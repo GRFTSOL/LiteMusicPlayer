@@ -1,0 +1,354 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5F2BD4C714962301003E7F5C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F2BD4C614962301003E7F5C /* Cocoa.framework */; };
+		5F2BD4FF149623F1003E7F5C /* IMPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2BD4DF149623F1003E7F5C /* IMPlayer.h */; };
+		5F2BD500149623F1003E7F5C /* MDAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F2BD4E0149623F1003E7F5C /* MDAgent.cpp */; };
+		5F2BD501149623F1003E7F5C /* MDAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2BD4E1149623F1003E7F5C /* MDAgent.h */; };
+		5F2BD50A149623F1003E7F5C /* Media.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F2BD4EA149623F1003E7F5C /* Media.cpp */; };
+		5F2BD50B149623F1003E7F5C /* Media.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2BD4EB149623F1003E7F5C /* Media.h */; };
+		5F2BD50C149623F1003E7F5C /* MediaLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F2BD4EC149623F1003E7F5C /* MediaLibrary.cpp */; };
+		5F2BD50D149623F1003E7F5C /* MediaLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2BD4ED149623F1003E7F5C /* MediaLibrary.h */; };
+		5F2BD50E149623F1003E7F5C /* MILocalFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F2BD4EE149623F1003E7F5C /* MILocalFile.cpp */; };
+		5F2BD50F149623F1003E7F5C /* MILocalFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2BD4EF149623F1003E7F5C /* MILocalFile.h */; };
+		5F2BD512149623F1003E7F5C /* MPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F2BD4F2149623F1003E7F5C /* MPlayer.cpp */; };
+		5F2BD513149623F1003E7F5C /* MPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2BD4F3149623F1003E7F5C /* MPlayer.h */; };
+		5F2BD514149623F1003E7F5C /* MPTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F2BD4F4149623F1003E7F5C /* MPTime.cpp */; };
+		5F2BD515149623F1003E7F5C /* MPTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2BD4F5149623F1003E7F5C /* MPTime.h */; };
+		5F2BD516149623F1003E7F5C /* MPTools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F2BD4F6149623F1003E7F5C /* MPTools.cpp */; };
+		5F2BD517149623F1003E7F5C /* MPTools.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2BD4F7149623F1003E7F5C /* MPTools.h */; };
+		5F2BD518149623F1003E7F5C /* Playlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F2BD4F8149623F1003E7F5C /* Playlist.cpp */; };
+		5F2BD519149623F1003E7F5C /* Playlist.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2BD4F9149623F1003E7F5C /* Playlist.h */; };
+		5F2BD51A149623F1003E7F5C /* stdafx.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2BD4FA149623F1003E7F5C /* stdafx.h */; };
+		5F2BD59714963C09003E7F5C /* fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F2BD59514963C09003E7F5C /* fft.c */; };
+		5F2BD59814963C09003E7F5C /* fft.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2BD59614963C09003E7F5C /* fft.h */; };
+		5FCD5B9817A95168004FD253 /* MDAVPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCD5B9617A95168004FD253 /* MDAVPlayer.h */; };
+		5FCD5B9917A95168004FD253 /* MDAVPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5FCD5B9717A95168004FD253 /* MDAVPlayer.mm */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		5F2BD4C314962301003E7F5C /* libMPlayerLib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMPlayerLib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F2BD4C614962301003E7F5C /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		5F2BD4C914962301003E7F5C /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		5F2BD4CA14962301003E7F5C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		5F2BD4CB14962301003E7F5C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		5F2BD4DF149623F1003E7F5C /* IMPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMPlayer.h; sourceTree = SOURCE_ROOT; };
+		5F2BD4E0149623F1003E7F5C /* MDAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDAgent.cpp; sourceTree = SOURCE_ROOT; };
+		5F2BD4E1149623F1003E7F5C /* MDAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDAgent.h; sourceTree = SOURCE_ROOT; };
+		5F2BD4EA149623F1003E7F5C /* Media.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Media.cpp; sourceTree = SOURCE_ROOT; };
+		5F2BD4EB149623F1003E7F5C /* Media.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Media.h; sourceTree = SOURCE_ROOT; };
+		5F2BD4EC149623F1003E7F5C /* MediaLibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaLibrary.cpp; sourceTree = SOURCE_ROOT; };
+		5F2BD4ED149623F1003E7F5C /* MediaLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaLibrary.h; sourceTree = SOURCE_ROOT; };
+		5F2BD4EE149623F1003E7F5C /* MILocalFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MILocalFile.cpp; sourceTree = SOURCE_ROOT; };
+		5F2BD4EF149623F1003E7F5C /* MILocalFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MILocalFile.h; sourceTree = SOURCE_ROOT; };
+		5F2BD4F2149623F1003E7F5C /* MPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MPlayer.cpp; sourceTree = SOURCE_ROOT; };
+		5F2BD4F3149623F1003E7F5C /* MPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPlayer.h; sourceTree = SOURCE_ROOT; };
+		5F2BD4F4149623F1003E7F5C /* MPTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MPTime.cpp; sourceTree = SOURCE_ROOT; };
+		5F2BD4F5149623F1003E7F5C /* MPTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPTime.h; sourceTree = SOURCE_ROOT; };
+		5F2BD4F6149623F1003E7F5C /* MPTools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MPTools.cpp; sourceTree = SOURCE_ROOT; };
+		5F2BD4F7149623F1003E7F5C /* MPTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPTools.h; sourceTree = SOURCE_ROOT; };
+		5F2BD4F8149623F1003E7F5C /* Playlist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Playlist.cpp; sourceTree = SOURCE_ROOT; };
+		5F2BD4F9149623F1003E7F5C /* Playlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Playlist.h; sourceTree = SOURCE_ROOT; };
+		5F2BD4FA149623F1003E7F5C /* stdafx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdafx.h; sourceTree = SOURCE_ROOT; };
+		5F2BD59514963C09003E7F5C /* fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fft.c; sourceTree = SOURCE_ROOT; };
+		5F2BD59614963C09003E7F5C /* fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fft.h; sourceTree = SOURCE_ROOT; };
+		5FCD5B9617A95168004FD253 /* MDAVPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MDAVPlayer.h; path = mac/MDAVPlayer.h; sourceTree = SOURCE_ROOT; };
+		5FCD5B9717A95168004FD253 /* MDAVPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MDAVPlayer.mm; path = mac/MDAVPlayer.mm; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5F2BD4C014962301003E7F5C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5F2BD4C714962301003E7F5C /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5F2BD4B814962300003E7F5C = {
+			isa = PBXGroup;
+			children = (
+				5F2BD4CC14962301003E7F5C /* Source */,
+				5F2BD4C514962301003E7F5C /* Frameworks */,
+				5F2BD4C414962301003E7F5C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5F2BD4C414962301003E7F5C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5F2BD4C314962301003E7F5C /* libMPlayerLib.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5F2BD4C514962301003E7F5C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5F2BD4C614962301003E7F5C /* Cocoa.framework */,
+				5F2BD4C814962301003E7F5C /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5F2BD4C814962301003E7F5C /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5F2BD4C914962301003E7F5C /* AppKit.framework */,
+				5F2BD4CA14962301003E7F5C /* CoreData.framework */,
+				5F2BD4CB14962301003E7F5C /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		5F2BD4CC14962301003E7F5C /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				5FCD5B9517A95157004FD253 /* mac */,
+				5F2BD59514963C09003E7F5C /* fft.c */,
+				5F2BD59614963C09003E7F5C /* fft.h */,
+				5F2BD4DF149623F1003E7F5C /* IMPlayer.h */,
+				5F2BD4E0149623F1003E7F5C /* MDAgent.cpp */,
+				5F2BD4E1149623F1003E7F5C /* MDAgent.h */,
+				5F2BD4EA149623F1003E7F5C /* Media.cpp */,
+				5F2BD4EB149623F1003E7F5C /* Media.h */,
+				5F2BD4EC149623F1003E7F5C /* MediaLibrary.cpp */,
+				5F2BD4ED149623F1003E7F5C /* MediaLibrary.h */,
+				5F2BD4EE149623F1003E7F5C /* MILocalFile.cpp */,
+				5F2BD4EF149623F1003E7F5C /* MILocalFile.h */,
+				5F2BD4F2149623F1003E7F5C /* MPlayer.cpp */,
+				5F2BD4F3149623F1003E7F5C /* MPlayer.h */,
+				5F2BD4F4149623F1003E7F5C /* MPTime.cpp */,
+				5F2BD4F5149623F1003E7F5C /* MPTime.h */,
+				5F2BD4F6149623F1003E7F5C /* MPTools.cpp */,
+				5F2BD4F7149623F1003E7F5C /* MPTools.h */,
+				5F2BD4F8149623F1003E7F5C /* Playlist.cpp */,
+				5F2BD4F9149623F1003E7F5C /* Playlist.h */,
+				5F2BD4FA149623F1003E7F5C /* stdafx.h */,
+			);
+			name = Source;
+			path = MPlayerLib;
+			sourceTree = "<group>";
+		};
+		5FCD5B9517A95157004FD253 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				5FCD5B9617A95168004FD253 /* MDAVPlayer.h */,
+				5FCD5B9717A95168004FD253 /* MDAVPlayer.mm */,
+			);
+			name = mac;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		5F2BD4C114962301003E7F5C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5F2BD4FF149623F1003E7F5C /* IMPlayer.h in Headers */,
+				5F2BD501149623F1003E7F5C /* MDAgent.h in Headers */,
+				5F2BD50B149623F1003E7F5C /* Media.h in Headers */,
+				5F2BD50D149623F1003E7F5C /* MediaLibrary.h in Headers */,
+				5F2BD50F149623F1003E7F5C /* MILocalFile.h in Headers */,
+				5F2BD513149623F1003E7F5C /* MPlayer.h in Headers */,
+				5F2BD515149623F1003E7F5C /* MPTime.h in Headers */,
+				5F2BD517149623F1003E7F5C /* MPTools.h in Headers */,
+				5F2BD519149623F1003E7F5C /* Playlist.h in Headers */,
+				5F2BD51A149623F1003E7F5C /* stdafx.h in Headers */,
+				5F2BD59814963C09003E7F5C /* fft.h in Headers */,
+				5FCD5B9817A95168004FD253 /* MDAVPlayer.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		5F2BD4C214962301003E7F5C /* MPlayerLib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5F2BD4D414962301003E7F5C /* Build configuration list for PBXNativeTarget "MPlayerLib" */;
+			buildPhases = (
+				5F2BD4BF14962301003E7F5C /* Sources */,
+				5F2BD4C014962301003E7F5C /* Frameworks */,
+				5F2BD4C114962301003E7F5C /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MPlayerLib;
+			productName = MPlayerLib;
+			productReference = 5F2BD4C314962301003E7F5C /* libMPlayerLib.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5F2BD4BA14962300003E7F5C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0500;
+			};
+			buildConfigurationList = 5F2BD4BD14962300003E7F5C /* Build configuration list for PBXProject "MPlayerEngine" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				English,
+				en,
+			);
+			mainGroup = 5F2BD4B814962300003E7F5C;
+			productRefGroup = 5F2BD4C414962301003E7F5C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5F2BD4C214962301003E7F5C /* MPlayerLib */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5F2BD4BF14962301003E7F5C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5F2BD500149623F1003E7F5C /* MDAgent.cpp in Sources */,
+				5F2BD50A149623F1003E7F5C /* Media.cpp in Sources */,
+				5F2BD50C149623F1003E7F5C /* MediaLibrary.cpp in Sources */,
+				5F2BD50E149623F1003E7F5C /* MILocalFile.cpp in Sources */,
+				5F2BD512149623F1003E7F5C /* MPlayer.cpp in Sources */,
+				5F2BD514149623F1003E7F5C /* MPTime.cpp in Sources */,
+				5F2BD516149623F1003E7F5C /* MPTools.cpp in Sources */,
+				5F2BD518149623F1003E7F5C /* Playlist.cpp in Sources */,
+				5F2BD59714963C09003E7F5C /* fft.c in Sources */,
+				5FCD5B9917A95168004FD253 /* MDAVPlayer.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		5F2BD4D214962301003E7F5C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					_MAC_OS,
+					"DEBUG=1",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		5F2BD4D314962301003E7F5C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = _MAC_OS;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		5F2BD4D514962301003E7F5C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5F2BD4D614962301003E7F5C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5F2BD4BD14962300003E7F5C /* Build configuration list for PBXProject "MPlayerEngine" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5F2BD4D214962301003E7F5C /* Debug */,
+				5F2BD4D314962301003E7F5C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5F2BD4D414962301003E7F5C /* Build configuration list for PBXNativeTarget "MPlayerLib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5F2BD4D514962301003E7F5C /* Debug */,
+				5F2BD4D614962301003E7F5C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5F2BD4BA14962300003E7F5C /* Project object */;
+}

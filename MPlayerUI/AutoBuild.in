@@ -1,0 +1,10 @@
+#ifndef __AUTOBUILD_H__
+#define __AUTOBUILD_H__
+
+// Use SVN revision number as build number.
+// SubWCRev.exe . AutoBuild.in AutoBuild.h
+
+#define AUTO_BUILD_NUM $WCREV$
+
+
+#endif //__AUTOBUILD_H__

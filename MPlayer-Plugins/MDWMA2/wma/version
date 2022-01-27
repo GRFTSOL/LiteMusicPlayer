@@ -1,0 +1,58 @@
+History:
+--------
+
+Version 0.2
+-----------
+16 September 2005
+
+BETA VERSION
+
+
+* Initial public Release
+
+--
+
+Version 0.2.1
+-------------
+
+10 November 2005
+
+BETA VERSION
+
+* Increased the size of MAX_CODED_SUPERFRAME_SIZE
+* Removed the assertion check in decode_exp_vlc.
+
+--
+
+Version 0.3
+-----------
+
+20 December 2005
+
+BETA VERSION
+
+* Fixed bug in seeking that was causing some songs to be 'cut' short.
+
+--
+
+Version 0.4
+-----------
+
+5 January 2006
+
+BETA VERSION
+
+* Fixed bug that was cauaing some WMA files to be not recognised as valid. Made a modification to the way ASF parsing code read the extended comment header, also makes this section of code faster.
+
+--
+
+Version 0.5
+-----------
+
+8 January 2006
+
+BETA VERSION
+
+* Removed usage of the pow() function from within wmadec.c to use precalculated values. The pow() function was not working reliably during run-time operations.
+
+--

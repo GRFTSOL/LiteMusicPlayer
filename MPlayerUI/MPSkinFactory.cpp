@@ -1,0 +1,422 @@
+// MPSkinFactory.cpp: implementation of the CMPSkinFactory class.
+//
+//////////////////////////////////////////////////////////////////////
+
+#include "MPlayerApp.h"
+#include "MPSkinFactory.h"
+#include "MPSkinWnd.h"
+#include "LyricShowMultiRowObj.h"
+#include "LyricShowTxtObj.h"
+#include "LyricShowTwoRowObj.h"
+#include "LyricShowSingleRowObj.h"
+#include "LyricShowVobSub.h"
+#include "LyricShowAgentObj.h"
+#include "LyricShowTextEditObj.h"
+#include "LyricShowTxtContainer.h"
+#include "SkinListCtrlEx.h"
+#include "SkinRateCtrl.h"
+#include "SkinPicText.h"
+#include "MPSkinTimeCtrl.h"
+#include "MPSkinInfoTextCtrl.h"
+#include "MediaInfoTextCtrl.h"
+#include "MediaAlbumArtCtrl.h"
+#include "SkinFilterCtrl.h"
+#include "MPSkinInfoTextCtrlEx.h"
+#include "DlgAbout.h"
+#include "DlgSearchLyrics.h"
+#include "PreferenceDlg.h"
+#include "DlgUpload.h"
+#include "DlgAdjustHue.h"
+#include "MPlaylistCtrl.h"
+#include "MPSkinMediaNumInfoCtrl.h"
+#include "MPlaylistSearchObj.h"
+
+#ifdef _MPLAYER
+#include "SkinTreeCtrl.h"
+#include "MPSkinVis.h"
+#endif
+
+#ifdef _WIN32
+#include "win32/LyricsDownloader.h"
+#endif
+
+#ifdef _MAC_OS
+#include "mac/LyricsDownloader.h"
+#endif
+
+#include "MPSkinMenu.h"
+
+#ifdef _WIN32_DESKTOP
+#include "win32/MPFloatingLyrWnd.h"
+#else
+#include "MPFloatingLyrWnd.h"
+#endif
+
+
+CMPSkinFactory::CMPSkinFactory(CSkinApp *pApp, UIObjectIDDefinition uidDefinition[])
+    : CSkinFactory(pApp, uidDefinition)
+{
+    m_bClickThrough = false;
+
+    setMenuIDByUID(CMD_QUIT, IDC_EXIT);
+}
+
+CMPSkinFactory::~CMPSkinFactory()
+{
+
+}
+
+int CMPSkinFactory::init()
+{
+    AddUIObjNewer(CLyricShowMultiRowObj);
+    AddUIObjNewer(CLyricShowTxtObj);
+    AddUIObjNewer(CLyricShowTwoRowObj);
+    AddUIObjNewer(CLyricShowSingleRowObj);
+    AddUIObjNewer(CLyricShowVobSub);
+    AddUIObjNewer(CLyricShowTextEditObj);
+    AddUIObjNewer(CLyricShowTxtContainer);
+    AddUIObjNewer(CLyricShowAgentObj);
+    AddUIObjNewer(CSkinRateCtrl);
+    AddUIObjNewer(CSkinPicText);
+    AddUIObjNewer(CMPSkinTimeCtrl<CSkinPicText>);
+    AddUIObjNewer(CMPSkinTimeCtrl<CSkinStaticText>);
+    AddUIObjNewer(CMPSkinInfoTextCtrl);
+    AddUIObjNewer(CMPSkinInfoTextCtrlEx);
+    AddUIObjNewer(CSkinFilterCtrl);
+#ifdef _MPLAYER
+    AddUIObjNewer(CSkinTreeCtrl);
+    AddUIObjNewer(CMPSkinVis);
+#endif
+    AddUIObjNewer(CSkinListCtrlEx);
+    AddUIObjNewer(CMPSkinMediaNumInfoCtrl);
+    AddUIObjNewer(CMPlaylistSearchObj);
+    AddUIObjNewer(CMediaInfoTextCtrl);
+    AddUIObjNewer(CMediaAlbumArtCtrl);
+    AddUIObjNewer(CMPlaylistCtrl);
+
+    registerAboutPage(this);
+    registerSearchLyricsPage(this);
+    registerPreferencePage(this);
+    registerUploadLyrPage(this);
+    registerAdjustHuePage(this);
+    
+    registerLyricsToolPage(this);
+
+    return CSkinFactory::init();
+}
+
+CSkinWnd *CMPSkinFactory::newSkinWnd(cstr_t szSkinWndName, bool bMainWnd)
+{
+    if (bMainWnd)
+        return new CMPSkinMainWnd;
+    else
+        return new CMPSkinWnd;
+}
+
+CSkinMenu *CMPSkinFactory::loadPresetMenu(CSkinWnd *pWnd, cstr_t szMenu)
+{
+    CSkinMenu    *pSkinMenu = nullptr;
+
+    if (strcasecmp(szMenu, "MainMenu") == 0)
+    {
+        CMPSkinMenu    *pMenu = new CMPSkinMenu();
+        pSkinMenu = pMenu;
+        pMenu->addUICheckStatusIf(pWnd);
+        pSkinMenu->loadMenu(IDM_NORMAL_STAT);
+    }
+    else if (strcasecmp(szMenu, "LyricsMenu") == 0)
+    {
+        CMPSkinMenu    *pMenu = new CMPSkinMenu();
+        pSkinMenu = pMenu;
+        pMenu->addUICheckStatusIf(pWnd);
+        pSkinMenu->loadMenu(IDM_FLOATING_LYRICS);
+    }
+    else if (strcasecmp(szMenu, "LyrEditorMenu") == 0)
+    {
+        pSkinMenu = new CLyrEditorMenu();
+        // pSkinMenu->loadMenu(IDM_LYR_EDITOR);
+        pSkinMenu->loadMenu(IDM_LYR_EDITOR);
+    }
+    else if (strcasecmp(szMenu, "MainWndMenu") == 0)
+    {
+        CMPSkinMenu    *pMenu = new CMPSkinMenu();
+        pSkinMenu = pMenu;
+        pMenu->addUICheckStatusIf(pWnd);
+        // pSkinMenu->loadMenu(IDM_MAIN_WND);
+        pSkinMenu->loadMenu(IDM_MAIN_WND);
+    }
+    else if (strcasecmp(szMenu, "LyrDlCtxMenu") == 0)
+    {
+        CMPSkinMenu    *pMenu = new CMPSkinMenu();
+        pSkinMenu = pMenu;
+        pMenu->addUICheckStatusIf(pWnd);
+        pSkinMenu->loadMenu(IDM_NORMAL_STAT);
+        pMenu->removeItem(7); // 7 is Lyrics Downloader for iPod
+    }
+    else if (strcasecmp(szMenu, "iPodLyricsDownloader") == 0)
+    {
+        CMPSkinMenu    *pMenu = new CMPSkinMenu();
+        pSkinMenu = pMenu;
+        pSkinMenu->loadMenu(IDM_IPOD_LYR_DOWNLOADER);
+    }
+#ifdef _MPLAYER
+/*    else if (strcasecmp(szMenu, "PlaylistMenu") == 0)
+    {
+        CMPSkinMenu    *pMenu = new CMPSkinMenu();
+        pSkinMenu = pMenu;
+        pMenu->addUICheckStatusIf(pWnd);
+        pSkinMenu->loadPopupMenu(IDM_MENU, 2);
+    }*/
+    else if (strcasecmp(szMenu, "MediaLibMenu") == 0)
+    {
+        pSkinMenu = new CSkinMenu();
+        pSkinMenu->loadPopupMenu(IDM_PLAYER_MENU, 1);
+    }
+    else if (strcasecmp(szMenu, "MediaGuideTreeMenu") == 0)
+    {
+        pSkinMenu = new CSkinMenu();
+        pSkinMenu->loadPopupMenu(IDM_PLAYER_MENU, 1);
+    }
+    else if (strcasecmp(szMenu, "MediaGuideSongListMenu") == 0)
+    {
+        pSkinMenu = new CSkinMenu();
+        pSkinMenu->loadPopupMenu(IDM_PLAYER_MENU, 1);
+    }
+#endif
+    else
+    {
+        CMPSkinMenu    *pMenu = new CMPSkinMenu();
+        pSkinMenu = pMenu;
+        pMenu->addUICheckStatusIf(pWnd);
+        pSkinMenu->loadMenu(IDM_NORMAL_STAT);
+    }
+
+    return pSkinMenu;
+}
+
+void CMPSkinFactory::topmostAll(bool bTopmost)
+{
+    auto itEnd = m_listSkinWnds.end();
+
+    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it)
+    {
+        CSkinWnd    *pWnd = *it;
+        pWnd->setTopmost(bTopmost);
+    }
+}
+
+void CMPSkinFactory::minizeAll(bool bSilently)
+{
+    auto itEnd = m_listSkinWnds.end();
+
+    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it)
+    {
+        CSkinWnd    *pWnd = *it;
+#ifdef _WIN32
+        if (::getParent(pWnd->getHandle()) != nullptr)
+            continue;
+#endif
+        if (pWnd->isToolWindow())
+        {
+            pWnd->minimizeNoActivate();
+            pWnd->hide();
+        } else if (bSilently) {
+            pWnd->minimizeNoActivate();
+        } else {
+            pWnd->minimize();
+        }
+    }
+}
+
+void CMPSkinFactory::restoreAll()
+{
+    auto itEnd = m_listSkinWnds.end();
+
+    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it)
+    {
+        CSkinWnd    *pWnd = *it;
+
+        if (pWnd->isIconic())
+            pWnd->showNoActivate();
+
+        if (pWnd->isToolWindow())
+            pWnd->show();
+    }
+}
+
+int CMPSkinFactory::getIDByNameEx(cstr_t szId, string &strToolTip)
+{
+    int        nID = CSkinFactory::getIDByNameEx(szId, strToolTip);
+    if (nID == UID_INVALID)
+        return nID;
+
+    string        strHotkey;
+
+    if (CMPlayerAppBase::getHotkey().getHotkeyText(nID, strHotkey))
+    {
+        strToolTip = _TL(strToolTip.c_str());
+        strToolTip += " (";
+        strToolTip += strHotkey;
+        strToolTip += ")";
+    }
+
+    return nID;
+}
+
+void CMPSkinFactory::getTooltip(int nId, string &strToolTip)
+{
+    CSkinFactory::getTooltip(nId, strToolTip);
+
+    if (strToolTip.size())
+    {
+        string        strHotkey;
+
+        if (CMPlayerAppBase::getHotkey().getHotkeyText(nId, strHotkey))
+        {
+            strToolTip = _TL(strToolTip.c_str());
+            strToolTip += " (";
+            strToolTip += strHotkey;
+            strToolTip += ")";
+        }
+    }
+}
+
+int CMPSkinFactory::openSimpliestSkin()
+{
+    int            nRet;
+    string        strSkinFile;
+
+    strSkinFile = getAppResourceDir();
+    strSkinFile += "sskin.xml";
+
+    nRet = openSkinFile(strSkinFile.c_str());
+    if (nRet != ERR_OK)
+        return nRet;
+
+    assert(m_listSkinWnds.size() > 0);
+    if (m_listSkinWnds.size() > 0)
+    {
+        CSkinWnd *pWnd = m_listSkinWnds.front();
+        pWnd->openSkin("MiniLyrics");
+    }
+
+    return ERR_OK;
+}
+
+void CMPSkinFactory::adjustHue(float hue, float saturation, float luminance)
+{
+    CSkinFactory::adjustHue(hue, saturation, luminance);
+
+    g_wndFloatingLyr.onAdjustHue(hue, saturation, luminance);
+    g_wndFloatingLyr.invalidateRect();
+}
+
+#ifndef _MPLAYER
+void CMPSkinFactory::beforeTrackMoveWith(Window *pWndChain[], int nCount, Window *pWndToTrack)
+{
+    auto itEnd = m_listSkinWnds.end();
+
+    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it)
+    {
+        CSkinWnd    *pWnd = *it;
+        pWnd->m_WndDrag.beforeTrackMoveWith(pWndChain, nCount, pWndToTrack);
+    }
+}
+
+void CMPSkinFactory::trackMoveWith(Window *pWnd, int x, int y)
+{
+    auto itEnd = m_listSkinWnds.end();
+
+    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it)
+    {
+        CSkinWnd    *pWnd = *it;
+        pWnd->m_WndDrag.trackMoveWith(pWnd, x, y);
+    }
+}
+
+void CMPSkinFactory::addWndCloseto(Window *pWnd, cstr_t szWndName, cstr_t szClass)
+{
+    m_WndCloseToPlayers.addWndCloseto(pWnd, szClass, szWndName);
+}
+
+// ISkinWndDragHost
+void CMPSkinFactory::getWndDragAutoCloseTo(vector<Window *> &vWnd)
+{
+    CSkinFactory::getWndDragAutoCloseTo(vWnd);
+
+    V_WNDCLOSETO::iterator    it, itEnd;
+    itEnd = m_WndCloseToPlayers.m_vWndCloseTo.end();
+    for (it = m_WndCloseToPlayers.m_vWndCloseTo.begin(); it != itEnd; ++it)
+    {
+        Window        *pWnd;
+        WndDrag::WndCloseTo        &item = *it;
+
+        if (item.pWnd)
+            pWnd = item.pWnd;
+        else
+        {
+            const char    *szClass = item.strClass.c_str();
+            if (isEmptyString(szClass))
+                szClass = nullptr;
+            const char    *szWnd = item.strWndName.c_str();
+            if (isEmptyString(szWnd))
+                szWnd = nullptr;
+            pWnd = findWindow(szClass, szWnd);
+        }
+
+        if (pWnd)
+            vWnd.push_back(pWnd);
+    }
+}
+#endif
+
+void CMPSkinFactory::allUpdateTransparent()
+{
+    int        nOpaque = g_profile.getInt(SZ_SECT_UI, "WindowOpaquePercent", 100);
+    uint8_t    byAlpha = opaquePercentToAlpha(nOpaque);
+
+#ifdef _WIN32_DESKTOP
+    if (!isLayeredWndSupported())
+        return;
+
+#ifndef _MPLAYER
+    if (g_wndFloatingLyr.isValid())
+        g_wndFloatingLyr.setTransparent(byAlpha, false);
+
+    if (::getParent(CMPlayerAppBase::getMainWnd()->getHandle()))
+        return;
+#endif
+#endif // #ifdef _WIN32_DESKTOP
+
+    auto itEnd = m_listSkinWnds.end();
+    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it)
+    {
+        CSkinWnd    *pWnd = *it;
+        pWnd->setTransparent(byAlpha, m_bClickThrough);
+    }
+}
+
+void CMPSkinFactory::setClickThrough(bool bClickThrough)
+{
+    m_bClickThrough = bClickThrough;
+
+    // save ClickThrough options
+    g_profile.writeInt(SZ_SECT_UI, "ClickThrough", m_bClickThrough);
+
+#ifdef _WIN32_DESKTOP
+    if (m_bClickThrough)
+    {
+        // show MiniLyrics system tray icon.
+        int            nShowPos;
+
+        nShowPos = g_profile.getInt(SZ_SECT_UI, "ShowIconOn", SHOW_ICON_ON_TASKBAR);
+        if (nShowPos == SHOW_ICON_ON_NONE || nShowPos == SHOW_ICON_ON_TASKBAR)
+        {
+            g_profile.writeInt(SZ_SECT_UI, "ShowIconOn", SHOW_ICON_ON_TASKBAR);
+            CMPlayerAppBase::getMainWnd()->getTrayIcon().updateShowIconPos();
+        }
+    }
+#endif // #ifdef _WIN32_DESKTOP
+
+    allUpdateTransparent();
+}

@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MDVorbis", "MDVorbis.vcproj", "{77AE0947-DF25-49F8-8780-D90B090AE816}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CEF9924B-FD3B-4FCE-B54B-68EC523B5D29} = {CEF9924B-FD3B-4FCE-B54B-68EC523B5D29}
+		{23EEFA26-1A02-4C83-BF3F-A15F818E0B76} = {23EEFA26-1A02-4C83-BF3F-A15F818E0B76}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Vorbis", "Vorbis.vcproj", "{23EEFA26-1A02-4C83-BF3F-A15F818E0B76}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "base", "..\..\base\base.vcproj", "{CEF9924B-FD3B-4FCE-B54B-68EC523B5D29}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		Unicode Debug|Win32 = Unicode Debug|Win32
+		Unicode Release|Win32 = Unicode Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{77AE0947-DF25-49F8-8780-D90B090AE816}.Debug|Win32.ActiveCfg = Debug|Win32
+		{77AE0947-DF25-49F8-8780-D90B090AE816}.Debug|Win32.Build.0 = Debug|Win32
+		{77AE0947-DF25-49F8-8780-D90B090AE816}.Release|Win32.ActiveCfg = Release|Win32
+		{77AE0947-DF25-49F8-8780-D90B090AE816}.Release|Win32.Build.0 = Release|Win32
+		{77AE0947-DF25-49F8-8780-D90B090AE816}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
+		{77AE0947-DF25-49F8-8780-D90B090AE816}.Unicode Debug|Win32.Build.0 = Debug|Win32
+		{77AE0947-DF25-49F8-8780-D90B090AE816}.Unicode Release|Win32.ActiveCfg = Release|Win32
+		{77AE0947-DF25-49F8-8780-D90B090AE816}.Unicode Release|Win32.Build.0 = Release|Win32
+		{23EEFA26-1A02-4C83-BF3F-A15F818E0B76}.Debug|Win32.ActiveCfg = Debug|Win32
+		{23EEFA26-1A02-4C83-BF3F-A15F818E0B76}.Debug|Win32.Build.0 = Debug|Win32
+		{23EEFA26-1A02-4C83-BF3F-A15F818E0B76}.Release|Win32.ActiveCfg = Release|Win32
+		{23EEFA26-1A02-4C83-BF3F-A15F818E0B76}.Release|Win32.Build.0 = Release|Win32
+		{23EEFA26-1A02-4C83-BF3F-A15F818E0B76}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
+		{23EEFA26-1A02-4C83-BF3F-A15F818E0B76}.Unicode Debug|Win32.Build.0 = Debug|Win32
+		{23EEFA26-1A02-4C83-BF3F-A15F818E0B76}.Unicode Release|Win32.ActiveCfg = Release|Win32
+		{23EEFA26-1A02-4C83-BF3F-A15F818E0B76}.Unicode Release|Win32.Build.0 = Release|Win32
+		{CEF9924B-FD3B-4FCE-B54B-68EC523B5D29}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CEF9924B-FD3B-4FCE-B54B-68EC523B5D29}.Debug|Win32.Build.0 = Debug|Win32
+		{CEF9924B-FD3B-4FCE-B54B-68EC523B5D29}.Release|Win32.ActiveCfg = Release|Win32
+		{CEF9924B-FD3B-4FCE-B54B-68EC523B5D29}.Release|Win32.Build.0 = Release|Win32
+		{CEF9924B-FD3B-4FCE-B54B-68EC523B5D29}.Unicode Debug|Win32.ActiveCfg = Unicode Debug|Win32
+		{CEF9924B-FD3B-4FCE-B54B-68EC523B5D29}.Unicode Debug|Win32.Build.0 = Unicode Debug|Win32
+		{CEF9924B-FD3B-4FCE-B54B-68EC523B5D29}.Unicode Release|Win32.ActiveCfg = Unicode Release|Win32
+		{CEF9924B-FD3B-4FCE-B54B-68EC523B5D29}.Unicode Release|Win32.Build.0 = Unicode Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

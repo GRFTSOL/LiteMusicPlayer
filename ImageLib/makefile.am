@@ -1,0 +1,26 @@
+SUBDIRS = 
+
+noinst_LIBRARIES = libImageLib.a
+
+libImageLib_a_SOURCES =  ImgBmpFile.cpp ImgGifFile.cpp ImgJpegFile.cpp ImgPngFile.cpp \
+	RawImageData.cpp ILIO.cpp\
+	jpeg/jcapimin.c   jpeg/jcapistd.c   jpeg/jccoefct.c   jpeg/jccolor.c    jpeg/jcdctmgr.c   jpeg/jchuff.c \
+	jpeg/jcinit.c     jpeg/jcmainct.c   jpeg/jcmarker.c   jpeg/jcmaster.c   jpeg/jcomapi.c    jpeg/jcparam.c \
+	jpeg/jcphuff.c    jpeg/jcprepct.c   jpeg/jcsample.c   jpeg/jctrans.c    jpeg/jdapimin.c   jpeg/jdapistd.c \
+	jpeg/jdatadst.c   jpeg/jdatasrc.c   jpeg/jdcoefct.c   jpeg/jdcolor.c    jpeg/jddctmgr.c   jpeg/jdhuff.c \
+	jpeg/jdinput.c    jpeg/jdmainct.c   jpeg/jdmarker.c   jpeg/jdmaster.c   jpeg/jdmerge.c    jpeg/jdphuff.c \
+	jpeg/jdpostct.c   jpeg/jdsample.c   jpeg/jdtrans.c    jpeg/jerror.c     jpeg/jfdctflt.c   jpeg/jfdctfst.c \
+	jpeg/jfdctint.c   jpeg/jidctflt.c   jpeg/jidctfst.c   jpeg/jidctint.c   jpeg/jidctred.c   jpeg/jmemmgr.c \
+	jpeg/jmemnobs.c   jpeg/jquant1.c    jpeg/jquant2.c    jpeg/jutils.c \
+	png/png.c        png/pngerror.c   png/pnggccrd.c   png/pngget.c     png/pngmem.c \
+	png/pngpread.c   png/pngread.c    png/pngrio.c     png/pngrtran.c   png/pngrutil.c   png/pngset.c \
+	png/pngtrans.c   png/pngvcrd.c    png/pngwio.c     png/pngwrite.c   png/pngwtran.c   png/pngwutil.c
+	../SDK/zlib/adler32.c    ../SDK/zlib/compress.c   ../SDK/zlib/crc32.c      ../SDK/zlib/deflate.c    ../SDK/zlib/gzio.c \
+	../SDK/zlib/infback.c    ../SDK/zlib/inffast.c    ../SDK/zlib/inflate.c    ../SDK/zlib/inftrees.c   ../SDK/zlib/trees.c \
+	../SDK/zlib/uncompr.c    ../SDK/zlib/zutil.c
+
+INCLUDES = -I$(top_srcdir)/base -I$(top_srcdir)/Utils -I$(top_srcdir)/SDK/Agg/include \
+	-I$(top_srcdir)/SDK/zlib
+
+libImageLib_a_CPPFLAGS = -D_LINUX -D_LINUX_GTK2 `pkg-config gtk+-2.0 --cflags`
+

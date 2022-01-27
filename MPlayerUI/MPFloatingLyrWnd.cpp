@@ -1,0 +1,20 @@
+// MPFloatingLyrWnd.cpp: implementation of the CMPFloatingLyrWnd class.
+//
+//////////////////////////////////////////////////////////////////////
+#include "../Skin/Skin.h"
+#include "MPFloatingLyrWnd.h"
+
+CMPFloatingLyrWnd        g_wndFloatingLyr;
+
+//////////////////////////////////////////////////////////////////////
+// Construction/Destruction
+//////////////////////////////////////////////////////////////////////
+
+CMPFloatingLyrWnd::CMPFloatingLyrWnd()
+{
+}
+
+CMPFloatingLyrWnd::~CMPFloatingLyrWnd()
+{
+
+}

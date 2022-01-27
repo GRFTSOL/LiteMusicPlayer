@@ -1,0 +1,15 @@
+noinst_LIBRARIES = libmplayerlib.a
+
+libmplayerlib_a_SOURCES = audio.cpp                    DspDemo.cpp\
+		fft.c                        MDAgent.cpp\
+		MDLibmad.cpp                 MDRow.cpp\
+		MDWave.cpp                   MediaLibrary.cpp\
+		MILocalFile.cpp              MORaw.cpp\
+		linux/MOSoundCard.cpp        MPTools.cpp\
+		MPlayer.cpp                  MPTime.cpp\
+		Playlist.cpp                 
+
+INCLUDES = -I$(top_srcdir)/base -I$(top_srcdir)/Utils
+
+libmplayerlib_a_CPPFLAGS = -D_LINUX -D_LINUX_GTK2 -DFPM_INTEL `pkg-config gtk+-2.0 --cflags`
+

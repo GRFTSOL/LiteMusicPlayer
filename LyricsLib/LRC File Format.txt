@@ -1,0 +1,18 @@
+LRC File Format
+LRC is a lyrics file format with time tags to synchronize the lyrics with the audio file (MP3 file for example).
+LRC files are basically text files, so you can read them with any text editor.
+
+The main issue of the basic LRC file is that the syncs are done line by line and not syllable by syllable.
+Hopefully, an recent extension to this format allows to specify a time tag for each word.
+
+The LRC files start with some information tags, the two most important are artist and title:
+[ar:Artist name here]
+[ti:Title of the song]
+
+Then comes the lyrics, with the synchronization tags:
+[mm:ss.xx]word 1<mm:ss.xx> word 2 <mm:ss.xx> ...
+To make it easier, let's show an example:
+[00:43.75]Let <00:43.96>it <00:44.16>be
+
+The purpose of this website is to provide only enhanced LRC files for all the karaoke enthusiasts!
+And if you create some enhanced LRC files, why not submitting them for the other users? 

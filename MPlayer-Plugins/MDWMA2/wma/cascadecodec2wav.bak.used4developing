@@ -1,0 +1,219 @@
+// cascadecodec2wav.cpp : implementation of program cascadecodec2wav
+//
+// Copyright (c) 2005, Roku, LLC.  All Rights Reserved.
+//
+// This program converts a file of arbitrary audio format into a wave file
+// using a CascadeAudioCodec.  Currently only CascadeAudioCodecWAV is provided -
+// to test your own codecs, modify the function AllocateNewAudioCodec.
+//
+// function main() does all the work.  
+//
+///////////////////////////////////////////////////////////////////////////////
+
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <unistd.h>
+
+#include "CascadeAudioCodecWMA.h"
+#include <cascade/util/CascadeFileStream.h>
+
+///////////////////////////////////////////////////////////////////////////////
+// module cascadecodec2wav #defines
+#define PROGNAME            "cascadecodec2wav"
+#define SPACELEN            "                "
+#define WAVE_HEADER_SIZE    44
+
+///////////////////////////////////////////////////////////////////////////////
+// module cascadecodec2wav static variables
+static char s_waveHeader[WAVE_HEADER_SIZE] =
+{
+    'R', 'I', 'F', 'F',
+    0, 0, 0, 0,             // le 32 nChunkSize - (size of whole file, less 8)
+    'W', 'A', 'V', 'E',
+    'f', 'm', 't', ' ',
+    16, 0, 0, 0,            // le 32 nChunkSize (16 for PCM WAVEFORMATEX)
+    1, 0,                   // le 16 wFormat tag (1 == PCM)
+    0, 0,                   // le 16 nNumChannels
+    0, 0, 0, 0,             // le 32 sample rate
+    0, 0, 0, 0,             // le 32 bytes/second
+    0, 0,                   // le 16 block align = numChannels * bitsPerSample / 8
+    0, 0,                   // le 16 bitsPerSample
+    'd', 'a', 't', 'a',
+    0, 0, 0, 0              // total bytes of pcm samples
+};
+static u32 * s_pRIFFChunkSize   = (u32 *)&s_waveHeader[4];
+static u16 * s_pNumChannels     = (u16 *)&s_waveHeader[22];
+static u32 * s_pSampleRate      = (u32 *)&s_waveHeader[24];
+static u32 * s_pBytesPerSecond  = (u32 *)&s_waveHeader[28];
+static u16 * s_pBlockAlign      = (u16 *)&s_waveHeader[32];
+static u16 * s_pBitsPerSample   = (u16 *)&s_waveHeader[34];
+static u8  * s_pPCMSampleBytes  = (u8  *)&s_waveHeader[40];
+
+///////////////////////////////////////////////////////////////////////////////
+// module cascadecodec2wav forward declarations
+static bool                 GetUppercaseExtension(const char * pFilename, char * pExtensionToSet);
+static CascadeAudioCodec *  AllocateNewAudioCodec(const char * pExtension);
+static void                 CalculateInitialWaveHeader(CascadeAudioCodec * pCodec);
+static void                 UpdateWaveHeader(u32 nNumBytesDecoded);
+static int                  Cleanup(CascadeAudioCodec * pCodec, FILE * pFile, const char * pFilename);
+
+///////////////////////////////////////////////////////////////////////////////
+// program cascadecodec2wav function main
+int main(int argc, const char ** argv)
+{
+	if (argc != 3) return printf("usage: "PROGNAME" <inputfile> <outputfile>\n"), -1;
+
+	CascadeFile file(argv[1]);
+	CascadeFileStream stream;
+    CascadeAudioCodec * pCodec = NULL;
+    char extension[4];
+
+    // first see if we can instantiate an appropriate CascadeAudioCodec based on the input file extension
+    if (! GetUppercaseExtension(argv[1], extension)) return printf(PROGNAME": %s is not a valid filename \n", argv[1]), -1;
+	if (NULL == (pCodec = AllocateNewAudioCodec(extension))) return printf(PROGNAME": failed to find an appropriate codec\n"), -1;
+
+	// open the file as a CascadeStream
+    if (! stream.Open(file))
+    {
+        delete pCodec;
+        return printf(PROGNAME": failed to open %s\n", argv[1]), -1;
+    }
+
+    // tell the codec that it is to operate on this input stream.  The codec will return false
+    // if it doesn't understand the stream, or true if it does.  Once a codec's SetInputStream returns
+    // true, the codec can be queried to determine the parameters of the audio stream
+    if (! pCodec->SetInputStream(&stream))
+    {
+        delete pCodec;
+        return printf(PROGNAME": %s was not understood as a %s file\n", argv[1], extension), -1;
+    }
+
+    // ok, we've got the codec with a valid input stream wired into it, lets print out some of the stream's parms just for fun
+    if (0 == pCodec->GetDurationInMilliseconds()) printf(PROGNAME": %s is a %s file of unknown duration with\n", argv[1], extension);
+    else printf(PROGNAME": %s is a %lu millisecond %s file with\n", argv[1], pCodec->GetDurationInMilliseconds(), extension);    
+    printf(SPACELEN"  a sample rate of %lu Hz containing %lu channels of\n", pCodec->GetSampleRate(), pCodec->GetNumChannels());
+    printf(SPACELEN"  %lu bps %s %s endian samples%s.\n",
+         pCodec->GetBitsPerSample(),
+        (pCodec->GetSamplePolarity() == CascadeAudioCodec::kSigned ? "signed" : "unsigned"), (pCodec->GetSampleEndianness() == CascadeAudioCodec::kLittleEndian ? "little" : "big"),
+        (pCodec->GetNumChannels() == 2) ? (pCodec->GetSampleOrder() == CascadeAudioCodec::kLeftRight ? " in left-right order" : " in right-left order") : "");
+
+    if ((pCodec->GetNumChannels() != 2) ||
+        (pCodec->GetBitsPerSample() != 16) ||
+        (pCodec->GetSamplePolarity() != CascadeAudioCodec::kSigned) ||
+        (pCodec->GetSampleOrder() != CascadeAudioCodec::kLeftRight))
+    {
+        // note: this simple test program that writes wav files only deals with
+        // 2 channel, 16 bit little endian samples in left-right order.
+        // CascadeAudioPlayer is more sophisticated and matches driver capabilities to
+        // the codec's stated parameters, applying transforms where needed so if you write
+        // your own codec, you're not limited to what I'm masking out here.
+        // If you do write your own codec and want to test it with this program, then
+        // you should apply post-processing sample transforms into 2 channel, 16 bit little endian
+        // samples in left-right order, because that is what needs to go into wave files as written
+        // by this program.
+        delete pCodec;
+        return printf(PROGNAME": can only write a wave file with 2 channel, 16-bit,\n"SPACELEN"  little endian samples in left-right order.\n"), -1;
+    }
+
+    printf(PROGNAME": decoding file %s to file %s\n", argv[1], argv[2]);
+
+    // ok, now let's open up the output file
+    FILE * pOutputFile = fopen(argv[2], "wb");
+    if (NULL == pOutputFile)
+    {
+        delete pCodec;
+        return printf(PROGNAME": failed to open out file %s\n", argv[2]), -1;
+    }
+
+    // ok, now we're going to do the decode
+    // first calculate and write the wave file header
+    CalculateInitialWaveHeader(pCodec);
+    if (1 != fwrite(s_waveHeader, sizeof(s_waveHeader), 1, pOutputFile)) return printf(PROGNAME": failed to write wave header to %s\n", argv[2]), Cleanup(pCodec, pOutputFile, argv[2]);
+
+    // now decode the input file using the CascadeAudioCodec.  We'll decode into a stack buffer,
+    // which I normally wouldn't do, but this is a test program
+    char buff[8192];
+    u32 nBytesDecoded = 0;
+    u32 nTotalBytesDecoded = 0;
+    while (1)
+    {
+        nBytesDecoded = pCodec->ReadBytes(sizeof(buff), buff);
+        if (0 == nBytesDecoded) break; // if we got 0 bytes of samples out of the codec, we're done
+        nTotalBytesDecoded += nBytesDecoded;
+        if (0 == (nTotalBytesDecoded % (256 * 1024))) { printf("."); fflush(stdout); }
+        if (nBytesDecoded != fwrite(buff, 1, nBytesDecoded, pOutputFile)) return printf("\n"PROGNAME": failed to write sample data to %s\n", argv[2]), Cleanup(pCodec, pOutputFile, argv[2]);
+        if (nBytesDecoded < sizeof(buff)) break; // if the codec returned less bytes then we asked for we're also done
+    }
+    printf("\n");
+
+    // if we didn't decode any bytes out of the codec, bail
+    if (0 == nTotalBytesDecoded) return printf(PROGNAME": decoded 0 bytes!\n"), Cleanup(pCodec, pOutputFile, argv[2]);
+
+    // now that we've decoded the file and know how many bytes of samples were actually decoded,
+    // update the wave header and rewrite it.
+    UpdateWaveHeader(nTotalBytesDecoded);
+    if (0 != fseek(pOutputFile, 0, SEEK_SET)) return printf(PROGNAME": failed to seek back to the beginning of the output file\n"), Cleanup(pCodec, pOutputFile, argv[2]);
+    if (1 != fwrite(s_waveHeader, sizeof(s_waveHeader), 1, pOutputFile)) return printf(PROGNAME": failed to re-write wave header after decode\n"), Cleanup(pCodec, pOutputFile, argv[2]);
+
+    // success!
+    printf(PROGNAME": decoded %lu bytes to file %s\n", nTotalBytesDecoded, argv[2]);
+    fclose(pOutputFile);
+    delete pCodec;
+	return 0;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// program cascadecodec2wav helper functions
+static bool
+GetUppercaseExtension(const char * pFilename, char * pExtensionToSet)
+{
+    pExtensionToSet = "WMA";
+
+	return true;
+}
+
+static CascadeAudioCodec *
+AllocateNewAudioCodec(const char * pExtension)
+{     
+	return new CascadeAudioCodecWMA;
+}
+
+static void
+CalculateInitialWaveHeader(CascadeAudioCodec * pCodec)
+{
+    *s_pRIFFChunkSize = WAVE_HEADER_SIZE - 8;
+    *s_pNumChannels = (u16)pCodec->GetNumChannels();
+    *s_pSampleRate = pCodec->GetSampleRate();
+    *s_pBitsPerSample = (u16)pCodec->GetBitsPerSample();
+    *s_pBytesPerSecond = (u32)((u64)*s_pSampleRate * (u64)*s_pNumChannels * ((*s_pBitsPerSample == 8) ? (u64)1 : (u64)2));
+    *s_pBlockAlign = (*s_pBitsPerSample == 8 ? 1 : 2) * (*s_pNumChannels);
+    s_pPCMSampleBytes[0] = 0;
+    s_pPCMSampleBytes[1] = 0;
+    s_pPCMSampleBytes[2] = 0;
+    s_pPCMSampleBytes[3] = 0;
+}
+
+static void
+UpdateWaveHeader(u32 nNumBytesDecoded)
+{
+    *s_pRIFFChunkSize += nNumBytesDecoded;
+    s_pPCMSampleBytes[0] = (u8) (nNumBytesDecoded & 0xFF);
+    s_pPCMSampleBytes[1] = (u8) ((nNumBytesDecoded >> 8) & 0xFF);
+    s_pPCMSampleBytes[2] = (u8) ((nNumBytesDecoded >> 16) & 0xFF);
+    s_pPCMSampleBytes[3] = (u8) ((nNumBytesDecoded >> 24) & 0xFF);
+}
+
+static int
+Cleanup(CascadeAudioCodec * pCodec, FILE * pFile, const char * pFilename)
+{
+    delete pCodec;
+    fclose(pFile);
+    unlink(pFilename);
+    return -1;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//  LOG
+///////////////////////////////////////////////////////////////////////////////
+//  21-Mar-05   dwoodward   created
