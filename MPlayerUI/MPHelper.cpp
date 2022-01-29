@@ -27,7 +27,7 @@ bool onSongOpenFileCmd(Window *pWndParent, bool bOpen)
         dlg.getOpenFile(vFiles);
 
         if (bOpen)
-            g_Player.clearPlaylist();
+            g_Player.newCurrentPlaylist();
         else
             g_Player.setPlaylistModified(true);
 

@@ -9,12 +9,12 @@ CMDLrc::~CMDLrc(void)
 {
 }
 
-LPCXSTR CMDLrc::getDescription()
+cstr_t CMDLrc::getDescription()
 {
     return "LRC decoder";
 }
 
-LPCXSTR CMDLrc::getFileExtentions()
+cstr_t CMDLrc::getFileExtentions()
 {
     return ".lrc|LRC file";
 }

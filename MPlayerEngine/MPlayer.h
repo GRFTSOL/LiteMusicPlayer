@@ -49,7 +49,7 @@ public:
     void quit();
 
     virtual IFBuffer *allocFBuffer(uint32_t nCapacity);
-    virtual IXStr *allocStr();
+    virtual IString *allocStr();
 
     virtual void onRelease(IFBuffer *pBuf);
 
@@ -68,7 +68,7 @@ public:
     CMOAgent();
     ~CMOAgent();
 
-    virtual LPCXSTR getDescription();
+    virtual cstr_t getDescription();
 
     virtual MLRESULT init(IMPlayer *pPlayer);
     virtual MLRESULT quit();
@@ -109,7 +109,7 @@ public:
 
     virtual MLRESULT onInternalDecoderRegister(IMediaDecode *pDecoder) { if (m_pluginMgr) return m_pluginMgr->onInternalDecoderRegister(pDecoder); else return ERR_OK; }
 
-    virtual MLRESULT newInput(LPCXSTR szMediaUrl, IMediaInput **ppInput);
+    virtual MLRESULT newInput(cstr_t szMediaUrl, IMediaInput **ppInput);
     virtual MLRESULT newDecoder(IMediaInput *pInput, IMediaDecode **ppDecoder);
     virtual MLRESULT newOutput(IMediaOutput **ppOutput);
 
@@ -145,7 +145,7 @@ public:
     virtual MLRESULT next();
     virtual MLRESULT seek(uint32_t dwPos);
 
-    virtual MLRESULT newMedia(IMedia **ppMedia, LPCXSTR szUrl);
+    virtual MLRESULT newMedia(IMedia **ppMedia, cstr_t szUrl);
     virtual MLRESULT newPlaylist(IPlaylist **ppPlaylist);
 
     virtual MLRESULT getMediaLibrary(IMediaLibrary **ppMediaLib);
@@ -159,7 +159,7 @@ public:
     virtual MLRESULT setCurrentPlaylist(IPlaylist *pPlaylist);
     virtual MLRESULT setCurrentMedia(IMedia *pMedia);
 
-    virtual MLRESULT setCurrentMedia(LPCXSTR szSourceMedia);
+    virtual MLRESULT setCurrentMedia(cstr_t szSourceMedia);
 
     //
     // Current playing Media state

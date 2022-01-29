@@ -127,32 +127,6 @@ UIOBJECT_CLASS_NAME_IMP(CPagePfInternet, "Container.Inet")
 
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef _MPLAYER
-
-#ifdef _MAC_OS
-
-IdToString        _id2strPlayers[] = { { 0, "iTunes" },
-    { 0, nullptr }
-};
-
-#else
-
-IdToString        _id2strPlayers[] = { { 0, "Winamp2" }, { 0, "Winamp5" },
-    { 0, "Windows Media Player" }, { 0, "iTunes" }, { 0, "Foobar2000" },
-    { 0, "Quintessential Player" }, { 0, "Silverjuke" },
-    { 0, "MediaMonkey" }, { 0, "KMPlayer" },
-    { 0, "BSPlayer" }, { 0, "Media Jukebox" },
-    { 0, "XMPlay" }, { 0, "AIMP2" }, { 0, "AIMP3" },
-    { 0, "VLC Media Player" },
-    { 0, nullptr }
-};
-
-#endif
-
-int   _idWmp = 0;
-
-#endif // #ifndef _MPLAYER
-
 class CPagePfStartup: public CPagePfBase
 {
     UIOBJECT_CLASS_NAME_DECLARE(CPagePfBase)
@@ -171,77 +145,15 @@ public:
         addOptBool(ET_NULL, SZ_SECT_UI, "CheckNewVer", true, "CID_C_CHECK_NEW_VERSION");
 
         initCheckButtons();
-
-#ifndef _MPLAYER
-        CUIObject *pObjFrame = getUIObjectById("CID_STARTUP_FRAME", nullptr);
-        assert(pObjFrame);
-        if (!pObjFrame)
-            return;
-
-        CStrPrintf    strWidth("(%s)/2-10", pObjFrame->m_formWidth.getFormula());
-        CStrPrintf    strP1Left("%s + 10", pObjFrame->m_formLeft.getFormula());
-        CStrPrintf    strP2Left("%s+(%s)/2+10", pObjFrame->m_formLeft.getFormula(),
-            pObjFrame->m_formWidth.getFormula());
-        CFormula    formTop;
-
-        formTop.setFormula(pObjFrame->m_formTop.getFormula());
-        formTop.increase(25);
-
-        for (int i = 0; _id2strPlayers[i].szId != nullptr; i++)
-        {
-            bool bLeft = (i % 2 == 0);
-
-            if (_id2strPlayers[i].dwId == 0)
-                _id2strPlayers[i].dwId = m_pSkin->getSkinFactory()->allocUID();
-
-            if (strcmp(_id2strPlayers[i].szId, "Windows Media Player") == 0)
-                _idWmp = _id2strPlayers[i].dwId;
-
-            CSkinNStatusButton *pButton = (CSkinNStatusButton*)m_pSkin->getSkinFactory()->createDynamicCtrl(
-                this, "NormalCheckBox", _id2strPlayers[i].dwId,
-                bLeft ? strP1Left.c_str() : strP2Left.c_str(), formTop.getFormula(), strWidth.c_str());
-            if (pButton)
-            {
-                pButton->setProperty(SZ_PN_TEXT, _id2strPlayers[i].szId);
-                if (g_profile.getInt(_id2strPlayers[i].szId, true))
-                    pButton->setStatus(true);
-            }
-
-            if (!bLeft)
-                formTop.increase(30);
-        }
-#endif // #ifndef _MPLAYER
     }
 
     bool onCustomCommand(int nId)
     {
-#ifndef _MPLAYER
-        //
-        // Should MiniLyrics get started with the checked player?
-        //
-        cstr_t        szPlayer;
-        szPlayer = iDToString(_id2strPlayers, nId, "");
-        if (!isEmptyString(szPlayer))
-        {
-            g_profile.writeInt(szPlayer, isButtonChecked(nId));
-            return true;
-        }
-#endif // #ifndef _MPLAYER
-
         return CPagePfBase::onCustomCommand(nId);
     }
 
     void onDestroy()
     {
-#ifdef _MINILYRICS_WIN32
-        if (m_bInitailed)
-        {
-            assert(_idWmp != UID_INVALID);
-            regWriteProfileInt(HKEY_CURRENT_USER, "Software\\Microsoft\\MediaPlayer\\UIPlugins\\{46B5EE7F-3B6B-4079-A756-5EFC10B1F50B}", 
-                "Running", isButtonChecked(_idWmp));
-        }
-#endif // #ifdef _MINILYRICS_WIN32
-
         CPagePfBase::onDestroy();
     }
 

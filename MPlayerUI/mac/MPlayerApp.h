@@ -15,11 +15,8 @@ public:
     virtual void quit();
 
     bool isRunning() { return m_bRunning; }
-    
-    void restartToAppMode(AppMode appMode);
 
 protected:
-    AppMode                    m_appModeQuitToStart;
     bool                    m_bRunning;
 
 };

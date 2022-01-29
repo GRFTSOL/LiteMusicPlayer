@@ -21,7 +21,7 @@ CMILocalFile::~CMILocalFile()
     close();
 }
 
-MLRESULT CMILocalFile::open(LPCXSTR szSourceMedia)
+MLRESULT CMILocalFile::open(cstr_t szSourceMedia)
 {
     m_fp = fopen(szSourceMedia, "rb");
     if (m_fp == nullptr)
@@ -91,7 +91,7 @@ void CMILocalFile::close()
     }
 }
 
-LPCXSTR CMILocalFile::getSource()
+cstr_t CMILocalFile::getSource()
 {
     return m_strFile.c_str();
 }

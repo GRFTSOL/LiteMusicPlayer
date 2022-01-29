@@ -20,7 +20,7 @@ CMDAgent::~CMDAgent()
 
 }
 
-LPCXSTR CMDAgent::getDescription()
+cstr_t CMDAgent::getDescription()
 {
     if (m_pMediaDecode.p)
         return m_pMediaDecode->getDescription();
@@ -28,7 +28,7 @@ LPCXSTR CMDAgent::getDescription()
         return "MDAgen: no decoder was specified.";
 }
 
-LPCXSTR CMDAgent::getFileExtentions()
+cstr_t CMDAgent::getFileExtentions()
 {
     if (m_pMediaDecode.p)
         return m_pMediaDecode->getFileExtentions();

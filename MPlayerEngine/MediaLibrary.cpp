@@ -265,17 +265,17 @@ CMediaLibrary::~CMediaLibrary()
     close();
 }
 
-MLRESULT CMediaLibrary::getAllArtist(IVXStr **ppvArtist)
+MLRESULT CMediaLibrary::getAllArtist(IVString **ppvArtist)
 {
     return queryVStr("select artist from medialib group by artist", ppvArtist);
 }
 
-MLRESULT CMediaLibrary::getAllAlbum(IVXStr **ppvAlbum)
+MLRESULT CMediaLibrary::getAllAlbum(IVString **ppvAlbum)
 {
     return queryVStr("select album from medialib group by album", ppvAlbum);
 }
 
-MLRESULT CMediaLibrary::getAllGenre(IVXStr **ppvAlbum)
+MLRESULT CMediaLibrary::getAllGenre(IVString **ppvAlbum)
 {
     return queryVStr("select genre from medialib group by genre", ppvAlbum);
 }
@@ -319,7 +319,7 @@ MLRESULT CMediaLibrary::getAllYear(IVInt **ppvYear)
     return nRet;
 }
 
-MLRESULT CMediaLibrary::getAlbumOfArtist(LPCXSTR szArtist, IVXStr **ppvAlbum)
+MLRESULT CMediaLibrary::getAlbumOfArtist(cstr_t szArtist, IVString **ppvAlbum)
 {
     if (!isOK())
         return m_nInitResult;
@@ -373,7 +373,7 @@ uint32_t CMediaLibrary::getMediaCount()
     return sqlite_query_int_value(m_db.m_db, SQL_COUNT_OF_MEDIA);
 }
 
-MLRESULT CMediaLibrary::getMediaByUrl(LPCXSTR szUrl, IMedia **ppMedia)
+MLRESULT CMediaLibrary::getMediaByUrl(cstr_t szUrl, IMedia **ppMedia)
 {
     assert(ppMedia);
 
@@ -411,7 +411,7 @@ MLRESULT CMediaLibrary::getMediaByUrl(LPCXSTR szUrl, IMedia **ppMedia)
     return nRet;
 }
 
-MLRESULT CMediaLibrary::add(LPCXSTR szMediaUrl, IMedia **ppMedia)
+MLRESULT CMediaLibrary::add(cstr_t szMediaUrl, IMedia **ppMedia)
 {
     if (!isOK())
         return m_nInitResult;
@@ -446,7 +446,7 @@ MLRESULT CMediaLibrary::add(LPCXSTR szMediaUrl, IMedia **ppMedia)
 }
 
 // add media to media library fast, didn't update media info.
-MLRESULT CMediaLibrary::addFast(LPCXSTR szMediaUrl, LPCXSTR szArtist, LPCXSTR szTitle, IMedia **ppMedia)
+MLRESULT CMediaLibrary::addFast(cstr_t szMediaUrl, cstr_t szArtist, cstr_t szTitle, IMedia **ppMedia)
 {
     if (!isOK())
         return m_nInitResult;
@@ -625,7 +625,7 @@ MLRESULT CMediaLibrary::getAll(IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, 
     return nRet;
 }
 
-MLRESULT CMediaLibrary::getByArtist(LPCXSTR szArtist, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN)
+MLRESULT CMediaLibrary::getByArtist(cstr_t szArtist, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN)
 {
     string                strSql;
 
@@ -635,7 +635,7 @@ MLRESULT CMediaLibrary::getByArtist(LPCXSTR szArtist, IPlaylist **ppPlaylist, Me
     return queryPlaylist(strSql.c_str(), szArtist, ppPlaylist);
 }
 
-MLRESULT CMediaLibrary::getByAlbum(LPCXSTR szAlbum, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN)
+MLRESULT CMediaLibrary::getByAlbum(cstr_t szAlbum, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN)
 {
     string                strSql;
 
@@ -645,7 +645,7 @@ MLRESULT CMediaLibrary::getByAlbum(LPCXSTR szAlbum, IPlaylist **ppPlaylist, Medi
     return queryPlaylist(strSql.c_str(), szAlbum, ppPlaylist);
 }
 
-MLRESULT CMediaLibrary::getByAlbum(LPCXSTR szArtist, LPCXSTR szAlbum, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN)
+MLRESULT CMediaLibrary::getByAlbum(cstr_t szArtist, cstr_t szAlbum, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN)
 {
     CMLQueryPlaylist    query;
     int                    nRet;
@@ -674,12 +674,12 @@ MLRESULT CMediaLibrary::getByAlbum(LPCXSTR szArtist, LPCXSTR szAlbum, IPlaylist 
     return nRet;
 }
 
-MLRESULT CMediaLibrary::getByTitle(LPCXSTR szTitle, IPlaylist **ppPlaylist)
+MLRESULT CMediaLibrary::getByTitle(cstr_t szTitle, IPlaylist **ppPlaylist)
 {
     return queryPlaylist("select * from medialib where title=? and file_deleted=0", szTitle, ppPlaylist);
 }
 
-MLRESULT CMediaLibrary::getByGenre(LPCXSTR szGenre, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN)
+MLRESULT CMediaLibrary::getByGenre(cstr_t szGenre, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN)
 {
     string                strSql;
 
@@ -1062,7 +1062,7 @@ void CMediaLibrary::close()
     m_player.release();
 }
 
-MLRESULT CMediaLibrary::queryPlaylist(cstr_t szSQL, LPCXSTR szClause, IPlaylist **ppPlaylist)
+MLRESULT CMediaLibrary::queryPlaylist(cstr_t szSQL, cstr_t szClause, IPlaylist **ppPlaylist)
 {
     if (!isOK())
         return m_nInitResult;
@@ -1110,7 +1110,7 @@ MLRESULT CMediaLibrary::queryPlaylist(cstr_t szSQL, LPCXSTR szClause, IPlaylist 
 }
 
 // 
-MLRESULT CMediaLibrary::queryVStr(cstr_t szSql, IVXStr **ppvStr)
+MLRESULT CMediaLibrary::queryVStr(cstr_t szSql, IVString **ppvStr)
 {
     if (!isOK())
         return m_nInitResult;

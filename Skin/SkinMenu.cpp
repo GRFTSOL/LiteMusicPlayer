@@ -63,84 +63,40 @@ CSkinMenu::~CSkinMenu()
 
 }
 
-int CSkinMenu::loadMenu(int nID)
+int CSkinMenu::loadMenu(const rapidjson::Value &items)
 {
-    string strFile = CSkinApp::getInstance()->getSkinFactory()->getResourceMgr()->getResourcePathName("menu.txt");
-    if (strFile.empty())
-        return ERR_NOT_FOUND;
-
-    CTextFile file;
-
-    int nRet = file.open(strFile.c_str(), true, ED_LATIN9_ISO);
-    if (nRet != ERR_OK)
-        return nRet;
-
-    string line;
-    file.readLine(line);
-    if (strcmp(line.c_str(), "menufile_v1") != 0)
-    {
-        ERR_LOG1("Invalid menu file format: %s", strFile.c_str());
-        return ERR_BAD_FILE_FORMAT;
-    }
-
     createPopupMenu();
 
-    CStrPrintf strMenu("menu:%d", nID);
+    assert(items.IsArray());
 
-    while (file.readLine(line))
-    {
-        if (strcmp(line.c_str(), strMenu.c_str()) != 0)
-            continue;
+    loadMenu(items, *this);
 
-        loadMenu(file, *this);
-        
-        onLoadMenu();
-        return ERR_OK;
-    }
-    
-    ERR_LOG1("Failed to load menu, NOT exists: %d", nID);
-
-    return ERR_NOT_FOUND;
+    return ERR_OK;
 }
 
-void CSkinMenu::loadMenu(CTextFile &file, CMenu &menu)
+void CSkinMenu::loadMenu(const rapidjson::Value &items, CMenu &menu)
 {
-    CColonSeparatedValues values;
-    string line;
-    while (file.readLine(line))
-    {
-        VecStrings vValues;
-        values.split(line.c_str(), vValues);
-        if (vValues.size() == 0)
-            continue;
+    assert(items.IsArray());
 
-        if (strcmp(vValues[0].c_str(), "popup") == 0)
-        {
-            CMenu subMenu = menu.appendSubmenu(_TL(vValues[1].c_str()));
-            loadMenu(file, subMenu);
-        }
-        else if (strcmp(vValues[0].c_str(), "item") == 0)
-        {
-            if (vValues.size() != 4)
-            {
-                ERR_LOG1("Invalid menu item line: %s", line.c_str());
-                continue;
-            }
-            int nID = stringToInt(vValues[1].c_str(), -1);
-            getShortcutKey(nID, vValues[3]);
-            menu.appendItem(nID, 
-                _TL(vValues[2].c_str()), vValues[3].c_str());
-        }
-        else if (strcmp(vValues[0].c_str(), "separator") == 0)
-        {
+    for (int i = 0; i < items.Size(); i++) {
+        auto &item = items[i];
+        assert(item.IsArray());
+
+        if (item.Size() == 1) {
+            // Separator
             menu.appendSeperator();
+        } else if (item.Size() == 2) {
+            // Popup
+            CMenu subMenu = menu.appendSubmenu(_TL(item[0].GetString()));
+            loadMenu(item[1], subMenu);
+        } else {
+            // Menu item
+            assert(item.Size() == 3);
+            string name = item[0].GetString(), shortcut;
+            int nID = item[2].GetInt();
+            getShortcutKey(nID, shortcut);
+            menu.appendItem(nID, _TL(name.c_str()), shortcut.c_str());
         }
-        else if (strcmp(vValues[0].c_str(), "end") == 0)
-        {
-            return;
-        }
-        else
-            ERR_LOG1("Invalid menu item line: %s", line.c_str());
     }
 }
 

@@ -55,13 +55,13 @@ CMDWMA::~CMDWMA()
 
 OBJ_REFERENCE_IMP(CMDWMA)
 
-LPCXSTR CMDWMA::getDescription()
+cstr_t CMDWMA::getDescription()
 {
 	return SZ_DECODER_DESC;
 }
 
 // get supported file's extentions.
-LPCXSTR CMDWMA::getFileExtentions()
+cstr_t CMDWMA::getFileExtentions()
 {
 	return _T(".wma\0wma files\0");
 }
@@ -461,7 +461,7 @@ IMediaDecode *MPlayerGetMDWMA()
 extern "C" __declspec(dllexport) MLRESULT ZikiPlayerQueryPluginIF(
 	int nIndex,
 	MPInterfaceType *pInterfaceType,
-	IXStr *strDescription,
+	IString *strDescription,
 	LPVOID *lpInterface
 	)
 {

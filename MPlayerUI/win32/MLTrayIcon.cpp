@@ -181,23 +181,7 @@ void CMLTrayIcon::onMyNotifyIcon(WPARAM wParam, LPARAM lParam)
         }
         else if (lParam == WM_LBUTTONDBLCLK || lParam == WM_LBUTTONUP)
         {
-#ifndef _MPLAYER
-            if (CMPlayerAppBase::getInstance()->isEmbeddedMode()
-                && g_Player.getPlayerType() == P_WINAMP5)
-            {
-                // buf fix for winamp5
-                HWND    hWnd = g_Player.getMainWnd();
-                if (::isIconic(hWnd))
-                {
-                    ::showWindow(hWnd, SW_RESTORE);
-                    if (CMPlayerAppBase::getMainWnd()->isTopmost())
-                        CMPlayerAppBase::getMainWnd()->setTopmost(CMPlayerAppBase::getMainWnd()->isTopmost());
-                }
-            }
-            CMPlayerAppBase::getMainWnd()->activateWindow();
-#else
             activateWindow(CMPlayerAppBase::getMainWnd()->getHandle());
-#endif
 
             // show cancel transparent with mouse click menu.
             if (CMPlayerAppBase::getMainWnd()->m_bClickThrough)

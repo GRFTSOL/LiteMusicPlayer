@@ -23,7 +23,7 @@ public:
 
     virtual MLRESULT onInternalDecoderRegister(IMediaDecode *pDecoder);
 
-    virtual MLRESULT newInput(LPCXSTR szMediaUrl, IMediaInput **ppInput);
+    virtual MLRESULT newInput(cstr_t szMediaUrl, IMediaInput **ppInput);
     virtual MLRESULT newDecoder(IMediaInput *pInput, IMediaDecode **ppDecoder);
     virtual MLRESULT newOutput(IMediaOutput **ppOutput);
 

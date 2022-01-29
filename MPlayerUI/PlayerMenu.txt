@@ -1,0 +1,444 @@
+menufile_v2
+
+# menu: rate
+  Rate These Lyrics: 1 (Low)@IDC_RATE_LYR_1
+  Rate These Lyrics: 2@IDC_RATE_LYR_2
+  Rate These Lyrics: 3@IDC_RATE_LYR_3
+  Rate These Lyrics: 4@IDC_RATE_LYR_4
+  Rate These Lyrics: 5 (High)@IDC_RATE_LYR_5
+
+# menu: open_lyr_dlg
+  &Browse File...@IDC_BROWSE
+  &No Suitable Lyrics for the Song File@IDC_NOT_MATCH
+  &Edit with External Lyrics Editor...@IDC_EXTERNAL_LYR_EDIT
+  separator
+  &Delete File@IDC_DEL_FILE
+  &Rename File@IDC_RENAME
+  separator
+  Don't &Pop up This Window Automatically@IDC_NO_PROMPT
+
+# menu: album_art
+  Browse Album Art...@IDC_BR_ALBUM_ART
+
+# menu: LyrEditorMenu
+  popup@&File
+    popup@&Upload Lyrics
+      &Upload Lyrics...@IDC_UPLOAD_LYRICS
+      Sign in Via &Web Browser...@IDC_LOGIN_VIA_IE
+      &Sign up Free...@IDC_APPLY_ACCOUNT
+    separator
+    &New Lyrics@IDC_NEW_LYRICS
+    Open &Lyrics...\tCtrl+L@IDC_OPEN_LYRICS
+    separator
+    Save Lyrics in &Song File...@IDC_EMBEDDED_LYRICS
+    separator
+    &Save Lyrics\tCtrl+S@IDC_SAVE_LYRICS
+    Save Lyrics &As...@IDC_SAVE_LYRICS_AS
+    separator
+    popup@&Character Encoding
+      &Default@IDC_ENC_DEFAULT
+      separator
+      Arabic@IDC_ENC_ARABIC
+      separator
+      Baltic@IDC_ENC_BALTIC
+      separator
+      Cyrillic@IDC_ENC_CYRILLIC
+      separator
+      Central European@IDC_ENC_CENTRAL_EUROPE
+      separator
+      Western European@IDC_ENC_WEST_EUROPE
+      separator
+      Greek@IDC_ENC_GREEK
+      separator
+      Hebrew@IDC_ENC_HEBREW
+      separator
+      &Japanese@IDC_ENC_JAPANESE
+      separator
+      &Korean@IDC_ENC_KOREAN
+      separator
+      Latin 9 (ISO)@IDC_ENC_LATIN9_ISO
+      separator
+      &Simplified Chinese (GB)@IDC_ENC_CHS
+      &Traditional Chinese (Big5)@IDC_ENC_CHT
+      separator
+      Thai@IDC_ENC_THAI
+      separator
+      Turkish@IDC_ENC_TURKISH
+      separator
+      &Unicode@IDC_ENC_UNICODE
+      Utf-&8@IDC_ENC_UTF8
+      separator
+      Vietnamese@IDC_ENC_VIETNAMESE
+    separator
+    &Close@IDCLOSE
+  popup@&Play
+    &Play/Pause@IDC_PLAYPAUSE
+    &Stop@IDC_STOP
+    separator
+    Pr&evious@IDC_PREV
+    &Next@IDC_NEXT
+    separator
+    &Backward 2 Seconds\tCtrl+Page up@IDC_BACKWARD2SEC
+    &Forward 2 Seconds\tCtrl+Page down@IDC_FORWARD2SEC
+    Jump to current line\tCtrl+J@IDC_JUMP_TO_CURRENT_LINE
+  popup@&Edit
+    &Undo\tCtrl+Z@IDC_EDIT_UNDO
+    &Redo\tCtrl+Y@IDC_EDIT_REDO
+    separator
+    Cu&t\tCtrl+X@IDC_EDIT_CUT
+    &Copy\tCtrl+C@IDC_EDIT_COPY
+    &Paste\tCtrl+V@IDC_EDIT_PASTE
+    &Delete\tDel@IDC_EDIT_DELETE
+    separator
+    &Find...\tCtrl+F@IDC_EDIT_FIND
+    &Replace...\tCtrl+H@IDC_EDIT_REPLACE
+  popup@&Lyrics
+    Synchronize the current line and move to next line\tF7@IDC_INSERT_TAG_AND_MOVE_DOWN
+    Synchronize the current line\tCtrl+F7@IDC_INSERT_TAG
+    separator
+    Auto fill artist, album and title info@IDC_AUTO_FILL_LYRICS_INFO
+    separator
+    Forward the timestamp of this line 0.2s\tCtrl+'+'@IDC_FORWARD_CUR_LINE
+    Backward the timestamp of this line 0.2s\tCtrl+'-'@IDC_BACKWARD_CUR_LINE
+    separator
+    Forward the remaining lyrics 0.2s@IDC_FORWARD_REMAIN_LINES
+    Backward the remaining lyrics 0.2s@IDC_BACKWARD_REMAIN_LINES
+    separator
+    Trim Leading and Trailing Whitespace of All Lines@IDC_TRIM_SPACE
+    Remove All Timestamps@IDC_REMOVE_ALL_TAG
+    Remove All Blank Lines@IDC_REMOVE_BLANK_LINE
+    Remove All Unsynchronized Lines@IDC_REMOVE_UNSYNC_LINE
+    separator
+    Capitalize the Leading Letter of All Lines@IDC_CAPITALIZE_LEADING_LETTER
+    Convert All Lyrics Characters to Lower Case@IDC_TO_LOWER_CASE
+  popup@&Options
+    &Lyrics Color...@IDC_EDITOR_LYR_COLOR
+    &Highlight Lyrics Color...@IDC_EDITOR_HIGH_COLOR
+    &Tag Color...@IDC_TAG_COLOR
+    &Background Color of Edited Line...@IDC_EDIT_LINE_COLOR
+    Back&ground Color...@IDC_EDITOR_BG_COLOR
+    separator
+    Edit Lyrics &Tag@IDC_EDIT_LYR_TAG
+  popup@&Help
+    A&bout $Product$...@IDC_ABOUT
+    $Product$ &Help@IDC_ML_HELP
+    separator
+    $Product$ &Website@IDC_WEBHOME
+    &Report to Author@IDC_EMAIL
+
+# menu: MainWndMenu
+  popup@&File
+    &Open File...@IDC_OPENFILE
+    Open &Folder...@IDC_OPENDIR
+    Open &URL...@IDC_OPENDIR
+    separator
+    &Add File...@IDC_ADDFILE
+    Add F&older...@IDC_ADDDIR
+    Add UR&L...@IDC_OPENDIR
+    separator
+    &New Playlist@IDC_NEW_PL
+    Open &Playlist@IDC_OPEN_PL
+    &Save Playlist...@IDC_SAVE_PL
+    separator
+    Media &Information@IDC_MEDIA_INFO
+  popup@Play&back
+    &Play/Pause@IDC_PLAYPAUSE
+    separator
+    Pr&evious@IDC_PREV
+    &Next@IDC_NEXT
+    separator
+    &Shuffle@IDC_SHUFFLE
+    &Repeat@IDC_REPEAT_OFF
+    separator
+    E&qualizer@IDC_EQ
+  popup@&Lyrics
+    &Search Lyrics...\tD@IDC_OPEN_LYRICS
+    separator
+    popup@Ra&te These Lyrics
+      5 (High)@IDC_RATE_LYR_5
+      4@IDC_RATE_LYR_4
+      3@IDC_RATE_LYR_3
+      2@IDC_RATE_LYR_2
+      1 (Low)@IDC_RATE_LYR_1
+    popup@&Upload Lyrics
+      &Upload Lyrics...@IDC_UPLOAD_LYRICS
+      Sign in Via &Web Browser...@IDC_LOGIN_VIA_IE
+      &Sign up Free...@IDC_APPLY_ACCOUNT
+    separator
+    Save Lyrics in &Song File...@IDC_EMBEDDED_LYRICS
+    separator
+    &Save Lyrics\tCtrl+S@IDC_SAVE_LYRICS
+    Save Lyrics &As...@IDC_SAVE_LYRICS_AS
+    separator
+    popup@&Character Encoding
+      &Default@IDC_ENC_DEFAULT
+      separator
+      Arabic@IDC_ENC_ARABIC
+      separator
+      Baltic@IDC_ENC_BALTIC
+      separator
+      Cyrillic@IDC_ENC_CYRILLIC
+      separator
+      Central European@IDC_ENC_CENTRAL_EUROPE
+      separator
+      Western European@IDC_ENC_WEST_EUROPE
+      separator
+      Greek@IDC_ENC_GREEK
+      separator
+      Hebrew@IDC_ENC_HEBREW
+      separator
+      &Japanese@IDC_ENC_JAPANESE
+      separator
+      &Korean@IDC_ENC_KOREAN
+      separator
+      Latin 9 (ISO)@IDC_ENC_LATIN9_ISO
+      separator
+      &Simplified Chinese (GB)@IDC_ENC_CHS
+      &Traditional Chinese (Big5)@IDC_ENC_CHT
+      separator
+      Thai@IDC_ENC_THAI
+      separator
+      Turkish@IDC_ENC_TURKISH
+      separator
+      &Unicode@IDC_ENC_UNICODE
+      Utf-&8@IDC_ENC_UTF8
+      separator
+      Vietnamese@IDC_ENC_VIETNAMESE
+    separator
+    &Edit with External Lyrics Editor...@IDC_EXTERNAL_LYR_EDIT
+  popup@&View
+    Lyrics &Editor...@IDC_LYR_EDITOR
+    &Floating Lyrics...@IDC_FLOATING_LYRICS
+    &Preferences...\tCtrl+P@IDC_PREFERENCE
+    INSERT_NEW_MENU_POS@IDC_NEW_MENU_POS
+    separator
+    Ad&just Hue...@IDC_ADJUST_HUE
+    separator
+    &Vertical Scrolling Style@IDC_LDS_MULTI_LINE
+    S&tatic Text Style@IDC_LDS_STATIC_TXT
+    separator
+    Mouse &Click Through@IDC_CLICK_THROUGH
+    Always on &Top\tCtrl+T@IDC_SETTOPMOST
+  popup@S&kins
+    INSERT_SKIN_POS@IDC_SKIN_POS
+    separator
+  popup@&Help
+    A&bout $Product$...@IDC_ABOUT
+    $Product$ &Help@IDC_ML_HELP
+    separator
+    &Activate $Product$...@IDC_REGISTER
+    separator
+    $Product$ &Website@IDC_WEBHOME
+
+# menu: StaticLyricsMenu
+  &Clear Lyrics Scrolling Actions@IDC_SL_CLEAR_TIME_STAMP
+  Lyrics &Editor...@IDC_LYR_EDITOR
+  &Help@IDC_HELP_STATIC_LYR
+
+# menu: MainContextMenu
+  popup@&File
+    &Open File...@IDC_OPENFILE
+    Open &Folder...@IDC_OPENDIR
+    Open &URL...@IDC_OPENDIR
+    separator
+    &Add File...@IDC_ADDFILE
+    Add F&older...@IDC_ADDDIR
+    Add UR&L...@IDC_OPENDIR
+    separator
+    &New Playlist@IDC_NEW_PL
+    Open &Playlist@IDC_OPEN_PL
+    &Save Playlist...@IDC_SAVE_PL
+    separator
+    Media &Information@IDC_MEDIA_INFO
+  &Search Lyrics...\tD@IDC_OPEN_LYRICS
+  popup@&Lyrics
+    popup@Ra&te These Lyrics
+      5 (High)@IDC_RATE_LYR_5
+      4@IDC_RATE_LYR_4
+      3@IDC_RATE_LYR_3
+      2@IDC_RATE_LYR_2
+      1 (Low)@IDC_RATE_LYR_1
+    separator
+    Save Lyrics in &Song File...@IDC_EMBEDDED_LYRICS
+    separator
+    &Save Lyrics\tCtrl+S@IDC_SAVE_LYRICS
+    Save Lyrics &As...@IDC_SAVE_LYRICS_AS
+    separator
+    &Upload Lyrics...@IDC_UPLOAD_LYRICS
+    Sign in Via &Web Browser...@IDC_LOGIN_VIA_IE
+    &Sign up Free...@IDC_APPLY_ACCOUNT
+    separator
+    popup@&Character Encoding
+      &Default@IDC_ENC_DEFAULT
+      separator
+      Arabic@IDC_ENC_ARABIC
+      separator
+      Baltic@IDC_ENC_BALTIC
+      separator
+      Cyrillic@IDC_ENC_CYRILLIC
+      separator
+      Central European@IDC_ENC_CENTRAL_EUROPE
+      separator
+      Western European@IDC_ENC_WEST_EUROPE
+      separator
+      Greek@IDC_ENC_GREEK
+      separator
+      Hebrew@IDC_ENC_HEBREW
+      separator
+      &Japanese@IDC_ENC_JAPANESE
+      separator
+      &Korean@IDC_ENC_KOREAN
+      separator
+      Latin 9 (ISO)@IDC_ENC_LATIN9_ISO
+      separator
+      &Simplified Chinese (GB)@IDC_ENC_CHS
+      &Traditional Chinese (Big5)@IDC_ENC_CHT
+      separator
+      Thai@IDC_ENC_THAI
+      separator
+      Turkish@IDC_ENC_TURKISH
+      separator
+      &Unicode@IDC_ENC_UNICODE
+      Utf-&8@IDC_ENC_UTF8
+      separator
+      Vietnamese@IDC_ENC_VIETNAMESE
+    separator
+    &Edit with External Lyrics Editor...@IDC_EXTERNAL_LYR_EDIT
+  separator
+  popup@S&kins
+    Winamp's skin@IDC_WINAMP_SKIN
+    separator
+    INSERT_SKIN_POS@IDC_SKIN_POS
+    separator
+  popup@Display &Options
+    Dis&play Options...@IDC_LYR_DISPLAY_OPT
+    Ad&just Hue...@IDC_ADJUST_HUE
+    separator
+    Mouse &Click Through@IDC_CLICK_THROUGH
+    separator
+    &Vertical Scrolling Style@IDC_LDS_MULTI_LINE
+    &Double Line Style@IDC_LDS_TWO_LINE
+    Single &Line Style@IDC_LDS_SINGLE_LINE
+    &Horizontal Scrolling style@IDC_LDS_HORZ_SCROLL
+    S&tatic Text Style@IDC_LDS_STATIC_TXT
+    Movie S&ubtitle Style@IDC_LDS_VOBSUB
+    separator
+    &Karaoke@IDC_LDO_KARAOKE
+    separator
+    &Automatic@IDC_LDO_AUTO
+    Norma&l@IDC_LDO_NORMAL
+    &Fade in Lyrics@IDC_LDO_FADE_IN
+    Fade out to Back&ground@IDC_LDO_FADEOUT_BG
+    separator
+    Ant&ialiasing@IDC_ANTIAlIAS
+  &Preferences...\tCtrl+P@IDC_PREFERENCE
+  separator
+  &Floating Lyrics...@IDC_FLOATING_LYRICS
+  Lyrics &Editor...@IDC_LYR_EDITOR
+  INSERT_NEW_MENU_POS@IDC_NEW_MENU_POS
+  separator
+  popup@&Help and Support
+    A&bout $Product$...@IDC_ABOUT
+    $Product$ &Help@IDC_ML_HELP
+    separator
+    &Activate $Product$...@IDC_REGISTER
+    separator
+    $Product$ &Website@IDC_WEBHOME
+    &Report to Author@IDC_EMAIL
+  separator
+  Always on &Top\tCtrl+T@IDC_SETTOPMOST
+  separator
+  E&xit@IDC_EXIT
+
+# menu: LyricsMenu
+  &Search Lyrics...\tD@IDC_OPEN_LYRICS
+  popup@&Lyrics
+    popup@Ra&te These Lyrics
+      5 (High)@IDC_RATE_LYR_5
+      4@IDC_RATE_LYR_4
+      3@IDC_RATE_LYR_3
+      2@IDC_RATE_LYR_2
+      1 (Low)@IDC_RATE_LYR_1
+    separator
+    Save Lyrics in &Song File...@IDC_EMBEDDED_LYRICS
+    separator
+    &Save Lyrics\tCtrl+S@IDC_SAVE_LYRICS
+    Save Lyrics &As...@IDC_SAVE_LYRICS_AS
+    separator
+    popup@&Character Encoding
+      &Default@IDC_ENC_DEFAULT
+      separator
+      Arabic@IDC_ENC_ARABIC
+      separator
+      Baltic@IDC_ENC_BALTIC
+      separator
+      Cyrillic@IDC_ENC_CYRILLIC
+      separator
+      Central European@IDC_ENC_CENTRAL_EUROPE
+      separator
+      Western European@IDC_ENC_WEST_EUROPE
+      separator
+      Greek@IDC_ENC_GREEK
+      separator
+      Hebrew@IDC_ENC_HEBREW
+      separator
+      &Japanese@IDC_ENC_JAPANESE
+      separator
+      &Korean@IDC_ENC_KOREAN
+      separator
+      Latin 9 (ISO)@IDC_ENC_LATIN9_ISO
+      separator
+      &Simplified Chinese (GB)@IDC_ENC_CHS
+      &Traditional Chinese (Big5)@IDC_ENC_CHT
+      separator
+      Thai@IDC_ENC_THAI
+      separator
+      Turkish@IDC_ENC_TURKISH
+      separator
+      &Unicode@IDC_ENC_UNICODE
+      Utf-&8@IDC_ENC_UTF8
+      separator
+      Vietnamese@IDC_ENC_VIETNAMESE
+    separator
+    &Edit with External Lyrics Editor...@IDC_EXTERNAL_LYR_EDIT
+  separator
+  Dis&play Options...@IDC_LYR_DISPLAY_OPT
+  separator
+  Mouse &Click Through@IDC_CLICK_THROUGH
+  separator
+  &Automatic@IDC_LDO_AUTO
+  Norma&l@IDC_LDO_NORMAL
+  &Fade in Lyrics@IDC_LDO_FADE_IN
+  Fade out to Back&ground@IDC_LDO_FADEOUT_BG
+  separator
+  Always on &Top\tCtrl+T@IDC_SETTOPMOST
+  separator
+  &Close@IDCLOSE
+
+# menu: PlaylistMenu
+  &Open File...@IDC_OPENFILE
+  Open &Folder...@IDC_OPENDIR
+  separator
+  &Add File...@IDC_ADDFILE
+  Add F&older...@IDC_ADDDIR
+  separator
+  &New Playlist@IDC_NEW_PL
+  &Save Playlist...@IDC_SAVE_PL
+  separator
+  Move &Up@IDC_MOVE_UP
+  &Move Down@IDC_MOVE_DOWN
+  &Remove From Playlist@IDC_REMOVE
+  separator
+  &Clear Now Playing@IDC_CLEAR
+  separator
+  Media &Information@IDC_MEDIA_INFO
+
+# menu: MediaLibMenu
+  &Queue Up@IDC_QUEUE_UP
+  &Queue Up All@IDC_QUEUE_UP_ALL
+  separator
+  &Add Folder to Media Library@IDC_ADD_DIR_TO_ML
+  separator
+  &Remove from Media Library@IDC_NEW_PL
+  separator
+  &Now Playing@IDC_NOWPLAYING

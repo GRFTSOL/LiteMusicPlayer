@@ -1220,13 +1220,13 @@ CMDMP4::~CMDMP4()
 
 OBJ_REFERENCE_IMP(CMDMP4)
 
-LPCXSTR CMDMP4::getDescription()
+cstr_t CMDMP4::getDescription()
 {
 	return SZ_DECODER_DESC;
 }
 
 // get supported file's extentions.
-LPCXSTR CMDMP4::getFileExtentions()
+cstr_t CMDMP4::getFileExtentions()
 {
 	return _T(".m4a\0MPEG-4 Files (*.m4a)\0.aac\0AAC Files (*.aac)\0");
 }
@@ -1509,7 +1509,7 @@ IMediaDecode *MPlayerGetMDMP4()
 extern "C" __declspec(dllexport) MLRESULT ZikiPlayerQueryPluginIF(
 	int nIndex,
 	MPInterfaceType *pInterfaceType,
-	IXStr *strDescription,
+	IString *strDescription,
 	LPVOID *lpInterface
 	)
 {

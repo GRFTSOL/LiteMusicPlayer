@@ -7,19 +7,6 @@
 
 #define LRC_TITLE_MAX_LEN        128
 
-enum PLAYER_TYPE
-{
-    P_NOTSET            = 0xFF,
-    P_UNKNOWN            = 0,
-    P_WINAMP2            = 1,
-    P_WMP                = 3,
-    P_FOOOBAR2000        = 4,
-    P_QCDPLAYER            = 5,
-    P_WINAMP5            = 6,
-    P_ITUNES            = 7,
-    P_ZIKIPLAYER        = 8,
-};
-
 class CMPlayerEventHandler;
 class CMPluginManager;
 
@@ -32,9 +19,6 @@ public:
 public:
     void onInit(bool bMiniLyrics);
     void onQuit();
-
-    void onInitOfZikiPlayer();
-    void onQuitOfZikiPlayer();
 
     // control player
     void play();
@@ -121,7 +105,7 @@ public:
     MLRESULT newPlaylist(IPlaylist **ppPlaylist);
     MLRESULT setCurrentPlaylist(IPlaylist *pPlaylist);
     MLRESULT setCurrentMediaInPlaylist(long nIndex);
-    MLRESULT newMedia(IMedia **ppMedia, LPCXSTR szUrl);
+    MLRESULT newMedia(IMedia **ppMedia, cstr_t szUrl);
 
     int unregisterVis(IVis *pVis);
     int registerVis(IVis *pVis);

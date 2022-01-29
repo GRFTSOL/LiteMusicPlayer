@@ -133,7 +133,7 @@ bool CMediaLibTreeProvider::chToChild(int nIndex)
     }
     else if (item.folderType == FT_ALL_ARTIST)
     {
-        CMPAutoPtr<IVXStr>    pvStr;
+        CMPAutoPtr<IVString>    pvStr;
         MLRESULT            nRet;
         Item                newitem;
 
@@ -162,7 +162,7 @@ bool CMediaLibTreeProvider::chToChild(int nIndex)
     }
     else if (item.folderType == FT_ALL_ALBUM)
     {
-        CMPAutoPtr<IVXStr>    pvStr;
+        CMPAutoPtr<IVString>    pvStr;
         MLRESULT            nRet;
         Item                newitem;
 
@@ -191,7 +191,7 @@ bool CMediaLibTreeProvider::chToChild(int nIndex)
     }
     else if ((item.folderType == FT_ARTIST || item.folderType == FT_ARTIST_UNKNOWN))
     {
-        CMPAutoPtr<IVXStr>    pvStr;
+        CMPAutoPtr<IVString>    pvStr;
         MLRESULT            nRet;
         Item                newitem;
 

@@ -108,46 +108,41 @@ struct EQualizer
     int        vData[EQ_BANDS_COUNT];    //set value EQ_dB_MAX to EQ_dB_MIN (default EQ_dB_DEF)
 };
 
-// XStr maybe UNICODE, ANSI or Utf8 str, for different platform.
-// Windows    - UNICODE
-// linux    - utf8
-typedef cstr_t LPCXSTR;
-typedef char *  LPXSTR;
 
-interface IXStr
+interface IString
 {
-    virtual ~IXStr() { }
+    virtual ~IString() { }
 
     virtual void addRef() = 0;
     virtual void release() = 0;
 
-    virtual LPXSTR data() = 0;
-    virtual LPCXSTR c_str() = 0;
+    virtual char * data() = 0;
+    virtual cstr_t c_str() = 0;
     virtual size_t size() = 0;
     virtual uint32_t capacity() = 0;
     virtual void resize(uint32_t nSize) = 0;
     virtual MLRESULT reserve(uint32_t nCapacity) = 0;
-    virtual void copy(IXStr *pSrcStr) = 0;
-    virtual void copy(LPCXSTR str) = 0;
+    virtual void copy(IString *pSrcStr) = 0;
+    virtual void copy(cstr_t str) = 0;
     virtual void erase(int nOffset, int n) = 0;
     virtual void clear() = 0;
-    virtual void insert(int nOffset, LPCXSTR str, int n) = 0;
-    virtual void append(LPCXSTR str, int n) = 0;
+    virtual void insert(int nOffset, cstr_t str, int n) = 0;
+    virtual void append(cstr_t str, int n) = 0;
 
 };
 
-interface IVXStr
+interface IVString
 {
-    virtual ~IVXStr() { }
+    virtual ~IVString() { }
 
     virtual void addRef() = 0;
     virtual void release() = 0;
 
     virtual size_t size() = 0;
-    virtual void push_back(LPCXSTR szStr) = 0;
+    virtual void push_back(cstr_t szStr) = 0;
     virtual void clear() = 0;
-    virtual LPCXSTR at(int index) = 0;
-    virtual void set(int index, LPCXSTR szStr) = 0;
+    virtual cstr_t at(int index) = 0;
+    virtual void set(int index, cstr_t szStr) = 0;
     virtual void insert(int index, cstr_t szStr) = 0;
 
 };
@@ -207,7 +202,7 @@ interface IMemAllocator
     virtual void release() = 0;
 
     virtual IFBuffer *allocFBuffer(uint32_t nCapacity) = 0;
-    virtual IXStr *allocStr() = 0;
+    virtual IString *allocStr() = 0;
 
 };
 /*
@@ -262,14 +257,14 @@ interface IMedia
     // the ID in media library, 0 for not existing in media library
     virtual long getID() = 0;
 
-    virtual MLRESULT getSourceUrl(IXStr *strUrl) = 0;
-    virtual MLRESULT getArtist(IXStr *strArtist) = 0;
-    virtual MLRESULT getTitle(IXStr *strTitle) = 0;
-    virtual MLRESULT getAlbum(IXStr *strAlbum) = 0;
+    virtual MLRESULT getSourceUrl(IString *strUrl) = 0;
+    virtual MLRESULT getArtist(IString *strArtist) = 0;
+    virtual MLRESULT getTitle(IString *strTitle) = 0;
+    virtual MLRESULT getAlbum(IString *strAlbum) = 0;
 
     virtual long getDuration() = 0;
 
-    virtual MLRESULT setSourceUrl(LPCXSTR strUrl) = 0;
+    virtual MLRESULT setSourceUrl(cstr_t strUrl) = 0;
 
     virtual bool isInfoUpdatedToMediaLib() = 0;
     virtual MLRESULT setInfoUpdatedToMediaLib(bool bUpdated) = 0;
@@ -277,8 +272,8 @@ interface IMedia
     //
     // attribute methods
     //
-    virtual MLRESULT getAttribute(MediaAttribute mediaAttr, IXStr *strValue) = 0;
-    virtual MLRESULT setAttribute(MediaAttribute mediaAttr, LPCXSTR szValue) = 0;
+    virtual MLRESULT getAttribute(MediaAttribute mediaAttr, IString *strValue) = 0;
+    virtual MLRESULT setAttribute(MediaAttribute mediaAttr, cstr_t szValue) = 0;
 
     virtual MLRESULT getAttribute(MediaAttribute mediaAttr, int *pnValue) = 0;
     virtual MLRESULT setAttribute(MediaAttribute mediaAttr, int value) = 0;
@@ -296,7 +291,7 @@ interface IPlaylist
 
     virtual MLRESULT getItem(long nIndex, IMedia **ppMedia) = 0;
 
-    virtual MLRESULT getName(IXStr *str) = 0;
+    virtual MLRESULT getName(IString *str) = 0;
 
     virtual MLRESULT insertItem(long nIndex, IMedia *pMedia) = 0;
 
@@ -325,24 +320,24 @@ interface IMediaLibrary
     virtual void addRef() = 0;
     virtual void release() = 0;
 
-    virtual MLRESULT getAllArtist(IVXStr **ppvArtist) = 0;
+    virtual MLRESULT getAllArtist(IVString **ppvArtist) = 0;
 
-    virtual MLRESULT getAllAlbum(IVXStr **ppvAlbum) = 0;
+    virtual MLRESULT getAllAlbum(IVString **ppvAlbum) = 0;
 
-    virtual MLRESULT getAllGenre(IVXStr **ppvAlbum) = 0;
+    virtual MLRESULT getAllGenre(IVString **ppvAlbum) = 0;
 
     virtual MLRESULT getAllYear(IVInt **ppvYear) = 0;
 
-    virtual MLRESULT getAlbumOfArtist(LPCXSTR szArtist, IVXStr **ppvAlbum) = 0;
+    virtual MLRESULT getAlbumOfArtist(cstr_t szArtist, IVString **ppvAlbum) = 0;
 
     virtual uint32_t getMediaCount() = 0;
 
-    virtual MLRESULT getMediaByUrl(LPCXSTR szUrl, IMedia **pMedia) = 0;
+    virtual MLRESULT getMediaByUrl(cstr_t szUrl, IMedia **pMedia) = 0;
 
-    virtual MLRESULT add(LPCXSTR szMediaUrl, IMedia **ppMedia) = 0;
+    virtual MLRESULT add(cstr_t szMediaUrl, IMedia **ppMedia) = 0;
 
     // add media to media library fast, media info will not be reloaded from media file immediately.
-    virtual MLRESULT addFast(LPCXSTR szMediaUrl, LPCXSTR szArtist, LPCXSTR szTitle, IMedia **ppMedia) = 0;
+    virtual MLRESULT addFast(cstr_t szMediaUrl, cstr_t szArtist, cstr_t szTitle, IMedia **ppMedia) = 0;
 
     virtual MLRESULT updateMediaInfo(IMedia *pMedia) = 0;
 
@@ -355,15 +350,15 @@ interface IMediaLibrary
     // nTopN = -1 : query all
     virtual MLRESULT getAll(IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN) = 0;
 
-    virtual MLRESULT getByArtist(LPCXSTR szArtist, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN) = 0;
+    virtual MLRESULT getByArtist(cstr_t szArtist, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN) = 0;
 
-    virtual MLRESULT getByAlbum(LPCXSTR szAlbum, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN) = 0;
+    virtual MLRESULT getByAlbum(cstr_t szAlbum, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN) = 0;
 
-    virtual MLRESULT getByAlbum(LPCXSTR szArtist, LPCXSTR szAlbum, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN) = 0;
+    virtual MLRESULT getByAlbum(cstr_t szArtist, cstr_t szAlbum, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN) = 0;
 
-    virtual MLRESULT getByTitle(LPCXSTR szTitle, IPlaylist **ppPlaylist) = 0;
+    virtual MLRESULT getByTitle(cstr_t szTitle, IPlaylist **ppPlaylist) = 0;
 
-    virtual MLRESULT getByGenre(LPCXSTR szGenre, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN) = 0;
+    virtual MLRESULT getByGenre(cstr_t szGenre, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN) = 0;
 
     virtual MLRESULT getByYear(int nYear, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN) = 0;
 
@@ -441,7 +436,7 @@ interface IMPluginManager
 
     virtual MLRESULT onInternalDecoderRegister(IMediaDecode *pDecoder) = 0;
 
-    virtual MLRESULT newInput(LPCXSTR szMediaUrl, IMediaInput **ppInput) = 0;
+    virtual MLRESULT newInput(cstr_t szMediaUrl, IMediaInput **ppInput) = 0;
     virtual MLRESULT newDecoder(IMediaInput *pInput, IMediaDecode **ppDecoder) = 0;
     virtual MLRESULT newOutput(IMediaOutput **ppOutput) = 0;
     virtual MLRESULT getActiveDSP(IDSP **ppDSP) = 0;
@@ -471,7 +466,7 @@ interface IMPlayer
     virtual MLRESULT next() = 0;
     virtual MLRESULT seek(uint32_t dwPos) = 0;
 
-    virtual MLRESULT newMedia(IMedia **ppMedia, LPCXSTR szUrl) = 0;
+    virtual MLRESULT newMedia(IMedia **ppMedia, cstr_t szUrl) = 0;
     virtual MLRESULT newPlaylist(IPlaylist **ppPlaylist) = 0;
 
     virtual MLRESULT getMediaLibrary(IMediaLibrary **ppMediaLib) = 0;
@@ -485,7 +480,7 @@ interface IMPlayer
     virtual MLRESULT setCurrentPlaylist(IPlaylist *pPlaylist) = 0;
     virtual MLRESULT setCurrentMedia(IMedia *pMedia) = 0;
 
-    virtual MLRESULT setCurrentMedia(LPCXSTR szSourceMedia) = 0;
+    virtual MLRESULT setCurrentMedia(cstr_t szSourceMedia) = 0;
 
     //
     // Current playing Media state
@@ -596,7 +591,7 @@ interface IMediaOutput// : IUnknown
     virtual void addRef() = 0;
     virtual void release() = 0;
 
-    virtual LPCXSTR getDescription() = 0;
+    virtual cstr_t getDescription() = 0;
 
     virtual MLRESULT init(IMPlayer *pPlayer) = 0;
     virtual MLRESULT quit() = 0;
@@ -636,8 +631,8 @@ interface IMediaInputDetector
     virtual void addRef() = 0;
     virtual void release() = 0;
 
-    virtual MLRESULT newInput(LPCXSTR szSourceMedia, IMediaInput **ppInput) = 0;
-    virtual MLRESULT getDescription(IXStr *desc);
+    virtual MLRESULT newInput(cstr_t szSourceMedia, IMediaInput **ppInput) = 0;
+    virtual MLRESULT getDescription(IString *desc);
 
 };
 
@@ -648,7 +643,7 @@ interface IMediaInput
     virtual void release() = 0;
 
     // if FAILED, return ERR_MI_OPEN_SRC, ERR_MI_NOT_FOUND
-    virtual MLRESULT open(LPCXSTR szSourceMedia) = 0;
+    virtual MLRESULT open(cstr_t szSourceMedia) = 0;
     virtual uint32_t read(void *lpBuffer, uint32_t dwSize) = 0;
     // nOrigin: SEEK_SET, SEEK_CUR, SEEK_END
     virtual MLRESULT seek(uint32_t dwOffset, int nOrigin) = 0;
@@ -660,7 +655,7 @@ interface IMediaInput
 
     virtual void close() = 0;
 
-    virtual LPCXSTR getSource() = 0;
+    virtual cstr_t getSource() = 0;
 
 };
 /*
@@ -673,8 +668,8 @@ interface IMediaDecodeSimple
     // individual methods
     //
 
-    virtual LPCXSTR getDescription() = 0;
-    virtual LPCXSTR getFileExtentions() = 0;
+    virtual cstr_t getDescription() = 0;
+    virtual cstr_t getFileExtentions() = 0;
     virtual MLRESULT getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia) = 0;
 
     //
@@ -708,9 +703,9 @@ interface IMediaDecode// : IUnknown
     // individual methods
     //
 
-    virtual LPCXSTR getDescription() = 0;
+    virtual cstr_t getDescription() = 0;
     // get supported file extensions. Example: .mp3|MP3 files|.mp2|MP2 files
-    virtual LPCXSTR getFileExtentions() = 0;
+    virtual cstr_t getFileExtentions() = 0;
     virtual MLRESULT getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia) = 0;
 
     //
@@ -753,13 +748,13 @@ interface IMediaDecode// : IUnknown
 // extern "C" __declspec(dllexport) MLRESULT zikiPlayerQueryPluginIF(
 //     int nIndex,
 //     MPInterfaceType *pInterfaceType,
-//     IXStr *strDescription,
+//     IString *strDescription,
 //     void **lpInterface
 // );
 typedef MLRESULT (*ZikiPlayerQueryPluginIF_t)(
     int nIndex,
     MPInterfaceType *pInterfaceType,
-    IXStr *strDescription,
+    IString *strDescription,
     void **lpInterface
 );
 

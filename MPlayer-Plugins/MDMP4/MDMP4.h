@@ -20,8 +20,8 @@ public:
 	// individual methods
 	//
 
-	virtual LPCXSTR getDescription();
-	virtual LPCXSTR getFileExtentions();	// get supported file's extentions.
+	virtual cstr_t getDescription();
+	virtual cstr_t getFileExtentions();	// get supported file's extentions.
 	virtual MLRESULT getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia);
 
 	//

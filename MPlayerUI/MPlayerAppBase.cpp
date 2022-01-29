@@ -213,10 +213,6 @@ bool g_bAutoMinimized = false;
 
 CMPlayerAppBase::CMPlayerAppBase()
 {
-#ifndef _MPLAYER
-    m_bMPSkinMode = true;
-    m_appMode = SA_LYRICS_PLAYER;
-#endif
 }
 
 CMPlayerAppBase::~CMPlayerAppBase()
@@ -234,68 +230,6 @@ CEventsDispatcherBase *CMPlayerAppBase::getEventsDispatcher()
 {
     assert(m_pInstance);
     return m_pInstance->getEventPatcher();
-}
-
-bool CMPlayerAppBase::initLyricsPlayer()
-{
-    g_Player.onInit(false);
-
-    if (!initLoadSkin())
-        return false;
-
-    onMediaChanged(true);
-
-    m_hotKey.init();
-
-    m_hotKey.setEventWnd(getMainWnd());
-
-    // Restore iconic status
-//    if (g_profile.getBool("Minimized", false))
-//    {
-//        if (getMainWnd()->isToolWindow())
-//            getMainWnd()->showWindow(SW_HIDE);
-//        getMainWnd()->showWindow(SW_SHOWMINNOACTIVE);
-//    }
-
-    if (g_profile.getBool(SZ_SECT_UI, "ClickThrough", false))
-        getMPSkinFactory()->setClickThrough(true);
-
-#ifdef _MINILYRICS_WIN32
-    g_Player.sendMainWndHandle();
-
-    if (g_profile.getBool("FloatingLyr", false))
-        g_wndFloatingLyr.create();
-#endif
-
-    g_lyrOutPlguinMgr.init();
-
-    return true;
-}
-
-bool CMPlayerAppBase::initiPodLyricsDownloader()
-{
-    g_Player.onInit(false);
-
-    m_pSkinFactory->setSkinFileName("iPodLyricsDownloader.xml");
-    int nRet = loadDefaultSkin("Metal", true);
-    if (nRet != ERR_OK)
-    {
-        g_profile.writeString(m_pSkinFactory->getSkinFileName(), "DefaultSkinWnd", "");
-        nRet = changeSkinByUserCmd("Metal");
-        if (nRet != ERR_OK)
-        {
-            messageOut("Failed to open skin, please perform full uninstallation to solve this issue.");
-            return false;
-        }
-    }
-
-    m_hotKey.init();
-
-    m_hotKey.setEventWnd(getMainWnd());
-
-    g_lyrOutPlguinMgr.init();
-
-    return true;
 }
 
 bool CMPlayerAppBase::init()
@@ -325,14 +259,43 @@ bool CMPlayerAppBase::init()
 
     registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_LYRICS_SEARCH_END, ET_DOWNLOAD_END, ET_LYRICS_RESEARCH);
 
-    // Initialize MiniLyrics/ZikiPlayer
-    bool bRet = false;
-    if (m_appMode == SA_IPOD_LYRICS_DOWNLOADER)
-        bRet = initiPodLyricsDownloader();
-    else
-        bRet = initLyricsPlayer();
-    if (!bRet)
-        return false;
+    g_Player.onInit(false);
+
+    // create main skin window.
+    int nRet = loadDefaultSkin(SZ_DEFSKIN);
+    if (nRet != ERR_OK)
+    {
+        g_profile.writeString(m_pSkinFactory->getSkinFileName(), "DefaultSkinWnd", "");
+        nRet = changeSkinByUserCmd(SZ_DEFSKIN);
+        if (nRet != ERR_OK)
+        {
+            messageOut("Failed to open skin, please perform full uninstallation to solve this issue.");
+        }
+    }
+
+    m_hotKey.init();
+
+    m_hotKey.setEventWnd(getMainWnd());
+
+    // Restore iconic status
+//    if (g_profile.getBool("Minimized", false))
+//    {
+//        if (getMainWnd()->isToolWindow())
+//            getMainWnd()->showWindow(SW_HIDE);
+//        getMainWnd()->showWindow(SW_SHOWMINNOACTIVE);
+//    }
+
+    if (g_profile.getBool(SZ_SECT_UI, "ClickThrough", false))
+        getMPSkinFactory()->setClickThrough(true);
+
+#ifdef _MINILYRICS_WIN32
+    if (g_profile.getBool("FloatingLyr", false))
+        g_wndFloatingLyr.create();
+#endif
+
+    g_lyrOutPlguinMgr.init();
+
+    // onMediaChanged(true);
 
     getInstance()->setRunningFlag();
 
@@ -341,41 +304,6 @@ bool CMPlayerAppBase::init()
     {
         CVersionUpdate        VerUp;
         VerUp.checkNewVersion();
-    }
-
-    return true;
-}
-
-bool CMPlayerAppBase::initLoadSkin()
-{
-    int nRet;
-
-    // create main skin window.
-#ifdef _MINILYRICS_WIN32
-    bool bMPSkinMode = g_profile.getBool("MPSkinMode", true);
-    if (!bMPSkinMode)
-    {
-        nRet = g_Player.switchToEmbeddedSkin();
-        if (m_pSkinFactory->getMainWnd() == nullptr)
-            nRet = loadDefaultSkin(SZ_DEFSKIN);
-    }
-    else
-        nRet = loadDefaultSkin(SZ_DEFSKIN);
-#else // _MPLAYER
-    nRet = loadDefaultSkin(SZ_DEFSKIN);
-#endif // _MPLAYER
-
-    if (nRet != ERR_OK)
-    {
-        g_profile.writeString(m_pSkinFactory->getSkinFileName(), "DefaultSkinWnd", "");
-        nRet = changeSkinByUserCmd(SZ_DEFSKIN);
-        if (nRet != ERR_OK)
-        {
-            messageOut("$Product$ can't open latest skin, please try other skins.", MB_OK | MB_ICONERROR);
-            nRet = getMPSkinFactory()->openSimpliestSkin();
-            if (nRet != ERR_OK)
-                return false;
-        }
     }
 
     return true;
@@ -747,10 +675,7 @@ void CMPlayerAppBase::getCurLyrDisplaySettingName(bool bFloatingLyr, string &str
     }
     else
     {
-        if (m_appMode == SA_IPOD_LYRICS_DOWNLOADER)
-            strSectionName = "iPodLyricsDwonloader";
-        else
-            strSectionName = SZ_SECT_LYR_DISPLAY;
+        strSectionName = SZ_SECT_LYR_DISPLAY;
         etDispSettings = ET_LYRICS_DISPLAY_SETTINGS;
     }
 }
@@ -763,10 +688,7 @@ cstr_t CMPlayerAppBase::getCurLyrDisplaySettingName(bool bFloatingLyr)
     }
     else
     {
-        if (m_appMode == SA_IPOD_LYRICS_DOWNLOADER)
-            return "iPodLyricsDwonloader";
-        else
-            return SZ_SECT_LYR_DISPLAY;
+        return SZ_SECT_LYR_DISPLAY;
     }
 }
 

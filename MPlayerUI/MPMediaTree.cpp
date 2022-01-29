@@ -46,7 +46,7 @@ void CMPMTNMediaLibrary::onUpdate()
     }
     else if (folderType == FT_ALL_ARTIST)
     {
-        CMPAutoPtr<IVXStr>    pvStr;
+        CMPAutoPtr<IVString>    pvStr;
         MLRESULT            nRet;
 
         nRet = mediaLib->getAllArtist(&pvStr);
@@ -64,7 +64,7 @@ void CMPMTNMediaLibrary::onUpdate()
     }
     else if (folderType == FT_ALL_ALBUM)
     {
-        CMPAutoPtr<IVXStr>    pvStr;
+        CMPAutoPtr<IVString>    pvStr;
         MLRESULT            nRet;
 
         nRet = mediaLib->getAllAlbum(&pvStr);
@@ -83,7 +83,7 @@ void CMPMTNMediaLibrary::onUpdate()
     else if (folderType == FT_ARTIST || 
         folderType == FT_ARTIST_UNKNOWN)
     {
-        CMPAutoPtr<IVXStr>    pvStr;
+        CMPAutoPtr<IVString>    pvStr;
 
         addNewNode("Top rated songs by artist", FT_ARTIST_TOP_RATING, II_MUSIC, false);
 
@@ -145,7 +145,7 @@ void CMPMTNMediaLibrary::onUpdate()
     // Genre
     else if (folderType == FT_ALL_GENRE)
     {
-        CMPAutoPtr<IVXStr>    pvStr;
+        CMPAutoPtr<IVString>    pvStr;
         MLRESULT            nRet;
 
         nRet = mediaLib->getAllGenre(&pvStr);

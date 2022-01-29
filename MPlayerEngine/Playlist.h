@@ -18,7 +18,7 @@ public:
 
     virtual MLRESULT getItem(long nIndex, IMedia **ppMedia);
 
-    virtual MLRESULT getName(IXStr *str);
+    virtual MLRESULT getName(IString *str);
 
     virtual MLRESULT insertItem(long nIndex, IMedia *pMedia);
 

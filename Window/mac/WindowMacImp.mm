@@ -203,7 +203,6 @@ inline CPoint NSPointToCPoint(const NSPoint &nsPoint, int wndHeight)
     NSNumber *msgId = [msg objectAtIndex:0];
     NSNumber *param = [msg objectAtIndex:1];
     mBaseWnd->onUserMessage([msgId intValue], (LPARAM)[param longValue]);
-    [msg dealloc];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

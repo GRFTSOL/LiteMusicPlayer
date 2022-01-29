@@ -206,18 +206,7 @@ public:
         string        strSkinName;
         m_pSkinList->getItemText(nSel, 0, strSkinName);
 
-        // set default page, when skin changes.
-#ifdef _MINILYRICS_WIN32
-        if (strcasecmp(strSkinName.c_str(), m_strEmbeddedSkinName.c_str()) == 0)
-        {
-            CMPlayerAppBase::getInstance()->setReloadEmbeddedTheme();
-            g_Player.switchToEmbeddedSkin();
-        }
-        else
-#endif
-        {
-            CMPlayerAppBase::getInstance()->changeSkinByUserCmd(strSkinName.c_str());
-        }
+        CMPlayerAppBase::getInstance()->changeSkinByUserCmd(strSkinName.c_str());
     }
 
     virtual void onUIObjNotify(IUIObjNotify *pNotify)

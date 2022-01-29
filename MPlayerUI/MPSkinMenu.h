@@ -58,8 +58,8 @@ protected:
     bool getRadioChecked(MenuRadioGroupIDName *idNames, uint32_t &nIDChecked);
 
 protected:
-    typedef list<MenuItemCheck    >    LIST_MENU_ITEMS_CHECK;
-    typedef list<MenuRadioGroup    >    LIST_MENU_ITEMS_RADIO;
+    typedef list<MenuItemCheck>    LIST_MENU_ITEMS_CHECK;
+    typedef list<MenuRadioGroup>    LIST_MENU_ITEMS_RADIO;
     typedef list<IUICheckStatus *>    LIST_UI_CHECK_STATUS;
 
     LIST_MENU_ITEMS_CHECK            m_vMenuItemsCheck;

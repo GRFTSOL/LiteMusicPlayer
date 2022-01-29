@@ -27,7 +27,7 @@ CMORaw::~CMORaw()
 {
 }
 
-LPCXSTR CMORaw::getDescription()
+cstr_t CMORaw::getDescription()
 {
     return "MPlayer Raw file output 1.0";
 }

@@ -67,9 +67,7 @@ int encodingIdToCmd(CHAR_ENCODING nEncodingId)
 
 MenuItemCheck _menuItemsCheck[] = 
 {
-#ifdef _MPLAYER
     { IDC_SHUFFLE, SZ_SECT_PLAYER, "shuffle", "1", },
-#endif
     { IDC_SETTOPMOST, nullptr, nullptr, nullptr, },
     { IDC_ANTIAlIAS, SZ_SECT_UI, "Antialias", "1", },
     { IDC_CLICK_THROUGH, nullptr, nullptr, "1",  },
@@ -78,15 +76,13 @@ MenuItemCheck _menuItemsCheck[] =
     { IDC_FLOATING_LYRICS, nullptr, nullptr, "1", },
 };
 
-#ifdef _MPLAYER
-MenuRadioGroupIDName    _MenuRadioLoop[] = 
+MenuRadioGroupIDName    _MenuRadioLoop[] =
 {
     { IDC_REPEAT_OFF, "off" },
     { IDC_REPEAT_ALL, "all" },
     { IDC_REPEAT_TRACK, "track" },
     { 0, nullptr },
 };
-#endif
 
 MenuRadioGroupIDName    _MenuRadioLyrDisplayStyle[] = 
 {
@@ -443,19 +439,6 @@ void CMPSkinMenu::insertSkinMenu(CMenu &menuSkin, int nPosStart)
         }
     }
 
-#ifdef _MINILYRICS_WIN32
-    if (g_Player.isSupportEmbedded())
-    {
-        menuSkin.appendItem(IDC_WINAMP_SKIN, _TL(g_Player.getEmbeddedSkinName()));
-        menuSkin.appendSeperator();
-
-        if (CMPlayerAppBase::getInstance()->isEmbeddedMode())
-            strDefaultSkin.clear();
-
-        menuSkin.checkItem(IDC_WINAMP_SKIN, CMPlayerAppBase::getInstance()->isEmbeddedMode());
-    }
-#endif
-
     // 查找所有的Skin，并且添加到菜单中
     vector<string>    vSkins;
     if (CMPlayerAppBase::getMPSkinFactory()->enumAllSkins(vSkins))
@@ -473,15 +456,6 @@ bool onCommandSkin(int nCmdId)
 {
     int            i;
 
-#ifdef _MINILYRICS_WIN32
-    if (nCmdId == IDC_WINAMP_SKIN)
-    {
-        CMPlayerAppBase::getInstance()->setReloadEmbeddedTheme();
-        g_Player.switchToEmbeddedSkin();
-        return true;
-    }
-#endif
-
     for (i = 0; i < __SkinMenuCount; i++)
     {
         if (nCmdId == __vSkinMenuId[i])
@@ -494,10 +468,6 @@ bool onCommandSkin(int nCmdId)
 
     // 取得上次加载的Skin
     string strDefaultSkin = CSkinApp::getInstance()->getDefaultSkin();
-#ifdef _MINILYRICS_WIN32
-    if (CMPlayerAppBase::getInstance()->isEmbeddedMode())
-        strDefaultSkin.clear();
-#endif
 
     vector<string>    vSkins;
     string            strSkin;

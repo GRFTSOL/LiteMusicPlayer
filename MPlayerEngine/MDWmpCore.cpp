@@ -172,12 +172,12 @@ MLRESULT hResultToMLResult(HRESULT hr)
     return ERR_OK;
 }
 
-LPCXSTR CMDWmpCore::getDescription()
+cstr_t CMDWmpCore::getDescription()
 {
     return "Windows Media Player Core";
 }
 
-LPCXSTR CMDWmpCore::getFileExtentions()
+cstr_t CMDWmpCore::getFileExtentions()
 {
     return ".mp3|MP3 files|.wma|WMA files|.mp2|MP2 files";
 }

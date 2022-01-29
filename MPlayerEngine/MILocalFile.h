@@ -16,7 +16,7 @@ public:
     CMILocalFile();
     virtual ~CMILocalFile();
 
-    virtual MLRESULT open(LPCXSTR szSourceMedia);
+    virtual MLRESULT open(cstr_t szSourceMedia);
     virtual uint32_t read(void *lpBuffer, uint32_t dwSize);
     virtual MLRESULT seek(uint32_t dwOffset, int nOrigin = SEEK_SET);
     virtual MLRESULT getSize(uint32_t &dwSize);
@@ -27,7 +27,7 @@ public:
 
     virtual void close();
 
-    virtual LPCXSTR getSource();
+    virtual cstr_t getSource();
 
 protected:
     FILE        *m_fp;

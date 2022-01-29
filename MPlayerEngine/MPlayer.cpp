@@ -171,7 +171,7 @@ IFBuffer *CMemAllocator::allocFBuffer(uint32_t nCapacity)
     return pBuffer;
 }
 
-IXStr *CMemAllocator::allocStr()
+IString *CMemAllocator::allocStr()
 {
     return new CXStr();
 }
@@ -193,7 +193,7 @@ CMOAgent::~CMOAgent()
 {
 }
 
-LPCXSTR CMOAgent::getDescription()
+cstr_t CMOAgent::getDescription()
 {
     if (m_pMediaOutput)
         return m_pMediaOutput->getDescription();
@@ -342,7 +342,7 @@ MLRESULT CMPluginManagerAgent::detectPlugins()
 }
 
 
-MLRESULT CMPluginManagerAgent::newInput(LPCXSTR szMediaUrl, IMediaInput **ppInput)
+MLRESULT CMPluginManagerAgent::newInput(cstr_t szMediaUrl, IMediaInput **ppInput)
 {
     if (m_pluginMgr && m_pluginMgr->newInput(szMediaUrl, ppInput) == ERR_OK)
         return ERR_OK;
@@ -372,7 +372,7 @@ MLRESULT CMPluginManagerAgent::newDecoder(IMediaInput *pInput, IMediaDecode **pp
     *ppDecoder = nullptr;
 
 #ifndef _MAC_OS
-    LPCXSTR szMediaUrl = pInput->getSource();
+    cstr_t szMediaUrl = pInput->getSource();
 
 #ifdef _MPLAYER
     if (fileIsExtSame(szMediaUrl, ".mp3"))
@@ -785,7 +785,7 @@ MLRESULT CMPlayer::seek(uint32_t dwPos)
         return ERR_PLAYER_INVALID_STATE;
 }
 
-MLRESULT CMPlayer::newMedia(IMedia **ppMedia, LPCXSTR szUrl)
+MLRESULT CMPlayer::newMedia(IMedia **ppMedia, cstr_t szUrl)
 {
     assert(ppMedia);
 
@@ -924,7 +924,7 @@ MLRESULT CMPlayer::setCurrentMedia(IMedia *pMedia)
     return play();
 }
 
-MLRESULT CMPlayer::setCurrentMedia(LPCXSTR szSourceMedia)
+MLRESULT CMPlayer::setCurrentMedia(cstr_t szSourceMedia)
 {
     MLRESULT            nRet;
     CMPAutoPtr<IMedia>    pMedia;

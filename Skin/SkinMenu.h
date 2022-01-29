@@ -7,6 +7,9 @@
 
 #pragma once
 
+#include "../third-parties/rapidjson/rapidjson/document.h"
+
+
 class CSkinMenu : public CMenu  
 {
 public:
@@ -42,7 +45,7 @@ public:
     CSkinMenu();
     virtual ~CSkinMenu();
 
-    int loadMenu(int nID);
+    int loadMenu(const rapidjson::Value &items);
 
     void trackPopupMenu(int x, int y, Window *pWnd, CRect *prcNotOverlap = nullptr);
 
@@ -59,7 +62,7 @@ public:
     int getSubMenuPos(int nSubMenu) const;
 
 protected:
-    void loadMenu(class CTextFile &file, CMenu &menu);
+    void loadMenu(const rapidjson::Value &items, CMenu &menu);
 
 protected:
     typedef list<Item>        LIST_ITEMS;

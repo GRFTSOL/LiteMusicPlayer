@@ -5,6 +5,7 @@
 #include "UtilsTypes.h"
 #include "SimpleXML.h"
 #include "SimpleXMLParser.h"
+#include "MLBinXMLParser.h"
 #include "XMLWriter.h"
 #include "base64.h"
 #include "FileApi.h"
@@ -270,15 +271,15 @@ bool CSimpleXML::parseData(const void *lpXmlData, size_t nLen, bool bNoProlog)
 {
     free();
 
-//    if (CMLBinXMLParser::isHeaderType((char *)lpXmlData))
-//    {
-//        CMLBinXMLParser            parser;
-//        CMLBinXMLParser::MLBinXmlParseError    ret;
-//
-//        ret = parser.parseData(lpXmlData, nLen, *this);
-//        return (ret == CMLBinXMLParser::E_OK);
-//    }
-//    else
+    if (CMLBinXMLParser::isHeaderType((char *)lpXmlData))
+    {
+        CMLBinXMLParser            parser;
+        CMLBinXMLParser::MLBinXmlParseError    ret;
+
+        ret = parser.parseData(lpXmlData, nLen, *this);
+        return (ret == CMLBinXMLParser::E_OK);
+    }
+    else
     {
         CSimpleXMLParser        parser;
         SimpleXMLParserError    ret;

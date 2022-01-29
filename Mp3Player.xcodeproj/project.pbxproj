@@ -188,7 +188,6 @@
 		0EB710BE27773BB6006929F1 /* MPHotkey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7103F27773BB4006929F1 /* MPHotkey.cpp */; };
 		0EB710BF27773BB6006929F1 /* MLTrayIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7104127773BB4006929F1 /* MLTrayIcon.cpp */; };
 		0EB710C027773BB6006929F1 /* MPlayerApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7104327773BB4006929F1 /* MPlayerApp.cpp */; };
-		0EB710C127773BB6006929F1 /* LyricsDownloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7104427773BB4006929F1 /* LyricsDownloader.cpp */; };
 		0EB710C227773BB6006929F1 /* MPSkinMainWndMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7104527773BB4006929F1 /* MPSkinMainWndMac.cpp */; };
 		0EB710C327773BB6006929F1 /* DlgSaveLyrPrompt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7104627773BB4006929F1 /* DlgSaveLyrPrompt.cpp */; };
 		0EB710C527773BB6006929F1 /* DlgUpdateLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7104A27773BB4006929F1 /* DlgUpdateLibrary.cpp */; };
@@ -595,10 +594,8 @@
 		0EB70FCF27773BAF006929F1 /* MediaInfoTextCtrl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaInfoTextCtrl.h; path = MPlayerUI/MediaInfoTextCtrl.h; sourceTree = "<group>"; };
 		0EB70FD027773BAF006929F1 /* MediaAlbumArtCtrl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MediaAlbumArtCtrl.cpp; path = MPlayerUI/MediaAlbumArtCtrl.cpp; sourceTree = "<group>"; };
 		0EB70FD127773BAF006929F1 /* MediaDetectionService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MediaDetectionService.cpp; path = MPlayerUI/MediaDetectionService.cpp; sourceTree = "<group>"; };
-		0EB70FD227773BAF006929F1 /* MiniLyrics_menu.rc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MiniLyrics_menu.rc; path = MPlayerUI/MiniLyrics_menu.rc; sourceTree = "<group>"; };
 		0EB70FD327773BAF006929F1 /* LrcUploadDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LrcUploadDB.cpp; path = MPlayerUI/LrcUploadDB.cpp; sourceTree = "<group>"; };
 		0EB70FD427773BAF006929F1 /* AutoProcessEmbeddedLyrics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AutoProcessEmbeddedLyrics.cpp; path = MPlayerUI/AutoProcessEmbeddedLyrics.cpp; sourceTree = "<group>"; };
-		0EB70FD527773BAF006929F1 /* MPlayer.rc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MPlayer.rc; path = MPlayerUI/MPlayer.rc; sourceTree = "<group>"; };
 		0EB70FD627773BAF006929F1 /* DlgMediaInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgMediaInfo.cpp; path = MPlayerUI/DlgMediaInfo.cpp; sourceTree = "<group>"; };
 		0EB70FD727773BAF006929F1 /* WaitingDlg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WaitingDlg.cpp; path = MPlayerUI/WaitingDlg.cpp; sourceTree = "<group>"; };
 		0EB70FD927773BAF006929F1 /* DlgAdjustHue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgAdjustHue.cpp; path = MPlayerUI/DlgAdjustHue.cpp; sourceTree = "<group>"; };
@@ -695,11 +692,9 @@
 		0EB7103D27773BB4006929F1 /* LyricsOutPluginMgr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LyricsOutPluginMgr.cpp; sourceTree = "<group>"; };
 		0EB7103E27773BB4006929F1 /* DlgSaveLyrPrompt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DlgSaveLyrPrompt.h; sourceTree = "<group>"; };
 		0EB7103F27773BB4006929F1 /* MPHotkey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MPHotkey.cpp; sourceTree = "<group>"; };
-		0EB7104027773BB4006929F1 /* LyricsDownloader_dialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LyricsDownloader_dialog.h; sourceTree = "<group>"; };
 		0EB7104127773BB4006929F1 /* MLTrayIcon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MLTrayIcon.cpp; sourceTree = "<group>"; };
 		0EB7104227773BB4006929F1 /* PlayerEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerEventDispatcher.h; sourceTree = "<group>"; };
 		0EB7104327773BB4006929F1 /* MPlayerApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MPlayerApp.cpp; sourceTree = "<group>"; };
-		0EB7104427773BB4006929F1 /* LyricsDownloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LyricsDownloader.cpp; sourceTree = "<group>"; };
 		0EB7104527773BB4006929F1 /* MPSkinMainWndMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MPSkinMainWndMac.cpp; sourceTree = "<group>"; };
 		0EB7104627773BB4006929F1 /* DlgSaveLyrPrompt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DlgSaveLyrPrompt.cpp; sourceTree = "<group>"; };
 		0EB7104727773BB4006929F1 /* DlgChooseFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DlgChooseFont.h; sourceTree = "<group>"; };
@@ -707,8 +702,6 @@
 		0EB7104A27773BB4006929F1 /* DlgUpdateLibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DlgUpdateLibrary.cpp; sourceTree = "<group>"; };
 		0EB7104B27773BB4006929F1 /* HelperMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HelperMac.cpp; sourceTree = "<group>"; };
 		0EB7104C27773BB4006929F1 /* PlayerEventDispatcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlayerEventDispatcher.mm; sourceTree = "<group>"; };
-		0EB7104E27773BB4006929F1 /* LyricsDownloader_worker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LyricsDownloader_worker.h; sourceTree = "<group>"; };
-		0EB7104F27773BB4006929F1 /* LyricsDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LyricsDownloader.h; sourceTree = "<group>"; };
 		0EB7105027773BB4006929F1 /* DlgChooseFont.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DlgChooseFont.mm; sourceTree = "<group>"; };
 		0EB7105327773BB4006929F1 /* LyricShowTwoRowObj.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LyricShowTwoRowObj.cpp; path = MPlayerUI/LyricShowTwoRowObj.cpp; sourceTree = "<group>"; };
 		0EB7105427773BB4006929F1 /* SkinScrollText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkinScrollText.h; path = MPlayerUI/SkinScrollText.h; sourceTree = "<group>"; };
@@ -716,7 +709,6 @@
 		0EB7105627773BB4006929F1 /* MPlaylistCtrl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPlaylistCtrl.h; path = MPlayerUI/MPlaylistCtrl.h; sourceTree = "<group>"; };
 		0EB7105727773BB4006929F1 /* CurMediaAlbumArt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CurMediaAlbumArt.h; path = MPlayerUI/CurMediaAlbumArt.h; sourceTree = "<group>"; };
 		0EB7105827773BB4006929F1 /* MPSkinWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPSkinWnd.h; path = MPlayerUI/MPSkinWnd.h; sourceTree = "<group>"; };
-		0EB7105927773BB4006929F1 /* MiniLyrics.rc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MiniLyrics.rc; path = MPlayerUI/MiniLyrics.rc; sourceTree = "<group>"; };
 		0EB7105A27773BB4006929F1 /* MPPlaylistCmdHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPPlaylistCmdHandler.h; path = MPlayerUI/MPPlaylistCmdHandler.h; sourceTree = "<group>"; };
 		0EB7105B27773BB4006929F1 /* MPMediaLibCmdHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MPMediaLibCmdHandler.cpp; path = MPlayerUI/MPMediaLibCmdHandler.cpp; sourceTree = "<group>"; };
 		0EB7105C27773BB5006929F1 /* LyricShowMultiRowObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LyricShowMultiRowObj.h; path = MPlayerUI/LyricShowMultiRowObj.h; sourceTree = "<group>"; };
@@ -776,6 +768,7 @@
 		0EB7115E277DCC78006929F1 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		0EB71161277DCCE6006929F1 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		0EB71164277DEE4A006929F1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		C0E6A46227A3CEBB009FA5AF /* rapidjson */ = {isa = PBXFileReference; lastKnownFileType = folder; name = rapidjson; path = "third-parties/rapidjson/rapidjson"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -805,6 +798,7 @@
 		0E56B8DA273CD7B200032A3E = {
 			isa = PBXGroup;
 			children = (
+				C0E6A46227A3CEBB009FA5AF /* rapidjson */,
 				0EB70F9D2776C88F006929F1 /* MLProtocol.xcodeproj */,
 				0EB70F952776B971006929F1 /* MPlayerEngine.xcodeproj */,
 				0EB70F8D2776B952006929F1 /* LyricsLib.xcodeproj */,
@@ -1280,8 +1274,6 @@
 				0EB7100E27773BB2006929F1 /* MediaDetectionService.h */,
 				0EB70FF627773BB1006929F1 /* MediaInfoTextCtrl.cpp */,
 				0EB70FCF27773BAF006929F1 /* MediaInfoTextCtrl.h */,
-				0EB70FD227773BAF006929F1 /* MiniLyrics_menu.rc */,
-				0EB7105927773BB4006929F1 /* MiniLyrics.rc */,
 				0EB70FF427773BB1006929F1 /* MLClientSession.cpp */,
 				0EB7105E27773BB5006929F1 /* MLClientSession.h */,
 				0EB7101227773BB2006929F1 /* MLCmd.cpp */,
@@ -1296,7 +1288,6 @@
 				0EB7107127773BB6006929F1 /* MPFloatingLyrWnd.h */,
 				0EB70FF227773BB1006929F1 /* MPHelper.cpp */,
 				0EB70FDB27773BB0006929F1 /* MPHelper.h */,
-				0EB70FD527773BAF006929F1 /* MPlayer.rc */,
 				0EB7101927773BB2006929F1 /* MPlayerAppBase.cpp */,
 				0EB7106627773BB5006929F1 /* MPlayerAppBase.h */,
 				0EB7100227773BB1006929F1 /* MPlaylistCtrl.cpp */,
@@ -1428,10 +1419,6 @@
 				0EB7104A27773BB4006929F1 /* DlgUpdateLibrary.cpp */,
 				0EB7103427773BB4006929F1 /* DlgUpdateLibrary.h */,
 				0EB7104B27773BB4006929F1 /* HelperMac.cpp */,
-				0EB7104027773BB4006929F1 /* LyricsDownloader_dialog.h */,
-				0EB7104E27773BB4006929F1 /* LyricsDownloader_worker.h */,
-				0EB7104427773BB4006929F1 /* LyricsDownloader.cpp */,
-				0EB7104F27773BB4006929F1 /* LyricsDownloader.h */,
 				0EB7103D27773BB4006929F1 /* LyricsOutPluginMgr.cpp */,
 				0EB7103C27773BB4006929F1 /* LyricsOutPluginMgr.h */,
 				0EB7103727773BB4006929F1 /* MediaSource.h */,
@@ -1680,7 +1667,6 @@
 				0E56BC7B274CAB4E00032A3E /* App.mm in Sources */,
 				0EB710AC27773BB6006929F1 /* MPlaylistSearchObj.cpp in Sources */,
 				0E56BBF12745E53D00032A3E /* SkinSeekCtrl.cpp in Sources */,
-				0EB710C127773BB6006929F1 /* LyricsDownloader.cpp in Sources */,
 				0E56BBEB2745E53D00032A3E /* SkinMenuBar.cpp in Sources */,
 				0EB7109A27773BB6006929F1 /* MLClientSession.cpp in Sources */,
 				0E56BBFA2745E53D00032A3E /* Formula.cpp in Sources */,

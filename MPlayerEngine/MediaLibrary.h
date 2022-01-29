@@ -24,24 +24,24 @@ public:
     CMediaLibrary();
     virtual ~CMediaLibrary();
 
-    virtual MLRESULT getAllArtist(IVXStr **ppvArtist);
+    virtual MLRESULT getAllArtist(IVString **ppvArtist);
 
-    virtual MLRESULT getAllAlbum(IVXStr **ppvAlbum);
+    virtual MLRESULT getAllAlbum(IVString **ppvAlbum);
 
-    virtual MLRESULT getAllGenre(IVXStr **ppvAlbum);
+    virtual MLRESULT getAllGenre(IVString **ppvAlbum);
 
     virtual MLRESULT getAllYear(IVInt **ppvYear);
 
-    virtual MLRESULT getAlbumOfArtist(LPCXSTR szArtist, IVXStr **ppvAlbum);
+    virtual MLRESULT getAlbumOfArtist(cstr_t szArtist, IVString **ppvAlbum);
 
     virtual uint32_t getMediaCount();
 
-    virtual MLRESULT getMediaByUrl(LPCXSTR szUrl, IMedia **pMedia);
+    virtual MLRESULT getMediaByUrl(cstr_t szUrl, IMedia **pMedia);
 
-    virtual MLRESULT add(LPCXSTR szMediaUrl, IMedia **ppMedia);
+    virtual MLRESULT add(cstr_t szMediaUrl, IMedia **ppMedia);
 
     // add media to media library fast, didn't update media info.
-    virtual MLRESULT addFast(LPCXSTR szMediaUrl, LPCXSTR szArtist, LPCXSTR szTitle, IMedia **ppMedia);
+    virtual MLRESULT addFast(cstr_t szMediaUrl, cstr_t szArtist, cstr_t szTitle, IMedia **ppMedia);
 
     virtual MLRESULT updateMediaInfo(IMedia *pMedia);
 
@@ -53,15 +53,15 @@ public:
 
     virtual MLRESULT getAll(IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN);
 
-    virtual MLRESULT getByArtist(LPCXSTR szArtist, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN);
+    virtual MLRESULT getByArtist(cstr_t szArtist, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN);
 
-    virtual MLRESULT getByAlbum(LPCXSTR szAlbum, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN);
+    virtual MLRESULT getByAlbum(cstr_t szAlbum, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN);
 
-    virtual MLRESULT getByAlbum(LPCXSTR szArtist, LPCXSTR szAlbum, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN);
+    virtual MLRESULT getByAlbum(cstr_t szArtist, cstr_t szAlbum, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN);
 
-    virtual MLRESULT getByTitle(LPCXSTR szTitle, IPlaylist **ppPlaylist);
+    virtual MLRESULT getByTitle(cstr_t szTitle, IPlaylist **ppPlaylist);
 
-    virtual MLRESULT getByGenre(LPCXSTR szGenre, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN);
+    virtual MLRESULT getByGenre(cstr_t szGenre, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN);
 
     virtual MLRESULT getByYear(int nYear, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN);
 
@@ -94,9 +94,9 @@ public:
 
     bool isOK() { return m_nInitResult == ERR_OK; }
 
-    MLRESULT queryPlaylist(cstr_t szSQL, LPCXSTR szClause, IPlaylist **ppPlaylist);
+    MLRESULT queryPlaylist(cstr_t szSQL, cstr_t szClause, IPlaylist **ppPlaylist);
 
-    MLRESULT queryVStr(cstr_t szSql, IVXStr **ppvStr);
+    MLRESULT queryVStr(cstr_t szSql, IVString **ppvStr);
 
     MLRESULT executeSQL(cstr_t szSql);
 

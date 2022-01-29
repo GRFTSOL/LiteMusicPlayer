@@ -39,12 +39,12 @@ CMDRow::~CMDRow()
     }
 }
 
-LPCXSTR CMDRow::getDescription()
+cstr_t CMDRow::getDescription()
 {
     return "Raw File decoder";
 }
 
-LPCXSTR CMDRow::getFileExtentions()
+cstr_t CMDRow::getFileExtentions()
 {
     return ".raw|raw files";
 }

@@ -41,12 +41,12 @@ CMDWave::~CMDWave()
     }
 }
 
-LPCXSTR CMDWave::getDescription()
+cstr_t CMDWave::getDescription()
 {
     return "Wave File decoder";
 }
 
-LPCXSTR CMDWave::getFileExtentions()
+cstr_t CMDWave::getFileExtentions()
 {
     return ".wav|wave files";
 }

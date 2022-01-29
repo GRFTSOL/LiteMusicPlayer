@@ -162,9 +162,6 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID)
                 displayOptToStr(displayOpt));
         }
         break;
-    case CMD_IPOD_LYRICS_DOWNLOADER:
-        CMPlayerApp::getInstance()->restartToAppMode(SA_IPOD_LYRICS_DOWNLOADER);
-        break;
 
 #ifdef _WIN32_DESKTOP
     case CMD_TOGGLE_MP:
@@ -294,11 +291,13 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID)
 
     case CMD_LYR_SCROLL_MENU:
         {
-            CSkinMenu menu;
+            CMenu *menu = nullptr;
             CPoint pt = getCursorPos();
-            menu.loadMenu(IDR_MENU_STATIC_LYR);
-            menu.enableItem(IDC_SL_CLEAR_TIME_STAMP, g_LyricData.getLyrContentType() == LCT_TXT);
-            menu.trackPopupMenu(pt.x, pt.y, m_pSkinWnd, nullptr);
+            if (m_pSkinWnd->getSkinFactory()->loadMenu(m_pSkinWnd, &menu, "StaticLyricsMenu")) {
+                menu->enableItem(IDC_SL_CLEAR_TIME_STAMP, g_LyricData.getLyrContentType() == LCT_TXT);
+                menu->trackPopupMenu(pt.x, pt.y, m_pSkinWnd, nullptr);
+                delete menu;
+            }
         }
         break;
     case CMD_LYR_EDITOR:
@@ -642,25 +641,13 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID)
                 m_etDispSettings == ET_LYRICS_FLOATING_SETTINGS, nullptr);
         }
         break;
-    case CMD_MENU_LYR_EDIT:
-        {
-            CSkinMenu    menu;
-            CPoint pt = getCursorPos();
-            menu.loadMenu(IDM_EDITOR_CONTEXT);
-            menu.trackPopupMenu(pt.x, pt.y, m_pSkinWnd);
-        }
-        break;
 
     case CMD_OK:
     case CMD_CANCEL:
     case ID_ALBUMART:
         {
             // album art
-            CSkinMenu    menu;
-
-            CPoint pt = getCursorPos();
-            menu.loadMenu(IDR_MENU_ALBUMART);
-            menu.trackPopupMenu(pt.x, pt.y, m_pSkinWnd);
+            m_pSkinWnd->getSkinFactory()->showPopupMenu(m_pSkinWnd, "AlbumArtMenu");
         }
         break;
     case CMD_RATE_LYR:
@@ -671,11 +658,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID)
                 break;
             }
 
-            CSkinMenu    menu;
-            menu.loadMenu(IDR_MENU_RATE);
-
-            CPoint pt = getCursorPos();
-            menu.trackPopupMenu(pt.x, pt.y, m_pSkinWnd);
+            m_pSkinWnd->getSkinFactory()->showPopupMenu(m_pSkinWnd, "RateMenu");
         }
         break;
     case CMD_RELOAD_LYR:

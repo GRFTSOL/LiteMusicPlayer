@@ -146,6 +146,7 @@ public:
 
     CPageSearchLyrics()
     {
+        m_msgNeed |= UO_MSG_WANT_CUSTOM_CMD;
         TIMER_ID_RESEARCH = 0;
         m_bAutoSearchLocal = true;
         m_nCurPage = 0;
@@ -568,18 +569,18 @@ public:
                 }
             }
 
-            CSkinMenu m_menu;
-            m_menu.loadMenu(IDR_MENU_OPEN_LRC_DLG);
+            CMenu *menu = nullptr;
+            m_pSkin->getSkinFactory()->loadMenu(m_pSkin, &menu, "OpenLyricsDlgMenu");
 
-            m_menu.enableItem(IDC_EXTERNAL_LYR_EDIT, bLocalLyrFile);
-            m_menu.enableItem(IDC_DEL_FILE, bLocalLyr);
-            m_menu.enableItem(IDC_RENAME, bLocalLyrFile);
-            m_menu.checkItem(IDC_NO_PROMPT,
+            menu->enableItem(IDC_EXTERNAL_LYR_EDIT, bLocalLyrFile);
+            menu->enableItem(IDC_DEL_FILE, bLocalLyr);
+            menu->enableItem(IDC_RENAME, bLocalLyrFile);
+            menu->checkItem(IDC_NO_PROMPT,
                 !g_profile.getBool(SZ_SECT_LYR_DL, "DownLrcUserSelect", false));
 
             getUIObjectRect(CID_MORE, rc);
             m_pSkin->clientToScreen(rc);
-            m_menu.trackPopupMenu(rc.left, rc.top, m_pSkin);
+            menu->trackPopupMenu(rc.left, rc.top, m_pSkin);
         }
         else if (nId == CID_NEXT_PAGE)
         {

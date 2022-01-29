@@ -210,7 +210,6 @@ bool WndDrag::autoCloseToWindows(int &nOffx, int &nOffy, bool bMoveWindow /* = t
     nOffx = 0;
     nOffy = 0;
 
-    // move Window close to winamp window and desktop and tray_window
     for (uint32_t i = 0; i < m_vWndCloseTo.size(); i ++)
     {
         if (nOffx == 0 || nOffy == 0)

@@ -15,11 +15,6 @@
 
 #define _SZ_SKINWND            "skinwnd"
 
-/*
-const char SZ_WINAMP2_DEFSKIN_DIR[] = "winamp";
-const char SZ_WINAMP2_DEFSKIN_DIR[] = "";
-*/
-// 
 
 #define TIMER_ID_BEG_ALLOC        120
 #define TIMER_ID_ANIMATION        117

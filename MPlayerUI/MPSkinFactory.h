@@ -12,11 +12,7 @@
 #include "../Skin/SkinFactory.h"
 
 
-#ifdef _MPLAYER
-#define SZ_DEFSKIN        "ZikiPlayer"
-#else
-#define SZ_DEFSKIN        "MiniLyrics"
-#endif
+#define SZ_DEFSKIN        "DHPlayer"
 
 class CSkinMenu;
 
@@ -36,8 +32,6 @@ public:
 
     virtual int getIDByNameEx(cstr_t szId, string &strToolTip);
     virtual void getTooltip(int nId, string &strToolTip);
-
-    int openSimpliestSkin();
 
     virtual void adjustHue(float hue, float saturation = 0.5, float luminance = 0.5);
 
@@ -66,7 +60,7 @@ protected:
     bool                m_bClickThrough;
 
 protected:
-    virtual CSkinMenu *loadPresetMenu(CSkinWnd *pWnd, cstr_t szMenu);
+    virtual CSkinMenu *newSkinMenu(CSkinWnd *pWnd, const rapidjson::Value &items) override;
 
     SXNode *getMenuOfMenus(SXNode *pNodeMenus, cstr_t szMenuName);
 

@@ -24,8 +24,6 @@
 #define INET_CON_LAN    1
 
 #define HTTP_PROXY_NONE        1
-// #define HTTP_PROXY_WINAMP    2
-// #define HTTP_PROXY_IE        3
 #define HTTP_PROXY_OURS        4
 
 enum DOWN_SAVE_DIR

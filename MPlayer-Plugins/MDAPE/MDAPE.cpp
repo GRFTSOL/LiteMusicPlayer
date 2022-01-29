@@ -127,13 +127,13 @@ CMDAPE::~CMDAPE()
 
 OBJ_REFERENCE_IMP(CMDAPE)
 
-LPCXSTR CMDAPE::getDescription()
+cstr_t CMDAPE::getDescription()
 {
 	return SZ_DECODER_DESC;
 }
 
 // get supported file's extentions.
-LPCXSTR CMDAPE::getFileExtentions()
+cstr_t CMDAPE::getFileExtentions()
 {
 	return _T(".ape\0APE Files\0");
 }
@@ -515,7 +515,7 @@ IMediaDecode *MPlayerGetMDAPE()
 extern "C" __declspec(dllexport) MLRESULT ZikiPlayerQueryPluginIF(
 	int nIndex,
 	MPInterfaceType *pInterfaceType,
-	IXStr *strDescription,
+	IString *strDescription,
 	LPVOID *lpInterface
 )
 {

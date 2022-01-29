@@ -51,7 +51,7 @@ MLRESULT CPlaylist::getItem(long nIndex, IMedia **ppMedia)
     return ERR_NOT_FOUND;
 }
 
-MLRESULT CPlaylist::getName(IXStr *str)
+MLRESULT CPlaylist::getName(IString *str)
 {
     return ERR_OK;
 }

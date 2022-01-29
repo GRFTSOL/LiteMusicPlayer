@@ -77,13 +77,13 @@ CMDFlac::~CMDFlac()
 
 OBJ_REFERENCE_IMP(CMDFlac)
 
-LPCXSTR CMDFlac::getDescription()
+cstr_t CMDFlac::getDescription()
 {
 	return SZ_DECODER_DESC;
 }
 
 // get supported file's extentions.
-LPCXSTR CMDFlac::getFileExtentions()
+cstr_t CMDFlac::getFileExtentions()
 {
 	return _T(".flac\0flac files\0");
 }
@@ -406,7 +406,7 @@ IMediaDecode *MPlayerGetMDFlac()
 extern "C" __declspec(dllexport) MLRESULT ZikiPlayerQueryPluginIF(
 	int nIndex,
 	MPInterfaceType *pInterfaceType,
-	IXStr *strDescription,
+	IString *strDescription,
 	LPVOID *lpInterface
 	)
 {

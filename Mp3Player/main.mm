@@ -14,9 +14,6 @@ int main(int argc, char *argv[])
     initBaseFramework(argc, (const char **)argv, "MP3Player.log",
         "/Users/henry_xiao/ProjectsPrivate/Mp3Player/build/Debug/MP3Player.ini", "MP3Player");
 
-    CMPlayerApp *pApp = CMPlayerApp::getInstance();
-    pApp->m_appMode = SA_IPOD_LYRICS_DOWNLOADER;
-
     return NSApplicationMain(argc, (const char **)argv);
 }
 //
@@ -35,9 +32,6 @@ int main(int argc, char *argv[])
 //
 //    initBaseFramework(argc, argv, "MP3Player.log", "/Users/hongyongxiao/ProjectsPrivate/Mp3Player/build/Debug/MP3Player.ini", "MP3Player");
 //    // InitBaseFrameWork(argc, argv, "MiniLyrics.log", "MiniLyrics.ini", SZ_SECT_UI);
-//
-//    CMPlayerApp *pApp = CMPlayerApp::getInstance();
-//        pApp->m_appMode = SA_IPOD_LYRICS_DOWNLOADER;
 //
 ////    auto player = MPlayerApp::getInstance();
 ////

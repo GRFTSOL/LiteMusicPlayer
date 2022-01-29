@@ -663,7 +663,7 @@ LRESULT Window::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam)
     case WM_HSCROLL:
         onHScroll(LOWORD(wParam), HIWORD(wParam), nullptr);
         break;
-    case WM_KEYDOWN: // pass keyboard messages to main winamp window (for processing)
+    case WM_KEYDOWN:
         onKeyDown(wParam, lParam);
         break;
     case WM_KEYUP:

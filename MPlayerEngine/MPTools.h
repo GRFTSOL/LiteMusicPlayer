@@ -4,32 +4,32 @@
 
 void calc_freq(unsigned char *dest, unsigned char *src);
 
-class CXStr : public IXStr
+class CXStr : public IString
 {
 OBJ_REFERENCE_DECL
 public:
     CXStr();
     virtual ~CXStr();
 
-    virtual LPXSTR data();
-    virtual LPCXSTR c_str();
+    virtual char * data();
+    virtual cstr_t c_str();
     virtual size_t size();
     virtual uint32_t capacity();
     virtual void resize(uint32_t nSize);
     virtual MLRESULT reserve(uint32_t nCapacity);
-    virtual void copy(IXStr *pSrcStr);
-    virtual void copy(LPCXSTR str);
+    virtual void copy(IString *pSrcStr);
+    virtual void copy(cstr_t str);
     virtual void erase(int nOffset, int n);
     virtual void clear();
-    virtual void insert(int nOffset, LPCXSTR str, int n);
-    virtual void append(LPCXSTR str, int n);
+    virtual void insert(int nOffset, cstr_t str, int n);
+    virtual void append(cstr_t str, int n);
 
 protected:
     string        m_str;
 
 };
 
-class CVXStr : public IVXStr
+class CVXStr : public IVString
 {
 OBJ_REFERENCE_DECL
 public:
@@ -37,10 +37,10 @@ public:
     virtual ~CVXStr();
 
     virtual size_t size();
-    virtual void push_back(LPCXSTR szStr);
+    virtual void push_back(cstr_t szStr);
     virtual void clear();
-    virtual LPCXSTR at(int index);
-    virtual void set(int index, LPCXSTR szStr);
+    virtual cstr_t at(int index);
+    virtual void set(int index, cstr_t szStr);
     virtual void insert(int index, cstr_t szStr);
 
 protected:

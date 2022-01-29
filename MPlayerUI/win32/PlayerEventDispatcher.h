@@ -144,15 +144,6 @@ public:
         }
         else if (wParam == ML_SEND_CMD_LINE && pcds->dwData == ML_SEND_CMD_LINE)
         {
-#ifndef _MPLAYER
-            AppMode appMode = SA_UNKNOWN;
-            processCmdLine((cstr_t)pcds->lpData, appMode);
-            if (appMode == SA_IPOD_LYRICS_DOWNLOADER && appMode != CMPlayerApp::getInstance()->getCurrentAppMode())
-            {
-                // Change to another app mode
-                CMPlayerApp::getInstance()->restartToAppMode(appMode);
-            }
-#endif
         }
     }
     

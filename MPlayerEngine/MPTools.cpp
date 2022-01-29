@@ -35,12 +35,12 @@ CXStr::~CXStr()
 
 }
 
-LPXSTR CXStr::data()
+char * CXStr::data()
 {
-    return (LPXSTR)m_str.data();
+    return (char *)m_str.data();
 }
 
-LPCXSTR CXStr::c_str()
+cstr_t CXStr::c_str()
 {
     return m_str.c_str();
 }
@@ -66,13 +66,13 @@ MLRESULT CXStr::reserve(uint32_t nCapacity)
     return ERR_OK;
 }
 
-void CXStr::copy(IXStr *pSrcStr)
+void CXStr::copy(IString *pSrcStr)
 {
     m_str.clear();
     m_str.append(pSrcStr->c_str(), pSrcStr->size());
 }
 
-void CXStr::copy(LPCXSTR str)
+void CXStr::copy(cstr_t str)
 {
     m_str = str;
 }
@@ -87,12 +87,12 @@ void CXStr::clear()
     m_str.clear();
 }
 
-void CXStr::insert(int nOffset, LPCXSTR str, int n)
+void CXStr::insert(int nOffset, cstr_t str, int n)
 {
     m_str.insert(nOffset, str, n);
 }
 
-void CXStr::append(LPCXSTR str, int n)
+void CXStr::append(cstr_t str, int n)
 {
     m_str.append(str, n);
 }
@@ -114,7 +114,7 @@ size_t CVXStr::size()
     return m_vstr.size();
 }
 
-void CVXStr::push_back(LPCXSTR szStr)
+void CVXStr::push_back(cstr_t szStr)
 {
     m_vstr.push_back(szStr);
 }
@@ -124,7 +124,7 @@ void CVXStr::clear()
     m_vstr.clear();
 }
 
-LPCXSTR CVXStr::at(int index)
+cstr_t CVXStr::at(int index)
 {
     assert(index >= 0 && index < (int)m_vstr.size());
     if (index >= 0 && index < (int)m_vstr.size())
@@ -133,7 +133,7 @@ LPCXSTR CVXStr::at(int index)
         return "";
 }
 
-void CVXStr::set(int index, LPCXSTR szStr)
+void CVXStr::set(int index, cstr_t szStr)
 {
     assert(index >= 0 && index < (int)m_vstr.size());
     if (index >= 0 && index < (int)m_vstr.size())

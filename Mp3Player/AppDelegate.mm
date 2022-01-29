@@ -84,8 +84,6 @@ NSMenuItem *duplicateMenuItem(NSMenuItem *org) {
     pApp->init();
 
     const char *szMenu = "MainWndMenu";
-    szMenu = "iPodLyricsDownloader";
-
     if (pApp->getSkinFactory()->loadMenu(pApp->getMainWnd(), (CMenu **)&_menu, szMenu)) {
         _menu->updateMenuStatus();
 

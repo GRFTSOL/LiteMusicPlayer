@@ -200,7 +200,6 @@
 #define IDC_SKIN_MAX                    40018
 #define IDC_SAVE_LYRICS                 40019
 #define IDC_SAVE_LYRICS_AS              40020
-#define IDC_WINAMP_SKIN                 40021
 #define IDC_EXTERNAL_LYR_EDIT           40022
 #define IDC_ML_HELP                     40023
 #define IDC_ENC_DEFAULT                 40024
@@ -291,6 +290,7 @@
 #define IDC_LDS_MULTI_LINE              40111
 #define IDC_LDS_STATIC_TXT              40112
 #define IDC_LDS_TWO_LINE                40113
+#define IDC_LDS_HORZ_SCROLL             40114
 #define IDC_LDS_SINGLE_LINE             40115
 #define IDC_LDS_VOBSUB                  40116
 #define IDC_LDO_KARAOKE                 40117
@@ -371,8 +371,6 @@
 #define IDC_RATE_LYR_4                  40191
 #define IDC_RATE_LYR_5                  40192
 #define IDC_IMPORT_ITUNES_LIB           40193
-#define IDC_DOWNLOAD_ALL_LYR_FOR_IPOD   40194
-#define IDC_IPOD_LYRICS_DOWNLOADER      40196
 #define IDC_NEW_LYRICS                  40197
 #define ID_OPTIONS_DISPLAYLYRICSTAG     40198
 #define IDC_EDIT_LYR_TAG                40199

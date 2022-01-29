@@ -39,7 +39,7 @@ static void *AVSPPlayerRateContext = &AVSPPlayerRateContext;
 {
     // create an asset with our URL, asychronously load its tracks, its duration, and whether it's playable or protected.
     // When that loading is complete, configure a player to play the asset.
-    AVURLAsset *asset = [AVAsset assetWithURL:[NSURL fileURLWithPath:file]];
+    AVURLAsset *asset = [AVURLAsset assetWithURL:[NSURL fileURLWithPath:file]];
 
     if (![asset isPlayable] || [asset hasProtectedContent])
         return false;
@@ -85,6 +85,7 @@ static void *AVSPPlayerRateContext = &AVSPPlayerRateContext;
         switch (status)
         {
             case AVPlayerItemStatusUnknown:
+                enable = YES;
                 break;
             case AVPlayerItemStatusReadyToPlay:
                 enable = YES;
@@ -92,7 +93,7 @@ static void *AVSPPlayerRateContext = &AVSPPlayerRateContext;
             case AVPlayerItemStatusFailed:
                 break;
         }
-        
+
         if (!enable)
         {
             if (mMDAVPlayer->getMPlayer())
@@ -106,8 +107,9 @@ static void *AVSPPlayerRateContext = &AVSPPlayerRateContext;
         {
             CMTime pos = [mPlayer currentTime];
             CMTime length = [[mPlayer currentItem] duration];
-            if (pos.value * 1.f / pos.timescale >= length.value * 1.f / length.timescale)
+            if (pos.value * 1.f / pos.timescale + 0.5 >= length.value * 1.f / length.timescale)
             {
+                // + 0.5 是因为结束时，pos 比 length 小.
                 if (mMDAVPlayer->getMPlayer())
                     mMDAVPlayer->getMPlayer()->notifyEod(mMDAVPlayer, ERR_OK);
             }
@@ -149,12 +151,12 @@ CMDAVPlayer::~CMDAVPlayer(void)
 {
 }
 
-LPCXSTR CMDAVPlayer::getDescription()
+cstr_t CMDAVPlayer::getDescription()
 {
     return "AVPlayer";
 }
 
-LPCXSTR CMDAVPlayer::getFileExtentions()
+cstr_t CMDAVPlayer::getFileExtentions()
 {
     return ".mp3|MP3 files|.mp4|MP4 files|.wma|WMA files|.mp2|MP2 files";
 }

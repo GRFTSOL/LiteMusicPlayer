@@ -2588,14 +2588,37 @@ void CSkinEditCtrl::onChar(uint32_t nChar)
     makeCaretInSight();
 }
 
+void addMenuItem(rapidjson::Document &doc, const char *name, int id) {
+    rapidjson::Value item;
+    item.SetArray();
+    if (name == nullptr) {
+        item.PushBack(rapidjson::Value("separator", doc.GetAllocator()), doc.GetAllocator());
+    } else {
+        item.PushBack(rapidjson::Value(name, doc.GetAllocator()), doc.GetAllocator());
+        item.PushBack(rapidjson::Value(""), doc.GetAllocator());
+        item.PushBack(rapidjson::Value(id), doc.GetAllocator());
+    }
+    doc.PushBack(item, doc.GetAllocator());
+}
+
 void CSkinEditCtrl::onContexMenu(int xPos, int yPos)
 {
     CSkinMenu    menu;
-    bool        bEnable;
 
-    menu.loadMenu(IDM_EDITOR_CONTEXT);
+    rapidjson::Document doc;
+    doc.SetArray();
 
-    bEnable = isSelected();
+    addMenuItem(doc, _TL("&Undo"), IDC_EDIT_UNDO);
+    addMenuItem(doc, _TL("&Redo"), IDC_EDIT_REDO);
+    addMenuItem(doc, nullptr, 0);
+    addMenuItem(doc, _TL("Cu&t"), IDC_EDIT_UNDO);
+    addMenuItem(doc, _TL("&Copy"), IDC_EDIT_UNDO);
+    addMenuItem(doc, _TL("&Paste"), IDC_EDIT_UNDO);
+    addMenuItem(doc, _TL("&Delete"), IDC_EDIT_UNDO);
+
+    menu.loadMenu(doc.GetArray());
+
+    bool bEnable = isSelected();
     menu.enableItem(IDC_EDIT_CUT, bEnable);
     menu.enableItem(IDC_EDIT_COPY, bEnable);
 

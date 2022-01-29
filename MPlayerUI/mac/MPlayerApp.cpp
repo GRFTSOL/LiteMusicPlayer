@@ -14,9 +14,6 @@
 CMPlayerApp::CMPlayerApp()
 {
     m_bRunning = false;
-
-    m_appMode = SA_LYRICS_PLAYER;
-    m_appModeQuitToStart = SA_UNKNOWN;
 }
 
 CMPlayerApp::~CMPlayerApp()
@@ -55,11 +52,3 @@ void CMPlayerApp::quit()
 
     CMPlayerAppBase::quit();
 }
-
-void CMPlayerApp::restartToAppMode(AppMode appMode)
-{
-    m_appModeQuitToStart = appMode;
-
-    postQuitMessageMac();
-}
-

@@ -98,13 +98,13 @@ CMDVorbis::~CMDVorbis()
 
 OBJ_REFERENCE_IMP(CMDVorbis)
 
-LPCXSTR CMDVorbis::getDescription()
+cstr_t CMDVorbis::getDescription()
 {
 	return SZ_DECODER_DESC;
 }
 
 // get supported file's extentions.
-LPCXSTR CMDVorbis::getFileExtentions()
+cstr_t CMDVorbis::getFileExtentions()
 {
 	return _T(".ogg\0ogg files\0");
 }
@@ -460,7 +460,7 @@ IMediaDecode *MPlayerGetMDOgg()
 extern "C" __declspec(dllexport) MLRESULT ZikiPlayerQueryPluginIF(
 	int nIndex,
 	MPInterfaceType *pInterfaceType,
-	IXStr *strDescription,
+	IString *strDescription,
 	LPVOID *lpInterface
 	)
 {

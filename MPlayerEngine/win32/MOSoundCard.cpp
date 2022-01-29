@@ -87,7 +87,7 @@ CMOSoundCard::~CMOSoundCard()
     }
 }
 
-LPCXSTR CMOSoundCard::getDescription()
+cstr_t CMOSoundCard::getDescription()
 {
     return "MPlayer soundcard output 1.0";
 }

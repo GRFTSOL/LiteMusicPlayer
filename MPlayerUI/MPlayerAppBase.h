@@ -102,13 +102,6 @@ enum STR_NAME
     SN_WEBHOME,
 };
 
-enum AppMode
-{
-    SA_UNKNOWN,
-    SA_LYRICS_PLAYER,
-    SA_IPOD_LYRICS_DOWNLOADER,
-};
-
 string getAppNameLong();
 
 cstr_t getStrName(STR_NAME nameId);
@@ -132,9 +125,6 @@ protected:
     virtual CEventsDispatcher *newEventPatcher();
     virtual CSkinFactory *newSkinFactory();
 
-    bool initLyricsPlayer();
-    bool initiPodLyricsDownloader();
-
 public:
     static CMPlayerApp *getInstance();
 
@@ -153,8 +143,6 @@ public:
     void dispatchResearchLyrics();
     void dispatchLyricsChangedSyncEvent();
 
-    bool initLoadSkin();
-
     void onMediaChanged(bool bAutoDownloadIfNotExist);
 
     void onLanguageChanged();
@@ -172,14 +160,6 @@ public:
     int messageOut(cstr_t lpText, uint32_t uType = MB_ICONINFORMATION | MB_OK, cstr_t lpCaption = nullptr);
 
     int changeSkinByUserCmd(cstr_t szSkin);
-
-#ifndef _MPLAYER
-public:
-    bool                    m_bMPSkinMode;
-#endif
-
-    AppMode getCurrentAppMode() const { return m_appMode; }
-    AppMode                    m_appMode;
 
     void getCurLyrDisplaySettingName(bool bFloatingLyr, string &strSectionName, EventType &etDispSettings);
     cstr_t getCurLyrDisplaySettingName(bool bFloatingLyr);

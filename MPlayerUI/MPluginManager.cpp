@@ -38,7 +38,7 @@ public:
     MLRESULT zikiPlayerQueryPluginIF(
         int nIndex,
         MPInterfaceType *pInterfaceType,
-        IXStr *strDescription,
+        IString *strDescription,
         void * *lpInterface
         )
     {
@@ -72,7 +72,7 @@ public:
     MLRESULT zikiPlayerQueryPluginIF(
         int nIndex,
         MPInterfaceType *pInterfaceType,
-        IXStr *strDescription,
+        IString *strDescription,
         void * *lpInterface
         )
     {
@@ -177,7 +177,7 @@ MLRESULT CMPluginManager::onInternalDecoderRegister(IMediaDecode *pDecoder)
 }
 
 
-MLRESULT CMPluginManager::newInput(LPCXSTR szMediaUrl, IMediaInput **ppInput)
+MLRESULT CMPluginManager::newInput(cstr_t szMediaUrl, IMediaInput **ppInput)
 {
     // Use internal input
     return ERR_NOT_SUPPORT;
@@ -186,7 +186,7 @@ MLRESULT CMPluginManager::newInput(LPCXSTR szMediaUrl, IMediaInput **ppInput)
 
 MLRESULT CMPluginManager::newDecoder(IMediaInput *pInput, IMediaDecode **ppDecoder)
 {
-    LPCXSTR                        szMediaUrl = pInput->getSource();
+    cstr_t                        szMediaUrl = pInput->getSource();
     ListDecodersInfo::iterator    it;
     cstr_t                        szExt;
 

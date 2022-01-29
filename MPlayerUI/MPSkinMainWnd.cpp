@@ -51,11 +51,5 @@ void CMPSkinMainWndBase::onEvent(const IEvent *pEvent)
 
 void CMPSkinMainWndBase::updateCaptionText()
 {
-    cstr_t szAppName;
-    if (CMPlayerApp::getInstance()->getCurrentAppMode() == SA_IPOD_LYRICS_DOWNLOADER)
-        szAppName = _TLM("Lyrics Downloader for iPod");
-    else
-        szAppName = SZ_APP_NAME;
-
-    setCaptionText(_TL(szAppName));
+    setCaptionText(_TL(SZ_APP_NAME));
 }

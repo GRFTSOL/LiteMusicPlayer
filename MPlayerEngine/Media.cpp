@@ -2,9 +2,9 @@
 #include "Media.h"
 
 /*
-LPCXSTR CMPlayer::MediaAttributeName(MediaAttribute mediaAttri)
+cstr_t CMPlayer::MediaAttributeName(MediaAttribute mediaAttri)
 {
-    static LPCXSTR        _szMediaAttrName[] = 
+    static cstr_t        _szMediaAttrName[] = 
     {
         "Artist",
         "Album",
@@ -70,25 +70,25 @@ long CMedia::getID()
     return m_nID;
 }
 
-MLRESULT CMedia::getSourceUrl(IXStr *strUrl)
+MLRESULT CMedia::getSourceUrl(IString *strUrl)
 {
     strUrl->copy(m_strUrl.c_str());
     return ERR_OK;
 }
 
-MLRESULT CMedia::getArtist(IXStr *strArtist)
+MLRESULT CMedia::getArtist(IString *strArtist)
 {
     strArtist->copy(m_strArtist.c_str());
     return ERR_OK;
 }
 
-MLRESULT CMedia::getTitle(IXStr *strTitle)
+MLRESULT CMedia::getTitle(IString *strTitle)
 {
     strTitle->copy(m_strTitle.c_str());
     return ERR_OK;
 }
 
-MLRESULT CMedia::getAlbum(IXStr *strAlbum)
+MLRESULT CMedia::getAlbum(IString *strAlbum)
 {
     strAlbum->copy(m_strAlbum.c_str());
     return ERR_OK;
@@ -99,7 +99,7 @@ long CMedia::getDuration()
     return m_nLength;
 }
 
-MLRESULT CMedia::setSourceUrl(LPCXSTR strUrl)
+MLRESULT CMedia::setSourceUrl(cstr_t strUrl)
 {
     m_strUrl = strUrl;
     return ERR_OK;
@@ -116,14 +116,14 @@ MLRESULT CMedia::setInfoUpdatedToMediaLib(bool bUpdated)
     return ERR_OK;
 }
 
-void long2XStr(long value, IXStr *str)
+void long2XStr(long value, IString *str)
 {
     str->reserve(32);
     int size = snprintf(str->data(), str->capacity(), "%d", value);
     str->resize(size);
 }
 
-void mPTime2XStr(CMPTime &date, IXStr *str)
+void mPTime2XStr(CMPTime &date, IString *str)
 {
     MPTM        tm;
 
@@ -139,7 +139,7 @@ void mPTime2XStr(CMPTime &date, IXStr *str)
         str->copy("-");
 }
 
-MLRESULT CMedia::getAttribute(MediaAttribute mediaAttr, IXStr *strValue)
+MLRESULT CMedia::getAttribute(MediaAttribute mediaAttr, IString *strValue)
 {
     strValue->clear();
 
@@ -176,7 +176,7 @@ MLRESULT CMedia::getAttribute(MediaAttribute mediaAttr, IXStr *strValue)
     return ERR_OK;
 }
 
-MLRESULT CMedia::setAttribute(MediaAttribute mediaAttr, LPCXSTR szValue)
+MLRESULT CMedia::setAttribute(MediaAttribute mediaAttr, cstr_t szValue)
 {
     switch (mediaAttr)
     {

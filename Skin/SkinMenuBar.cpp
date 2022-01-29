@@ -309,6 +309,7 @@ bool CSkinMenuBar::onLButtonDown(uint32_t nFlags, CPoint point)
     if (m_vSubMenus[m_nSelSubMenu].bHasSubMenu)
     {
         trackPopupMenu();
+        m_pSkin->releaseCaptureMouse(this);
     }
     else
         m_pSkin->onCommand(m_vSubMenus[m_nSelSubMenu].nID, 0);

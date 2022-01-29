@@ -16,6 +16,8 @@ class CSkinContainer;
 
 #include "SkinResMgr.h"
 #include "SkinWndDrag.h"
+#include "../third-parties/rapidjson/rapidjson/document.h"
+
 
 struct SkinWndStartupInfo
 {
@@ -305,6 +307,7 @@ public:
 
     // resource
     virtual bool loadMenu(CSkinWnd *pWnd, CMenu **ppMenu, cstr_t szMenu);
+    virtual void showPopupMenu(CSkinWnd *pWnd, cstr_t menuName);
 
     virtual int onDynamicCmd(int nCmdID, CSkinWnd *pSkinWnd);
 
@@ -328,8 +331,9 @@ public:
 protected:
     virtual int openSkinFile(cstr_t szSkinFile);
 
-    virtual CSkinMenu *loadPresetMenu(CSkinWnd *pWnd, cstr_t szMenu)
-        { return nullptr; }
+    virtual CSkinMenu *newSkinMenu(CSkinWnd *pWnd, const rapidjson::Value &items) { return nullptr; }
+
+    CSkinMenu *loadPresetMenu(CSkinWnd *pWnd, cstr_t szMenu);
 
     void expandIncludeNode(SXNode *pNodeRoot);
 
@@ -351,6 +355,9 @@ protected:
 
     // Skin styles
     CSkinStyles                    m_skinStyle;
+
+    // Menus
+    rapidjson::Document             m_menus;
 
     //
     // Dynamic commands define

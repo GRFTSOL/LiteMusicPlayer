@@ -51,9 +51,6 @@ bool CSkinContainer::onCustomCommand(int nId)
     {
         CUIObject    *pObj = m_vUIObjs[i];
 
-        if (!pObj->isVisible())
-            continue;
-
         if (pObj->isContainer() || pObj->needMsgCustomCmd())
         {
             if (pObj->onCustomCommand(nId))

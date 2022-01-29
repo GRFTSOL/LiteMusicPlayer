@@ -245,12 +245,12 @@ CMDLibmad::~CMDLibmad()
         delete[] m_pnToc;
 }
 
-LPCXSTR CMDLibmad::getDescription()
+cstr_t CMDLibmad::getDescription()
 {
     return "Mp3 file decoder";
 }
 
-LPCXSTR CMDLibmad::getFileExtentions()
+cstr_t CMDLibmad::getFileExtentions()
 {
     return ".mp3|mp3 files";
 }
@@ -263,7 +263,7 @@ MLRESULT CMDLibmad::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia 
     if (nRet != ERR_OK)
         return nRet;
 
-    LPCXSTR szSource = pInput->getSource();
+    cstr_t szSource = pInput->getSource();
     FILE    *fp = fopen(szSource, "rb");
     if (fp)
     {

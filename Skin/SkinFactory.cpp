@@ -20,7 +20,7 @@
 #define _SZ_DYNMICCTRLS            "DynControls"
 #define _SZ_DYNMICCMDS            "DynCmds"
 #define _SZ_CONTROLDEF            "controldef"
-#define _SZ_SKIN_FILE_NAME        "minilyrics.xml"
+#define _SZ_SKIN_FILE_NAME        "main.xml"
 #define _SZ_ADJUST_HUE            "adjustHue"
 
 #define MENU_ID_CUSTOM_BASE        46000
@@ -1360,14 +1360,6 @@ cstr_t CSkinFactory::getSkinRootDir()
 void CSkinFactory::setSkinFileName(cstr_t szSkinFileName)
 {
     m_strSkinFileName = szSkinFileName;
-
-#if defined (_DEBUG) && defined (_WIN32)
-//     if (strcasecmp(m_strSkinFileName.c_str(), "iPodLyricsDownloader.xml") == 0)
-//     {
-//         m_strSkinRootDir = getAppResourceDir();
-//         m_strSkinRootDir += "..\\Install_iPodLyricsDownloader\\Share\\skins\\";
-//     }
-#endif
 }
 
 // 枚举 skin
@@ -1504,6 +1496,37 @@ bool CSkinFactory::loadMenu(CSkinWnd *pWnd, CMenu **ppMenu, cstr_t szMenu)
     *ppMenu = pSkinMenu;
 
     return pSkinMenu != nullptr;
+}
+
+void CSkinFactory::showPopupMenu(CSkinWnd *pWnd, cstr_t menuName) {
+    CMenu *menu = nullptr;
+
+    if (loadMenu(pWnd, &menu, menuName)) {
+        CPoint pt = getCursorPos();
+        menu->trackPopupMenu(pt.x, pt.y, pWnd, nullptr);
+        delete menu;
+    }
+}
+
+CSkinMenu *CSkinFactory::loadPresetMenu(CSkinWnd *pWnd, cstr_t szMenu) {
+    if (m_menus.IsNull()) {
+        string fn = CSkinApp::getInstance()->getSkinFactory()->getResourceMgr()->getResourcePathName("menu.json");
+        string content;
+        if (!readFile(fn.c_str(), content)) {
+            ERR_LOG1("Failed to load menu file: %s", fn.c_str());
+            return nullptr;
+        }
+
+        m_menus.Parse(content.c_str(), content.size());
+        assert(m_menus.IsObject());
+    }
+
+    if (m_menus.HasMember(szMenu)) {
+        return newSkinMenu(pWnd, m_menus[szMenu]);
+    } else {
+        ERR_LOG1("Can NOT find menu %s.", szMenu);
+        return nullptr;
+    }
 }
 
 int CSkinFactory::onDynamicCmd(int nCmdID, CSkinWnd *pSkinWnd)

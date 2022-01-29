@@ -147,13 +147,79 @@ void CPlayer::onInit(bool bMiniLyrics)
         trimStr(m_vTitleFilters, ' ');
     }
 
-    onInitOfZikiPlayer();
+    if (CMPlayer::getInstance(&m_spPlayer) != ERR_OK)
+        return;
+
+    assert(m_pPluginMgr == nullptr);
+
+    m_pPluginMgr = new CMPluginManager;
+    m_spPlayer->setPluginManager(m_pPluginMgr);
+
+    m_pEventHandler = new CMPlayerEventHandler;
+    m_pEventHandler->addRef();
+    m_spPlayer->registerEvent(m_pEventHandler);
+
+    cstr_t            szValue;
+    MP_LOOP_MODE    loopMode;
+
+    // get loop mode
+    szValue = g_profile.getString(SZ_SECT_PLAYER, "repeat", "off");
+    if (strcasecmp(szValue, "all") == 0)
+        loopMode = MP_LOOP_ALL;
+    else if (strcasecmp(szValue, "track") == 0)
+        loopMode = MP_LOOP_TRACK;
+    else
+        loopMode = MP_LOOP_OFF;
+    m_spPlayer->setLoop(loopMode);
+
+    // shuffle
+    m_spPlayer->setShuffle(
+        isTRUE(g_profile.getString(SZ_SECT_PLAYER, "shuffle", SZ_FALSE)));
+
+    // mute
+    m_spPlayer->setMute(
+        isTRUE(g_profile.getString(SZ_SECT_PLAYER, "mute", SZ_FALSE)));
+
+    // volume
+    m_spPlayer->setVolume(g_profile.getInt(SZ_SECT_PLAYER, "volume", 30));
+
+
+    // Load current playlist
+    string playlist = g_profile.getString("LatestPlaylist", "");
+    if (!playlist.empty()) {
+        loadPlaylist(playlist.c_str());
+    }
+
+    // current playing music
+    // m_spPlayer->setCurrentMediaInPlaylist(
+    //    g_profile.getInt(SZ_SECT_PLAYER, "NowPlayingIdx", 0));
+
+    g_playerEventDispatcher.init();
+
+    if (g_profile.getBool("StartPlayAtStartup", false))
+        play();
 }
 
 void CPlayer::onQuit()
 {
-    if (m_spPlayer)
-        onQuitOfZikiPlayer();
+    if (m_spPlayer) {
+        g_playerEventDispatcher.quit();
+
+        saveCurrentPlaylist();
+
+        // save latest playing song file
+        g_profile.writeInt(SZ_SECT_PLAYER, "NowPlayingIdx", (int)m_spPlayer->getCurrentMediaInPlaylist());
+
+        if (m_pEventHandler)
+        {
+            m_spPlayer->unregisterEvent(m_pEventHandler);
+            m_pEventHandler->release();
+        }
+
+        assert(m_spPlayer);
+        m_spPlayer->stop();
+        CMPlayer::quitInstance(&m_spPlayer);
+    }
 }
 
 // control player
@@ -347,74 +413,6 @@ void CPlayer::setMute(bool bValue)
     g_profile.writeString(SZ_SECT_PLAYER, "mute", bValue ? SZ_TRUE : SZ_FALSE);
 }
 
-void CPlayer::onInitOfZikiPlayer()
-{
-    if (CMPlayer::getInstance(&m_spPlayer) != ERR_OK)
-        return;
-
-    assert(m_pPluginMgr == nullptr);
-
-    m_pPluginMgr = new CMPluginManager;
-    m_spPlayer->setPluginManager(m_pPluginMgr);
-
-    m_pEventHandler = new CMPlayerEventHandler;
-    m_pEventHandler->addRef();
-    m_spPlayer->registerEvent(m_pEventHandler);
-
-    cstr_t            szValue;
-    MP_LOOP_MODE    loopMode;
-
-    // get loop mode
-    szValue = g_profile.getString(SZ_SECT_PLAYER, "repeat", "off");
-    if (strcasecmp(szValue, "all") == 0)
-        loopMode = MP_LOOP_ALL;
-    else if (strcasecmp(szValue, "track") == 0)
-        loopMode = MP_LOOP_TRACK;
-    else
-        loopMode = MP_LOOP_OFF;
-    m_spPlayer->setLoop(loopMode);
-
-    // shuffle
-    m_spPlayer->setShuffle(
-        isTRUE(g_profile.getString(SZ_SECT_PLAYER, "shuffle", SZ_FALSE)));
-
-    // mute
-    m_spPlayer->setMute(
-        isTRUE(g_profile.getString(SZ_SECT_PLAYER, "mute", SZ_FALSE)));
-
-    // volume
-    m_spPlayer->setVolume(g_profile.getInt(SZ_SECT_PLAYER, "volume", 30));
-
-    // current playing music
-    // m_spPlayer->setCurrentMediaInPlaylist(
-    //    g_profile.getInt(SZ_SECT_PLAYER, "NowPlayingIdx", 0));
-
-    g_playerEventDispatcher.init();
-
-    if (g_profile.getBool("StartPlayAtStartup", false))
-        play();
-}
-
-void CPlayer::onQuitOfZikiPlayer()
-{
-    g_playerEventDispatcher.quit();
-
-    saveCurrentPlaylist();
-
-    // save latest playing song file
-    g_profile.writeInt(SZ_SECT_PLAYER, "NowPlayingIdx", (int)m_spPlayer->getCurrentMediaInPlaylist());
-
-    if (m_pEventHandler)
-    {
-        m_spPlayer->unregisterEvent(m_pEventHandler);
-        m_pEventHandler->release();
-    }
-
-    assert(m_spPlayer);
-    m_spPlayer->stop();
-    CMPlayer::quitInstance(&m_spPlayer);
-}
-
 void CPlayer::clearPlaylist()
 {
     if (!m_spPlayer)
@@ -434,20 +432,20 @@ void CPlayer::newCurrentPlaylist()
     m_strCurrentPlaylist = getAppDataDir();
     m_strCurrentPlaylist += "untitled playlist.m3u";
 
-    if (!isFileExist(m_strCurrentPlaylist.c_str()))
-        return;
-
-    CStrPrintf strFile;
-    for (int i = 0; i < 100; i++)
-    {
-        strFile.printf("%suntitled playlist %d.m3u", getAppDataDir().c_str(), i);
-
-        if (!isFileExist(strFile.c_str()))
-        {
-            m_strCurrentPlaylist = strFile.c_str();
-            break;
-        }
-    }
+//    if (!isFileExist(m_strCurrentPlaylist.c_str()))
+//        return;
+//
+//    CStrPrintf strFile;
+//    for (int i = 0; i < 100; i++)
+//    {
+//        strFile.printf("%suntitled playlist %d.m3u", getAppDataDir().c_str(), i);
+//
+//        if (!isFileExist(strFile.c_str()))
+//        {
+//            m_strCurrentPlaylist = strFile.c_str();
+//            break;
+//        }
+//    }
 }
 
 void CPlayer::addDirToPlaylist(cstr_t szDir, bool bIncSubDir)
@@ -852,7 +850,7 @@ MLRESULT CPlayer::setCurrentMediaInPlaylist(long nIndex)
         return ERR_NOT_IMPLEMENTED;
 }
 
-MLRESULT CPlayer::newMedia(IMedia **ppMedia, LPCXSTR szUrl)
+MLRESULT CPlayer::newMedia(IMedia **ppMedia, cstr_t szUrl)
 {
     if (m_spPlayer)
         return m_spPlayer->newMedia(ppMedia, szUrl);
@@ -922,7 +920,7 @@ void CPlayer::saveCurrentPlaylist()
         {
             setPlaylistModified(false);
             // SaveRecentPlList(m_strCurrentPlaylist.c_str());
-            g_profile.writeString("Latest Playlist", m_strCurrentPlaylist.c_str());
+            g_profile.writeString("LatestPlaylist", m_strCurrentPlaylist.c_str());
         }
     }
 }

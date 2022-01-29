@@ -12,14 +12,14 @@ public:
     // the ID in media library, 0 for not exist in media library
     virtual long getID();
 
-    virtual MLRESULT getSourceUrl(IXStr *strUrl);
-    virtual MLRESULT getArtist(IXStr *strArtist);
-    virtual MLRESULT getTitle(IXStr *strTitle);
-    virtual MLRESULT getAlbum(IXStr *strAlbum);
+    virtual MLRESULT getSourceUrl(IString *strUrl);
+    virtual MLRESULT getArtist(IString *strArtist);
+    virtual MLRESULT getTitle(IString *strTitle);
+    virtual MLRESULT getAlbum(IString *strAlbum);
 
     virtual long getDuration();
 
-    virtual MLRESULT setSourceUrl(LPCXSTR strUrl);
+    virtual MLRESULT setSourceUrl(cstr_t strUrl);
 
     virtual bool isInfoUpdatedToMediaLib();
     virtual MLRESULT setInfoUpdatedToMediaLib(bool bUpdated);
@@ -27,8 +27,8 @@ public:
     //
     // attribute methods
     //
-    virtual MLRESULT getAttribute(MediaAttribute mediaAttr, IXStr *strValue);
-    virtual MLRESULT setAttribute(MediaAttribute mediaAttr, LPCXSTR szValue);
+    virtual MLRESULT getAttribute(MediaAttribute mediaAttr, IString *strValue);
+    virtual MLRESULT setAttribute(MediaAttribute mediaAttr, cstr_t szValue);
 
     virtual MLRESULT getAttribute(MediaAttribute mediaAttr, int *pnValue);
     virtual MLRESULT setAttribute(MediaAttribute mediaAttr, int value);

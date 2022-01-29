@@ -18,7 +18,7 @@ public:
     CMORaw();
     virtual ~CMORaw();
 
-    LPCXSTR getDescription();
+    cstr_t getDescription();
 
     virtual MLRESULT init(IMPlayer *pPlayer) { return ERR_OK; }
     virtual MLRESULT quit() { return ERR_OK; }
