@@ -13,13 +13,13 @@ void CallMenuCommand(int cmd);
 @interface MainMenuHandler : NSObject {
 }
 
-- (void) OnCommand:(NSMenuItem *)item;
+- (void) onCommand:(NSMenuItem *)item;
 
 @end
 
 @implementation MainMenuHandler
 
-- (void) OnCommand:(NSMenuItem *)item
+- (void) onCommand:(NSMenuItem *)item
 {
     CallMenuCommand((int)[item tag]);
 }
