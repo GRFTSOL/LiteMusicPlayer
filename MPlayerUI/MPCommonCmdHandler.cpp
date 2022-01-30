@@ -176,6 +176,13 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID)
             }
         }
         break;
+    case CMD_ADJUST_HUE:
+        {
+            showAdjustHueDialog(m_pSkinWnd);
+        }
+        break;
+#endif // _WIN32_DESKTOP
+
     case CMD_FLOATING_LYRICS:
         {
             g_profile.writeInt("FloatingLyr", !g_wndFloatingLyr.isValid());
@@ -185,12 +192,6 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID)
                 g_wndFloatingLyr.destroy();
         }
         break;
-    case CMD_ADJUST_HUE:
-        {
-            showAdjustHueDialog(m_pSkinWnd);
-        }
-        break;
-#endif // _WIN32_DESKTOP
 
     case CMD_PREFERENCES:
         showPreferenceDialog(m_pSkinWnd, m_etDispSettings != ET_LYRICS_FLOATING_SETTINGS);

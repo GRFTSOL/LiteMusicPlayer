@@ -70,7 +70,7 @@ public:
     CLyricsLocalSearch();
     virtual ~CLyricsLocalSearch();
 
-public:
+protected:
     VecStrings    m_vLyricsFolders;
 
     //

@@ -191,8 +191,8 @@ void CPlayer::onInit(bool bMiniLyrics)
     }
 
     // current playing music
-    // m_spPlayer->setCurrentMediaInPlaylist(
-    //    g_profile.getInt(SZ_SECT_PLAYER, "NowPlayingIdx", 0));
+     m_spPlayer->setCurrentMediaInPlaylist(
+        g_profile.getInt(SZ_SECT_PLAYER, "NowPlayingIdx", 0));
 
     g_playerEventDispatcher.init();
 

@@ -98,6 +98,8 @@ void CSkinMenu::loadMenu(const rapidjson::Value &items, CMenu &menu)
             menu.appendItem(nID, _TL(name.c_str()), shortcut.c_str());
         }
     }
+
+    onLoadMenu();
 }
 
 void CSkinMenu::trackPopupMenu(int x, int y, Window *pWnd, CRect *prcNotOverlap)

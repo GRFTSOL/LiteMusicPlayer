@@ -306,14 +306,14 @@ bool CLyricsLocalSearch::associateLyrics(cstr_t szAssociateFileKeyword, cstr_t s
 
 bool CLyricsLocalSearch::cancelAssociate(cstr_t szAssociateFileKeyword)
 {
-    SONG_LYRIC_MAP::iterator        itLyric;
-    MutexAutolock                    autoLock(m_mutex);
-
-    itLyric = m_mapLyricsAssociate.find(toAssociateKeyword(szAssociateFileKeyword));
-    if (itLyric != m_mapLyricsAssociate.end())
     {
-        m_mapLyricsAssociate.erase(itLyric);
-        return true;
+        MutexAutolock autoLock(m_mutex);
+        auto itLyric = m_mapLyricsAssociate.find(toAssociateKeyword(szAssociateFileKeyword));
+        if (itLyric != m_mapLyricsAssociate.end())
+        {
+            m_mapLyricsAssociate.erase(itLyric);
+            return true;
+        }
     }
 
     saveLyricsAssociation();
