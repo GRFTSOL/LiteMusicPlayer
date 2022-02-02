@@ -108,9 +108,9 @@ bool CTextFile::write(cstr_t szText, size_t nLenText)
     size_t nWritten = 0;
     if (m_encoding == ED_UNICODE || m_encoding == ED_UNICODE_BIG_ENDIAN)
     {
-        wstring strUCS2;
+        u16string strUCS2;
         utf8ToUCS2(szText, (int)nLenText, strUCS2);
-        if (m_encoding == ED_UNICODE_BIG_ENDIAN) {
+        if (m_encoding == ED_UNICODE) {
             ucs2EncodingReverse((WCHAR *)strUCS2.c_str(), strUCS2.size());
         }
 

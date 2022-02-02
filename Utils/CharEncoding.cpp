@@ -165,9 +165,9 @@ string strToUtf8ByBom(const char *data, size_t size) {
     std::string str;
     if (encoding == ED_UNICODE) {
         ucs2ToUtf8((WCHAR *)data, size / 2, str);
-    } else if (encoding == ED_UNICODE) {
-        ucs2ToUtf8((WCHAR *)data, size / 2, str);
+    } else if (encoding == ED_UNICODE_BIG_ENDIAN) {
         ucs2EncodingReverse((WCHAR *)data, size / 2);
+        ucs2ToUtf8((WCHAR *)data, size / 2, str);
     } if (encoding == ED_UTF8) {
         str.assign(data, size);
     } else {
@@ -267,7 +267,7 @@ int ucs2ToUtf8(const WCHAR *str, int nLen, string &strOut)
 #define UTF8_2_to_UCS2(in)    ((WCHAR) (MXS((in)[0],0xC0, 6) | M80S((in)[1], 0)))
 #define UTF8_3_to_UCS2(in)    ((WCHAR) (MXS((in)[0],0xE0,12) | M80S((in)[1], 6) | M80S((in)[2], 0) ))
 
-int utf8ToUCS2(const char *str, int nLen, wstring &strOut)
+int utf8ToUCS2(const char *str, int nLen, u16string &strOut)
 {
     ensureInputStrLen(str, nLen);
 

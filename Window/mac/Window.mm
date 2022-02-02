@@ -56,6 +56,9 @@ bool Window::createForSkin(cstr_t szClassName, cstr_t szCaption, int x, int y, i
     if (pWndParent && pWndParent->m_handleHolder->window)
         [w setParentWindow:pWndParent->m_handleHolder->window];
 
+    m_wndSize.cx = (int)[w frame].size.width;
+    m_wndSize.cy = (int)[w frame].size.height;
+    
     //[w setOpaque:NO];
     // [w setAlphaValue:(float)128 / 255];
 
@@ -79,8 +82,11 @@ void Window::setHasShadow(bool hasShadow)
 
 void Window::destroy()
 {
-    if (m_handleHolder->window)
+    if (m_handleHolder->window) {
         [m_handleHolder->window close];
+        m_handleHolder->window = nullptr;
+        m_handleHolder->view = nullptr;
+    }
 }
 
 void Window::postDestroy()

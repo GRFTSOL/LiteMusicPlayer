@@ -11,15 +11,15 @@ void appendStrByEncodingAndBom(string &buff, cstr_t str, ID3v2EncType encType, C
     if (encType == IET_UCS2LE_BOM)
     {
         buff += SZ_FE_UCS2;
-        wstring    strW;
+        u16string    strW;
         utf8ToUCS2(str, -1, strW);
+        ucs2EncodingReverse((WCHAR *)strW.data(), strW.size());
         buff.append((const char *)strW.c_str(), (strW.size() + 1) * sizeof(WCHAR));
     }
     else if (encType == IET_UCS2BE_NO_BOM)
     {
-        wstring    strW;
+        u16string    strW;
         utf8ToUCS2(str, -1, strW);
-        ucs2EncodingReverse((WCHAR *)strW.data(), strW.size());
         buff.append((const char *)strW.c_str(), (strW.size() + 1) * sizeof(WCHAR));
     }
     else if (encType == IET_UTF8)
@@ -96,7 +96,7 @@ int copyStrByEncodingAndBom(string &str, ID3v2EncType encType, const char *data,
     if (encType == IET_UCS2LE_BOM || encType == IET_UCS2BE_NO_BOM)
     {
         int n = wcslen_safe((WCHAR *)pbyData, len / sizeof(WCHAR));
-        wstring temp;
+        u16string temp;
         temp.append((WCHAR *)pbyData, n);
         if (encType == IET_UCS2BE_NO_BOM)
             ucs2EncodingReverse((WCHAR *)temp.c_str(), n);

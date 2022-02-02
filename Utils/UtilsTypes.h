@@ -58,7 +58,7 @@ inline bool isFlagSet(T1 n, T2 flags) { return (n & flags) == flags; }
 template<typename T>
 inline bool tobool(T v) { return v != 0; }
 
-typedef wchar_t             WCHAR;
+typedef char16_t            WCHAR;
 typedef const char *        cstr_t;
 typedef const WCHAR *       cwstr_t;
 

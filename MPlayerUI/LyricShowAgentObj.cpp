@@ -121,15 +121,17 @@ void CLyricShowAgentObj::onEvent(const IEvent *pEvent)
     }
     else if (pEvent->eventType == ET_LYRICS_CHANGED && m_bEnableStaticTextStyle)
     {
-        string        strNewStyle;
-        if (g_LyricData.getLyrContentType() != LCT_TXT)
-            strNewStyle = m_strLyrDisplayStyleDefault;
-        else
-            strNewStyle = SZ_TXT_LYR_CONTAINER;
+        m_pSkin->postExecOnMainThread([this]() {
+            string        strNewStyle;
+            if (g_LyricData.getLyrContentType() != LCT_TXT)
+                strNewStyle = m_strLyrDisplayStyleDefault;
+            else
+                strNewStyle = SZ_TXT_LYR_CONTAINER;
 
-        changeLyricsDisplayStyle(strNewStyle.c_str());
+            changeLyricsDisplayStyle(strNewStyle.c_str());
 
-        m_pContainer->recalculateUIObjSizePos(this);
+            m_pContainer->recalculateUIObjSizePos(this);
+        });
     }
 }
 

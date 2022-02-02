@@ -107,7 +107,7 @@ static void *AVSPPlayerRateContext = &AVSPPlayerRateContext;
         {
             CMTime pos = [mPlayer currentTime];
             CMTime length = [[mPlayer currentItem] duration];
-            if (pos.value * 1.f / pos.timescale + 0.5 >= length.value * 1.f / length.timescale)
+            if (pos.value * 1.f / pos.timescale + 1 >= length.value * 1.f / length.timescale)
             {
                 // + 0.5 是因为结束时，pos 比 length 小.
                 if (mMDAVPlayer->getMPlayer())

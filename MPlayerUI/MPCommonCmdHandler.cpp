@@ -22,12 +22,7 @@
 #endif
 
 #include "MPHelper.h"
-
-#ifdef _WIN32_DESKTOP
-#include "win32/MPFloatingLyrWnd.h"
-#else
 #include "MPFloatingLyrWnd.h"
-#endif
 
 bool        g_bInModalDlLrcSelDlg;
 
@@ -215,10 +210,6 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID)
         }
         break;
 //     case CMD_MINIMIZE:
-// #if !defined(_MPLAYER) && defined(_WIN32_DESKTOP)
-//         if (::getParent(CMPlayerAppBase::getMainWnd()->getHandle()))
-//             break;
-// #endif
 //         CMPlayerAppBase::getMPSkinFactory()->minizeAll();
 //         break;
     case CMD_APPLY_ACCOUNT:
@@ -766,11 +757,9 @@ bool CMPCommonCmdHandler::getChecked(uint32_t nID, bool &bChecked)
     case IDC_LDO_KARAOKE:
         bChecked = g_profile.getBool(m_strSectName.c_str(), "Karaoke", false);
         break;
-#if defined(_WIN32_DESKTOP)
     case IDC_FLOATING_LYRICS:
         bChecked = g_wndFloatingLyr.isValid();
         break;
-#endif
     default:
         return false;
     }

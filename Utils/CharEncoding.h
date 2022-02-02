@@ -99,7 +99,7 @@ bool isAnsiStr(const char *szStr);
 
 int mbcsToUtf8(const char *str, int nLen, string &strOut, int encodingID = ED_SYSDEF);
 int ucs2ToUtf8(const WCHAR *str, int nLen, string &strOut);
-int utf8ToUCS2(const char *str, int nLen, wstring &strOut);
+int utf8ToUCS2(const char *str, int nLen, u16string &strOut);
 int utf8ToMbcs(const char *str, int nLen, string &strOut, int encodingID = ED_SYSDEF);
 
 // Big Endian to Little Endian, or vice versa

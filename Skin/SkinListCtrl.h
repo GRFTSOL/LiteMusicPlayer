@@ -121,7 +121,7 @@ public:
     virtual CRawImage *getCellImage(int row, int col);
 
 protected:
-    Item *newItem(int nCol);
+    virtual Item *newItem(int nCol);
 
 protected:
     typedef vector<Row *>                V_ROWS;

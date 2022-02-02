@@ -108,6 +108,15 @@ size_t strncpy_safe(char *strDestination, size_t nLenMax, const char *strSource,
     return org - nToCopy;
 }
 
+size_t wcslen(const WCHAR *str) {
+    auto p = str;
+    while (*p) {
+        p++;
+    }
+
+    return size_t(p - str);
+}
+
 void strrep(string &str, const char *szSrc, const char *szDest)
 {
     size_t        nPos;

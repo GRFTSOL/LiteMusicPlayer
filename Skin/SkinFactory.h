@@ -65,6 +65,8 @@ enum UIObjectId
     CMD_OK,
     CMD_CANCEL,
 
+    CMD_EXEC_FUNCTION,
+    
     CMD_BASE_END,
     CMD_ID_CUSTOM_BASE = 1000,        // system alloc id begins from here
 

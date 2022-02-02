@@ -42,11 +42,7 @@
 
 #include "MPSkinMenu.h"
 
-#ifdef _WIN32_DESKTOP
-#include "win32/MPFloatingLyrWnd.h"
-#else
 #include "MPFloatingLyrWnd.h"
-#endif
 
 
 CMPSkinFactory::CMPSkinFactory(CSkinApp *pApp, UIObjectIDDefinition uidDefinition[])

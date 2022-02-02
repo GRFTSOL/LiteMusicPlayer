@@ -110,7 +110,7 @@ string convertLyricsToUtf8(uint8_t *text, size_t len, bool useSpecifiedEncoding,
     //
     string txtUtf8;
     if (encoding == ED_UNICODE || encoding == ED_UNICODE_BIG_ENDIAN) {
-        wstring    wstrBE;
+        u16string    wstrBE;
         len /= sizeof(WCHAR);
 
         if (encoding == ED_UNICODE_BIG_ENDIAN) {

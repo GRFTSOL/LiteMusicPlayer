@@ -1935,6 +1935,9 @@ bool CSkinWnd::onCustomCommand(int nId)
             onContexMenu(pt.x, pt.y);
         }
         break;
+    case CMD_EXEC_FUNCTION:
+        onExecOnMainThread();
+        break;
     default:
         return false;
     }
@@ -1953,6 +1956,21 @@ void CSkinWnd::postCustomCommandMsg(int nId)
     onCustomCommand(nId);
 #endif // #ifdef _MAC_OS
 #endif // #ifdef _WIN32
+}
+
+void CSkinWnd::postExecOnMainThread(const std::function<void()> &f) {
+    RMutexAutolock lock(m_mutex);
+    m_functionsToExecOnMainThread.push_back(f);
+    postCustomCommandMsg(CMD_EXEC_FUNCTION);
+}
+
+void CSkinWnd::onExecOnMainThread() {
+    while (!m_functionsToExecOnMainThread.empty()) {
+        RMutexAutolock lock(m_mutex);
+        auto &f = m_functionsToExecOnMainThread.front();
+        m_functionsToExecOnMainThread.pop_front();
+        f();
+    }
 }
 
 void CSkinWnd::postShortcutKeyCmd(int nId)

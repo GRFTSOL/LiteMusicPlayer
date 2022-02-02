@@ -30,9 +30,6 @@
 
 #include "resource.h"
 
-#ifdef _WIN32_DESKTOP
-#endif
-
 #ifdef _MPLAYER
 #define SZ_APP_NAME            "ZikiPlayer"
 #define SZ_COMPANY_NAME        ""

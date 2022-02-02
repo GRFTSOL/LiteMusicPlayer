@@ -235,6 +235,8 @@ public:
     virtual void postCustomCommandMsg(int nId);
     virtual void postShortcutKeyCmd(int nId);
 
+    virtual void postExecOnMainThread(const std::function<void()> &f);
+
     virtual void onUserMessage(int nMessageID, LPARAM param);
 
     virtual void onUIObjNotify(IUIObjNotify *pNotify) { }
@@ -363,6 +365,8 @@ protected:
 
     void processMouseMove(CPoint point);
 
+    void onExecOnMainThread();
+    
     friend class CSkinContainer;
     friend class CUIObject;
     friend class CSjvmSkinWnd;
@@ -449,9 +453,7 @@ protected:
     bool            m_bWindowsAppearance;
     bool            m_bAeroGlass;
 
-     // skin region
-    CRect            m_rcBoundBox;    // 当使用region时，它是区域m_rgnWnd的边框
-                                    // 当不使用region，它是skin的矩形。
+    CRect            m_rcBoundBox;  // skin的矩形
 
     CSkinFontProperty    m_fontProperty;    // Default font property.
 
@@ -505,6 +507,12 @@ protected:
 
     // exchange Pool is used to exchange data between pages.
     MapStrings                m_mapExchangePool;
+
+    //
+    // 将在主线程待执行的函数列表
+    //
+    std::recursive_mutex                m_mutex;
+    std::list<std::function<void()>>    m_functionsToExecOnMainThread;
 
     //
     // Skin script message delivery

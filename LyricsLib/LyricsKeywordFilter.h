@@ -20,7 +20,7 @@ public:
     static void init(cstr_t dataDir = nullptr);
 
     static void filter(const char *szTarg, string &strOut);
-    static void filter(cwstr_t szTarg, wstring &strOut);
+    static void filter(cwstr_t szTarg, u16string &strOut);
 
 #define WORD_MAX        0xFFFF
 

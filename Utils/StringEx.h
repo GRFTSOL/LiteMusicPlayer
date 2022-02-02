@@ -21,6 +21,8 @@ size_t strlen_safe(const char * str, size_t maxLength);
 char *strcpy_safe(char *strDestination, size_t nLenMax, const char *strSource);
 size_t strncpy_safe(char *strDestination, size_t nLenMax, const char *strSource, size_t nToCopy);
 
+size_t wcslen(const WCHAR *str);
+
 char *strrep(char * str, char chSrc, char chDest);
 void strrep(string &str, char chSrc, char chDest);
 void strrep(string &str, const char *szSrc, const char *szDest);

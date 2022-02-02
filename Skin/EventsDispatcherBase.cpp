@@ -145,7 +145,7 @@ void CEventsDispatcherBase::dispatchSyncEvent(IEvent *pEvent)
         delete pEvent;
         return;
     }
-
+    
     m_mutex.lock();
     LIST_EVENTHANDLER listHandler = m_vListEventHandler[eventType];
     m_mutex.unlock();

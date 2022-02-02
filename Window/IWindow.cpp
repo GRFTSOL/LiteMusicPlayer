@@ -28,7 +28,7 @@ void IWindow::onCreate() {
 }
 
 void IWindow::onResized(int width, int height) {
-    if (m_wndSize.cx == width && m_wndSize.cy == height) {
+    if (m_wndSize.cx == width && m_wndSize.cy == height && m_pmemGraph) {
         return;
     }
     m_wndSize.cx = width;

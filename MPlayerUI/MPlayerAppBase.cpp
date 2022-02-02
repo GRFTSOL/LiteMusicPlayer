@@ -27,14 +27,7 @@
 #include "win32/DlgSaveLyrPrompt.h"
 #endif
 
-#ifdef _WIN32_DESKTOP
-#include "win32/MPFloatingLyrWnd.h"
-#ifndef _MPLAYER
-#include "../MiniLyrics/win32/MLPlayerMgr.h"
-#endif
-#else
 #include "MPFloatingLyrWnd.h"
-#endif
 
 #ifdef _MAC_OS
 #include "mac/DlgSaveLyrPrompt.h"
@@ -65,21 +58,6 @@ string getAppNameLong()
 {
     return string(SZ_APP_NAME) + " " + VERSION_STR;
 }
-
-#ifdef _WIN32_DESKTOP
-cstr_t getRegnowBuyLink()
-{
-    static    char szBuyNowLink[MAX_PATH] = "";
-
-    if (g_profile.getInt("UseAffiliate", true))
-    {
-        regGetProfileString(HKEY_LOCAL_MACHINE,
-            "SOFTWARE\\Digital River\\SoftwarePassport\\Crintsoft\\MiniLyrics\\0", "BuyURL", "", szBuyNowLink, CountOf(szBuyNowLink));
-    }
-
-    return szBuyNowLink;
-}
-#endif
 
 int isRNLEdition()
 {
@@ -113,17 +91,6 @@ cstr_t getStrName(STR_NAME nameId)
     switch (nameId)
     {
     case SN_HTTP_DOMAIN:    return "http://www.zikiplayer.com";
-#ifdef _WIN32_DESKTOP
-    case SN_HTTP_REGISTER:
-        {
-            cstr_t        szLink;
-            szLink = getRegnowBuyLink();
-            if (isEmptyString(szLink))
-                return "http://www.zikiplayer.com/buy.htm";
-            else
-                return szLink;
-        }
-#endif
     case SN_HTTP_DLSKIN:    return "http://www.zikiplayer.com/skins.htm";
     case SN_HTTP_FAQ_INET:    return "http://www.zikiplayer.com/mlfaq-ineterror.htm";
     case SN_HTTP_BBS:        return "http://forum.zikiplayer.com";
@@ -444,31 +411,6 @@ void CMPlayerAppBase::onMediaChanged(bool bAutoDownloadIfNotExist)
         g_LyricData.addTextInLyrics(vMediaInfo);
 
         dispatchLyricsChangedSyncEvent();
-
-#if !defined(_MPLAYER) && defined(_WIN32_DESKTOP)
-        // 隐藏歌词显示窗口
-        if (g_profile.getBool(SZ_SECT_UI, "AutoHideIfNoLyrics", false))
-        {
-            HWND    hWnd = GetForegroundWindow();
-            if (!hWnd || GetWindowThreadProcessId(hWnd, nullptr) != GetWindowThreadProcessId(getMainWnd()->getHandle(), nullptr)
-                && !::getParent(getMainWnd()->getHandle()))
-            {
-                CMPlayerAppBase::getMPSkinFactory()->minizeAll(true);
-                g_bAutoMinimized = true;
-            }
-        }
-
-        //
-        // 播放MOVIE的时候隐藏窗口
-        //
-        if (g_profile.getBool(SZ_SECT_UI, "AutoHideOnPlayMovie", true)
-            && g_Player.hasVideo() && !::getParent(getMainWnd()->getHandle()))
-        {
-            CMPlayerAppBase::getMPSkinFactory()->minizeAll(true);
-            g_bAutoMinimized = true;
-            return;
-        }
-#endif
     }
 
     if (bAutoDownloadIfNotExist && !bAssociateNone)
@@ -481,10 +423,8 @@ void CMPlayerAppBase::onLanguageChanged()
 
     m_pSkinFactory->onLanguageChanged();
 
-#ifdef _WIN32_DESKTOP
     if (g_wndFloatingLyr.isValid())
         g_wndFloatingLyr.onLanguageChanged();
-#endif
 }
 
 void CMPlayerAppBase::onOnlineSearchEnd()
