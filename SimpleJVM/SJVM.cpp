@@ -694,6 +694,8 @@ void CSJVM::reset()
     // reset jobject manager
     m_jobjMgr.reset();
 
+    m_varDeclStack.reset();
+
     // reset statement image
 }
 

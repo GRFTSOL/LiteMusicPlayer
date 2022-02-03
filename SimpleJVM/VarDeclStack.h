@@ -43,6 +43,8 @@ public:
     CVarDeclStack();
     virtual ~CVarDeclStack();
 
+    void reset();
+    
     // travel in block
     void enterClass(CClass *pClass);
     void enterMethod(CMemberMethod *pMethod);

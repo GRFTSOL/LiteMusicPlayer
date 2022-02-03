@@ -17,6 +17,10 @@ CVarDeclStack::~CVarDeclStack()
     }
 }
 
+void CVarDeclStack::reset() {
+    m_mapStaticVars.clear();
+}
+
 void CVarDeclStack::enterClass(CClass *pClass)
 {
     assert(m_stmtBlockStack.size() == 0);
