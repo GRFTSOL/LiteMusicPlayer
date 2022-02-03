@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skinwnd Extends="WindowFrame" Name="OpenLyrics.xml" Caption="Search lyrics"
+         MinWidth="520" MinHeight="300" Width="600" Height="400" RememberSizePos="true"
+         Animate="fade" AnimateDuration="300" DefaultPage="Container.SearchLyr">
+  <Container.SearchLyr Visible="false" ID="CID_C_OPEN" Name="Search lyrics" Rect="0,0,w,h">
+    <NormalText ID="CID_S_AR" Text="Artist:" Rect="10,25,60,"/>
+    <NormalEdit ID="CID_E_ARTIST" Rect="70,22,w-70-20-80-20,"/>
+    <NormalText ID="CID_S_TI" Text="Title:" Rect="10,55,60,"/>
+    <NormalEdit ID="CID_E_TITLE" Rect="70,52,w-70-20-80-20,"/>
+    <NormalTextBt ID="CID_GOOGLE" Rect="w-90-10,20,30," ResizeToContent="true"
+            ImageContent="google.png"/>
+    <NormalTextBt ID="CID_SEARCH" Text="&amp;Search" Rect="w-90-10,50,90,"/>
+
+    <NormalListCtrl ID="CID_L_LYRICS" Rect="10,85,w-20,h-85-45" DrawHeader="true"
+         EnableSort="true" DrawBorder="true" ImageList="LyrFileType.png"/>
+
+    <NormalTextBt ID="CID_PREV_PAGE" Visible="false" Text="&lt;&lt; Prev Page" Rect="w-230,h-30-15-20,100,"/>
+    <NormalTextBt ID="CID_NEXT_PAGE" Visible="false" Text="Next Page &gt;&gt;" Rect="w-110,h-30-15-20,100,"/>
+
+    <NormalTextBt ID="CID_OPEN" Text="&amp;Open" Rect="w/2-120,h-10-20,100,"/>
+    <NormalTextBt ID="CID_MORE" Text="&amp;More &gt;&gt;" Rect="w/2+20,h-10-20,100,"/>
+    <NormalTextBt ID="ID_CANCEL" Text="Cancel" Rect="w-110,h-10-20,100,"/>
+  </Container.SearchLyr>
+  <Container.RenameLyr ID="CID_C_RENAME" Visible="false" Name="Rename lyrics file" Rect="0,0,w,h" visible="false">
+    <NormalText ID="CID_S_FILENAME" Text="File Name:" Rect="30,h/2-20-20,120,"/>
+    <NormalEdit ID="CID_E_FILENAME" Rect="150,h/2-20-20,w-20-150,"/>
+    <NormalTextBt ID="ID_OK" Text="OK" Rect="w/2-100-20,h/2+15,100,"/>
+    <NormalTextBt ID="ID_CANCEL" Text="Cancel" Rect="w/2+20,h/2+15,100,"/>
+  </Container.RenameLyr>
+  <include Name="Waiting.xml"/>
+</skinwnd>

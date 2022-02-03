@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<skin defmainwnd="ZikiPlayer" mainwnds="ZikiPlayer" ExtraResouceFolder="DHPlayer/">
+	<include Name="Styles.xml"/>
+  <Menus>
+    <Menu Name="NormalMode" From="MainMenu" >
+      <Item Action="Append" Type="item" Name="Lyrics &amp;Bar..." IDCmd="dyncmd_openclose_lyrics_bar" CanCheck="true" IsCheckedCmd="dyncmd_is_lyrics_bar_visible" />
+      <Item Action="Append" Type="item" Name="Ly&amp;rics Editor..." IDCmd="dyncmd_openclose_lyr_editor" CanCheck="true" IsCheckedCmd="dyncmd_is_lyr_editor_visible" />
+      <Item Action="Append" Type="item" Name="&amp;Album Art" IDCmd="dyncmd_openclose_albumart_bar" CanCheck="true" IsCheckedCmd="dyncmd_is_albumart_bar_visible" />
+    </Menu>
+    <Menu Name="MenuBar">
+      <Item Action="Append" Type="popup" Name="&amp;File">
+        <Item Action="Append" Type="item" Name="&amp;Open files..." ID="CMD_OPEN"/>
+        <Item Action="Append" Type="item" Name="&amp;Open folder..." ID="CMD_OPEN_FOLDER"/>
+      </Item>
+
+      <Item Action="Append" Type="popup" Name="&amp;Edit">
+      </Item>
+
+      <Item Action="Append" Type="popup" Name="&amp;View">
+      </Item>
+
+      <Item Action="Append" Type="popup" Name="&amp;Tool">
+      </Item>
+
+      <Item Action="Append" Type="popup" Name="&amp;Help">
+      </Item>
+    </Menu>
+  </Menus>
+  <DynCmds>
+    <cmd ID="dyncmd_show_lyrics" func="show_hide_ctrl" param="CID_LYRICS,CID_PLAYLIST"/>
+    <cmd ID="dyncmd_show_playlist" func="show_hide_ctrl" param="CID_PLAYLIST,CID_LYRICS"/>
+    <cmd ID="dyncmd_openclose_lyrics_bar" func="openclose_skin_wnd" param="lyrbar" />
+    <cmd ID="dyncmd_openclose_lyr_editor" func="openclose_skin_wnd" param="lyreditor" />
+    <cmd ID="dyncmd_is_lyrics_bar_visible" func="is_skin_wnd_visible" param="lyrbar" />
+    <cmd ID="dyncmd_is_lyr_editor_visible" func="is_skin_wnd_visible" param="lyreditor" />
+    <cmd ID="dyncmd_openclose_albumart_bar" func="openclose_framebar_bar" param="CCMD_MAINFRAME,CCMD_ALBUMART" />
+    <cmd ID="dyncmd_is_albumart_bar_visible" func="is_framebar_bar_visible" param="CCMD_MAINFRAME,CCMD_ALBUMART" />
+  </DynCmds>
+  <DynControls>
+    <VScrollBar TranslucencyWithSkin="TRUE" width="14" PushBtHeight="14" ThumbHeight="28" TrackHeight="28" ScrollBarWidth="14" Image="vscrollbar.bmp" ScalableThumb="TRUE" />
+    <HScrollBar TranslucencyWithSkin="TRUE" height="14" PushBtWidth="14" ThumbWidth="28" TrackWidth="28" ScrollBarHeight="14" Image="hscrollbar.bmp" ScalableThumb="TRUE" />
+    <ListCtrl BkColor="#4F586E" SelBkColor="#D9D9D9" NowPlayBkColor="#5478CA" TextColor="#FFFFFF" SelTextColor="#4F586E" NowPlayTextColor="#FFFFFF" FontHeight="13"/>
+    <Toolbar Name="normal" image="toolbar-small.bmp" enablehover="TRUE" height="18" units_x="18" blank_x="216" blank_cx="18" seperator_x="216" seperator_cx="10">
+      <button ID="ID_SEARCH_LYRICS" left="8"/>
+      <button ID="ID_BACKWARD_LYRICS" left="9"/>
+      <button ID="ID_FORWARD_LYRICS" left="10"/>
+      <button ID="ID_MENU" left="11"/>
+      <seperator/>
+      <button ID="ID_PLAY" left="0"/>
+      <button ID="ID_PAUSE" left="1"/>
+      <button ID="ID_STOP" left="2"/>
+      <button ID="ID_PREVIOUS" left="3"/>
+      <button ID="ID_NEXT" left="4"/>
+      <button ID="ID_HELP" left="7"/>
+    </Toolbar>
+  </DynControls>
+  <skinwnd Name="ZikiPlayer" EnableTranslucency="true" TranslucencyAlpha="0" TranslucencyAlphaOnHover="150" TranslucencyAlphaOnActive="230" MinWidth="330" MinHeight="200" Width="460" Height="210" PaintBg="TRUE" BgColor="#576C91" FgColor="#282828" FontName="Tahoma" FontHeight="20" FontBold="FALSE" TextOutlined="FALSE" TextOutlinedColor="#000000" TextColor="#FFFFFF" ContextMenu="NormalMode" CmdHandler="ch_common,ch_playlist,ch_mediaguide">
+    <DecorativeContainer Name="Caption" Left="0" Top="0" Width="w" Height="33">
+      <CaptionImage Left="0" Top="0" Width="w" Height="24" Name="Caption" EnableDblClick="TRUE" Image="frame.png" ImageRect="0,0,325,24" CutPos="100,120,180,200" BlendPixMode="copy"/>
+      <Button left="5" top="4" width="17" height="17" ID="ID_MENU" Name="Menu" Image="cap-bt.png" ImageRect="68,0,17,17" ImageSel="cap-bt.png" ImageSelRect="68,34,17,17" ImageFocus="cap-bt.png" ImageFocusRect="68,17,17,17" BlendPixMode="alpha_blend"/>
+      <Text Left="22" Top="4" Width="70" Height="18" FontHeight="16" FontBold="false" TextColor="#202020" LeftMargin="0" Text="ZikiPlayer" />
+      <Button left="w-80" top="5" width="17" height="17" ID="ID_MINIMIZE" Name="Minimize" Image="cap-bt.png" ImageRect="0,0,17,17" ImageSel="cap-bt.png" ImageSelRect="0,34,17,17" ImageFocus="cap-bt.png" ImageFocusRect="0,17,17,17" BlendPixMode="alpha_blend"/>
+      <Button left="w-55" top="5" width="17" height="17" ID="ID_MAXIMIZE" Name="maximize" CurStatus="0" S0_Image="cap-bt.png" S0_ImageRect="17,0,17,17" S0_ImageSel="cap-bt.png" S0_ImageSelRect="17,34,17,17" S0_ImageFocus="cap-bt.png" S0_ImageFocusRect="17,17,17,17" BlendPixMode="alpha_blend"/>
+      <Button left="w-30" top="5" width="17" height="17" ID="ID_CLOSE" Name="Close" Image="cap-bt.png" ImageRect="51,0,17,17" ImageSel="cap-bt.png" ImageSelRect="51,34,17,17" ImageFocus="cap-bt.png" ImageFocusRect="51,17,17,17" BlendPixMode="alpha_blend"/>
+      <MenuBar left="100" top="4" width="w-100-90" height="16" Name="Menu" Menu="MainWndMenu" FontHeight="16" FontBold="false" TextColor="#202020" TextOutlinedColor="#FFFFFF" TextOutlined="FALSE" TextColorHover="#202020" TextOutlinedColorHover="#FFFFFF" TextColorPressed="#FFFFFF" TextOutlinedColorPressed="#000000" BgColorPressed="#D0D0D0" BgPressedAlpha="127"/>
+    </DecorativeContainer>
+
+    <DecorativeContainer Name="RightPanel" Left="145" Top="h-43" Width="w-145" Height="43">
+      <HStretchImage Name="RightPanelBg" Left="0" Top="0" Width="w" Height="43" BlendPixMode="copy" Image="frame.png" ImageRect="145,59,180,43" StretchStartX="155" StretchEndX="268" />
+      <Button left="4" top="5" width="20" height="20" ID="ID_MUTE" Name="Mute" BlendPixMode="alpha_blend" CurStatus="0"
+              S0_Image="buttons.png" S0_ImageRect="140,0,20,20" S0_ImageSel="buttons.png" S0_ImageSelRect="140,40,20,20" S0_ImageFocus="buttons.png" S0_ImageFocusRect="140,20,20,20"
+              S1_Image="buttons.png" S1_ImageRect="160,0,20,20" S1_ImageSel="buttons.png" S1_ImageSelRect="160,40,20,20" S1_ImageFocus="buttons.png" S1_ImageFocusRect="160,20,20,20"/>
+      <Image left="26+35" top="11-5" width="6" height="10" Name="bar jiont" image="bar-jiont.png" ImageRect="0,0,6,10" BltMode="copy" BlendPixMode="alpha_blend"/>
+      <SeekCtrl Name="Volume" ID="ID_VOLUME" Left="26" Top="12" Width="38" Height="7" EndWidth="2" ThumbWidth="3" TrackWidthLeft="5" TrackWidthRight="24" SeekCtrlHeight="7" Image="progress-bar.png" BlendPixMode="alpha_blend"/>
+      <SeekCtrl Name="Seek" ID="ID_SEEK" Left="26+35+3" Top="11-8" Width="w-(26+35+3)-6-10" Height="7" EndWidth="2" ThumbWidth="3" TrackWidthLeft="5" TrackWidthRight="24" SeekCtrlHeight="7" Image="progress-bar.png" BlendPixMode="alpha_blend"/>
+      <MediaInfoText Name="Title" Left="75" Top="10" Width="w-75-120" Height="16" FontHeight="14" TextColor="#000000" FontBold="FALSE" TextOutlined="FALSE" LeftMargin="0" Text="" MediaInfoType="Title" ShowTitle="false" PaintBg="false"/>
+      <PlayingTimeText Name="PlayingTime" Left="w-100" Top="10" Width="80" Height="16" FontHeight="14" TextColor="#000000" FontBold="FALSE" TextOutlined="FALSE" LeftMargin="0" Text="" PaintBg="false"/>
+    </DecorativeContainer>
+
+    <DecorativeContainer Name="Body" Left="0" Top="24" Width="w-8" Height="h-24">
+      <Container Name="Lyrics" ID="CID_LYRICS" left="0" top="0" width="w" height="h-43" ContextMenu="LyricsMenu">
+        <LyricsShow ID="ID_LYRICS_SHOW" left="0" top="0" width="w" height="h" EnableToolbar="FALSE" BgColor="#D3D3D3" FgColor="#000000" FgLowColor="#3F3F3F" FocusLineBgColor="#8A94AA" TagColor="#FFFFFF" HilightAutoGradient="#000000" HilightBorderColor="#292F34" LowlightAutoGradient="#3B3B3B" LowlightBorderColor="#8A94AA" OutlineLyrText="TRUE" EnableAutoResize="FALSE" />
+      </Container>
+      <Container Name="Playlist" ID="CID_PLAYLIST" left="0" top="0" width="w" height="h-43" Visible="false" ContextMenu="PlaylistMenu">
+        <ListCtrl Name="Playlist" ID="ID_PLAYLIST" Left="0" Top="0" Width="w" Height="h" UseSkinBgClr="TRUE" TranslucencyWithSkin="TRUE" BgColor="#4F586E" SelBgColor="#D9D9D9" NowPlayBkColor="#5478CA" TextColor="#FFFFFF" SelTextColor="#4F586E" NowPlayTextColor="#FFFFFF" FontHeight="13" ImageList="" />
+      </Container>
+      <Image left="0" top="h-16" width="145" height="16" Name="left bottom shadow" image="frame.png" ImageRect="0,86,145,16" BltMode="copy" BlendPixMode="copy"/>
+      <Image left="0" top="h-78" width="145" height="67" Name="OverlayArea" image="frame.png" ImageRect="0,24,145,67" BltMode="copy" BlendPixMode="alpha_blend"/>
+      <Button left="8" top="h-78+40" width="20" height="20" ID="ID_SHUFFLE" Name="shuffle" BlendPixMode="alpha_blend" CurStatus="0"
+              S0_Image="buttons.png" S0_ImageRect="40,0,20,20" S0_ImageSel="buttons.png" S0_ImageSelRect="40,40,20,20" S0_ImageFocus="buttons.png" S0_ImageFocusRect="40,20,20,20"
+              S1_Image="buttons.png" S1_ImageRect="60,0,20,20" S1_ImageSel="buttons.png" S1_ImageSelRect="60,40,20,20" S1_ImageFocus="buttons.png" S1_ImageFocusRect="60,20,20,20" 
+              S2_Image="buttons.png" S2_ImageRect="80,0,20,20" S2_ImageSel="buttons.png" S2_ImageSelRect="80,40,20,20" S2_ImageFocus="buttons.png" S2_ImageFocusRect="80,20,20,20"/>
+      <Button left="33" top="h-78+40" width="20" height="20" ID="ID_LOOP" Name="loop" BlendPixMode="alpha_blend" CurStatus="0"
+              S0_Image="buttons.png" S0_ImageRect="100,0,20,20" S0_ImageSel="buttons.png" S0_ImageSelRect="100,40,20,20" S0_ImageFocus="buttons.png" S0_ImageFocusRect="100,20,20,20"
+              S1_Image="buttons.png" S1_ImageRect="120,0,20,20" S1_ImageSel="buttons.png" S1_ImageSelRect="120,40,20,20" S1_ImageFocus="buttons.png" S1_ImageFocusRect="120,20,20,20"/>
+      <Button left="33" top="h-78+11" width="20" height="20" ID="ID_PREVIOUS" Name="previous" Image="buttons.png" ImageRect="0,0,20,20" ImageSel="buttons.png" ImageSelRect="0,40,20,20" ImageFocus="buttons.png" ImageFocusRect="0,20,20,20" BlendPixMode="alpha_blend"/>
+      <Button left="121" top="h-78+39" width="20" height="20" ID="ID_NEXT" Name="Next" Image="buttons.png" ImageRect="20,0,20,20" ImageSel="buttons.png" ImageSelRect="20,40,20,20" ImageFocus="buttons.png" ImageFocusRect="20,20,20,20" BlendPixMode="alpha_blend"/>
+      <Button left="61" top="h-78+9" width="52" height="52" ID="ID_PLAYPAUSE" Name="PlayPause" BlendPixMode="alpha_blend" CurStatus="0"
+              S0_Image="pp.png" S0_ImageRect="0,0,52,52" S0_ImageSel="pp.png" S0_ImageSelRect="0,104,52,52" S0_ImageFocus="pp.png" S0_ImageFocusRect="0,52,52,52"
+              S1_Image="pp.png" S1_ImageRect="52,0,52,52" S1_ImageSel="pp.png" S1_ImageSelRect="52,104,52,52" S1_ImageFocus="pp.png" S1_ImageFocusRect="52,52,52,52"/>
+      <Button left="w-48" top="h-20-43" width="48" height="20" Name="Lyr Pl switch" BlendPixMode="alpha_blend" CurStatus="0"
+              S0_IDCmd="dyncmd_show_lyrics" S0_Image="pl-bt.png" S0_ImageRect="0,0,48,20" S0_ImageSel="pl-bt.png" S0_ImageSelRect="0,40,48,20" S0_ImageFocus="pl-bt.png" S0_ImageFocusRect="0,20,48,20"
+              S1_IDCmd="dyncmd_show_playlist" S1_Image="pl-bt.png" S1_ImageRect="48,0,48,20" S1_ImageSel="pl-bt.png" S1_ImageSelRect="48,40,48,20" S1_ImageFocus="pl-bt.png" S1_ImageFocusRect="48,20,48,20"/>
+    </DecorativeContainer>
+
+    <Image left="w-8" top="24" width="8" height="h-24-43" Name="right shadow" image="frame.png" ImageRect="317,24,8,35" BltMode="tile" BlendPixMode="copy"/>
+    <WndResizer Left="w-13" Top="0" Width="8" Height="h-22" Direction="right" Name="Right"/>
+    <WndResizer Left="0" Top="h-13" Width="w-22" Height="8" Direction="bottom" Name="Bottom"/>
+    <WndResizer Left="w-22" Top="h-22" Width="14" Height="14" Direction="bottom|right" Name="Right bottom"/>
+
+</skinwnd>
+  <skinwnd Name="lyreditor" region="Modern.tr2" MinWidth="275" MinHeight="250" EnableResize="TRUE" Width="640" Height="450" BgColor="#4F586E" ContextMenu="NormalMode" CmdHandler="ch_common,ch_player">
+    <CaptionImage left="0" top="0" width="w" height="23" Name="Caption" EnableDblClick="true" image="caption.bmp" ImageRect="0,24,275,23" imageFocus="caption.bmp" imageFocusRect="0,0,275,23" CutPos="25,97,177,225"/>
+    <ActiveButton left="6" top="4" width="11" height="10" ID="ID_MENU" Name="Menu" image="buttons.bmp" ImageRect="0,0,11,10" imageSel="buttons.bmp" ImageSelRect="0,20,11,10" imageFocus="buttons.bmp" ImageFocusRect="0,10,11,10"/>
+    <ActiveButton left="w-41" top="4" width="11" height="10" ID="ID_MINIMIZE" Name="Minimize" image="buttons.bmp" ImageRect="11,0,11,10" imageSel="buttons.bmp" ImageSelRect="11,20,11,10" imageFocus="buttons.bmp" ImageFocusRect="11,10,11,10"/>
+    <ActiveButton left="w-41+12" top="4" width="11" height="10" ID="ID_MAXIMIZE" Name="maximize" image="buttons.bmp" ImageRect="44,0,11,10" imageSel="buttons.bmp" ImageSelRect="44,20,11,10" imageFocus="buttons.bmp" ImageFocusRect="44,10,11,10" S1_image="buttons.bmp" S1_ImageRect="55,0,11,10" S1_imageSel="buttons.bmp" S1_ImageSelRect="55,20,11,10" S1_imageFocus="buttons.bmp" S1_ImageFocusRect="55,10,11,10"/>
+    <ActiveButton left="w-41+24" top="4" width="11" height="10" ID="ID_CLOSE" Name="close" image="buttons.bmp" ImageRect="33,0,11,10" imageSel="buttons.bmp" ImageSelRect="33,20,11,10" imageFocus="buttons.bmp" ImageFocusRect="33,10,11,10"/>
+    <Toolbar ID="ID_TOOLBAR" Left="6" Top="23" Width="w-12" Height="26" image="lyr-tb.bmp" enablehover="TRUE" units_x="22" blank_x="858" blank_cx="22" seperator_x="858" seperator_cx="10" MarginX="5" MarginY="3">
+      <button ID="ID_SEARCH_LYRICS" left="20" />
+      <button ID="ID_NEW_LRC" left="0" />
+      <button ID="ID_OPEN_LRC" left="1" />
+      <button ID="ID_SAVE_LRC" left="2" />
+      <button ID="ID_SAVE_LRC_AS" left="3" />
+      <seperator>
+      </seperator>
+      <button ID="ID_PLAY" left="4" />
+      <button ID="ID_PAUSE" left="5" />
+      <button ID="ID_BACKWARD" left="9" />
+      <button ID="ID_FORWARD" left="10" />
+      <button ID="ID_JUMP" left="11" />
+      <seperator>
+      </seperator>
+      <button ID="ID_INSERTTAG_DOWN" left="12" width="2" />
+      <button ID="ID_INSERTTAG" left="14" />
+      <button ID="ID_DEL_TAG" left="15" />
+      <seperator>
+      </seperator>
+      <button ID="ID_EDIT_CUT" left="26" disabled_left="35" />
+      <button ID="ID_EDIT_COPY" left="27" disabled_left="36" />
+      <button ID="ID_EDIT_PASTE" left="28" />
+      <seperator>
+      </seperator>
+      <button ID="ID_EDIT_UNDO" left="29" disabled_left="37" />
+      <button ID="ID_EDIT_REDO" left="30" disabled_left="38" />
+      <seperator>
+      </seperator>
+      <button ID="ID_EDIT_FIND" left="31" />
+      <button ID="ID_EDIT_REPLACE" left="32" />
+      <seperator>
+      </seperator>
+      <button ID="ID_BACKWARD_LYRICS" left="21" />
+      <button ID="ID_FORWARD_LYRICS" left="22" />
+      <button ID="ID_EDIT_TAG" left="25" />
+      <seperator>
+      </seperator>
+      <button ID="ID_EDIT_HELP" left="24" />
+    </Toolbar>
+    <LyricShowTextEdit Left="6" Top="26+23" Width="w-12" Height="(h-23-10-26)" BgColor="#183C7B" FgColor="#ECECEC" FgLowColor="#8297BD" FocusLineBgColor="#000000" TagColor="#FF8242" />
+	<VStretchImage left="0" top="23" width="6" height="h-23-10" Name="left frame" image="caption.bmp" ImageRect="276,0,6,54" imageScaleYStart="2" imageScaleYEnd="40"/>
+	<VStretchImage left="w-6" top="23" width="6" height="h-23-10" Name="right frame" image="caption.bmp" ImageRect="283,0,6,54" imageScaleYStart="2" imageScaleYEnd="40"/>
+	<HStretchImage left="0" top="h-10" width="w" height="10" Name="bottom frame" image="caption.bmp" ImageRect="0,48,275,10" imageScaleXStart="60" imageScaleXEnd="250"/>
+  </skinwnd>
+</skin>
+

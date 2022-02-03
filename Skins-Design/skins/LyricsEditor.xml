@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skinwnd Extends="MenuWindowFrame" Name="LyricsEditor.xml" Caption="Lyrics Editor" CmdHandler="ch_common"
+         MinWidth="640" MinHeight="300" Width="640" Height="400" ContextMenu="MainContextMenu" Menu="LyrEditorMenu"
+         IsDialog="false">
+	<Toolbar Rect="0,3,22*4+5,26" Image="lyr-tb.png"
+           enablehover="TRUE" units_x="22" blank_x="858" blank_cx="22"
+           seperator_x="858" seperator_cx="10" MarginX="5" MarginY="3">
+		<button ID="ID_INSERTTAG_DOWN" Left="12" Width="2" />
+		<button ID="ID_INSERTTAG" Left="14" />
+		<button ID="ID_TOGGLE_LYR_EDIT_TOOLBAR" Left="23"/>
+	</Toolbar>
+	<Container Name="Seekbar" ID="CID_TB_SEEK_BAR" Rect="22*4+5,3,w-(22*4+5),26" Visible="true">
+		<PlayingTimeText Name="PlayingTime" Rect="0,5,50,18" AlignText="AT_CENTER | AT_VCENTER"
+			FontName="Verdana" FontHeight="13" FontBold="TRUE" TextOutlined="TRUE" TextColor="#FFFFFF"
+			TextOutlinedColor="#000000" LeftMargin="0" Text=""/>
+		<SeekCtrl Name="Seek" ID="ID_SEEK"
+			Rect="50,8,w-60,12" EndWidth="3" ImageThumb="seek_thumb.png"
+			ImageTrack="seek_track.png"/>
+	</Container>
+	<Toolbar ID="ID_TB_LYR_EDIT" Rect="22*4+5,3,w-(22*4+5),26" 
+           Image="lyr-tb.png" enablehover="TRUE" units_x="22" blank_x="858" blank_cx="22"
+           seperator_x="858" seperator_cx="10" MarginX="5" MarginY="3" Visible="false">
+		<seperator/>
+		<button ID="ID_SEARCH_LYRICS" Left="20" />
+		<button ID="ID_NEW_LRC" Left="0" />
+		<button ID="ID_OPEN_LRC" Left="1" />
+		<button ID="ID_SAVE_LRC" Left="2" />
+		<button ID="ID_SAVE_LRC_AS" Left="3" />
+		<seperator/>
+		<button ID="ID_PLAY" Left="4" />
+		<button ID="ID_PAUSE" Left="5" />
+		<button ID="ID_BACKWARD" Left="9" />
+		<button ID="ID_FORWARD" Left="10" />
+		<button ID="ID_JUMP" Left="11" />
+		<seperator/>
+		<button ID="ID_EDIT_CUT" Left="26" disabled_Left="35" />
+		<button ID="ID_EDIT_COPY" Left="27" disabled_Left="36" />
+		<button ID="ID_EDIT_PASTE" Left="28" />
+		<seperator/>
+		<button ID="ID_EDIT_UNDO" Left="29" disabled_Left="37" />
+		<button ID="ID_EDIT_REDO" Left="30" disabled_Left="38" />
+		<seperator/>
+		<button ID="ID_EDIT_FIND" Left="31" />
+		<button ID="ID_EDIT_REPLACE" Left="32" />
+		<seperator/>
+		<button ID="ID_BACKWARD_LYRICS" Left="21" />
+		<button ID="ID_FORWARD_LYRICS" Left="22" />
+		<seperator/>
+		<button ID="ID_EDIT_HELP" Left="24" />
+	</Toolbar>
+	<LinearContainer Name="EditorFrame" ID="CID_EDITOR_FRAME" Rect="5,26+5,w-10,h-26-10" Orientation="Vertical">
+		<Container Name="Find" ID="CID_C_FIND" Height="35" LayoutParams="match_parent_width" Visible="false" FixedHeight="TRUE" >
+			<NormalTextBt ID="CID_FIND_PREV" Text="Find &amp;Previous" Rect="10,5,100,"/>
+			<NormalTextBt ID="CID_FIND_NEXT" Text="Find &amp;Next" Rect="130,5,100,"/>
+			<NormalText Text="Find what:" Rect="230,10,100," AlignText="AT_RIGHT | AT_VCENTER"/>
+			<NormalEdit ID="CID_E_FIND" Rect="340,10,w-340-160,"/>
+			<NormalCheckBox ID="CID_MATCHCASE" Text="Match &amp;case" Rect="w-150,8,130,"/>
+		</Container>
+		<Container Name="Replace" ID="CID_C_REPLACE" Height="35" LayoutParams="match_parent_width" Visible="false" FixedHeight="TRUE" >
+			<NormalTextBt ID="CID_REPLACE" Text="&amp;Replace" Rect="10,5,100,"/>
+			<NormalTextBt ID="CID_REPLACE_ALL" Text="Replace &amp;All" Rect="130,5,100,"/>
+			<NormalText Text="Replace with:" Rect="230,10,100," AlignText="AT_RIGHT | AT_VCENTER"/>
+			<NormalEdit ID="CID_E_REPLACE" Rect="340,8,w-340-160,"/>
+		</Container>
+	
+		<Container Name="Editor" ID="CID_C_EDITOR" MinWidth="220" MinHeight="104" Width="200" LayoutParams="match_parent_width" Weight="1">
+			<Frame Name="Inner frame" Rect="0,0,w,h" Image="inner_frame.png" ImageRect="0,0,20,20" 
+				RoundWidthTop="1" RoundWidthBottom="1" ThickWidth="1" BlendPixMode="copy"/>
+			<LyricShowTextEdit Rect="1,1,w-2,h-2"/>
+		</Container>
+	
+		<Container Name="Lyrics Tag" ID="CID_C_LYR_TAG" Height="95" Width="200" LayoutParams="match_parent_width" FixedHeight="TRUE" >
+			<NormalText Text="Artist:" Rect="10,10,70," AlignText="AT_RIGHT | AT_VCENTER"/>
+			<RefreshButton ID="CID_RERESH_ARTIST" ToolTip="Refresh from media tag" Rect="85,10,,"/>
+			<NormalEdit ID="CID_E_ARTIST" Rect="110,10,w/2-110,"/>
+			<NormalText Text="Edited by:" Rect="w/2,10,120," AlignText="AT_RIGHT | AT_VCENTER"/>
+			<RefreshButton ID="CID_RERESH_BY" ToolTip="Refresh from media tag" Rect="w/2+125,10,,"/>
+			<NormalEdit ID="CID_E_BY" Rect="w/2+150,10,w/2-160,"/>
+
+			<NormalText Text="Title:" Rect="10,40,70," AlignText="AT_RIGHT | AT_VCENTER"/>
+			<RefreshButton ID="CID_RERESH_TITLE" ToolTip="Refresh from media tag" Rect="85,40,,"/>
+			<NormalEdit ID="CID_E_TITLE" Rect="110,40,w/2-110,"/>
+			<NormalText Text="Media length:" Rect="w/2,40,120," AlignText="AT_RIGHT | AT_VCENTER"/>
+			<RefreshButton ID="CID_RERESH_MEDIA_LENGTH" ToolTip="Refresh from media tag" Rect="w/2+125,40,,"/>
+			<NormalEdit ID="CID_E_MEDIA_LENGTH" Rect="w/2+150,40,w/2-160,"/>
+
+			<NormalText Text="Album:" Rect="5,70,75," AlignText="AT_RIGHT | AT_VCENTER"/>
+			<RefreshButton ID="CID_RERESH_ALBUM" ToolTip="Refresh from media tag" Rect="85,70,,"/>
+			<NormalEdit ID="CID_E_ALBUM" Rect="110,70,w/2-110,"/>
+			<NormalText Text="Delay time (ms):" Rect="w/2,70,120," AlignText="AT_RIGHT | AT_VCENTER"/>
+			<NormalEdit ID="CID_E_OFFSET" Rect="w/2+150,70,w/2-160,"/>
+		</Container>
+	</LinearContainer>
+</skinwnd>

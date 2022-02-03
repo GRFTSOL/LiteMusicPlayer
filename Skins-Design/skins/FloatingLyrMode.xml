@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skinwnd Name="floatinglyr" EnableTranslucency="true" TranslucencyAlpha="0"
+         TranslucencyAlphaOnHover="70" TranslucencyAlphaOnActive="228"
+         MinWidth="400" MinHeight="60" Width="640" Height="200"
+         BgColor="#183C7B" ContextMenu="FloatingLyrMode" CmdHandler="ch_floating_lyr"
+         LyrDisplayStylePropName="FloatingLyrDispStyle">
+  <DecorativeContainer Name="Caption" Left="10" Top="0" Width="w-20" Height="h" >
+    <LyricsShow Left="0" Top="0" Width="w" Height="h" EnableToolbar="FALSE" EnableAdjustVertAlign="FALSE" EnableStaticTextStyle="FALSE" LyrDisplayStylePropName="FloatingLyrDispStyle" FloatingLyr="1" UseAlbumArtAsBg="FALSE" BlendingLyrText="TRUE" ThickOutline="TRUE"/>
+    <Toolbar Left="50" Top="8" Width="230" Height="22" HideIfMouseInactive="TRUE" Image="fl_buttons.png" enablehover="TRUE" units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" MarginX="0" MarginY="0" FullStatusImage="TRUE"
+              TranslucencyWithSkin="TRUE">
+      <button ID="ID_PREVIOUS" Left="0" />
+      <button ID="ID_PLAYPAUSE" Left="1" CanCheck="TRUE" checked_left="2"/>
+      <button ID="ID_NEXT" Left="3" />
+      <seperator/>
+      <button ID="ID_SEARCH_LYRICS" Left="5" />
+      <button ID="ID_BACKWARD_LYRICS" Left="6" Continuous="TRUE"/>
+      <button ID="ID_FORWARD_LYRICS" Left="7" Continuous="TRUE"/>
+      <seperator/>
+      <button ID="ID_FONT_SIZE_INC" Left="8"/>
+      <button ID="ID_FONT_SIZE_DEC" Left="9"/>
+      <button ID="ID_LYR_HIGH_CLR_LIST" Left="14"/>
+    </Toolbar>
+    <Toolbar Left="w-62-10" Top="10" Width="62" Height="14" TranslucencyWithSkin="TRUE" Image="fl_cap_bt.png" enablehover="TRUE" units_x="14" blank_x="-1" blank_cx="14" seperator_x="0" seperator_cx="10" MarginX="0" MarginY="0" ButtonSpacesCX="2" FullStatusImage="TRUE">
+      <button ID="ID_MINIMIZE" Left="0" />
+      <button ID="dyncmd_change_to_bar" Left="4" ToolTip="Lyrics Bar Mode"/>
+      <button ID="dyncmd_change_to_normal" Left="2" ToolTip="Normal Mode"/>
+      <button ID="ID_CLOSE" Left="1" />
+    </Toolbar>
+    <Toolbar Left="w-70" Top="h-8-22" Width="70" Height="22" HideIfMouseInactive="TRUE" TranslucencyWithSkin="TRUE" Image="fl_buttons.png" enablehover="TRUE" units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" MarginX="0" MarginY="0" FullStatusImage="TRUE">
+      <button ID="ID_CLICK_THROUGH" Left="11"/>
+      <button ID="ID_CLR_PREV_HUE" Left="12"/>
+      <button ID="ID_CLR_NEXT_HUE" Left="13" />
+    </Toolbar>
+  </DecorativeContainer>
+  <Image Left="0" Top="0" Width="10" Height="10" Image="fl_border_mask.png" ImageRect="0, 0, 10, 10" BlendPixMode="alpha_mask"/>
+  <Image Left="w-10" Top="0" Width="10" Height="10" Image="fl_border_mask.png" ImageRect="10, 0, 10, 10" BlendPixMode="alpha_mask"/>
+  <Image Left="0" Top="h-10" Width="10" Height="10" Image="fl_border_mask.png" ImageRect="0, 10, 10, 10" BlendPixMode="alpha_mask"/>
+  <Image Left="w-10" Top="h-10" Width="10" Height="10" Image="fl_border_mask.png" ImageRect="10, 10, 10, 10" BlendPixMode="alpha_mask"/>
+</skinwnd>

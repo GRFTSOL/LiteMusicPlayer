@@ -389,6 +389,9 @@ size_t itoa(int64_t num, char *buffer) {
         buffer[i++] = '-';
     }
 
+    // '\0' end
+    buffer[i] = '\0';
+    
     // Reverse buffer
     char *p = buffer, *end = buffer + i - 1;
     while (p < end) {

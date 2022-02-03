@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<skin defmainwnd="MainWnd" mainwnds="MainWnd" Script="main.java">
+	<include Name="Styles.xml"/>
+
+	<skinwnd Name="MainWnd" Extends="MenuWindowFrame" EnableTranslucency="true"
+		TranslucencyAlpha="255" MinWidth="640" MinHeight="480" Width="700" Height="400" EnableClickThrough="false"
+		Menu="MainWndMenu" ContextMenu="MainContextMenu">
+
+		<Frame Image="panel-frame.png" Rect="0,0,320,135" RoundWidth="5" ThickWidth="5"
+			  XBorder="0" YBorder="0"/>
+		<Frame Image="panel-frame.png" Rect="320,0,w-320,200" RoundWidth="5" ThickWidth="5"
+			  XBorder="0" YBorder="0"/>
+		
+		<Image Name="Seperator" Rect="324,200-1,w-5-324,2" Image="seperator-h.png" BltMode="tile" />
+		<Image Name="Seperator" Rect="320-1,5,2,125" Image="seperator-v.png" BltMode="tile" />
+
+		<Container Rect="5,5,310,125" Name="Media Info" BgColor="#000000" >
+
+			<Property Name="BgImage" Image="media_info_bg.png" HorzExtendPos="1,4" VertExtendPos="100,121"/>
+
+			<NormalLink Rect="0,0,w,h" ID="UID_INSTRUCTION" Text="Please click here to add media files." Link="cmd://CMD_IMPORT"
+				Visible="false" FontHeight="16" FontBold="true" TextColor="#FF8040" AlignText="AT_CENTER|AT_VCENTER"/>
+			
+			<Container Rect="0,0,w,h" ID="UID_MEDIA_INFO" Name="Info">
+				<MediaInfoText Name="Title" Rect="10,10,w-20,20" FontName="Tahoma" FontHeight="16" FontBold="TRUE" TextOutlined="TRUE" TextOutlinedColor="#000000" TextColor="#FFFFFF" Text="" MediaInfoType="Title" ShowTitle="false"/>
+				<HStretchImage Name="TitleLine" Rect="8,35,w-16,6" Image="title_line.png" ImageRect="0,0,20,6" StretchStartX="6" StretchEndX="14"/>
+				<MediaInfoText Name="Artist" Rect="10,50,w-20,16" FontName="Tahoma" FontHeight="13" FontBold="TRUE" TextOutlined="TRUE" TextOutlinedColor="#000000" TextColor="#FFFFFF" Text="" MediaInfoType="Artist" ShowTitle="false"/>
+				<MediaInfoText Name="Album" Rect="10,70,w-20,16" FontName="Tahoma" FontHeight="13" FontBold="TRUE" TextOutlined="TRUE" TextOutlinedColor="#000000" TextColor="#FFFFFF" Text="" MediaInfoType="Album" ShowTitle="false"/>
+
+				<PlayingTime Rect="10,100,50,11" 
+					AlignText="AT_CENTER" CharWidth="8" TextImage="shade-numfont.png" ImageChars="0123456789 -:" />
+				<PlayingTimeText Visible="false" Name="PlayingTime" Rect="10,100,50,18" AlignText="AT_CENTER | AT_VCENTER"
+				   FontName="Verdana" FontHeight="13" FontBold="TRUE" TextOutlined="TRUE" TextColor="#FFFFFF"
+				   TextOutlinedColor="#000000" LeftMargin="0" Text=""/>
+				<SeekCtrl Name="Seek" ID="ID_SEEK" 
+						  Rect="10+50+8,100,w-10-50-10-8,12" EndWidth="3" ImageThumb="seek_thumb.png"
+						  ImageTrack="seek_track.png"/>
+			</Container>
+		</Container>
+
+		<Container Rect="5,135,310,60" Name="PlayControl" >
+			<Button Rect="10,10,40,40" ID="ID_PREVIOUS"
+				Image="prev_next.png" ImageSize="40,40" ImagePos="0,0" ImageSelPos="0,80"
+				ImageFocusPos="0,40" TranslucencyWithSkin="TRUE"/>
+
+			<Button Rect="60,3,55,55" ID="ID_PLAYPAUSE"
+				S0_Image="playpause.png" S0_ImageSize="55,55" S0_ImagePos="0,0" S0_ImageSelPos="0,110" S0_ImageFocusPos="0,55"
+				S1_Image="playpause.png" S1_ImageSize="55,55" S1_ImagePos="55,0" S1_ImageSelPos="55,110" S1_ImageFocusPos="55,55"
+				TranslucencyWithSkin="TRUE"/>
+
+			<Button Rect="125,10,40,40" ID="ID_NEXT"
+				Image="prev_next.png" ImageSize="40,40" ImagePos="40,0" ImageSelPos="40,80"
+				ImageFocusPos="40,40" TranslucencyWithSkin="TRUE"/>
+				
+			<Image Name="Volume" Rect="w-110-14-5,25,14,14" Image="volume.png" />
+			<SeekCtrl Name="Volume" ID="ID_VOLUME" 
+					  Rect="w-110,26,100,12" EndWidth="3" ImageThumb="seek_thumb.png"
+					  ImageTrack="seek_track.png"/>
+		</Container>
+
+		<Container Rect="325,5,w-320-10,190" Name="Lyrics" >
+			<LyricsShow ID="ID_LYRICS_SHOW" Rect="0,0,w,h" SetSkinBg="false"
+			  EnableToolbar="FALSE" EnableAutoResize="FALSE" />
+		</Container>
+
+		<Animation ID="CID_AM_SHOW_WORKING" MoveFromBottom="CID_WORKING"
+				 ResizeCtrl="CID_PLAYLIST,,,,h-200-60" Duration="300"/>
+		<Animation ID="CID_AM_HIDE_WORKING" MoveToBottom="CID_WORKING"
+				 ResizeCtrl="CID_PLAYLIST,,,,h-200" Duration="300"/>
+
+		<Container ID="CID_PLAYLIST" Rect="0,200,w,h-200"  ContextMenu="PlaylistMenu">
+			<Frame Image="panel-frame.png" Rect="0,0,w,h" RoundWidth="5" ThickWidth="5"
+				  XBorder="0" YBorder="0"/>
+			<NormalPlaylist Rect="5,5,w-10,h-10" DrawHeader="true" EnableBorder="false" />
+		</Container>
+		
+		<Container ID="CID_WORKING" Rect="0,h-60,w,60" Name="Lyrics" Visible="false" >
+			<NormalText ID="CID_STATUS" Text="" Rect="15,5,w-10,h"/>
+			<Progress ID="CID_PROGRESS" Rect="10,30,w-110-40,"/>
+			<NormalTextBt ID="CID_CANCEL_WORK" Text="Cancel" Rect="w-110-15,28,110,"/>
+		</Container>
+	</skinwnd>
+</skin>

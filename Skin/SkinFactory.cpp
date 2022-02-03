@@ -1804,10 +1804,7 @@ void CSkinFactory::onLanguageChanged()
 void CSkinFactory::applyDefaultThemeOfSkin()
 {
     string themeFile;
-
-    string strThemeName = fileGetTitle(getSkinFileName());
-    strThemeName += "_theme.xml";
-    if (!m_resourceMgr.getResourcePathName(strThemeName.c_str(), themeFile))
+    if (!m_resourceMgr.getResourcePathName("theme.xml", themeFile))
         return;
 
     CSimpleXML xml;

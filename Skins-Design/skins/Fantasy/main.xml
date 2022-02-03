@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<skin defmainwnd="MainWnd" mainwnds="MainWnd,lyrbar,floatinglyr" ExtraResouceFolder="DHPlayer">
+  <include Name="Styles.xml"/>
+  <Menus>
+    <Menu Name="NormalMode" From="MainWndMenu" >
+      <Item Action="Append" Type="item" Name="&amp;Album Art" IDCmd="dyncmd_openclose_albumart_bar" CanCheck="true" IsCheckedCmd="dyncmd_is_albumart_bar_visible" />
+    </Menu>
+    <Menu Name="LyrBarMode" From="MainWndMenu" >
+      <Item Action="Append" Type="item" Name="&amp;Normal Mode" IDCmd="dyncmd_change_to_normal"/>
+    </Menu>
+    <Menu Name="FloatingLyrMode" From="MainWndMenu" >
+      <Item Action="Append" Type="item" Name="&amp;Normal Mode" IDCmd="dyncmd_change_to_normal"/>
+    </Menu>
+  </Menus>
+  <DynCmds>
+    <cmd ID="dyncmd_change_to_bar" func="change_skin_wnd" param="lyrbar"/>
+    <cmd ID="dyncmd_change_to_floatinglyr" func="change_skin_wnd" param="floatinglyr"/>
+    <cmd ID="dyncmd_change_to_normal" func="change_skin_wnd" param="MainWnd"/>
+    <cmd ID="dyncmd_openclose_albumart_bar" func="toggle_ctrl_visible" param="CCMD_ALBUMART" />
+    <cmd ID="dyncmd_is_albumart_bar_visible" func="is_ctrl_visible" param="CCMD_ALBUMART" />
+
+    <cmd ID="CMD_SHOW_LYR"             func="set_ctrl_property"    param="CID_TOGGLE_LYR_PL,CmdToggle,CID_LYRICS" />
+    <cmd ID="CMD_SHOW_INFO_TEXT"       func="set_ctrl_property"    param="CID_TOGGLE_LYR_PL,CmdToggle,CID_INFOTEXT" />
+  </DynCmds>
+  <include Name="FloatingLyrMode.xml"/>
+  <skinwnd Name="lyrbar" EnableTranslucency="true" TranslucencyAlpha="228" MinWidth="275" MinHeight="20" Width="400" Height="200" BgColor="#183C7B" ContextMenu="LyrBarMode" CmdHandler="ch_common" LyrDisplayStylePropName="LyrBarDispStyle">
+    <Image Left="0" Top="0" Width="10" Height="10" Image="fl_border_mask.png" ImageRect="0, 0, 10, 10" BlendPixMode="alpha_mask"/>
+    <Image Left="w-10" Top="0" Width="10" Height="10" Image="fl_border_mask.png" ImageRect="10, 0, 10, 10" BlendPixMode="alpha_mask"/>
+    <Image Left="0" Top="h-10" Width="10" Height="10" Image="fl_border_mask.png" ImageRect="0, 10, 10, 10" BlendPixMode="alpha_mask"/>
+    <Image Left="w-10" Top="h-10" Width="10" Height="10" Image="fl_border_mask.png" ImageRect="10, 10, 10, 10" BlendPixMode="alpha_mask"/>
+    <DecorativeContainer Name="Lyrics" Left="10" Top="2" Width="w-20" Height="h-4" >
+      <LyricsShow Left="0" Top="0" Width="w" Height="h" EnableToolbar="FALSE" 
+                  LyrDisplayStylePropName="LyrBarDispStyle" LyrDisplayStyle="LyricShowSingleRow"/>
+      <Toolbar Left="w-62" Top="h/2-7" Width="62" Height="14" HideIfWndInactive="TRUE" Image="fl_cap_bt.png" enablehover="TRUE" units_x="14" blank_x="-1" blank_cx="14" seperator_x="0" seperator_cx="10" MarginX="0" MarginY="0" ButtonSpacesCX="2" FullStatusImage="TRUE">
+        <button ID="ID_MINIMIZE" Left="0" />
+        <button ID="dyncmd_change_to_floatinglyr" Left="3" ToolTip="Floating Lyrics Mode"/>
+        <button ID="dyncmd_change_to_normal" Left="2" ToolTip="Normal Mode"/>
+        <button ID="ID_CLOSE" Left="1" />
+      </Toolbar>
+    </DecorativeContainer>
+  </skinwnd>
+  <skinwnd Name="MainWnd" EnableTranslucency="true" TranslucencyAlpha="228" 
+       MinWidth="330" MinHeight="300" Width="330" Height="400" BgColor="#576C91"
+       ContextMenu="NormalMode" CmdHandler="ch_common">
+    <Image Name="TopLeftCorner" Left="0" Top="0" Width="20" Height="20" Image="frame.png" ImageRect="0, 0, 20, 20" BlendPixMode="alpha_mask"/>
+    <Image Name="LeftBottomCorner" Left="0" Top="h-20" Width="20" Height="20" Image="frame.png" ImageRect="0, 55, 20, 20" BlendPixMode="alpha_mask"/>
+    <Image Name="BottomBorder" Left="20" Top="h-20+10" Width="w-20-20" Height="20-10" Image="frame.png" ImageRect="20, 65, 35, 10" BltMode="tile" BlendPixMode="alpha_mask"/>
+    <Image Name="RightBottomCorner" Left="w-20" Top="h-20" Width="20" Height="20" Image="frame.png" ImageRect="55, 55, 20, 20" BlendPixMode="alpha_mask"/>
+    <Image Name="TopRightCorner" Left="w-20" Top="0" Width="20" Height="20" Image="frame.png" ImageRect="55, 0, 20, 20" BlendPixMode="alpha_mask"/>
+    <Image Name="RightBorder" Left="w-20+10" Top="20" Width="20-10" Height="h-20-20" Image="frame.png" ImageRect="65, 20, 10, 35" BltMode="tile" BlendPixMode="alpha_mask"/>
+    <Toolbar ID="CID_TB_SYSBT"  Left="w-62-20" Top="8" Width="62" Height="14" HideIfWndInactive="TRUE"
+         Image="fl_cap_bt.png" enablehover="TRUE" units_x="14"
+         blank_x="-1" blank_cx="14" seperator_x="0" seperator_cx="10" 
+         MarginX="0" MarginY="0" ButtonSpacesCX="2" FullStatusImage="TRUE">
+      <button ID="ID_MINIMIZE" Left="0" />
+      <button ID="dyncmd_change_to_bar" Left="4" ToolTip="Lyrics Bar Mode"/>
+      <button ID="dyncmd_change_to_floatinglyr" Left="3" ToolTip="Floating Lyrics Mode"/>
+      <button ID="ID_CLOSE" Left="1" />
+    </Toolbar>
+    <LinearContainer Name="PanelFrame" ID="CCMD_MAINFRAME" Left="16" Top="16" Width="w-16-20" Height="108" Orientation="Horizontal">
+      <Container Name="AlbumArt" ID="CCMD_ALBUMART" Width="108+10" Height="108" MinWidth="108+10" MinHeight="108" FixedHeight="TRUE" FixedWidth="TRUE" >
+        <AlbumArt Name="AlbumArt" Left="0" Top="0" Width="108" Height="108" ID="ID_ALBUMART" Image="AlbumArt.png" FrameMask="albumart-mask.png" FrameMaskRectPos="4,4,100,100"/>
+      </Container>
+      <Container Name="MediaInfo" ID="CCMD_MEDIAINFO" Width="200" Height="108" MinWidth="108" MinHeight="108" FixedHeight="TRUE" Weight="1">
+        <MediaInfoText Name="Title" Left="0" Top="8" Width="w" Height="18" FontName="Tahoma" FontHeight="16" FontBold="TRUE" TextOutlined="TRUE" TextOutlinedColor="#000000" TextColor="#FFFFFF" LeftMargin="0" Text="" MediaInfoType="Title" ShowTitle="false"/>
+        <HStretchImage Left="-2" Top="25" Width="w+2" Height="6" Name="TitleLine" Image="title_line.png" ImageRect="0,0,20,6" StretchStartX="6" StretchEndX="14"/>
+        <MediaInfoText Name="Artist" Left="0" Top="33" Width="w" Height="16" FontName="Tahoma" FontHeight="13" FontBold="TRUE" TextOutlined="TRUE" TextOutlinedColor="#000000" TextColor="#FFFFFF" LeftMargin="0" Text="" MediaInfoType="Artist" ShowTitle="false"/>
+        <MediaInfoText Name="Album" Left="0" Top="58" Width="w" Height="16" FontName="Tahoma" FontHeight="13" FontBold="TRUE" TextOutlined="TRUE" TextOutlinedColor="#000000" TextColor="#FFFFFF" LeftMargin="0" Text="" MediaInfoType="Album" ShowTitle="false"/>
+        <Toolbar Rect="0,78,80,22" Image="fl_buttons.png" enablehover="TRUE" units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" MarginX="0" MarginY="0" FullStatusImage="TRUE">
+          <button ID="ID_PREVIOUS" Left="0" />
+          <button ID="ID_PLAYPAUSE" Left="1" CanCheck="TRUE" checked_left="2"/>
+          <button ID="ID_NEXT" Left="3" />
+          <seperator/>
+        </Toolbar>
+		<Toolbar ID="ID_TB_LYR_SYNC" Rect="80,78,92,22" Image="fl_buttons.png" enablehover="TRUE"
+				units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14"
+				MarginX="0" MarginY="0" FullStatusImage="TRUE">
+			<button ID="ID_SEARCH_LYRICS" Left="5" />
+			<button ID="ID_BACKWARD_LYRICS" Left="6" Continuous="TRUE"/>
+			<button ID="ID_FORWARD_LYRICS" Left="7" Continuous="TRUE"/>
+			<button ID="ID_RATE_LYR" Left="15"/>
+		</Toolbar>
+
+		<Toolbar ID="ID_TB_LYR_TXT" Rect="80,79,92,20" Image="lyr_scroll_actions_tb.png" enablehover="TRUE"
+				units_x="20" blank_x="-1" blank_cx="20" seperator_x="-1" seperator_cx="20" ButtonSpacesCX="3"
+				MarginX="0" MarginY="0" FullStatusImage="TRUE" Visible="false">
+			<button ID="ID_SEARCH_LYRICS" Left="5" />
+			<button ID="ID_LYR_SCROLL_ENABLE_RECORD" Left="0" CanCheck="TRUE" checked_left="1"/>
+			<button ID="ID_LYR_SCROLL_ENABLE_REPLAY" Left="2" CanCheck="TRUE" checked_left="3"/>
+			<button ID="ID_LYR_SCROLL_MENU" Left="4"/>
+		</Toolbar>
+	  </Container>
+    </LinearContainer>
+
+    <ToggleCtrlContainer ID="CID_TOGGLE_LYR_PL" Name="Body" Left="10" Top="140" Width="w-30" Height="h-150-15" >
+
+      <Container Name="Lyrics" ID="CID_LYRICS" left="0" top="0" width="w" height="h">
+        <LyricsShow Left="0" Top="0" Width="w" Height="h" EnableToolbar="FALSE"/>
+      </Container>
+      <InfoTextEx Name="Info Prompt" ID="CID_INFOTEXT" left="0" top="0" width="w" height="h" Visible="false"/>
+    </ToggleCtrlContainer>
+    <WndResizer Name="Bottom" Left="0" Top="h-20" Width="w-20" Height="20" Direction="bottom"/>
+    <WndResizer Name="Right" Left="w-20" Top="0" Width="20" Height="h-20" Direction="right"/>
+    <WndResizer Name="RightBottom" Left="w-20" Top="h-20" Width="20" Height="20" Direction="right|bottom"/>
+  </skinwnd>
+</skin>

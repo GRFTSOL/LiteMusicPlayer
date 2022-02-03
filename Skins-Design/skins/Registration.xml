@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skinwnd Extends="WindowFrame" Name="Registration.xml" Caption="$Product$ (Trial Version)" DefaultPage="Container.EnterCode"
+         FixedWidth="true" FixedHeight="true" Width="450" Height="320" RememberSizePos="false">
+  <include Name="Activate.xml"/>
+</skinwnd>

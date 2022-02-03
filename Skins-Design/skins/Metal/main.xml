@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<skin defmainwnd="MainWnd" mainwnds="MainWnd" Script="main.java" ExtraResouceFolder="DHPlayer">
+	<include Name="Styles.xml"/>
+
+	<skinwnd Name="MainWnd" EnableTranslucency="true" EnableClickThrough="false"
+			 MinWidth="640" MinHeight="480" Width="700" Height="400" Menu="MainWndMenu"
+			 ContextMenu="MainContextMenu" IsDialog="true" TranslucencyAlpha="255">
+
+		<Frame Name="Frame" Rect="0,110,w,h-110" Image="frame.png" ImageRect="0,110,425,40"
+			RoundWidthTop="8" RoundWidthBottom="8" ThickWidth="8" BlendPixMode="copy"/>
+
+		<Container Name="Caption" Rect="0,0,w,110" TranslucencyWithSkin="FALSE">
+			<Property Name="BgImage" Image="frame.png" ImageRect="0,0,425,110" HorzExtendPos="7,418" BlendPixMode="copy"/>
+
+			<MenuBar Rect="124,8,w/2-25,20" Name="Menu"
+					 FontName="Verdana"
+			   FontHeight="14" FontBold="false" TextColor="#000000" TextOutlinedColor="#FFFFFF"
+			   TextOutlined="TRUE" TextColorHover="#202020" TextOutlinedColorHover="#FFFFFF"
+			   TextColorPressed="#FFFFFF" TextOutlinedColorPressed="#000000"
+			   BgColorPressed="#D0D0D0" BgPressedAlpha="127"/>
+
+			<Toolbar ID="CID_TB_SYSBT" Rect="w-10-60,10,60,16" 
+				 Image="caption_btn.png" enablehover="TRUE" units_x="16"
+				 blank_x="-1" blank_cx="16" seperator_x="0" seperator_cx="10"
+				 MarginX="0" MarginY="0" ButtonSpacesCX="5" FullStatusImage="TRUE">
+				<button ID="ID_MINIMIZE" Left="1" />
+				<button ID="ID_MAXIMIZE" Left="2" CanCheck="TRUE" checked_left="3"/>
+			  <button ID="ID_CLOSE" Left="4" />
+			</Toolbar>
+
+			<AlbumArt Name="AlbumArt" Rect="6,6,108,108" ID="ID_ALBUMART" Image="AlbumArt.png"
+				FrameMask="albumart-mask.png" FrameMaskRectPos="4,4,100,100"/>
+
+			<Container Rect="125,40,300,100" Name="PlayControl" >
+				<Button Rect="10,10,40,40" ID="ID_PREVIOUS" ImageMask="prev_next.png" ImageMaskRect="0,0,40,40"
+					Image="prev_next.png" ImageSize="40,40" ImagePos="0,0" ImageSelPos="0,80"
+					ImageFocusPos="0,40" />
+
+				<Button Rect="60,3,55,55" ID="ID_PLAYPAUSE" ImageMask="playpause.png" ImageMaskRect="0,0,55,55"
+					S0_Image="playpause.png" S0_ImageSize="55,55" S0_ImagePos="0,0" S0_ImageSelPos="0,110" S0_ImageFocusPos="0,55"
+					S1_Image="playpause.png" S1_ImageSize="55,55" S1_ImagePos="55,0" S1_ImageSelPos="55,110" S1_ImageFocusPos="55,55"
+					/>
+
+				<Button Rect="125,10,40,40" ID="ID_NEXT" ImageMask="prev_next.png" ImageMaskRect="40,0,40,40"
+					Image="prev_next.png" ImageSize="40,40" ImagePos="40,0" ImageSelPos="40,80"
+					ImageFocusPos="40,40" />
+					
+				<Image Name="Volume" Rect="180,25,14,14" Image="volume.png" />
+				<SeekCtrl Name="Volume" ID="ID_VOLUME" 
+						  Rect="200,26,100,12" EndWidth="3" ImageThumb="seek_thumb.png"
+						  ImageTrack="seek_track.png"/>
+			</Container>
+
+			<Container Rect="435,35,w-435-15,70" Name="Media Info">
+				<Property Name="BgImage" Image="media_info_bg.png" HorzExtendPos="5,45" BlendPixMode="alpha_blend"/>
+
+				<NormalLink Rect="0,0,w,h" ID="UID_INSTRUCTION" Text="Please click here to add media files." Link="cmd://CMD_IMPORT"
+					Visible="false" FontHeight="16" FontBold="true" TextColor="#FF8040" AlignText="AT_CENTER|AT_VCENTER"/>
+				<Container Rect="0,0,w,h" ID="UID_MEDIA_INFO" Name="Info">
+					<MediaInfoText Name="Title" Rect="10,5,w-20,20" FontName="Tahoma" FontHeight="16" FontBold="TRUE" TextOutlined="TRUE" TextOutlinedColor="#000000" TextColor="#FFFFFF" Text="" MediaInfoType="Title"/>
+					<MediaInfoText Name="Artist - Album" Rect="10,27,w-20,16" FontName="Tahoma" FontHeight="13" FontBold="false" TextOutlined="TRUE" TextOutlinedColor="#000000" TextColor="#FFFFFF" Text="" MediaInfoType="Artist|Album" CombineWith=" - "/>
+
+					<PlayingTime Rect="10,50,50,11" 
+						AlignText="AT_CENTER" CharWidth="8" TextImage="shade-numfont.png" ImageChars="0123456789 -:" />
+					<SeekCtrl Name="Seek" ID="ID_SEEK" 
+							  Rect="65,50,w-65-10,12" EndWidth="3" ImageThumb="seek_thumb.png"
+							  ImageTrack="seek_track.png"/>
+				</Container>
+			</Container>
+
+		</Container>
+
+		<Container ID="CID_BODY" Rect="8,118,w-16,h-118-8">
+		
+			<Frame Name="Body frame" Rect="0,0,w,h" Image="inner_frame.png" ImageRect="0,0,20,20" 
+				RoundWidthTop="1" RoundWidthBottom="1" ThickWidth="1" BlendPixMode="copy"/>
+
+			<ResizableLinearContainer Name="Body" Rect="1,1,w-2,h-2" BgColor="#7F7F7F" SeparatorThickness="2" Orientation="Horizontal">
+				<Container ID="CID_PLAYLIST" Rect=",,200,108"  ContextMenu="PlaylistMenu" LayoutParams="match_parent_height" Weight="1">
+					<Frame Image="panel-frame.png" Rect="0,0,w,h" RoundWidth="5" ThickWidth="5"
+						  XBorder="0" YBorder="0"/>
+					<NormalPlaylist Rect="5,5,w-10,h-10" DrawHeader="true" EnableBorder="false" />
+				</Container>
+				<DecorativeContainer Name="MediaInfo" Width="200" Height="108" MinWidth="200" MinHeight="108" LayoutParams="match_parent_height">
+					<LyricsShow ID="ID_LYRICS_SHOW" Rect="0,0,w,h" SetSkinBg="false"
+					  EnableToolbar="FALSE" EnableAutoResize="FALSE" />
+
+					<Container ID="CID_LYR_TOOL_BAR" Rect="w-100,10,94,30">
+						<Property Name="BgImage" Image="lyr_ctrl_bg.png" HorzExtendPos="8,22" BlendPixMode="alpha_blend"/>
+
+						<Toolbar ID="ID_TB_LYR_SYNC" Rect="12,4,70,22" Image="fl_buttons.png" enablehover="TRUE"
+								units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" ButtonSpacesCX="2"
+								MarginX="0" MarginY="0" FullStatusImage="TRUE">
+							<button ID="ID_SEARCH_LYRICS" Left="5" />
+							<button ID="ID_BACKWARD_LYRICS" Left="6" Continuous="TRUE"/>
+							<button ID="ID_FORWARD_LYRICS" Left="7" Continuous="TRUE"/>
+						</Toolbar>
+
+						<Toolbar ID="ID_TB_LYR_TXT" Rect="12,5,70,20" Image="lyr_scroll_actions_tb.png" enablehover="TRUE"
+								units_x="20" blank_x="-1" blank_cx="20" seperator_x="-1" seperator_cx="20" ButtonSpacesCX="5"
+								MarginX="0" MarginY="0" FullStatusImage="TRUE" Visible="false">
+							<button ID="ID_LYR_SCROLL_ENABLE_RECORD" Left="0" CanCheck="TRUE" checked_left="1"/>
+							<button ID="ID_LYR_SCROLL_ENABLE_REPLAY" Left="2" CanCheck="TRUE" checked_left="3"/>
+							<button ID="ID_LYR_SCROLL_MENU" Left="4"/>
+						</Toolbar>
+					</Container>
+
+				</DecorativeContainer>
+			</ResizableLinearContainer>
+		</Container>
+
+		<Container ID="CID_WORKING" Rect="8,h-60-8,w-16,60" Visible="false" >
+			<Property Name="BgImage" Image="frame.png" ImageRect="8,82,409,60" HorzExtendPos="8,409" BlendPixMode="copy"/>
+			
+			<NormalText ID="CID_STATUS" Text="" Rect="5,10,w-10,h"/>
+			<Progress ID="CID_PROGRESS" Rect="0,35,w-110-20,"/>
+			<NormalTextBt ID="CID_CANCEL_WORK" Text="Cancel" Rect="w-110-5,33,110,"/>
+		</Container>
+
+		<Animation ID="CID_AM_SHOW_WORKING" MoveFromBottom="CID_WORKING"
+				 ResizeCtrl="CID_BODY,,,,h-118-8-60" Duration="300"/>
+		<Animation ID="CID_AM_HIDE_WORKING" MoveToBottom="CID_WORKING"
+				 ResizeCtrl="CID_BODY,,,,h-118-8" Duration="300"/>
+
+		<Animation ID="CID_AM_HIDE_LYR_TB" FadeOut="CID_LYR_TOOL_BAR"/>
+		<Animation ID="CID_AM_SHOW_LYR_TB" FadeIn="CID_LYR_TOOL_BAR"/>
+
+	</skinwnd>
+</skin>

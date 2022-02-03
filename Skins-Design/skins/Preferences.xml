@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<skinwnd Extends="WindowFrame" Name="Preferences.xml" Caption="Preferences"
+         MinWidth="600" MinHeight="540" RememberSizePos="true">
+  <PreferPage.Root Name="Preference Root" Rect="0,0,w,h">
+    <Toolbar ID="CID_TB_PREFERENCE" Left="20" Top="10" Width="w-40" Height="55" 
+             DrawBtText="true" 
+             BgImageChecked="pf_toolbar_bg_checked.png"
+             Image="preferences_btns.png" ImageHeight="34" units_x="34"
+             blank_x="-1" blank_cx="34" seperator_x="-1" seperator_cx="14" enablehover="TRUE"
+             MarginX="0" MarginY="0" FullStatusImage="TRUE">
+      <button ID="CMD_ROOT_UI" Left="0" checked_left="0" Text="User Interface" RadioGroup="1"/>
+      <button ID="CMD_ROOT_THEME" Left="1" checked_left="1" Text="Themes" RadioGroup="1"/>
+      <button ID="CMD_ROOT_SYSTEM" Left="2" checked_left="2" Text="System" RadioGroup="1"/>
+      <button ID="CMD_ROOT_LYRICS" Left="3" checked_left="3" Text="Lyrics" RadioGroup="1"/>
+      <button ID="CMD_ROOT_ADVANCED" Left="4" checked_left="4" Text="Advanced" RadioGroup="1"/>
+    </Toolbar>
+    <include Name="Pf_UserInterface.xml"/>
+    <include Name="Pf_Themes.xml"/>
+    <include Name="Pf_System.xml"/>
+    <include Name="Pf_Lyrics.xml"/>
+    <include Name="Pf_Advanced.xml"/>
+  </PreferPage.Root>
+</skinwnd>

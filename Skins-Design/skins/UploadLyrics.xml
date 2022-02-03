@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skinwnd Extends="WindowFrame" Name="UploadLyrics.xml" Caption="Upload lyrics"
+         MinWidth="520" MinHeight="300" Width="580" Height="340" RememberSizePos="true"
+         FixedWidth="true" FixedHeight="true">
+  <include Name="Login.xml"/>
+  <Container.UploadLyrNotice Name="Upload lyrics" Rect="0,20,w,h-20" Visible="false">
+    <TitleText Rect="20,10,w-40,25" Text="Thank you for uploading lyrics."/>
+    <Image Rect="10,60,," Image="information.png"/>
+    <NormalText Rect="90,70,w-110,50" Text="You are going to upload the lyrics to the lyrics server, and share them with other people."/>
+
+    <NormalText ID="CID_ACCOUNT_NOTICE" Rect="90,150,w-100,50" Text=""/>
+    <NormalLink ID="CID_CHANGE_ACCOUNT" Rect="90,175,w-100," Text="If you want to use another account, please click here"/>
+
+    <NormalTextBt ID="ID_OK" Text="Continue" Rect="w/2-50,h-40,100,"/>
+    <NormalTextBt ID="ID_CANCEL" Text="Cancel" Rect="w-100-20,h-40,100,"/>
+  </Container.UploadLyrNotice>
+
+  <Container.UploadLyrWaitMsg Name="Wait Message" Visible="false" Rect="0,0,w,h" visible="false">
+    <NormalText ID="CID_WAIT_INFO" Text="" Rect="15,h/2-20-20,w-30,40" AlignText="AT_CENTER"/>
+    <NormalTextBt ID="ID_CANCEL" Text="Cancel" Rect="w/2-45,h/2+15,90,"/>
+  </Container.UploadLyrWaitMsg>
+  <Container.UploadLyrResult ID="CID_UPLOAD_RESULT" Name="Upload result" Rect="0,20,w,h-20" Visible="false">
+    <Container ID="CID_C_UPLOAD_OK" Name="Upload OK" Rect="0,20,w,h-20" Visible="true">
+      <TitleText Rect="20,10,w-40,25" Text="You have uploaded lyrics successfully."/>
+      <Image Rect="w/2-24,45,," Image="success.png"/>
+      <NormalLink Rect="20,120,w-40,50" Text="You could manage the uploaded lyrics on website."
+                  AlignText="AT_CENTER" Link="http://www.viewlyrics.com/user/MyUploadedLyrics.aspx"/>
+      <NormalTextBt ID="ID_OK" Text="OK" Rect="w/2-100/2,h-40,100,"/>
+    </Container>
+    <Container ID="CID_C_UPLOAD_FAILED" Name="Upload result" Rect="0,20,w,h-20" Visible="false">
+      <TitleText Rect="20,10,w-40,25" Text="Failed to upload lyrics."/>
+
+      <Image Rect="w/2-24,45,," Image="warning.png"/>
+      <NormalText ID="CID_RESULT" Rect="20,120,w-40,50" Text="UNTRANS_Upload Result" AlignText="AT_CENTER"/>
+
+      <NormalTextBt ID="ID_OK" Text="OK" Rect="w/2-100-10,h-40,100,"/>
+      <NormalTextBt ID="CID_TRY_AGAIN" Text="Try Again" Rect="w/2+10,h-40,100,"/>
+    </Container>
+  </Container.UploadLyrResult>
+</skinwnd>

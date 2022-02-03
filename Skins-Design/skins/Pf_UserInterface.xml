@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PreferPage.UIRoot Visible="false" Name="UI" Rect="0,65,w,h-65">
+  <NormalFrame Rect="10,10,w-20,h-20"/>
+  <NormalTabButton ID="CID_TOOLBAR_UI"  Rect="30,10,w-30,">
+    <button ID="CMD_UI" Text="User Interface"/>
+    <button ID="CMD_SKINS" Text="Skins"/>
+  </NormalTabButton>
+  <Container Name="Content" Rect="10,0,w-20,h" ClipChildren="true">
+    <PreferPage.UI Visible="false" Name="UI" Rect="0,30,w,h-30-10">
+      <NormalFrame Rect="10,10,w-20,70" Text="Skin window settings"/>
+      <NormalCheckBox ID="CID_C_ON_TOP" Text="Always on top" Rect="25,30,w-50,"/>
+      <NormalCheckBox ID="CID_C_CLICK_THROUGH" Text="Mouse &amp;click through" Rect="25,55,w-50,"/>
+      <NormalFrame Rect="10,90,w-20,h-90-10" Text="Installed language packs"/>
+      <NormalTextBt ID="CID_SEL_LANGUAGE" Text="Select Language" Rect="20,115,w-40,"/>
+      <NormalText Text="Current language pack information:"
+                  Rect="20,145,w-40,"/>
+      <NormalText ID="CID_LANGUAGE_INFO" Rect="20,180,w-40,h-150-60" FontHeight="25" AlignText="AT_CENTER"/>
+    </PreferPage.UI>
+    <PreferPage.Skin Name="Skins" Visible="false" Rect="0,30,w,h-30-10">
+      <NormalText Rect="10,10,w-45,80" Text="Installed skins:"/>
+      <NormalListCtrl ID="CID_SKIN_LIST" Rect="10,40,w-20,180" EnableHorzScrollBar="false"/>
+      <NormalText Rect="10,230,w-45,80" Text="Current skin information:"/>
+      <NormalText ID="CID_SKIN_INFO" Rect="10,250,w-45,h-250-60" FontHeight="25" AlignText="AT_CENTER"/>
+    </PreferPage.Skin>
+  </Container>
+</PreferPage.UIRoot>
