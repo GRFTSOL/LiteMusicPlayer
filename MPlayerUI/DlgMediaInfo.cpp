@@ -17,7 +17,8 @@ class CDlgMediaInfoPage : public CSkinContainer
 public:
     CDlgMediaInfoPage(cstr_t szPageId, cstr_t szAssociateTabButtonId) : CSkinContainer()
     {
-        m_nAssociateTabButtonId = getIDByName(szAssociateTabButtonId);
+        m_strAssociateTabButtonId = szAssociateTabButtonId;
+        m_nAssociateTabButtonId = -1;
         m_bModified = false;
     }
 
@@ -29,6 +30,7 @@ public:
     {
         CSkinContainer::onInitialUpdate();
 
+        m_nAssociateTabButtonId = getIDByName(m_strAssociateTabButtonId.c_str());
         onUpdateView(false);
     }
 
@@ -51,6 +53,7 @@ public:
 protected:
     CDlgMediaInfo        *m_pDlgMediaInfo;
     bool                m_bModified;
+    string                  m_strAssociateTabButtonId;
     int                    m_nAssociateTabButtonId;
 
 };
@@ -307,9 +310,6 @@ CDlgMediaInfo::CDlgMediaInfo(IMedia *pMedia) : CMPSkinWnd()
     m_vInfoPages.push_back(new CDlgMediaInfoPageDetail());
     m_vInfoPages.push_back(new CDlgMediaInfoPageLyrics());
     m_vInfoPages.push_back(new CDlgMediaInfoPagePictures());
-    for (int i = 0; i < (int)m_vInfoPages.size(); i++)
-        m_vInfoPages[i]->setParent(this);
-
 }
 
 CDlgMediaInfo::~CDlgMediaInfo(void)
@@ -319,6 +319,11 @@ CDlgMediaInfo::~CDlgMediaInfo(void)
 void CDlgMediaInfo::onSkinLoaded()
 {
     CMPSkinWnd::onSkinLoaded();
+
+    for (int i = 0; i < (int)m_vInfoPages.size(); i++) {
+        m_vInfoPages[i]->setParent(this);
+        m_vInfoPages[i]->onInitialUpdate();
+    }
 
     reloadMediaInfo();
 

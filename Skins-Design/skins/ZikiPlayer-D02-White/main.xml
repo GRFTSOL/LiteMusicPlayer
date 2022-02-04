@@ -50,7 +50,7 @@
       <button ID="ID_HELP" left="7"/>
     </Toolbar>
   </DynControls>
-  <skinwnd Name="ZikiPlayer" EnableTranslucency="true" TranslucencyAlpha="0" TranslucencyAlphaOnHover="150" TranslucencyAlphaOnActive="255" MinWidth="330" MinHeight="200" Width="460" Height="210" PaintBg="TRUE" BgColor="#576C91" FgColor="#282828" FontName="Tahoma" FontHeight="20" FontBold="FALSE" TextOutlined="FALSE" TextOutlinedColor="#404040" TextColor="#FFFFFF" ContextMenu="NormalMode" CmdHandler="ch_common,ch_playlist,ch_mediaguide">
+  <skinwnd Name="ZikiPlayer" EnableTranslucency="true" TranslucencyAlpha="0" TranslucencyAlphaOnHover="150" TranslucencyAlphaOnActive="255" MinWidth="330" MinHeight="200" Width="460" Height="210" PaintBg="TRUE" BgColor="#576C91" FgColor="#282828" FontName="Tahoma" FontHeight="20" FontBold="FALSE" TextOutlined="FALSE" TextOutlinedColor="#404040" TextColor="#FFFFFF" ContextMenu="NormalMode" CmdHandler="ch_common,ch_playlist,ch_medialib">
     <DecorativeContainer Name="Caption" Left="0" Top="0" Width="w" Height="24" TranslucencyWithSkin="TRUE">
       <CaptionImage Left="0" Top="0" Width="w" Height="24" Name="Caption" EnableDblClick="TRUE" Image="frame.png" ImageRect="0,0,325,24" CutPos="100,120,180,200" BlendPixMode="copy"/>
       <Button left="3" top="4" width="17" height="17" ID="ID_MENU" Name="Menu" Image="cap-bt.png" ImageRect="68,0,17,17" ImageSel="cap-bt.png" ImageSelRect="68,34,17,17" ImageFocus="cap-bt.png" ImageFocusRect="68,17,17,17" BlendPixMode="alpha_blend"/>
@@ -108,7 +108,7 @@
     <WndResizer Left="w-22" Top="h-22" Width="14" Height="14" Direction="bottom|right" Name="Right bottom"/>
 
 </skinwnd>
-  <skinwnd Name="lyreditor" region="Modern.tr2" MinWidth="275" MinHeight="250" EnableResize="TRUE" Width="640" Height="450" BgColor="#4F586E" ContextMenu="NormalMode" CmdHandler="ch_common,ch_player">
+  <skinwnd Name="lyreditor" region="Modern.tr2" MinWidth="275" MinHeight="250" EnableResize="TRUE" Width="640" Height="450" BgColor="#4F586E" ContextMenu="NormalMode" CmdHandler="ch_common,ch_playlist,ch_medialib">
     <CaptionImage left="0" top="0" width="w" height="23" Name="Caption" EnableDblClick="true" image="caption.bmp" ImageRect="0,24,275,23" imageFocus="caption.bmp" imageFocusRect="0,0,275,23" CutPos="25,97,177,225"/>
     <ActiveButton left="6" top="4" width="11" height="10" ID="ID_MENU" Name="Menu" image="buttons.bmp" ImageRect="0,0,11,10" imageSel="buttons.bmp" ImageSelRect="0,20,11,10" imageFocus="buttons.bmp" ImageFocusRect="0,10,11,10"/>
     <ActiveButton left="w-41" top="4" width="11" height="10" ID="ID_MINIMIZE" Name="Minimize" image="buttons.bmp" ImageRect="11,0,11,10" imageSel="buttons.bmp" ImageSelRect="11,20,11,10" imageFocus="buttons.bmp" ImageFocusRect="11,10,11,10"/>

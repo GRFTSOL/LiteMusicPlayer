@@ -7,9 +7,7 @@
 #include "MPCommonCmdHandler.h"
 
 #include "MPPlaylistCmdHandler.h"
-#ifdef _MPLAYER
 #include "MPMediaLibCmdHandler.h"
-#endif
 
 #include "SkinRateCtrl.h"
 #include "LyricShowObj.h"
@@ -938,14 +936,12 @@ void CMPSkinWnd::addCmdHandler(cstr_t szName)
 
     if (strcasecmp(szName, "ch_common") == 0)
         pHandler = new CMPCommonCmdHandler();
-#ifdef _MPLAYER
     else if (strcasecmp(szName, "ch_playlist") == 0)
         pHandler = new CMPPlaylistCmdHandler();
-    else if (strcasecmp(szName, "ch_medialib_ppc") == 0)
+    else if (strcasecmp(szName, "ch_medialib") == 0)
         pHandler = new CMPMediaLibCmdHandler();
 //    else if (strcasecmp(szName, "ch_mediaguide") == 0)
 //        pHandler = new CMPCmdHandlerOfMediaGuide;
-#endif
     else if (strcasecmp(szName, "ch_floating_lyr") == 0)
         pHandler = new CMPCommonCmdHandler(true);
     else

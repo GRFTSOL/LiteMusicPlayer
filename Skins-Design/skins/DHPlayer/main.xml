@@ -2,7 +2,7 @@
 <skin defmainwnd="MainWnd" mainwnds="MainWnd" Script="main.java">
 	<include Name="Styles.xml"/>
 
-	<skinwnd Name="MainWnd" Extends="MenuWindowFrame" EnableTranslucency="true"
+	<skinwnd Name="MainWnd" Extends="MenuWindowFrame" EnableTranslucency="true" CmdHandler="ch_common,ch_playlist,ch_medialib"
 		TranslucencyAlpha="255" MinWidth="640" MinHeight="480" Width="700" Height="400" EnableClickThrough="false"
 		Menu="MainWndMenu" ContextMenu="MainContextMenu">
 

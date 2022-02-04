@@ -4,6 +4,7 @@
 
 	<skinwnd Name="MainWnd" EnableTranslucency="true" EnableClickThrough="false"
 			 MinWidth="640" MinHeight="480" Width="700" Height="400" Menu="MainWndMenu"
+			 CmdHandler="ch_common,ch_playlist,ch_medialib"
 			 ContextMenu="MainContextMenu" IsDialog="true" TranslucencyAlpha="255">
 
 		<Frame Name="Frame" Rect="0,110,w,h-110" Image="frame.png" ImageRect="0,110,425,40"

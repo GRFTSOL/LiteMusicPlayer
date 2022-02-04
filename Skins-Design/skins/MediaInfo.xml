@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<skinwnd Extends="WindowFrame" Name="MediaInfo.xml" Caption="Media Info"
+         MinWidth="600" MinHeight="540" RememberSizePos="true">
+  <NormalTabButton ID="CID_MEDIA_INFO_TAB"  Rect="10,5,w-10,">
+    <button ID="CMD_MI_BASIC" Text="Basic"/>
+    <button ID="CMD_MI_DETAIL" Text="Detail"/>
+    <button ID="CMD_MI_LYRICS" Text="Lyrics"/>
+    <button ID="CMD_MI_PICTURES" Text="Pictures"/>
+  </NormalTabButton>
+
+  <Container Name="Content" Rect="10,0,w-20,h" ClipChildren="true">
+    <Container ID="CID_C_MI_BASIC" Rect="0,10,w,h-10-20" Visible="false">
+      <NormalText Rect="20,0,150," Text="Title:" AlignText="AT_RIGHT"/>
+      <NormalEdit ID="CID_E_TITLE" Text="" Rect="210,100,200,"/>
+
+      <NormalText Rect="20,30,150," Text="Artist:" AlignText="AT_RIGHT"/>
+      <NormalEdit ID="CID_E_ARTIST" Text="" Rect="210,130,80,"/>
+
+      <NormalText Rect="20,60,150," Text="Album:" AlignText="AT_RIGHT"/>
+      <NormalEdit ID="CID_E_ALBUM" Text="" Rect="210,160,200,"/>
+
+      <NormalText Rect="20,90,150," Text="Genre" AlignText="AT_RIGHT"/>
+      <NormalEdit ID="CID_E_GENRE" Text="" Rect="210,190,200,"/>
+
+      <NormalText Rect="20,120,150," Text="Year:" AlignText="AT_RIGHT"/>
+      <NormalEdit ID="CID_E_YEAR" Text="" Rect="210,160,200,"/>
+
+      <NormalText Rect="20,150,150," Text="Track:" AlignText="AT_RIGHT"/>
+      <NormalEdit ID="CID_E_TRACK" Text="" Rect="210,160,200,"/>
+
+      <NormalText Rect="20,180,150," Text="Comments:" AlignText="AT_RIGHT"/>
+      <NormalEdit ID="CID_E_COMMENT" Text="" Rect="210,160,200,"/>
+    </Container>
+
+    <Container ID="CID_C_MI_DETAIL" Rect="0,10,w,h-10-20" Visible="false">
+      <NormalText Rect="20,0,150," Text="Composer:" AlignText="AT_RIGHT"/>
+      <NormalEdit ID="CID_E_COMPOSER" Text="" Rect="210,100,200,"/>
+
+      <NormalText Rect="20,30,150," Text="Copyright:" AlignText="AT_RIGHT"/>
+      <NormalEdit ID="CID_E_COPYRIGHT" Text="" Rect="210,130,80,"/>
+
+      <NormalText Rect="20,60,150," Text="Encoded:" AlignText="AT_RIGHT"/>
+      <NormalEdit ID="CID_E_ENCODED" Text="" Rect="210,160,200,"/>
+
+      <NormalText Rect="20,90,150," Text="URL" AlignText="AT_RIGHT"/>
+      <NormalEdit ID="CID_E_URL" Text="" Rect="210,190,200,"/>
+
+      <NormalText Rect="20,120,150," Text="Original Artist:" AlignText="AT_RIGHT"/>
+      <NormalEdit ID="CID_E_ORIG_ARTIST" Text="" Rect="210,160,200,"/>
+
+      <NormalText Rect="20,150,150," Text="Publisher:" AlignText="AT_RIGHT"/>
+      <NormalEdit ID="CID_E_PUBLISHER" Text="" Rect="210,160,200,"/>
+
+      <NormalText Rect="20,180,150," Text="BPM:" AlignText="AT_RIGHT"/>
+      <NormalEdit ID="CID_E_BPM" Text="" Rect="210,160,200,"/>
+    </Container>
+
+    <Container ID="CID_C_MI_LYRICS" Rect="0,10,w,h-10-20" Visible="false">
+      <NormalText Rect="20,0,150," Text="Lyrics:" AlignText="AT_RIGHT"/>
+      <NormalEdit ID="CID_E_LYRICS" Text="" Rect="20,20,w-40,h-30"/>
+    </Container>
+
+    <Container ID="CID_C_MI_PICTURES" Rect="0,10,w,h-10-20" Visible="false">
+      <NormalText Rect="20,0,150," Text="Album Artwork:" AlignText="AT_RIGHT"/>
+      <ImageListCtrl ID="CID_LIST_PICS" Text="" Rect="20,10,200,"/>
+      <NormalTextBt ID="CID_ADD_PIC" Text="&amp;Load Theme" Rect="w/2-110-110/2-30,260,110,"/>
+      <NormalTextBt ID="CID_DEL_PIC" Text="&amp;Save Theme" Rect="w/2-110/2,260,110,"/>
+      <NormalTextBt ID="CID_SAVE_PIC_AS" Text="&amp;Delete Theme" Rect="w/2+110/2+30,260,110,"/>
+    </Container>
+
+  </Container>
+
+</skinwnd>
