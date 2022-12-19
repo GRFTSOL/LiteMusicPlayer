@@ -784,7 +784,7 @@ int CSkinFactory::openSkin(cstr_t szSkinName, cstr_t szSkinDir, cstr_t szExtraDi
     m_resourceMgr.addRessourceDir(szSkinDir);
     if (szExtraDir && !isEmptyString(szExtraDir))
         m_resourceMgr.addRessourceDir(szExtraDir);
-    m_resourceMgr.addRessourceDir(getSkinRootDir());
+    m_resourceMgr.addRessourceDir(dirStringJoin(getSkinRootDir(), "assets").c_str());
 
     string skinFile;
     if (!m_resourceMgr.getResourcePathName(m_strSkinFileName.c_str(), skinFile))
