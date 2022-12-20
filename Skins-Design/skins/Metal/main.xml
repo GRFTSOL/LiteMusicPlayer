@@ -52,7 +52,7 @@
 						  ImageTrack="seek_track.png"/>
 			</Container>
 
-			<Container Rect="435,35,w-435-15,70" Name="Media Info">
+			<Container Rect="435,35,w-435-44,70" Name="Media Info">
 				<Property Name="BgImage" Image="media_info_bg.png" HorzExtendPos="5,45" BlendPixMode="alpha_blend"/>
 
 				<NormalLink Rect="0,0,w,h" ID="UID_INSTRUCTION" Text="Please click here to add media files." Link="cmd://CMD_IMPORT"
@@ -69,6 +69,9 @@
 				</Container>
 			</Container>
 
+			<Button Rect="w-24-10,35,24,24" ID="CID_HIDE_PLAYLIST" Image="playlist.png" ImageSize="24,24"/>
+			<Button Rect="w-24-10,85,24,24" ID="CID_HIDE_BOTTOM" Image="bottom.png" ImageSize="24,24"/>
+
 		</Container>
 
 		<Container ID="CID_BODY" Rect="8,118,w-16,h-118-8">
@@ -82,7 +85,7 @@
 						  XBorder="0" YBorder="0"/>
 					<NormalPlaylist Rect="5,5,w-10,h-10" DrawHeader="true" EnableBorder="false" />
 				</Container>
-				<DecorativeContainer Name="MediaInfo" Width="200" Height="108" MinWidth="200" MinHeight="108" LayoutParams="match_parent_height">
+				<DecorativeContainer ID="CID_LYRICS_AREA" Name="Lyrics" Width="200" Height="108" MinWidth="200" MinHeight="108" LayoutParams="match_parent_height">
 					<LyricsShow ID="ID_LYRICS_SHOW" Rect="0,0,w,h" SetSkinBg="false"
 					  EnableToolbar="FALSE" EnableAutoResize="FALSE" />
 
@@ -108,14 +111,6 @@
 
 				</DecorativeContainer>
 			</ResizableLinearContainer>
-		</Container>
-
-		<Container ID="CID_WORKING" Rect="8,h-60-8,w-16,60" Visible="false" >
-			<Property Name="BgImage" Image="frame.png" ImageRect="8,82,409,60" HorzExtendPos="8,409" BlendPixMode="copy"/>
-			
-			<NormalText ID="CID_STATUS" Text="" Rect="5,10,w-10,h"/>
-			<Progress ID="CID_PROGRESS" Rect="0,35,w-110-20,"/>
-			<NormalTextBt ID="CID_CANCEL_WORK" Text="Cancel" Rect="w-110-5,33,110,"/>
 		</Container>
 
 		<Animation ID="CID_AM_SHOW_WORKING" MoveFromBottom="CID_WORKING"

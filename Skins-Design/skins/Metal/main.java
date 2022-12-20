@@ -1,5 +1,5 @@
 
-public class iPodLyricsDownloaderWndEvent extends SkinWndEvent {
+public class MainWndEvent extends SkinWndEvent {
 
 	public SkinWnd mSkinWnd;
 
@@ -12,6 +12,10 @@ public class iPodLyricsDownloaderWndEvent extends SkinWndEvent {
 	
 	public boolean onCommand(int nCmdId)
 	{
+		if (nCmdId == CID_HIDE_PLAYLIST) {
+			mSkinWnd->setUIObjVisible(CID_LYRICS_AREA, false);
+		}
+
 		return false;
 	}
 
@@ -54,15 +58,20 @@ public class DHPlayer
 	public static int CID_AM_HIDE_LYR_TB;
 	public static int CID_AM_SHOW_LYR_TB;
 
+	public static int CID_HIDE_PLAYLIST;
+	public static int CID_LYRICS_AREA;
+
 	public static void main()
 	{
 		// UnitTest.message("DHPlayer main()");
 
 		CID_AM_HIDE_LYR_TB = SkinSystem.getCommandID("CID_AM_HIDE_LYR_TB");
 		CID_AM_SHOW_LYR_TB = SkinSystem.getCommandID("CID_AM_SHOW_LYR_TB");
+		CID_HIDE_PLAYLIST = SkinSystem.getCommandID("CID_HIDE_PLAYLIST");
+		CID_LYRICS_AREA = SkinSystem.getCommandID("CID_LYRICS_AREA");
 
-		static iPodLyricsDownloaderWndEvent	skinWndEvent = new iPodLyricsDownloaderWndEvent();
+		static MainWndEvent	skinWndEvent = new MainWndEvent();
 
-		SkinSystem.registerSkinWndEvent("iPodLyricsDownloader", skinWndEvent);
+		SkinSystem.registerSkinWndEvent("MainWnd", skinWndEvent);
 	}
 }

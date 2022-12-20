@@ -117,7 +117,7 @@ bool CSkinListCtrl::setItemImage(int nItem, int nSubItem, RawImageData *image, b
         if (m_vHeading[nSubItem]->colType == CColHeader::TYPE_IMAGE)
         {
             ItemImage *item = (ItemImage *)row->vItems[nSubItem];
-            item->image->attach(image);
+            item->image.attach(image);
             if (bRedraw)
                 invalidateItem(nItem);
             return true;
@@ -315,7 +315,7 @@ CRawImage *CSkinListCtrl::getCellImage(int row, int col)
         return nullptr;
 
     ItemImage *item = (ItemImage*) pRow->vItems[col];
-    return item->image;
+    return &item->image;
 }
 
 CSkinListCtrl::Item *CSkinListCtrl::newItem(int nCol)

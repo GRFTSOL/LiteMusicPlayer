@@ -652,7 +652,7 @@ void CSjvmSkinSystem::loadScript(cstr_t szScript)
     nRet = g_sjvm->compileFiles(vFiles);
     if (nRet != ERR_OK)
     {
-        ERR_LOG2("Failed to compile script files: %s, error: %s", szScript, (cstr_t)Error2Str(nRet));
+        ERR_LOG3("Failed to compile script files: %s, error: %s, %s", szScript, (cstr_t)Error2Str(nRet), g_sjvm->lastError().c_str());
         return;
     }
 

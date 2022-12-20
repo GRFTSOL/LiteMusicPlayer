@@ -73,11 +73,6 @@
 				  XBorder="0" YBorder="0"/>
 			<NormalPlaylist Rect="5,5,w-10,h-10" DrawHeader="true" EnableBorder="false" />
 		</Container>
-		
-		<Container ID="CID_WORKING" Rect="0,h-60,w,60" Name="Lyrics" Visible="false" >
-			<NormalText ID="CID_STATUS" Text="" Rect="15,5,w-10,h"/>
-			<Progress ID="CID_PROGRESS" Rect="10,30,w-110-40,"/>
-			<NormalTextBt ID="CID_CANCEL_WORK" Text="Cancel" Rect="w-110-15,28,110,"/>
-		</Container>
+
 	</skinwnd>
 </skin>

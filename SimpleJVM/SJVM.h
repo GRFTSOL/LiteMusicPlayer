@@ -415,6 +415,8 @@ public:
 
     void finishedInitSysModule();
 
+    const string &lastError() const { return m_strLastErr; }
+
 public:
     //
     // Interfaces for Simple JNI

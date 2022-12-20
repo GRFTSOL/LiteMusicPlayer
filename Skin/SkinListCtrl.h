@@ -32,9 +32,8 @@ public:
     class ItemImage : public Item
     {
     public:
-        ItemImage() { image = nullptr; }
-        ItemImage(CRawImage *image) { this->image = image; }
-        CRawImage        *image;
+        ItemImage() { }
+        CRawImage         image;
     };
 
     struct Row

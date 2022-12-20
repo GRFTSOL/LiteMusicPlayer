@@ -1700,8 +1700,7 @@ int CSkinFactory::exeDynamicCmd(const CDynamicCmds::DynamicCmd &cmd, CSkinWnd *p
         strSplit(cmd.strParam.c_str(), ',', vStrParam);
         if (vStrParam.size() != 3)
             return ERR_FALSE;
-        for (int i = 0; i < (int)vStrParam.size(); i++)
-            trimStr(vStrParam[i]);
+        trimStr(vStrParam);
 
         pObj = pSkinWnd->getUIObjectById(getIDByName(vStrParam[0].c_str()));
         if (pObj)
