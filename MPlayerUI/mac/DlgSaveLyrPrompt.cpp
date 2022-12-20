@@ -8,7 +8,7 @@ int saveLyrDialogBox(Window *pWnd)
     {
         bInModal = true;
         
-        string        strMessage = CStrPrintf(_TLT("The lyrics of the %s file have changed."), 
+        string        strMessage = stringPrintf(_TLT("The lyrics of the %s file have changed."), 
                                             fileGetName(g_LyricData.getSongFileName())).c_str();
         strMessage += "\r\n\r\n";
         strMessage += _TLT("Do you want to save the changes?");

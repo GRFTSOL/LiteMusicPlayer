@@ -158,12 +158,9 @@ void CUIObjProperties::addPropImage(cstr_t szName, cstr_t szRectName, cstr_t szI
     assert(!isPropExist(szName));
     CUIObjProperty        property;
 
-    CStrPrintf rect("%d,%d,%d,%d",
-        image.x(), image.y(),
-        image.width(), image.height());
-
     property.options.push_back(szRectName);
-    property.options.push_back(rect.c_str());
+    property.options.push_back(stringPrintf("%d,%d,%d,%d",
+        image.x(), image.y(), image.width(), image.height()));
 
     property.name = szName;
     property.strValue = szImage;
@@ -178,12 +175,9 @@ void CUIObjProperties::addPropImageEx(cstr_t szName, cstr_t szRectName, cstr_t s
     assert(!isPropExist(szName));
     CUIObjProperty        property;
 
-    CStrPrintf rect("%d,%d,%d,%d",
-        image.x(), image.y(),
-        image.width(), image.height());
-
     property.options.push_back(szRectName);
-    property.options.push_back(rect.c_str());
+    property.options.push_back(stringPrintf("%d,%d,%d,%d",
+        image.x(), image.y(), image.width(), image.height()));
     property.options.insert(property.options.end(), vExtraProperies.begin(), vExtraProperies.end());
 
     property.name = szName;
@@ -342,7 +336,7 @@ void readMarginValue(cstr_t szValue, CRect &rc)
 {
     VecStrings        vRect;
 
-    makeSizedString(szValue).split(',', vRect);
+    SizedString(szValue).split(',', vRect);
     for (auto &s : vRect) {
         trimStr(s);
     }

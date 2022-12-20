@@ -141,9 +141,9 @@ public:
                 if (strcasecmp(strDownSaveDir.c_str(), dlg.getFolder()) != 0)
                 {
                     strDownSaveDir = dlg.getFolder();
-                    dirStringAddSlash(strDownSaveDir);
+                    dirStringAddSep(strDownSaveDir);
 
-                    if (!canWriteInDir(strDownSaveDir.c_str()))
+                    if (!isDirWritable(strDownSaveDir.c_str()))
                         m_pSkin->messageOut("Can't save lyrics in the selected folder.");
                     else
                     {

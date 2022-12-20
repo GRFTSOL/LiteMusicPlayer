@@ -8,9 +8,9 @@
 
 
 //
-// return CHAR_ENCODING of XML file.
+// return CharEncodingType of XML file.
 //
-CHAR_ENCODING getXMLTxtEncoding(const char *szTxt, int nLen)
+CharEncodingType getXMLTxtEncoding(const char *szTxt, int nLen)
 {
     // encoding='gb2312'
     const char    *szEncoding = "encoding";
@@ -97,7 +97,7 @@ SimpleXMLParserError CSimpleXMLParser::parseData(const void *lpXmlData, size_t n
     int bomSize = 0;
     uint8_t *szBuffer = (uint8_t *)lpXmlData;
 
-    CHAR_ENCODING encoding = detectFileEncoding(szBuffer, nLen, bomSize);
+    CharEncodingType encoding = detectFileEncoding(szBuffer, nLen, bomSize);
 
     szBuffer += bomSize;
     nLen -= bomSize;

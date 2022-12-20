@@ -158,9 +158,9 @@ void CSkinScrollFrameCtrlBase::createVertScrollbar()
     m_pObjVertScrollBar->m_formWidth.calCualteValue(nWidth);
     m_nWidthVertScrollBar = nWidth;
 
-    m_pObjVertScrollBar->m_formLeft.setFormula(CStrPrintf("w-%d", m_nWidthVertScrollBar + m_rcPadding.right).c_str());
+    m_pObjVertScrollBar->m_formLeft.setFormula(stringPrintf("w-%d", m_nWidthVertScrollBar + m_rcPadding.right).c_str());
     m_pObjVertScrollBar->m_formTop.setFormula(m_rcPadding.top);
-    m_pObjVertScrollBar->m_formHeight.setFormula(CStrPrintf("h-%d", m_rcPadding.top + m_rcPadding.bottom + m_nHeightHorzScrollBar).c_str());
+    m_pObjVertScrollBar->m_formHeight.setFormula(stringPrintf("h-%d", m_rcPadding.top + m_rcPadding.bottom + m_nHeightHorzScrollBar).c_str());
     if (m_pObjHorzScrollBar)
     {
         // Horizontal scroll bar is created first, decrease its width now.
@@ -201,8 +201,8 @@ void CSkinScrollFrameCtrlBase::createHorzScrollbar()
     m_nHeightHorzScrollBar = nHeight;
 
     m_pObjHorzScrollBar->m_formLeft.setFormula(m_rcPadding.left);
-    m_pObjHorzScrollBar->m_formTop.setFormula(CStrPrintf("h-%d", m_rcPadding.bottom + m_nHeightHorzScrollBar).c_str());
-    m_pObjHorzScrollBar->m_formWidth.setFormula(CStrPrintf("w-%d", m_rcPadding.left + m_rcPadding.right + m_nWidthVertScrollBar).c_str());
+    m_pObjHorzScrollBar->m_formTop.setFormula(stringPrintf("h-%d", m_rcPadding.bottom + m_nHeightHorzScrollBar).c_str());
+    m_pObjHorzScrollBar->m_formWidth.setFormula(stringPrintf("w-%d", m_rcPadding.left + m_rcPadding.right + m_nWidthVertScrollBar).c_str());
     if (m_pObjVertScrollBar)
     {
         // Vertical scroll bar is created first, decrease its height now.

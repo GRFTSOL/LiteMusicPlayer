@@ -11,7 +11,7 @@
 typedef struct _CMDID_ENCODING
 {
     int                                nCmdId;
-    CHAR_ENCODING    nEncodingId;
+    CharEncodingType    nEncodingId;
 }_CMDID_ENCODING;
 
 _CMDID_ENCODING    _arrCmdIdCharset[] = 
@@ -50,7 +50,7 @@ int cmdIdToEncoding(int nCmdId)
     return -1;
 }
 
-int encodingIdToCmd(CHAR_ENCODING nEncodingId)
+int encodingIdToCmd(CharEncodingType nEncodingId)
 {
     for (int i = 0; i < CountOf(_arrCmdIdCharset); i++)
     {
@@ -145,7 +145,7 @@ typedef uint32_t(*FUNGetCheckMenuID)();
 
 static uint32_t getCharEncodingCheckMenuID()
 {
-    CHAR_ENCODING encoding = ED_SYSDEF;
+    CharEncodingType encoding = ED_SYSDEF;
     return encodingIdToCmd(encoding);
 }
 

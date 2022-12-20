@@ -17,7 +17,7 @@ public:
     FileFind();
     virtual ~FileFind();
 
-    bool openDir(cstr_t szDir, cstr_t szFilter = nullptr);
+    bool openDir(cstr_t szDir, cstr_t extFilter = nullptr);
 
     void close();
 

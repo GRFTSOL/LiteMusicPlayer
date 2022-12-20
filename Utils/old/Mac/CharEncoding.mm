@@ -16,7 +16,7 @@
 //
 // ED_XXX 的定义和 __encodingCodepage 的索引顺序是一直的。
 // 即__encodingCodepage[ED_XXX].nEncodingId = ED_XXX
-ENCODING_CODEPAGE    __encodingCodepage[] =
+EncodingCodePage    __encodingCodepage[] =
 {
     { ED_SYSDEF, kCFStringEncodingWindowsLatin1, "", "", "systemdefault" },
     { ED_UNICODE, kCFStringEncodingUTF16LE, "unicode", "", "Unicode" },
@@ -47,41 +47,41 @@ int GetCharEncodingCount() { return __MaxEncodings; }
 
 void InitSetDefaultCharEncoding()
 {
-    ENCODING_CODEPAGE &ecp = GetCharEncodingByID(ED_SYSDEF);
+    EncodingCodePage &ecp = GetCharEncodingByID(ED_SYSDEF);
     NSLocale *local = [NSLocale currentLocale];
     NSString *lang = [local objectForKey:NSLocaleLanguageCode];
     NSString *countryCode = [local objectForKey: NSLocaleCountryCode];
     
     // Compare country code
     if ([countryCode isEqual: @"CN"] || [countryCode isEqual: @"SG"])
-        ecp.nCFStringEncoding = GetCharEncodingByID(ED_GB2312).nCFStringEncoding;
+        ecp.cfStringEncoding = GetCharEncodingByID(ED_GB2312).cfStringEncoding;
     else if ([countryCode isEqual: @"TW"] || [countryCode isEqual: @"HK"])
-        ecp.nCFStringEncoding = GetCharEncodingByID(ED_BIG5).nCFStringEncoding;
+        ecp.cfStringEncoding = GetCharEncodingByID(ED_BIG5).cfStringEncoding;
     else if ([countryCode isEqual: @"JP"])
-        ecp.nCFStringEncoding = GetCharEncodingByID(ED_JAPANESE_SHIFT_JIS).nCFStringEncoding;
+        ecp.cfStringEncoding = GetCharEncodingByID(ED_JAPANESE_SHIFT_JIS).cfStringEncoding;
     
     // Compare language code
     else if ([lang isEqual: @"ara"])
-        ecp.nCFStringEncoding = GetCharEncodingByID(ED_ARABIC).nCFStringEncoding;
+        ecp.cfStringEncoding = GetCharEncodingByID(ED_ARABIC).cfStringEncoding;
     else if ([lang isEqual: @"bat"])
-        ecp.nCFStringEncoding = GetCharEncodingByID(ED_BALTIC_WINDOWS).nCFStringEncoding;
+        ecp.cfStringEncoding = GetCharEncodingByID(ED_BALTIC_WINDOWS).cfStringEncoding;
     else if ([lang isEqual: @"gre"])
-        ecp.nCFStringEncoding = GetCharEncodingByID(ED_GREEK_WINDOWS).nCFStringEncoding;
+        ecp.cfStringEncoding = GetCharEncodingByID(ED_GREEK_WINDOWS).cfStringEncoding;
     else if ([lang isEqual: @"heb"])
-        ecp.nCFStringEncoding = GetCharEncodingByID(ED_HEBREW_WINDOWS).nCFStringEncoding;
+        ecp.cfStringEncoding = GetCharEncodingByID(ED_HEBREW_WINDOWS).cfStringEncoding;
     else if ([lang isEqual: @"tha"])
-        ecp.nCFStringEncoding = GetCharEncodingByID(ED_THAI).nCFStringEncoding;
+        ecp.cfStringEncoding = GetCharEncodingByID(ED_THAI).cfStringEncoding;
     else if ([lang isEqual: @"tur"])
-        ecp.nCFStringEncoding = GetCharEncodingByID(ED_TURKISH_WINDOWS).nCFStringEncoding;
+        ecp.cfStringEncoding = GetCharEncodingByID(ED_TURKISH_WINDOWS).cfStringEncoding;
     else if ([lang isEqual: @"vie"])
-        ecp.nCFStringEncoding = GetCharEncodingByID(ED_VIETNAMESE).nCFStringEncoding;
+        ecp.cfStringEncoding = GetCharEncodingByID(ED_VIETNAMESE).cfStringEncoding;
     else if ([lang isEqual: @"rus"])
-        ecp.nCFStringEncoding = GetCharEncodingByID(ED_RUSSIAN_WINDOWS).nCFStringEncoding;
+        ecp.cfStringEncoding = GetCharEncodingByID(ED_RUSSIAN_WINDOWS).cfStringEncoding;
     else if ([lang isEqual: @"kor"])
-        ecp.nCFStringEncoding = GetCharEncodingByID(ED_KOREAN).nCFStringEncoding;
+        ecp.cfStringEncoding = GetCharEncodingByID(ED_KOREAN).cfStringEncoding;
 }
 
-ENCODING_CODEPAGE &GetSysDefaultCharEncoding()
+EncodingCodePage &GetSysDefaultCharEncoding()
 {
     static bool defaultSet = false;
     if (!defaultSet) {
@@ -103,7 +103,7 @@ NSString *initNSString(const char *str, int nLen, int encodingID)
     
     temp = [NSString stringWithCString:str encoding:(NSStringEncoding)
             CFStringConvertEncodingToNSStringEncoding(
-                                                      GetCharEncodingByID((CHAR_ENCODING)encodingID).nCFStringEncoding)];
+                                                      GetCharEncodingByID((CharEncodingType)encodingID).cfStringEncoding)];
     if (!temp)
         temp = [NSString stringWithCString:str encoding:(NSStringEncoding)NSISOLatin1StringEncoding];
     
@@ -162,7 +162,7 @@ int Utf8ToMbcs(const char *str, int nLen, char *strOut, int nOut, int encodingID
         [temp getCString:strOut
               maxLength:nOut
                encoding:CFStringConvertEncodingToNSStringEncoding(
-                                                                  GetCharEncodingByID((CHAR_ENCODING)encodingID).nCFStringEncoding)];
+                                                                  GetCharEncodingByID((CharEncodingType)encodingID).cfStringEncoding)];
     } else {
         return 0;
     }
@@ -198,7 +198,7 @@ int ucs2ToMbcs(const WCHAR *str, int nLen, char *strOut, int nOut, int encodingI
         [temp getCString:strOut
               maxLength:nOut
                encoding:CFStringConvertEncodingToNSStringEncoding(
-                                                                  GetCharEncodingByID((CHAR_ENCODING)encodingID).nCFStringEncoding)];
+                                                                  GetCharEncodingByID((CharEncodingType)encodingID).cfStringEncoding)];
         [temp release];
     } else {
         return 0;

@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "UtilsTypes.h"
+#include "Utils.h"
 #ifdef _WIN32
 #include <wtypes.h>
 #include <oleauto.h>
@@ -19,8 +19,6 @@
 #include <time.h>
 
 #include "Log.h"
-#include "Date.h"
-#include "FileApi.h"
 
 /*
 
@@ -205,14 +203,14 @@ void CLog::writeLog( uint8_t byLevel, cstr_t szFile, int nLine, cstr_t szFormat,
     char        szBuffer[MAX_MSG_LEN] = "";
     int            nLen = 0;
 
-    CDate time = CDate::getCurrentDate();
+    auto time = DateTime::localTime();
 
 #if defined(_WIN32_DESKTOP)
     __try
 #endif
     {
         nLen = snprintf(szBuffer, CountOf(szBuffer) - 1, "|T%d-%d %d:%d:%d|F%s|L%d|E%d|M",
-            time.month, time.day, time.hour, time.minute, time.second,
+            time.month(), time.day(), time.hour(), time.minute(), time.second(),
             szFile, nLine, byLevel);
 
         // 格式化日志
@@ -260,7 +258,7 @@ void CLog::writeLog( uint8_t byLevel, cstr_t szFile, int nLine, cstr_t szFormat,
         if (openLogFile())
         {
             writeLog(LOG_LVL_INFO, __FILE__, __LINE__, "log File is NOT opened, open it At %d-%d-%d %d:%d:%d. LOG STARTED:)\n",
-                time.year, time.month, time.day, time.hour, time.minute, time.second);
+                time.year(), time.month(), time.day(), time.hour(), time.minute(), time.second());
         }
     }
 
@@ -279,7 +277,7 @@ void CLog::init(cstr_t szLogFileName)
     if (!szLogFileName)
         return;
 
-    if (strchr(szLogFileName, DIR_SLASH) != nullptr)
+    if (strchr(szLogFileName, PATH_SEP_CHAR) != nullptr)
     {
         // It might be full file path
         m_logFile = szLogFileName;
@@ -294,10 +292,10 @@ void CLog::init(cstr_t szLogFileName)
     if (!openLogFile())
         return;
 
-    CDate time = CDate::getCurrentDate();
+    auto time = DateTime::localTime();
 
     writeLog(LOG_LVL_INFO, __FILE__, __LINE__, "Started log : %s At %d-%d-%d %d:%d:%d. LOG STARTED:)", szLogFileName,
-        time.year, time.month, time.day, time.hour, time.minute, time.second);
+        time.year(), time.month(), time.day(), time.hour(), time.minute(), time.second());
 }
 
 void CLog::close()
@@ -317,7 +315,7 @@ void CLog::setSrcRootDir(cstr_t szSrcFile, int nCurFileDeep)
 
     while (szDirEndPos > szSrcFile)
     {
-        if (*szDirEndPos == DIR_SLASH)
+        if (*szDirEndPos == PATH_SEP_CHAR)
         {
             if (nCurFileDeep > 0)
                 nCurFileDeep--;

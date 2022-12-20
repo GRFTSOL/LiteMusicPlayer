@@ -4,7 +4,6 @@
 
 #include "UtilsTypes.h"
 #include "IdString.h"
-#include "StringEx.h"
 
 
 uint32_t stringToID(ID_TO_STRING_A Ids[], cstr_t szID, uint32_t dwDefault)
@@ -62,8 +61,7 @@ uint32_t getCombinationValue(IdToString Ids[], cstr_t szValue)
     uint32_t dwFlags = 0;
     for (auto &str : vStr) {
         str.trim(' ');
-        string s = makeString(str);
-        dwFlags |= stringToID(Ids, s.c_str(), 0);
+        dwFlags |= stringToID(Ids, str.toString().c_str(), 0);
     }
 
     return dwFlags;

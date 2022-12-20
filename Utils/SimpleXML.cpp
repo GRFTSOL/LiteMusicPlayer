@@ -2,13 +2,11 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "UtilsTypes.h"
+#include "Utils.h"
 #include "SimpleXML.h"
 #include "SimpleXMLParser.h"
 #include "MLBinXMLParser.h"
 #include "XMLWriter.h"
-#include "base64.h"
-#include "FileApi.h"
 
 
 SXNode *dupSXNode(SXNode *pOrgNode)
@@ -368,7 +366,7 @@ protected:
 
             p = node.getProperty(szName);
             if (!p || !(strcmp(p, szValue) == 0))
-                CPPUNIT_FAIL_T(CStrPrintf("SXNode.getProperty(), case: %d, %s", i, szName).c_str());
+                CPPUNIT_FAIL_T(stringPrintf("SXNode.getProperty(), case: %d, %s", i, szName).c_str());
         }
 
         // Erase property
@@ -384,7 +382,7 @@ protected:
             node.eraseProperty(szName);
             p = node.getProperty(szName);
             if (p)
-                CPPUNIT_FAIL_T(CStrPrintf("SXNode.eraseProperty(), case: %d, %s", i, szName).c_str());
+                CPPUNIT_FAIL_T(stringPrintf("SXNode.eraseProperty(), case: %d, %s", i, szName).c_str());
         }
 
         // To xml, and parse from xml

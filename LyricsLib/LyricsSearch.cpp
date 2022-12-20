@@ -44,7 +44,7 @@ inline int fileTypeToMatchValueCol(MLFileType fileType)
 
 int CLyricsSearchParameter::calMatchValueByName(cstr_t szLyricsDir, cstr_t szLyricsFileName, MLFileType fileType)
 {
-    assert(endsWith(szLyricsDir, SZ_DIR_SLASH));
+    assert(endsWith(szLyricsDir, PATH_SEP_STR));
 
     bool isFileTitleSame = false;
     bool isDirSame = false;
@@ -279,7 +279,7 @@ void searchMatchLyricsInDir(cstr_t szDir, CLyricsSearchParameter &searchParam, V
             if (bIncludeSub)
             {
                 string subDir = dirStringJoin(szDir, finder.getCurName());
-                dirStringAddSlash(subDir);
+                dirStringAddSep(subDir);
                 searchMatchLyricsInDir(subDir.c_str(), searchParam, vLyrics, bIncludeSub);
                 if (searchParam.isBestMatchLyricsFound())
                     return;
@@ -344,7 +344,7 @@ int searchEmbeddedLyrics(cstr_t szSongFile, V_LRCSEARCHRESULT &vLyrics, bool bOn
         {
             string strIndex;
             if (index > 0)
-                strIndex = CStrPrintf(": %d", index).c_str();
+                strIndex = stringPrintf(": %d", index).c_str();
             if (language == "eng")
                 result.strArtist = "English";
             else if (language == "fre")

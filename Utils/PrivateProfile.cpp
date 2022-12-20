@@ -1,6 +1,4 @@
-#include "UtilsTypes.h"
-#include "StringEx.h"
-#include "FileApi.h"
+#include "Utils.h"
 
 
 uint32_t GetPrivateProfileString(cstr_t lpAppName, cstr_t lpKeyName, cstr_t lpDefault, char * lpReturnedString, uint32_t nSize, cstr_t lpFileName)
@@ -233,5 +231,5 @@ bool WritePrivateProfileString(cstr_t appName, cstr_t keyName, cstr_t value, cst
 
     replacePrivateProfileStr(buff, appName, keyName, value);
 
-    return saveDataAsFile(fileName, buff.c_str(), (int)buff.size());
+    return writeFile(fileName, buff.c_str(), (int)buff.size());
 }

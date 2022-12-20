@@ -104,7 +104,7 @@ int CLyricsOutPluginMgr::init()
                 if (nRet != ML_LYR_OUT_VERSION || plugin.plyricsOut == nullptr)
                 {
                     FreeLibrary(hModule);
-                    CMPlayerAppBase::getInstance()->messageOut(CStrPrintf("init lyrics output plugin: %s FAILED!\r\nMaybe incorrect plugin version!", strPluginFile.c_str()).c_str());
+                    CMPlayerAppBase::getInstance()->messageOut(stringPrintf("init lyrics output plugin: %s FAILED!\r\nMaybe incorrect plugin version!", strPluginFile.c_str()).c_str());
                 }
                 else
                 {

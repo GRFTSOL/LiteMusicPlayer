@@ -270,7 +270,7 @@ void CMPSkinEditorApp::OnSkinWndNew()
 
     name = strNamePrefix;
     for (int i = 1; !pSkinFile->canUseSkinWndName(name.c_str()); i++)
-        name = strNamePrefix + CStrPrintf(" %d", i).c_str();
+        name = strNamePrefix + stringPrintf(" %d", i).c_str();
 
     CSkinEditorFrame *pSEFrame = (CSkinEditorFrame*)pFrame->CreateNewChild(
         RUNTIME_CLASS(CSkinEditorFrame), IDR_MPSKINTYPE, m_hMDIMenu, m_hMDIAccel);
@@ -302,7 +302,7 @@ void CMPSkinEditorApp::OnSkinWndDup()
 
         name = strNamePrefix += pSEFrameSrc->m_wndSkin.getSkinWndName();
         for (int i = 1; !pSkinFile->canUseSkinWndName(name.c_str()); i++)
-            name = strNamePrefix + CStrPrintf(" %d", i).c_str();
+            name = strNamePrefix + stringPrintf(" %d", i).c_str();
 
         CSkinEditorFrame *pSEFrame = (CSkinEditorFrame*)pFrame->CreateNewChild(
             RUNTIME_CLASS(CSkinEditorFrame), IDR_MPSKINTYPE, m_hMDIMenu, m_hMDIAccel);

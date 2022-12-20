@@ -5,7 +5,7 @@
 class CID3v2IF : public CID3v2
 {
 public:
-    CID3v2IF(CHAR_ENCODING encoding);
+    CID3v2IF(CharEncodingType encoding);
     ~CID3v2IF();
 
     int listLyrics(VecStrings &vLyrNames);

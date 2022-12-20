@@ -40,7 +40,7 @@ CDownloadMgr            g_LyricsDownloader;
 
 CLyricsLocalSearch        g_LyricSearch;
 
-CHAR_ENCODING getDefaultLyricsEncodingSettings();
+CharEncodingType getDefaultLyricsEncodingSettings();
 
 #ifdef _CPPUNIT_TEST
 void mLRunUnitTest()
@@ -519,9 +519,7 @@ void CMPlayerAppBase::onDownloadLyricsFailed(CDownloadTask *pTask)
         showInetErrorDlg(getMainWnd(), pTask->m_errResult);
     else if (pTask->m_nHttpRetCode != 200)
     {
-        CStrPrintf    str;
-
-        str.printf("URL:  %s\r\nCode: %d, %s", pTask->m_strURL.c_str(), 
+        auto str = stringPrintf("URL:  %s\r\nCode: %d, %s", pTask->m_strURL.c_str(),
             pTask->m_nHttpRetCode, httpErrorCodeToStr(pTask->m_nHttpRetCode));
 
         getMainWnd()->messageOut(str.c_str());

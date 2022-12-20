@@ -53,7 +53,7 @@ int CDlgChooseFont::doModal(Window *pWndParent, cstr_t szFontFaceName, int nFont
 
         // font size
         strFontName += " ";
-        strFontName += CStrPrintf("%d", nFontSize).c_str();
+        strFontName += stringPrintf("%d", nFontSize).c_str();
 
         gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(m_window), strFontName.c_str());
     }

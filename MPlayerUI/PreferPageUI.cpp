@@ -21,8 +21,8 @@ public:
         addOptBool(ET_NULL, SZ_SECT_UI, "topmost", true, "CID_C_ON_TOP");
 
         // Click though...
-        CStrPrintf str("%d", CMPlayerAppBase::getMPSkinFactory()->getClickThrough());
-        setUIObjectProperty("CID_C_CLICK_THROUGH", "CurStatus", str.c_str());
+        setUIObjectProperty("CID_C_CLICK_THROUGH", "CurStatus",
+            stringPrintf("%d", CMPlayerAppBase::getMPSkinFactory()->getClickThrough()).c_str());
 
         initCheckButtons();
 

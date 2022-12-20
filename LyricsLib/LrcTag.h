@@ -32,9 +32,9 @@ enum LYRICS_CONTENT_TYPE
     LCT_ALL                = LCT_TXT | LCT_LRC | LCT_KARAOKE,
 };
 
-void setDefaultLyricsEncoding(CHAR_ENCODING encoding);
+void setDefaultLyricsEncoding(CharEncodingType encoding);
 
-string convertLyricsToUtf8(uint8_t *text, size_t len, bool useSpecifiedEncoding, CHAR_ENCODING encoding);
+string convertLyricsToUtf8(uint8_t *text, size_t len, bool useSpecifiedEncoding, CharEncodingType encoding);
 
 bool isTxtTagAtTailOfFile(LyrTagType tagType);
 
@@ -158,7 +158,7 @@ public:
     CLrcTag(LyricsProperties &orgProp, LyricsProperties &newProp, uint32_t tagMask = LTT_ALL_TAG);
 
     int readFromFile(cstr_t szFile);
-    bool readFromText(uint8_t *str, size_t len, bool bUseSpecifiedEncoding = false, CHAR_ENCODING encoding = ED_SYSDEF);
+    bool readFromText(uint8_t *str, size_t len, bool bUseSpecifiedEncoding = false, CharEncodingType encoding = ED_SYSDEF);
     bool readFromText(const char *str, size_t len);
 
     int writeToFile(cstr_t szFile, bool bLrcTag);

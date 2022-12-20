@@ -10,7 +10,7 @@
 #include "ID3v1.h"
 
 
-CHAR_ENCODING iD3v2EncTypeToCharEncoding(ID3v2EncType encType)
+CharEncodingType iD3v2EncTypeToCharEncoding(ID3v2EncType encType)
 {
     switch (encType)
     {
@@ -28,7 +28,7 @@ CHAR_ENCODING iD3v2EncTypeToCharEncoding(ID3v2EncType encType)
     }
 }
 
-ID3v2EncType charEncodingToID3v2EncType(CHAR_ENCODING encoding)
+ID3v2EncType charEncodingToID3v2EncType(CharEncodingType encoding)
 {
     switch (encoding)
     {
@@ -189,7 +189,7 @@ int ID3v2Pictures::getPicDescriptionsCount()
 }
 
 
-CID3v2::CID3v2(CHAR_ENCODING encoding)
+CID3v2::CID3v2(CharEncodingType encoding)
 {
     m_Encoding = encoding;
     m_bAttach = false;
@@ -274,7 +274,7 @@ int CID3v2::open(cstr_t szFile, bool bModify, bool bCreate)
 
     if (!m_fp)
     {
-        setCustomErrorDesc(CStrPrintf("%s: %s", (cstr_t)OSError(), szFile).c_str());
+        setCustomErrorDesc(stringPrintf("%s: %s", (cstr_t)OSError(), szFile).c_str());
         return ERR_CUSTOM_ERROR;
     }
 

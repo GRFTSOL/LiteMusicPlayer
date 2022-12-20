@@ -1259,7 +1259,7 @@ void CSkinContainer::setExPool(cstr_t szProperty, cstr_t szValue)
 
 void CSkinContainer::setExPool(cstr_t szProperty, int value)
 {
-    m_pSkin->m_mapExchangePool[szProperty] = CStrPrintf("%d", value).c_str();
+    m_pSkin->m_mapExchangePool[szProperty] = stringPrintf("%d", value).c_str();
 }
 
 string CSkinContainer::getExPoolStr(cstr_t szProperty, cstr_t szDefault)
@@ -1299,7 +1299,7 @@ void CSkinContainer::dumpUIObject(int &nDeep, CPoint *pt)
     for (uint32_t i = 0; i < m_vUIObjs.size(); i++)
     {
         CUIObject    *p = m_vUIObjs[i];
-        CStrPrintf str("%s id=%s(%d), name=%s visible=%d rc=%d,%d,%d,%d", + p->getClassName(), 
+        auto str = stringPrintf("%s id=%s(%d), name=%s visible=%d rc=%d,%d,%d,%d", + p->getClassName(), 
             m_pSkin->getSkinFactory()->getStringOfID(p->getID()).c_str(), p->getID(),
             p->m_strName.c_str(), p->m_visible, p->m_rcObj.left, p->m_rcObj.top, p->m_rcObj.width(), p->m_rcObj.height());
         if (pt == nullptr || p->isPtIn(*pt))

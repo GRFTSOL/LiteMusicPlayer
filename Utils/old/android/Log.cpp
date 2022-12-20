@@ -98,7 +98,7 @@ void CLog::setSrcRootDir(cstr_t szSrcFile, int nCurFileDeep)
 
     while (szDirEndPos > szSrcFile)
     {
-        if (*szDirEndPos == DIR_SLASH)
+        if (*szDirEndPos == PATH_SEP_CHAR)
         {
             if (nCurFileDeep > 0)
                 nCurFileDeep--;

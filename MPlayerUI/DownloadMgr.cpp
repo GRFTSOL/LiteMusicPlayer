@@ -283,7 +283,7 @@ void CDownloadMgr::createDefaultLyricsDir(string &strDefSavePath)
     // Retrieve the root Dir.
     strDefSavePath = getAppResourceDir();
     strDefSavePath.resize(3);
-    if (!canWriteInDir(strDefSavePath.c_str()))
+    if (!isDirWritable(strDefSavePath.c_str()))
     {
         char        szDir[MAX_PATH];
 
@@ -291,14 +291,14 @@ void CDownloadMgr::createDefaultLyricsDir(string &strDefSavePath)
         GetWindowsDirectory(szDir, CountOf(szDir));
         strDefSavePath = szDir;
         strDefSavePath.resize(3);
-        if (!canWriteInDir(strDefSavePath.c_str()))
+        if (!isDirWritable(strDefSavePath.c_str()))
             strDefSavePath = getAppDataDir();
     }
 #else
     strDefSavePath = getAppDataDir();
 #endif
     strDefSavePath += "Lyrics";
-    dirStringAddSlash(strDefSavePath);
+    dirStringAddSep(strDefSavePath);
 
     if (!isDirExist(strDefSavePath.c_str()))
         createDirectoryAll(strDefSavePath.c_str());
@@ -329,7 +329,7 @@ string CDownloadMgr::getSaveLyricsFile(cstr_t szSongFile, cstr_t szFileName, DOW
     if (strLyricsFile.empty())
         strLyricsFile = m_strDefSavePath.c_str();
 
-    dirStringAddSlash(strLyricsFile);
+    dirStringAddSep(strLyricsFile);
 
     // save lyrics in sub folder by ABC order?
     if (DownSaveDir != DOWN_SAVE_IN_SONG_DIR 
@@ -341,7 +341,7 @@ string CDownloadMgr::getSaveLyricsFile(cstr_t szSongFile, cstr_t szFileName, DOW
         else if (c >= '0' && c <='9')
             strLyricsFile += '#';
 
-        dirStringAddSlash(strLyricsFile);
+        dirStringAddSep(strLyricsFile);
     }
 
     string name;
@@ -538,8 +538,7 @@ int CDownloadMgr::runHttpTask(CDownloadTask *pTask)
     nRet = httpClient.init(pTask->m_strURL.c_str(), nullptr);
     if (nRet != ERR_OK)
     {
-        CStrPrintf    str("Failed to init http url: %s",pTask->m_strURL.c_str());
-        ERR_LOG1("%s", str.c_str());
+        ERR_LOG1("Failed to init http url: %s",pTask->m_strURL.c_str());
         nRet = ERR_HTTP_BAD_REQUEST;
         nHttpCode = 0;
         goto RETURN_END;
@@ -696,25 +695,25 @@ int CDownloadMgr::saveDownloadedLyrAsFile(string &strFile, const void *lpData, i
 
     strFile = fileNameFilterInvalidChars(strFile.c_str());
 
-    if (!saveDataAsFile(strFile.c_str(), lpData, nSize))
+    if (!writeFile(strFile.c_str(), lpData, nSize))
     {
         string strDir = fileGetPath(strFile.c_str());
         createDirectoryAll(strDir.c_str());
 
-        if (!saveDataAsFile(strFile.c_str(), lpData, nSize))
+        if (!writeFile(strFile.c_str(), lpData, nSize))
         {
-            if (m_strDefSavePath.empty() || !canWriteInDir(m_strDefSavePath.c_str()))
+            if (m_strDefSavePath.empty() || !isDirWritable(m_strDefSavePath.c_str()))
                 createDefaultLyricsDir(m_strDefSavePath);
 
             // save in the default directory
             string    strSaveFile = m_strDefSavePath;
-            dirStringAddSlash(strSaveFile);
+            dirStringAddSep(strSaveFile);
             strSaveFile += fileGetName(strFile.c_str());
             strFile = strSaveFile;
 
             strDir = fileGetPath(strFile.c_str());
             createDirectoryAll(strDir.c_str());
-            if (!saveDataAsFile(strFile.c_str(), lpData, nSize))
+            if (!writeFile(strFile.c_str(), lpData, nSize))
             {
                 ERR_LOG1("Failed to save downloaded lyrics file: %s.", strFile.c_str());
                 return ERR_OPEN_FILE;

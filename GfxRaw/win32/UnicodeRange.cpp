@@ -369,11 +369,11 @@ uint32_t findCharUnicodeRange(WCHAR ch)
   return  gUnicodeTertiaryRangeTable[(ch - 0x0700) >> 7];
 }
 
-extern CHAR_ENCODING FindCharEncUnicodeRange(WCHAR ch)
+extern CharEncodingType FindCharEncUnicodeRange(WCHAR ch)
 {
     uint32_t    range = findCharUnicodeRange(ch);
     if (range >= ED_END)
         range = ED_SYSDEF;
 
-    return (CHAR_ENCODING)range;
+    return (CharEncodingType)range;
 }

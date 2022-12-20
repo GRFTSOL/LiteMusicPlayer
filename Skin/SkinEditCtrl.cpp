@@ -220,9 +220,6 @@ CSkinEditCtrl::CSkinEditCtrl()
     m_bInMouseSel = false;
     m_nScrollPosx = 0;
 
-    m_bMbcsA = false;
-    m_bWin9x = getOperationSystemType() <= OPS_WIN9XMORE;
-
     m_pEditSyntaxParser = nullptr;
     m_pEditNotification = nullptr;
 
@@ -2524,43 +2521,12 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags)
 
 void CSkinEditCtrl::onChar(uint32_t nChar)
 {
-    // CStrPrintf        strp("%x -", wUniChar);
     char            wUniChar;
 
-#ifdef _WIN32
-    if (m_bWin9x)
-    {
-        if (m_bMbcsA)
-        {
-            m_bMbcsA = false;
-            m_szMbcsA[1] = nChar;
-            WCHAR        szOut[2];
-            convertStr2(m_szMbcsA, 2, szOut, CountOf(szOut));
-            wUniChar = szOut[0];
-        }
-        else
-        {
-            if (nChar <= 127 && nChar != '\t' && !isprint(nChar))
-                 return;
+    if (nChar <= 127 && nChar != '\t' && !isprint(nChar))
+         return;
 
-            if (IsDBCSLeadByte(nChar))
-            {
-                m_bMbcsA = true;
-                m_szMbcsA[0] = nChar;
-                return;
-            }
-            else
-                wUniChar = nChar;
-        }
-    }
-    else
-#endif
-    {
-        if (nChar <= 127 && nChar != '\t' && !isprint(nChar))
-             return;
-
-        wUniChar = nChar;
-    }
+    wUniChar = nChar;
 
     CAutoUpdate        updater(this);
 

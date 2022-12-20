@@ -76,7 +76,7 @@ public:
         cstr_t        szBeg, szEnd;
         int            nClip;
         uint8_t        lfCharSetAbove = DEFAULT_CHARSET, lfCharSet = DEFAULT_CHARSET;
-        CHAR_ENCODING    encoding;
+        CharEncodingType    encoding;
 
         if (nLen == -1)
             nLen = strlen(szText);
@@ -93,7 +93,7 @@ public:
                 {
                     encoding = FindCharEncUnicodeRange(*szText);
 
-                    lfCharSet = GetCharEncodingByID(encoding).nFontCharset;
+                    lfCharSet = GetCharEncodingByID(encoding).fontCharset;
                     if (lfCharSet != lfCharSetAbove && nClip > 0)
                         break;
                     lfCharSetAbove = lfCharSet;

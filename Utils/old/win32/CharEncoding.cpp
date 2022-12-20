@@ -15,7 +15,7 @@
 //
 // ED_XXX 的定义和 __encodingCodepage 的索引顺序是一直的。
 // 即__encodingCodepage[ED_XXX].encodingID = ED_XXX
-ENCODING_CODEPAGE    __encodingCodepage[] = 
+EncodingCodePage    __encodingCodepage[] = 
 {
     { ED_SYSDEF, CP_ACP, DEFAULT_CHARSET, "", "", "Default" },
     { ED_UNICODE, 0, DEFAULT_CHARSET, "unicode", "", "Unicode" },
@@ -50,14 +50,14 @@ ENCODING_CODEPAGE    __encodingCodepage[] =
 
 int getCharEncodingCount() { return __MaxEncodings; }
 
-ENCODING_CODEPAGE &getSysDefaultCharEncoding()
+EncodingCodePage &getSysDefaultCharEncoding()
 {
-    uint32_t        nCodePage;
+    uint32_t        codePage;
 
-    nCodePage = GetACP();
+    codePage = GetACP();
     for (int i = 0; i < __MaxEncodings; i++)
     {
-        if (nCodePage == __encodingCodepage[i].nCodePage)
+        if (codePage == __encodingCodepage[i].codePage)
             return __encodingCodepage[i];
     }
 
@@ -76,7 +76,7 @@ int ucs2ToMbcs(const WCHAR *str, int nLen, char *strOut, int nOut, int encodingI
     ensureInputStrLen(str, nLen);
     emptyStr(strOut);
 
-    int n = WideCharToMultiByte(__encodingCodepage[encodingID].nCodePage, 0,
+    int n = WideCharToMultiByte(__encodingCodepage[encodingID].codePage, 0,
         str, nLen, strOut, nOut, nullptr, nullptr);
     if (n > 0)
     {
@@ -148,7 +148,7 @@ int mbcsToUCS2(const char *str, int nLen, WCHAR *strOut, int nOut, int encodingI
     ensureInputStrLen(str, nLen);
     emptyStr(strOut);
 
-    int n = MultiByteToWideChar(__encodingCodepage[encodingID].nCodePage, 0,
+    int n = MultiByteToWideChar(__encodingCodepage[encodingID].codePage, 0,
         str, nLen, strOut, nOut);
     if (n == 0 && getLastError() == ERROR_INVALID_PARAMETER)
     {

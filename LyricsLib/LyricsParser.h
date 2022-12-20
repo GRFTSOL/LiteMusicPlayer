@@ -15,7 +15,7 @@ public:
     virtual ~CLyricsParser() { };
 
 public:
-    virtual int parseFile(bool bUseSpecifiedEncoding, CHAR_ENCODING encoding) = 0;
+    virtual int parseFile(bool bUseSpecifiedEncoding, CharEncodingType encoding) = 0;
     virtual int saveAsFile(cstr_t file) = 0;
 
     virtual LYRICS_CONTENT_TYPE getLyrContentType() = 0;

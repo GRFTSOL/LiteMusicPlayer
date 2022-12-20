@@ -23,7 +23,7 @@ public:
         setUIObjectProperty("CID_VERSION", SZ_PN_TEXT, VERSION_STR);
 
         setUIObjectProperty("CID_COPYRIGHT", SZ_PN_LINK, getStrName(SN_HTTP_DOMAIN));
-        setUIObjectText("CID_COPYRIGHT", CStrPrintf("%s  2001-2012 Crintsoft MiniLyrics", _TLT("Copyright")).c_str());
+        setUIObjectText("CID_COPYRIGHT", stringPrintf("%s  2001-2012 Crintsoft MiniLyrics", _TLT("Copyright")).c_str());
 
         setUIObjectProperty("CID_FEEDBACK", SZ_PN_LINK, getStrName(SN_HTTP_FEEDBACK));
 

@@ -5,7 +5,6 @@
 #include "../WindowTypes.h"
 #include "Window.h"
 #include "Menu.h"
-#include "../../Utils/StringEx.h"
 #import <Cocoa/Cocoa.h>
 
 

@@ -121,7 +121,6 @@ bool CLyrScrollActionRecorder::isEventTag(cstr_t str)
 
 string CLyrScrollActionRecorder::eventsDataToString()
 {
-    // CStrPrintf    strEvents;
     int nLastTime = 0, nLastDistance = 0;
 
     // If events too less, don't store these actions.
@@ -399,7 +398,7 @@ protected:
     void testAddLyrEvent()
     {
         // CPPUNIT_ASSERT(strcmp(szStr, "abcdef1213") == 0);
-        // CPPUNIT_FAIL_T(CStrPrintf("strSplit(set) test, case(Can't find): %d, %s", i, strResult[i]).c_str());
+        // CPPUNIT_FAIL_T(stringPrintf("strSplit(set) test, case(Can't find): %d, %s", i, strResult[i]).c_str());
     }
 
 };

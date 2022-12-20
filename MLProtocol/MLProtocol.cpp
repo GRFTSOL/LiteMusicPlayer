@@ -734,7 +734,7 @@ void saveRequestToFile(string *buf) {
     char fn[256];
     snprintf(fn, sizeof(fn), "d:\\request_%d.bin", i++);
 
-    saveDataAsFile(fn, buf->data(), buf->size());
+    writeFile(fn, buf->data(), buf->size());
 }
 
 int CMLProtocol::readMsg(MLMsgType &msgType, string *pMsgBuff)
@@ -993,7 +993,7 @@ protected:
         string    strFile = getAppDataDir();
         strFile += "unittest_save.txt";
         string bufContent = ";alskge\1,.zsm,ng\n;ea<>>\n";
-        CPPUNIT_ASSERT(saveDataAsFile(strFile.c_str(), bufContent.c_str(), bufContent.size()));
+        CPPUNIT_ASSERT(writeFile(strFile.c_str(), bufContent.c_str(), bufContent.size()));
 
         {
             MLLyricsInfoLite    lyrInfo;

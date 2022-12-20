@@ -11,7 +11,7 @@ public:
 class CFileOpenDlg  
 {
 public:
-    CFileOpenDlg(cstr_t szTitle, cstr_t szFile, cstr_t szFilter, int nDefFileType, bool bAllowMultiSel = false);
+    CFileOpenDlg(cstr_t szTitle, cstr_t szFile, cstr_t extFilter, int nDefFileType, bool bAllowMultiSel = false);
     virtual ~CFileOpenDlg();
 
 #ifdef _NO_WIGET_LIB

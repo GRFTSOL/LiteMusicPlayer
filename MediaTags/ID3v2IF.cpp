@@ -25,13 +25,13 @@ void addEmbeddedLyrics(VecStrings &vNames, string &name)
     }
 
     if (next > 0)
-        name += CStrPrintf("/%d", next).c_str();
+        name += stringPrintf("/%d", next).c_str();
     vNames.push_back(name);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-CID3v2IF::CID3v2IF(CHAR_ENCODING encoding) : CID3v2(encoding)
+CID3v2IF::CID3v2IF(CharEncodingType encoding) : CID3v2(encoding)
 {
 }
 

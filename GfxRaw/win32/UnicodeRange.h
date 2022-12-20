@@ -83,7 +83,7 @@ const uint8_t   kRangeTertiaryTable  = 145; // leave room for 16 subtable
 
 extern uint32_t findCharUnicodeRange(WCHAR ch);
 
-extern CHAR_ENCODING FindCharEncUnicodeRange(WCHAR ch);
+extern CharEncodingType FindCharEncUnicodeRange(WCHAR ch);
 
 
 #endif // !defined(AFX_UNICODERANGE_H__844E93E6_8D23_4759_A0D9_6E78F66B3F55__INCLUDED_)

@@ -12,7 +12,7 @@
 
 // The order of ED_XXX is the order of __encodingCodepage 
 // __encodingCodepage[ED_XXX].encodingID = ED_XXX
-ENCODING_CODEPAGE    __encodingCodepage[] = 
+EncodingCodePage    __encodingCodepage[] = 
 {
     { ED_SYSDEF, "iso-8859-15", "", "Latin 9 (ISO)", "ISO8859_15_FDIS" },
     { ED_UNICODE, "unicode", "", "Unicode", "UnicodeLittleUnmarked" },
@@ -42,7 +42,7 @@ ENCODING_CODEPAGE    __encodingCodepage[] =
 int getCharEncodingCount() { return __MaxEncodings; }
 int g_defaultSysEncoding = ED_SYSDEF;
 
-ENCODING_CODEPAGE &getSysDefaultCharEncoding()
+EncodingCodePage &getSysDefaultCharEncoding()
 {
     return __encodingCodepage[g_defaultSysEncoding];
 }

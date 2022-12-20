@@ -180,7 +180,7 @@ void CMPlaylistSearchObj::onCreate()
     {
         string            strPlaylist;
 
-        strPlaylist = g_profile.getString(CStrPrintf("%s%d", SZ_RECENT_PL, i).c_str(), "");
+        strPlaylist = g_profile.getString(stringPrintf("%s%d", SZ_RECENT_PL, i).c_str(), "");
         if (strPlaylist.empty())
             break;
         if (!isFileExist(strPlaylist.c_str()))
@@ -538,7 +538,7 @@ void CMPlaylistSearchObj::useResultAsNowPlaying()
 
     // save recent playlist...
     for (i = PN_CUSTOMIZED; i < (int)m_vRecentPL.size(); i++)
-        g_profile.writeString(CStrPrintf("%s%d", SZ_RECENT_PL, i).c_str(), m_vRecentPL[i].c_str());
+        g_profile.writeString(stringPrintf("%s%d", SZ_RECENT_PL, i).c_str(), m_vRecentPL[i].c_str());
 }
 
 #ifdef _CPPUNIT_TEST
@@ -603,11 +603,11 @@ protected:
             for (int i = 0; i < nCountOutput; i++)
             {
                 if (strcmp(vOutput[i], vKeywords[i].c_str()) != 0)
-                    CPPUNIT_FAIL_T(CStrPrintf("splitKeywords:%s Failed, %s should be %s, Round: %d", szKeywords, vKeywords[i].c_str(), vOutput[i], i).c_str());
+                    CPPUNIT_FAIL_T(stringPrintf("splitKeywords:%s Failed, %s should be %s, Round: %d", szKeywords, vKeywords[i].c_str(), vOutput[i], i).c_str());
             }
         }
         else
-            CPPUNIT_FAIL_T(CStrPrintf("splitKeywords:%s Failed, Output Count not match.", szKeywords).c_str());
+            CPPUNIT_FAIL_T(stringPrintf("splitKeywords:%s Failed, Output Count not match.", szKeywords).c_str());
     }
 
 };

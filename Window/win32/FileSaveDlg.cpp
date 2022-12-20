@@ -73,13 +73,13 @@ UINT_PTR CALLBACK MyOFNHookProc(
     return 0;
 }
 
-CFileSaveDlg::CFileSaveDlg(cstr_t szTitle, cstr_t szFile, cstr_t szFilter, int nDefFileType)
+CFileSaveDlg::CFileSaveDlg(cstr_t szTitle, cstr_t szFile, cstr_t extFilter, int nDefFileType)
 {
     strcpy_safe(m_szFile, CountOf(m_szFile), szFile);
 
     memset(&m_openfile, 0, sizeof(m_openfile));
     m_openfile.lpstrTitle = szTitle;
-    m_openfile.lpstrFilter = szFilter;
+    m_openfile.lpstrFilter = extFilter;
     m_openfile.lpstrFile = m_szFile;
     m_openfile.nMaxFile = CountOf(m_szFile);
     m_openfile.nFilterIndex = nDefFileType;

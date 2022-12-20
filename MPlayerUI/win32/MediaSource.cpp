@@ -261,7 +261,7 @@ void CFileMediaSource::addFolder(cstr_t szFolder, bool bIncludeSubFolder)
         return;
 
     strDir = szFolder;
-    dirStringAddSlash(strDir);
+    dirStringAddSep(strDir);
 
     while (find.findNext())
     {

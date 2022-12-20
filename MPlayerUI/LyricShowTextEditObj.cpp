@@ -297,7 +297,7 @@ void CLyricShowTextEditObj::onKeyDown(uint32_t nChar, uint32_t nFlags)
                     // Replace selected tag value.
                     int        nCaretColOld = m_nCaretCol;
                     setSel(m_nCaretRow, m_nCaretCol - 1, m_nCaretRow, m_nCaretCol + 1);
-                    replaceSel(CStrPrintf("%02d", n).c_str());
+                    replaceSel(stringPrintf("%02d", n).c_str());
                     setCaret(m_nCaretRow, nCaretColOld);
 
                     return;
@@ -1818,7 +1818,7 @@ bool CLyricShowTextEditObj::findNext(bool bSearchDown)
 
     if (!findText(strFindWhat.c_str(), dwFlags))
     {
-        m_pSkin->messageOut(CStrPrintf(_TLT("Can't find \"%s\""), strFindWhat.c_str()).c_str());
+        m_pSkin->messageOut(stringPrintf(_TLT("Can't find \"%s\""), strFindWhat.c_str()).c_str());
         return false;
     }
 

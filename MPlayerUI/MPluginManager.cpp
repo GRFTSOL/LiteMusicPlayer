@@ -111,7 +111,7 @@ MLRESULT CMPluginManager::detectPlugins()
 
     strPluginFolder = getAppResourceDir();
     strPluginFolder += "Plugins";
-    dirStringAddSlash(strPluginFolder);
+    dirStringAddSep(strPluginFolder);
 
     if (!finder.openDir(strPluginFolder.c_str()))
         return ERR_OK;

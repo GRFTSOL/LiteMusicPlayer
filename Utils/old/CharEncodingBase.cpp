@@ -4,9 +4,9 @@
 #include "string.h"
 #include "safestr.h"
 
-extern ENCODING_CODEPAGE    __encodingCodepage[];
+extern EncodingCodePage    __encodingCodepage[];
 
-CHAR_ENCODING getCharEncodingID(const char *szEncoding)
+CharEncodingType getCharEncodingID(const char *szEncoding)
 {
     if (isEmptyString(szEncoding))
         return ED_SYSDEF;
@@ -31,7 +31,7 @@ CHAR_ENCODING getCharEncodingID(const char *szEncoding)
     return ED_SYSDEF;
 }
 
-CHAR_ENCODING getCharEncodingID(const WCHAR *szEncoding)
+CharEncodingType getCharEncodingID(const WCHAR *szEncoding)
 {
     assert(ED_END + 1 == getCharEncodingCount());
     for (int i = getCharEncodingCount() - 1; i >= 0; i--)
@@ -50,7 +50,7 @@ CHAR_ENCODING getCharEncodingID(const WCHAR *szEncoding)
     return ED_SYSDEF;
 }
 
-ENCODING_CODEPAGE &getCharEncodingByID(CHAR_ENCODING encoding)
+EncodingCodePage &getCharEncodingByID(CharEncodingType encoding)
 {
     if (encoding >= getCharEncodingCount() || encoding < 0)
         encoding = ED_SYSDEF;

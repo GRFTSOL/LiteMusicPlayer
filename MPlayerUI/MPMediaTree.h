@@ -151,7 +151,7 @@ public:
         pNewNode->m_nExpandedImageIndex = nExpandedImageIndex;
         pNewNode->m_strName = szName;
         pNewNode->m_strDir = szDir;
-        dirStringAddSlash(pNewNode->m_strDir);
+        dirStringAddSep(pNewNode->m_strDir);
         addChildBack(pNewNode);
     }
 

@@ -435,7 +435,7 @@ void CPlayer::newCurrentPlaylist()
 //    if (!isFileExist(m_strCurrentPlaylist.c_str()))
 //        return;
 //
-//    CStrPrintf strFile;
+//    stringPrintf strFile;
 //    for (int i = 0; i < 100; i++)
 //    {
 //        strFile.printf("%suntitled playlist %d.m3u", getAppDataDir().c_str(), i);
@@ -461,7 +461,7 @@ void CPlayer::addDirToPlaylist(cstr_t szDir, bool bIncSubDir)
         return;
 
     strDir = szDir;
-    dirStringAddSlash(strDir);
+    dirStringAddSep(strDir);
 
     while (find.findNext())
     {
@@ -708,7 +708,7 @@ void CPlayer::addDirToMediaLib(cstr_t szDir, bool bIncSubDir)
         return;
 
     strDir = szDir;
-    dirStringAddSlash(strDir);
+    dirStringAddSep(strDir);
 
     while (find.findNext())
     {
@@ -955,7 +955,7 @@ string fixFileUri(cstr_t szUri)
             szUri++;
         
         string uri = uriUnquote(szUri);
-        strrep(uri, '/', DIR_SLASH);
+        strrep(uri, '/', PATH_SEP_CHAR);
         return uri;
     }
     else

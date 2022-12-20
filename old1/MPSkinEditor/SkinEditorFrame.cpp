@@ -153,7 +153,7 @@ void CSkinEditorFrame::onUIObjNameChanged(CUIObject *pObj)
     HTREEITEM    hItem = findItemInSkinUIObjTreeCtrl(pTree, TVI_ROOT, (uint32_t)pObj);
     if (hItem)
     {
-        pTree->setItemText(hItem, CStrPrintf("%s (%s)", pObj->m_strName.c_str(), pObj->getClassName()).c_str());
+        pTree->setItemText(hItem, stringPrintf("%s (%s)", pObj->m_strName.c_str(), pObj->getClassName()).c_str());
     }
 }
 
@@ -492,7 +492,7 @@ void addSkinObjToTreeCtrl(CTreeCtrl *pTree, HTREEITEM hParent, CSkinContainer *p
         CUIObject    *pObj = pConainter->getChildByIndex(i);
         if (pObj)
         {
-            hChild = pTree->insertItem(CStrPrintf("%s (%s)", pObj->m_strName.c_str(), pObj->getClassName()).c_str(), 
+            hChild = pTree->insertItem(stringPrintf("%s (%s)", pObj->m_strName.c_str(), pObj->getClassName()).c_str(), 
                 hParent, TVI_LAST);
             pTree->setItemData(hChild, (uint32_t)pObj);
 

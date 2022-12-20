@@ -12,7 +12,7 @@
 //
 // ED_XXX 的定义和 __encodingCodepage 的索引顺序是一直的。
 // 即__encodingCodepage[ED_XXX].encodingID = ED_XXX
-ENCODING_CODEPAGE    __encodingCodepage[] = 
+EncodingCodePage    __encodingCodepage[] = 
 {
     { ED_SYSDEF, "", "", "systemdefault", "ISO-8859-15" },
     { ED_UNICODE, "unicode", "", "Unicode", "unicode" },
@@ -42,7 +42,7 @@ ENCODING_CODEPAGE    __encodingCodepage[] =
 int getCharEncodingCount() { return __MaxEncodings; }
 
 
-ENCODING_CODEPAGE &getSysDefaultCharEncoding()
+EncodingCodePage &getSysDefaultCharEncoding()
 {
     return __encodingCodepage[ED_UTF8];
 }

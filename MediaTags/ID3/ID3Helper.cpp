@@ -6,7 +6,7 @@
 #include "ID3Helper.h"
 
 
-void appendStrByEncodingAndBom(string &buff, cstr_t str, ID3v2EncType encType, CHAR_ENCODING encoding)
+void appendStrByEncodingAndBom(string &buff, cstr_t str, ID3v2EncType encType, CharEncodingType encoding)
 {
     if (encType == IET_UCS2LE_BOM)
     {
@@ -62,7 +62,7 @@ size_t wcslen_safe(const WCHAR * str, size_t maxLength)
 }
 
 // return the size of bytes used from buffer data
-int copyStrByEncodingAndBom(string &str, ID3v2EncType encType, const char *data, int len, CHAR_ENCODING encoding)
+int copyStrByEncodingAndBom(string &str, ID3v2EncType encType, const char *data, int len, CharEncodingType encoding)
 {
     int        lenOrg = len;
     uint8_t *pbyData = (uint8_t *)data;

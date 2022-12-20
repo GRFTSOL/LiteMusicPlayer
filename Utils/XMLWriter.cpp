@@ -2,10 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "UtilsTypes.h"
+#include "Utils.h"
 #include "XMLWriter.h"
-#include "StringEx.h"
-#include "base64.h"
 
 
 //////////////////////////////////////////////////////////////////////
@@ -156,7 +154,7 @@ void CXMLWriter::writeData(const char *szData, int n)
 
 bool CXMLWriter::saveAsFile(cstr_t szFile)
 {
-    return saveDataAsFile(szFile, (void *)m_strBuff.c_str(), m_strBuff.size());
+    return writeFile(szFile, (void *)m_strBuff.c_str(), m_strBuff.size());
 }
 
 void CXMLWriter::writeDirect(cstr_t szBuff)

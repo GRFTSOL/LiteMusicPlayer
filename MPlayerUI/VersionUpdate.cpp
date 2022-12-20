@@ -136,15 +136,15 @@ void CVersionUpdate::checkNewVersion(bool bAutoCheck)
     if (bAutoCheck)
     {
         string strCheckVerTime = g_profile.encryptGetString("CheckVerTime", "");
-        CDate dateLastCheck;
-        dateLastCheck.fromString(strCheckVerTime.c_str());
+        DateTime dateLastCheck;
+        dateLastCheck.fromString(strCheckVerTime.c_str(), (uint32_t)strCheckVerTime.size());
 
         // 如果日期相隔7天，则检查更新
-        CDate dateNow = CDate::getCurrentDate();
-        if (abs((long)dateNow.getTime() - (long)dateLastCheck.getTime()) <= 7 * CDate::MILLIS_IN_ONE_DAY)
+        auto dateNow = DateTime::localTime();
+        if (abs((long)dateNow.getTime() - (long)dateLastCheck.getTime()) <= 7 * DateTime::SECOND_IN_ONE_DAY)
             return;
 
-        g_profile.encryptWriteString("CheckVerTime", dateNow.toUtcDateString().c_str());
+        g_profile.encryptWriteString("CheckVerTime", dateNow.toDateString().c_str());
     }
 
     g_LyricsDownloader.downloadVersionFile(getStrName(SN_HTTP_ML_VER), !bAutoCheck);

@@ -282,7 +282,7 @@ public:
 
         assert(g_sessionUpload.isLogined());
         setUIObjectText("CID_ACCOUNT_NOTICE", 
-            CStrPrintf(_TLT("Your lyrics will be uploaded under account: %s"), g_sessionUpload.getLoginName()).c_str(), false);
+            stringPrintf(_TLT("Your lyrics will be uploaded under account: %s"), g_sessionUpload.getLoginName()).c_str(), false);
     }
 
     bool onOK()
@@ -344,7 +344,7 @@ public:
             setUIObjectVisible("CID_C_UPLOAD_OK", bUploadOK, false);
             setUIObjectVisible("CID_C_UPLOAD_FAILED", !bUploadOK, false);
             if (!bUploadOK)
-                setUIObjectText("CID_RESULT", CStrPrintf("%s", ERROR2STR_LOCAL(nResult)).c_str(), false);
+                setUIObjectText("CID_RESULT", stringPrintf("%s", ERROR2STR_LOCAL(nResult)).c_str(), false);
 
             if (getExPoolStr(SZ_EX_POOL_WORK_MSG).size())
                 m_pSkin->postCustomCommandMsg(CMD_SHOW_ERR_RESULT);

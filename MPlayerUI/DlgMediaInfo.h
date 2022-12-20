@@ -64,7 +64,7 @@ protected:
     string                m_strMediaFile;
     bool                m_bReadOnly;
     uint32_t                m_nSupportedMediaTagType;
-    CHAR_ENCODING        m_nEncodingOfConvertAnsi;
+    CharEncodingType        m_nEncodingOfConvertAnsi;
 
     vector<class CDlgMediaInfoPage *>    m_vInfoPages;
     class CDlgMediaInfoPage                *m_pOldPage;

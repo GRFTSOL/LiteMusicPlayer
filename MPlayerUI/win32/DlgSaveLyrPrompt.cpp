@@ -11,7 +11,7 @@ int saveLyrDialogBox(Window *pWnd)
         int nRet = g_profile.getInt("SaveLyrPrompt", IDCANCEL);
         if (nRet == IDCANCEL)
         {
-            string        strMessage = CStrPrintf(_TLT("The lyrics of the %s file have changed."), 
+            string        strMessage = stringPrintf(_TLT("The lyrics of the %s file have changed."), 
                                                 fileGetName(g_LyricData.getSongFileName())).c_str();
             strMessage += "\r\n\r\n";
             strMessage += _TLT("Do you want to save the changes?");

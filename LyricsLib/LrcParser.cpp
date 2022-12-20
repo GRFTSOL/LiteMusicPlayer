@@ -142,7 +142,7 @@ CLrcParser::~CLrcParser()
 {
 }
 
-int CLrcParser::parseFile(bool bUseSpecifiedEncoding, CHAR_ENCODING encoding)
+int CLrcParser::parseFile(bool bUseSpecifiedEncoding, CharEncodingType encoding)
 {
     string         lyrics;
 
@@ -300,7 +300,7 @@ void CLrcParser::finalFixOnLyrics(bool bAddTimeStampForTextLine)
 //
 // parse .lrc or .txt lyrics text
 //
-int CLrcParser::parseString(uint8_t *szLrc, size_t nLen, bool bAddTimeStampForTextLine, bool bUseSpecifiedEncoding, CHAR_ENCODING encoding)
+int CLrcParser::parseString(uint8_t *szLrc, size_t nLen, bool bAddTimeStampForTextLine, bool bUseSpecifiedEncoding, CharEncodingType encoding)
 {
     string lyricsUtf8 = convertLyricsToUtf8(szLrc, nLen, bUseSpecifiedEncoding, encoding);
 
@@ -958,7 +958,7 @@ protected:
 
         uint8_t *vLyrics[] = { uint8_t *SZ_LYRICS_TEST, uint8_t *wLyrics.c_str(),        uint8_t *wLyricsBe.c_str(),            uint8_t *utf8Lyrics.c_str(), };
         int            vLen[] = { strlen(SZ_LYRICS_TEST),    wLyrics.size() * sizeof(WCHAR), wLyricsBe.size() * sizeof(WCHAR),    utf8Lyrics.size(), };
-        CHAR_ENCODING    vEncoding[] = { ED_BIG5,    ED_UNICODE,                        ED_UNICODE_BIG_ENDIAN,                ED_UTF8, };
+        CharEncodingType    vEncoding[] = { ED_BIG5,    ED_UNICODE,                        ED_UNICODE_BIG_ENDIAN,                ED_UTF8, };
 
 
         for (int i = 0; i < CountOf(vLyrics); i++)
@@ -1074,7 +1074,7 @@ protected:
 
         uint8_t *vLyrics[] = { uint8_t *SZ_LYRICS_TEST, uint8_t *wLyrics.c_str(),        uint8_t *wLyricsBe.c_str(),            uint8_t *utf8Lyrics.c_str(), };
         int            vLen[] = { strlen(SZ_LYRICS_TEST),    wLyrics.size() * sizeof(WCHAR), wLyricsBe.size() * sizeof(WCHAR),    utf8Lyrics.size(), };
-        CHAR_ENCODING    vEncoding[] = { ED_BIG5,    ED_UNICODE,                        ED_UNICODE_BIG_ENDIAN,                ED_UTF8, };
+        CharEncodingType    vEncoding[] = { ED_BIG5,    ED_UNICODE,                        ED_UNICODE_BIG_ENDIAN,                ED_UTF8, };
 
 
         for (int i = 0; i < CountOf(vLyrics); i++)

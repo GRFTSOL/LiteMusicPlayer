@@ -2,10 +2,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "UtilsTypes.h"
+#include "Utils.h"
 #include "Error.h"
 #include "IdString.h"
-#include "StringEx.h"
 
 
 static char g_szCustomErrorDesc[512];

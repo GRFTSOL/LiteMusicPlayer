@@ -49,7 +49,7 @@ void showPreferenceDialog(CSkinWnd *pParent, bool bFloatingLyr, PreferPageID pre
         "Preferences.xml", pParent);
 
     skinWndStartupInfo.mapExchangePool[SZ_EX_POOL_PF_FLOATING_LYR] = BOOLTOSTR(bFloatingLyr);
-    skinWndStartupInfo.mapExchangePool[SZ_EX_POOL_PF_DEFAULT_PAGE] = CStrPrintf("%d", preferPageId).c_str();
+    skinWndStartupInfo.mapExchangePool[SZ_EX_POOL_PF_DEFAULT_PAGE] = stringPrintf("%d", preferPageId).c_str();
 
     CSkinApp::getInstance()->getSkinFactory()->activeOrCreateSkinWnd(skinWndStartupInfo);
 }

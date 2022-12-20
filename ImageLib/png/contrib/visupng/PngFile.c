@@ -44,13 +44,13 @@ png_cexcept_error(png_structp png_ptr, png_const_charp msg)
 
 void PngFileInitialize (HWND hwnd)
 {
-    static TCHAR szFilter[] = TEXT ("PNG Files (*.PNG)\0*.png\0")
+    static TCHAR extFilter[] = TEXT ("PNG Files (*.PNG)\0*.png\0")
         TEXT ("All Files (*.*)\0*.*\0\0");
 
     ofn.lStructSize       = sizeof (OPENFILENAME);
     ofn.hwndOwner         = hwnd;
     ofn.hInstance         = NULL;
-    ofn.lpstrFilter       = szFilter;
+    ofn.lpstrFilter       = extFilter;
     ofn.lpstrCustomFilter = NULL;
     ofn.nMaxCustFilter    = 0;
     ofn.nFilterIndex      = 0;

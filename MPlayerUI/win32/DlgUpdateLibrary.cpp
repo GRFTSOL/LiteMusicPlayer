@@ -102,7 +102,7 @@ void CAddMediaObj::listMedia(cstr_t szDir)
         return;
 
     strDir = szDir;
-    dirStringAddSlash(strDir);
+    dirStringAddSep(strDir);
 
     while (find.findNext())
     {

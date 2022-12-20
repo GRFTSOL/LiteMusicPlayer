@@ -392,7 +392,7 @@ bool showDlgItem(HWND hWnd, int nIDItem, int nCmdShow)
 /*
 
 // "All supported files (*.lrc; *.txt)\0*.lrc;*.txt\0Lyric File (*.lrc)\0*.LRC\0Text File (*.txt)\0*.TXT\0\0"
-bool openFileDialog(HWND hWnd, HINSTANCE hInst, cstr_t szFilter, int nFilterIndex, char * szFile, int nFileNameBuffSize, cstr_t szTitle, uint32_t dwFlag)
+bool openFileDialog(HWND hWnd, HINSTANCE hInst, cstr_t extFilter, int nFilterIndex, char * szFile, int nFileNameBuffSize, cstr_t szTitle, uint32_t dwFlag)
 {
     OPENFILENAME openfile;
 
@@ -402,7 +402,7 @@ bool openFileDialog(HWND hWnd, HINSTANCE hInst, cstr_t szFilter, int nFilterInde
     openfile.lStructSize = sizeof(openfile);
     openfile.hwndOwner = hWnd;
     openfile.hInstance = hInst;
-    openfile.lpstrFilter = szFilter;
+    openfile.lpstrFilter = extFilter;
     openfile.lpstrCustomFilter = nullptr;
     openfile.lpstrFile = szFile;
     openfile.nMaxFile = nFileNameBuffSize;

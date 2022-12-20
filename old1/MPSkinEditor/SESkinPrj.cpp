@@ -31,8 +31,8 @@ void CSEUIAdapter::setMousePointerInfo(int x, int y)
     CStatusBar    *pStatusBar = pFrame->getStatusBar();
     int            nIndex = 1;//pStatusBar->CommandToIndex(IDC_MOUSE_POINTER);
     pStatusBar->SetPaneStyle(nIndex, pStatusBar->GetPaneStyle(nIndex) & ~SBPS_DISABLED);
-    pStatusBar->SetPaneText(nIndex, CStrPrintf("X: %4d Y: %4d", x, y).c_str(), true);
-//    pStatusBar->SetPaneText(2, CStrPrintf("X: %4d Y: %4d", x, y).c_str());
+    pStatusBar->SetPaneText(nIndex, stringPrintf("X: %4d Y: %4d", x, y).c_str(), true);
+//    pStatusBar->SetPaneText(2, stringPrintf("X: %4d Y: %4d", x, y).c_str());
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ void getBackupFile(cstr_t szDir, string &strLatestBackup, string &strNextBackup)
     int        nPrefixLen = strlen(SZ_SKIN_FILE_PREFIX);
     string    strDirOK = szDir;
 
-    dirStringAddSlash(strDirOK);
+    dirStringAddSep(strDirOK);
 
     // get Max and Min backup file
     enumFilesInDir(szDir, "*.xml", vFiles, false);
@@ -75,15 +75,15 @@ void getBackupFile(cstr_t szDir, string &strLatestBackup, string &strNextBackup)
         }
     }
 
-    strLatestBackup = strDirOK + CStrPrintf("%s%03d.xml", SZ_SKIN_FILE_PREFIX, nMax).c_str();
+    strLatestBackup = strDirOK + stringPrintf("%s%03d.xml", SZ_SKIN_FILE_PREFIX, nMax).c_str();
     if (isFileExist(strLatestBackup.c_str()))
         nMax++;
-    strNextBackup = strDirOK + CStrPrintf("%s%03d.xml", SZ_SKIN_FILE_PREFIX, nMax).c_str();
+    strNextBackup = strDirOK + stringPrintf("%s%03d.xml", SZ_SKIN_FILE_PREFIX, nMax).c_str();
 
     // remove too old backup file
     for (i = nMin; i <= nMax - 1000; i++)
     {
-        deleteFile(CStrPrintf("%s%03d.xml", SZ_SKIN_FILE_PREFIX, i).c_str());
+        deleteFile(stringPrintf("%s%03d.xml", SZ_SKIN_FILE_PREFIX, i).c_str());
     }
 }
 

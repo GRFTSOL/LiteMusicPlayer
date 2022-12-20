@@ -215,14 +215,12 @@ void CSkinResizableLinearContainer::onDestroy()
     uIObjsToItems(m_vUIObjs.begin(), m_vUIObjs.end(), vItems, totalMinSize, totalSizeStart, totalFixedSize);
 
     // save sizes of children
-    CStrPrintf    strFormat;
-    string        strSizes;
+    string strSizes;
     for (VecItems::iterator it = vItems.begin(); it != vItems.end(); ++it)
     {
         if (strSizes.size())
             strSizes += ',';
-        strFormat.printf("%d", (*it).size);
-        strSizes += strFormat.c_str();
+        strSizes += itos((*it).size);
     }
 
     writeString("ChildrenSize", strSizes.c_str());

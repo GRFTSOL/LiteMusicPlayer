@@ -9,7 +9,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "CharEncoding.h"
+#include "Utils.h"
 
 
 enum SimpleXMLParserError
@@ -82,7 +82,7 @@ protected:
     SimpleXMLParserError doParse(const char *szData, int nLen, CSimpleXML &xmlData);
 
 protected:
-    CHAR_ENCODING    m_encodingID;
+    CharEncodingType    m_encodingID;
 
     const char        *m_szData;
     int                m_nLen;

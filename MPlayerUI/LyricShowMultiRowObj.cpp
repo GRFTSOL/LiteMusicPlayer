@@ -179,7 +179,7 @@ void CLyricShowMultiRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate/* = nul
 //     {
 //         static int g_n = 0;
 //         g_n++;
-//         CStrPrintf    strFile("C:\\a_%03d%d.bmp", g_n, prcUpdate);
+//         stringPrintf    strFile("C:\\a_%03d%d.bmp", g_n, prcUpdate);
 // 
 //         saveBmpFileFromRawImageData(canvas->GetRawBuff(), strFile.c_str());
 //         g_bSave = false;

@@ -5,7 +5,7 @@
 
 NSArray *SetStrToExtArray(SetStrings &setExt);
 
-void ExtFiltersToSet(cstr_t szFilter, SetStrings &setExts);
+void ExtFiltersToSet(cstr_t extFilter, SetStrings &setExts);
 
 // COMMENT:
 //        取得 GetSaveFileName 中lpstrFilter 的第nIndex个扩展名。
@@ -36,12 +36,12 @@ cstr_t GetFileFilterExtByIndex(cstr_t szFilters, int nIndex)
     return szReturn;
 }
 
-CFileSaveDlg::CFileSaveDlg(cstr_t szTitle, cstr_t szFile, cstr_t szFilter, int nDefFileType)
+CFileSaveDlg::CFileSaveDlg(cstr_t szTitle, cstr_t szFile, cstr_t extFilter, int nDefFileType)
 {
     strcpy_safe(m_szFile, CountOf(m_szFile), szFile);
     
-    if (szFilter)
-        ExtFiltersToSet(szFilter, m_setExt);
+    if (extFilter)
+        ExtFiltersToSet(extFilter, m_setExt);
 }
 
 CFileSaveDlg::~CFileSaveDlg(void)

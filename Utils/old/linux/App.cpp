@@ -23,7 +23,7 @@ void setWorkingFolder(cstr_t szWorkingFolder)
 {
     // assert(szWorkingFolder && !isEmptyString(szWorkingFolder));
     strcpy_safe(g_szWorkingFolder, MAX_PATH, szWorkingFolder);
-    dirStringAddSlash(g_szWorkingFolder);
+    dirStringAddSep(g_szWorkingFolder);
 }
 
 void getAppResourceDir(char * szWorkingFolder)
@@ -73,8 +73,8 @@ bool initBaseFrameWork(cstr_t szWorkingFolder, cstr_t szLogTag, cstr_t szProfile
 
     strcpy_safe(g_szAppDataDir, CountOf(g_szAppDataDir), szWorkingFolder);
     strcpy_safe(g_szWorkingFolder, CountOf(g_szWorkingFolder), szWorkingFolder);
-    dirStringAddSlash(g_szWorkingFolder);
-    dirStringAddSlash(g_szAppDataDir);
+    dirStringAddSep(g_szWorkingFolder);
+    dirStringAddSep(g_szAppDataDir);
 
     g_profile.init(szProfileName, szDefAppName);
 
@@ -102,7 +102,7 @@ bool initBaseFrameWork(int argc, char *argv[], cstr_t szLogFile, cstr_t szProfil
         _tcscpy(g_szWorkingFolder, argv[0]);
         nLen = strlen(g_szWorkingFolder);
         nLen --;
-        while (nLen >= 0 && g_szWorkingFolder[nLen] != DIR_SLASH)
+        while (nLen >= 0 && g_szWorkingFolder[nLen] != PATH_SEP_CHAR)
             nLen --;
         if (nLen < 0)
             return false;

@@ -18,13 +18,13 @@ public:
     virtual ~CLrcParser();
 
 public:
-    int parseFile(bool bUseSpecifiedEncoding, CHAR_ENCODING encoding);
+    int parseFile(bool bUseSpecifiedEncoding, CharEncodingType encoding);
     int saveAsFile(cstr_t file);
 
     virtual LYRICS_CONTENT_TYPE getLyrContentType() { return m_lyrContentType; }
 
     int parseString(cstr_t szText, bool bAddTimeStampForTextLine = false);
-    int parseString(uint8_t *szLrc, size_t nLen, bool bAddTimeStampForTextLine = false, bool bUseSpecifiedEncoding = false, CHAR_ENCODING encoding = ED_SYSDEF);
+    int parseString(uint8_t *szLrc, size_t nLen, bool bAddTimeStampForTextLine = false, bool bUseSpecifiedEncoding = false, CharEncodingType encoding = ED_SYSDEF);
 
     void toString(string &str, bool bIncTags, bool bToTxtFormat);
 

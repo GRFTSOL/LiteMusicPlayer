@@ -1,7 +1,5 @@
-#include "UtilsTypes.h"
+#include "Utils.h"
 #include "Error.h"
-#include "CharEncoding.h"
-#include "StringEx.h"
 
 cstr_t stringFeedUntil(cstr_t begin, cstr_t szUtil, string &buf)
 {

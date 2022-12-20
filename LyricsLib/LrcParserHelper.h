@@ -2,7 +2,7 @@
 #pragma once
 
 
-CHAR_ENCODING getLyricsTextEncoding(uint8_t *&szLrc, int &nLen);
+CharEncodingType getLyricsTextEncoding(uint8_t *&szLrc, int &nLen);
 
 
 inline bool parseLrcTimeTag(const char *szLine, int &nNextPos, int &nTime)

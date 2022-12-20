@@ -561,11 +561,6 @@ protected:
     // undo
     CUndoMgr            m_undoMgr;
 
-    // for win9x, process MBCS input...
-    char                m_szMbcsA[2];        // first half part of MBCS char.
-    bool                m_bMbcsA;
-    bool                m_bWin9x;
-
     IEditSyntaxParser    *m_pEditSyntaxParser;
     IEditNotification    *m_pEditNotification;
     bool                m_bPrevSelectedStatus;

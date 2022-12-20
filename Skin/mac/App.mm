@@ -23,7 +23,7 @@ const string &getAppResourceDir() {
         g_resourceDir.assign((const char *)[resourcePath UTF8String]);
 #endif
 
-        dirStringAddSlash(g_resourceDir);
+        dirStringAddSep(g_resourceDir);
     }
     return g_resourceDir;
 }
@@ -59,7 +59,7 @@ bool initBaseFramework(int argc, const char *argv[], cstr_t logFile, cstr_t prof
                                             error:nil];
             }
 
-            dirStringAddSlash(g_dataDir);
+            dirStringAddSep(g_dataDir);
         }
 #endif
 

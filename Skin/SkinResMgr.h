@@ -27,7 +27,7 @@ public:
 public:
     void onClose();
 
-    void enumFiles(cstr_t szFilter, vector<string> &vFiles, bool bEnumFullPath);
+    void enumFiles(cstr_t extFilter, vector<string> &vFiles, bool bEnumFullPath);
 
     bool getResourcePathName(cstr_t szResName, string &fileNameOut) const;
     string getResourcePathName(cstr_t szResName) const;

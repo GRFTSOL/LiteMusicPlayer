@@ -116,7 +116,7 @@ CMLData::~CMLData()
     close();
 }
 
-int CMLData::openLyrics(cstr_t szSongFile, int nMediaLength, cstr_t szLrcSource, bool bUseSpecifiedEncoding, CHAR_ENCODING encodingSpecified)
+int CMLData::openLyrics(cstr_t szSongFile, int nMediaLength, cstr_t szLrcSource, bool bUseSpecifiedEncoding, CharEncodingType encodingSpecified)
 {
     int                nRet = ERR_OK;
     LRC_SOURCE_TYPE lrcSourceType;
@@ -278,7 +278,7 @@ int CMLData::openLyricsContent(cstr_t szSongFile, int nMediaLength, cstr_t szLyr
 //
 // 重新打开歌词
 //
-int CMLData::reopenLyrics(bool bUseSpecifiedEncoding, CHAR_ENCODING encodingSpecified)
+int CMLData::reopenLyrics(bool bUseSpecifiedEncoding, CharEncodingType encodingSpecified)
 {
     string        strLrcSource, strSongFile;
 
@@ -288,7 +288,7 @@ int CMLData::reopenLyrics(bool bUseSpecifiedEncoding, CHAR_ENCODING encodingSpec
     return openLyrics(strSongFile.c_str(), m_nMediaLength, strLrcSource.c_str(), bUseSpecifiedEncoding, encodingSpecified);
 }
 
-int CMLData::openLyricsFile(cstr_t szFile, bool bUseSpecifiedEncoding, CHAR_ENCODING encodingSpecified)
+int CMLData::openLyricsFile(cstr_t szFile, bool bUseSpecifiedEncoding, CharEncodingType encodingSpecified)
 {
     close();
 
@@ -323,7 +323,7 @@ int CMLData::openLyricsFile(cstr_t szFile, bool bUseSpecifiedEncoding, CHAR_ENCO
 }
 
 #ifdef _ID3V2_SUPPORT
-int CMLData::openLyricsInSongOfID3v2USLT(ID3v2UnsynchLyrics &lyrics, bool bUseSpecifiedEncoding, CHAR_ENCODING encodingSpecified)
+int CMLData::openLyricsInSongOfID3v2USLT(ID3v2UnsynchLyrics &lyrics, bool bUseSpecifiedEncoding, CharEncodingType encodingSpecified)
 {
     int        nRet = ERR_OK;
 
@@ -339,7 +339,7 @@ int CMLData::openLyricsInSongOfID3v2USLT(ID3v2UnsynchLyrics &lyrics, bool bUseSp
     return ERR_OK;
 }
 
-int CMLData::openLyricsInSongOfID3v2SYLT(ID3v2SynchLyrics &lyrics, bool bUseSpecifiedEncoding, CHAR_ENCODING encodingSpecified)
+int CMLData::openLyricsInSongOfID3v2SYLT(ID3v2SynchLyrics &lyrics, bool bUseSpecifiedEncoding, CharEncodingType encodingSpecified)
 {
     close();
 
@@ -387,7 +387,7 @@ int CMLData::openLyricsInSongOfID3v2SYLT(ID3v2SynchLyrics &lyrics, bool bUseSpec
     return ERR_OK;
 }
 
-int CMLData::openLyricsInSongOfLyrics3v2(const char *buffer, size_t len, bool bUseSpecifiedEncoding, CHAR_ENCODING encodingSpecified)
+int CMLData::openLyricsInSongOfLyrics3v2(const char *buffer, size_t len, bool bUseSpecifiedEncoding, CharEncodingType encodingSpecified)
 {
     int        nRet;
 
@@ -498,7 +498,7 @@ int CMLData::saveLyricsInSongOfID3v2(VecStrings &vLyrNames)
         return nRet;
 
     string            strLyrics;
-    CHAR_ENCODING    encoding;
+    CharEncodingType    encoding;
     toString(strLyrics, g_profile.getBool("KeepTimeStampsInTxtLyr", false) ? FT_LYRICS_LRC : FT_LYRICS_TXT, true);
     if (isAnsiStr(strLyrics.c_str()))
         encoding = ED_SYSDEF;
@@ -1543,7 +1543,7 @@ int CMLData::filterContents(void)
 }
 
 #ifdef _ID3V2_SUPPORT
-void CMLData::toID3v2SynchLyrics(ID3v2SynchLyrics &lyrics, CHAR_ENCODING encoding)
+void CMLData::toID3v2SynchLyrics(ID3v2SynchLyrics &lyrics, CharEncodingType encoding)
 {
     strcpy_safe(lyrics.m_szLanguage, CountOf(lyrics.m_szLanguage), m_id3v2SaveCacheInfo.m_strLanguage.c_str());
     lyrics.m_bTimeStampMs = true;
@@ -1588,7 +1588,7 @@ void CMLData::toID3v2SynchLyrics(ID3v2SynchLyrics &lyrics, CHAR_ENCODING encodin
     }
 }
 
-void CMLData::toID3v2UnsynchLyrics(ID3v2UnsynchLyrics &lyrics, CHAR_ENCODING encoding)
+void CMLData::toID3v2UnsynchLyrics(ID3v2UnsynchLyrics &lyrics, CharEncodingType encoding)
 {
     string        str;
 
@@ -1666,7 +1666,7 @@ public:
     void setUp()
     {
         m_strTestDataFolder = fileGetPath(__FILE__);
-        dirStringAddSlash(m_strTestDataFolder);
+        dirStringAddSep(m_strTestDataFolder);
         m_strTestDataFolder += "TestData\\";
     }
     void tearDown() 

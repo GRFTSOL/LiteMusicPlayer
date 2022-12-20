@@ -76,7 +76,7 @@ void CDlgBatchProcessEmbeddedLyrics::onOK()
     }
 
     if (nFailedTimes > 0)
-        messageOut(CStrPrintf("%d Lyrics were failed to process.", nFailedTimes).c_str());
+        messageOut(stringPrintf("%d Lyrics were failed to process.", nFailedTimes).c_str());
     else
         CBaseDialog::onOK();
 }

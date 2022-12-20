@@ -73,7 +73,7 @@ bool CSncParser::lyricsLineToText(LyricsLine *pLine, string &strBuff)
     int nSec = (nMs / 1000) % 60;
     int nMin = nMs / (1000 * 60);
 
-    strBuff = CStrPrintf("⑩%04d%02d%02d⑿\r\n", nMin, nSec, n10Ms).c_str();
+    strBuff = stringPrintf("⑩%04d%02d%02d⑿\r\n", nMin, nSec, n10Ms).c_str();
 
     int            nCount;
     string strLyrics;

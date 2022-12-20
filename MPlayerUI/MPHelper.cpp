@@ -122,7 +122,7 @@ void enumPlaylists(cstr_t szDir, int &nLevel, vector<string> &vFiles)
         return;
 
     strDir = szDir;
-    dirStringAddSlash(strDir);
+    dirStringAddSep(strDir);
 
     nLevel--;
 

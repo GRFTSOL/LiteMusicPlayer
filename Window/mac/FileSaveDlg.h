@@ -6,7 +6,7 @@
 class CFileSaveDlg
 {
 public:
-    CFileSaveDlg(cstr_t szTitle, cstr_t szFile, cstr_t szFilter, int nDefFileType);
+    CFileSaveDlg(cstr_t szTitle, cstr_t szFile, cstr_t extFilter, int nDefFileType);
     virtual ~CFileSaveDlg(void);
 
     int doModal(Window *pWndParent);

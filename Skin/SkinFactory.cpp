@@ -830,7 +830,7 @@ int CSkinFactory::changeSkin(cstr_t szSkinName, cstr_t szSkinDir, cstr_t szExtra
     strSkinWndDef = g_profile.getString(getSkinFileName(), "DefaultSkinWnd", "");
 
     VecStrings strs;
-    makeSizedString(strOpenedSkinWnds).split(',', strs);
+    SizedString(strOpenedSkinWnds).split(',', strs);
     for (auto &s : strs) {
         setOpenedSkinWnds.insert(s);
     }
@@ -948,13 +948,13 @@ int CSkinFactory::openSkinFile(cstr_t szSkinFile)
             if (path.empty())
                 continue;
 #ifdef WIN32
-            strrep(path, "/", SZ_DIR_SLASH);
+            strrep(path, "/", PATH_SEP_STR);
 #else
-            strrep(path, "\\", SZ_DIR_SLASH);
+            strrep(path, "\\", PATH_SEP_STR);
 #endif
             string        strExtraDirAbs;
             strExtraDirAbs = getSkinRootDir();
-            if (path[0] == DIR_SLASH)
+            if (path[0] == PATH_SEP_CHAR)
                 strExtraDirAbs += path.c_str() + 1;
             else
                 strExtraDirAbs += path;
@@ -1323,7 +1323,7 @@ void CSkinFactory::setSkinsRootDir(cstr_t szSkinsRootDir)
     m_strSkinRootDir = szSkinsRootDir;
     if (!m_strSkinRootDir.empty())
     {
-        dirStringAddSlash(m_strSkinRootDir);
+        dirStringAddSep(m_strSkinRootDir);
         g_profile.writeString("SkinRootDir", m_strSkinRootDir.c_str());
     }
 }
@@ -1335,14 +1335,14 @@ cstr_t CSkinFactory::getSkinRootDir()
         m_strSkinRootDir = g_profile.getString("SkinRootDir", "");
         if (!m_strSkinRootDir.empty())
         {
-            dirStringAddSlash(m_strSkinRootDir);
+            dirStringAddSep(m_strSkinRootDir);
             if (isDirExist(m_strSkinRootDir.c_str()))
                 return m_strSkinRootDir.c_str();
         }
 
         m_strSkinRootDir = getAppResourceDir();
         m_strSkinRootDir += "skins";
-        m_strSkinRootDir += SZ_DIR_SLASH;
+        m_strSkinRootDir += PATH_SEP_STR;
 
 #if defined (_DEBUG) && defined (_WIN32)
         if (!isDirExist(m_strSkinRootDir.c_str()))
@@ -1381,7 +1381,7 @@ bool CSkinFactory::findFirstSkin(string &strSkin)
         {
             string fn = getSkinRootDir();
             fn += find.getCurName();
-            fn += SZ_DIR_SLASH;
+            fn += PATH_SEP_STR;
             fn += m_strSkinFileName;
 
             if (isFileExist(fn.c_str()))
@@ -1408,7 +1408,7 @@ bool CSkinFactory::enumAllSkins(vector<string> &vSkins)
         {
             string fn = getSkinRootDir();
             fn += find.getCurName();
-            fn += SZ_DIR_SLASH;
+            fn += PATH_SEP_STR;
             fn += m_strSkinFileName;
 
             if (isFileExist(fn.c_str()))

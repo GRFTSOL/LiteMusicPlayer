@@ -30,12 +30,12 @@ public:
 
     int newLyrics(cstr_t szSongFile, int nMediaLength);
 
-    int openLyrics(cstr_t szSongFile, int nMediaLength, cstr_t szLrcSource, bool bUseSpecifiedEncoding = false, CHAR_ENCODING encodingSpecified = ED_SYSDEF);
+    int openLyrics(cstr_t szSongFile, int nMediaLength, cstr_t szLrcSource, bool bUseSpecifiedEncoding = false, CharEncodingType encodingSpecified = ED_SYSDEF);
     int openLyrics(cstr_t szSongFile, int nMediaLength, uint8_t *szLrc, int nLen);
 #ifdef _IPHONE
     int openLyricsContent(cstr_t szSongFile, int nMediaLength, cstr_t szLyrContent);
 #endif
-    int reopenLyrics(bool bUseSpecifiedEncoding, CHAR_ENCODING encodingSpecified);
+    int reopenLyrics(bool bUseSpecifiedEncoding, CharEncodingType encodingSpecified);
 
     int saveAsFile(cstr_t file, bool &bUseNewFileName);
     int save();
@@ -47,7 +47,7 @@ public:
 #endif
 
     void toString(string &str, MLFileType lrcFormat = FT_LYRICS_LRC, bool bIncTags = false);
-    // int fromString(const void *lpLrc, int nLen, bool bAddTimeStampForTextLine = false, bool bUseSpecifiedEncoding = false, CHAR_ENCODING encodingSpecified = ED_SYSDEF);
+    // int fromString(const void *lpLrc, int nLen, bool bAddTimeStampForTextLine = false, bool bUseSpecifiedEncoding = false, CharEncodingType encodingSpecified = ED_SYSDEF);
     int fromString(cstr_t szLyrics);
 
 
@@ -151,14 +151,14 @@ public:
     void clearLyrics();
 
 protected:
-    int openLyricsFile(cstr_t szFile, bool bUseSpecifiedEncoding = false, CHAR_ENCODING encodingSpecified = ED_SYSDEF);
+    int openLyricsFile(cstr_t szFile, bool bUseSpecifiedEncoding = false, CharEncodingType encodingSpecified = ED_SYSDEF);
 #ifdef _ID3V2_SUPPORT
-    int openLyricsInSongOfID3v2USLT(ID3v2UnsynchLyrics &lyrics, bool bUseSpecifiedEncoding = false, CHAR_ENCODING encodingSpecified = ED_SYSDEF);
-    int openLyricsInSongOfID3v2SYLT(ID3v2SynchLyrics &lyrics, bool bUseSpecifiedEncoding = false, CHAR_ENCODING encodingSpecified = ED_SYSDEF);
-    int openLyricsInSongOfLyrics3v2(const char *buffer, size_t len, bool bUseSpecifiedEncoding = false, CHAR_ENCODING encodingSpecified = ED_SYSDEF);
+    int openLyricsInSongOfID3v2USLT(ID3v2UnsynchLyrics &lyrics, bool bUseSpecifiedEncoding = false, CharEncodingType encodingSpecified = ED_SYSDEF);
+    int openLyricsInSongOfID3v2SYLT(ID3v2SynchLyrics &lyrics, bool bUseSpecifiedEncoding = false, CharEncodingType encodingSpecified = ED_SYSDEF);
+    int openLyricsInSongOfLyrics3v2(const char *buffer, size_t len, bool bUseSpecifiedEncoding = false, CharEncodingType encodingSpecified = ED_SYSDEF);
 
-    void toID3v2SynchLyrics(ID3v2SynchLyrics &lyrics, CHAR_ENCODING encoding);
-    void toID3v2UnsynchLyrics(ID3v2UnsynchLyrics &lyrics, CHAR_ENCODING encoding);
+    void toID3v2SynchLyrics(ID3v2SynchLyrics &lyrics, CharEncodingType encoding);
+    void toID3v2UnsynchLyrics(ID3v2UnsynchLyrics &lyrics, CharEncodingType encoding);
 
     int updateTagToID3v2DescTxt();
 #endif // #ifdef _ID3V2_SUPPORT

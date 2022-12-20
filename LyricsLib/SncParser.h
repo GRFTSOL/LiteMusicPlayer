@@ -17,7 +17,7 @@ public:
     CSncParser(CMLData *pMLData);
     virtual ~CSncParser();
 
-    virtual int parseFile(bool bUseSpecifiedEncoding, CHAR_ENCODING encoding) { return ERR_FALSE; }
+    virtual int parseFile(bool bUseSpecifiedEncoding, CharEncodingType encoding) { return ERR_FALSE; }
     virtual int saveAsFile(cstr_t file);
 
     virtual LYRICS_CONTENT_TYPE getLyrContentType() { return LCT_UNKNOWN; }

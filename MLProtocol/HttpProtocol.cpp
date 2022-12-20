@@ -236,9 +236,9 @@ int CHttpRequestProtocol::writeHead()
     if (m_bUseProxy)
     {
         if (m_nHostPort != __HTTP_PORT)
-            urlNew = CStrPrintf("http://%s:%d", m_szHost, m_nHostPort).c_str();
+            urlNew = stringPrintf("http://%s:%d", m_szHost, m_nHostPort).c_str();
         else
-            urlNew = CStrPrintf("http://%s", m_szHost).c_str();
+            urlNew = stringPrintf("http://%s", m_szHost).c_str();
         if (m_strUrl[0] != '/')
             urlNew += "/";
         urlNew += m_strUrl;
@@ -308,12 +308,10 @@ int CHttpRequestProtocol::writeHead()
 
     if (m_dwAvailProp & RP_RANGE)
     {
-        CStrPrintf str;
         if (m_dwRangeEnd > m_dwRangeBeg)
-            str.printf("Range: bytes=%d-%d\r\n", m_dwRangeBeg, m_dwRangeEnd);
+            m_buffHead += stringPrintf("Range: bytes=%d-%d\r\n", m_dwRangeBeg, m_dwRangeEnd);
         else if (m_dwRangeEnd == 0)
-            str.printf("Range: bytes=%d-\r\n", m_dwRangeBeg);
-        m_buffHead += str.c_str();
+            m_buffHead += stringPrintf("Range: bytes=%d-\r\n", m_dwRangeBeg);
     }
 
     if (isFlagSet(m_dwAvailProp, RP_CONNECTION) && !isEmptyString(m_szConnection))

@@ -22,7 +22,7 @@ void listMedia(cstr_t szDir, vector<string> &vFiles)
         return;
 
     strDir = szDir;
-    dirStringAddSlash(strDir);
+    dirStringAddSep(strDir);
 
     while (find.findNext())
     {

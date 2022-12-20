@@ -143,7 +143,7 @@ void CSkinResMgr::addRessourceDir(cstr_t szResDir, int nPos)
         return;
 
     string strDir = szResDir;
-    dirStringAddSlash(strDir);
+    dirStringAddSep(strDir);
 
     for (uint32_t i = 0; i < m_vResSearchDirs.size(); i++)
     {
@@ -157,11 +157,11 @@ void CSkinResMgr::addRessourceDir(cstr_t szResDir, int nPos)
         m_vResSearchDirs.insert(m_vResSearchDirs.begin() + nPos, strDir);
 }
 
-void CSkinResMgr::enumFiles(cstr_t szFilter, vector<string> &vFiles, bool bEnumFullPath)
+void CSkinResMgr::enumFiles(cstr_t extFilter, vector<string> &vFiles, bool bEnumFullPath)
 {
     for (uint32_t i = 0; i < m_vResSearchDirs.size(); i++)
     {
-        enumFilesInDir(m_vResSearchDirs[i].c_str(), szFilter, vFiles, bEnumFullPath);
+        enumFilesInDir(m_vResSearchDirs[i].c_str(), extFilter, vFiles, bEnumFullPath);
     }
 }
 

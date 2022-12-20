@@ -270,7 +270,7 @@ public:
                 string file = dlg.getSaveFile();
                 fileSetExt(file, strExt.c_str());
 
-                saveDataAsFile(file.c_str(), pic->m_buffPic.data(), pic->m_buffPic.size());
+                writeFile(file.c_str(), pic->m_buffPic.data(), pic->m_buffPic.size());
             }
         }
         else
@@ -502,7 +502,7 @@ void CDlgMediaInfo::reloadMediaInfo()
             mbcsToUtf8(id3v1Info.szComment, -1, m_comment, m_nEncodingOfConvertAnsi);
             mbcsToUtf8(id3v1Info.szYear, -1, m_year, m_nEncodingOfConvertAnsi);
 
-            m_track = CStrPrintf("%d", id3v1Info.byTrack).c_str();
+            m_track = stringPrintf("%d", id3v1Info.byTrack).c_str();
             cstr_t    szGenre;
             szGenre = CID3v1::getGenreDescription(id3v1Info.byGenre);
             if (szGenre)

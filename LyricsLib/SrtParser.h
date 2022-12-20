@@ -18,7 +18,7 @@ public:
     virtual ~CSrtParser();
 
 public:
-    virtual int parseFile(bool bUseSpecifiedEncoding, CHAR_ENCODING encoding);
+    virtual int parseFile(bool bUseSpecifiedEncoding, CharEncodingType encoding);
     virtual int saveAsFile(cstr_t file);
 
     virtual LYRICS_CONTENT_TYPE getLyrContentType();

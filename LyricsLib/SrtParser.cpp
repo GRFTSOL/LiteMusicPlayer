@@ -134,7 +134,7 @@ static cstr_t readTime(cstr_t szBeg, uint32_t &dwTime)
 }
 
 // 分析歌词文件，并且存储到 pMLData 中
-int CSrtParser::parseFile(bool bUseSpecifiedEncoding, CHAR_ENCODING encoding)
+int CSrtParser::parseFile(bool bUseSpecifiedEncoding, CharEncodingType encoding)
 {
     //8
     //00:00:21,657 --> 00:00:26,516

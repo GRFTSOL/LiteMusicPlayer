@@ -6,11 +6,8 @@
     Purpose  :    
 *********************************************************************/
 
-#include "../UtilsTypes.h"
-#include "../StringEx.h"
+#include "../Utils.h"
 #include "../Profile.h"
-#include "../FileApi.h"
-#include "../base64.h"
 
 /*
 test Encrypt ....
@@ -265,8 +262,8 @@ void CProfile::init(cstr_t szProfile, cstr_t szDefKey)
 
     if (strlen(szProfile) > 3)
     {
-        if (((szProfile[1] == ':') && (szProfile[2] == DIR_SLASH)) ||
-            (szProfile[0] == DIR_SLASH))
+        if (((szProfile[1] == ':') && (szProfile[2] == PATH_SEP_CHAR)) ||
+            (szProfile[0] == PATH_SEP_CHAR))
         {
             // 如果已经是全路径，则不管
             m_strProfile = szProfile;
@@ -577,5 +574,5 @@ int CProfile::encryptGetInt(cstr_t szKeyName, int value)
 
 void CProfile::encryptWriteInt(cstr_t szKeyName, int value)
 {
-    encryptWriteString(szKeyName, CStrPrintf("%d", value).c_str());
+    encryptWriteString(szKeyName, stringPrintf("%d", value).c_str());
 }

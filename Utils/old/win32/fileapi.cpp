@@ -127,7 +127,7 @@ bool setFileTime(
     return bRet;
 }
 
-uint32_t canWriteInDir(cstr_t szDir)
+uint32_t isDirWritable(cstr_t szDir)
 {
     uint32_t    dwAttr;
 
@@ -140,7 +140,7 @@ uint32_t canWriteInDir(cstr_t szDir)
 
     // Try to create a file in the folder, then delete it.
     string strFile = szDir;
-    dirStringAddSlash(strFile);
+    dirStringAddSep(strFile);
     strFile += "temp.txt";
     if (!saveDataAsFile(strFile.c_str(), "abc", 3))
         return false;
@@ -164,15 +164,15 @@ FileFind::~FileFind()
         FindClose(hFileFind);
 }
 
-bool FileFind::openDir(cstr_t szDir, cstr_t szFilter)
+bool FileFind::openDir(cstr_t szDir, cstr_t extFilter)
 {
-    if (!szFilter)
-        szFilter = "*.*";
+    if (!extFilter)
+        extFilter = "*.*";
 
     string        str;
     str = szDir;
-    dirStringAddSlash(str);
-    str += szFilter;
+    dirStringAddSep(str);
+    str += extFilter;
 
     hFileFind = FindFirstFile(str.c_str(), &FindData);
     if (hFileFind == INVALID_HANDLE_VALUE)

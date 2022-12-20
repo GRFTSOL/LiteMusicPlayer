@@ -129,7 +129,7 @@ bool copyFile(cstr_t lpExistingFileName, cstr_t lpNewFileName, bool bFailIfExist
 
 #endif
 
-uint32_t canWriteInDir(cstr_t szDir)
+uint32_t isDirWritable(cstr_t szDir)
 {
     return true;
 }
@@ -148,7 +148,7 @@ FileFind::~FileFind()
     close();
 }
 
-bool FileFind::openDir(cstr_t szDir, cstr_t szFilter)
+bool FileFind::openDir(cstr_t szDir, cstr_t extFilter)
 {
     close();
 
@@ -203,7 +203,7 @@ bool FileFind::getCurStat()
 
     char        szFile[400];
     _tcscpy(szFile, m_szDir);
-    dirStringAddSlash(szFile);
+    dirStringAddSep(szFile);
     _tcscat(szFile, m_dirp->d_name);
 
     memset(&m_stat, 0, sizeof(m_stat));

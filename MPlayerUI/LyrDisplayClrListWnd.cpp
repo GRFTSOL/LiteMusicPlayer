@@ -7,7 +7,7 @@ void createGradientFillImage(CRawImage &image, int nHeight, CColor clrGradient[3
 string getPatternDir()
 {
     string strPatternDir = getAppResourceDir();
-    strPatternDir += "Patterns" SZ_DIR_SLASH;
+    strPatternDir += "Patterns" PATH_SEP_STR;
 
 #if defined (_DEBUG) && defined (_WIN32)
     if (!isDirExist(strPatternDir.c_str()))

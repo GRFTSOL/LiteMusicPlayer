@@ -385,14 +385,14 @@ CSkinTreeCtrl::CSkinTreeCtrl()
     for (int i = 0; i < 20; i++)
     {
         p = new ISkinTreeNode;
-        p->m_strName = CStrPrintf("Node %d", i).c_str();
+        p->m_strName = stringPrintf("Node %d", i).c_str();
         p->setExpanded(true);
         pRoot->addChildBack(p);
 
         for (int k = 0; k < 2; k++)
         {
             p2 = new ISkinTreeNode;
-            p2->m_strName = CStrPrintf("Node %d-%d", i, k).c_str();
+            p2->m_strName = stringPrintf("Node %d-%d", i, k).c_str();
             p->setExpanded(true);
             p->addChildBack(p2);
         }

@@ -23,88 +23,44 @@ bool setClipboardText(Window *pWnd, cstr_t szText)
 
 bool SHDeleteFile(cstr_t szFile, Window *pWndParent)
 {
-    if (isWin9xSystem())
-    {
-        SHFILEOPSTRUCTA sop;
-        string strFile = szFile;
-        strFile += '\0';
+    SHFILEOPSTRUCT    sop;
+    string            strFile;
 
-        sop.hwnd = pWndParent->getHandle();
-        sop.wFunc = FO_DELETE;
-        sop.pFrom = strFile.c_str();
-        sop.pTo = nullptr;
-        sop.fFlags = FOF_ALLOWUNDO;
-        sop.fAnyOperationsAborted = false;
-        sop.hNameMappings = nullptr;
-        sop.lpszProgressTitle = "";
+    strFile = szFile;
+    strFile += '\0';
 
-        return (SHFileOperationA(&sop) == 0 && !sop.fAnyOperationsAborted);
-    }
-    else
-    {
-        SHFILEOPSTRUCT    sop;
-        string            strFile;
+    sop.hwnd = pWndParent->getHandle();
+    sop.wFunc = FO_DELETE;
+    sop.pFrom = strFile.c_str();
+    sop.pTo = nullptr;
+    sop.fFlags = FOF_ALLOWUNDO;
+    sop.fAnyOperationsAborted = false;
+    sop.hNameMappings = nullptr;
+    sop.lpszProgressTitle = "";
 
-        strFile = szFile;
-        strFile += '\0';
-
-        sop.hwnd = pWndParent->getHandle();
-        sop.wFunc = FO_DELETE;
-        sop.pFrom = strFile.c_str();
-        sop.pTo = nullptr;
-        sop.fFlags = FOF_ALLOWUNDO;
-        sop.fAnyOperationsAborted = false;
-        sop.hNameMappings = nullptr;
-        sop.lpszProgressTitle = "";
-
-        return (SHFileOperation(&sop) == 0 && !sop.fAnyOperationsAborted);
-    }
+    return (SHFileOperation(&sop) == 0 && !sop.fAnyOperationsAborted);
 }
 
 bool SHCopyFile(cstr_t szSrcFile, cstr_t szTargFile, Window *pWndParent)
 {
-    if (isWin9xSystem())
-    {
-        SHFILEOPSTRUCTA    sop;
-        string            strSrc, strTarg;
+    SHFILEOPSTRUCT    sop;
+    string            strSrc, strTarg;
 
-        strSrc = szSrcFile;
-        strTarg = szTargFile;
-        strSrc += '\0';
-        strTarg += '\0';
+    strSrc = szSrcFile;
+    strTarg = szTargFile;
+    szSrcFile += '\0';
+    szTargFile += '\0';
 
-        sop.hwnd = pWndParent->getHandle();
-        sop.wFunc = FO_COPY;
-        sop.pFrom = strSrc.c_str();
-        sop.pTo = strTarg.c_str();
-        sop.fFlags = FOF_ALLOWUNDO;
-        sop.fAnyOperationsAborted = false;
-        sop.hNameMappings = nullptr;
-        sop.lpszProgressTitle = "";
+    sop.hwnd = pWndParent->getHandle();
+    sop.wFunc = FO_COPY;
+    sop.pFrom = strSrc.c_str();
+    sop.pTo = strTarg.c_str();
+    sop.fFlags = FOF_ALLOWUNDO;
+    sop.fAnyOperationsAborted = false;
+    sop.hNameMappings = nullptr;
+    sop.lpszProgressTitle = "";
 
-        return (SHFileOperationA(&sop) == 0 && !sop.fAnyOperationsAborted);
-    }
-    else
-    {
-        SHFILEOPSTRUCT    sop;
-        string            strSrc, strTarg;
-
-        strSrc = szSrcFile;
-        strTarg = szTargFile;
-        szSrcFile += '\0';
-        szTargFile += '\0';
-
-        sop.hwnd = pWndParent->getHandle();
-        sop.wFunc = FO_COPY;
-        sop.pFrom = strSrc.c_str();
-        sop.pTo = strTarg.c_str();
-        sop.fFlags = FOF_ALLOWUNDO;
-        sop.fAnyOperationsAborted = false;
-        sop.hNameMappings = nullptr;
-        sop.lpszProgressTitle = "";
-
-        return (SHFileOperation(&sop) == 0 && !sop.fAnyOperationsAborted);
-    }
+    return (SHFileOperation(&sop) == 0 && !sop.fAnyOperationsAborted);
 }
 
 #ifndef INVALID_FILE_ATTRIBUTES
@@ -222,7 +178,7 @@ bool loadProxySvrFromFireFox(bool &bUseProxy, string &strSvr, int &nPort)
     if (!SUCCEEDED(SHGetSpecialFolderPath(nullptr, szFireFoxDir, CSIDL_APPDATA, false)))
         return false;
 
-    dirStringAddSlash(szFireFoxDir);
+    dirStringAddSep(szFireFoxDir);
     strcat_safe(szFireFoxDir, CountOf(szFireFoxDir), "Mozilla\\Firefox\\");
     // C:\Documents and Settings\username\Application Data\Mozilla\Firefox
 
@@ -245,7 +201,7 @@ bool loadProxySvrFromFireFox(bool &bUseProxy, string &strSvr, int &nPort)
         // get current profile folder.
         for (int i = 0; i < 10; i++)
         {
-            if (1 == profile.getInt(CStrPrintf("Profile%d", i).c_str(), "Default", 0))
+            if (1 == profile.getInt(stringPrintf("Profile%d", i).c_str(), "Default", 0))
             {
                 // Find the default profile.
                 nDefault = i;
@@ -253,7 +209,7 @@ bool loadProxySvrFromFireFox(bool &bUseProxy, string &strSvr, int &nPort)
             }
         }
 
-        string        strPath = profile.getString(CStrPrintf("Profile%d", nDefault).c_str(), "Path", "");
+        string        strPath = profile.getString(stringPrintf("Profile%d", nDefault).c_str(), "Path", "");
         if (strPath.empty())
             return false;
 
@@ -264,7 +220,7 @@ bool loadProxySvrFromFireFox(bool &bUseProxy, string &strSvr, int &nPort)
             strProfilePath = szFireFoxDir;
             strProfilePath += strPath;
         }
-        dirStringAddSlash(strProfilePath);
+        dirStringAddSep(strProfilePath);
     }
 
     // get proxy settings.
@@ -300,7 +256,7 @@ void getNotepadEditor(string &strEditor)
     char        szBuffer[MAX_PATH];
 
     GetWindowsDirectory(szBuffer, MAX_PATH);
-    dirStringAddSlash(szBuffer);
+    dirStringAddSep(szBuffer);
 
     strEditor = szBuffer;
     strEditor += "notepad.exe";

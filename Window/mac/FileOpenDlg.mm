@@ -12,10 +12,10 @@ void CFileDlgExtFilter::addExtention(cstr_t szDesc, cstr_t szExt)
     append(1, char('\0'));
 }
 
-void ExtFiltersToSet(cstr_t szFilter, SetStrings &setExts)
+void ExtFiltersToSet(cstr_t extFilter, SetStrings &setExts)
 {
     VecStrings vStr;
-    multiStrToVStr(szFilter, vStr);
+    multiStrToVStr(extFilter, vStr);
     
     string str;
     for (uint32_t i = 0; i < vStr.size(); i++) {
@@ -52,15 +52,15 @@ NSArray *SetStrToExtArray(SetStrings &setExt)
 
 //////////////////////////////////////////////////////////////////////
 
-CFileOpenDlg::CFileOpenDlg(cstr_t szTitle, cstr_t szFile, cstr_t szFilter, int nDefFileType, bool bAllowMultiSel)
+CFileOpenDlg::CFileOpenDlg(cstr_t szTitle, cstr_t szFile, cstr_t extFilter, int nDefFileType, bool bAllowMultiSel)
 {
     m_bAllowMultiSel = bAllowMultiSel;
 
     if (szFile)
         m_vFiles.push_back(szFile);
     
-    if (szFilter)
-        ExtFiltersToSet(szFilter, m_setExt);
+    if (extFilter)
+        ExtFiltersToSet(extFilter, m_setExt);
 }
 
 CFileOpenDlg::~CFileOpenDlg()

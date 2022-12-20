@@ -1,8 +1,6 @@
-#include "UtilsTypes.h"
+#include "Utils.h"
 #include "FileEx.h"
 #include "Error.h"
-#include "StrPrintf.h"
-#include "BinaryStream.h"
 
 
 CFileEx::CFileEx()
@@ -22,7 +20,7 @@ int CFileEx::open(cstr_t szFile, cstr_t szMode)
     m_fp = fopen(szFile, szMode);
     if (!m_fp)
     {
-        setCustomErrorDesc(CStrPrintf("%s: %s", (cstr_t)OSError(), szFile).c_str());
+        setCustomErrorDesc(stringPrintf("%s: %s", (cstr_t)OSError(), szFile).c_str());
         return ERR_CUSTOM_ERROR;
     }
 

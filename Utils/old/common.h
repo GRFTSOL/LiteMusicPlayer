@@ -92,11 +92,11 @@ int_t1 inline min_fun(int_t1 a, int_t2 b)
 }
 
 #ifdef _WIN32
-#define DIR_SLASH        '\\'
-#define SZ_DIR_SLASH    "\\"
+#define PATH_SEP_CHAR        '\\'
+#define PATH_SEP_STR    "\\"
 #else
-#define DIR_SLASH        '/'
-#define SZ_DIR_SLASH    "/"
+#define PATH_SEP_CHAR        '/'
+#define PATH_SEP_STR    "/"
 #endif
 
 #define CHAR_SPACE        ' '

@@ -21,8 +21,8 @@ enum ID3v2EncType
     IET_UTF8            = 3,
 };
 
-CHAR_ENCODING iD3v2EncTypeToCharEncoding(ID3v2EncType encType);
-ID3v2EncType charEncodingToID3v2EncType(CHAR_ENCODING encoding);
+CharEncodingType iD3v2EncTypeToCharEncoding(ID3v2EncType encType);
+ID3v2EncType charEncodingToID3v2EncType(CharEncodingType encoding);
 
 enum ID3v2FrameAction
 {
@@ -303,7 +303,7 @@ public:
 class CID3v2
 {
 public:
-    CID3v2(CHAR_ENCODING encoding);
+    CID3v2(CharEncodingType encoding);
     virtual ~CID3v2();
 
     bool isID3v2_2() const { return m_id3v2Header.byMajorVer == ID3v2Header::ID3V2_V2; }
@@ -354,7 +354,7 @@ protected:
     bool        m_bModify;
     bool        m_bAttach;
     FILE        *m_fp;
-    CHAR_ENCODING m_Encoding;
+    CharEncodingType m_Encoding;
 
     FRAME_LIST    m_listFrames;
     // long        m_nextFramePos;

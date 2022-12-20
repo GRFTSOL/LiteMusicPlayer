@@ -227,7 +227,7 @@ void CSkinListView::enumProperties(CUIObjProperties &listProperties)
 
     for (vector<CColor>::size_type i = CN_CUSTOMIZED_START; i < m_vColors.size(); i++)
     {
-        listProperties.addPropColor(CStrPrintf("%s%d", SZ_CUSTOMIZED_CLR, i - CN_CUSTOMIZED_START).c_str(),
+        listProperties.addPropColor(stringPrintf("%s%d", SZ_CUSTOMIZED_CLR, i - CN_CUSTOMIZED_START).c_str(),
             getColor(i));
     }
 }

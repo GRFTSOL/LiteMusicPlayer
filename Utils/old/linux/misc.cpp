@@ -220,7 +220,7 @@ bool getModulePath(char szPath[], HINSTANCE hInstance/* = nullptr*/)
 
         nLen = GetModuleFileName(hInstance, szPath, MAX_PATH);
         nLen --;
-        while (nLen >= 0 && szPath[nLen] != DIR_SLASH)
+        while (nLen >= 0 && szPath[nLen] != PATH_SEP_CHAR)
             nLen --;
         if (nLen < 0)
             return false;

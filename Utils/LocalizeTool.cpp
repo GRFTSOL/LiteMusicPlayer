@@ -14,7 +14,7 @@ CLanguageTool            g_LangTool;
 string getLangPackDir()
 {
     string strLangDir = getAppResourceDir();
-    strLangDir += SZ_LANG_DIR SZ_DIR_SLASH;
+    strLangDir += SZ_LANG_DIR PATH_SEP_STR;
 
 #if defined (_DEBUG) && defined (_WIN32)
     if (!isDirExist(strLangDir.c_str()))
@@ -80,7 +80,7 @@ static bool getLanguagePackInfo(cstr_t szFile, string &strLanguage, string &strL
 {
     char        buff[1024];
     FILE        *fp;
-    CHAR_ENCODING    encoding;
+    CharEncodingType    encoding;
     string    strBuff;
     cstr_t        SZ_INFO = "[Info]";
 

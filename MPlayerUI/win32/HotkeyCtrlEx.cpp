@@ -183,7 +183,7 @@ LRESULT CHotkeyCtrlEx::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam)
 //         GetKeyNameText(lParam, szText, CountOf(szText));
 //         DBG_LOG1("Keydown: %s", szText);
 //         uint32_t    a, b, c, d, e;
-//         HKL    kb = LoadKeyboardLayout(CStrPrintf("%08X", GetUserDefaultLangID()).c_str(), KLF_ACTIVATE);
+//         HKL    kb = LoadKeyboardLayout(stringPrintf("%08X", GetUserDefaultLangID()).c_str(), KLF_ACTIVATE);
 //         a = MapVirtualKeyEx(wParam, 0, kb);
 //         b = MapVirtualKeyEx(wParam, 1, kb);
 //         c = MapVirtualKeyEx(wParam, 2, kb);

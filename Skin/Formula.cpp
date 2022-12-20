@@ -49,9 +49,9 @@ void CFormula::append(cstr_t szFormula)
 void CFormula::increase(int value)
 {
     if (value < 0)
-        m_strFormula += CStrPrintf("%d", value).c_str();
+        m_strFormula += stringPrintf("%d", value).c_str();
     else
-        m_strFormula += CStrPrintf("+%d", value).c_str();
+        m_strFormula += stringPrintf("+%d", value).c_str();
     simpleOptimize();
 }
 

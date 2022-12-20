@@ -16,7 +16,7 @@ void CFileDlgExtFilter::addExtention(cstr_t szDesc, cstr_t szExt)
 
 //////////////////////////////////////////////////////////////////////
 
-CFileOpenDlg::CFileOpenDlg(cstr_t szTitle, cstr_t szFile, cstr_t szFilter, int nDefFileType, bool bAllowMultiSel)
+CFileOpenDlg::CFileOpenDlg(cstr_t szTitle, cstr_t szFile, cstr_t extFilter, int nDefFileType, bool bAllowMultiSel)
 {
     if (bAllowMultiSel)
         m_nBufLen = 1024 * 10;
@@ -32,7 +32,7 @@ CFileOpenDlg::CFileOpenDlg(cstr_t szTitle, cstr_t szFile, cstr_t szFilter, int n
 
     memset(&m_openfile, 0, sizeof(m_openfile));
     m_openfile.lpstrTitle = szTitle;
-    m_openfile.lpstrFilter = szFilter;
+    m_openfile.lpstrFilter = extFilter;
     m_openfile.lpstrFile = m_szFile;
     m_openfile.nMaxFile = m_nBufLen;
     m_openfile.nFilterIndex = nDefFileType;
@@ -85,7 +85,7 @@ void CFileOpenDlg::getOpenFile(vector<string> &vFiles)
         string        strDir;
 
         strDir = m_szFile;
-        dirStringAddSlash(strDir);
+        dirStringAddSep(strDir);
 
         while (*szText != '\0')
             szText++;

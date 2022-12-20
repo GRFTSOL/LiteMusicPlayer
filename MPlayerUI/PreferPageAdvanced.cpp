@@ -15,7 +15,7 @@
 
 void formatHotkeyText(string &strText, uint32_t nVirtKey, uint32_t fsModifiers)
 {
-    strText = CStrPrintf("%d", nVirtKey).c_str();
+    strText = stringPrintf("%d", nVirtKey).c_str();
 }
 
 #endif
@@ -87,7 +87,7 @@ public:
     }
 
     virtual string getValue() {
-        return CStrPrintf("%d", getIntValue()).c_str();
+        return stringPrintf("%d", getIntValue()).c_str();
     }
 
     virtual int getIntValue()
@@ -301,14 +301,14 @@ public:
 
 };
 
-CHAR_ENCODING getDefaultLyricsEncodingSettings()
+CharEncodingType getDefaultLyricsEncodingSettings()
 {
     string defEncoding = g_profile.getString("LyrDefEncoding", "");
-    CHAR_ENCODING encodingId = getCharEncodingID(defEncoding.c_str());
+    CharEncodingType encodingId = getCharEncodingID(defEncoding.c_str());
     return encodingId;
 }
 
-void setDefaultLyricsEncodingSettings(CHAR_ENCODING encoding)
+void setDefaultLyricsEncodingSettings(CharEncodingType encoding)
 {
     setDefaultLyricsEncoding(encoding);
 
@@ -330,14 +330,14 @@ public:
     virtual void getOptions(VecStrings &vString, int &nRadio) {
         int count = getCharEncodingCount();
         for (int i = 0; i < count; i++) {
-            vString.push_back(_TL(getCharEncodingByID((CHAR_ENCODING)i).szDesc));
+            vString.push_back(_TL(getCharEncodingByID((CharEncodingType)i).szDesc));
         }
 
         nRadio = getDefaultLyricsEncodingSettings();
     }
 
     virtual void setOption(int nIndex) {
-        setDefaultLyricsEncodingSettings((CHAR_ENCODING)nIndex);
+        setDefaultLyricsEncodingSettings((CharEncodingType)nIndex);
     }
 
     virtual bool isDefault() {
@@ -426,11 +426,9 @@ public:
     }
 
     virtual void getOptions(VecStrings &vString, int &nRadio) {
-        CStrPrintf    str;
         for (int i = 10; i <= 100; i += 10)
         {
-            str.printf("%d", i);
-            vString.push_back(str.c_str());
+            vString.push_back(itos(i));
         }
 
         nRadio = getIntValue() / 10 - 1;
@@ -517,11 +515,9 @@ public:
         ET_LYRICS_DISPLAY_SETTINGS, SZ_SECT_LYR_DISPLAY, "LineSpacing", 2) { }
 
     virtual void getOptions(VecStrings &vString, int &nRadio) {
-        CStrPrintf    str;
         for (int i = 0; i <= 10; i++)
         {
-            str.printf("%d", i);
-            vString.push_back(str.c_str());
+            vString.push_back(itos(i));
         }
 
         nRadio = getIntValue();
@@ -541,13 +537,11 @@ public:
         ET_NULL, SZ_SECT_LYR_DISPLAY, "LyrDelayTime", 0) { }
 
     virtual void getOptions(VecStrings &vString, int &nRadio) {
-        CStrPrintf    str;
         int            nMax = 20;
         float        fDelayTime = -5.0;
         for (int i = 0; i <= nMax; i++)
         {
-            str.printf("%.1f", fDelayTime + i * 0.5);
-            vString.push_back(str.c_str());
+            vString.push_back(stringPrintf("%.1f", fDelayTime + i * 0.5));
         }
 
         nRadio = getIntValue() / 500 + nMax / 2;
@@ -771,7 +765,7 @@ public:
 
                     strCmd = getCmdIDDescription(CMPlayerAppBase::getHotkey().get(nUsedCmdIndex)->cmd);
 
-                    strMsg = CStrPrintf(_TLT("This hotkey is currently used by action: %s."), _TL(strCmd.c_str())).c_str();
+                    strMsg = stringPrintf(_TLT("This hotkey is currently used by action: %s."), _TL(strCmd.c_str())).c_str();
                     strMsg += "\r\n";
                     strMsg += _TLT("Do you want to replace it?");
                     if (m_pWndParent->getSkinWnd()->messageOut(strMsg.c_str(), MB_ICONINFORMATION | MB_YESNO) != IDYES)

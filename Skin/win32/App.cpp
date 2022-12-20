@@ -23,7 +23,7 @@ void setWorkingFolder(cstr_t szWorkingFolder)
 {
     // assert(szWorkingFolder && !isEmptyString(szWorkingFolder));
     strcpy_safe(g_szWorkingFolder, MAX_PATH, szWorkingFolder);
-    dirStringAddSlash(g_szWorkingFolder);
+    dirStringAddSep(g_szWorkingFolder);
 }
 
 void getAppResourceDir(char * szWorkingFolder)
@@ -44,7 +44,7 @@ cstr_t getAppResourceDir()
 
         getModulePath(g_szWorkingFolder, g_hInst);
 
-        dirStringAddSlash(g_szWorkingFolder);
+        dirStringAddSep(g_szWorkingFolder);
     }
 
     return g_szWorkingFolder;
@@ -89,7 +89,7 @@ void getAppDataDir(char * szAppDataDir, cstr_t szDefAppName)
             if (!bInUserDir)
             {
                 // To verify that it is writable.
-                if (!canWriteInDir(getAppResourceDir()))
+                if (!isDirWritable(getAppResourceDir()))
                     bInUserDir = true;
             }
         }
@@ -103,11 +103,11 @@ void getAppDataDir(char * szAppDataDir, cstr_t szDefAppName)
     {
         if (SUCCEEDED(SHGetSpecialFolderPath(nullptr, szAppDataDir, CSIDL_APPDATA, false)))
         {
-            dirStringAddSlash(szAppDataDir);
+            dirStringAddSep(szAppDataDir);
             strcat_safe(szAppDataDir, MAX_PATH, szDefAppName);
             if (!isDirExist(szAppDataDir))
                 createDirectory(szAppDataDir, nullptr);
-            dirStringAddSlash(szAppDataDir);
+            dirStringAddSep(szAppDataDir);
         }
         else
             getAppResourceDir(szAppDataDir);

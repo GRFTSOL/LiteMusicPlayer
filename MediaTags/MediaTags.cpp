@@ -127,7 +127,7 @@ int MediaTags::getTagFast(cstr_t szFile, string *pArtist, string *pTitle, string
     fp = fopen(szFile, "rb");
     if (!fp)
     {
-        setCustomErrorDesc(CStrPrintf("%s: %s", OSError().Description(), szFile).c_str());
+        setCustomErrorDesc(stringPrintf("%s: %s", OSError().Description(), szFile).c_str());
         return ERR_CUSTOM_ERROR;
     }
 
@@ -170,7 +170,7 @@ int MediaTags::getTagFast(cstr_t szFile, string *pArtist, string *pTitle, string
             if (pTitle && pTitle->empty()) *pTitle = v1tag.szTitle;
             if (pYear && pYear->empty()) *pYear = v1tag.szYear;
             if (pGenre && pGenre->empty()) *pGenre = id3v1.getGenreDescription(v1tag.byGenre);
-            if (pTrackNo && pTrackNo->empty()) *pTrackNo = CStrPrintf("%d", v1tag.byTrack).c_str();
+            if (pTrackNo && pTrackNo->empty()) *pTrackNo = stringPrintf("%d", v1tag.byTrack).c_str();
         }
     }
 

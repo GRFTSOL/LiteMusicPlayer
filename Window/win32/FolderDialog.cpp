@@ -161,7 +161,7 @@ void CFolderDialog::setInitFolder(cstr_t szInitDir)
     m_strInitFolder = szInitDir;
 
     // 去掉目录后面的\ 
-    if (m_strInitFolder.size() > 0 && m_strInitFolder[m_strInitFolder.size() - 1] == DIR_SLASH)
+    if (m_strInitFolder.size() > 0 && m_strInitFolder[m_strInitFolder.size() - 1] == PATH_SEP_CHAR)
         m_strInitFolder[m_strInitFolder.size() - 1] = '\0';
 }
 

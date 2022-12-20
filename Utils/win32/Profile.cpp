@@ -378,7 +378,7 @@ void CProfile::init(cstr_t szProfile, cstr_t szDefKey)
                 nLenRootKey++;
 
             m_strProfile = szProfile + HKEY_LEN + nLenRootKey;
-            dirStringAddSlash(m_strProfile);
+            dirStringAddSep(m_strProfile);
 
             for (int i = 0; i < RET_STR_MAX; i++)
                 m_szSetStrings[i] = new char[RET_STR_LEN];
@@ -386,7 +386,7 @@ void CProfile::init(cstr_t szProfile, cstr_t szDefKey)
         }
     }
 
-    if (strchr(szProfile, DIR_SLASH) != nullptr)
+    if (strchr(szProfile, PATH_SEP_CHAR) != nullptr)
     {
         // It might be full file path
         m_strProfile = szProfile;
@@ -865,5 +865,5 @@ int CProfile::encryptGetInt(cstr_t szKeyName, int value)
 
 void CProfile::encryptWriteInt(cstr_t szKeyName, int value)
 {
-    encryptWriteString(szKeyName, CStrPrintf("%d", value).c_str());
+    encryptWriteString(szKeyName, stringPrintf("%d", value).c_str());
 }

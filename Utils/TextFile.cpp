@@ -13,7 +13,7 @@ CTextFile::~CTextFile()
     close();
 }
 
-int CTextFile::open(cstr_t szFile, bool readMode, CHAR_ENCODING encoding)
+int CTextFile::open(cstr_t szFile, bool readMode, CharEncodingType encoding)
 {
     close();
 
@@ -25,7 +25,7 @@ int CTextFile::open(cstr_t szFile, bool readMode, CHAR_ENCODING encoding)
     m_fp = fopen(szFile, szMode);
     if (!m_fp)
     {
-        setCustomErrorDesc(CStrPrintf("%s: %s", (cstr_t)OSError(), szFile).c_str());
+        setCustomErrorDesc(stringPrintf("%s: %s", (cstr_t)OSError(), szFile).c_str());
         return ERR_CUSTOM_ERROR;
     }
 
@@ -179,7 +179,7 @@ protected:
 
         string szFile = getUnitTestFolder() + "testTextFile.txt";
 
-        CHAR_ENCODING encodings[] = { ED_UTF8, ED_UNICODE, ED_SYSDEF };
+        CharEncodingType encodings[] = { ED_UTF8, ED_UNICODE, ED_SYSDEF };
 
         for (int i = 0; i < CountOf(encodings); i++)
         {

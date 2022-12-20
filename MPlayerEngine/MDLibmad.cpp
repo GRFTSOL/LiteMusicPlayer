@@ -326,7 +326,7 @@ MLRESULT CMDLibmad::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia 
     pMedia->setAttribute(MA_ISVBR, m_audioInfo.bVbr);
 
     pMedia->setAttribute(MA_EXTRA_INFO,
-        CStrPrintf("Header offset: %d\n"
+        stringPrintf("Header offset: %d\n"
             "MPEG version: %d\n"
             "MPEG layer: %d\n"
             "frames: %d\n"

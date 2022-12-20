@@ -1852,7 +1852,7 @@ void CLyricShowObj::loadBgImageFolder()
     if (m_strBgPicFolder.empty())
         return;
 
-    dirStringAddSlash(m_strBgPicFolder);
+    dirStringAddSep(m_strBgPicFolder);
 
     FileFind        finder;
     static cstr_t    szSupportedPicExt[] = { ".jpg", ".gif", ".bmp", ".tif", ".png" };

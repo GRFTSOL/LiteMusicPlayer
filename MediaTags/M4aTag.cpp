@@ -234,7 +234,7 @@ int CM4aTag::open(cstr_t szFile, bool bModify, bool bCreate)
 
     if (!m_fp)
     {
-        setCustomErrorDesc(CStrPrintf("%s: %s", (cstr_t)OSError(), szFile).c_str());
+        setCustomErrorDesc(stringPrintf("%s: %s", (cstr_t)OSError(), szFile).c_str());
         return ERR_CUSTOM_ERROR;
     }
 

@@ -385,7 +385,7 @@ int CMidiTag::getLyrics(CLyricsLines &lyricsLines)
                 }
                 line->appendPiece((int)startTime, TEMP_TIME, str.c_str(), str.size(), false, true);
 
-                // DBG_LOG0(CStrPrintf("Time division: %d, delta: %d, time: %d, %s", m_timeDivision, deltaTime, (int)startTime, str.c_str()).c_str());
+                // DBG_LOG0(stringPrintf("Time division: %d, delta: %d, time: %d, %s", m_timeDivision, deltaTime, (int)startTime, str.c_str()).c_str());
             }
             else if (metaEvent == MAT_LYRIC)
             {
@@ -395,7 +395,7 @@ int CMidiTag::getLyrics(CLyricsLines &lyricsLines)
                     lyricsLines.push_back(line);
                 }
                 line->appendPiece((int)startTime, TEMP_TIME, str.c_str(), str.size(), false, true);
-                // DBG_LOG0(CStrPrintf("Time division: %d, delta: %d, time: %d, %s", m_timeDivision, deltaTime, (int)startTime, str.c_str()).c_str());
+                // DBG_LOG0(stringPrintf("Time division: %d, delta: %d, time: %d, %s", m_timeDivision, deltaTime, (int)startTime, str.c_str()).c_str());
                 startTime += (float)deltaTime * m_tempo / 1000 / m_numberator;
             }
         }
@@ -485,7 +485,7 @@ int CMidiTag::readTrackTrunk(TrackTrunk &trunk)
                 DBG_LOG1("  Tempo: %d", m_tempo);
             }
 
-            // DBG_LOG0(CStrPrintf("  Meta, metaType: 0x%x, deltatime: %d, len: %d, %s", metaEvent, deltaTime, len, buf.c_str()).c_str());
+            // DBG_LOG0(stringPrintf("  Meta, metaType: 0x%x, deltatime: %d, len: %d, %s", metaEvent, deltaTime, len, buf.c_str()).c_str());
         }
     }
 

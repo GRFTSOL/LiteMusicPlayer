@@ -2,7 +2,7 @@
 
 DECLAR_CPPUNIT_TEST_REG(CharEncodingBase)
 
-enum CHAR_ENCODING
+enum CharEncodingType
 {
     ED_SYSDEF,                    // ϵͳȱʡ�ı���
     ED_UNICODE,                    // unicode,
@@ -37,17 +37,17 @@ enum CHAR_ENCODING
 #define SZ_UTF8                    "utf-8"
 #define SZ_UNICODE                "unicode"
 
-struct ENCODING_CODEPAGE
+struct EncodingCodePage
 {
-    CHAR_ENCODING        encodingID;
+    CharEncodingType        encodingID;
 
 #ifdef _MAC_OS
-    int                    nCFStringEncoding;
+    int                    cfStringEncoding;
 #endif
 
 #ifdef _WIN32
-    int                    nCodePage;        // windows codepage
-    int                    nFontCharset;
+    int                    codePage;        // windows codepage
+    int                    fontCharset;
 #endif
 
     cstr_t                szEncoding;
@@ -66,12 +66,12 @@ struct ENCODING_CODEPAGE
 
 int getCharEncodingCount();
 
-CHAR_ENCODING getCharEncodingID(const char *szEncoding);
-CHAR_ENCODING getCharEncodingID(const WCHAR *szEncoding);
+CharEncodingType getCharEncodingID(const char *szEncoding);
+CharEncodingType getCharEncodingID(const WCHAR *szEncoding);
 
-ENCODING_CODEPAGE &getSysDefaultCharEncoding();
+EncodingCodePage &getSysDefaultCharEncoding();
 
-ENCODING_CODEPAGE &getCharEncodingByID(CHAR_ENCODING encoding);
+EncodingCodePage &getCharEncodingByID(CharEncodingType encoding);
 
 //////////////////////////////////////////////////////////////////////////
 

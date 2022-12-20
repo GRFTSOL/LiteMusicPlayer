@@ -90,10 +90,10 @@ void retLyrInfoListToVResult(CLyricsSearchParameter &searchParam, RetLyrInfoList
 
 int getCurDaysFrom2000()
 {
-    CDate dateNow = CDate::getCurrentDate();
-    CDate date2000(2000, 1, 1);
+    DateTime dateNow = DateTime::localTime();
+    DateTime date2000(2000, 1, 1);
 
-    return (dateNow.getTime() - date2000.getTime()) / CDate::MILLIS_IN_ONE_DAY;
+    return (dateNow.getTime() - date2000.getTime()) / DateTime::SECOND_IN_ONE_DAY;
 }
 
 static cstr_t SZ_IGNOR_NAMES[] = { ".720p", ".1080p", };

@@ -73,7 +73,7 @@ public:
                 g_profile.writeInt("ProxyType", nHttpProxyType);
 
                 setUIObjectText("CID_HTTP_PROXY", strSvr.c_str());
-                setUIObjectText("CID_HTTP_PORT", CStrPrintf("%d", nPort).c_str());
+                setUIObjectText("CID_HTTP_PORT", stringPrintf("%d", nPort).c_str());
             }
         }
         else if (nId == getIDByName("CID_USE_PROXY"))
@@ -113,7 +113,7 @@ protected:
 
         if (strUser.size())
         {
-            CStrPrintf userPwd("%s:%s", strUser.c_str(), strPwd.c_str());
+            string userPwd = stringPrintf("%s:%s", strUser.c_str(), strPwd.c_str());
             string b64UserPwd = base64Encode((uint8_t *)userPwd.c_str(), userPwd.size());
             g_profile.writeString("Base64ProxyUserPass", b64UserPwd.c_str());
         }

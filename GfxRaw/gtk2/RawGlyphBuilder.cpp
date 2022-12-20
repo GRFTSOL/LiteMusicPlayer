@@ -78,7 +78,7 @@ Glyph *CRawGlyphBuilder::buildGlyph(string &ch)
     g_object_unref (layout);
 
 //     cairo_status_t status;
-//     CStrPrintf    strFile("Char%d.png", ch[0]);
+//     stringPrintf    strFile("Char%d.png", ch[0]);
 // 
 //     status = cairo_surface_write_to_png (m_surface, strFile.c_str());
 //     if (status != CAIRO_STATUS_SUCCESS)

@@ -8,7 +8,7 @@ public:
     virtual ~CTextFile();
 
     // This will open all the file data to memory at one time.
-    int open(cstr_t szFile, bool readMode, CHAR_ENCODING encoding);
+    int open(cstr_t szFile, bool readMode, CharEncodingType encoding);
     void close();
 
     bool readLine(string &strText);
@@ -16,7 +16,7 @@ public:
     bool write(cstr_t szText, size_t nLenText = -1);
 
 protected:
-    CHAR_ENCODING           m_encoding;
+    CharEncodingType           m_encoding;
     FILE                    *m_fp;
 
     string                  m_fileData;

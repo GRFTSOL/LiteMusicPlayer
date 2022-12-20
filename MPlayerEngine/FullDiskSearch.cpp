@@ -95,7 +95,7 @@ void CFullDiskSearch::searchFolder(const char* szStr, /* "C:\" */ bool bRoot)
         {
             string subFolder = szStr;
             subFolder += find.getCurName();
-            subFolder += SZ_DIR_SLASH;
+            subFolder += PATH_SEP_STR;
             searchFolder(subFolder.c_str(), false);
         }
         else if (cbIsFileIntereasted(find.getCurName()))

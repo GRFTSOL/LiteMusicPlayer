@@ -148,7 +148,7 @@ void CLyricsLocalSearch::searchLyrics(CLyricsSearchParameter &searchParam, V_LRC
     // search in lyrics download folder
     {
         strDir = g_LyricsDownloader.getDefSavePath();
-        dirStringAddSlash(strDir);
+        dirStringAddSep(strDir);
 
         searchMatchLyricsInDir(strDir.c_str(), searchParam, vLyrics, true);
         if (searchParam.isBestMatchLyricsFound())
@@ -159,7 +159,7 @@ void CLyricsLocalSearch::searchLyrics(CLyricsSearchParameter &searchParam, V_LRC
     for (int i = getSearchFolerCount() - 1; i >= 0; i --)
     {
         strDir = m_vLyricsFolders[i].c_str();
-        dirStringAddSlash(strDir);
+        dirStringAddSep(strDir);
 
         searchMatchLyricsInDir(strDir.c_str(), searchParam, vLyrics, true);
         if (searchParam.isBestMatchLyricsFound())

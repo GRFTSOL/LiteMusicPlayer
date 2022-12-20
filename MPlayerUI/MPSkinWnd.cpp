@@ -647,7 +647,7 @@ void CMPSkinWnd::onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar)
         g_Player.setVolume(pScrollBar->getScrollPos());
         long vol = g_Player.getVolume();
 
-        CMPlayerAppBase::getInstance()->dispatchInfoText(CStrPrintf("%s %d%%", _TLT("set Volume"), vol).c_str());
+        CMPlayerAppBase::getInstance()->dispatchInfoText(stringPrintf("%s %d%%", _TLT("set Volume"), vol).c_str());
     }
     else if (pScrollBar->getID() == CMD_SEEK)
     {
@@ -661,7 +661,7 @@ void CMPSkinWnd::onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar)
             nPercent = nPos * 100 / nMediaLength;
             formatPlayTime(nPos, szPos);
             formatPlayTime(nMediaLength, szLength);
-            CMPlayerAppBase::getInstance()->dispatchInfoText(CStrPrintf("%s %s/%s (%d%%)", _TLT("seek"),
+            CMPlayerAppBase::getInstance()->dispatchInfoText(stringPrintf("%s %s/%s (%d%%)", _TLT("seek"),
                 szPos, szLength, nPercent).c_str(), "seek");
         }
 

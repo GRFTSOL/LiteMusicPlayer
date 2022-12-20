@@ -14,7 +14,7 @@
 
 int cmdIdToEncoding(int nCmdId);
 
-int encodingIdToCmd(CHAR_ENCODING nEncodingId);
+int encodingIdToCmd(CharEncodingType nEncodingId);
 
 bool onCommandSkin(int nCmdId);
 

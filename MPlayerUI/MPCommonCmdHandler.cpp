@@ -127,7 +127,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID)
             strUrl = getStrName(SN_HTTP_RATE_LRC);
             strUrl += g_LyricData.properties().m_strId;
 
-            strUrl += CStrPrintf("&rating=%d", nRate).c_str();
+            strUrl += stringPrintf("&rating=%d", nRate).c_str();
             openUrl(m_pSkinWnd, strUrl.c_str());
         }
         break;
@@ -372,7 +372,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID)
                 if (vol > MP_VOLUME_MAX)
                     vol = MP_VOLUME_MAX;
                 g_Player.setVolume(vol);
-                CMPlayerAppBase::getInstance()->dispatchInfoText(CStrPrintf("%s %d%%", _TLT("set Volume"), vol).c_str());
+                CMPlayerAppBase::getInstance()->dispatchInfoText(stringPrintf("%s %d%%", _TLT("set Volume"), vol).c_str());
             }
         }
         break;
@@ -387,7 +387,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID)
                 if (vol < 0)
                     vol = 0;
                 g_Player.setVolume(vol);
-                CMPlayerAppBase::getInstance()->dispatchInfoText(CStrPrintf("%s %d%%", _TLT("set Volume"), vol).c_str());
+                CMPlayerAppBase::getInstance()->dispatchInfoText(stringPrintf("%s %d%%", _TLT("set Volume"), vol).c_str());
             }
         }
         break;
@@ -471,7 +471,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID)
 
             if (g_LyricData.isContentModified())
             {
-                string        strMessage = CStrPrintf(_TLT("The lyrics of the %s file have changed."), 
+                string        strMessage = stringPrintf(_TLT("The lyrics of the %s file have changed."), 
                     fileGetName(g_LyricData.getSongFileName())).c_str();
                 strMessage += "\r\n\r\n";
                 strMessage += _TLT("Do you want to save the changes?");
@@ -834,7 +834,7 @@ bool CMPCommonCmdHandler::onCommandCharEncoding(int nCmdId)
     }
 
     // 以用户指定的编码重新打开歌词
-    g_LyricData.reopenLyrics(true, (CHAR_ENCODING)nEncodingId);
+    g_LyricData.reopenLyrics(true, (CharEncodingType)nEncodingId);
 
     CMPlayerAppBase::getInstance()->dispatchLyricsChangedSyncEvent();
 
@@ -952,7 +952,7 @@ bool CMPCommonCmdHandler::saveCurrentLyrics(CSkinWnd *pSkinWnd, bool bDispatchOn
                 g_autoProcessEmbeddedLyrics.saveEmbeddedLyrics(g_LyricData.getSongFileName(), 
                     nullptr, &bufLyrics, vLyrNames);
             }
-            pSkinWnd->messageOut(CStrPrintf("%s\n%s", ERROR2STR_LOCAL(nRet), _TLT("Failed to save embedded lyrics, $Product$ will auto try again later.")).c_str());
+            pSkinWnd->messageOut(stringPrintf("%s\n%s", ERROR2STR_LOCAL(nRet), _TLT("Failed to save embedded lyrics, $Product$ will auto try again later.")).c_str());
         }
     }
 

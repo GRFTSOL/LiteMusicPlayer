@@ -12,11 +12,7 @@
 		0E56B8ED273CD7BE00032A3E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0E56B8EB273CD7BE00032A3E /* MainMenu.xib */; };
 		0E56B8F0273CD7BE00032A3E /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0E56B8EF273CD7BE00032A3E /* main.mm */; };
 		0E56B989273E115500032A3E /* WndDrag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56B970273E115500032A3E /* WndDrag.cpp */; };
-		0E56BA65273E116300032A3E /* AllocatorPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BA1D273E116200032A3E /* AllocatorPool.cpp */; };
 		0E56BA96273FCEAB00032A3E /* IWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BA94273FCEAB00032A3E /* IWindow.cpp */; };
-		0E56BB0E2743FC5F00032A3E /* os.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BB052743FC5F00032A3E /* os.cpp */; };
-		0E56BB0F2743FC5F00032A3E /* SizedString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BB062743FC5F00032A3E /* SizedString.cpp */; };
-		0E56BB102743FC5F00032A3E /* BinaryStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BB082743FC5F00032A3E /* BinaryStream.cpp */; };
 		0E56BB1D2743FCBE00032A3E /* WindowMacImp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BB152743FCBE00032A3E /* WindowMacImp.mm */; };
 		0E56BB1E2743FCBE00032A3E /* Cursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BB172743FCBE00032A3E /* Cursor.cpp */; };
 		0E56BB202743FCBE00032A3E /* Desktop.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BB1A2743FCBE00032A3E /* Desktop.mm */; };
@@ -65,22 +61,14 @@
 		0E56BC2A2747F84600032A3E /* IdString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC242747F84600032A3E /* IdString.cpp */; };
 		0E56BC2C2747F84600032A3E /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC262747F84600032A3E /* Log.cpp */; };
 		0E56BC392747F91100032A3E /* SimpleXML.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC2F2747F91000032A3E /* SimpleXML.cpp */; };
-		0E56BC3A2747F91100032A3E /* XCharSeparatedValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC312747F91100032A3E /* XCharSeparatedValues.cpp */; };
 		0E56BC3B2747F91100032A3E /* XMLWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC352747F91100032A3E /* XMLWriter.cpp */; };
-		0E56BC3C2747F91100032A3E /* StringEx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC362747F91100032A3E /* StringEx.cpp */; };
 		0E56BC3D2747F91100032A3E /* SimpleXMLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC382747F91100032A3E /* SimpleXMLParser.cpp */; };
-		0E56BC412749324F00032A3E /* base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC3F2749324E00032A3E /* base64.cpp */; };
-		0E56BC462749D95D00032A3E /* CharEncoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC442749D95D00032A3E /* CharEncoding.cpp */; };
-		0E56BC4D2749E25100032A3E /* CharEncodingMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC4A2749E25100032A3E /* CharEncodingMac.mm */; };
-		0E56BC532749F03600032A3E /* StrPrintf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC512749F03600032A3E /* StrPrintf.cpp */; };
-		0E56BC5A274A8D1800032A3E /* Date.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC58274A8D1700032A3E /* Date.cpp */; };
 		0E56BC61274A95CA00032A3E /* UndoMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC60274A95CA00032A3E /* UndoMgr.cpp */; };
 		0E56BC6A274B3B8400032A3E /* Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC68274B3B8400032A3E /* Menu.mm */; };
 		0E56BC6B274B3B8400032A3E /* WndResizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC69274B3B8400032A3E /* WndResizer.cpp */; };
 		0E56BC71274B479200032A3E /* TextFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC70274B479100032A3E /* TextFile.cpp */; };
 		0E56BC7A274CAB4D00032A3E /* EventsDispatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC75274CAB4D00032A3E /* EventsDispatcher.mm */; };
 		0E56BC7B274CAB4E00032A3E /* App.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC76274CAB4D00032A3E /* App.mm */; };
-		0E56BC82274CC17900032A3E /* FileApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC81274CC17900032A3E /* FileApi.cpp */; };
 		0E56BCDA274D34DE00032A3E /* SimpleJava.tab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC8B274D34DD00032A3E /* SimpleJava.tab.cpp */; };
 		0E56BCDB274D34DE00032A3E /* SyntaxTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC8C274D34DD00032A3E /* SyntaxTree.cpp */; };
 		0E56BCDE274D34DE00032A3E /* VMStatment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC90274D34DD00032A3E /* VMStatment.cpp */; };
@@ -220,6 +208,7 @@
 		0EB7115F277DCC79006929F1 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EB7115E277DCC78006929F1 /* CoreText.framework */; };
 		0EB71162277DCCE6006929F1 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EB71161277DCCE6006929F1 /* AppKit.framework */; };
 		0EB71165277DEE4D006929F1 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EB71164277DEE4A006929F1 /* CoreData.framework */; };
+		C05D73DF2951594000294F50 /* libTinyJsLib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C05D73DE2951592E00294F50 /* libTinyJsLib.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -307,6 +296,20 @@
 			remoteGlobalIDString = 5FB5925A154594720071B204;
 			remoteInfo = Taglib;
 		};
+		C05D73DB2951592E00294F50 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C05D73D52951592D00294F50 /* TinyJS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C03E44422839CECC00864631;
+			remoteInfo = TinyJS;
+		};
+		C05D73DD2951592E00294F50 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C05D73D52951592D00294F50 /* TinyJS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C06C1615294EAFF70022ADCA;
+			remoteInfo = TinyJsLib;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -319,7 +322,6 @@
 		0E56B8EF273CD7BE00032A3E /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		0E56B8F1273CD7BE00032A3E /* Mp3Player.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Mp3Player.entitlements; sourceTree = "<group>"; };
 		0E56B970273E115500032A3E /* WndDrag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WndDrag.cpp; sourceTree = "<group>"; };
-		0E56BA1D273E116200032A3E /* AllocatorPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AllocatorPool.cpp; sourceTree = "<group>"; };
 		0E56BA94273FCEAB00032A3E /* IWindow.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IWindow.cpp; sourceTree = "<group>"; };
 		0E56BAA32740C32800032A3E /* libsktext.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsktext.a; path = ../../ProjectsOpenSource/skia/out/Debug/libsktext.a; sourceTree = "<group>"; };
 		0E56BAA42740C32800032A3E /* libsksg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsksg.a; path = ../../ProjectsOpenSource/skia/out/Debug/libsksg.a; sourceTree = "<group>"; };
@@ -342,14 +344,7 @@
 		0E56BAB52740C32800032A3E /* libparticles.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libparticles.a; path = ../../ProjectsOpenSource/skia/out/Debug/libparticles.a; sourceTree = "<group>"; };
 		0E56BAB62740C32800032A3E /* libwebp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libwebp.a; path = ../../ProjectsOpenSource/skia/out/Debug/libwebp.a; sourceTree = "<group>"; };
 		0E56BAB72740C32800032A3E /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = ../../ProjectsOpenSource/skia/out/Debug/libpng.a; sourceTree = "<group>"; };
-		0E56BB052743FC5F00032A3E /* os.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = os.cpp; sourceTree = "<group>"; };
-		0E56BB062743FC5F00032A3E /* SizedString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SizedString.cpp; sourceTree = "<group>"; };
 		0E56BB072743FC5F00032A3E /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
-		0E56BB082743FC5F00032A3E /* BinaryStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinaryStream.cpp; sourceTree = "<group>"; };
-		0E56BB092743FC5F00032A3E /* os.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = os.h; sourceTree = "<group>"; };
-		0E56BB0A2743FC5F00032A3E /* BinaryStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinaryStream.h; sourceTree = "<group>"; };
-		0E56BB0B2743FC5F00032A3E /* AllocatorPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllocatorPool.h; sourceTree = "<group>"; };
-		0E56BB0C2743FC5F00032A3E /* SizedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SizedString.h; sourceTree = "<group>"; };
 		0E56BB0D2743FC5F00032A3E /* UtilsTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UtilsTypes.h; sourceTree = "<group>"; };
 		0E56BB132743FCBD00032A3E /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Window.h; sourceTree = "<group>"; };
 		0E56BB142743FCBD00032A3E /* ViewMacImp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewMacImp.h; sourceTree = "<group>"; };
@@ -454,26 +449,13 @@
 		0E56BC272747F84600032A3E /* Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
 		0E56BC282747F84600032A3E /* IdString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IdString.h; sourceTree = "<group>"; };
 		0E56BC292747F84600032A3E /* LogAlias.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogAlias.h; sourceTree = "<group>"; };
-		0E56BC2E2747F91000032A3E /* StringEx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringEx.h; sourceTree = "<group>"; };
 		0E56BC2F2747F91000032A3E /* SimpleXML.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleXML.cpp; sourceTree = "<group>"; };
 		0E56BC302747F91000032A3E /* Profile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Profile.h; sourceTree = "<group>"; };
-		0E56BC312747F91100032A3E /* XCharSeparatedValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XCharSeparatedValues.cpp; sourceTree = "<group>"; };
-		0E56BC322747F91100032A3E /* XCharSeparatedValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCharSeparatedValues.h; sourceTree = "<group>"; };
 		0E56BC332747F91100032A3E /* SimpleXML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleXML.h; sourceTree = "<group>"; };
 		0E56BC342747F91100032A3E /* SimpleXMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleXMLParser.h; sourceTree = "<group>"; };
 		0E56BC352747F91100032A3E /* XMLWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLWriter.cpp; sourceTree = "<group>"; };
-		0E56BC362747F91100032A3E /* StringEx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringEx.cpp; sourceTree = "<group>"; };
 		0E56BC372747F91100032A3E /* XMLWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLWriter.h; sourceTree = "<group>"; };
 		0E56BC382747F91100032A3E /* SimpleXMLParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleXMLParser.cpp; sourceTree = "<group>"; };
-		0E56BC3F2749324E00032A3E /* base64.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = base64.cpp; sourceTree = "<group>"; };
-		0E56BC402749324E00032A3E /* base64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
-		0E56BC442749D95D00032A3E /* CharEncoding.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CharEncoding.cpp; sourceTree = "<group>"; };
-		0E56BC452749D95D00032A3E /* CharEncoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CharEncoding.h; sourceTree = "<group>"; };
-		0E56BC4A2749E25100032A3E /* CharEncodingMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CharEncodingMac.mm; sourceTree = "<group>"; };
-		0E56BC512749F03600032A3E /* StrPrintf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StrPrintf.cpp; sourceTree = "<group>"; };
-		0E56BC522749F03600032A3E /* StrPrintf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StrPrintf.h; sourceTree = "<group>"; };
-		0E56BC58274A8D1700032A3E /* Date.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Date.cpp; sourceTree = "<group>"; };
-		0E56BC59274A8D1700032A3E /* Date.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Date.h; sourceTree = "<group>"; };
 		0E56BC5F274A95CA00032A3E /* UndoMgr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UndoMgr.h; sourceTree = "<group>"; };
 		0E56BC60274A95CA00032A3E /* UndoMgr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UndoMgr.cpp; sourceTree = "<group>"; };
 		0E56BC64274B2CBB00032A3E /* StringIterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StringIterator.h; sourceTree = "<group>"; };
@@ -486,8 +468,6 @@
 		0E56BC75274CAB4D00032A3E /* EventsDispatcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventsDispatcher.mm; sourceTree = "<group>"; };
 		0E56BC76274CAB4D00032A3E /* App.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = App.mm; sourceTree = "<group>"; };
 		0E56BC77274CAB4D00032A3E /* EventsDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventsDispatcher.h; sourceTree = "<group>"; };
-		0E56BC80274CC17900032A3E /* FileApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileApi.h; sourceTree = "<group>"; };
-		0E56BC81274CC17900032A3E /* FileApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileApi.cpp; sourceTree = "<group>"; };
 		0E56BC8B274D34DD00032A3E /* SimpleJava.tab.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleJava.tab.cpp; sourceTree = "<group>"; };
 		0E56BC8C274D34DD00032A3E /* SyntaxTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SyntaxTree.cpp; sourceTree = "<group>"; };
 		0E56BC8D274D34DD00032A3E /* SJVM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SJVM.h; sourceTree = "<group>"; };
@@ -768,6 +748,7 @@
 		0EB7115E277DCC78006929F1 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		0EB71161277DCCE6006929F1 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		0EB71164277DEE4A006929F1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		C05D73D52951592D00294F50 /* TinyJS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TinyJS.xcodeproj; path = TinyJS/TinyJS.xcodeproj; sourceTree = "<group>"; };
 		C0E6A46227A3CEBB009FA5AF /* rapidjson */ = {isa = PBXFileReference; lastKnownFileType = folder; name = rapidjson; path = "third-parties/rapidjson/rapidjson"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -776,6 +757,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C05D73DF2951594000294F50 /* libTinyJsLib.dylib in Frameworks */,
 				0EB71165277DEE4D006929F1 /* CoreData.framework in Frameworks */,
 				0EB71162277DCCE6006929F1 /* AppKit.framework in Frameworks */,
 				0EB7115F277DCC79006929F1 /* CoreText.framework in Frameworks */,
@@ -811,6 +793,7 @@
 				0E56BB6A2745E53C00032A3E /* Skin */,
 				0E56BB522745E4A900032A3E /* quickjs */,
 				0E56B98B273E116100032A3E /* Utils */,
+				C05D73D52951592D00294F50 /* TinyJS.xcodeproj */,
 				0E56B937273E115500032A3E /* Window */,
 				0E56B8E5273CD7B200032A3E /* Mp3Player */,
 				0E56BAA22740C32800032A3E /* Frameworks */,
@@ -914,44 +897,22 @@
 				0E56BD28274DD1D100032A3E /* PrivateProfile.cpp */,
 				0E56BD1F274D386A00032A3E /* Error.cpp */,
 				0E56BD1E274D386A00032A3E /* Error.h */,
-				0E56BA1D273E116200032A3E /* AllocatorPool.cpp */,
-				0E56BB0B2743FC5F00032A3E /* AllocatorPool.h */,
-				0E56BC3F2749324E00032A3E /* base64.cpp */,
-				0E56BC402749324E00032A3E /* base64.h */,
-				0E56BB082743FC5F00032A3E /* BinaryStream.cpp */,
-				0E56BB0A2743FC5F00032A3E /* BinaryStream.h */,
-				0E56BC442749D95D00032A3E /* CharEncoding.cpp */,
-				0E56BC452749D95D00032A3E /* CharEncoding.h */,
-				0E56BC58274A8D1700032A3E /* Date.cpp */,
-				0E56BC59274A8D1700032A3E /* Date.h */,
-				0E56BC81274CC17900032A3E /* FileApi.cpp */,
-				0E56BC80274CC17900032A3E /* FileApi.h */,
 				0E56BC242747F84600032A3E /* IdString.cpp */,
 				0E56BC282747F84600032A3E /* IdString.h */,
 				0E56BC262747F84600032A3E /* Log.cpp */,
 				0E56BC272747F84600032A3E /* Log.h */,
 				0E56BC292747F84600032A3E /* LogAlias.h */,
 				0E56BC482749E25100032A3E /* mac */,
-				0E56BB052743FC5F00032A3E /* os.cpp */,
-				0E56BB092743FC5F00032A3E /* os.h */,
 				0E56BC302747F91000032A3E /* Profile.h */,
 				0E56BC2F2747F91000032A3E /* SimpleXML.cpp */,
 				0E56BC332747F91100032A3E /* SimpleXML.h */,
 				0E56BC382747F91100032A3E /* SimpleXMLParser.cpp */,
 				0E56BC342747F91100032A3E /* SimpleXMLParser.h */,
-				0E56BB062743FC5F00032A3E /* SizedString.cpp */,
-				0E56BB0C2743FC5F00032A3E /* SizedString.h */,
-				0E56BC362747F91100032A3E /* StringEx.cpp */,
-				0E56BC2E2747F91000032A3E /* StringEx.h */,
 				0E56BC64274B2CBB00032A3E /* StringIterator.h */,
-				0E56BC512749F03600032A3E /* StrPrintf.cpp */,
-				0E56BC522749F03600032A3E /* StrPrintf.h */,
 				0E56BC70274B479100032A3E /* TextFile.cpp */,
 				0E56BC6F274B479100032A3E /* TextFile.h */,
 				0E56BB072743FC5F00032A3E /* Utils.h */,
 				0E56BB0D2743FC5F00032A3E /* UtilsTypes.h */,
-				0E56BC312747F91100032A3E /* XCharSeparatedValues.cpp */,
-				0E56BC322747F91100032A3E /* XCharSeparatedValues.h */,
 				0E56BC352747F91100032A3E /* XMLWriter.cpp */,
 				0E56BC372747F91100032A3E /* XMLWriter.h */,
 				0EB70F282773396C006929F1 /* MPAutoPtr.h */,
@@ -1116,7 +1077,6 @@
 				0EB7111A277D83FF006929F1 /* Event.mm */,
 				0E56BD22274D38CC00032A3E /* Error.cpp */,
 				0E56BD23274D38CC00032A3E /* Profile.cpp */,
-				0E56BC4A2749E25100032A3E /* CharEncodingMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -1438,6 +1398,15 @@
 			path = MPlayerUI/mac;
 			sourceTree = "<group>";
 		};
+		C05D73D62951592D00294F50 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C05D73DC2951592E00294F50 /* TinyJS */,
+				C05D73DE2951592E00294F50 /* libTinyJsLib.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1513,6 +1482,10 @@
 					ProductGroup = 0EB70F792776B58A006929F1 /* Products */;
 					ProjectRef = 0EB70F782776B58A006929F1 /* ThirdPartiesSDK.xcodeproj */;
 				},
+				{
+					ProductGroup = C05D73D62951592D00294F50 /* Products */;
+					ProjectRef = C05D73D52951592D00294F50 /* TinyJS.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -1562,6 +1535,20 @@
 			fileType = archive.ar;
 			path = libMLProtocolMac.a;
 			remoteRef = 0EB70FA12776C88F006929F1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		C05D73DC2951592E00294F50 /* TinyJS */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = TinyJS;
+			remoteRef = C05D73DB2951592E00294F50 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		C05D73DE2951592E00294F50 /* libTinyJsLib.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = libTinyJsLib.dylib;
+			remoteRef = C05D73DD2951592E00294F50 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1677,7 +1664,6 @@
 				0EB7108F27773BB6006929F1 /* LyricShowTxtObj.cpp in Sources */,
 				0EB70F7127759E22006929F1 /* FolderDialog.mm in Sources */,
 				0E56BD29274DD1D100032A3E /* PrivateProfile.cpp in Sources */,
-				0E56BB102743FC5F00032A3E /* BinaryStream.cpp in Sources */,
 				0EB710C827773BB6006929F1 /* DlgChooseFont.mm in Sources */,
 				0E56BB212743FCBE00032A3E /* ViewMacImp.mm in Sources */,
 				0E56BBF32745E53D00032A3E /* SkinDecorativeContainer.cpp in Sources */,
@@ -1687,25 +1673,20 @@
 				0E56BC152745E53E00032A3E /* SkinWndDrag.cpp in Sources */,
 				0EB710CD27773BB6006929F1 /* MPMediaLibCmdHandler.cpp in Sources */,
 				0EB70F5A27759DE2006929F1 /* PopupSkinListWnd.cpp in Sources */,
-				0E56BC532749F03600032A3E /* StrPrintf.cpp in Sources */,
 				0EB7107727773BB6006929F1 /* DownloadMgr.cpp in Sources */,
 				0EB710AE27773BB6006929F1 /* LyricShowMultiRowObj.cpp in Sources */,
 				0EB70F1A277223D2006929F1 /* RawImage.cpp in Sources */,
 				0EB70F17277223D2006929F1 /* RawPen.cpp in Sources */,
 				0EB710E3277A0DF9006929F1 /* Thread.cpp in Sources */,
-				0E56BC4D2749E25100032A3E /* CharEncodingMac.mm in Sources */,
 				0EB7114D277D9AEF006929F1 /* MediaSource.mm in Sources */,
 				0EB710C627773BB6006929F1 /* HelperMac.cpp in Sources */,
 				0EB70F5F27759DF5006929F1 /* SplashScreenWnd.cpp in Sources */,
-				0E56BC462749D95D00032A3E /* CharEncoding.cpp in Sources */,
 				0EB7109627773BB6006929F1 /* PreferenceDlg.cpp in Sources */,
 				0EB70F7327759E22006929F1 /* SkinToolTip.cpp in Sources */,
 				0E56BBE22745E53D00032A3E /* SkinNStatusButton.cpp in Sources */,
-				0E56BC3A2747F91100032A3E /* XCharSeparatedValues.cpp in Sources */,
 				0E56BBE12745E53D00032A3E /* SkinAnimation.cpp in Sources */,
 				0EB7109827773BB6006929F1 /* MPSkinTimeCtrl.cpp in Sources */,
 				0EB710D127773BB6006929F1 /* PreferPageUI.cpp in Sources */,
-				0E56BC412749324F00032A3E /* base64.cpp in Sources */,
 				0E56BBF42745E53D00032A3E /* SkinMenu.cpp in Sources */,
 				0EB7108A27773BB6006929F1 /* DlgAdjustHue.cpp in Sources */,
 				0E56BBEC2745E53D00032A3E /* SkinWndResizeObj.cpp in Sources */,
@@ -1742,9 +1723,7 @@
 				0EB710F7277AFFA1006929F1 /* MLProfile.cpp in Sources */,
 				0E56BCE7274D34DE00032A3E /* UnitTest.java in Sources */,
 				0EB710A427773BB6006929F1 /* ErrorResolveDlg.cpp in Sources */,
-				0E56BA65273E116300032A3E /* AllocatorPool.cpp in Sources */,
 				0EB710E2277A0DF9006929F1 /* url.cpp in Sources */,
-				0E56BB0E2743FC5F00032A3E /* os.cpp in Sources */,
 				0E56BA96273FCEAB00032A3E /* IWindow.cpp in Sources */,
 				0E56B989273E115500032A3E /* WndDrag.cpp in Sources */,
 				0E56BBFD2745E53D00032A3E /* SkinWnd.cpp in Sources */,
@@ -1752,7 +1731,6 @@
 				0EB710A027773BB6006929F1 /* MPlaylistCtrl.cpp in Sources */,
 				0E56BC042745E53E00032A3E /* SkinScaleImage.cpp in Sources */,
 				0EB710B327773BB6006929F1 /* CurMediaAlbumArt.cpp in Sources */,
-				0E56BB0F2743FC5F00032A3E /* SizedString.cpp in Sources */,
 				0EB7109027773BB6006929F1 /* DlgAbout.cpp in Sources */,
 				0EB710CA27773BB6006929F1 /* LyricShowTwoRowObj.cpp in Sources */,
 				0EB7107D27773BB6006929F1 /* SkinRateCtrl.cpp in Sources */,
@@ -1761,10 +1739,8 @@
 				0E56BD0F274D34DE00032A3E /* ss.yy.cpp in Sources */,
 				0EB710BD27773BB6006929F1 /* LyricsOutPluginMgr.cpp in Sources */,
 				0E56BC2C2747F84600032A3E /* Log.cpp in Sources */,
-				0E56BC5A274A8D1800032A3E /* Date.cpp in Sources */,
 				0E56BBE42745E53D00032A3E /* SkinDataObj.cpp in Sources */,
 				0EB7109B27773BB6006929F1 /* LyricShowAgentObj.cpp in Sources */,
-				0E56BC82274CC17900032A3E /* FileApi.cpp in Sources */,
 				0E56BC0A2745E53E00032A3E /* SkinFactory.cpp in Sources */,
 				0EB710BF27773BB6006929F1 /* MLTrayIcon.cpp in Sources */,
 				0E56BB1E2743FCBE00032A3E /* Cursor.cpp in Sources */,
@@ -1776,7 +1752,6 @@
 				0E56BC062745E53E00032A3E /* SkinSquare.cpp in Sources */,
 				0EB7108927773BB6006929F1 /* WaitingDlg.cpp in Sources */,
 				0E56BCDB274D34DE00032A3E /* SyntaxTree.cpp in Sources */,
-				0E56BC3C2747F91100032A3E /* StringEx.cpp in Sources */,
 				0EB7109C27773BB6006929F1 /* MediaInfoTextCtrl.cpp in Sources */,
 				0EB7107C27773BB6006929F1 /* SkinListCtrlEx.cpp in Sources */,
 				0E56BBEE2745E53D00032A3E /* UIObject.cpp in Sources */,
@@ -1884,13 +1859,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "{$SRCROOT}";
 				LIBRARY_SEARCH_PATHS = /Users/hongyongxiao/ProjectsOpenSource/skia/out/Shared;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = /Users/hongyongxiao/ProjectsOpenSource/skia;
 			};
 			name = Debug;
 		};
@@ -1939,12 +1914,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "{$SRCROOT}";
 				LIBRARY_SEARCH_PATHS = /Users/hongyongxiao/ProjectsOpenSource/skia/out/Shared;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = /Users/hongyongxiao/ProjectsOpenSource/skia;
 			};
 			name = Release;
 		};
