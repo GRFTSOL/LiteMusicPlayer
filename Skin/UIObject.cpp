@@ -9,7 +9,9 @@
 #include "SkinTypes.h"
 #include "Skin.h"
 #include "UIObject.h"
+#include "api-js/JsUIObject.hpp"
 #include "../Utils/Utils.h"
+
 
 IdToString    __idszLayoutParams[] = 
 {
@@ -466,6 +468,10 @@ CUIObject::~CUIObject()
     }
 }
 
+JsValue CUIObject::getJsObject(VMContext *ctx) {
+    return ctx->runtime->pushObject(new JsUIObject(this));
+}
+
 CColor CUIObject::getBgColor() const
 {
     if (m_bgType == BG_COLOR)
@@ -604,11 +610,17 @@ void CUIObject::onMeasureSizePos(FORMULA_VAR vars[])
         m_rcObj.top += m_pContainer->m_rcObj.top;
     }
 
-    if (m_formWidth.calCualteValue(vars, value))
+    if (m_formWidth.calCualteValue(vars, value) && value > 0) {
         m_rcObj.right = m_rcObj.left + value;
+    } else {
+        m_rcObj.right = m_rcObj.left + 0;
+    }
 
-    if (m_formHeight.calCualteValue(vars, value))
+    if (m_formHeight.calCualteValue(vars, value) && value > 0) {
         m_rcObj.bottom = m_rcObj.top + value;
+    } else {
+        m_rcObj.bottom = m_rcObj.top + 0;
+    }
 
     if (m_layoutParams & (LAYOUT_HEIGHT_WRAP_CONENT | LAYOUT_WIDTH_WRAP_CONENT))
         onMeasureSizeByContent();

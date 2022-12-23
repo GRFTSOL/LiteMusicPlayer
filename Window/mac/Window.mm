@@ -148,6 +148,14 @@ void Window::minimizeNoActivate() {
 //    return true;
 //}
 
+void Window::setMinSize(uint32_t width, uint32_t height) {
+    [m_handleHolder->window setMinSize:NSMakeSize(width, height)];
+}
+
+void Window::setMaxSize(uint32_t width, uint32_t height) {
+    [m_handleHolder->window setMaxSize:NSMakeSize(width, height)];
+}
+
 void Window::screenToClient(CRect &rc)
 {
     if (m_handleHolder->window == nullptr)
@@ -457,7 +465,12 @@ bool Window::moveWindow(int X, int Y, int nWidth, int nHeight, bool bRepaint)
 {
     if (m_handleHolder->window == nullptr)
         return false;
-    
+
+    NSRect rc = [m_handleHolder->window frame];
+    if (rc.origin.y == Y) {
+        Y += rc.size.height - nHeight;
+    }
+
     [m_handleHolder->window setFrame:NSMakeRect(X, Y, nWidth, nHeight) display: bRepaint ? YES : NO];
     
     return true;

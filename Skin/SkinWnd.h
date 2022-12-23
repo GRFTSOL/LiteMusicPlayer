@@ -14,13 +14,13 @@
 #include "UIObject.h"
 #include "SkinFontProperty.h"
 #include "SkinContainer.h"
+#include "interpreter/VirtualMachine.hpp"
 
 
 class CSkinWnd;
 class CSkinFactory;
 class CSkinContainer;
 class CSFImage;
-class SjvmSkinWndEvent;
 
 
 #define UIOBJ_ID_BEGIN_ALLOC        0xFFFFF
@@ -369,7 +369,6 @@ protected:
     
     friend class CSkinContainer;
     friend class CUIObject;
-    friend class CSjvmSkinWnd;
 
 protected:
     //
@@ -515,13 +514,20 @@ protected:
     std::list<std::function<void()>>    m_functionsToExecOnMainThread;
 
     //
-    // Skin script message delivery
+    // Skin script releated members.
     //
-public:
-    void sjvmSetNotifyEvent(SjvmSkinWndEvent *pNotify) { m_pSjvmNotifyEvent = pNotify; }
-
 protected:
-    SjvmSkinWndEvent    *m_pSjvmNotifyEvent;
+    friend class JsSkinDocument;
+
+    string                  m_scriptFile;
+    JsVirtualMachine        *m_vm;
+
+    JsValue                 m_onMouseMoveListener;
+    JsValue                 m_onSizeListener;
+    JsValue                 m_onActivateListener;
+    JsValue                 m_onDestoryListener;
+    JsValue                 m_onCommandListener;
+    JsValue                 m_onMouseActivateListener;
 
     //
     // Skin animation object

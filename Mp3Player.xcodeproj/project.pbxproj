@@ -47,7 +47,6 @@
 		0E56BC042745E53E00032A3E /* SkinScaleImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BBB92745E53D00032A3E /* SkinScaleImage.cpp */; };
 		0E56BC052745E53E00032A3E /* SkinToolBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BBBA2745E53D00032A3E /* SkinToolBar.cpp */; };
 		0E56BC062745E53E00032A3E /* SkinSquare.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BBBD2745E53D00032A3E /* SkinSquare.cpp */; };
-		0E56BC072745E53E00032A3E /* SjvmSkinSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BBC12745E53D00032A3E /* SjvmSkinSystem.cpp */; };
 		0E56BC082745E53E00032A3E /* SkinButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BBC52745E53D00032A3E /* SkinButton.cpp */; };
 		0E56BC092745E53E00032A3E /* SkinImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BBC72745E53D00032A3E /* SkinImage.cpp */; };
 		0E56BC0A2745E53E00032A3E /* SkinFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BBC92745E53D00032A3E /* SkinFactory.cpp */; };
@@ -69,17 +68,6 @@
 		0E56BC71274B479200032A3E /* TextFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC70274B479100032A3E /* TextFile.cpp */; };
 		0E56BC7A274CAB4D00032A3E /* EventsDispatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC75274CAB4D00032A3E /* EventsDispatcher.mm */; };
 		0E56BC7B274CAB4E00032A3E /* App.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC76274CAB4D00032A3E /* App.mm */; };
-		0E56BCDA274D34DE00032A3E /* SimpleJava.tab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC8B274D34DD00032A3E /* SimpleJava.tab.cpp */; };
-		0E56BCDB274D34DE00032A3E /* SyntaxTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC8C274D34DD00032A3E /* SyntaxTree.cpp */; };
-		0E56BCDE274D34DE00032A3E /* VMStatment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC90274D34DD00032A3E /* VMStatment.cpp */; };
-		0E56BCE1274D34DE00032A3E /* case1.java in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC95274D34DD00032A3E /* case1.java */; };
-		0E56BCE2274D34DE00032A3E /* SjvmLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC96274D34DD00032A3E /* SjvmLib.cpp */; };
-		0E56BCE4274D34DE00032A3E /* SJVM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC9A274D34DD00032A3E /* SJVM.cpp */; };
-		0E56BCE5274D34DE00032A3E /* VarDeclStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BC9B274D34DD00032A3E /* VarDeclStack.cpp */; };
-		0E56BCE7274D34DE00032A3E /* UnitTest.java in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BCA0274D34DD00032A3E /* UnitTest.java */; };
-		0E56BCE8274D34DE00032A3E /* UIObject.java in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BCA1274D34DD00032A3E /* UIObject.java */; };
-		0E56BCE9274D34DE00032A3E /* BatchMem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BCA2274D34DD00032A3E /* BatchMem.cpp */; };
-		0E56BD0F274D34DE00032A3E /* ss.yy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BCD4274D34DD00032A3E /* ss.yy.cpp */; };
 		0E56BD20274D386A00032A3E /* Error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BD1F274D386A00032A3E /* Error.cpp */; };
 		0E56BD24274D38CC00032A3E /* Error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BD22274D38CC00032A3E /* Error.cpp */; };
 		0E56BD25274D38CC00032A3E /* Profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BD23274D38CC00032A3E /* Profile.cpp */; };
@@ -209,6 +197,11 @@
 		0EB71162277DCCE6006929F1 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EB71161277DCCE6006929F1 /* AppKit.framework */; };
 		0EB71165277DEE4D006929F1 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EB71164277DEE4A006929F1 /* CoreData.framework */; };
 		C05D73DF2951594000294F50 /* libTinyJsLib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C05D73DE2951592E00294F50 /* libTinyJsLib.dylib */; };
+		C05D73E32951B82100294F50 /* Profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D73E12951B82100294F50 /* Profile.cpp */; };
+		C05D73EE2952B72A00294F50 /* SkinJsAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D73EC2952B72A00294F50 /* SkinJsAPI.cpp */; };
+		C05D74002954775A00294F50 /* JsUIObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D73FF2954775A00294F50 /* JsUIObject.cpp */; };
+		C05D740429547A4500294F50 /* JsSkinDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D740229547A4500294F50 /* JsSkinDocument.cpp */; };
+		C05D740729553EBB00294F50 /* JsResizableLinearContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D740529553EBB00294F50 /* JsResizableLinearContainer.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -308,6 +301,13 @@
 			containerPortal = C05D73D52951592D00294F50 /* TinyJS.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = C06C1615294EAFF70022ADCA;
+			remoteInfo = TinyJsLib;
+		};
+		C05D73FC2954316B00294F50 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C05D73D52951592D00294F50 /* TinyJS.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = C06C1614294EAFF70022ADCA;
 			remoteInfo = TinyJsLib;
 		};
 /* End PBXContainerItemProxy section */
@@ -424,10 +424,8 @@
 		0E56BBBE2745E53D00032A3E /* SkinCaption.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkinCaption.h; sourceTree = "<group>"; };
 		0E56BBBF2745E53D00032A3E /* SkinTxtLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkinTxtLink.h; sourceTree = "<group>"; };
 		0E56BBC02745E53D00032A3E /* SkinLinearContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkinLinearContainer.h; sourceTree = "<group>"; };
-		0E56BBC12745E53D00032A3E /* SjvmSkinSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SjvmSkinSystem.cpp; sourceTree = "<group>"; };
 		0E56BBC22745E53D00032A3E /* SkinTextButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkinTextButton.h; sourceTree = "<group>"; };
 		0E56BBC32745E53D00032A3E /* SkinVScrollBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkinVScrollBar.h; sourceTree = "<group>"; };
-		0E56BBC42745E53D00032A3E /* SjvmSkinSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SjvmSkinSystem.h; sourceTree = "<group>"; };
 		0E56BBC52745E53D00032A3E /* SkinButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkinButton.cpp; sourceTree = "<group>"; };
 		0E56BBC62745E53D00032A3E /* SkinStaticText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkinStaticText.h; sourceTree = "<group>"; };
 		0E56BBC72745E53D00032A3E /* SkinImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkinImage.cpp; sourceTree = "<group>"; };
@@ -468,25 +466,6 @@
 		0E56BC75274CAB4D00032A3E /* EventsDispatcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventsDispatcher.mm; sourceTree = "<group>"; };
 		0E56BC76274CAB4D00032A3E /* App.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = App.mm; sourceTree = "<group>"; };
 		0E56BC77274CAB4D00032A3E /* EventsDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventsDispatcher.h; sourceTree = "<group>"; };
-		0E56BC8B274D34DD00032A3E /* SimpleJava.tab.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleJava.tab.cpp; sourceTree = "<group>"; };
-		0E56BC8C274D34DD00032A3E /* SyntaxTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SyntaxTree.cpp; sourceTree = "<group>"; };
-		0E56BC8D274D34DD00032A3E /* SJVM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SJVM.h; sourceTree = "<group>"; };
-		0E56BC90274D34DD00032A3E /* VMStatment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMStatment.cpp; sourceTree = "<group>"; };
-		0E56BC95274D34DD00032A3E /* case1.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = case1.java; sourceTree = "<group>"; };
-		0E56BC96274D34DD00032A3E /* SjvmLib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SjvmLib.cpp; sourceTree = "<group>"; };
-		0E56BC97274D34DD00032A3E /* unistd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unistd.h; sourceTree = "<group>"; };
-		0E56BC99274D34DD00032A3E /* SjvmLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SjvmLib.h; sourceTree = "<group>"; };
-		0E56BC9A274D34DD00032A3E /* SJVM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SJVM.cpp; sourceTree = "<group>"; };
-		0E56BC9B274D34DD00032A3E /* VarDeclStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VarDeclStack.cpp; sourceTree = "<group>"; };
-		0E56BC9C274D34DD00032A3E /* VarDeclStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VarDeclStack.h; sourceTree = "<group>"; };
-		0E56BC9E274D34DD00032A3E /* VMStatment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMStatment.h; sourceTree = "<group>"; };
-		0E56BC9F274D34DD00032A3E /* SyntaxTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyntaxTree.h; sourceTree = "<group>"; };
-		0E56BCA0274D34DD00032A3E /* UnitTest.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = UnitTest.java; sourceTree = "<group>"; };
-		0E56BCA1274D34DD00032A3E /* UIObject.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = UIObject.java; sourceTree = "<group>"; };
-		0E56BCA2274D34DD00032A3E /* BatchMem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BatchMem.cpp; sourceTree = "<group>"; };
-		0E56BCA4274D34DD00032A3E /* BatchMem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchMem.h; sourceTree = "<group>"; };
-		0E56BCA8274D34DD00032A3E /* SimpleJava.tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleJava.tab.h; sourceTree = "<group>"; };
-		0E56BCD4274D34DD00032A3E /* ss.yy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ss.yy.cpp; sourceTree = "<group>"; };
 		0E56BD1E274D386A00032A3E /* Error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Error.h; sourceTree = "<group>"; };
 		0E56BD1F274D386A00032A3E /* Error.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Error.cpp; sourceTree = "<group>"; };
 		0E56BD22274D38CC00032A3E /* Error.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Error.cpp; sourceTree = "<group>"; };
@@ -749,6 +728,15 @@
 		0EB71161277DCCE6006929F1 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		0EB71164277DEE4A006929F1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		C05D73D52951592D00294F50 /* TinyJS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TinyJS.xcodeproj; path = TinyJS/TinyJS.xcodeproj; sourceTree = "<group>"; };
+		C05D73E12951B82100294F50 /* Profile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Profile.cpp; sourceTree = "<group>"; };
+		C05D73EC2952B72A00294F50 /* SkinJsAPI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SkinJsAPI.cpp; sourceTree = "<group>"; };
+		C05D73ED2952B72A00294F50 /* SkinJsAPI.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SkinJsAPI.hpp; sourceTree = "<group>"; };
+		C05D73FF2954775A00294F50 /* JsUIObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JsUIObject.cpp; sourceTree = "<group>"; };
+		C05D7401295477CE00294F50 /* JsUIObject.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = JsUIObject.hpp; sourceTree = "<group>"; };
+		C05D740229547A4500294F50 /* JsSkinDocument.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JsSkinDocument.cpp; sourceTree = "<group>"; };
+		C05D740329547A4500294F50 /* JsSkinDocument.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = JsSkinDocument.hpp; sourceTree = "<group>"; };
+		C05D740529553EBB00294F50 /* JsResizableLinearContainer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JsResizableLinearContainer.cpp; sourceTree = "<group>"; };
+		C05D740629553EBB00294F50 /* JsResizableLinearContainer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = JsResizableLinearContainer.hpp; sourceTree = "<group>"; };
 		C0E6A46227A3CEBB009FA5AF /* rapidjson */ = {isa = PBXFileReference; lastKnownFileType = folder; name = rapidjson; path = "third-parties/rapidjson/rapidjson"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -789,9 +777,7 @@
 				0EB70F782776B58A006929F1 /* ThirdPartiesSDK.xcodeproj */,
 				0EB70F2A277377DD006929F1 /* ImageLibMac.xcodeproj */,
 				0EB70F07277223B0006929F1 /* GfxRaw */,
-				0E56BC88274D34DC00032A3E /* SimpleJVM */,
 				0E56BB6A2745E53C00032A3E /* Skin */,
-				0E56BB522745E4A900032A3E /* quickjs */,
 				0E56B98B273E116100032A3E /* Utils */,
 				C05D73D52951592D00294F50 /* TinyJS.xcodeproj */,
 				0E56B937273E115500032A3E /* Window */,
@@ -962,16 +948,10 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		0E56BB522745E4A900032A3E /* quickjs */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = quickjs;
-			sourceTree = "<group>";
-		};
 		0E56BB6A2745E53C00032A3E /* Skin */ = {
 			isa = PBXGroup;
 			children = (
+				C05D73E02951B80200294F50 /* api-js */,
 				0EB70F5627759DE2006929F1 /* PopupSkinListWnd.cpp */,
 				0EB70F5327759DE1006929F1 /* PopupSkinListWnd.h */,
 				0EB70F5527759DE1006929F1 /* PopupSkinWnd.cpp */,
@@ -989,8 +969,6 @@
 				0E56BBB52745E53D00032A3E /* SFImage.h */,
 				0E56BBD92745E53D00032A3E /* SFImgList.cpp */,
 				0E56BB952745E53C00032A3E /* SFImgList.h */,
-				0E56BBC12745E53D00032A3E /* SjvmSkinSystem.cpp */,
-				0E56BBC42745E53D00032A3E /* SjvmSkinSystem.h */,
 				0E56BBBB2745E53D00032A3E /* Skin.h */,
 				0E56BB6E2745E53C00032A3E /* SkinAnimation.cpp */,
 				0E56BB6F2745E53C00032A3E /* SkinAnimation.h */,
@@ -1091,40 +1069,6 @@
 				0E56BC77274CAB4D00032A3E /* EventsDispatcher.h */,
 			);
 			path = mac;
-			sourceTree = "<group>";
-		};
-		0E56BC88274D34DC00032A3E /* SimpleJVM */ = {
-			isa = PBXGroup;
-			children = (
-				0E56BC8B274D34DD00032A3E /* SimpleJava.tab.cpp */,
-				0E56BC8C274D34DD00032A3E /* SyntaxTree.cpp */,
-				0E56BC8D274D34DD00032A3E /* SJVM.h */,
-				0E56BC90274D34DD00032A3E /* VMStatment.cpp */,
-				0E56BC94274D34DD00032A3E /* test */,
-				0E56BC96274D34DD00032A3E /* SjvmLib.cpp */,
-				0E56BC97274D34DD00032A3E /* unistd.h */,
-				0E56BC99274D34DD00032A3E /* SjvmLib.h */,
-				0E56BC9A274D34DD00032A3E /* SJVM.cpp */,
-				0E56BC9B274D34DD00032A3E /* VarDeclStack.cpp */,
-				0E56BC9C274D34DD00032A3E /* VarDeclStack.h */,
-				0E56BC9E274D34DD00032A3E /* VMStatment.h */,
-				0E56BC9F274D34DD00032A3E /* SyntaxTree.h */,
-				0E56BCA0274D34DD00032A3E /* UnitTest.java */,
-				0E56BCA1274D34DD00032A3E /* UIObject.java */,
-				0E56BCA2274D34DD00032A3E /* BatchMem.cpp */,
-				0E56BCA4274D34DD00032A3E /* BatchMem.h */,
-				0E56BCA8274D34DD00032A3E /* SimpleJava.tab.h */,
-				0E56BCD4274D34DD00032A3E /* ss.yy.cpp */,
-			);
-			path = SimpleJVM;
-			sourceTree = "<group>";
-		};
-		0E56BC94274D34DD00032A3E /* test */ = {
-			isa = PBXGroup;
-			children = (
-				0E56BC95274D34DD00032A3E /* case1.java */,
-			);
-			path = test;
 			sourceTree = "<group>";
 		};
 		0EB70F07277223B0006929F1 /* GfxRaw */ = {
@@ -1407,6 +1351,22 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		C05D73E02951B80200294F50 /* api-js */ = {
+			isa = PBXGroup;
+			children = (
+				C05D740229547A4500294F50 /* JsSkinDocument.cpp */,
+				C05D740329547A4500294F50 /* JsSkinDocument.hpp */,
+				C05D73FF2954775A00294F50 /* JsUIObject.cpp */,
+				C05D7401295477CE00294F50 /* JsUIObject.hpp */,
+				C05D73E12951B82100294F50 /* Profile.cpp */,
+				C05D73EC2952B72A00294F50 /* SkinJsAPI.cpp */,
+				C05D73ED2952B72A00294F50 /* SkinJsAPI.hpp */,
+				C05D740529553EBB00294F50 /* JsResizableLinearContainer.cpp */,
+				C05D740629553EBB00294F50 /* JsResizableLinearContainer.hpp */,
+			);
+			path = "api-js";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1421,6 +1381,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				C05D73FD2954316B00294F50 /* PBXTargetDependency */,
 				0EB70FA62776C89C006929F1 /* PBXTargetDependency */,
 				0EB70FA82776C89C006929F1 /* PBXTargetDependency */,
 				0EB70FAA2776C89C006929F1 /* PBXTargetDependency */,
@@ -1577,6 +1538,7 @@
 				0EB7107827773BB6006929F1 /* MPSkinVis.cpp in Sources */,
 				0E56BD24274D38CC00032A3E /* Error.cpp in Sources */,
 				0E56BC142745E53E00032A3E /* EventsDispatcherBase.cpp in Sources */,
+				C05D73EE2952B72A00294F50 /* SkinJsAPI.cpp in Sources */,
 				0E56BC2A2747F84600032A3E /* IdString.cpp in Sources */,
 				0E56BC0D2745E53E00032A3E /* SkinTabButton.cpp in Sources */,
 				0EB70F5927759DE2006929F1 /* PopupSkinWnd.cpp in Sources */,
@@ -1586,7 +1548,6 @@
 				0E56BC172745E53E00032A3E /* SkinListView.cpp in Sources */,
 				0EB710A227773BB6006929F1 /* LyricShowSingleRowObj.cpp in Sources */,
 				0EB71109277C6AE5006929F1 /* DlgSaveEmbeddedLyrics.mm in Sources */,
-				0E56BC072745E53E00032A3E /* SjvmSkinSystem.cpp in Sources */,
 				0E56BBE92745E53D00032A3E /* SkinContainer.cpp in Sources */,
 				0EB710C027773BB6006929F1 /* MPlayerApp.cpp in Sources */,
 				0EB710CF27773BB6006929F1 /* PreferPageTheme.cpp in Sources */,
@@ -1601,7 +1562,6 @@
 				0EB70F7427759E23006929F1 /* FileSaveDlg.mm in Sources */,
 				0EB710A927773BB6006929F1 /* MPlayerAppBase.cpp in Sources */,
 				0EB7108527773BB6006929F1 /* LrcUploadDB.cpp in Sources */,
-				0E56BCDE274D34DE00032A3E /* VMStatment.cpp in Sources */,
 				0EB70F5B27759DE2006929F1 /* SkinComboBox.cpp in Sources */,
 				0E56BC0C2745E53E00032A3E /* SkinStaticText.cpp in Sources */,
 				0EB7108027773BB6006929F1 /* SkinTreeCtrl.cpp in Sources */,
@@ -1637,13 +1597,11 @@
 				0EB70F4C27759DC5006929F1 /* RawGraphData.mm in Sources */,
 				0E56BC71274B479200032A3E /* TextFile.cpp in Sources */,
 				0E56BBE62745E53D00032A3E /* SkinLinearContainer.cpp in Sources */,
-				0E56BCE2274D34DE00032A3E /* SjvmLib.cpp in Sources */,
 				0EB7110A277C6AE5006929F1 /* DlgSaveEmbeddedLyricsController.mm in Sources */,
 				0EB7110F277CAB54006929F1 /* Looper.cpp in Sources */,
 				0E56BBE32745E53D00032A3E /* SkinCaption.cpp in Sources */,
 				0EB710A527773BB6006929F1 /* MLCmd.cpp in Sources */,
 				0EB710CE27773BB6006929F1 /* MPEventsDispatcher.cpp in Sources */,
-				0E56BCE1274D34DE00032A3E /* case1.java in Sources */,
 				0E56BC082745E53E00032A3E /* SkinButton.cpp in Sources */,
 				0EB7109927773BB6006929F1 /* MPHelper.cpp in Sources */,
 				0EB710B827773BB6006929F1 /* MPSkinInfoTextCtrl.cpp in Sources */,
@@ -1660,7 +1618,6 @@
 				0EB70F19277223D2006929F1 /* RawGraph.cpp in Sources */,
 				0E56BC7A274CAB4D00032A3E /* EventsDispatcher.mm in Sources */,
 				0EB7107F27773BB6006929F1 /* PreferPageSystem.cpp in Sources */,
-				0E56BCDA274D34DE00032A3E /* SimpleJava.tab.cpp in Sources */,
 				0EB7108F27773BB6006929F1 /* LyricShowTxtObj.cpp in Sources */,
 				0EB70F7127759E22006929F1 /* FolderDialog.mm in Sources */,
 				0E56BD29274DD1D100032A3E /* PrivateProfile.cpp in Sources */,
@@ -1706,10 +1663,10 @@
 				0EB710D227773BB6006929F1 /* OnlineSearch.cpp in Sources */,
 				0E56BBED2745E53D00032A3E /* SkinResizableLinearContainer.cpp in Sources */,
 				0EB7108C27773BB6006929F1 /* MPSkinWnd.cpp in Sources */,
-				0E56BCE5274D34DE00032A3E /* VarDeclStack.cpp in Sources */,
 				0E56BBF22745E53D00032A3E /* SFImage.cpp in Sources */,
 				0E56BBE72745E53D00032A3E /* SkinResMgr.cpp in Sources */,
 				0EB710A327773BB6006929F1 /* MPVisAdapter.cpp in Sources */,
+				C05D73E32951B82100294F50 /* Profile.cpp in Sources */,
 				0E56BB202743FCBE00032A3E /* Desktop.mm in Sources */,
 				0E56BBFB2745E53D00032A3E /* SkinScrollFrameCtrlBase.cpp in Sources */,
 				0EB710B527773BB6006929F1 /* MPSkinFactory.cpp in Sources */,
@@ -1721,8 +1678,8 @@
 				0EB7108827773BB6006929F1 /* DlgMediaInfo.cpp in Sources */,
 				0EB710C327773BB6006929F1 /* DlgSaveLyrPrompt.cpp in Sources */,
 				0EB710F7277AFFA1006929F1 /* MLProfile.cpp in Sources */,
-				0E56BCE7274D34DE00032A3E /* UnitTest.java in Sources */,
 				0EB710A427773BB6006929F1 /* ErrorResolveDlg.cpp in Sources */,
+				C05D740429547A4500294F50 /* JsSkinDocument.cpp in Sources */,
 				0EB710E2277A0DF9006929F1 /* url.cpp in Sources */,
 				0E56BA96273FCEAB00032A3E /* IWindow.cpp in Sources */,
 				0E56B989273E115500032A3E /* WndDrag.cpp in Sources */,
@@ -1734,11 +1691,11 @@
 				0EB7109027773BB6006929F1 /* DlgAbout.cpp in Sources */,
 				0EB710CA27773BB6006929F1 /* LyricShowTwoRowObj.cpp in Sources */,
 				0EB7107D27773BB6006929F1 /* SkinRateCtrl.cpp in Sources */,
+				C05D74002954775A00294F50 /* JsUIObject.cpp in Sources */,
 				0E56BC092745E53E00032A3E /* SkinImage.cpp in Sources */,
-				0E56BCE9274D34DE00032A3E /* BatchMem.cpp in Sources */,
-				0E56BD0F274D34DE00032A3E /* ss.yy.cpp in Sources */,
 				0EB710BD27773BB6006929F1 /* LyricsOutPluginMgr.cpp in Sources */,
 				0E56BC2C2747F84600032A3E /* Log.cpp in Sources */,
+				C05D740729553EBB00294F50 /* JsResizableLinearContainer.cpp in Sources */,
 				0E56BBE42745E53D00032A3E /* SkinDataObj.cpp in Sources */,
 				0EB7109B27773BB6006929F1 /* LyricShowAgentObj.cpp in Sources */,
 				0E56BC0A2745E53E00032A3E /* SkinFactory.cpp in Sources */,
@@ -1746,12 +1703,9 @@
 				0E56BB1E2743FCBE00032A3E /* Cursor.cpp in Sources */,
 				0EB710B227773BB6006929F1 /* LyricShowTextEditObj.cpp in Sources */,
 				0E56BBFE2745E53D00032A3E /* SkinFrameCtrl.cpp in Sources */,
-				0E56BCE4274D34DE00032A3E /* SJVM.cpp in Sources */,
-				0E56BCE8274D34DE00032A3E /* UIObject.java in Sources */,
 				0EB7109727773BB6006929F1 /* Player.cpp in Sources */,
 				0E56BC062745E53E00032A3E /* SkinSquare.cpp in Sources */,
 				0EB7108927773BB6006929F1 /* WaitingDlg.cpp in Sources */,
-				0E56BCDB274D34DE00032A3E /* SyntaxTree.cpp in Sources */,
 				0EB7109C27773BB6006929F1 /* MediaInfoTextCtrl.cpp in Sources */,
 				0EB7107C27773BB6006929F1 /* SkinListCtrlEx.cpp in Sources */,
 				0E56BBEE2745E53D00032A3E /* UIObject.cpp in Sources */,
@@ -1791,6 +1745,11 @@
 			isa = PBXTargetDependency;
 			name = Taglib;
 			targetProxy = 0EB70FAB2776C89C006929F1 /* PBXContainerItemProxy */;
+		};
+		C05D73FD2954316B00294F50 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = TinyJsLib;
+			targetProxy = C05D73FC2954316B00294F50 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1859,7 +1818,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "{$SRCROOT}";
+				HEADER_SEARCH_PATHS = (
+					$SRCROOT,
+					$SRCROOT/TinyJs,
+				);
 				LIBRARY_SEARCH_PATHS = /Users/hongyongxiao/ProjectsOpenSource/skia/out/Shared;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -1914,7 +1876,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "{$SRCROOT}";
+				HEADER_SEARCH_PATHS = (
+					$SRCROOT,
+					$SRCROOT/TinyJs,
+				);
 				LIBRARY_SEARCH_PATHS = /Users/hongyongxiao/ProjectsOpenSource/skia/out/Shared;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -1946,7 +1911,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.crintsoft.Mp3Player;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
 		};
@@ -1974,7 +1938,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.crintsoft.Mp3Player;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;
 		};

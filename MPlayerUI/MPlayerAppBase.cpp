@@ -293,9 +293,6 @@ void CMPlayerAppBase::quit()
     m_pSkinFactory->quit();
     g_Player.onQuit();
 
-    // quit SimpleJVM environment
-    CSjvmSkinSystem::quit();
-
     g_LyricData.close();
 
     g_profile.close();

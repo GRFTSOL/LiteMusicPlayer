@@ -5,6 +5,7 @@
 #include "Formula.h"
 #include "SkinAnimation.h"
 #include "SFImage.h"
+#include "interpreter/VirtualMachineTypes.hpp"
 
 
 class CFormula;
@@ -13,6 +14,7 @@ class CSkinContainer;
 class CUIObject;
 class CSkinAnimation;
 class SXNode;
+class CSkinWnd;
 
 typedef vector<CUIObject *>        VecUIObjects;
 typedef list<CUIObject *>        ListUIObjects;
@@ -183,8 +185,8 @@ bool isTRUE(cstr_t szValue);
 //
 #define UIOBJECT_CLASS_NAME_DECLARE(BaseClass)    \
 public:\
-    cstr_t getClassName() { return ms_szClassName; }\
-    bool isKindOf(cstr_t szClassName)\
+    virtual cstr_t getClassName() override { return ms_szClassName; }\
+    virtual bool isKindOf(cstr_t szClassName) override\
     {\
             if (BaseClass::isKindOf(szClassName))\
                 return true;\
@@ -233,6 +235,8 @@ public:
 public:
     void setParent(CSkinWnd *pSkinWnd, CSkinContainer *pContainer)
         { m_pSkin = pSkinWnd; m_pContainer = pContainer; }
+
+    virtual JsValue getJsObject(VMContext *ctx);
 
     // modify CUIObject's property
     virtual bool setProperty(cstr_t szProperty, CSXNodeProperty *pProperties);

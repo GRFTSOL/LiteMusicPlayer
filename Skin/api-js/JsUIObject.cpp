@@ -1,0 +1,86 @@
+//
+//  JsUIObject.cpp
+//  Mp3Player
+//
+//  Created by henry_xiao on 2022/12/22.
+//
+
+#include "JsUIObject.hpp"
+#include "interpreter/VirtualMachineTypes.hpp"
+#include "objects/JsLibObject.hpp"
+#include "strings/CommonString.hpp"
+#include "objects/JsObjectX.hpp"
+#include "SkinJsAPI.hpp"
+#include "../SkinFactory.h"
+#include "../SkinWnd.h"
+
+
+JsValue jsValuePrototypeUIObject;
+
+const SizedString SS_VISIBLE = makeCommonString("visible");
+const SizedString SS_FORM_WIDTH = makeCommonString("formWidth");
+
+JsUIObject::JsUIObject(CUIObject *obj) : JsObjectX(SJT_UIOBJECT, jsValuePrototypeUIObject), _obj(obj) {
+}
+
+bool JsUIObject::onSetValue(VMContext *ctx, const SizedString &name, const JsValue &value) {
+    if (name.equal(SS_VISIBLE)) {
+        _obj->setVisible(ctx->runtime->testTrue(value), true);
+    } else if (name.equal(SS_FORM_WIDTH)) {
+        auto str = ctx->runtime->toSizedString(ctx, value);
+        _obj->setProperty(SZ_PN_WIDTH, str.toString().c_str());
+    }
+
+    return false;
+}
+
+JsValue JsUIObject::onGetValue(VMContext *ctx, const SizedString &name) {
+    if (name.equal(SS_VISIBLE)) {
+        return makeJsValueBool(_obj->isVisible());
+    } else if (name.equal(SS_FORM_WIDTH)) {
+        return ctx->runtime->pushString(_obj->m_formWidth.getFormula());
+    }
+
+    return jsValueEmpty;
+}
+
+void JsUIObject::onEnumAllProperties(VMContext *ctx, VecSizedStrings &names, VecJsValues &values) {
+    names.push_back(SS_VISIBLE);
+    values.push_back(makeJsValueBool(_obj->isVisible()));
+
+    names.push_back(SS_FORM_WIDTH);
+    values.push_back(ctx->runtime->pushString(_obj->m_formWidth.getFormula()));
+}
+
+CUIObject *convertToUIObject(VMContext *ctx, const JsValue &thiz, const Arguments &args) {
+    if (thiz.type != JDT_OBJ_X) {
+        ctx->throwExceptionFormatJsValue(JE_TYPE_ERROR, "UIObject's this must be UIObject type.", thiz);
+        return nullptr;
+    }
+
+    auto obj = (JsObjectX *)ctx->runtime->getObject(thiz);
+    if (obj->extraType() != SJT_UIOBJECT) {
+        ctx->throwExceptionFormatJsValue(JE_TYPE_ERROR, "UIObject's this must be UIObject type(2).", thiz);
+        return nullptr;
+    }
+
+    return ((JsUIObject *)obj)->uiobject();
+}
+
+void uiobject_setVisible(VMContext *ctx, const JsValue &thiz, const Arguments &args) {
+    auto obj = convertToUIObject(ctx, thiz, args);
+    if (obj) {
+        obj->setVisible(args.getBoolAt(ctx, 0));
+    }
+}
+
+static JsLibProperty uiobjectPrototypeFunctions[] = {
+    { "name", nullptr, "UIObject" },
+    { "length", nullptr, nullptr, jsValueLength1Property },
+    // { "formWidth", nullptr, nullptr, jsValue },
+};
+
+void registerUIObject(VMRuntimeCommon *rt) {
+    auto prototypeObj = new JsLibObject(rt, uiobjectPrototypeFunctions, CountOf(uiobjectPrototypeFunctions));
+    jsValuePrototypeUIObject = rt->pushObject(prototypeObj);
+}

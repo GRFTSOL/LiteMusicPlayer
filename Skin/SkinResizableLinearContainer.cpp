@@ -2,6 +2,8 @@
 #include "Skin.h"
 #include "SkinLinearContainer.h"
 #include "SkinResizableLinearContainer.h"
+#include "api-js/JsResizableLinearContainer.hpp"
+
 
 UIOBJECT_CLASS_NAME_IMP(CSkinResizableLinearContainer, "ResizableLinearContainer")
 
@@ -386,4 +388,42 @@ void CSkinResizableLinearContainer::zoomAll(VecItems &vItems, int nSize)
         else
             item.size = item.minSize + sizeToAlloc * item.minSize / totalMinSize;
     }
+}
+
+JsValue CSkinResizableLinearContainer::getJsObject(VMContext *ctx) {
+    return ctx->runtime->pushObject(new JsResizableLinearContainer(this));
+}
+
+void CSkinResizableLinearContainer::setMode(cstr_t modeName) {
+    SizedString mode(modeName);
+    if (m_vUIObjs.size() >= 2) {
+        if (mode.equal("left")) {
+            m_vUIObjs[0]->setVisible(true, false);
+            m_vUIObjs[1]->setVisible(false, false);
+        } else if (mode.equal("right")) {
+            m_vUIObjs[1]->setVisible(true, false);
+            m_vUIObjs[0]->setVisible(false, false);
+        } else if (mode.equal("all")) {
+            m_vUIObjs[1]->setVisible(true, false);
+            m_vUIObjs[0]->setVisible(true, false);
+        }
+
+        onSize();
+        invalidate();
+    }
+}
+
+cstr_t CSkinResizableLinearContainer::getMode() const {
+    if (m_vUIObjs.size() >= 2) {
+        if (m_vUIObjs[0]->isVisible()) {
+            if (m_vUIObjs[1]->isVisible()) {
+                return "all";
+            }
+            return "left";
+        } else {
+            return "right";
+        }
+    }
+
+    return "all";
 }

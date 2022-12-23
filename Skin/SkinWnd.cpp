@@ -12,14 +12,17 @@
 #include "SkinButton.h"
 #include "SkinVScrollBar.h"
 #include "SkinCaption.h"
+#include "api-js/SkinJsAPI.hpp"
+
 
 #define _SZ_SKINWND            "skinwnd"
 
 
 #define TIMER_ID_BEG_ALLOC        120
+#define TIMER_ID_TINY_JS_VM       116
 #define TIMER_ID_ANIMATION        117
 #define TIMER_ID_DYNAMIC_TRANS    118
-#define TIMER_ID_MOUSE_INACTIVE    119
+#define TIMER_ID_MOUSE_INACTIVE   119
 
 #define TIMER_SPAN_MOUSE_INACTIVE    (3 * 1000)
 
@@ -203,7 +206,7 @@ CSkinWnd::CSkinWnd()
     m_bOnMouseHover = false;
     m_translucencyStatus = TS_NORMAL;
 
-    m_pSjvmNotifyEvent = nullptr;
+    m_vm = nullptr;
 
 #ifndef _WIN32
     m_rcMemUpdate.top = m_rcMemUpdate.bottom = 0;
@@ -286,11 +289,26 @@ void CSkinWnd::closeSkin()
     killTimer(TIMER_ID_ANIMATION);
     m_listAnimations.clear();
 
-    if (m_pSjvmNotifyEvent)
-        m_pSjvmNotifyEvent->onDestroy();
+    m_onMouseMoveListener = jsValueEmpty;
+    m_onSizeListener = jsValueEmpty;
+    m_onActivateListener = jsValueEmpty;
+    m_onDestoryListener = jsValueEmpty;
+    m_onCommandListener = jsValueEmpty;
+    m_onMouseActivateListener = jsValueEmpty;
 
-    if (m_bManageBySkinFactory)
-        CSjvmSkinSystem::onSkinWndDestory(this);
+    if (m_onDestoryListener.isFunction()) {
+        auto ctx = m_vm->defaultRuntime()->mainCtx();
+        ctx->error = JE_OK;
+        m_vm->callMember(ctx, jsValueGlobalThis, m_onDestoryListener, Arguments());
+    }
+
+    killTimer(TIMER_ID_TINY_JS_VM);
+
+    if (m_vm) {
+        auto ctx = m_vm->defaultRuntime()->mainCtx();
+        delete m_vm;
+        m_vm = nullptr;
+    }
 
 #ifdef _WIN32_DESKTOP
     if (m_bWindowsAppearance)
@@ -366,7 +384,6 @@ void CSkinWnd::closeSkin()
     m_bMouseActive = false;
     killTimer(TIMER_ID_MOUSE_INACTIVE);
 
-    m_pSjvmNotifyEvent = nullptr;
     m_vUIObjNotifyHandlers.clear();
 
     m_animateType = AT_UNKNOWN;
@@ -840,6 +857,8 @@ bool CSkinWnd::updateSkinProperty()
     // init 
     onSize(m_rcBoundBox.width(), m_rcBoundBox.height());
 
+    setMinSize(m_wndResizer.getMinCx(), m_wndResizer.getMinCy());
+
     return true;
 }
 
@@ -1051,9 +1070,13 @@ void CSkinWnd::onMove(int x, int y)
         m_rcBoundBox.top = rc.top;
         m_rcBoundBox.right = (int)(rc.left + rc.width() / m_dbScale);
         m_rcBoundBox.bottom = (int)(rc.top + rc.height() / m_dbScale);
+    }
 
-        if (m_pSjvmNotifyEvent)
-            m_pSjvmNotifyEvent->onMove(x, y);
+    if (m_onMouseMoveListener.isFunction()) {
+        auto ctx = m_vm->defaultRuntime()->mainCtx();
+        ctx->error = JE_OK;
+        m_vm->callMember(ctx, jsValueGlobalThis, m_onMouseMoveListener,
+            ArgumentsX(makeJsValueInt32(x), makeJsValueInt32(y)));
     }
 }
 
@@ -1091,8 +1114,12 @@ void CSkinWnd::onSize(int cx, int cy)
 
             invalidateRect();
 
-            if (m_pSjvmNotifyEvent)
-                m_pSjvmNotifyEvent->onSize(cx, cy);
+            if (m_onSizeListener.isFunction()) {
+                auto ctx = m_vm->defaultRuntime()->mainCtx();
+                ctx->error = JE_OK;
+                m_vm->callMember(ctx, jsValueGlobalThis, m_onSizeListener,
+                    ArgumentsX(makeJsValueInt32(cx), makeJsValueInt32(cy)));
+            }
         }
     }
 }
@@ -1266,6 +1293,8 @@ bool CSkinWnd::setProperty(cstr_t szProperty, cstr_t szValue)
         m_animateType = animateTypeFromString(szValue);
     else if (isPropertyName(szProperty, "AnimateDuration"))
         m_animateDuration = atoi(szValue);
+    else if (isPropertyName(szProperty, "Script"))
+        m_scriptFile = szValue;
     else if (m_rootConainter.setProperty(szProperty, szValue))
     {
         DBG_LOG2("Property is set to Root Container: %s, %s", szProperty, szValue);
@@ -1466,8 +1495,12 @@ void CSkinWnd::onActivate(bool bActived)
             onMouseActive(m_bMouseActive);
         }
 
-        if (m_pSjvmNotifyEvent)
-            m_pSjvmNotifyEvent->onActivate(bActived);
+        if (m_onActivateListener.isFunction()) {
+            auto ctx = m_vm->defaultRuntime()->mainCtx();
+            ctx->error = JE_OK;
+            m_vm->callMember(ctx, jsValueGlobalThis, m_onActivateListener,
+                ArgumentsX(makeJsValueBool(bActived)));
+        }
     }
 
     if (bActived && !isIconic())
@@ -1840,11 +1873,30 @@ void CSkinWnd::onSkinLoaded()
     if (getFocusUIObj() == nullptr)
         m_rootConainter.focusToNext();
 
-    if (m_bManageBySkinFactory)
-        CSjvmSkinSystem::onSkinWndCreate(this);
+    if (!m_scriptFile.empty()) {
+        assert(m_vm == nullptr);
+        string code;
+        string fn = m_pSkinFactory->getResourceMgr()->getResourcePathName(m_scriptFile.c_str());
+        if (!readFile(fn.c_str(), code)) {
+            ERR_LOG1("Failed to open script file: %s", m_scriptFile.c_str());
+        } else {
+            m_vm = new JsVirtualMachine();
+            auto runtime = m_vm->defaultRuntime();
+            auto ctx = runtime->mainCtx();
 
-    if (m_pSjvmNotifyEvent)
-        m_pSjvmNotifyEvent->onCreate(this);
+            runtime->globalScope()->set(makeCommonString("document"),
+                runtime->pushObject(new JsSkinDocument(this)));
+
+            m_vm->run(code.c_str(), code.size());
+            if (ctx->error != JE_OK) {
+                auto err = m_vm->defaultRuntime()->toSizedString(ctx, ctx->errorMessage);
+                ERR_LOG3("Failed to eval script: %s, error: %.*s", m_scriptFile.c_str(), err.len, err.data);
+            }
+
+            // 需要周期性的执行 TinyJs VM 的任务.
+            setTimer(TIMER_ID_TINY_JS_VM, 1);
+        }
+    }
 }
 
 #ifdef _WIN32_DESKTOP
@@ -1879,8 +1931,12 @@ bool showAsToolWindowNoRefresh(HWND hWnd)
 
 bool CSkinWnd::onCustomCommand(int nId)
 {
-    if (m_pSjvmNotifyEvent && m_pSjvmNotifyEvent->onCommand(nId))
-        return true;
+    if (m_onCommandListener.isFunction()) {
+        auto ctx = m_vm->defaultRuntime()->mainCtx();
+        ctx->error = JE_OK;
+        m_vm->callMember(ctx, jsValueGlobalThis, m_onCommandListener,
+            ArgumentsX(makeJsValueInt32(nId)));
+    }
 
     if (m_rootConainter.onCustomCommand(nId))
         return true;
@@ -2068,7 +2124,26 @@ void CSkinWnd::onTimer(uint32_t nIDEvent)
     }
 #endif // #ifdef _TRANSLUCENCY_ENABLED
 
-    if (nIDEvent == TIMER_ID_MOUSE_INACTIVE)
+    if (nIDEvent == TIMER_ID_TINY_JS_VM)
+    {
+        auto runtime = m_vm->defaultRuntime();
+        runtime->onRunTasks();
+
+        if (runtime->shouldGarbageCollect()) {
+#if DEBUG
+            auto countAllocated = runtime->countAllocated();
+            auto countFreed = runtime->garbageCollect();
+            printf("** CountFreed: %d, CountAllocated: %d\n", countFreed, countAllocated);
+            if (countAllocated != countFreed) {
+                printf("** NOT FREED **\n");
+            }
+#else
+            runtime->garbageCollect();
+#endif
+        }
+        return;
+    }
+    else if (nIDEvent == TIMER_ID_MOUSE_INACTIVE)
     {
         onTimerMouseInactive();
         return;
@@ -2287,8 +2362,11 @@ void CSkinWnd::onTimerMouseInactive()
 
 void CSkinWnd::onMouseActive(bool bMouseActive)
 {
-    if (m_pSjvmNotifyEvent)
-        m_pSjvmNotifyEvent->onMouseActive(bMouseActive);
+    if (m_onMouseActivateListener.isFunction()) {
+        auto ctx = m_vm->defaultRuntime()->mainCtx();
+        m_vm->callMember(ctx, jsValueGlobalThis, m_onMouseActivateListener,
+            ArgumentsX(makeJsValueBool(bMouseActive)));
+    }
 }
 
 void CSkinWnd::startAnimation(int nUIDAnimation)

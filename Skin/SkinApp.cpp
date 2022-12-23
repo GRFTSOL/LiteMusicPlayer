@@ -1,6 +1,8 @@
 #include "SkinTypes.h"
 #include "Skin.h"
 #include "SkinApp.h"
+#include "api-js/SkinJsAPI.hpp"
+
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -37,6 +39,8 @@ bool CSkinApp::init()
     m_pEventDispatcher->init();
 
     m_pSkinFactory->init();
+
+    initSkinJsAPIs();
 
     return true;
 }

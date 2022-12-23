@@ -5,6 +5,7 @@
 #pragma once
 
 #include <stack>
+#include "UIObject.h"
 
 class CMenu;
 

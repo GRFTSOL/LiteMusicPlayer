@@ -1,5 +1,7 @@
 #pragma once
 
+#include "SkinContainer.h"
+
 
 class CSkinLinearContainer : public CSkinContainer  
 {

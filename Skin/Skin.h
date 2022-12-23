@@ -4,7 +4,6 @@
 class CSkinWnd;
 
 #include "SkinTypes.h"
-#include "SjvmSkinSystem.h"
 #include "Formula.h"
 #include "SkinResMgr.h"
 #include "SFImage.h"

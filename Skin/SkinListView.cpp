@@ -90,7 +90,7 @@ void CSkinListView::loadColumnWidth(cstr_t szProperty)
 
 void CSkinListView::saveColumnWidth(cstr_t szProperty)
 {
-    VecInt    vWidth;
+    VecInts    vWidth;
     for (size_t i = 0; i < getColumnCount(); i++)
         vWidth.push_back(getColumnWidth(i));
     string str = strJoin(vWidth.begin(), vWidth.end(), "%d", ",");

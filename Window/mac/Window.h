@@ -42,6 +42,9 @@ public:
     void maximize();
     void restore();
 
+    void setMinSize(uint32_t width, uint32_t height);
+    void setMaxSize(uint32_t width, uint32_t height);
+
     bool setTimer(uint32_t nTimerId, uint32_t nElapse);
     void killTimer(uint32_t nTimerId);
     

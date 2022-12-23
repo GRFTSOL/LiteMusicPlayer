@@ -1,5 +1,8 @@
 #pragma once
 
+#include "SkinLinearContainer.h"
+
+
 class CSkinResizableLinearContainer : public CSkinLinearContainer  
 {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinContainer)
@@ -7,16 +10,21 @@ public:
     CSkinResizableLinearContainer();
     virtual ~CSkinResizableLinearContainer();
 
-    virtual bool onMouseDrag(CPoint point);
-    virtual bool onMouseMove(CPoint point);
-    virtual bool onLButtonDown(uint32_t nFlags, CPoint point);
-    virtual bool onLButtonUp(uint32_t nFlags, CPoint point);
+    virtual bool onMouseDrag(CPoint point) override;
+    virtual bool onMouseMove(CPoint point) override;
+    virtual bool onLButtonDown(uint32_t nFlags, CPoint point) override;
+    virtual bool onLButtonUp(uint32_t nFlags, CPoint point) override;
 
-    virtual void onCreate();
-    virtual void onDestroy();
-    virtual void onSize();
+    virtual void onCreate() override;
+    virtual void onDestroy() override;
+    virtual void onSize() override;
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    virtual bool setProperty(cstr_t szProperty, cstr_t szValue) override;
+
+    virtual JsValue getJsObject(VMContext *ctx) override;
+
+    void setMode(cstr_t modeName);
+    cstr_t getMode() const;
 
 protected:
     // Return -1, if NOT in resizer area

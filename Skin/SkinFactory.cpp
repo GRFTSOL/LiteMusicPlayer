@@ -606,9 +606,6 @@ int CSkinFactory::init()
     AddUIObjNewer(CSkinLinearContainer);
     AddUIObjNewer(CSkinResizableLinearContainer);
 
-    // init SimpleJVM environment
-    CSjvmSkinSystem::init(this);
-
     return ERR_OK;
 }
 
@@ -970,11 +967,6 @@ int CSkinFactory::openSkinFile(cstr_t szSkinFile)
     if (pNode)
         m_dynamicCmds.fromXML(pNode);
 
-    // load and compile SJVM script files.
-    cstr_t szScript = m_skinFile.getSkinProperty("Script");
-    if (szScript && !isEmptyString(szScript))
-        CSjvmSkinSystem::loadScript(szScript);
-
     return ERR_OK;
 }
 
@@ -1086,8 +1078,6 @@ void CSkinFactory::close(bool bQuit)
         else
             ++it;
     }
-
-    CSjvmSkinSystem::closeScript();
 }
 
 CSkinWnd *CSkinFactory::newSkinWnd(cstr_t szSkinWndName, bool bMainWnd)
