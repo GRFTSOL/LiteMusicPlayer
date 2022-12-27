@@ -51,10 +51,10 @@ int CDlgChooseFont::doModal(Window *pWndParent, cstr_t szFontFaceName, int nFont
     [panel setDelegate:delegate];
     [panel setPanelFont:oldFont isMultiple:NO];
 
-    int nRet = [NSApp runModalForWindow:panel];
+    auto nRet = [NSApp runModalForWindow:panel];
     [delegate release];
     if (nRet != IDOK)
-        return nRet;
+        return (int)nRet;
     //[panel makeKeyAndOrderFront:nil];
     
     NSFont *newFont = [panel panelConvertFont:oldFont];

@@ -3,9 +3,10 @@
 #include "../Utils/Utils.h"
 #include "../GfxRaw/GfxRawTypes.h"
 
+
 struct CPoint {
-    int x;
-    int y;
+    int                         x;
+    int                         y;
 
     CPoint() : x(0), y(0) { }
     CPoint(int x, int y) : x(x), y(y) { }
@@ -17,8 +18,8 @@ struct CPoint {
 };
 
 struct CSize {
-    int cx;
-    int cy;
+    int                         cx;
+    int                         cy;
 
     CSize() : cx(0), cy(0) { }
     CSize(int cx, int cy) : cx(cx), cy(cy) { }
@@ -30,10 +31,10 @@ struct CSize {
 };
 
 struct CRect {
-    int left;
-    int top;
-    int right;
-    int bottom;
+    int                         left;
+    int                         top;
+    int                         right;
+    int                         bottom;
 
     CRect() : left(0), top(0), right(0), bottom(0) { }
     CRect(int left, int top, int right, int bottom) : left(left), top(top), right(right), bottom(bottom) { }
@@ -80,15 +81,14 @@ struct CRect {
     bool intersect(const CRect &a, const CRect &b) {
         if (a.empty() || b.empty() ||
             (a.left >= b.right) || (b.left >= a.right) ||
-            (a.top >= b.bottom) || (b.top >= a.bottom))
-        {
+            (a.top >= b.bottom) || (b.top >= a.bottom)) {
             setEmpty();
             return false;
         }
 
-        left   = std::max(a.left, b.left);
-        right  = std::min(a.right, b.right);
-        top    = std::max(a.top, b.top);
+        left = std::max(a.left, b.left);
+        right = std::min(a.right, b.right);
+        top = std::max(a.top, b.top);
         bottom = std::min(a.bottom, b.bottom);
         return true;
     }

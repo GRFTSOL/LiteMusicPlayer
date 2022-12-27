@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef _HEADER_WIDGET_H_
 #define _HEADER_WIDGET_H_
 
@@ -35,5 +37,6 @@
 
 #include "WndDrag.h"
 #include "Desktop.h"
+
 
 #endif // _HEADER_WIDGET_H_

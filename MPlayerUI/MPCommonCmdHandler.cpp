@@ -363,8 +363,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID)
         break;
     case CMD_VOL_INC:
         {
-            long        vol;
-            vol = g_Player.getVolume();
+            int vol = g_Player.getVolume();
             if (vol < MP_VOLUME_MAX)
             {
                 vol += 5;
@@ -378,8 +377,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID)
         break;
     case CMD_VOL_DEC:
         {
-            long        vol;
-            vol = g_Player.getVolume();
+            int vol = g_Player.getVolume();
             if (vol > 0)
             {
                 vol -= 5;

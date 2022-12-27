@@ -2,12 +2,13 @@
     Created  :    2002/01/04    21:30
     FileName :    Profile.cpp
     Author   :    xhy
-    
+
     Purpose  :    
 *********************************************************************/
 
 #include "../Utils.h"
 #include "../Profile.h"
+
 
 /*
 test Encrypt ....
@@ -36,12 +37,11 @@ int testEncryptProfile()
 int k = testEncryptProfile();*/
 
 bool writePrivateProfileInt(
-                            cstr_t lpAppName,  // section name
-                            cstr_t lpKeyName,  // key name
-                            int value,            // int to add
-                            cstr_t lpFileName  // initialization file
-                            )
-{
+    cstr_t lpAppName,  // section name
+    cstr_t lpKeyName,  // key name
+    int value,            // int to add
+    cstr_t lpFileName  // initialization file
+    ) {
     string str = itos(value);
     return WritePrivateProfileString(lpAppName, lpKeyName, str.c_str(), lpFileName);
 }
@@ -50,13 +50,13 @@ bool writePrivateProfileInt(
 //{
 //    getPrivateProfileString("Registry", szKeyName, szDefault, szReturnedString, nSize);
 //}
-// 
+//
 // uint32_t regGetProfileString(HKEY hRoot, cstr_t szItem, cstr_t szKeyName, cstr_t szDefault, char * szReturnedString, uint32_t nSize)
 // {
 //     HKEY    hKey;
-// 
+//
 //     emptyStr(szReturnedString);
-// 
+//
 //     if (RegOpenKeyEx(hRoot, szItem,
 //         0, KEY_QUERY_VALUE, &hKey) == ERROR_SUCCESS)
 //     {
@@ -68,15 +68,15 @@ bool writePrivateProfileInt(
 //         }
 //         RegCloseKey(hKey);
 //     }
-// 
+//
 //     return strlen(szReturnedString);
 // }
-// 
+//
 // bool regWriteProfileString(HKEY hRoot, cstr_t szItem, cstr_t szKeyName, cstr_t szValue)
 // {
 //     HKEY    hKey;
 //     uint32_t    dwDispositon;
-// 
+//
 //     if (RegCreateKeyEx(hRoot, szItem,
 //         0, nullptr, REG_OPTION_NON_VOLATILE, KEY_SET_VALUE, nullptr, &hKey, &dwDispositon) == ERROR_SUCCESS)
 //     {
@@ -87,15 +87,15 @@ bool writePrivateProfileInt(
 //         }
 //         RegCloseKey(hKey);
 //     }
-// 
+//
 //     return lstrlen(szKeyName);
 // }
-// 
+//
 // bool regWriteProfileString(cstr_t szKeyName, cstr_t szValue)
 // {
 //     HKEY    hKey;
 //     uint32_t    dwDispositon;
-// 
+//
 //     if (RegCreateKeyEx(HKEY_LOCAL_MACHINE, "Software\\MiniLyrics",
 //         0, nullptr, REG_OPTION_NON_VOLATILE, KEY_SET_VALUE, nullptr, &hKey, &dwDispositon) == ERROR_SUCCESS)
 //     {
@@ -106,15 +106,15 @@ bool writePrivateProfileInt(
 //         }
 //         RegCloseKey(hKey);
 //     }
-// 
+//
 //     return strlen(szKeyName);
 // }
-// 
+//
 // int regGetProfileInt(HKEY hRoot, cstr_t szSubKey, cstr_t szKeyName, int nDefault)
 // {
 //     HKEY    hKey;
 //     int        value = nDefault;
-// 
+//
 //     if (RegOpenKeyEx(hRoot, szSubKey,
 //         0, KEY_QUERY_VALUE, &hKey) == ERROR_SUCCESS)
 //     {
@@ -126,16 +126,16 @@ bool writePrivateProfileInt(
 //         }
 //         RegCloseKey(hKey);
 //     }
-// 
+//
 //     return value;
 // }
-// 
+//
 // bool regWriteProfileInt(HKEY hRoot, cstr_t szSubKey, cstr_t szKeyName, int value)
 // {
 //     HKEY    hKey;
 //     uint32_t    dwDispositon;
 //     bool    bRet = false;
-// 
+//
 //     if (RegCreateKeyEx(hRoot, szSubKey,
 //         0, nullptr, REG_OPTION_NON_VOLATILE, KEY_SET_VALUE, nullptr, &hKey, &dwDispositon) == ERROR_SUCCESS)
 //     {
@@ -146,40 +146,34 @@ bool writePrivateProfileInt(
 //         }
 //         RegCloseKey(hKey);
 //     }
-// 
+//
 //     return bRet;
 // }
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
-CProfile::CProfile()
-{
+
+CProfile::CProfile() {
 }
 
-CProfile::~CProfile()
-{
+CProfile::~CProfile() {
     close();
 }
 
 //
 // 区分大小写，将szAppName, szKey添加到缓存中
-void CProfile::addKeys(cstr_t szAppName, cstr_t szKeyName, cstr_t szValue)
-{
-    ListSections::iterator    itApp;
-    Section                *appSec = nullptr;
-    string                    strKeyNameLower;
+void CProfile::addKeys(cstr_t szAppName, cstr_t szKeyName, cstr_t szValue) {
+    ListSections::iterator itApp;
+    Section *appSec = nullptr;
+    string strKeyNameLower;
 
     // find AppName
-    for (itApp = m_listAppSect.begin(); itApp != m_listAppSect.end(); itApp++)
-    {
+    for (itApp = m_listAppSect.begin(); itApp != m_listAppSect.end(); itApp++) {
         appSec = *itApp;
-        if (strcasecmp(appSec->strAppName.c_str(), szAppName) == 0)
+        if (strcasecmp(appSec->strAppName.c_str(), szAppName) == 0) {
             break;
+        }
     }
-    if (appSec == nullptr || itApp == m_listAppSect.end())
-    {
+    if (appSec == nullptr || itApp == m_listAppSect.end()) {
         // append new app secton
         appSec = new Section;
         appSec->strAppName = szAppName;
@@ -191,53 +185,52 @@ void CProfile::addKeys(cstr_t szAppName, cstr_t szKeyName, cstr_t szValue)
     appSec->mapKeys[strKeyNameLower] = szValue;
 }
 
-bool CProfile::getKey(cstr_t szAppName, cstr_t szKeyName, MapStrings::iterator &it)
-{
-    ListSections::iterator    itApp;
-    Section                *appSec = nullptr;
-    string                    strKeyNameLower;
+bool CProfile::getKey(cstr_t szAppName, cstr_t szKeyName, MapStrings::iterator &it) {
+    ListSections::iterator itApp;
+    Section *appSec = nullptr;
+    string strKeyNameLower;
 
     strKeyNameLower = szKeyName;
     toLower((char *)strKeyNameLower.c_str());
 
     // 查找AppName
-    for (itApp = m_listAppSect.begin(); itApp != m_listAppSect.end(); itApp++)
-    {
+    for (itApp = m_listAppSect.begin(); itApp != m_listAppSect.end(); itApp++) {
         appSec = *itApp;
-        if (strcasecmp(appSec->strAppName.c_str(), szAppName) == 0)
+        if (strcasecmp(appSec->strAppName.c_str(), szAppName) == 0) {
             break;
+        }
     }
-    if (appSec == nullptr || itApp == m_listAppSect.end())
+    if (appSec == nullptr || itApp == m_listAppSect.end()) {
         return false;
+    }
 
     //
     // 查找KeyName
     it = appSec->mapKeys.find(strKeyNameLower);
-    if (it == appSec->mapKeys.end())
+    if (it == appSec->mapKeys.end()) {
         return false;
+    }
 
     return true;
 }
 
-void CProfile::setKeyDefaultIfNotExist(cstr_t szAppName, cstr_t szKeyName, cstr_t szValue)
-{
-    ListSections::iterator    itApp;
-    Section                *appSec = nullptr;
-    string                    strKeyNameLower;
-    MapStrings::iterator    it;
+void CProfile::setKeyDefaultIfNotExist(cstr_t szAppName, cstr_t szKeyName, cstr_t szValue) {
+    ListSections::iterator itApp;
+    Section *appSec = nullptr;
+    string strKeyNameLower;
+    MapStrings::iterator it;
 
     strKeyNameLower = szKeyName;
     toLower((char *)strKeyNameLower.c_str());
 
     // 查找AppName
-    for (itApp = m_listAppSect.begin(); itApp != m_listAppSect.end(); itApp++)
-    {
+    for (itApp = m_listAppSect.begin(); itApp != m_listAppSect.end(); itApp++) {
         appSec = *itApp;
-        if (strcasecmp(appSec->strAppName.c_str(), szAppName) == 0)
+        if (strcasecmp(appSec->strAppName.c_str(), szAppName) == 0) {
             break;
+        }
     }
-    if (appSec == nullptr || itApp == m_listAppSect.end())
-    {
+    if (appSec == nullptr || itApp == m_listAppSect.end()) {
         // append new app secton
         appSec = new Section;
         appSec->strAppName = szAppName;
@@ -247,24 +240,23 @@ void CProfile::setKeyDefaultIfNotExist(cstr_t szAppName, cstr_t szKeyName, cstr_
     }
 
     it = appSec->mapKeys.find(strKeyNameLower);
-    if (it == appSec->mapKeys.end())
+    if (it == appSec->mapKeys.end()) {
         appSec->mapKeys[strKeyNameLower] = szValue;
+    }
 }
 
-void CProfile::init(cstr_t szProfile, cstr_t szDefKey)
-{
+void CProfile::init(cstr_t szProfile, cstr_t szDefKey) {
     close();
 
-    if (szDefKey == nullptr)
+    if (szDefKey == nullptr) {
         m_strDefAppName = "";
-    else
+    } else {
         m_strDefAppName = szDefKey;
+    }
 
-    if (strlen(szProfile) > 3)
-    {
+    if (strlen(szProfile) > 3) {
         if (((szProfile[1] == ':') && (szProfile[2] == PATH_SEP_CHAR)) ||
-            (szProfile[0] == PATH_SEP_CHAR))
-        {
+            (szProfile[0] == PATH_SEP_CHAR)) {
             // 如果已经是全路径，则不管
             m_strProfile = szProfile;
             return;
@@ -272,21 +264,19 @@ void CProfile::init(cstr_t szProfile, cstr_t szDefKey)
     }
 
     m_strProfile = szProfile;
-//    m_strProfile = getAppDataDir();
-//    m_strProfile += szProfile;
+    //    m_strProfile = getAppDataDir();
+    //    m_strProfile += szProfile;
 }
 
-void CProfile::close()
-{
+void CProfile::close() {
     m_strDefAppName = "";
     m_strProfile = "";
 
-    ListSections::iterator    itApp;
-    Section                *appSec;
+    ListSections::iterator itApp;
+    Section *appSec;
 
     // 查找AppName
-    for (itApp = m_listAppSect.begin(); itApp != m_listAppSect.end(); itApp++)
-    {
+    for (itApp = m_listAppSect.begin(); itApp != m_listAppSect.end(); itApp++) {
         appSec = *itApp;
         delete appSec;
     }
@@ -294,42 +284,44 @@ void CProfile::close()
 }
 
 
-void CProfile::doCache()
-{
-    string    str;
-    cstr_t        szBeg, szEnd;
-    string        strAppName, strKey, strValue;
+void CProfile::doCache() {
+    string str;
+    cstr_t szBeg, szEnd;
+    string strAppName, strKey, strValue;
 
-    if (!readFile(m_strProfile.c_str(), str))
+    if (!readFile(m_strProfile.c_str(), str)) {
         return;
+    }
 
     //
     // 查找 AppName
     szBeg = str.c_str();
-    while (*szBeg)
-    {
-        while (*szBeg == ' ' || *szBeg == '\t' || *szBeg == '\n')
+    while (*szBeg) {
+        while (*szBeg == ' ' || *szBeg == '\t' || *szBeg == '\n') {
             szBeg++;
+        }
 
-        if (*szBeg != '[')
-        {
-            while (*szBeg && *szBeg != '\n')
+        if (*szBeg != '[') {
+            while (*szBeg && *szBeg != '\n') {
                 szBeg++;
+            }
             continue;
         }
         szBeg++;
 
-        while (*szBeg == ' ' || *szBeg == '\t')
+        while (*szBeg == ' ' || *szBeg == '\t') {
             szBeg++;
+        }
 
         szEnd = szBeg;
-        while (*szEnd && *szEnd != ']' && *szEnd != '\n')
+        while (*szEnd && *szEnd != ']' && *szEnd != '\n') {
             szEnd++;
+        }
 
-        if (*szEnd != ']')
-        {
-            while (*szBeg && *szBeg != '\n')
+        if (*szEnd != ']') {
+            while (*szBeg && *szBeg != '\n') {
                 szBeg++;
+            }
             continue;
         }
 
@@ -340,27 +332,30 @@ void CProfile::doCache()
 
         szBeg = szEnd + 1;
 
-        while (*szBeg)
-        {
+        while (*szBeg) {
             // get key and values
-            while (*szBeg == ' ' || *szBeg == '\t')
+            while (*szBeg == ' ' || *szBeg == '\t') {
                 szBeg++;
+            }
 
-            while (*szBeg == '\r' || *szBeg == '\n')
+            while (*szBeg == '\r' || *szBeg == '\n') {
                 szBeg++;
+            }
 
-            if (*szBeg == '[')
+            if (*szBeg == '[') {
                 break;
+            }
 
             szEnd = szBeg;
-            while (*szEnd && *szEnd != '=' && *szEnd != '\n')
+            while (*szEnd && *szEnd != '=' && *szEnd != '\n') {
                 szEnd++;
+            }
 
-            if (*szEnd != '=')
-            {
+            if (*szEnd != '=') {
                 szBeg = szEnd;
-                while (*szBeg && *szBeg != '\n')
+                while (*szBeg && *szBeg != '\n') {
                     szBeg++;
+                }
                 continue;
             }
 
@@ -369,13 +364,16 @@ void CProfile::doCache()
             strKey.append(szBeg, szEnd);
 
             szBeg = szEnd + 1;
-            while (*szEnd && *szEnd != '\n')
+            while (*szEnd && *szEnd != '\n') {
                 szEnd++;
+            }
 
-            while (*szEnd == '\r' || *szEnd == '\n')
+            while (*szEnd == '\r' || *szEnd == '\n') {
                 szEnd--;
-            if (*szEnd)
+            }
+            if (*szEnd) {
                 szEnd++;
+            }
             strValue = "";
             strValue.append(szBeg, szEnd);
 
@@ -386,35 +384,31 @@ void CProfile::doCache()
     }
 }
 
-void CProfile::setDefaultIfNotExist(cstr_t szAppName, cstr_t szKeyName, cstr_t szDefault)
-{
+void CProfile::setDefaultIfNotExist(cstr_t szAppName, cstr_t szKeyName, cstr_t szDefault) {
     setKeyDefaultIfNotExist(szAppName, szKeyName, szDefault);
 }
 
-void CProfile::setDefaultIfNotExist(cstr_t szAppName, cstr_t szKeyName, int nDefault)
-{
-    char    szDefault[64];
+void CProfile::setDefaultIfNotExist(cstr_t szAppName, cstr_t szKeyName, int nDefault) {
+    char szDefault[64];
     itoa(nDefault, szDefault);
 
     setKeyDefaultIfNotExist(szAppName, szKeyName, szDefault);
 }
 
-cstr_t CProfile::getString(cstr_t szAppName, cstr_t szKeyName, cstr_t szDefault)
-{
+cstr_t CProfile::getString(cstr_t szAppName, cstr_t szKeyName, cstr_t szDefault) {
     assert(!m_strProfile.empty());
 
-    if (szKeyName[0] == '\0')
+    if (szKeyName[0] == '\0') {
         return "";
+    }
 
-    MapStrings::iterator    itKey;
+    MapStrings::iterator itKey;
 
-    if (!getKey(szAppName, szKeyName, itKey))
-    {
-        char    szReturnedString[1024];
+    if (!getKey(szAppName, szKeyName, itKey)) {
+        char szReturnedString[1024];
         GetPrivateProfileString(szAppName, szKeyName, szDefault, szReturnedString, 1024, m_strProfile.c_str());
         addKeys(szAppName, szKeyName, szReturnedString);
-        if (!getKey(szAppName, szKeyName, itKey))
-        {
+        if (!getKey(szAppName, szKeyName, itKey)) {
             assert(0 && "getKey Can't be FAILED!");
             return "";
         }
@@ -423,36 +417,32 @@ cstr_t CProfile::getString(cstr_t szAppName, cstr_t szKeyName, cstr_t szDefault)
     return (*itKey).second.c_str();
 }
 
-bool CProfile::writeString(cstr_t szAppName, cstr_t szKeyName, cstr_t szValue)
-{
+bool CProfile::writeString(cstr_t szAppName, cstr_t szKeyName, cstr_t szValue) {
     assert(!m_strProfile.empty());
 
-    uint32_t        dwRet;
-    MapStrings::iterator    itKey;
+    uint32_t dwRet;
+    MapStrings::iterator itKey;
 
     dwRet = WritePrivateProfileString(szAppName, szKeyName, szValue, m_strProfile.c_str());
 
-    if (!getKey(szAppName, szKeyName, itKey))
-    {
+    if (!getKey(szAppName, szKeyName, itKey)) {
         addKeys(szAppName, szKeyName, szValue);
-    }
-    else
+    } else {
         (*itKey).second = szValue;
+    }
 
     return dwRet;
 }
 
 
-uint32_t CProfile::getInt(cstr_t szAppName, cstr_t szKeyName, int nDefault)
-{
+uint32_t CProfile::getInt(cstr_t szAppName, cstr_t szKeyName, int nDefault) {
     assert(!m_strProfile.empty());
 
-    if (szKeyName[0] == '\0')
-    {
+    if (szKeyName[0] == '\0') {
         return nDefault;
     }
 
-    char    szDefault[64];
+    char szDefault[64];
     itoa(nDefault, szDefault);
 
     cstr_t value = getString(szAppName, szKeyName, szDefault);
@@ -460,11 +450,10 @@ uint32_t CProfile::getInt(cstr_t szAppName, cstr_t szKeyName, int nDefault)
     return atoi(value);
 }
 
-bool CProfile::writeInt(cstr_t szAppName, cstr_t szKeyName, int value)
-{
+bool CProfile::writeInt(cstr_t szAppName, cstr_t szKeyName, int value) {
     assert(!m_strProfile.empty());
 
-    char        szValue[64];
+    char szValue[64];
 
     itoa(value, szValue);
 
@@ -472,26 +461,22 @@ bool CProfile::writeInt(cstr_t szAppName, cstr_t szKeyName, int value)
 }
 
 
-cstr_t CProfile::getFile()
-{
+cstr_t CProfile::getFile() {
     return m_strProfile.c_str();
 }
 
-cstr_t CProfile::getDefAppName()
-{
+cstr_t CProfile::getDefAppName() {
     return m_strDefAppName.c_str();
 }
 
 //
 // support encrypt keyname and value
 //
-void encryptStr(cstr_t str, string &strOut)
-{
+void encryptStr(cstr_t str, string &strOut) {
     strOut = base64Encode((uint8_t *)str, strlen(str));
 }
 
-void decryptStr(cstr_t str, string &strOut)
-{
+void decryptStr(cstr_t str, string &strOut) {
     strOut = base64Decode(str, strlen(str));
 }
 /*
@@ -511,27 +496,23 @@ void testEnDecrypt()
 }
 */
 
-string CProfile::encryptGetString(cstr_t szAppName, cstr_t szKeyName, cstr_t szDefault)
-{
+string CProfile::encryptGetString(cstr_t szAppName, cstr_t szKeyName, cstr_t szDefault) {
     assert(!m_strProfile.empty());
 
     if (isEmptyString(szKeyName)) {
         return "";
     }
 
-    string    strKeyNameEncrypt, strValue;
+    string strKeyNameEncrypt, strValue;
     encryptStr(szKeyName, strKeyNameEncrypt);
 
     char szReturnedString[512];
-    MapStrings::iterator    itKey;
-    if (!getKey(szAppName, strKeyNameEncrypt.c_str(), itKey))
-    {
+    MapStrings::iterator itKey;
+    if (!getKey(szAppName, strKeyNameEncrypt.c_str(), itKey)) {
         encryptStr(szDefault, strValue);
         GetPrivateProfileString(szAppName, strKeyNameEncrypt.c_str(), strValue.c_str(), szReturnedString, CountOf(szReturnedString), m_strProfile.c_str());
         addKeys(szAppName, strKeyNameEncrypt.c_str(), szReturnedString);
-    }
-    else
-    {
+    } else {
         strcpy_safe(szReturnedString, CountOf(szReturnedString), (*itKey).second.c_str());
     }
     decryptStr(szReturnedString, strValue);
@@ -540,39 +521,36 @@ string CProfile::encryptGetString(cstr_t szAppName, cstr_t szKeyName, cstr_t szD
     return szReturnedString;
 }
 
-bool CProfile::encryptWriteString(cstr_t szAppName, cstr_t szKeyName, cstr_t szValue)
-{
+bool CProfile::encryptWriteString(cstr_t szAppName, cstr_t szKeyName, cstr_t szValue) {
     assert(!m_strProfile.empty());
 
-    uint32_t        dwRet;
-    MapStrings::iterator    itKey;
-    string    strKeyNameEncrypt, strValueEncrypt;
+    uint32_t dwRet;
+    MapStrings::iterator itKey;
+    string strKeyNameEncrypt, strValueEncrypt;
 
     encryptStr(szKeyName, strKeyNameEncrypt);
     encryptStr(szValue, strValueEncrypt);
 
     dwRet = WritePrivateProfileString(szAppName, strKeyNameEncrypt.c_str(), strValueEncrypt.c_str(), m_strProfile.c_str());
 
-    if (!getKey(szAppName, strKeyNameEncrypt.c_str(), itKey))
-    {
+    if (!getKey(szAppName, strKeyNameEncrypt.c_str(), itKey)) {
         addKeys(szAppName, strKeyNameEncrypt.c_str(), szValue);
-    }
-    else
+    } else {
         (*itKey).second = strValueEncrypt;
+    }
 
     return dwRet;
 }
 
-int CProfile::encryptGetInt(cstr_t szKeyName, int value)
-{
-    string    str = encryptGetString(szKeyName, "");
-    if (str.empty())
+int CProfile::encryptGetInt(cstr_t szKeyName, int value) {
+    string str = encryptGetString(szKeyName, "");
+    if (str.empty()) {
         return value;
-    else
+    } else {
         return atoi(str.c_str());
+    }
 }
 
-void CProfile::encryptWriteInt(cstr_t szKeyName, int value)
-{
+void CProfile::encryptWriteInt(cstr_t szKeyName, int value) {
     encryptWriteString(szKeyName, stringPrintf("%d", value).c_str());
 }

@@ -254,8 +254,8 @@ void CMPlaylistCtrl::updatePlaylist(CEventPlaylistChanged *pEventPlaylistChanged
     }
     else if (pEventPlaylistChanged->action == IMPEvent::PCA_MOVE)
     {
-        int            nIndex = pEventPlaylistChanged->nIndex;
-        int            nIndexOld = pEventPlaylistChanged->nIndexOld;
+        int nIndex = pEventPlaylistChanged->nIndex;
+        int nIndexOld = pEventPlaylistChanged->nIndexOld;
         if (nIndex >= 0 && nIndex < getItemCount()
             && nIndexOld >= 0 && nIndexOld < getItemCount())
         {

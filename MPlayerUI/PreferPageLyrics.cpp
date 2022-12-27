@@ -1,4 +1,4 @@
-﻿#include "MPlayerApp.h"
+#include "MPlayerApp.h"
 #include "PreferPageLyrics.h"
 #include "DownloadMgr.h"
 
@@ -31,7 +31,7 @@ public:
         CID_C_M4A_LYRICS = 0;
     }
 
-    void onInitialUpdate()
+    void onInitialUpdate() override
     {
         CPagePfBase::onInitialUpdate();
 
@@ -91,7 +91,7 @@ public:
         initCheckButtons();
     }
 
-    bool onCustomCommand(int nId)
+    bool onCustomCommand(int nId)override
     {
         if (nId == CID_C_SAVE_IN_SONG_DIR
             || nId == CID_C_SAVE_IN_DIR)
@@ -180,7 +180,7 @@ public:
     {
     }
 
-    void onInitialUpdate()
+    void onInitialUpdate() override
     {
         CPagePfBase::onInitialUpdate();
 
@@ -195,7 +195,7 @@ public:
         initCheckButtons();
     }
 
-    virtual bool onCustomCommand(int nId)
+    virtual bool onCustomCommand(int nId) override
     {
         if (nId == CID_C_APPEND_OFFSET_FOR_IOS)
         {
@@ -243,7 +243,7 @@ public:
         CID_LO_PLUGIN_LIST = 0;
     }
 
-    void onInitialUpdate()
+    void onInitialUpdate() override
     {
         CPagePfBase::onInitialUpdate();
 
@@ -269,7 +269,7 @@ public:
         enablePluginBtns();
     }
 
-    bool onCustomCommand(int nId)
+    bool onCustomCommand(int nId) override
     {
         if (!m_pListPlugins)
             return CPagePfBase::onCustomCommand(nId);
@@ -298,7 +298,7 @@ public:
         return true;
     }
 
-    void onUIObjNotify(IUIObjNotify *pNotify)
+    void onUIObjNotify(IUIObjNotify *pNotify) override
     {
         if (pNotify->nID == CID_LO_PLUGIN_LIST && pNotify->isKindOf(CSkinListCtrl::className()))
         {

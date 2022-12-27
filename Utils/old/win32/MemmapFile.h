@@ -1,7 +1,6 @@
 ﻿#pragma once
 
-class CMemmapFile  
-{
+class CMemmapFile {
 public:
     CMemmapFile();
     virtual ~CMemmapFile();
@@ -16,15 +15,14 @@ public:
 
     bool isValid() const { return m_lpFile != nullptr; }
 
-    uint8_t *getPtr()
-    {
+    uint8_t *getPtr() {
         return m_lpFile;
     }
 
 protected:
-    HANDLE        m_hFile;            // 文件句柄
-    HANDLE        m_hFilemap;            // 文件映射句柄
-    int            m_nFileSize;        // 文件大小
-    uint8_t *m_lpFile;            // 文件映射之后的文件内容
+    HANDLE                      m_hFile;            // 文件句柄
+    HANDLE                      m_hFilemap;         // 文件映射句柄
+    int                         m_nFileSize;        // 文件大小
+    uint8_t                     *m_lpFile;          // 文件映射之后的文件内容
 
 };

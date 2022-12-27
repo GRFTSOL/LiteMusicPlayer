@@ -28,7 +28,7 @@ CLyricShowTwoRowObj::~CLyricShowTwoRowObj()
 {
 }
 
-void CLyricShowTwoRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate/* = nullptr*/)
+void CLyricShowTwoRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate)
 {
     if (m_pMLData == nullptr)
         return;

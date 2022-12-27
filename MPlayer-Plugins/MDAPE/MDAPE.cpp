@@ -376,12 +376,12 @@ uint32 CMDAPE::GetPos()
 		return m_nSeekPos;
 }
 
-MLRESULT CMDAPE::setVolume(int nVolume, int nBanlance)
+MLRESULT CMDAPE::setVolume(int volume, int nBanlance)
 {
 	if (!m_pOutput)
 		return ERR_PLAYER_INVALID_STATE;
 
-	return m_pOutput->setVolume(nVolume, nBanlance);
+	return m_pOutput->setVolume(volume, nBanlance);
 }
 
 void CMDAPE::DecodeThread(LPVOID lpParam)

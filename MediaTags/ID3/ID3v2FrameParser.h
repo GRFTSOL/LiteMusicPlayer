@@ -1,39 +1,32 @@
-// ID3v2FrameParser.h: interface for the CID3v2FrameParser class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_ID3V2FRAMEPARSER_H__749002BF_ECF1_4CCA_8869_17AFACE76F16__INCLUDED_)
-#define AFX_ID3V2FRAMEPARSER_H__749002BF_ECF1_4CCA_8869_17AFACE76F16__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef MediaTags_ID3_ID3v2FrameParser_h
+#define MediaTags_ID3_ID3v2FrameParser_h
+
 
 #include "ID3v2.h"
 
-class CID3v2FrameParserBase  
-{
+
+class CID3v2FrameParserBase {
 public:
     CID3v2FrameParserBase(CharEncodingType encoding) { m_encoding = encoding; }
     virtual ~CID3v2FrameParserBase() { }
 
-//    virtual int parse(CID3v2Frame *pFrame) = 0;
-//    virtual int toFrameData(CID3v2Frame *pFrame) = 0;
-    CharEncodingType        m_encoding;
+    //    virtual int parse(CID3v2Frame *pFrame) = 0;
+    //    virtual int toFrameData(CID3v2Frame *pFrame) = 0;
+    CharEncodingType            m_encoding;
 
 };
 
-class CID3v2FrameParserSynLyrics : public CID3v2FrameParserBase
-{
+class CID3v2FrameParserSynLyrics : public CID3v2FrameParserBase {
 public:
-    enum CONTENT_TYPE
-    {
-        CT_OTHER        = 0,
-        CT_LYRICS        = 1,
-        CT_TEXT_TRANS    = 2,
-        CT_MOVEMENT        = 3,
-        CT_EVENT        = 4,
-        CT_CHORD        = 5
+    enum CONTENT_TYPE {
+        CT_OTHER                    = 0,
+        CT_LYRICS                   = 1,
+        CT_TEXT_TRANS               = 2,
+        CT_MOVEMENT                 = 3,
+        CT_EVENT                    = 4,
+        CT_CHORD                    = 5
     };
 
     CID3v2FrameParserSynLyrics(CharEncodingType encoding) : CID3v2FrameParserBase(encoding) { }
@@ -47,12 +40,11 @@ public:
 
 protected:
 
-//    ID3v2SynchLyrics        m_Lyrics;
+    //    ID3v2SynchLyrics        m_Lyrics;
 
 };
 
-class CID3v2FrameParserUnsynLyrics : public CID3v2FrameParserBase
-{
+class CID3v2FrameParserUnsynLyrics : public CID3v2FrameParserBase {
 public:
     CID3v2FrameParserUnsynLyrics(CharEncodingType encoding) : CID3v2FrameParserBase(encoding) { }
     virtual ~CID3v2FrameParserUnsynLyrics() { }
@@ -68,8 +60,7 @@ protected:
 
 };
 
-class CID3v2FrameParserText : public CID3v2FrameParserBase
-{
+class CID3v2FrameParserText : public CID3v2FrameParserBase {
 public:
     CID3v2FrameParserText(CharEncodingType encoding) : CID3v2FrameParserBase(encoding) { }
     virtual ~CID3v2FrameParserText() { }
@@ -83,8 +74,7 @@ public:
 // Text encoding     $xx
 // Description       <text string according to encoding> $00 (00)
 // Value             <text string according to encoding>
-class CID3v2FrameParserTextUserDefined : public CID3v2FrameParserBase
-{
+class CID3v2FrameParserTextUserDefined : public CID3v2FrameParserBase {
 public:
     CID3v2FrameParserTextUserDefined(CharEncodingType encoding) : CID3v2FrameParserBase(encoding) { }
     virtual ~CID3v2FrameParserTextUserDefined() { }
@@ -99,11 +89,9 @@ public:
 //  Language               $xx xx xx
 //  Short content descrip. <text string according to encoding> $00 (00)
 //  The actual text        <full text string according to encoding>
-class CID3v2FrameParserComment : public CID3v2FrameParserBase
-{
+class CID3v2FrameParserComment : public CID3v2FrameParserBase {
 public:
-    CID3v2FrameParserComment(CharEncodingType encoding) : CID3v2FrameParserBase(encoding)
-    {
+    CID3v2FrameParserComment(CharEncodingType encoding) : CID3v2FrameParserBase(encoding) {
         memset(m_szLanguage, 0, sizeof(m_szLanguage));
         m_EncodingType = IET_ANSI;
     }
@@ -113,9 +101,9 @@ public:
     void setText(cstr_t szShortDesc, cstr_t szText);
 
 public:
-    ID3v2EncType    m_EncodingType;
-    char            m_szLanguage[4];
-    string        m_strShortDesc, m_strText;
+    ID3v2EncType                m_EncodingType;
+    char                        m_szLanguage[4];
+    string                      m_strShortDesc, m_strText;
 
 };
 
@@ -134,11 +122,9 @@ public:
 //  Picture type       $xx
 //  Description        <text string according to encoding> $00 (00)
 //  Picture data       <binary data>
-class CID3v2FrameParserPic : public CID3v2FrameParserBase
-{
+class CID3v2FrameParserPic : public CID3v2FrameParserBase {
 public:
-    CID3v2FrameParserPic(CharEncodingType encoding) : CID3v2FrameParserBase(encoding)
-    {
+    CID3v2FrameParserPic(CharEncodingType encoding) : CID3v2FrameParserBase(encoding) {
     }
     virtual int parse(CID3v2 *pid3v2, const CID3v2Frame *pFrame, ID3v2Pictures::ITEM *picture);
     virtual int toFrame(CID3v2 *pid3v2, CID3v2Frame *pFrame, ID3v2Pictures::ITEM *picture);
@@ -150,18 +136,17 @@ public:
 //  Text encoding     $xx
 //  Description       <text string according to encoding> $00 (00)
 //  URL               <text string>
-class CID3v2FrameParserUserDefinedUrl : public CID3v2FrameParserBase
-{
+class CID3v2FrameParserUserDefinedUrl : public CID3v2FrameParserBase {
 public:
     CID3v2FrameParserUserDefinedUrl(CharEncodingType encoding) : CID3v2FrameParserBase(encoding) { }
     virtual int parse(const CID3v2Frame *pFrame);
     virtual int toFrame(CID3v2Frame *pFrame);
 
 public:
-    ID3v2Text        m_textDesc;
-    string            m_strUrl;
+    ID3v2Text                   m_textDesc;
+    string                      m_strUrl;
 
 };
 
 
-#endif // !defined(AFX_ID3V2FRAMEPARSER_H__749002BF_ECF1_4CCA_8869_17AFACE76F16__INCLUDED_)
+#endif // !defined(MediaTags_ID3_ID3v2FrameParser_h)

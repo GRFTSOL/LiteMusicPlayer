@@ -1,4 +1,4 @@
-﻿/********************************************************************
+/********************************************************************
     Created  :    2002/01/04    21:40
     FileName :    LyricShowMultiRowObj.h
     Author   :    xhy
@@ -22,15 +22,15 @@ public:
     CLyricShowMultiRowObj();
     virtual ~CLyricShowMultiRowObj();
 
-    void fastDraw(CRawGraph *canvas, CRect *prcUpdate = nullptr);
+    void fastDraw(CRawGraph *canvas, CRect *prcUpdate = nullptr) override;
 
-    void invalidate();
+    void invalidate() override;
 
 protected:
     void fastestDraw_GetUpdateRectOfFadeInOut(CRawGraph *canvas, CRect *prcUpdate, int y, int nCurLine);
     void fastestDraw_GetUpdateRectOfNormal(CRawGraph *canvas, CRect *prcUpdate, int y);
 
-    virtual int getAutoHeightLines() {
+    virtual int getAutoHeightLines() override {
         if (m_etDispSettings == ET_LYRICS_FLOATING_SETTINGS
             && (m_LyricsDisplayOpt == DO_FADEOUT_BG || m_LyricsDisplayOpt == DO_AUTO))
             return 3;

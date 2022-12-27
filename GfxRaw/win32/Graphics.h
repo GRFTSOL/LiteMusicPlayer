@@ -3,8 +3,7 @@
 class CColor;
 class CFontInfo;
 
-class CGraphics
-{
+class CGraphics {
 public:
     CGraphics();
     virtual ~CGraphics();
@@ -25,6 +24,6 @@ public:
     virtual void setBgColor(const CColor &color) { };
 
 protected:
-    HDC                m_hdc;
+    HDC                         m_hdc;
 
 };

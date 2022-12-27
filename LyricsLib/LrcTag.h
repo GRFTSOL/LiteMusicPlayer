@@ -1,35 +1,32 @@
-
 #pragma once
 
 #include "../Utils/Utils.h"
 
 
-enum LyrTagType
-{
-    LTT_UNKNOWN            = 0,
-    LTT_ARTIST            = 1,
-    LTT_TITLE            = 1 << 1,
-    LTT_ALBUM            = 1 << 2,
-    LTT_BY                = 1 << 3,
-    LTT_OFFSET            = 1 << 4,
-    LTT_MEDIA_LENGTH    = 1 << 5,
-    LTT_ID                = 1 << 6,
-    LTT_ENCODING        = 1 << 7,
-    LTT_CONTENT_TYPE    = 1 << 8,    // Check Time tag:[00:01.01], get LYRICS_CONTENT_TYPE
-    LTT_MD5                = 1 << 9,    // get Md5 of lyrics content, NOT including properties.
-    LTT_ALL_TAG            = 0xFFFFFFFF & ~(LTT_CONTENT_TYPE | LTT_MD5),
-    LTT_ALL                = 0xFFFFFFFF,
+enum LyrTagType {
+    LTT_UNKNOWN                 = 0,
+    LTT_ARTIST                  = 1,
+    LTT_TITLE                   = 1 << 1,
+    LTT_ALBUM                   = 1 << 2,
+    LTT_BY                      = 1 << 3,
+    LTT_OFFSET                  = 1 << 4,
+    LTT_MEDIA_LENGTH            = 1 << 5,
+    LTT_ID                      = 1 << 6,
+    LTT_ENCODING                = 1 << 7,
+    LTT_CONTENT_TYPE            = 1 << 8, // Check Time tag:[00:01.01], get LYRICS_CONTENT_TYPE
+    LTT_MD5                     = 1 << 9, // get Md5 of lyrics content, NOT including properties.
+    LTT_ALL_TAG                 = 0xFFFFFFFF & ~(LTT_CONTENT_TYPE | LTT_MD5),
+    LTT_ALL                     = 0xFFFFFFFF,
 };
 
 // TXT < LRC < karaoke , precision of timestamps is higher
-enum LYRICS_CONTENT_TYPE
-{
-    LCT_UNKNOWN            = 0,
-    LCT_TXT                = 1 << 1,
-    LCT_LRC                = 1 << 2,
-    LCT_KARAOKE            = 1 << 4,        // karaoke content, full synced.
+enum LYRICS_CONTENT_TYPE {
+    LCT_UNKNOWN                 = 0,
+    LCT_TXT                     = 1 << 1,
+    LCT_LRC                     = 1 << 2,
+    LCT_KARAOKE                 = 1 << 4, // karaoke content, full synced.
 
-    LCT_ALL                = LCT_TXT | LCT_LRC | LCT_KARAOKE,
+    LCT_ALL                     = LCT_TXT | LCT_LRC | LCT_KARAOKE,
 };
 
 void setDefaultLyricsEncoding(CharEncodingType encoding);
@@ -43,27 +40,25 @@ void formatPlayTime(int nmsTime, char szBuf[]);
 
 bool compressLyrics(string &buf);
 
-#define    SZ_LRC_AR                "ar:"
-#define    SZ_LRC_TI                "ti:"
-#define    SZ_LRC_AL                "al:"
-#define    SZ_LRC_BY                "by:"
-#define    SZ_LRC_ENCODING            "Encoding:"
-#define    SZ_LRC_OFFSET            "offset:"
-#define    SZ_LRC_LENGTH            "length:"
-#define    SZ_LRC_ID                "id:"
+#define    SZ_LRC_AR        "ar:"
+#define    SZ_LRC_TI        "ti:"
+#define    SZ_LRC_AL        "al:"
+#define    SZ_LRC_BY        "by:"
+#define    SZ_LRC_ENCODING  "Encoding:"
+#define    SZ_LRC_OFFSET    "offset:"
+#define    SZ_LRC_LENGTH    "length:"
+#define    SZ_LRC_ID        "id:"
 
-#define    SZ_TXT_AR                "Artist:"
-#define    SZ_TXT_TI                "Title:"
-#define    SZ_TXT_AL                "Album:"
-#define    SZ_TXT_ENCODING            "encoding:"
-#define    SZ_TXT_OFFSET            "offset:"
-#define    SZ_TXT_LENGTH            "length:"
-#define    SZ_TXT_ID                "ID:"
+#define    SZ_TXT_AR        "Artist:"
+#define    SZ_TXT_TI        "Title:"
+#define    SZ_TXT_AL        "Album:"
+#define    SZ_TXT_ENCODING  "encoding:"
+#define    SZ_TXT_OFFSET    "offset:"
+#define    SZ_TXT_LENGTH    "length:"
+#define    SZ_TXT_ID        "ID:"
 
-struct LyricsProperties
-{
-    LyricsProperties()
-    {
+struct LyricsProperties {
+    LyricsProperties() {
         m_nTimeOffset = 0;
         m_lyrContentType = LCT_UNKNOWN;
     }
@@ -97,8 +92,7 @@ protected:
 
 };
 
-class CLyrTagNameValueMap
-{
+class CLyrTagNameValueMap {
 public:
     CLyrTagNameValueMap(LyricsProperties &prop, uint32_t tagMask = LTT_ALL_TAG);
 
@@ -128,27 +122,25 @@ public:
 
     void remove(int nIndex);
 
-    struct Item
-    {
-        string            strLrcName;
-        string            strTxtName;
-        LyrTagType        tagType;
-        string            *pstrValue;
+    struct Item {
+        string                      strLrcName;
+        string                      strTxtName;
+        LyrTagType                  tagType;
+        string                      *pstrValue;
     };
 
 protected:
     void onSetValue(int nIndex);
 
 protected:
-    uint32_t                m_tagMask;
-    vector<Item>        m_vItems;
-    LyricsProperties    &m_prop;
-    string                m_strOffset;
+    uint32_t                    m_tagMask;
+    vector<Item>                m_vItems;
+    LyricsProperties            &m_prop;
+    string                      m_strOffset;
 
 };
 
-class CLrcTag : public LyricsProperties
-{
+class CLrcTag : public LyricsProperties {
 public:
     CLrcTag(uint32_t tagMask = LTT_ALL_TAG) { m_tagMask = tagMask; }
 
@@ -170,7 +162,7 @@ public:
     cstr_t getMD5() { return m_md5OfLyrContent.c_str(); }
 
 protected:
-    string                  m_md5OfLyrContent;
-    uint32_t                m_tagMask;
+    string                      m_md5OfLyrContent;
+    uint32_t                    m_tagMask;
 
 };

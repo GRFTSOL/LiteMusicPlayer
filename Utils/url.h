@@ -13,4 +13,3 @@ void uriQuote(const char *szLocal, char *szInet, int nLenMax);
 // Convert %20 etc to blank space...
 bool uriIsQuoted(cstr_t str);
 string uriUnquote(cstr_t str);
-

@@ -16,79 +16,74 @@ class CSkinAnimation;
 class SXNode;
 class CSkinWnd;
 
-typedef vector<CUIObject *>        VecUIObjects;
-typedef list<CUIObject *>        ListUIObjects;
+typedef vector<CUIObject *> VecUIObjects;
+typedef list<CUIObject *> ListUIObjects;
 
-enum LayoutParams
-{
+enum LayoutParams {
     // For both
-    LAYOUT_WIDTH_WRAP_CONENT        = 1 << 0,
-    LAYOUT_HEIGHT_WRAP_CONENT        = 1 << 1,
+    LAYOUT_WIDTH_WRAP_CONENT    = 1 << 0,
+    LAYOUT_HEIGHT_WRAP_CONENT   = 1 << 1,
 
     // Only for vertical linear container
-    LAYOUT_WIDTH_MATCH_PARENT        = 1 << 2,
-    LAYOUT_ALIN_HORZ_CENTER            = 1 << 3,
-    LAYOUT_ALIN_RIGHT                = 1 << 4,
+    LAYOUT_WIDTH_MATCH_PARENT   = 1 << 2,
+    LAYOUT_ALIN_HORZ_CENTER     = 1 << 3,
+    LAYOUT_ALIN_RIGHT           = 1 << 4,
 
     // Only for horizontal linear container
-    LAYOUT_HEIGHT_MATCH_PARENT        = 1 << 5,
-    LAYOUT_ALIN_VERT_CENTER            = 1 << 6,
-    LAYOUT_ALIN_BOTTOM                = 1 << 7,
+    LAYOUT_HEIGHT_MATCH_PARENT  = 1 << 5,
+    LAYOUT_ALIN_VERT_CENTER     = 1 << 6,
+    LAYOUT_ALIN_BOTTOM          = 1 << 7,
 };
 
-enum BLT_MODE
-{
-    BLT_COPY,            // 直接拷贝
-    BLT_STRETCH,        // 进行伸缩复制
-    BLT_TILE            // 平铺复制，自动判断是X方向还是Y方向
+enum BLT_MODE {
+    BLT_COPY,                        // 直接拷贝
+    BLT_STRETCH,                     // 进行伸缩复制
+    BLT_TILE                         // 平铺复制，自动判断是X方向还是Y方向
 };
 
 BLT_MODE bltModeFromStr(cstr_t szBltMode);
 
 BlendPixMode blendPixModeFromStr(cstr_t szBpm);
 
-enum AlginText
-{
-    AT_LEFT        = DT_LEFT,
-    AT_CENTER    = DT_CENTER,
-    AT_RIGHT    = DT_RIGHT,
-    AT_TOP        = DT_TOP,
-    AT_VCENTER    = DT_VCENTER,
-    AT_BOTTOM    = DT_BOTTOM,
+enum AlginText {
+    AT_LEFT                     = DT_LEFT,
+    AT_CENTER                   = DT_CENTER,
+    AT_RIGHT                    = DT_RIGHT,
+    AT_TOP                      = DT_TOP,
+    AT_VCENTER                  = DT_VCENTER,
+    AT_BOTTOM                   = DT_BOTTOM,
 };
 
 uint32_t alignTextFromStr(cstr_t szAlignText);
 void alignTextToStr(uint32_t dwAlignTextFlags, string &str);
 
-class CUIObjProperty
-{
+class CUIObjProperty {
 public:
     CUIObjProperty() { bToXmlAttrib = true; valueType = VT_INT; }
-    enum VALUE_TYPE
-    {
-        VT_INT,                // 整型数值
-        VT_ID,                // ID of controls
-        VT_STR,                // 字符串值
-        VT_FILE,            // options 是文件扩展名列表
+    enum VALUE_TYPE {
+        VT_INT,                          // 整型数值
+        VT_ID,                           // ID of controls
+        VT_STR,                          // 字符串值
+        VT_FILE,                         // options 是文件扩展名列表
         VT_IMG_FILE,
-        VT_IMAGE,            // Image file(strValue) and rect(options[0, 1])
+        VT_IMAGE,                        // Image file(strValue) and rect(options[0, 1])
         VT_VAR_INT,
-        VT_RECT,            // %d, %d, %d, %d 型的值
-        VT_BOOL_STR,        // bool 值
-        VT_COMB_STR,        // options 是可以选择的字符串列表
-        VT_COLOR,            // color
-        VT_FONT_NAME,        // font
+        VT_RECT,                         // %d, %d, %d, %d 型的值
+        VT_BOOL_STR,                     // bool 值
+        VT_COMB_STR,                     // options 是可以选择的字符串列表
+        VT_COLOR,                        // color
+        VT_FONT_NAME,                    // font
     };
-    string        name;
-    string        desc;        // 描述
-    string        strValue;
-    VALUE_TYPE    valueType;
-    bool        bToXmlAttrib;
+    string                      name;
+    string                      desc;               // 描述
+    string                      strValue;
+    VALUE_TYPE                  valueType;
+    bool                        bToXmlAttrib;
 
-    vector<string>    options;
+    vector<string>              options;
 
     // 子属性
-    vector<CUIObjProperty>        childProps;
+    vector<CUIObjProperty>      childProps;
 
     void setValue(int value);
 
@@ -96,8 +91,7 @@ public:
 
 };
 
-class CUIObjProperties : public list<CUIObjProperty>
-{
+class CUIObjProperties : public list<CUIObjProperty> {
 public:
     void addPropStr(cstr_t szName, cstr_t szValue, bool bToXmlAttrib = true);
     void addPropID(cstr_t szName, cstr_t szValue, bool bToXmlAttrib = true);
@@ -123,62 +117,61 @@ public:
 
 };
 
-enum
-{
-    UO_MSG_WANT_MOUSEMOVE    = 1,
-    UO_MSG_WANT_LBUTTON        = 1 << 1,
-    UO_MSG_WANT_RBUTTON        = 1 << 2,
-    UO_MSG_WANT_KEY            = 1 << 3,
-    UO_MSG_WANT_ENTER_KEY    = 1 << 4,
-    UO_MSG_WANT_ALL_KEYS    = 1 << 5,
-    UO_MSG_WANT_MOUSEWHEEL    = 1 << 6,
-    UO_MSG_WANT_MENU_KEY    = 1 << 7,
-    UO_MSG_WANT_CUSTOM_CMD    = 1 << 8,
-    UO_MSG_WANT_MENU_CMD    = 1 << 9,
-    UO_MSG_WANT_ALL            = 0xFFFFFFFF
+enum {
+    UO_MSG_WANT_MOUSEMOVE       = 1,
+    UO_MSG_WANT_LBUTTON         = 1 << 1,
+    UO_MSG_WANT_RBUTTON         = 1 << 2,
+    UO_MSG_WANT_KEY             = 1 << 3,
+    UO_MSG_WANT_ENTER_KEY       = 1 << 4,
+    UO_MSG_WANT_ALL_KEYS        = 1 << 5,
+    UO_MSG_WANT_MOUSEWHEEL      = 1 << 6,
+    UO_MSG_WANT_MENU_KEY        = 1 << 7,
+    UO_MSG_WANT_CUSTOM_CMD      = 1 << 8,
+    UO_MSG_WANT_MENU_CMD        = 1 << 9,
+    UO_MSG_WANT_ALL             = 0xFFFFFFFF
 };
 
 bool isTRUE(cstr_t szValue);
 
-#define BOOLTOSTR(bValue)        (bValue ? "true" : "false")
+#define BOOLTOSTR(bValue)   (bValue ? "true" : "false")
 
-#define GET_ID_BY_NAME(_id)        _id = getIDByName(#_id)
-#define GET_ID_BY_NAME2(_id1, _id2)        { _id1 = getIDByName(#_id1); _id2 = getIDByName(#_id2); }
-#define GET_ID_BY_NAME3(_id1, _id2, _id3)        { _id1 = getIDByName(#_id1); _id2 = getIDByName(#_id2); _id3 = getIDByName(#_id3); }
-#define GET_ID_BY_NAME4(_id1, _id2, _id3, _id4)        { _id1 = getIDByName(#_id1); _id2 = getIDByName(#_id2); _id3 = getIDByName(#_id3); _id4 = getIDByName(#_id4); }
+#define GET_ID_BY_NAME(_id) _id = getIDByName(#_id)
+#define GET_ID_BY_NAME2(_id1, _id2) { _id1 = getIDByName(#_id1); _id2 = getIDByName(#_id2); }
+#define GET_ID_BY_NAME3(_id1, _id2, _id3)   { _id1 = getIDByName(#_id1); _id2 = getIDByName(#_id2); _id3 = getIDByName(#_id3); }
+#define GET_ID_BY_NAME4(_id1, _id2, _id3, _id4) { _id1 = getIDByName(#_id1); _id2 = getIDByName(#_id2); _id3 = getIDByName(#_id3); _id4 = getIDByName(#_id4); }
 
-#define SZ_TRUE                "true"
+#define SZ_TRUE             "true"
 #define SZ_FALSE            "false"
 
 // PN = Property Name
-#define SZ_PN_NAME            "Name"
-#define SZ_PN_TEXT            "Text"
+#define SZ_PN_NAME          "Name"
+#define SZ_PN_TEXT          "Text"
 #define SZ_PN_ID            "ID"
-#define SZ_PN_LEFT            "Left"
-#define SZ_PN_TOP            "Top"
-#define SZ_PN_WIDTH            "width"
+#define SZ_PN_LEFT          "Left"
+#define SZ_PN_TOP           "Top"
+#define SZ_PN_WIDTH         "width"
 #define SZ_PN_HEIGHT        "height"
-#define SZ_PN_TOOLTIP        "ToolTip"
-#define SZ_PN_EXTENDS        "Extends"
+#define SZ_PN_TOOLTIP       "ToolTip"
+#define SZ_PN_EXTENDS       "Extends"
 
-#define SZ_PN_PROPERTY        "Property"
+#define SZ_PN_PROPERTY      "Property"
 
-#define SZ_PN_IMAGE            "Image"
+#define SZ_PN_IMAGE         "Image"
 #define SZ_PN_IMAGE_SIZE    "ImageSize"
-#define SZ_PN_IMAGE_POS        "ImagePos"
-#define SZ_PN_IMAGERECT        "ImageRect"
+#define SZ_PN_IMAGE_POS     "ImagePos"
+#define SZ_PN_IMAGERECT     "ImageRect"
 
-#define SZ_PN_RECT            "Rect"
+#define SZ_PN_RECT          "Rect"
 #define SZ_PN_MARGIN        "Margin"
-#define SZ_PN_PADDING        "Padding"
-#define SZ_PN_LAYOUT_PARAMS    "LayoutParams"
+#define SZ_PN_PADDING       "Padding"
+#define SZ_PN_LAYOUT_PARAMS "LayoutParams"
 #define SZ_PN_WEIGHT        "Weight"
-#define SZ_PN_MIN_WIDTH        "MinWidth"
+#define SZ_PN_MIN_WIDTH     "MinWidth"
 #define SZ_PN_MIN_HEIGHT    "MinHeight"
-#define SZ_PN_FIXED_WIDTH    "fixedWidth"
-#define SZ_PN_FIXED_HEIGHT    "fixedHeight"
+#define SZ_PN_FIXED_WIDTH   "fixedWidth"
+#define SZ_PN_FIXED_HEIGHT  "fixedHeight"
 
-#define SZ_PN_LINK            "Link"
+#define SZ_PN_LINK          "Link"
 
 //
 // declare getClassName, isKindOf, className of classes derived from CUIObject
@@ -201,8 +194,7 @@ public:
 #define UIOBJECT_CLASS_NAME_IMP(_ClassName, szClassName)    \
     cstr_t _ClassName::ms_szClassName = szClassName;
 
-class CSXNodeProperty
-{
+class CSXNodeProperty {
 public:
     CSXNodeProperty(SXNode *pNode1, SXNode *pNode2);
 
@@ -216,18 +208,17 @@ public:
     int getPropertyInt(cstr_t szPropName, int nValueIfInexist);
 
 protected:
-    SXNode        *m_pNode1, *m_pNode2;
+    SXNode                      *m_pNode1, *m_pNode2;
 
 };
 
-class CUIObject  
-{
+class CUIObject {
 public:
     CUIObject();
     virtual ~CUIObject();
 
     enum BackgroundType {
-        BG_NONE,    // Use the background of parent.
+        BG_NONE,                         // Use the background of parent.
         BG_COLOR,
         BG_IMAGE,
     };
@@ -319,7 +310,7 @@ public:
     bool isParentVisible();
 
     inline bool isEnable() { return m_enable; }
-    inline void setEnable(bool bEnable) { m_enable = bEnable; } 
+    inline void setEnable(bool bEnable) { m_enable = bEnable; }
 
     inline bool isUseParentBg() { return m_bgType == BG_NONE; }
     // inline void SetUseParentBg(bool bUseSkinBg) { m_bgType = BG_IMAGE; }
@@ -375,7 +366,7 @@ public:
     virtual CSkinContainer *getContainerIf() { return nullptr; }
 
     void tryToCallInitialUpdate()
-    { if (!m_bInitialUpdated) { m_bInitialUpdated = true; onInitialUpdate(); } }
+        { if (!m_bInitialUpdated) { m_bInitialUpdated = true; onInitialUpdate(); } }
 
 protected:
 #ifdef _SKIN_EDITOR_
@@ -385,70 +376,70 @@ protected:
 #endif // _SKIN_EDITOR_
 
 public:
-    CFormula    m_formTop;
-    CFormula    m_formLeft;
-    CFormula    m_formWidth;
-    CFormula    m_formHeight;
+    CFormula                    m_formTop;
+    CFormula                    m_formLeft;
+    CFormula                    m_formWidth;
+    CFormula                    m_formHeight;
 
-    uint32_t        m_layoutParams;
-    uint16_t        m_weight;
-    uint16_t        m_minWidth, m_minHeight;    // The minimum width and height
-    bool        m_fixedWidth, m_fixedHeight;
+    uint32_t                    m_layoutParams;
+    uint16_t                    m_weight;
+    uint16_t                    m_minWidth, m_minHeight; // The minimum width and height
+    bool                        m_fixedWidth, m_fixedHeight;
 
-    CRect        m_rcObj;        // The whole area of the UIObject, including its border.
-    CRect        m_rcContent;    // The content area of the UIObject, for example: for TextButton, it's the text area.
+    CRect                       m_rcObj;            // The whole area of the UIObject, including its border.
+    CRect                       m_rcContent;        // The content area of the UIObject, for example: for TextButton, it's the text area.
 
     // For differences between margin and padding: http://stackoverflow.com/questions/4619899/difference-between-a-views-padding-and-margin
-    CRect        m_rcMargin;        // The margin of UIObject (left, top, right, bottom)
-    CRect        m_rcPadding;    // The padding of UIObject (left, top, right, bottom)
+    CRect                       m_rcMargin;         // The margin of UIObject (left, top, right, bottom)
+    CRect                       m_rcPadding;        // The padding of UIObject (left, top, right, bottom)
 
     // auto allocated uni-ID by CSkinWnd.
-    int            m_autoUniID;
+    int                         m_autoUniID;
 
-    int            m_id;
-    string        m_strName;
+    int                         m_id;
+    string                      m_strName;
 
-    int            m_msgNeed;        // message mask is used to specify what messages ui objects want to process
-    string        m_strText, m_strTextEnglish;
-    bool        m_enable;        // Is control being enabled?
-    bool        m_visible;
-    bool        m_hideIfWndInactive;
-    bool        m_bHideIfMouseInactive;
+    int                         m_msgNeed;          // message mask is used to specify what messages ui objects want to process
+    string                      m_strText, m_strTextEnglish;
+    bool                        m_enable;           // Is control being enabled?
+    bool                        m_visible;
+    bool                        m_hideIfWndInactive;
+    bool                        m_bHideIfMouseInactive;
 
     /**
      * Background related properties.
      **/
-    BackgroundType        m_bgType;
+    BackgroundType              m_bgType;
 
     // Background color
-    CColor                m_clrBg, m_clrBgOrg;
+    CColor                      m_clrBg, m_clrBgOrg;
 
     // Background images
-    CScaleImagePainter    m_bgImagePainter;
-    CSFImage            m_imageBg, m_imageBgMask;
-    BlendPixMode        m_bgBpm;
+    CScaleImagePainter          m_bgImagePainter;
+    CSFImage                    m_imageBg, m_imageBgMask;
+    BlendPixMode                m_bgBpm;
 
-    bool        m_translucencyWithSkin;    // set the alpha of UIObject to the skin, if this flag is set.
-    int16_t        m_opacity;
+    bool                        m_translucencyWithSkin; // set the alpha of UIObject to the skin, if this flag is set.
+    int16_t                     m_opacity;
 
-    string        m_strMaskImage;
-    CSFImage    m_imgMask;
-
-protected:
-    static cstr_t        ms_szClassName;
-
-    string            m_strTooltip;
-    bool            m_bTempTooltip;
-
-    AnimateType        m_animateType;
-    int                m_animateDuration;
-
-    CSkinWnd        *m_pSkin;
-    CSkinContainer    *m_pContainer;
+    string                      m_strMaskImage;
+    CSFImage                    m_imgMask;
 
 protected:
-    bool            m_bCreated;
-    bool            m_bInitialUpdated;
+    static cstr_t               ms_szClassName;
+
+    string                      m_strTooltip;
+    bool                        m_bTempTooltip;
+
+    AnimateType                 m_animateType;
+    int                         m_animateDuration;
+
+    CSkinWnd                    *m_pSkin;
+    CSkinContainer              *m_pContainer;
+
+protected:
+    bool                        m_bCreated;
+    bool                        m_bInitialUpdated;
 
     friend class CSkinWnd;
     friend class CSkinContainer;

@@ -3,10 +3,10 @@
 #include "ClientCom.h"
 #include "MLProtocol.h"
 
+
 int downloadUrl(cstr_t szUrl, cstr_t szRefer, int &nHttpCode, string &buffRet, cstr_t szUserAgent = nullptr);
 
-class CHttpClient  
-{
+class CHttpClient {
 public:
     CHttpClient();
     virtual ~CHttpClient();
@@ -34,21 +34,21 @@ public:
     CHttpRequestProtocol &getHttpRequestProtocol() { return m_httpRequest; }
 
 protected:
-    CClientCom        m_ClientCom;
+    CClientCom                  m_ClientCom;
     CHttpRequestProtocol        m_httpRequest;
-    CHttpReturnProtocol            m_httpReturn;
-    CNetFile        m_NetFile;
+    CHttpReturnProtocol         m_httpReturn;
+    CNetFile                    m_NetFile;
 
-    string            m_strHost;
-    int                m_nHostPort;
-    string            m_strServer;
-    int                m_nServerPort;
-    string            m_strUserAgent;
+    string                      m_strHost;
+    int                         m_nHostPort;
+    string                      m_strServer;
+    int                         m_nServerPort;
+    string                      m_strUserAgent;
 
     //
     // proxy
-    bool            m_bUseProxy;
-    string            m_strProxyServer;
-    string            m_strBase64ProxyUserPass;
+    bool                        m_bUseProxy;
+    string                      m_strProxyServer;
+    string                      m_strBase64ProxyUserPass;
 
 };

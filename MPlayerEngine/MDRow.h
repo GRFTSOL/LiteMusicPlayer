@@ -1,18 +1,13 @@
-// MDRow.h: interface for the CMDRow class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MDROW_H__71277116_FBC6_4744_99BB_6224B78CF6A3__INCLUDED_)
-#define AFX_MDROW_H__71277116_FBC6_4744_99BB_6224B78CF6A3__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef MPlayerEngine_MDRow_h
+#define MPlayerEngine_MDRow_h
+
 
 #include "IMPlayer.h"
 
-class CMDRow : public IMediaDecode
-{
+
+class CMDRow : public IMediaDecode {
 OBJ_REFERENCE_DECL
 public:
     CMDRow();
@@ -44,7 +39,7 @@ public:
     virtual uint32_t getPos();
 
     // volume
-    virtual MLRESULT setVolume(int nVolume, int nBanlance);
+    virtual MLRESULT setVolume(int volume, int nBanlance);
 
 protected:
     static void decodeThread(void *lpParam);
@@ -52,19 +47,19 @@ protected:
     void decodeThreadProc();
 
 protected:
-    IMediaOutput    *m_pOutput;
-    IMediaInput        *m_pInput;
-    IMPlayer        *m_pPlayer;
-    IMemAllocator    *m_pMemAllocator;
-    PLAYER_STATE    m_state;
-    bool            m_bPaused;
-    bool            m_bKillThread;
-    int32_t            m_nSeekPos;
-    bool            m_bSeekFlag;
-    uint32_t            m_nLengthMs;
+    IMediaOutput                *m_pOutput;
+    IMediaInput                 *m_pInput;
+    IMPlayer                    *m_pPlayer;
+    IMemAllocator               *m_pMemAllocator;
+    PLAYER_STATE                m_state;
+    bool                        m_bPaused;
+    bool                        m_bKillThread;
+    int32_t                     m_nSeekPos;
+    bool                        m_bSeekFlag;
+    uint32_t                    m_nLengthMs;
 
-    CThread            m_threadDecode;
+    CThread                     m_threadDecode;
 
 };
 
-#endif // !defined(AFX_MDROW_H__71277116_FBC6_4744_99BB_6224B78CF6A3__INCLUDED_)
+#endif // !defined(MPlayerEngine_MDRow_h)

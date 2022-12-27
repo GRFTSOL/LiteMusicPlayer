@@ -36,7 +36,7 @@ public:
 
     virtual void enumProperties(CUIObjProperties &listProperties);
 
-    virtual bool setProperty(cstr_t szProperty, cstr_t szValue);
+    virtual bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 
     virtual int fromXML(CSkinContainer *pContainer, SXNode *pXmlNode);
 

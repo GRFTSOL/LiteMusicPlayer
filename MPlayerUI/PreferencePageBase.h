@@ -91,11 +91,11 @@ public:
 public:
     CPagePfBase(PreferPageID pfPageId, cstr_t szAssociateTabButtonId);
 
-    void onInitialUpdate();
+    void onInitialUpdate() override;
 
-    void onDestroy();
+    void onDestroy() override;
 
-    bool onCustomCommand(int nId);
+    bool onCustomCommand(int nId) override;
 
     void addOptBool(EventType evtType, cstr_t szSection, cstr_t szSettingName, bool bDefValue, cstr_t szCtrlId);
     void addOptComboStr(OptComboStr &optComboStr) { m_vOptComboStr.push_back(optComboStr); }
@@ -103,7 +103,7 @@ public:
 
     void initCheckButtons();
 
-    void onUIObjNotify(IUIObjNotify *pNotify);
+    void onUIObjNotify(IUIObjNotify *pNotify) override;
 
     PreferPageID getPfPageID() const { return m_pfPageId; }
     int getAssociateTabButtonId() const { return m_nAssociateTabButtonId; }

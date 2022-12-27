@@ -50,23 +50,23 @@ public:
     typedef vector<Button>        vec_buttons;
 
 public:
-    void onCreate();
+    void onCreate() override;
 
     bool onMouseMove(uint32_t nFlags, CPoint point);
-    bool onLButtonUp(uint32_t nFlags, CPoint point);
-    bool onLButtonDown(uint32_t nFlags, CPoint point);
-    bool onLButtonDblClk(uint32_t nFlags, CPoint point);
+    bool onLButtonUp(uint32_t nFlags, CPoint point) override;
+    bool onLButtonDown(uint32_t nFlags, CPoint point) override;
+    bool onLButtonDblClk(uint32_t nFlags, CPoint point) override;
 
-    void onSize();
+    void onSize() override;
 
-    void draw(CRawGraph *canvas);
+    void draw(CRawGraph *canvas) override;
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 #ifdef _SKIN_EDITOR_
     void enumProperties(CUIObjProperties &listProperties);
 #endif // _SKIN_EDITOR_
 
-    virtual int fromXML(SXNode *pXmlNode);
+    virtual int fromXML(SXNode *pXmlNode) override;
 
 #ifdef _SKIN_EDITOR_
     // write Button in XML

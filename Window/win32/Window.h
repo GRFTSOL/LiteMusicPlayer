@@ -1,6 +1,5 @@
-// BaseWnd.h: interface for the Window class.
-//
-//////////////////////////////////////////////////////////////////////
+#pragma once
+
 #ifndef _ML_WINDOW_H_INC_
 #define _ML_WINDOW_H_INC_
 
@@ -8,14 +7,13 @@
 #include "Cursor.h"
 
 
-const int ML_WM_LANGUAGE_CHANGED        = (WM_USER + 1212);
-const int ML_LANGUAGE_CHANGED_PARAM        = 172172;
+const int ML_WM_LANGUAGE_CHANGED = (WM_USER + 1212);
+const int ML_LANGUAGE_CHANGED_PARAM = 172172;
 #define ML_WM_USER                (WM_USER + 1213)
 
 LRESULT CALLBACK BaseWndProc(HWND hWnd, uint32_t message, WPARAM wParam, LPARAM lParam);
 
-class Window : public IWindow
-{
+class Window : public IWindow {
 public:
     Window();
     virtual ~Window();
@@ -140,11 +138,11 @@ public:
 
 public:
     // Translucency related APIs
-    bool                m_bTranslucencyLayered;                // Is following alpha setting enabled?
+    bool                        m_bTranslucencyLayered; // Is following alpha setting enabled?
 
     // Alpha
-    int                    m_nAlpha;
-    bool                m_bClickThrough;
+    int                         m_nAlpha;
+    bool                        m_bClickThrough;
 
     virtual void setTransparent(uint8_t nAlpha, bool bClickThrough);
     virtual bool isClickThrough() { return m_bClickThrough; }
@@ -156,8 +154,7 @@ public:
     void attach(HWND hWnd);
     void detach();
 
-    HWND getHandle()
-    {
+    HWND getHandle() {
         return m_hWnd;
     }
     // void SetWndHandle(HWND hWnd);
@@ -167,9 +164,9 @@ public:
     virtual LRESULT wndProc(uint32_t message, WPARAM wParam, LPARAM lParam);
 
 protected:
-    HWND                m_hWnd;
-    WndSizeMode            m_WndSizeMode;
+    HWND                        m_hWnd;
+    WndSizeMode                 m_WndSizeMode;
 
 };
 
-#endif // !defined(AFX_BASEWND_H__E1E1D147_5970_4781_97AB_BE14D02F0FF4__INCLUDED_)
+#endif // !defined(Window_win32_Window_h)

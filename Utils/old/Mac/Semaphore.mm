@@ -1,59 +1,49 @@
-// Semaphore.cpp: implementation of the Semaphore class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include <limits.h>
 #include "Semaphore.h"
 #include <Foundation/Foundation.h>
 
 
-class _SemaphoreInternal
-{
+class _SemaphoreInternal {
 public:
-    _SemaphoreInternal()
-    {
+    _SemaphoreInternal() {
         lock = [NSObject alloc];
     }
-    
-    ~_SemaphoreInternal()
-    {
+
+    ~_SemaphoreInternal() {
         [lock release];
     }
 
-    NSObject    *lock;
+    NSObject                    *lock;
 };
 
 
-Semaphore::semaphore(int nCount)
-{
+Semaphore::semaphore(int nCount) {
     m_internal = new _SemaphoreInternal();
     m_nCount = nCount;
     m_nLockCount = 0;
     m_mutex = new Mutex();
 }
 
-Semaphore::~Semaphore()
-{
+Semaphore::~Semaphore() {
     delete m_mutex;
     delete m_internal;
 }
 
-bool Semaphore::Wait(int ms)
-{
-    bool    bAcquire = false;
+bool Semaphore::Wait(int ms) {
+    bool bAcquire = false;
     @synchronized(m_internal->lock) {
-        if (m_nLockCount < m_nCount)
+        if (m_nLockCount < m_nCount) {
             m_nLockCount++;
-        else if (m_nLockCount == m_nCount)
+        } else if (m_nLockCount == m_nCount) {
             bAcquire = true;
+        }
     }
-    while (bAcquire)
-    {
-        if (!m_mutex->Acquire(ms))
+    while (bAcquire) {
+        if (!m_mutex->Acquire(ms)) {
             return false;
+        }
         @synchronized(m_internal->lock) {
-            if (m_nLockCount < m_nCount)
-            {
+            if (m_nLockCount < m_nCount) {
                 m_nLockCount++;
                 return true;
             }
@@ -63,12 +53,13 @@ bool Semaphore::Wait(int ms)
     return true;
 }
 
-void Semaphore::signal()
-{
+void Semaphore::signal() {
     @synchronized(m_internal->lock) {
-        if (m_nLockCount > 0)
+        if (m_nLockCount > 0) {
             m_nLockCount--;
-        if (m_nLockCount == m_nCount - 1)
+        }
+        if (m_nLockCount == m_nCount - 1) {
             m_mutex->Release();
+        }
     }
 }

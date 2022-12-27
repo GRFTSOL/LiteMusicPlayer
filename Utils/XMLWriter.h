@@ -1,7 +1,6 @@
 #pragma once
 
-class CXMLWriter  
-{
+class CXMLWriter {
 public:
     CXMLWriter(bool bWriteStartDoc = true);
     virtual ~CXMLWriter();
@@ -57,18 +56,17 @@ protected:
     cstr_t getCurElementName();
 
 protected:
-    string                m_indent;
-    vector<string>        m_vElementStack;
-    string            m_strBuff;
-    string            m_strTemp;    // temp buffer to save new/delete time.
+    string                      m_indent;
+    vector<string>              m_vElementStack;
+    string                      m_strBuff;
+    string                      m_strTemp;          // temp buffer to save new/delete time.
 
-    enum WritePos
-    {
+    enum WritePos {
         WP_READY,
         WP_ELEMENT_HEAD,
         WP_ELEMENT_BODY,
     };
 
-    WritePos            m_wp;
+    WritePos                    m_wp;
 
 };

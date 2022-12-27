@@ -1,14 +1,9 @@
-// SplashScreenWnd.h: interface for the CSplashScreenWnd class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #if !defined(_SPLASHSCREENWND_H_)
 #define _SPLASHSCREENWND_H_
 
 #pragma once
 
-class CSplashScreenWnd : public Window  
-{
+class CSplashScreenWnd : public Window {
 public:
     CSplashScreenWnd();
     virtual ~CSplashScreenWnd();

@@ -48,7 +48,7 @@ public:
 	virtual uint32 GetPos();
 
 	// volume
-	virtual MLRESULT setVolume(int nVolume, int nBanlance);
+	virtual MLRESULT setVolume(int volume, int nBanlance);
 
 	struct AUDIO_INFO
 	{

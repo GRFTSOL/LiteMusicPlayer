@@ -6,25 +6,24 @@ Author   :    xhy
 Purpose  :    调整窗口大小的类
 *********************************************************************/
 
-#if !defined(AFX_UIWNDSIZING_H__B7400FE0_78AA_11D5_9E04_02608CAD9330__INCLUDED_)
-#define AFX_UIWNDSIZING_H__B7400FE0_78AA_11D5_9E04_02608CAD9330__INCLUDED_
+#pragma once
 
-class WndResizer
-{
+#ifndef Window_mac_WndResizer_h
+#define Window_mac_WndResizer_h
+
+class WndResizer {
 public:
-    enum ResizeDirection
-    {
-        RD_TOP                = 0x1,
-        RD_LEFT                = 0x1 << 1,
-        RD_RIGHT            = 0x1 << 2,
-        RD_BOTTOM            = 0x1 << 3,
+    enum ResizeDirection {
+        RD_TOP                      = 0x1,
+        RD_LEFT                     = 0x1 << 1,
+        RD_RIGHT                    = 0x1 << 2,
+        RD_BOTTOM                   = 0x1 << 3,
     };
 
-    struct ResizeArea
-    {
-        int            nID;
-        uint32_t        resizeDirection;
-        CRect        rcResizeArea;
+    struct ResizeArea {
+        int                         nID;
+        uint32_t                    resizeDirection;
+        CRect                       rcResizeArea;
     };
 
     typedef list<ResizeArea>        ListResizeArea;
@@ -73,23 +72,23 @@ protected:
     void setCursor();
 
 protected:
-    ListResizeArea    m_listResizeArea;
+    ListResizeArea              m_listResizeArea;
 
-    bool            m_fixedWidth, m_fixedHeight;
-    bool            m_bInstanceResizing;
-    bool            m_bResizingAutoCloseto;        // 是否在调整大小时, 自动靠近指定窗口
+    bool                        m_fixedWidth, m_fixedHeight;
+    bool                        m_bInstanceResizing;
+    bool                        m_bResizingAutoCloseto; // 是否在调整大小时, 自动靠近指定窗口
 
-    bool            m_bResizing;        // 是否在拖动窗口
-    uint32_t            m_ResizeDirection;
-    CRect            m_rcResizing;                    // 调整中的矩形的大小
+    bool                        m_bResizing;        // 是否在拖动窗口
+    uint32_t                    m_ResizeDirection;
+    CRect                       m_rcResizing;       // 调整中的矩形的大小
 
-    CPoint            m_ptOld;
-    Window          *m_pWnd;                // 窗口
+    CPoint                      m_ptOld;
+    Window                      *m_pWnd;            // 窗口
 
-    int                m_nMincx;        // 窗口最小宽度
-    int                m_nMincy;        // 窗口最小高度
-    Cursor            m_cursorArrow, m_cursorNWSE, m_cursorNESW, m_cursorWE, m_cursorNS;
+    int                         m_nMincx;           // 窗口最小宽度
+    int                         m_nMincy;           // 窗口最小高度
+    Cursor                      m_cursorArrow, m_cursorNWSE, m_cursorNESW, m_cursorWE, m_cursorNS;
 
 };
 
-#endif // !defined(AFX_UIWNDSIZING_H__B7400FE0_78AA_11D5_9E04_02608CAD9330__INCLUDED_)
+#endif // !defined(Window_mac_WndResizer_h)

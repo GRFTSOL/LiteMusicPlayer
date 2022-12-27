@@ -11,7 +11,7 @@ class CPagePfLyricsRoot : public CPagePfBase
 public:
     CPagePfLyricsRoot();
 
-    void onInitialUpdate();
+    void onInitialUpdate() override;
 
 };
 

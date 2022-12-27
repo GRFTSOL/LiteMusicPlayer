@@ -6,17 +6,19 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
+#pragma once
+
 #import <AppKit/AppKit.h>
 
-typedef map<int, NSTimer *>    MapNSTimer;
+typedef map<int, NSTimer *> MapNSTimer;
 
 class Window;
 
 @interface WindowMacImp : NSWindow <NSWindowDelegate> {
-    NSPoint             mInitPt;
+    NSPoint mInitPt;
 
-    MapNSTimer          mMapTimer;
-    Window              *mBaseWnd;
+    MapNSTimer mMapTimer;
+    Window *mBaseWnd;
 }
 
 - (void)setTimer:(int)idTimer duration:(int)duration;

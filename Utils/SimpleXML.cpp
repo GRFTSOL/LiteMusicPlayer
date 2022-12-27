@@ -1,7 +1,3 @@
- // SimpleXML.cpp: implementation of the CSimpleXML class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "Utils.h"
 #include "SimpleXML.h"
 #include "SimpleXMLParser.h"
@@ -9,39 +5,37 @@
 #include "XMLWriter.h"
 
 
-SXNode *dupSXNode(SXNode *pOrgNode)
-{
-    SXNode        *pNewNode;
+SXNode *dupSXNode(SXNode *pOrgNode) {
+    SXNode *pNewNode;
 
     pNewNode = new SXNode;
     assert(pNewNode);
-    if (!pNewNode)
+    if (!pNewNode) {
         return nullptr;
+    }
 
-    for (SXNode::iterator it = pOrgNode->listChildren.begin(); 
-        it != pOrgNode->listChildren.end(); ++it)
-    {
-        SXNode        *pChild = dupSXNode(*it);
+    for (SXNode::iterator it = pOrgNode->listChildren.begin();
+    it != pOrgNode->listChildren.end(); ++it)
+        {
+        SXNode *pChild = dupSXNode(*it);
         pNewNode->listChildren.push_back(pChild);
     }
 
     pNewNode->name = pOrgNode->name;
     pNewNode->strContent = pOrgNode->strContent;
 
-    pNewNode->listProperties.insert(pNewNode->listProperties.begin(), 
+    pNewNode->listProperties.insert(pNewNode->listProperties.begin(),
         pOrgNode->listProperties.begin(), pOrgNode->listProperties.end());
 
     return pNewNode;
 }
 
-SXNode::~SXNode()
-{
-    iterator    it, itEnd;
+SXNode::~SXNode() {
+    iterator it, itEnd;
 
     itEnd = listChildren.end();
-    for (it = listChildren.begin(); it != itEnd; ++it)
-    {
-        SXNode        *p = *it;
+    for (it = listChildren.begin(); it != itEnd; ++it) {
+        SXNode *p = *it;
         delete p;
     }
     listChildren.clear();
@@ -49,86 +43,84 @@ SXNode::~SXNode()
     listProperties.clear();
 }
 
-SXNode::ListProperties::iterator SXNode::FindProperty(cstr_t szPropName)
-{
-    ListProperties::iterator    it, itEnd;
+SXNode::ListProperties::iterator SXNode::FindProperty(cstr_t szPropName) {
+    ListProperties::iterator it, itEnd;
 
     itEnd = listProperties.end();
 
-    for (it = listProperties.begin(); it != itEnd; ++it)
-    {
-        Property    &prop = *it;
-        if (strcmp(szPropName, prop.name.c_str()) == 0)
+    for (it = listProperties.begin(); it != itEnd; ++it) {
+        Property &prop = *it;
+        if (strcmp(szPropName, prop.name.c_str()) == 0) {
             return it;
+        }
     }
 
     return listProperties.end();
 }
 
 // If not exists, nullptr will be returned
-cstr_t SXNode::getProperty(cstr_t szPropName)
-{
-    ListProperties::iterator    it = FindProperty(szPropName);
-    if (it == listProperties.end())
+cstr_t SXNode::getProperty(cstr_t szPropName) {
+    ListProperties::iterator it = FindProperty(szPropName);
+    if (it == listProperties.end()) {
         return nullptr;
+    }
 
     return (*it).strValue.c_str();
 }
 
-int SXNode::getPropertyInt(cstr_t szPropName)
-{
-    ListProperties::iterator    it = FindProperty(szPropName);
-    if (it == listProperties.end())
+int SXNode::getPropertyInt(cstr_t szPropName) {
+    ListProperties::iterator it = FindProperty(szPropName);
+    if (it == listProperties.end()) {
         return 0;
+    }
 
     return atoi((*it).strValue.c_str());
 }
 
-int SXNode::getPropertyInt(cstr_t szPropName, int nValueIfInexist)
-{
-    ListProperties::iterator    it = FindProperty(szPropName);
-    if (it == listProperties.end())
+int SXNode::getPropertyInt(cstr_t szPropName, int nValueIfInexist) {
+    ListProperties::iterator it = FindProperty(szPropName);
+    if (it == listProperties.end()) {
         return nValueIfInexist;
+    }
 
     return atoi((*it).strValue.c_str());
 }
 
 // If not exists, "" will be returned.
-cstr_t SXNode::getPropertySafe(cstr_t szPropName)
-{
-    cstr_t        szValue;
+cstr_t SXNode::getPropertySafe(cstr_t szPropName) {
+    cstr_t szValue;
 
     szValue = getProperty(szPropName);
-    if (szValue)
+    if (szValue) {
         return szValue;
-    else
+    } else {
         return "";
+    }
 }
 
-bool SXNode::getPropertyBinData(cstr_t szPropName, string &buf)
-{
-    ListProperties::iterator    it = FindProperty(szPropName);
-    if (it == listProperties.end())
+bool SXNode::getPropertyBinData(cstr_t szPropName, string &buf) {
+    ListProperties::iterator it = FindProperty(szPropName);
+    if (it == listProperties.end()) {
         return false;
+    }
 
     Property &prop = *it;
     buf = prop.strValue;
     return true;
 }
 
-bool SXNode::getPropertyBase64Data(cstr_t szPropName, string &buf)
-{
-    ListProperties::iterator    it = FindProperty(szPropName);
-    if (it == listProperties.end())
+bool SXNode::getPropertyBase64Data(cstr_t szPropName, string &buf) {
+    ListProperties::iterator it = FindProperty(szPropName);
+    if (it == listProperties.end()) {
         return false;
+    }
 
     Property &prop = *it;
     buf = base64Decode(prop.strValue.c_str(), prop.strValue.size());
     return true;
 }
 
-void SXNode::addProperty(cstr_t szPropName, cstr_t szPropValue)
-{
+void SXNode::addProperty(cstr_t szPropName, cstr_t szPropValue) {
     assert(FindProperty(szPropName) == listProperties.end());
 
     Property prop;
@@ -137,69 +129,64 @@ void SXNode::addProperty(cstr_t szPropName, cstr_t szPropValue)
     listProperties.push_back(prop);
 }
 
-void SXNode::setProperty(cstr_t szPropName, cstr_t szPropValue)
-{
-    ListProperties::iterator    it = FindProperty(szPropName);
-    if (it == listProperties.end())
+void SXNode::setProperty(cstr_t szPropName, cstr_t szPropValue) {
+    ListProperties::iterator it = FindProperty(szPropName);
+    if (it == listProperties.end()) {
         addProperty(szPropName, szPropValue);
-    else
-    {
-        Property    &prop = *it;
+    } else {
+        Property &prop = *it;
         prop.strValue = szPropValue;
     }
 }
 
-void SXNode::eraseProperty(cstr_t szPropName)
-{
-    ListProperties::iterator    it = FindProperty(szPropName);
-    if (it != listProperties.end())
+void SXNode::eraseProperty(cstr_t szPropName) {
+    ListProperties::iterator it = FindProperty(szPropName);
+    if (it != listProperties.end()) {
         listProperties.erase(it);
+    }
 }
 
 // get first child same with the node name
-SXNode *SXNode::getChild(cstr_t szName)
-{
-    iterator    it, itEnd;
+SXNode *SXNode::getChild(cstr_t szName) {
+    iterator it, itEnd;
 
     itEnd = listChildren.end();
-    for (it = listChildren.begin(); it != itEnd; ++it)
-    {
-        SXNode        *p = *it;
-        if (strcmp(p->name.c_str(), szName) == 0)
+    for (it = listChildren.begin(); it != itEnd; ++it) {
+        SXNode *p = *it;
+        if (strcmp(p->name.c_str(), szName) == 0) {
             return p;
+        }
     }
 
     return nullptr;
 }
 
-void SXNode::toXML(CXMLWriter &xmlStream)
-{
+void SXNode::toXML(CXMLWriter &xmlStream) {
     xmlStream.writeStartElement(name.c_str());
 
     // write properties
     {
-        ListProperties::iterator    it, itEnd;
+        ListProperties::iterator it, itEnd;
 
         itEnd = listProperties.end();
-        for (it = listProperties.begin(); it != itEnd; ++it)
-        {
-            Property    &prop = *it;
+        for (it = listProperties.begin(); it != itEnd; ++it) {
+            Property &prop = *it;
             xmlStream.writeAttribute(prop.name.c_str(), prop.strValue.c_str());
         }
     }
 
     // write content
-    if (!strContent.empty())
+    if (!strContent.empty()) {
         xmlStream.writeString(strContent.c_str());
+    }
 
     // write children
     {
-        iterator    it, itEnd;
+        iterator it, itEnd;
 
         itEnd = listChildren.end();
-        for (it = listChildren.begin(); it != itEnd; ++it)
-        {
-            SXNode        *pNode = *it;
+        for (it = listChildren.begin(); it != itEnd; ++it) {
+            SXNode *pNode = *it;
             pNode->toXML(xmlStream);
         }
     }
@@ -233,54 +220,45 @@ void SXNode::toXML(CXMLWriter &xmlStream)
 }*/
 #endif
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
-CSimpleXML::CSimpleXML()
-{
+
+CSimpleXML::CSimpleXML() {
     m_pRoot = nullptr;
 }
 
-CSimpleXML::~CSimpleXML()
-{
+CSimpleXML::~CSimpleXML() {
     free();
 }
 
-void CSimpleXML::New(cstr_t szRootName)
-{
+void CSimpleXML::New(cstr_t szRootName) {
     free();
 
     m_pRoot = new SXNode;
     m_pRoot->name = szRootName;
 }
 
-bool CSimpleXML::parseFile(cstr_t szXmlFile, bool bNoProlog)
-{
+bool CSimpleXML::parseFile(cstr_t szXmlFile, bool bNoProlog) {
     string buf;
 
-    if (!readFile(szXmlFile, buf))
+    if (!readFile(szXmlFile, buf)) {
         return false;
+    }
 
     return parseData(buf.data(), buf.size(), bNoProlog);
 }
 
-bool CSimpleXML::parseData(const void *lpXmlData, size_t nLen, bool bNoProlog)
-{
+bool CSimpleXML::parseData(const void *lpXmlData, size_t nLen, bool bNoProlog) {
     free();
 
-    if (CMLBinXMLParser::isHeaderType((char *)lpXmlData))
-    {
-        CMLBinXMLParser            parser;
-        CMLBinXMLParser::MLBinXmlParseError    ret;
+    if (CMLBinXMLParser::isHeaderType((char *)lpXmlData)) {
+        CMLBinXMLParser parser;
+        CMLBinXMLParser::MLBinXmlParseError ret;
 
         ret = parser.parseData(lpXmlData, nLen, *this);
         return (ret == CMLBinXMLParser::E_OK);
-    }
-    else
-    {
-        CSimpleXMLParser        parser;
-        SimpleXMLParserError    ret;
+    } else {
+        CSimpleXMLParser parser;
+        SimpleXMLParserError ret;
 
         parser.m_bNoProlog = bNoProlog;
         ret = parser.parseData(lpXmlData, nLen, *this);
@@ -288,15 +266,16 @@ bool CSimpleXML::parseData(const void *lpXmlData, size_t nLen, bool bNoProlog)
     }
 }
 
-bool CSimpleXML::saveFile(cstr_t szXmlFile)
-{
-    if (!m_pRoot)
+bool CSimpleXML::saveFile(cstr_t szXmlFile) {
+    if (!m_pRoot) {
         return false;
+    }
 
-    CXMLWriter        xmlStream(m_encoding.empty());
+    CXMLWriter xmlStream(m_encoding.empty());
 
-    if (!m_encoding.empty())
+    if (!m_encoding.empty()) {
         xmlStream.writeStartDocument(m_encoding.c_str());
+    }
 
     m_pRoot->toXML(xmlStream);
 
@@ -305,10 +284,8 @@ bool CSimpleXML::saveFile(cstr_t szXmlFile)
     return xmlStream.saveAsFile(szXmlFile);
 }
 
-void CSimpleXML::free()
-{
-    if (m_pRoot)
-    {
+void CSimpleXML::free() {
+    if (m_pRoot) {
         delete m_pRoot;
         m_pRoot = nullptr;
     }
@@ -322,58 +299,54 @@ void CSimpleXML::free()
 //////////////////////////////////////////////////////////////////////////
 // CPPUnit test
 
-class CTestCaseSimpleXML : public CppUnit::TestFixture
-{
+class CTestCaseSimpleXML : public CppUnit::TestFixture {
     CPPUNIT_TEST_SUITE(CTestCaseSimpleXML);
     CPPUNIT_TEST(testSXNode);
     CPPUNIT_TEST(testParseCDATA);
     CPPUNIT_TEST_SUITE_END();
 
 protected:
-    void testParseCDATA()
-    {
-        CSimpleXML        xml;
-        cstr_t            SZ_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
-            "<root><![CDATA[value]]><![CDATA[value]]></root>";
+    void testParseCDATA() {
+        CSimpleXML xml;
+        cstr_t SZ_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
+        "<root><![CDATA[value]]><![CDATA[value]]></root>";
 
         CPPUNIT_ASSERT(xml.parseData(SZ_XML, strlen(SZ_XML)));
         CPPUNIT_ASSERT(xml.m_pRoot->name == "root");
         CPPUNIT_ASSERT(xml.m_pRoot->strContent == "valuevalue");
     }
 
-    void testSXNode()
-    {
-        SXNode        node;
+    void testSXNode() {
+        SXNode node;
 
-        cstr_t        SZ_NODE_NAME = "node";
-        cstr_t        SZ_CONTENT_NAME = "content";
-        cstr_t        SZ_PROP_NAME = "PropName_%d";
-        cstr_t        SZ_VALUE_NAME = "Value_%d";
-        int            i;
+        cstr_t SZ_NODE_NAME = "node";
+        cstr_t SZ_CONTENT_NAME = "content";
+        cstr_t SZ_PROP_NAME = "PropName_%d";
+        cstr_t SZ_VALUE_NAME = "Value_%d";
+        int i;
 
         node.name = SZ_NODE_NAME;
         node.strContent = SZ_CONTENT_NAME;
 
         // add property
-        for (i = 0; i < 5; i++)
-        {
-            char        szName[64], szValue[64];
-            cstr_t        p;
+        for (i = 0; i < 5; i++) {
+            char szName[64], szValue[64];
+            cstr_t p;
 
             sprintf(szName, SZ_PROP_NAME, i);
             sprintf(szValue, SZ_VALUE_NAME, i);
             node.addProperty(szName, szValue);
 
             p = node.getProperty(szName);
-            if (!p || !(strcmp(p, szValue) == 0))
+            if (!p || !(strcmp(p, szValue) == 0)) {
                 CPPUNIT_FAIL_T(stringPrintf("SXNode.getProperty(), case: %d, %s", i, szName).c_str());
+            }
         }
 
         // Erase property
-        for (i = 0; i < 1; i++)
-        {
-            char        szName[64], szValue[64];
-            cstr_t        p;
+        for (i = 0; i < 1; i++) {
+            char szName[64], szValue[64];
+            cstr_t p;
 
             sprintf(szName, SZ_PROP_NAME, i);
             sprintf(szValue, SZ_VALUE_NAME, i);
@@ -381,13 +354,14 @@ protected:
 
             node.eraseProperty(szName);
             p = node.getProperty(szName);
-            if (p)
+            if (p) {
                 CPPUNIT_FAIL_T(stringPrintf("SXNode.eraseProperty(), case: %d, %s", i, szName).c_str());
+            }
         }
 
         // To xml, and parse from xml
-        CXMLWriter        xmlWriter;
-        CSimpleXML        xml;
+        CXMLWriter xmlWriter;
+        CSimpleXML xml;
 
         node.toXML(xmlWriter);
         string &buf = xmlWriter.getBuffer();

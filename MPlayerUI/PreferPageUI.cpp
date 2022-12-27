@@ -14,7 +14,7 @@ public:
     {
     }
 
-    void onInitialUpdate()
+    void onInitialUpdate() override
     {
         CPagePfBase::onInitialUpdate();
 
@@ -29,7 +29,7 @@ public:
         updateLanguageInfo();
     }
 
-    bool onCustomCommand(int nId)
+    bool onCustomCommand(int nId) override
     {
         if (nId == getIDByName("CID_C_ON_TOP"))
         {
@@ -79,7 +79,7 @@ public:
         return true;
     }
 
-    virtual bool onCommand(int nId)
+    virtual bool onCommand(int nId) override
     {
         if (CPagePfBase::onCommand(nId))
             return true;
@@ -160,7 +160,7 @@ public:
         TIMER_ID_SKIN_SEL_CHANGED = 0;
     }
 
-    void onInitialUpdate()
+    void onInitialUpdate() override
     {
         CPagePfBase::onInitialUpdate();
 
@@ -177,19 +177,19 @@ public:
         updateSkinList();
     }
 
-    void onDestroy()
+    void onDestroy() override
     {
         m_pSkin->unregisterUIObjNotifyHandler(this);
 
         CPagePfBase::onDestroy();
     }
 
-    bool onCustomCommand(int nId)
+    bool onCustomCommand(int nId) override
     {
         return CPagePfBase::onCustomCommand(nId);
     }
 
-    void onTimer(int nId)
+    void onTimer(int nId) override
     {
         if (nId != TIMER_ID_SKIN_SEL_CHANGED)
             return;
@@ -209,7 +209,7 @@ public:
         CMPlayerAppBase::getInstance()->changeSkinByUserCmd(strSkinName.c_str());
     }
 
-    virtual void onUIObjNotify(IUIObjNotify *pNotify)
+    virtual void onUIObjNotify(IUIObjNotify *pNotify) override
     {
         if (pNotify->nID == CID_SKIN_LIST && pNotify->isKindOf(CSkinListCtrl::className()))
         {

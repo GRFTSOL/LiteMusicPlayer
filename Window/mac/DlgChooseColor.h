@@ -4,8 +4,7 @@
 #include "../../GfxRaw/Color.h"
 
 
-class CDlgChooseColor
-{
+class CDlgChooseColor {
 public:
     CDlgChooseColor();
     virtual ~CDlgChooseColor();
@@ -15,6 +14,6 @@ public:
     CColor &getColor() { return m_clr; }
 
 public:
-    CColor            m_clr;
+    CColor                      m_clr;
 
 };

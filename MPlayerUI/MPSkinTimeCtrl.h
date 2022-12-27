@@ -30,14 +30,14 @@ public:
         _CSkinText::m_pSkin->unregisterTimerObject(this);
     }
 
-    void onCreate()
+    void onCreate() override
     {
         _CSkinText::onCreate();
 
         _CSkinText::m_pSkin->registerTimerObject(this, 200);
     }
 
-    bool onLButtonUp(uint32_t nFlags, CPoint point)
+    bool onLButtonUp(uint32_t nFlags, CPoint point) override
     {
         m_bShowElapsedTime = !m_bShowElapsedTime;
 
@@ -47,7 +47,7 @@ public:
         return true;
     }
 
-    void onTimer(int nId)
+    void onTimer(int nId) override
     {
         resetTimeText();
     }

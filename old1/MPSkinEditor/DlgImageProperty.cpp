@@ -14,7 +14,7 @@ static char THIS_FILE[] = __FILE__;
 // CDlgImageProperty dialog
 
 
-CDlgImageProperty::CDlgImageProperty(CWnd* pParent /*=nullptr*/)
+CDlgImageProperty::CDlgImageProperty(CWnd* pParent)
     : CDialog(CDlgImageProperty::IDD, pParent)
 {
     //{{AFX_DATA_INIT(CDlgImageProperty)

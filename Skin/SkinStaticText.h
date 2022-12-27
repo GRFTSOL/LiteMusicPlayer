@@ -1,45 +1,46 @@
+#pragma once
+
 /********************************************************************
     Created  :    2002/01/04    21:42
     FileName :    SkinStaticText.h
     Author   :    xhy
-    
+
     Purpose  :    
 *********************************************************************/
 
-#if !defined(AFX_SKINSTATICTEXT_H__7ED53727_726A_11D5_9E04_02608CAD9330__INCLUDED_)
-#define AFX_SKINSTATICTEXT_H__7ED53727_726A_11D5_9E04_02608CAD9330__INCLUDED_
+#ifndef Skin_SkinStaticText_h
+#define Skin_SkinStaticText_h
 
 
-class CSkinStaticText : public CUIObject  
-{
+class CSkinStaticText : public CUIObject {
     UIOBJECT_CLASS_NAME_DECLARE(CUIObject)
 public:
     CSkinStaticText();
     virtual ~CSkinStaticText();
 
-    void draw(CRawGraph *canvas);
+    void draw(CRawGraph *canvas) override;
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 #ifdef _SKIN_EDITOR_
     void enumProperties(CUIObjProperties &listProperties);
 #endif // _SKIN_EDITOR_
 
-    void onCreate();
+    void onCreate() override;
 
-    void onMeasureSizeByContent();
+    void onMeasureSizeByContent() override;
 
-    void onAdjustHue(float hue, float saturation, float luminance);
+    void onAdjustHue(float hue, float saturation, float luminance) override;
 
-    bool onLButtonUp(uint32_t nFlags, CPoint point);
+    bool onLButtonUp(uint32_t nFlags, CPoint point) override;
 
 protected:
-    uint32_t            m_dwAlignText;
-    bool            m_bCaptionText;
+    uint32_t                    m_dwAlignText;
+    bool                        m_bCaptionText;
 
-    int                m_nLeftMargin;
+    int                         m_nLeftMargin;
 
-    CSkinFontProperty    m_font;
+    CSkinFontProperty           m_font;
 
 };
 
-#endif // !defined(AFX_SKINSTATICTEXT_H__7ED53727_726A_11D5_9E04_02608CAD9330__INCLUDED_)
+#endif // !defined(Skin_SkinStaticText_h)

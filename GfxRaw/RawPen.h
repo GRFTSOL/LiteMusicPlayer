@@ -1,7 +1,3 @@
-// RawGraph.h: interface for the CRawGraph class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #if !defined(_RAW_PEN_H_)
 #define _RAW_PEN_H_
 
@@ -10,8 +6,7 @@
 #include "Color.h"
 
 
-class CRawPen
-{
+class CRawPen {
 public:
     CRawPen();
     virtual ~CRawPen();
@@ -23,8 +18,8 @@ public:
     void destroy() { }
 
 public:
-    CColor              m_clrPen;
-    int                 m_nWidth;
+    CColor                      m_clrPen;
+    int                         m_nWidth;
 
 };
 

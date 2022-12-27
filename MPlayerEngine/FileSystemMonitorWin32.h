@@ -1,3 +1,5 @@
+#pragma once
+
 /******************************************************************************
 Implement CFileSystemMonitor on Win32 Platform
 *****************************************************************************/
@@ -8,12 +10,12 @@ Implement CFileSystemMonitor on Win32 Platform
 #include "filesystemmonitor.h"
 //#include "mutex.h"
 
+
 #define MAX_DRIVER_SUPPORT  ('Z' - 'A' + 1)
-#define DRIVE_STR_BUF_SIZE    ((3 + 1) * MAX_DRIVER_SUPPORT + 1)
+#define DRIVE_STR_BUF_SIZE    ((3 + 1)  * MAX_DRIVER_SUPPORT + 1)
 #define DRIVE_STR_STR_LEN    (3 * MAX_DRIVER_SUPPORT)
 
-class CFileSystemMonitorWin32: public CFileSystemMonitor
-{
+class CFileSystemMonitorWin32: public CFileSystemMonitor {
 public:
     CFileSystemMonitorWin32():m_hWorkingThread(nullptr), m_bDiskQueueIdle(true){};
     ~CFileSystemMonitorWin32(){};
@@ -38,8 +40,8 @@ protected:
     bool isDiskIdle(const char* disk);
 
 protected:
-    HANDLE        m_hWorkingThread;               // cbFullDiskSearchThread() thread
-    bool        m_bDiskQueueIdle;
+    HANDLE                      m_hWorkingThread;   // cbFullDiskSearchThread() thread
+    bool                        m_bDiskQueueIdle;
 
 };
 

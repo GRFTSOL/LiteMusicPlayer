@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef _ML_CONFIG_H
 #define _ML_CONFIG_H
 
@@ -39,15 +41,15 @@
 #endif
 
 #ifdef UTF8
-#define DEFAULT_ENCODING        ED_UTF8
+#define DEFAULT_ENCODING    ED_UTF8
 #endif
 
 #ifdef UNICODE
-#define DEFAULT_ENCODING        ED_UNICODE
+#define DEFAULT_ENCODING    ED_UNICODE
 #endif
 
 #ifndef DEFAULT_ENCODING
-#define DEFAULT_ENCODING        ED_SYSDEF
+#define DEFAULT_ENCODING    ED_SYSDEF
 #endif
 
 #ifdef DEBUG

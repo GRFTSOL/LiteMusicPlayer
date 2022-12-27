@@ -1,3 +1,5 @@
+#pragma once
+
 //
 //  ViewMacImp.h
 //  MiniLyricsMac
@@ -23,12 +25,12 @@ inline NSRect NSMakeRect(const CRect &rc) {
     nsrc.origin.y = rc.top;
     nsrc.size.width = rc.right - rc.left;
     nsrc.size.height = rc.bottom - rc.top;
-    
+
     return nsrc;
 }
 
 @interface ViewMacImp : NSView {
-    Window        *mBaseWnd;
+    Window *mBaseWnd;
 }
 
 - (void)setOwnerBaseWnd:(Window*)baseWnd;

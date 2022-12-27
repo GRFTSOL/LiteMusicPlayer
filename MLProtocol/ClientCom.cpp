@@ -3,23 +3,22 @@
 
 
 #ifdef _WIN32
-#define WSAError()            WSAGetLastError()
+#define WSAError()          WSAGetLastError()
 #else
-#define WSAError()            (errno + ERR_C_ERRNO_BASE)
+#define WSAError()          (errno + ERR_C_ERRNO_BASE)
 #define SOCKET_ERROR        (-1)
 #endif
 
 //////////////////////////////////////////////////////////////////////////
 //
-CClientCom::CClientCom()
-{
+CClientCom::CClientCom() {
     m_s = 0;
 }
 
-CClientCom::~CClientCom()
-{
-    if (m_s)
+CClientCom::~CClientCom() {
+    if (m_s) {
         ::closesocket(m_s);
+    }
 }
 
 /*
@@ -62,27 +61,24 @@ uint32_t WINAPI  CClientCom::ThreadRecv(void *lpParam)
 }*/
 
 
-int CClientCom::connect(cstr_t szServer, int nPort)
-{
-    hostent        *hostEntry;
-    int            nRet;
-    cstr_t        szServerAscii = szServer;
+int CClientCom::connect(cstr_t szServer, int nPort) {
+    hostent *hostEntry;
+    int nRet;
+    cstr_t szServerAscii = szServer;
 
     hostEntry = gethostbyname(szServerAscii);
-    
-    if(!hostEntry)
-    {
+
+    if(!hostEntry) {
         return ERR_NET_HOST_NOT_FOUND;
     }
 
     m_s = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    
-    if(m_s == SOCKET_ERROR)
-    {
+
+    if(m_s == SOCKET_ERROR) {
         nRet = WSAError();
         return nRet;
     }
-    
+
     // Fill in the sockaddr_in struct
     sockaddr_in serverInfo;
 
@@ -92,15 +88,14 @@ int CClientCom::connect(cstr_t szServer, int nPort)
     serverInfo.sin_port = htons(nPort);
 
     nRet = ::connect(m_s, (sockaddr *)&serverInfo, sizeof(serverInfo));
-    if(nRet==SOCKET_ERROR)
-    {
+    if(nRet==SOCKET_ERROR) {
         nRet = WSAError();
         ::closesocket(m_s);
         m_s = 0;
         return nRet;
     }
 
-    linger        lingSock;
+    linger lingSock;
     lingSock.l_onoff = 1;
     lingSock.l_linger = 20;
     setsockopt(m_s, SOL_SOCKET, SO_LINGER, (const char *)&lingSock, sizeof(lingSock));
@@ -108,55 +103,46 @@ int CClientCom::connect(cstr_t szServer, int nPort)
     return ERR_OK;
 }
 
-bool CClientCom::isValid()
-{
+bool CClientCom::isValid() {
     return m_s != 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-CNetFile::CNetFile()
-{
+CNetFile::CNetFile() {
     m_s = 0;
 }
 
-CNetFile::~CNetFile()
-{
+CNetFile::~CNetFile() {
 }
 
-int CNetFile::setTimeOut(int nTimeOut)
-{
+int CNetFile::setTimeOut(int nTimeOut) {
 #if !defined(_IPHONE)
     // 设置接收延时和发送延时
-    if (setsockopt(m_s, SOL_SOCKET, SO_SNDTIMEO, (const char *)&nTimeOut, sizeof(nTimeOut)) == SOCKET_ERROR)
-    {
+    if (setsockopt(m_s, SOL_SOCKET, SO_SNDTIMEO, (const char *)&nTimeOut, sizeof(nTimeOut)) == SOCKET_ERROR) {
         // Task.writeLog(DOWN_LOG_INFO_ERROR, "Error occured! set Socket send TimeOut Error! Scoket Error=%d", WSAGetLastError());
         // errResult = SockErrorToMLError(WSAGetLastError());
-        return     WSAError();
+        return WSAError();
     }
-    if (setsockopt(m_s, SOL_SOCKET, SO_RCVTIMEO, (const char *)&nTimeOut, sizeof(nTimeOut)) == SOCKET_ERROR)
-    {
+    if (setsockopt(m_s, SOL_SOCKET, SO_RCVTIMEO, (const char *)&nTimeOut, sizeof(nTimeOut)) == SOCKET_ERROR) {
         // Task.writeLog(DOWN_LOG_INFO_ERROR, "Error occured! set Socket send TimeOut Error! Scoket Error=%d", WSAGetLastError());
-        return     WSAError();
+        return WSAError();
     }
 #endif
 
     return ERR_OK;
 }
 
-int CNetFile::read(char *szBuffer, int nBufferLen, int *readOut)
-{
+int CNetFile::read(char *szBuffer, int nBufferLen, int *readOut) {
     *readOut = (int)recv(m_s, szBuffer, nBufferLen, 0);
-    if (*readOut == SOCKET_ERROR)
-    {
+    if (*readOut == SOCKET_ERROR) {
         *readOut = 0;
         return WSAError();
     }
     return ERR_OK;
 }
 
-int CNetFile::readExactly(string &buf, int nToRead)
-{
+int CNetFile::readExactly(string &buf, int nToRead) {
     if (nToRead <= 0) {
         return ERR_OK;
     }
@@ -251,11 +237,10 @@ int CNetFile::read(string &buf, int nMaxToRead, int *readOut) {
     return ERR_OK;
 }
 
-int CNetFile::write(const char *szBuffer, int nLen, int *pnWrite)
-{
-    if (SOCKET_ERROR != send(m_s, szBuffer, nLen, 0))
+int CNetFile::write(const char *szBuffer, int nLen, int *pnWrite) {
+    if (SOCKET_ERROR != send(m_s, szBuffer, nLen, 0)) {
         return ERR_OK;
-    else
+    } else {
         return WSAError();
+    }
 }
-

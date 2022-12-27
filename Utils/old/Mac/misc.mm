@@ -2,31 +2,27 @@
 #include "CharEncoding.h"
 #include "misc.h"
 
-int GetOperationSystemType()
-{
+#include <sys/time.h>
+
+
+int GetOperationSystemType() {
     return OPS_MACOSX;
 }
 
-bool IsWin9xSystem()
-{
+bool IsWin9xSystem() {
     return (GetOperationSystemType() <= OPS_WIN9XMORE);
 }
 
-#include <sys/time.h>
-
-uint32_t GetTickCount()
-{
+uint32_t GetTickCount() {
     timeval tim;
     gettimeofday(&tim, nullptr);
     return (uint32_t)(tim.tv_sec * 1000 + tim.tv_usec / 1000);
 }
 
-bool GetMonitorRestrictRect(const CRect &rcIn, CRect &rcRestrict)
-{
+bool GetMonitorRestrictRect(const CRect &rcIn, CRect &rcRestrict) {
     NSArray *screens = [NSScreen screens];
     int nMaxSpace = -1;
-    for (int i = 0; i < [screens count]; i++)
-    {
+    for (int i = 0; i < [screens count]; i++) {
         NSRect screenVisibleFrame = [[screens objectAtIndex:i] visibleFrame];
         CRect rcScreen;
         rcScreen.top = screenVisibleFrame.origin.y;
@@ -36,8 +32,7 @@ bool GetMonitorRestrictRect(const CRect &rcIn, CRect &rcRestrict)
         CRect rc;
         rc.IntersectRect(&rcIn, &rcScreen);
         int nSpace = rc.Width() * rc.Height();
-        if (nMaxSpace < nSpace)
-        {
+        if (nMaxSpace < nSpace) {
             nMaxSpace = nSpace;
             rcRestrict = rcScreen;
         }
@@ -46,30 +41,27 @@ bool GetMonitorRestrictRect(const CRect &rcIn, CRect &rcRestrict)
     return nMaxSpace != -1;
 }
 
-void Sleep(uint32_t dwMilliseconds)
-{
+void Sleep(uint32_t dwMilliseconds) {
     usleep((unsigned int)(dwMilliseconds * 1000));
 }
 
-bool ExecuteCmdAndWait(cstr_t szCmd, uint32_t dwTimeOut, uint32_t *pExitCode)
-{
+bool ExecuteCmdAndWait(cstr_t szCmd, uint32_t dwTimeOut, uint32_t *pExitCode) {
     return false;
 }
 
-bool CopyTextToClipboard(cstr_t szText)
-{
+bool CopyTextToClipboard(cstr_t szText) {
     NSPasteboard *board = [NSPasteboard generalPasteboard];
     [board clearContents];
     [board setString:[NSString stringWithUTF8String:szText] forType:NSStringPboardType];
     return true;
 }
 
-bool GetClipBoardText(string &str)
-{
+bool GetClipBoardText(string &str) {
     NSPasteboard *board = [NSPasteboard generalPasteboard];
     NSString *ns = [board stringForType:NSStringPboardType];
-    if (ns == nil)
+    if (ns == nil) {
         return false;
+    }
     str = [ns UTF8String];
     return true;
 }

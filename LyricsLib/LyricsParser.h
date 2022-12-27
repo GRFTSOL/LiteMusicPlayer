@@ -6,11 +6,9 @@
 
 #pragma once
 
-class CLyricsParser  
-{
+class CLyricsParser {
 public:
-    CLyricsParser(CMLData *pMLData) : m_pMLData(pMLData)
-    {
+    CLyricsParser(CMLData *pMLData) : m_pMLData(pMLData) {
     }
     virtual ~CLyricsParser() { };
 
@@ -21,6 +19,6 @@ public:
     virtual LYRICS_CONTENT_TYPE getLyrContentType() = 0;
 
 public:
-    CMLData                *m_pMLData;
-    
+    CMLData                     *m_pMLData;
+
 };

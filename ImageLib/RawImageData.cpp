@@ -1,7 +1,3 @@
-// RawImageData.cpp: implementation of the RawImageData class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "ILIO.h"
 #include "../GfxRaw/GfxRaw.h"
 
@@ -11,10 +7,10 @@
 #include "../third-parties/Agg/include/agg_pixfmt_rgb.h"
 #include "../third-parties/Agg/include/agg_rasterizer_scanline_aa.h"
 
-#define BMPWIDTHBYTES(dwWidth, dwBitCount)    (( ( dwWidth * dwBitCount + 7 ) / 8 + 3 ) & ~3)
 
-RawImageData *convert32BppTo24BppRawImage(RawImageData *src)
-{
+#define BMPWIDTHBYTES(dwWidth, dwBitCount)  (( ( dwWidth * dwBitCount + 7 ) / 8 + 3 ) & ~3)
+
+RawImageData *convert32BppTo24BppRawImage(RawImageData *src) {
     RawImageData *dst = new RawImageData;
     uint8_t *rowSrc, *rowDst;
 
@@ -22,13 +18,11 @@ RawImageData *convert32BppTo24BppRawImage(RawImageData *src)
 
     rowSrc = src->rowPtr(0);
     rowDst = dst->rowPtr(0);
-    for (int y = 0; y < src->height; y++)
-    {
-        uint8_t    *pixDst, *pixSrc;
+    for (int y = 0; y < src->height; y++) {
+        uint8_t *pixDst, *pixSrc;
         pixDst = rowDst;
         pixSrc = rowSrc;
-        for (int x = 0; x < src->width; x++)
-        {
+        for (int x = 0; x < src->width; x++) {
             pixDst[0] = pixSrc[0];
             pixDst[1] = pixSrc[1];
             pixDst[2] = pixSrc[2];
@@ -42,8 +36,7 @@ RawImageData *convert32BppTo24BppRawImage(RawImageData *src)
     return dst;
 }
 
-RawImageData *convert16BppTo24BppRawImage(RawImageData *src)
-{
+RawImageData *convert16BppTo24BppRawImage(RawImageData *src) {
     RawImageData *dst = new RawImageData;
     uint8_t *rowSrc, *rowDst;
 
@@ -58,23 +51,22 @@ RawImageData *convert16BppTo24BppRawImage(RawImageData *src)
 #define BMOVE    10                //
 #define BMAX    32                //最大颜色数
 
-    uint8_t    clrTable[(int)RMAX];//颜色转换表
-    for (int i = 0 ; i < (int)RMAX; i++)
+    uint8_t clrTable[(int)RMAX];//颜色转换表
+    for (int i = 0 ; i < (int)RMAX; i++) {
         clrTable[i] = (uint8_t)((float)i * CLRMAX / RMAX);
-    uint16_t    clrSrc;
+    }
+    uint16_t clrSrc;
 
     dst->create(src->width, src->height, 24);
 
     rowSrc = src->rowPtr(0);
     rowDst = dst->rowPtr(0);
-    for (int y = 0; y < src->height; y++)
-    {
-        uint8_t    *pixDst;
-        uint16_t    *pixSrc;
+    for (int y = 0; y < src->height; y++) {
+        uint8_t *pixDst;
+        uint16_t *pixSrc;
         pixDst = rowDst;
         pixSrc = (uint16_t*)rowSrc;
-        for (int x = 0; x < src->width; x++)
-        {
+        for (int x = 0; x < src->width; x++) {
             clrSrc = *pixSrc;
             pixDst[PixPosition::PIX_R] = clrTable[clrSrc & RMASK];
             pixDst[PixPosition::PIX_G] = clrTable[(clrSrc & GMASK) >> GMOVE];
@@ -89,8 +81,7 @@ RawImageData *convert16BppTo24BppRawImage(RawImageData *src)
     return dst;
 }
 
-RawImageData *convert8BppTo24BppRawImage(RawImageData *src)
-{
+RawImageData *convert8BppTo24BppRawImage(RawImageData *src) {
     RawImageData *dst = new RawImageData;
     uint8_t *rowSrc, *rowDst;
 
@@ -98,13 +89,11 @@ RawImageData *convert8BppTo24BppRawImage(RawImageData *src)
 
     rowSrc = src->rowPtr(0);
     rowDst = dst->rowPtr(0);
-    for (int y = 0; y < src->height; y++)
-    {
-        uint8_t    *pixDst, *pixSrc;
+    for (int y = 0; y < src->height; y++) {
+        uint8_t *pixDst, *pixSrc;
         pixDst = rowDst;
         pixSrc = rowSrc;
-        for (int x = 0; x < src->width; x++)
-        {
+        for (int x = 0; x < src->width; x++) {
             *pixDst = src->pallete[*pixSrc].rgbBlue;
             pixDst++;
             *pixDst = src->pallete[*pixSrc].rgbGreen;
@@ -120,8 +109,7 @@ RawImageData *convert8BppTo24BppRawImage(RawImageData *src)
     return dst;
 }
 
-RawImageData *convert4BppTo24BppRawImage(RawImageData *src)
-{
+RawImageData *convert4BppTo24BppRawImage(RawImageData *src) {
     RawImageData *dst = new RawImageData;
     uint8_t *rowSrc, *rowDst;
 
@@ -129,18 +117,15 @@ RawImageData *convert4BppTo24BppRawImage(RawImageData *src)
 
     rowSrc = src->rowPtr(0);
     rowDst = dst->rowPtr(0);
-    for (int y = 0; y < src->height; y++)
-    {
-        uint8_t    *pixDst, *pixSrc;
+    for (int y = 0; y < src->height; y++) {
+        uint8_t *pixDst, *pixSrc;
         pixDst = rowDst;
         pixSrc = rowSrc;
-        for (int x = 0; x < src->width; x++)
-        {
-            uint8_t    px;
-            if (x % 2 == 0)
+        for (int x = 0; x < src->width; x++) {
+            uint8_t px;
+            if (x % 2 == 0) {
                 px = (*pixSrc >> 4 )& 0xF;
-            else
-            {
+            } else {
                 px = *pixSrc & 0xF;
                 pixSrc++;
             }
@@ -158,11 +143,9 @@ RawImageData *convert4BppTo24BppRawImage(RawImageData *src)
     return dst;
 }
 
-RawImageData *convertTo24BppRawImage(RawImageData *src)
-{
+RawImageData *convertTo24BppRawImage(RawImageData *src) {
     RawImageData *dst = nullptr;
-    switch (src->bitCount)
-    {
+    switch (src->bitCount) {
     case 24:
         return src;
     case 32:
@@ -184,8 +167,7 @@ RawImageData *convertTo24BppRawImage(RawImageData *src)
     return dst;
 }
 
-RawImageData *convert24BppTo32BppRawImage(RawImageData *src)
-{
+RawImageData *convert24BppTo32BppRawImage(RawImageData *src) {
     RawImageData *dst = new RawImageData;
     uint8_t *rowSrc, *rowDst;
 
@@ -193,13 +175,11 @@ RawImageData *convert24BppTo32BppRawImage(RawImageData *src)
 
     rowSrc = src->rowPtr(0);
     rowDst = dst->rowPtr(0);
-    for (int y = 0; y < src->height; y++)
-    {
-        uint8_t    *pixDst, *pixSrc;
+    for (int y = 0; y < src->height; y++) {
+        uint8_t *pixDst, *pixSrc;
         pixDst = rowDst;
         pixSrc = rowSrc;
-        for (int x = 0; x < src->width; x++)
-        {
+        for (int x = 0; x < src->width; x++) {
             pixDst[0] = pixSrc[0];
             pixDst[1] = pixSrc[1];
             pixDst[2] = pixSrc[2];
@@ -214,11 +194,9 @@ RawImageData *convert24BppTo32BppRawImage(RawImageData *src)
     return dst;
 }
 
-RawImageData *convertTo32BppRawImage(RawImageData *src)
-{
+RawImageData *convertTo32BppRawImage(RawImageData *src) {
     RawImageData *dst = nullptr;
-    switch (src->bitCount)
-    {
+    switch (src->bitCount) {
     case 32:
         return src;
     case 24:
@@ -235,12 +213,12 @@ RawImageData *convertTo32BppRawImage(RawImageData *src)
     return dst;
 }
 
-RawImageData *duplicateRawImage(RawImageData *src)
-{
+RawImageData *duplicateRawImage(RawImageData *src) {
     RawImageData *dst = new RawImageData;
 
-    if (!dst->create(src->width, src->height, src->bitCount))
+    if (!dst->create(src->width, src->height, src->bitCount)) {
         return nullptr;
+    }
 
     dst->stride = src->stride;
 
@@ -256,8 +234,7 @@ RawImageData *loadRawImageDataFromJpgFile(IILIO *io);
 
 RawImageData *loadRawImageDataFromGifFile(IILIO *io);
 
-RawImageData *loadRawImageDataFromFile(cstr_t szFile)
-{
+RawImageData *loadRawImageDataFromFile(cstr_t szFile) {
 #ifdef _IPHONE
     return nullptr;
 #else
@@ -267,29 +244,32 @@ RawImageData *loadRawImageDataFromFile(cstr_t szFile)
     RawImageData *image = nullptr;
 
     n = strlen(szFile);
-    if (n < 4)
+    if (n < 4) {
         return nullptr;
+    }
 
-    if (!io.open(szFile))
+    if (!io.open(szFile)) {
         return nullptr;
+    }
 
     szExt = szFile + n - 4;
-    if (strcasecmp(szExt, ".bmp") == 0)
+    if (strcasecmp(szExt, ".bmp") == 0) {
         image = loadRawImageDataFromBmpFile(&io);
-    else if (strcasecmp(szExt, ".png") == 0)
+    } else if (strcasecmp(szExt, ".png") == 0) {
         image = loadRawImageDataFromPngFile(&io);
-    else if (strcasecmp(szExt, ".jpg") == 0
-        || strcasecmp(szExt, "jpeg") == 0)
+    } else if (strcasecmp(szExt, ".jpg") == 0
+        || strcasecmp(szExt, "jpeg") == 0) {
         image = loadRawImageDataFromJpgFile(&io);
-    else if (strcasecmp(szExt, ".gif") == 0)
+    } else if (strcasecmp(szExt, ".gif") == 0) {
         image = loadRawImageDataFromGifFile(&io);
-    else
+    } else {
         image = nullptr;
+    }
 
-    if (image)
-    {
-        if (image->bitCount != 24 && image->bitCount != 32)
+    if (image) {
+        if (image->bitCount != 24 && image->bitCount != 32) {
             return convertTo24BppRawImage(image);
+        }
     }
 
     return image;
@@ -297,8 +277,7 @@ RawImageData *loadRawImageDataFromFile(cstr_t szFile)
 }
 
 
-RawImageData *loadRawImageDataFromMem(const void *buf, int nSize)
-{
+RawImageData *loadRawImageDataFromMem(const void *buf, int nSize) {
 #ifdef _IPHONE
     return nullptr;
 #else
@@ -307,48 +286,46 @@ RawImageData *loadRawImageDataFromMem(const void *buf, int nSize)
     uint8_t png_signature[8] = {137, 80, 78, 71, 13, 10, 26, 10};
     RawImageData *image = nullptr;
 
-    if (!io.open(buf, nSize))
+    if (!io.open(buf, nSize)) {
         return nullptr;
+    }
 
-    if (memcmp(buf, "BM", 2) == 0)
+    if (memcmp(buf, "BM", 2) == 0) {
         image = loadRawImageDataFromBmpFile(&io);
-    else if (memcmp(buf, png_signature, 8) == 0)
+    } else if (memcmp(buf, png_signature, 8) == 0) {
         image = loadRawImageDataFromPngFile(&io);
-    else if (tag[0] == 0xFF && tag[1] == 0xD8)
+    } else if (tag[0] == 0xFF && tag[1] == 0xD8) {
         return loadRawImageDataFromJpgFile(&io);
-    else if (memcmp(buf, "GIF8", 4) == 0)
+    } else if (memcmp(buf, "GIF8", 4) == 0) {
         image = loadRawImageDataFromGifFile(&io);
-    else
+    } else {
         image = nullptr;
+    }
 
-    if (image)
-    {
-        if (image->bitCount != 24 && image->bitCount != 32)
+    if (image) {
+        if (image->bitCount != 24 && image->bitCount != 32) {
             return convertTo24BppRawImage(image);
+        }
     }
 
     return image;
 #endif // _IPHONE
 }
 
-void freeRawImage(RawImageData * image)
-{
+void freeRawImage(RawImageData * image) {
     image->free();
     delete image;
 }
 
 
-void rawImageBGR24Set(RawImageData *image, uint8_t r, uint8_t g, uint8_t b)
-{
-    uint8_t        *pRow, *p;
+void rawImageBGR24Set(RawImageData *image, uint8_t r, uint8_t g, uint8_t b) {
+    uint8_t *pRow, *p;
 
     pRow = image->rowPtr(0);
 
-    for (int y = 0; y < image->height; y++)
-    {
+    for (int y = 0; y < image->height; y++) {
         p = pRow;
-        for (int x = 0; x < image->width; x++)
-        {
+        for (int x = 0; x < image->width; x++) {
             p[PixPosition::PIX_B] = b;
             p[PixPosition::PIX_G] = g;
             p[PixPosition::PIX_R] = r;
@@ -358,19 +335,16 @@ void rawImageBGR24Set(RawImageData *image, uint8_t r, uint8_t g, uint8_t b)
     }
 }
 
-void rawImageBGRA32Set(RawImageData *image, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-{
+void rawImageBGRA32Set(RawImageData *image, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     assert(image->pixFormat == PF_RGBA32);
 
-    uint8_t        *pRow, *p;
+    uint8_t *pRow, *p;
 
     pRow = image->rowPtr(0);
 
-    for (int y = 0; y < image->height; y++)
-    {
+    for (int y = 0; y < image->height; y++) {
         p = pRow;
-        for (int x = 0; x < image->width; x++)
-        {
+        for (int x = 0; x < image->width; x++) {
             p[PixPosition::PIX_B] = b;
             p[PixPosition::PIX_G] = g;
             p[PixPosition::PIX_R] = r;
@@ -381,28 +355,26 @@ void rawImageBGRA32Set(RawImageData *image, uint8_t r, uint8_t g, uint8_t b, uin
     }
 }
 
-void rawImageSet(RawImageData *image, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-{
-    if (image->pixFormat == PF_RGB24)
+void rawImageSet(RawImageData *image, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+    if (image->pixFormat == PF_RGB24) {
         rawImageBGR24Set(image, r, g, b);
-    else
+    } else {
         rawImageBGRA32Set(image, r, g, b, a);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 inline unsigned char ToRGBx(float rm1, float rm2, float rh);
 
-inline unsigned char ToRGBx(float rm1, float rm2, float rh)
-{
-    if        (rh > 360.0f)
-    {
+inline unsigned char ToRGBx(float rm1, float rm2, float rh) {
+    if        (rh > 360.0f) {
         rh -= 360.0f;
-        if (rh > 360.0f)
+        if (rh > 360.0f) {
             rh -= 360.0f;
-    }
-    else if (rh <   0.0f) rh += 360.0f;
-    
+        }
+    } else if (rh <   0.0f) rh += 360.0f;
+
     if      (rh <  60.0f) rm1 = rm1 + (rm2 - rm1) * rh / 60.0f;
     else if (rh < 180.0f) rm1 = rm2;
     else if (rh < 240.0f) rm1 = rm1 + (rm2 - rm1) * (240.0f - rh) / 60.0f;
@@ -412,27 +384,23 @@ inline unsigned char ToRGBx(float rm1, float rm2, float rh)
 
 inline void adjustPixHue(uint8_t *pix, float hueOffset);
 
-inline void adjustPixHue(uint8_t *pix, float hueOffset)
-{
+inline void adjustPixHue(uint8_t *pix, float hueOffset) {
     float hue, saturation, luminance;
 
     unsigned char minval = min(pix[0], min(pix[1], pix[2]));
     unsigned char maxval = max(pix[0], max(pix[1], pix[2]));
-    float mdiff  = float(maxval) - float(minval);
-    float msum   = float(maxval) + float(minval);
+    float mdiff = float(maxval) - float(minval);
+    float msum = float(maxval) + float(minval);
 
     luminance = msum / 510.0f;
 
-    if (maxval == minval)
-    {
+    if (maxval == minval) {
         saturation = 0.0f;
         hue = 0.0f;
-    }
-    else
-    {
-        float rnorm = (maxval - pix[PixPosition::PIX_R]  ) / mdiff;
-        float gnorm = (maxval - pix[PixPosition::PIX_G]  ) / mdiff;
-        float bnorm = (maxval - pix[PixPosition::PIX_B]  ) / mdiff;
+    } else {
+        float rnorm = (maxval - pix[PixPosition::PIX_R] ) / mdiff;
+        float gnorm = (maxval - pix[PixPosition::PIX_G] ) / mdiff;
+        float bnorm = (maxval - pix[PixPosition::PIX_B] ) / mdiff;
 
         saturation = (luminance <= 0.5f) ? (mdiff / msum) : (mdiff / (510.0f - msum));
 
@@ -444,18 +412,16 @@ inline void adjustPixHue(uint8_t *pix, float hueOffset)
 
     hue += hueOffset;
 
-    if (saturation == 0.0)
-    {
+    if (saturation == 0.0) {
         pix[0] = pix[1] = pix[2] = (uint8_t)(luminance * 255.0);
-    }
-    else
-    {
+    } else {
         float rm1, rm2;
 
-        if (luminance <= 0.5f)
-            rm2 = luminance + luminance * saturation;  
-        else
+        if (luminance <= 0.5f) {
+            rm2 = luminance + luminance * saturation;
+        } else {
             rm2 = luminance + saturation - luminance * saturation;
+        }
 
         rm1 = 2.0f * luminance - rm2;
         pix[2] = ToRGBx(rm1, rm2, hue + 120.0f);
@@ -466,27 +432,23 @@ inline void adjustPixHue(uint8_t *pix, float hueOffset)
 
 inline void adjustPixHue(uint8_t *pix, float hueOffset, float saturationRatio, float luminanceRatio);
 
-inline void adjustPixHue(uint8_t *pix, float hueOffset, float saturationRatio, float luminanceRatio)
-{
+inline void adjustPixHue(uint8_t *pix, float hueOffset, float saturationRatio, float luminanceRatio) {
     float hue, saturation, luminance;
 
     unsigned char minval = min(pix[0], min(pix[1], pix[2]));
     unsigned char maxval = max(pix[0], max(pix[1], pix[2]));
-    float mdiff  = float(maxval) - float(minval);
-    float msum   = float(maxval) + float(minval);
+    float mdiff = float(maxval) - float(minval);
+    float msum = float(maxval) + float(minval);
 
     luminance = msum / 510.0f;
 
-    if (maxval == minval)
-    {
+    if (maxval == minval) {
         saturation = 0.0f;
         hue = 0.0f;
-    }
-    else
-    {
-        float rnorm = (maxval - pix[PixPosition::PIX_R]  ) / mdiff;
-        float gnorm = (maxval - pix[PixPosition::PIX_G]  ) / mdiff;
-        float bnorm = (maxval - pix[PixPosition::PIX_B]  ) / mdiff;
+    } else {
+        float rnorm = (maxval - pix[PixPosition::PIX_R] ) / mdiff;
+        float gnorm = (maxval - pix[PixPosition::PIX_G] ) / mdiff;
+        float bnorm = (maxval - pix[PixPosition::PIX_B] ) / mdiff;
 
         saturation = (luminance <= 0.5f) ? (mdiff / msum) : (mdiff / (510.0f - msum));
 
@@ -497,30 +459,30 @@ inline void adjustPixHue(uint8_t *pix, float hueOffset, float saturationRatio, f
     }
 
     hue += hueOffset;
-    if (saturationRatio > 0)
+    if (saturationRatio > 0) {
         saturation += (float)((1.0 - saturation) * saturationRatio);
-    else
+    } else {
         saturation *= -saturationRatio;
+    }
     assert(saturation >= 0 && saturation <= 1.0);
 
-    if (luminanceRatio > 0)
+    if (luminanceRatio > 0) {
         luminance += (float)((1.0 - luminance) * luminanceRatio);
-    else
+    } else {
         luminance *= -luminanceRatio;
+    }
     assert(luminance >= 0 && luminance <= 1.0);
 
-    if (saturation == 0.0)
-    {
+    if (saturation == 0.0) {
         pix[0] = pix[1] = pix[2] = (uint8_t)(luminance * 255.0);
-    }
-    else
-    {
+    } else {
         float rm1, rm2;
 
-        if (luminance <= 0.5f)
-            rm2 = luminance + luminance * saturation;  
-        else
+        if (luminance <= 0.5f) {
+            rm2 = luminance + luminance * saturation;
+        } else {
             rm2 = luminance + saturation - luminance * saturation;
+        }
 
         rm1 = 2.0f * luminance - rm2;
         pix[2] = ToRGBx(rm1, rm2, hue + 120.0f);
@@ -529,10 +491,9 @@ inline void adjustPixHue(uint8_t *pix, float hueOffset, float saturationRatio, f
     }
 }
 
-void adjustColorHue(COLORREF &clr, float hueOffset)
-{
-    uint8_t    *p = (uint8_t *)&clr;
-    uint8_t    pix[3];
+void adjustColorHue(COLORREF &clr, float hueOffset) {
+    uint8_t *p = (uint8_t *)&clr;
+    uint8_t pix[3];
     pix[0] = p[2];
     pix[1] = p[1];
     pix[2] = p[0];
@@ -542,10 +503,9 @@ void adjustColorHue(COLORREF &clr, float hueOffset)
     p[2] = pix[0];
 }
 
-void adjustColorHue(COLORREF &clr, float hueOffset, float saturationRatio, float luminanceRatio)
-{
-    uint8_t    *p = (uint8_t *)&clr;
-    uint8_t    pix[3];
+void adjustColorHue(COLORREF &clr, float hueOffset, float saturationRatio, float luminanceRatio) {
+    uint8_t *p = (uint8_t *)&clr;
+    uint8_t pix[3];
     pix[0] = p[2];
     pix[1] = p[1];
     pix[2] = p[0];
@@ -556,16 +516,13 @@ void adjustColorHue(COLORREF &clr, float hueOffset, float saturationRatio, float
 }
 
 // hueOffset: 0-360
-void adjustImageHue32(RawImageData *pImage, float hueOffset)
-{
-    uint8_t        *p, *pRow;
+void adjustImageHue32(RawImageData *pImage, float hueOffset) {
+    uint8_t *p, *pRow;
 
     pRow = pImage->rowPtr(0);
-    for (int y = 0; y < pImage->height; y++)
-    {
+    for (int y = 0; y < pImage->height; y++) {
         p = pRow;
-        for (int x = 0; x < pImage->width; x++)
-        {
+        for (int x = 0; x < pImage->width; x++) {
             adjustPixHue(p, hueOffset);
             p += 4;
         }
@@ -574,16 +531,13 @@ void adjustImageHue32(RawImageData *pImage, float hueOffset)
 }
 
 // hueOffset: 0-360
-void adjustImageHue24(RawImageData *pImage, float hueOffset)
-{
-    uint8_t        *p, *pRow;
+void adjustImageHue24(RawImageData *pImage, float hueOffset) {
+    uint8_t *p, *pRow;
 
     pRow = pImage->rowPtr(0);
-    for (int y = 0; y < pImage->height; y++)
-    {
+    for (int y = 0; y < pImage->height; y++) {
         p = pRow;
-        for (int x = 0; x < pImage->width; x++)
-        {
+        for (int x = 0; x < pImage->width; x++) {
             adjustPixHue(p, hueOffset);
             p += 3;
         }
@@ -591,25 +545,22 @@ void adjustImageHue24(RawImageData *pImage, float hueOffset)
     }
 }
 
-void adjustImageHue(RawImageData *pImage, float hueOffset)
-{
-    if (pImage->bitCount == 32)
+void adjustImageHue(RawImageData *pImage, float hueOffset) {
+    if (pImage->bitCount == 32) {
         adjustImageHue32(pImage, hueOffset);
-    else if (pImage->bitCount == 24)
+    } else if (pImage->bitCount == 24) {
         adjustImageHue24(pImage, hueOffset);
+    }
 }
 
 // hueOffset: 0-360
-void adjustImageHue32(RawImageData *pImage, float hueOffset, float saturationRatio, float luminanceRatio)
-{
-    uint8_t        *p, *pRow;
+void adjustImageHue32(RawImageData *pImage, float hueOffset, float saturationRatio, float luminanceRatio) {
+    uint8_t *p, *pRow;
 
     pRow = pImage->rowPtr(0);
-    for (int y = 0; y < pImage->height; y++)
-    {
+    for (int y = 0; y < pImage->height; y++) {
         p = pRow;
-        for (int x = 0; x < pImage->width; x++)
-        {
+        for (int x = 0; x < pImage->width; x++) {
             adjustPixHue(p, hueOffset, saturationRatio, luminanceRatio);
             p += 4;
         }
@@ -618,16 +569,13 @@ void adjustImageHue32(RawImageData *pImage, float hueOffset, float saturationRat
 }
 
 // hueOffset: 0-360
-void adjustImageHue24(RawImageData *pImage, float hueOffset, float saturationRatio, float luminanceRatio)
-{
-    uint8_t        *p, *pRow;
+void adjustImageHue24(RawImageData *pImage, float hueOffset, float saturationRatio, float luminanceRatio) {
+    uint8_t *p, *pRow;
 
     pRow = pImage->rowPtr(0);
-    for (int y = 0; y < pImage->height; y++)
-    {
+    for (int y = 0; y < pImage->height; y++) {
         p = pRow;
-        for (int x = 0; x < pImage->width; x++)
-        {
+        for (int x = 0; x < pImage->width; x++) {
             adjustPixHue(p, hueOffset, saturationRatio, luminanceRatio);
             p += 3;
         }
@@ -638,69 +586,62 @@ void adjustImageHue24(RawImageData *pImage, float hueOffset, float saturationRat
 // hueOffset: 0 ~ 360
 // luminanceRatio, saturationRatio: 0 ~ 1.0, increase ratio
 //                                    -1.0 ~ 0, ratio of scale
-void adjustImageHue(RawImageData *pImage, float hueOffset, float saturationRatio, float luminanceRatio)
-{
-    if (pImage->bitCount == 32)
+void adjustImageHue(RawImageData *pImage, float hueOffset, float saturationRatio, float luminanceRatio) {
+    if (pImage->bitCount == 32) {
         adjustImageHue32(pImage, hueOffset, saturationRatio, luminanceRatio);
-    else if (pImage->bitCount == 24)
+    } else if (pImage->bitCount == 24) {
         adjustImageHue24(pImage, hueOffset, saturationRatio, luminanceRatio);
+    }
 }
 
-COLORREF HLSToRGB(float hue, float saturation, float luminance)
-{
-    COLORREF        clr;
+COLORREF HLSToRGB(float hue, float saturation, float luminance) {
+    COLORREF clr;
 
-    if (saturation == 0.0)
-    {
-        unsigned char    c = (uint8_t)(luminance * 255.0);
+    if (saturation == 0.0) {
+        unsigned char c = (uint8_t)(luminance * 255.0);
         clr = RGB(c, c, c);
-    }
-    else
-    {
+    } else {
         float rm1, rm2;
 
-        if (luminance <= 0.5f)
-            rm2 = luminance + luminance * saturation;  
-        else
+        if (luminance <= 0.5f) {
+            rm2 = luminance + luminance * saturation;
+        } else {
             rm2 = luminance + saturation - luminance * saturation;
+        }
 
         rm1 = 2.0f * luminance - rm2;
         clr = RGB(ToRGBx(rm1, rm2, hue + 120.0f),
-                ToRGBx(rm1, rm2, hue),
-                ToRGBx(rm1, rm2, hue - 120.0f));
+            ToRGBx(rm1, rm2, hue),
+            ToRGBx(rm1, rm2, hue - 120.0f));
     }
 
     return clr;
 }
 
-void RGBToHLS(COLORREF clr, float &hue, float &saturation, float &luminance)
-{
+void RGBToHLS(COLORREF clr, float &hue, float &saturation, float &luminance) {
     // Konvertierung
     unsigned char minval = min(GetRValue(clr), min(GetGValue(clr), GetBValue(clr)));
     unsigned char maxval = max(GetRValue(clr), max(GetGValue(clr), GetBValue(clr)));
-    float mdiff  = float(maxval) - float(minval);
-    float msum   = float(maxval) + float(minval);
+    float mdiff = float(maxval) - float(minval);
+    float msum = float(maxval) + float(minval);
 
     luminance = msum / 510.0f;
 
-    if (maxval == minval) 
-    {
+    if (maxval == minval) {
         saturation = 0.0f;
-        hue = 0.0f; 
-    }
-    else 
-    { 
-        float rnorm = (maxval - GetRValue(clr)  ) / mdiff;      
-        float gnorm = (maxval - GetGValue(clr)  ) / mdiff;
-        float bnorm = (maxval - GetBValue(clr)  ) / mdiff;   
+        hue = 0.0f;
+    } else {
+        float rnorm = (maxval - GetRValue(clr) ) / mdiff;
+        float gnorm = (maxval - GetGValue(clr) ) / mdiff;
+        float bnorm = (maxval - GetBValue(clr) ) / mdiff;
 
-        if ((luminance <= 0.5f))
+        if ((luminance <= 0.5f)) {
             saturation = mdiff / msum;
-        else
-        {
+        } else {
             saturation = (float)(mdiff / (2.0 - msum));
-            if (saturation < 0)
+            if (saturation < 0) {
                 saturation = -saturation;
+            }
         }
 
         if (GetRValue(clr)   == maxval) hue = 60.0f * (6.0f + bnorm - gnorm);
@@ -889,8 +830,7 @@ void HLSTest()
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-RawImageData::RawImageData()
-{
+RawImageData::RawImageData() {
     buff = nullptr;
     width = height = 0;
     stride = 0;
@@ -905,24 +845,23 @@ RawImageData::~RawImageData() {
     free();
 }
 
-void RawImageData::attach(uint8_t *buf, int nWidth, int nHeight, int nBitCount)
-{
+void RawImageData::attach(uint8_t *buf, int nWidth, int nHeight, int nBitCount) {
     buff = buf;
     width = nWidth;
     height = nHeight;
     bitCount = nBitCount;
-    if (nBitCount == 32)
+    if (nBitCount == 32) {
         pixFormat = PF_RGBA32;
-    else if (nBitCount == 24)
+    } else if (nBitCount == 24) {
         pixFormat = PF_RGB24;
-    else
+    } else {
         pixFormat = PF_UNKNOWN;
+    }
 
     stride = -BMPWIDTHBYTES(width, nBitCount);
 }
 
-void RawImageData::attach(RawImageData *pSrc)
-{
+void RawImageData::attach(RawImageData *pSrc) {
     buff = pSrc->buff;
     width = pSrc->width;
     height = pSrc->height;
@@ -933,80 +872,75 @@ void RawImageData::attach(RawImageData *pSrc)
     pallete = pSrc->pallete;
 }
 
-void RawImageData::exchange(RawImageData *pSrc)
-{
-    RawImageData        temp;
+void RawImageData::exchange(RawImageData *pSrc) {
+    RawImageData temp;
     temp.attach(this);
     attach(pSrc);
     pSrc->attach(&temp);
     temp.detach();
 }
 
-void RawImageData::detach()
-{
+void RawImageData::detach() {
     buff = nullptr;
     pallete = nullptr;
     nClrUsed = 0;
 }
 
-bool RawImageData::create(int nWidth, int nHeight, int nBitCount)
-{
+bool RawImageData::create(int nWidth, int nHeight, int nBitCount) {
     width = nWidth;
     height = nHeight;
     bitCount = nBitCount;
-    if (nBitCount == 32)
+    if (nBitCount == 32) {
         pixFormat = PF_RGBA32;
-    else if (nBitCount == 24)
+    } else if (nBitCount == 24) {
         pixFormat = PF_RGB24;
-    else
+    } else {
         pixFormat = PF_UNKNOWN;
+    }
 
     stride = -BMPWIDTHBYTES(width, nBitCount);
 
     buff = new uint8_t[abs(stride) * height];
     assert(buff);
 
-    if (nBitCount <= 8)
+    if (nBitCount <= 8) {
         pallete = new RGBQUAD[256];
+    }
 
     return true;
 }
 
-bool RawImageData::createReverse(int nWidth, int nHeight, int nBitCount)
-{
-    if (!create(nWidth, nHeight, nBitCount))
+bool RawImageData::createReverse(int nWidth, int nHeight, int nBitCount) {
+    if (!create(nWidth, nHeight, nBitCount)) {
         return false;
+    }
 
     stride = -stride;
 
     return true;
 }
 
-void RawImageData::setClrUsed(int _nClrUsed)
-{
+void RawImageData::setClrUsed(int _nClrUsed) {
     nClrUsed = (uint8_t)_nClrUsed;
 
-    if (_nClrUsed == 0)
-    {
-        if (pallete)
-        {
+    if (_nClrUsed == 0) {
+        if (pallete) {
             delete[] pallete;
             pallete = nullptr;
         }
         return;
     }
-    if (!pallete)
+    if (!pallete) {
         pallete = new RGBQUAD[256];
+    }
 }
 
-RGBQUAD RawImageData::getPixel(int x, int y) const
-{
-    uint8_t        *p;
-    RGBQUAD        quad;
+RGBQUAD RawImageData::getPixel(int x, int y) const {
+    uint8_t *p;
+    RGBQUAD quad;
 
     p = rowPtr(y);
-    switch (pixFormat)
-    {
+    switch (pixFormat) {
     case PF_RGBA32:
         {
             p += x * 4;
@@ -1028,10 +962,11 @@ RGBQUAD RawImageData::getPixel(int x, int y) const
     case PF_PALLETE256:
         {
             p += x;
-            if (pallete)
+            if (pallete) {
                 quad = pallete[*p];
-            else
+            } else {
                 memset(&quad, 0, sizeof(quad));
+            }
         }
         break;
     case PF_PALLETE16:
@@ -1051,15 +986,12 @@ RGBQUAD RawImageData::getPixel(int x, int y) const
     return quad;
 }
 
-void RawImageData::free()
-{
-    if (buff)
-    {
+void RawImageData::free() {
+    if (buff) {
         delete[] buff;
         buff = nullptr;
     }
-    if (pallete)
-    {
+    if (pallete) {
         delete[] pallete;
         pallete = nullptr;
     }

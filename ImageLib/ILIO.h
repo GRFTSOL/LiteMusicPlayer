@@ -1,17 +1,12 @@
-// ILIO.h: interface for the CILIO class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_ILIO_H__35C6A017_5F2B_45CB_927E_E6537F270A30__INCLUDED_)
-#define AFX_ILIO_H__35C6A017_5F2B_45CB_927E_E6537F270A30__INCLUDED_
+#ifndef ImageLib_ILIO_h
+#define ImageLib_ILIO_h
 
 #pragma once
 
 #include "../Utils/Utils.h"
 
 
-class IILIO  
-{
+class IILIO {
 public:
     IILIO();
     virtual ~IILIO();
@@ -29,8 +24,7 @@ public:
 
 };
 
-class CFileILIO : public IILIO
-{
+class CFileILIO : public IILIO {
 public:
     CFileILIO();
     ~CFileILIO();
@@ -48,12 +42,11 @@ public:
     virtual void close();
 
 protected:
-    FILE        *m_fp;
+    FILE                        *m_fp;
 
 };
 
-class CBuffILIO : public IILIO
-{
+class CBuffILIO : public IILIO {
 public:
     CBuffILIO();
     ~CBuffILIO();
@@ -71,10 +64,10 @@ public:
     virtual void close();
 
 protected:
-    uint8_t        *m_buf;
-    size_t        m_nLength;
-    size_t            m_nPos;
+    uint8_t                     *m_buf;
+    size_t                      m_nLength;
+    size_t                      m_nPos;
 
 };
 
-#endif // !defined(AFX_ILIO_H__35C6A017_5F2B_45CB_927E_E6537F270A30__INCLUDED_)
+#endif // !defined(ImageLib_ILIO_h)

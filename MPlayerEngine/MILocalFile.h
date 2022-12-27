@@ -1,16 +1,10 @@
-// MILocalFile.h: interface for the CMILocalFile class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MILOCALFILE_H__1717B24F_3838_48AE_A77E_8014439E8535__INCLUDED_)
-#define AFX_MILOCALFILE_H__1717B24F_3838_48AE_A77E_8014439E8535__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-class CMILocalFile : public IMediaInput  
-{
+#ifndef MPlayerEngine_MILocalFile_h
+#define MPlayerEngine_MILocalFile_h
+
+
+class CMILocalFile : public IMediaInput {
 OBJ_REFERENCE_DECL
 public:
     CMILocalFile();
@@ -30,9 +24,9 @@ public:
     virtual cstr_t getSource();
 
 protected:
-    FILE        *m_fp;
-    string        m_strFile;
+    FILE                        *m_fp;
+    string                      m_strFile;
 
 };
 
-#endif // !defined(AFX_MILOCALFILE_H__1717B24F_3838_48AE_A77E_8014439E8535__INCLUDED_)
+#endif // !defined(MPlayerEngine_MILocalFile_h)

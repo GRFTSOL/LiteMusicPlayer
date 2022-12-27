@@ -2,57 +2,48 @@
 #include "Skin.h"
 #include "SkinImage.h"
 
-CSFImage::CSFImage(void)
-{
+
+CSFImage::CSFImage(void) {
     m_pSkinFactory = nullptr;
 }
 
-CSFImage::CSFImage(const CSFImage &src)
-{
+CSFImage::CSFImage(const CSFImage &src) {
     m_pSkinFactory = nullptr;
     copyFrom(src);
 }
 
-CSFImage::~CSFImage(void)
-{
+CSFImage::~CSFImage(void) {
     destroy();
 }
 
 
-void CSFImage::destroy()
-{
-    if (m_pSkinFactory)
-    {
-        if (m_image)
-        {
+void CSFImage::destroy() {
+    if (m_pSkinFactory) {
+        if (m_image) {
             m_pSkinFactory->getResourceMgr()->freeBitmap(m_image);
             m_image = nullptr;
         }
         m_pSkinFactory = nullptr;
+    } else {
+        CRawImage::destroy();
     }
-	else
-	{
-		CRawImage::destroy();
-	}
 }
 
 
-CSFImage &CSFImage::operator=(const CSFImage &src)
-{
+CSFImage &CSFImage::operator=(const CSFImage &src) {
     copyFrom(src);
 
     return *this;
 }
 
-void CSFImage::copyFrom(const CSFImage &src)
-{
-    if (this == &src)
+void CSFImage::copyFrom(const CSFImage &src) {
+    if (this == &src) {
         return;
+    }
 
     destroy();
 
-    if (src.m_pSkinFactory && src.m_image)
-    {
+    if (src.m_pSkinFactory && src.m_image) {
         src.m_pSkinFactory->getResourceMgr()->incBitmapReference(src.m_image);
         m_image = src.m_image;
     }
@@ -64,34 +55,33 @@ void CSFImage::copyFrom(const CSFImage &src)
     m_pSkinFactory = src.m_pSkinFactory;
 }
 
-bool CSFImage::loadFromSRM(CSkinFactory *pskinFactory, cstr_t szResName)
-{
+bool CSFImage::loadFromSRM(CSkinFactory *pskinFactory, cstr_t szResName) {
     destroy();
 
     assert(pskinFactory);
     m_pSkinFactory = pskinFactory;
 
     RawImageData *image = m_pSkinFactory->getResourceMgr()->loadBitmap(szResName);
-    if (image)
-    {
+    if (image) {
         attach(image);
-        if (0 == m_cx && 0 == m_cy)
+        if (0 == m_cx && 0 == m_cy) {
             getOrginalSize(m_cx, m_cy);
-    }
-    else
+        }
+    } else {
         ERR_LOG1("load Bitmap: %s, FAILED.", szResName);
+    }
 
     return image != nullptr;
 }
 
-void CSFImage::xScaleBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, int xExtendStart, int xExtendEnd, bool bTile, BlendPixMode bpm)
-{
+void CSFImage::xScaleBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, int xExtendStart, int xExtendEnd, bool bTile, BlendPixMode bpm) {
     assert(m_cx);
-    if (m_cx <= 0)
+    if (m_cx <= 0) {
         return;
+    }
 
-    int        x = xDest;
-    int        xSrc = m_x;
+    int x = xDest;
+    int xSrc = m_x;
 
     // start ...
     CRawImage::blt(canvas,
@@ -102,16 +92,13 @@ void CSFImage::xScaleBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest
     x += xExtendStart - xSrc;
 
     // Center part
-    if (bTile)
-    {
-        xTileBlt(canvas, x, yDest, 
+    if (bTile) {
+        xTileBlt(canvas, x, yDest,
             nWidthDest - (m_cx - (xExtendEnd - xExtendStart)), m_cy,
             xExtendStart, m_y,
             xExtendEnd - xExtendStart, m_cy, bpm);
-    }
-    else
-    {
-        CRawImage::stretchBlt(canvas, x, yDest, 
+    } else {
+        CRawImage::stretchBlt(canvas, x, yDest,
             nWidthDest - (m_cx - (xExtendEnd - xExtendStart)), m_cy,
             xExtendStart, m_y,
             xExtendEnd - xExtendStart, m_cy, bpm);
@@ -126,24 +113,22 @@ void CSFImage::xScaleBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest
         xExtendEnd, m_y, bpm);
 }
 
-void CSFImage::xTileBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, BlendPixMode bpm)
-{
+void CSFImage::xTileBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, BlendPixMode bpm) {
     assert(m_cx);
-    if (m_cx <= 0)
+    if (m_cx <= 0) {
         return;
+    }
 
-    int        x;
+    int x;
 
-    for (x = xDest; x + m_cx < xDest + nWidthDest; x += m_cx)
-    {
+    for (x = xDest; x + m_cx < xDest + nWidthDest; x += m_cx) {
         CRawImage::blt(canvas,
             x, yDest,
             m_cx, m_cy,
             m_x, m_y, bpm);
     }
 
-    if (x < xDest + nWidthDest)
-    {
+    if (x < xDest + nWidthDest) {
         CRawImage::blt(canvas,
             x, yDest,
             xDest + nWidthDest - x, m_cy,
@@ -151,24 +136,22 @@ void CSFImage::xTileBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest,
     }
 }
 
-void CSFImage::xTileBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, int nImageX, int nImageY, int nImageCx, int nImageCy, BlendPixMode bpm)
-{
+void CSFImage::xTileBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, int nImageX, int nImageY, int nImageCx, int nImageCy, BlendPixMode bpm) {
     assert(nImageCx);
-    if (nImageCx <= 0)
+    if (nImageCx <= 0) {
         return;
+    }
 
-    int        x;
+    int x;
 
-    for (x = xDest; x + nImageCx < xDest + nWidthDest; x += nImageCx)
-    {
+    for (x = xDest; x + nImageCx < xDest + nWidthDest; x += nImageCx) {
         CRawImage::blt(canvas,
             x, yDest,
             nImageCx, nImageCy,
             nImageX, nImageY, bpm);
     }
 
-    if (x < xDest + nWidthDest)
-    {
+    if (x < xDest + nWidthDest) {
         CRawImage::blt(canvas,
             x, yDest,
             xDest + nWidthDest - x, nImageCy,
@@ -176,24 +159,22 @@ void CSFImage::xTileBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest,
     }
 }
 
-void CSFImage::yTileBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, BlendPixMode bpm)
-{
+void CSFImage::yTileBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, BlendPixMode bpm) {
     assert(m_cy);
-    if (m_cy <= 0)
+    if (m_cy <= 0) {
         return;
+    }
 
-    int        y;
+    int y;
 
-    for (y = yDest; y + m_cy < yDest + nHeightDest; y += m_cy)
-    {
+    for (y = yDest; y + m_cy < yDest + nHeightDest; y += m_cy) {
         CRawImage::blt(canvas,
             xDest, y,
             m_cx, m_cy,
             m_x, m_y, bpm);
     }
 
-    if (y < yDest + nHeightDest)
-    {
+    if (y < yDest + nHeightDest) {
         CRawImage::blt(canvas,
             xDest, y,
             m_cx, yDest + nHeightDest - y,
@@ -201,24 +182,22 @@ void CSFImage::yTileBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest,
     }
 }
 
-void CSFImage::yTileBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, int nImageX, int nImageY, int nImageCx, int nImageCy, BlendPixMode bpm)
-{
+void CSFImage::yTileBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, int nImageX, int nImageY, int nImageCx, int nImageCy, BlendPixMode bpm) {
     assert(nImageCy);
-    if (nImageCy <= 0)
+    if (nImageCy <= 0) {
         return;
+    }
 
-    int        y;
+    int y;
 
-    for (y = yDest; y + nImageCy < yDest + nHeightDest; y += nImageCy)
-    {
+    for (y = yDest; y + nImageCy < yDest + nHeightDest; y += nImageCy) {
         CRawImage::blt(canvas,
             xDest, y,
             nImageCx, nImageCy,
             nImageX, nImageY, bpm);
     }
 
-    if (y < yDest + nHeightDest)
-    {
+    if (y < yDest + nHeightDest) {
         CRawImage::blt(canvas,
             xDest, y,
             nImageCx, yDest + nHeightDest - y,
@@ -226,15 +205,13 @@ void CSFImage::yTileBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest,
     }
 }
 
-void CSFImage::tileBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, BlendPixMode bpm)
-{
+void CSFImage::tileBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, BlendPixMode bpm) {
     CDrawImageFun fun(canvas, this, bpm);
 
     tileBltT(xDest, yDest, nWidthDest, nHeightDest, m_x, m_y, m_cx, m_cy, fun);
 }
 
-void CSFImage::tileMaskBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, CSFImage *pImageMask, BlendPixMode bpm)
-{
+void CSFImage::tileMaskBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, CSFImage *pImageMask, BlendPixMode bpm) {
     CDrawImageFunMask fun(canvas, this, pImageMask, bpm);
     tileBltT(xDest, yDest, nWidthDest, nHeightDest, m_x, m_y, m_cx, m_cy, fun);
 }
@@ -434,8 +411,7 @@ void CSkinImage::tileBltExT(CRawGraph *canvas, int xOrg, int yOrg, int xDest, in
     }
 }*/
 
-void CSFImage::tileBltEx(CRawGraph *canvas, int xOrg, int yOrg, int xDest, int yDest, int nWidthDest, int nHeightDest, BlendPixMode bpm)
-{
+void CSFImage::tileBltEx(CRawGraph *canvas, int xOrg, int yOrg, int xDest, int yDest, int nWidthDest, int nHeightDest, BlendPixMode bpm) {
     CDrawImageFun fun(canvas, this, bpm);
 
     tileBltExT(canvas, xOrg, yOrg, xDest, yDest, nWidthDest, nHeightDest, fun);

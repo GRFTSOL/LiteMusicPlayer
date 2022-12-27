@@ -1,44 +1,37 @@
-// SplashScreenWnd.cpp: implementation of the CSplashScreenWnd class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "SkinTypes.h"
 #include "Skin.h"
 #include "SplashScreenWnd.h"
 
-CSplashScreenWnd::CSplashScreenWnd()
-{
+
+CSplashScreenWnd::CSplashScreenWnd() {
 }
 
-CSplashScreenWnd::~CSplashScreenWnd()
-{
+CSplashScreenWnd::~CSplashScreenWnd() {
 }
 
-bool CSplashScreenWnd::show(cstr_t szImageFile)
-{
+bool CSplashScreenWnd::show(cstr_t szImageFile) {
     // load image, then display it.
-    CRawImage        image;
-    CRawGraph        memGraph;
+    CRawImage image;
+    CRawGraph memGraph;
 
-    if (!image.load(szImageFile))
-    {
+    if (!image.load(szImageFile)) {
         ERR_LOG1("load Splash Image file: %s, FAILED.", szImageFile);
         return false;
     }
 
-    int                x, y;
+    int x, y;
 
     x = (GetSystemMetrics(SM_CXSCREEN) - image.m_cx) / 2;
     y = (GetSystemMetrics(SM_CYSCREEN) - image.m_cy) / 2;
 
-    if (!create(nullptr, x, y, image.m_cx, image.m_cy, nullptr, DS_NOIDLEMSG))
+    if (!create(nullptr, x, y, image.m_cx, image.m_cy, nullptr, DS_NOIDLEMSG)) {
         return false;
+    }
 
-    IMLGraphicsBase    *canvas = getGraphics();
+    IMLGraphicsBase *canvas = getGraphics();
 
     assert(canvas);
-    if (!canvas)
-    {
+    if (!canvas) {
         destroy();
         return false;
     }
@@ -59,26 +52,24 @@ bool CSplashScreenWnd::show(cstr_t szImageFile)
     return true;
 }
 
-LRESULT CSplashScreenWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam)
-{
-//     switch (message)
-//     {
-//     case WM_INITDIALOG:
-//         return onInitDialog();
-//         break;
-//     default:
-        return Window::wndProc(message, wParam, lParam);
-//    }
+LRESULT CSplashScreenWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
+    //     switch (message)
+    //     {
+    //     case WM_INITDIALOG:
+    //         return onInitDialog();
+    //         break;
+    //     default:
+    return Window::wndProc(message, wParam, lParam);
+    //    }
 }
 
-bool CSplashScreenWnd::updateLayeredWindowUsingMemGraph(CRawGraph *canvas)
-{
-    HDC        hdc, hdcSrc;
-    CRect    rcWnd;
-    CPoint    ptSrc, ptDest;
-    SIZE    sizeWnd;
-    uint32_t    dwStyle, dwStyleNew;
-    BLENDFUNCTION    blend;
+bool CSplashScreenWnd::updateLayeredWindowUsingMemGraph(CRawGraph *canvas) {
+    HDC hdc, hdcSrc;
+    CRect rcWnd;
+    CPoint ptSrc, ptDest;
+    SIZE sizeWnd;
+    uint32_t dwStyle, dwStyleNew;
+    BLENDFUNCTION blend;
 
     hdc = GetDC(m_hWnd);
 
@@ -87,8 +78,9 @@ bool CSplashScreenWnd::updateLayeredWindowUsingMemGraph(CRawGraph *canvas)
     // ????WS_EX_LAYERED??
     dwStyle = GetWindowLong(m_hWnd, GWL_EXSTYLE);
     dwStyleNew = dwStyle | WS_EX_LAYERED;
-    if (dwStyle != dwStyleNew)
+    if (dwStyle != dwStyleNew) {
         SetWindowLong(m_hWnd, GWL_EXSTYLE, dwStyleNew);
+    }
 
     getWindowRect(&rcWnd);
 

@@ -3,8 +3,8 @@
 #include "../PluginWMP/wmp.h"
 #include "MDAgent.h"
 
-class CMDWmpCore: public CMDAgent
-{
+
+class CMDWmpCore: public CMDAgent {
     OBJ_REFERENCE_DECL
 public:
     CMDWmpCore(void);
@@ -41,7 +41,7 @@ public:
     virtual uint32_t getPos();
 
     // volume
-    virtual MLRESULT setVolume(int nVolume, int nBanlance);
+    virtual MLRESULT setVolume(int volume, int nBanlance);
 
 protected:
     bool init();
@@ -56,15 +56,14 @@ protected:
 protected:
     friend class CWmpEventsSink;
 
-    CMPAutoPtr<IMPlayer> m_mplayer;
+    CMPAutoPtr<IMPlayer>        m_mplayer;
 
-    CMPAutoPtr<IWMPPlayer> m_player;
-    CMPAutoPtr<IWMPControls> m_controls;
-    CMPAutoPtr<IWMPPlaylist> m_playlist;
+    CMPAutoPtr<IWMPPlayer>      m_player;
+    CMPAutoPtr<IWMPControls>    m_controls;
+    CMPAutoPtr<IWMPPlaylist>    m_playlist;
     CMPAutoPtr<IWMPMediaCollection> m_collection;
 
     CMPAutoPtr<IConnectionPoint> m_pConnectionPoint;
-    uint32_t m_dwAdviseCookie;
+    uint32_t                    m_dwAdviseCookie;
 
 };
-

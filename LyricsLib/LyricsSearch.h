@@ -1,7 +1,3 @@
-// LyricsSearch.h: interface for the CLyricsSearch class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #pragma once
 
 #include "../MLProtocol/MLUtils.h"
@@ -14,29 +10,30 @@
 #ifdef _ID3V2_SUPPORT
 #include "Lyrics3v2.h"
 #include "../MediaTags/MediaTags.h"
+
+
 #endif // #ifdef _ID3V2_SUPPORT
 
-#define MATCH_VALUE_MIN                30
-#define MATCH_VALUE_OK                60
-#define MATCH_VALUE_BETTER            70
-#define MATCH_VALUE_MAX                100
-#define MATCH_VALUE_EMBEDDED_LRC    95
+#define MATCH_VALUE_MIN     30
+#define MATCH_VALUE_OK      60
+#define MATCH_VALUE_BETTER  70
+#define MATCH_VALUE_MAX     100
+#define MATCH_VALUE_EMBEDDED_LRC 95
 
-class CLyricsSearchParameter 
-{
+class CLyricsSearchParameter {
 public:
-    cstr_t szSongFile, szArtist, szTitle;
+    cstr_t                      szSongFile, szArtist, szTitle;
 
-    string strArtistFiltered, strTitleFiltered;
-    string strSongTitle;
-    string strSongDir;
+    string                      strArtistFiltered, strTitleFiltered;
+    string                      strSongTitle;
+    string                      strSongDir;
 
-    bool bOnlySearchBestMatch;
-    int nMatchValueOfBest;
-    string strBestMatchLyrics;
+    bool                        bOnlySearchBestMatch;
+    int                         nMatchValueOfBest;
+    string                      strBestMatchLyrics;
 
     // Used for cache memory alloc
-    string strLyrArFiltered, strLyrTiFiltered;
+    string                      strLyrArFiltered, strLyrTiFiltered;
 
 public:
     CLyricsSearchParameter(cstr_t szSongFile, cstr_t szArtist, cstr_t szTitle, bool bOnlySearchBestMatch = false);
@@ -49,21 +46,19 @@ public:
 
 };
 
-struct LrcSearchResult
-{
-    string    strUrl;
-    string    strSaveFileName;
-    string    strArtist;
-    string    strTitle;
-    string    strAlbum;
-    string    strUploader;
-    float    nMatchValue;
-    float    fRate;                    // rate info of lyrics
-    int        nRateCount;                // 
-    int        nDownloads;                // total downloads of lyrics
+struct LrcSearchResult {
+    string                      strUrl;
+    string                      strSaveFileName;
+    string                      strArtist;
+    string                      strTitle;
+    string                      strAlbum;
+    string                      strUploader;
+    float                       nMatchValue;
+    float                       fRate;              // rate info of lyrics
+    int                         nRateCount;         //
+    int                         nDownloads;         // total downloads of lyrics
 
-    LrcSearchResult()
-    {
+    LrcSearchResult() {
         nMatchValue = 0;
         fRate = 0.0;
         nRateCount = 0;
@@ -73,8 +68,7 @@ struct LrcSearchResult
 bool operator<=(const LrcSearchResult &l1, const LrcSearchResult &l2);
 bool operator<(const LrcSearchResult &l1, const LrcSearchResult &l2);
 
-class V_LRCSEARCHRESULT : public list<LrcSearchResult>
-{
+class V_LRCSEARCHRESULT : public list<LrcSearchResult> {
 public:
     bool addResult(const LrcSearchResult &Result);
     iterator getTheBestMatchLyrics(bool bCheckExist = false);

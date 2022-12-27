@@ -100,13 +100,8 @@ bool savePlaylistAsM3u(IPlaylist    *playList, cstr_t szFile)
     // G:\mp3\Britney Spears04\01.Baby One More Time.MP3
     // ...
 
-    FILE*        fp;
-    long        nCount;
-    MLRESULT    nRet;
-
-    nCount = playList->getCount();
-
-    fp = fopen(szFile, "w");
+    auto nCount = playList->getCount();
+    auto fp = fopen(szFile, "w");
     if (!fp)
         return false;
 
@@ -114,10 +109,10 @@ bool savePlaylistAsM3u(IPlaylist    *playList, cstr_t szFile)
     fprintf(fp, "#EXTM3U\n");
 
     // 
-    for (long i = 0; i < nCount; i++)
+    for (int i = 0; i < nCount; i++)
     {
         CMPAutoPtr<IMedia>    media;
-        nRet = playList->getItem(i, &media);
+        auto nRet = playList->getItem(i, &media);
         if (nRet == ERR_OK)
         {
             CXStr    strUrl;

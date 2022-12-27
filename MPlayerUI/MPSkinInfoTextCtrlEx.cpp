@@ -34,9 +34,9 @@ void CMPSkinInfoTextCtrlEx::draw(CRawGraph *canvas)
 {
     canvas->setFont(&m_font);
 
-    int        nLineHeight = getLineHeight();
-    int        y = (m_rcObj.top + m_rcObj.bottom) / 2 - m_vText.size() * nLineHeight / 2;
-    int        x;
+    int nLineHeight = getLineHeight();
+    int y = (m_rcObj.top + m_rcObj.bottom) / 2 - (int)m_vText.size() * nLineHeight / 2;
+    int x;
 
     if (m_vText.size() > 1)
         x = m_rcObj.left + m_nXMargin;

@@ -1,8 +1,10 @@
+#pragma once
 
 #ifndef _CColor_INC_
 #define _CColor_INC_
 
 #include "../Utils/UtilsTypes.h"
+
 
 #ifndef RGB
 #define RGB(r,g,b)          ((COLORREF)(((uint8_t)(r)|((uint32_t)((uint8_t)(g))<<8))|(((uint32_t)(uint8_t)(b))<<16)))
@@ -12,8 +14,7 @@
 #define GetBValue(rgb)      ((uint8_t)((rgb)>>16))
 #endif
 
-class CColor
-{
+class CColor {
 public:
     CColor(COLORREF clr) {
         m_clr = clr;
@@ -42,8 +43,8 @@ public:
     bool operator==(CColor right) { return m_clr == right.m_clr && m_alpha == right.m_alpha; }
 
 protected:
-    COLORREF             m_clr;
-    uint8_t             m_alpha;
+    COLORREF                    m_clr;
+    uint8_t                     m_alpha;
 
 };
 

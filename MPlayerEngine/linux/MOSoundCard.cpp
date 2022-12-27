@@ -1,7 +1,3 @@
-// MOSoundCard.cpp: implementation of the CMOSoundCard class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "IMPlayer.h"
 #include "MOSoundCard.h"
 
@@ -13,20 +9,19 @@
 #include <dlfcn.h>
 #include <ctype.h>
 
-struct alsa_config
-{
-    const char *pcm_device;
-    int mixer_card;
-    const char *mixer_device;
-    int buffer_time;
-    int period_time;
-    gboolean debug;
-    gboolean mmap;
-    struct
-    {
-        int left, right;
+
+struct alsa_config {
+    const char                  *pcm_device;
+    int                         mixer_card;
+    const char                  *mixer_device;
+    int                         buffer_time;
+    int                         period_time;
+    gboolean                    debug;
+    gboolean                    mmap;
+    struct {
+        int                         left, right;
     } vol;
-    gboolean soft_volume;
+    gboolean                    soft_volume;
 };
 
 alsa_config g_alsa_cfg;
@@ -39,8 +34,7 @@ static int frag_count = 16;
 static int nr_channels = 2;
 static unsigned int output_rate = 44100;
 
-CMOSoundCard::CMOSoundCard() : m_eventCanWrite(false, true)
-{
+CMOSoundCard::CMOSoundCard() : m_eventCanWrite(false, true) {
     OBJ_REFERENCE_INIT;
 
     m_dwTotolBytesOffset = 0;
@@ -58,8 +52,7 @@ CMOSoundCard::CMOSoundCard() : m_eventCanWrite(false, true)
     g_alsa_cfg.pcm_device = "default";
     g_alsa_cfg.mixer_device = "PCM";
 
-    if (dlopen("libasound.so.2", RTLD_NOW | RTLD_GLOBAL) == nullptr)
-    {
+    if (dlopen("libasound.so.2", RTLD_NOW | RTLD_GLOBAL) == nullptr) {
         g_message("Cannot load alsa library: %s", dlerror());
         return;
     }
@@ -67,10 +60,9 @@ CMOSoundCard::CMOSoundCard() : m_eventCanWrite(false, true)
     //
     // open sound device
     //
-    int        err;
+    int err;
     err = snd_pcm_open(&sound_handle, g_alsa_cfg.pcm_device, stream, 0);
-    if (err < 0)
-    {
+    if (err < 0) {
         ERR_LOG2("snd_pcm_open: %s (%s)", snd_strerror(err), g_alsa_cfg.pcm_device);
         return;
     }
@@ -81,26 +73,24 @@ CMOSoundCard::CMOSoundCard() : m_eventCanWrite(false, true)
     }
 }
 
-CMOSoundCard::~CMOSoundCard()
-{
+CMOSoundCard::~CMOSoundCard() {
     if (sound_handle) {
         snd_pcm_drain(sound_handle);
         snd_pcm_close(sound_handle);
         sound_handle = nullptr;
-    }    
-    if (errlog)
+    }
+    if (errlog) {
         snd_output_close(errlog);
+    }
 }
 
 OBJ_REFERENCE_IMP(CMOSoundCard)
 
-cstr_t CMOSoundCard::getDescription()
-{
+cstr_t CMOSoundCard::getDescription() {
     return "MPlayer soundcard output 1.0";
 }
 
-MLRESULT CMOSoundCard::open(int nSampleRate, int nNumChannels, int nBitsPerSamp)
-{
+MLRESULT CMOSoundCard::open(int nSampleRate, int nNumChannels, int nBitsPerSamp) {
     DBG_LOG3("open, SapmleRate: %d, Channels: %d, BitsPerSample: %d", nSampleRate, nNumChannels, nBitsPerSamp);
 
     m_fadeMode = FADE_NONE;
@@ -111,13 +101,12 @@ MLRESULT CMOSoundCard::open(int nSampleRate, int nNumChannels, int nBitsPerSamp)
 
     assert(nBitsPerSamp == 16);
 
-    int        err;
+    int err;
     snd_pcm_hw_params_t *hw_params;
 
     /* Allocate Hardware Parameters structures and fills it with config space for PCM */
     err = snd_pcm_hw_params_malloc (&hw_params);
-    if (err < 0)
-    {
+    if (err < 0) {
         ERR_LOG1("snd_pcm_hw_params_malloc failed (%s).", snd_strerror(err));
         return ERR_NO_MEM;
     }
@@ -168,12 +157,11 @@ MLRESULT CMOSoundCard::open(int nSampleRate, int nNumChannels, int nBitsPerSamp)
     return ERR_OK;
 }
 
-MLRESULT CMOSoundCard::waitForWrite()
-{
+MLRESULT CMOSoundCard::waitForWrite() {
     /* wait till the interface is ready for data, or 1 second
     has elapsed.
     */
-    int        err;
+    int err;
     if ((err = snd_pcm_wait (sound_handle, 1000)) < 0) {
         fprintf (stderr, "poll failed (%s)\n", strerror (errno));
         return ERR_FALSE;
@@ -182,80 +170,69 @@ MLRESULT CMOSoundCard::waitForWrite()
     return ERR_OK;
 }
 
-MLRESULT CMOSoundCard::write(IFBuffer *pBuf)
-{
+MLRESULT CMOSoundCard::write(IFBuffer *pBuf) {
     snd_pcm_uframes_t fcount;
     int err;
 
     DBG_LOG1("write sound data: %d", pBuf->size());
 
     fcount = (snd_pcm_uframes_t) (pBuf->size() / 4);
-    if (!sound_handle)
-    {
+    if (!sound_handle) {
         ERR_LOG0("Sound handle is nullptr.");
         return ERR_SOUND_DEVICE_WRITE;
     }
     err = snd_pcm_writei(sound_handle, pBuf->data(), fcount);
-//     if (err < 0)
-//     {
-//         if (xrun_recovery(sound_handle, err) < 0)
-//         {
-//             ERR_LOG0("alsa: xrun_recovery failed.");
-//             return ERR_SOUND_DEVICE_WRITE;
-//         }
-//         err = snd_pcm_writei(sound_handle, pBuf->data(), fcount);
-//         if (err < 0)
-//         {
-//             if (xrun_recovery(sound_handle, err) < 0)
-//             {
-//                 ERR_LOG0("alsa: xrun_recovery failed. again");
-//                 return ERR_SOUND_DEVICE_WRITE;
-//             }
-//         }
-//     }
+    //     if (err < 0)
+    //     {
+    //         if (xrun_recovery(sound_handle, err) < 0)
+    //         {
+    //             ERR_LOG0("alsa: xrun_recovery failed.");
+    //             return ERR_SOUND_DEVICE_WRITE;
+    //         }
+    //         err = snd_pcm_writei(sound_handle, pBuf->data(), fcount);
+    //         if (err < 0)
+    //         {
+    //             if (xrun_recovery(sound_handle, err) < 0)
+    //             {
+    //                 ERR_LOG0("alsa: xrun_recovery failed. again");
+    //                 return ERR_SOUND_DEVICE_WRITE;
+    //             }
+    //         }
+    //     }
     pBuf->release();
 
     return ERR_OK;
 }
 
-MLRESULT CMOSoundCard::flush()
-{
+MLRESULT CMOSoundCard::flush() {
     m_eventCanWrite.set();
 
     return ERR_OK;
 }
 
-MLRESULT CMOSoundCard::pause(bool bPause)
-{
+MLRESULT CMOSoundCard::pause(bool bPause) {
     return ERR_OK;
 }
 
-bool CMOSoundCard::isPlaying()
-{
+bool CMOSoundCard::isPlaying() {
     return false;
 }
 
-MLRESULT CMOSoundCard::stop()
-{
+MLRESULT CMOSoundCard::stop() {
     return ERR_OK;
 }
 
-bool CMOSoundCard::isOpened()
-{
+bool CMOSoundCard::isOpened() {
     return false;
 }
 
 // volume
-MLRESULT CMOSoundCard::setVolume(int nVolume, int nBanlance)
-{
+MLRESULT CMOSoundCard::setVolume(int volume, int nBanlance) {
     return ERR_FALSE;
 }
 
-#define MAXINT32 0x7FFFFFFF
+#define MAXINT32            0x7FFFFFFF
 
-uint32_t CMOSoundCard::getPos()
-{
+uint32_t CMOSoundCard::getPos() {
     return 0;
 }
-
-

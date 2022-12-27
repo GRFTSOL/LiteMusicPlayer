@@ -1,43 +1,35 @@
-// SkinMenu.h: interface for the CSkinMenu class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_SKINMENU_H__66CE8E34_92F0_41E0_996C_AE1170E3AEE9__INCLUDED_)
-#define AFX_SKINMENU_H__66CE8E34_92F0_41E0_996C_AE1170E3AEE9__INCLUDED_
+#ifndef Skin_SkinMenu_h
+#define Skin_SkinMenu_h
 
 #pragma once
 
 #include "../third-parties/rapidjson/rapidjson/document.h"
 
 
-class CSkinMenu : public CMenu  
-{
+class CSkinMenu : public CMenu {
 public:
-    enum ItemType
-    {
+    enum ItemType {
         IT_ITEM,
         IT_POPUP,
         IT_SEPERATOR,
     };
 
-    enum Action
-    {
+    enum Action {
         A_UNKNOWN,
         A_INSERT_BY_ID,
         A_APPEND,
         A_REMOVE,
     };
 
-    struct Item
-    {
-        int                nMenuID;
-        int                nPos;
-        ItemType        type;
-        Action            action;
-        bool            bCanCheck;
-        string            name;
-        int                nIDCmd;
-        int                nIDCmdIsChecked;
+    struct Item {
+        int                         nMenuID;
+        int                         nPos;
+        ItemType                    type;
+        Action                      action;
+        bool                        bCanCheck;
+        string                      name;
+        int                         nIDCmd;
+        int                         nIDCmdIsChecked;
 
         int fromXML(CSkinFactory *pSkinFactory, SXNode *pNode);
     };
@@ -67,10 +59,10 @@ protected:
 protected:
     typedef list<Item>        LIST_ITEMS;
 
-    int                m_nOrgAppenPos;
-    int                m_nAppendPosition;
-    LIST_ITEMS        m_listItems;
+    int                         m_nOrgAppenPos;
+    int                         m_nAppendPosition;
+    LIST_ITEMS                  m_listItems;
 
 };
 
-#endif // !defined(AFX_SKINMENU_H__66CE8E34_92F0_41E0_996C_AE1170E3AEE9__INCLUDED_)
+#endif // !defined(Skin_SkinMenu_h)

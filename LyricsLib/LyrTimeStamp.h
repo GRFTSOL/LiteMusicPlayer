@@ -1,7 +1,6 @@
 #pragma once
 
-class CLyrTimeStamp
-{
+class CLyrTimeStamp {
 public:
     static bool isTimeStamps(cstr_t szTimeStamps);
 

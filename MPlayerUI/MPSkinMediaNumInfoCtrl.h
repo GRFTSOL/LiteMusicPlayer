@@ -18,11 +18,11 @@ public:
     CMPSkinMediaNumInfoCtrl();
     virtual ~CMPSkinMediaNumInfoCtrl();
 
-    void onCreate();
+    void onCreate() override;
 
-    void onEvent(const IEvent *pEvent);
+    void onEvent(const IEvent *pEvent) override;
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 #ifdef _SKIN_EDITOR_
     void enumProperties(CUIObjProperties &listProperties);
 #endif // _SKIN_EDITOR_

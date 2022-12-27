@@ -5,6 +5,8 @@
 //  Created by henry_xiao on 2022/12/22.
 //
 
+#pragma once
+
 #ifndef JsSkinDocument_hpp
 #define JsSkinDocument_hpp
 

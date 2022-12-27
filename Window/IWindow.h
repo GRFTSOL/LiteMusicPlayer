@@ -5,6 +5,8 @@
 //  Created by HongyongXiao on 2021/11/13.
 //
 
+#pragma once
+
 #ifndef IWindow_hpp
 #define IWindow_hpp
 
@@ -15,8 +17,7 @@
 //
 // The Window size state definition
 //
-enum WndSizeMode
-{
+enum WndSizeMode {
     WndSizeMode_Minimized,
     WndSizeMode_Maximized,
     WndSizeMode_Normal,

@@ -2,7 +2,8 @@
 
 #include "Log.h"
 
-extern class CLog        g_log;
+
+extern class CLog g_log;
 
 #define LOG0(byLevel, szMessage)            \
     g_log.writeLog(byLevel, __FILE__, __LINE__, szMessage)
@@ -48,14 +49,14 @@ extern class CLog        g_log;
     g_log.logDumpStr(LOG_LVL_DEBUG, __FILE__, __LINE__, sz, len)
 
 #else
-#define DBG_LOG0(szMessage)            (0)
+#define DBG_LOG0(szMessage) (0)
 
-#define DBG_LOG1(sz, p1)                (0)
+#define DBG_LOG1(sz, p1)    (0)
 
-#define DBG_LOG2(sz, p1, p2)            (0)
+#define DBG_LOG2(sz, p1, p2) (0)
 
-#define DBG_LOG3(sz, p1, p2, p3)        (0)
+#define DBG_LOG3(sz, p1, p2, p3) (0)
 
-#define DBG_LOGDUMPS(sz, len)        (0)
+#define DBG_LOGDUMPS(sz, len)   (0)
 
 #endif

@@ -1,9 +1,5 @@
-// RawImageData.h: interface for the RawImageData class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_RAWIMAGEDATA_H__99C17B14_06C0_4675_8030_19018283D265__INCLUDED_)
-#define AFX_RAWIMAGEDATA_H__99C17B14_06C0_4675_8030_19018283D265__INCLUDED_
+#ifndef ImageLib_RawImageData_h
+#define ImageLib_RawImageData_h
 
 #pragma once
 
@@ -11,60 +7,56 @@
 
 
 #ifndef _WIN32
-typedef struct tagRGBQUAD {
-    uint8_t    rgbBlue;
-    uint8_t    rgbGreen;
-    uint8_t    rgbRed;
-    uint8_t    rgbReserved;
-} RGBQUAD;
-typedef RGBQUAD * LPRGBQUAD;
+struct RGBQUAD {
+    uint8_t                     rgbBlue;
+    uint8_t                     rgbGreen;
+    uint8_t                     rgbRed;
+    uint8_t                     rgbReserved;
+};
 #endif
 
-enum PixFormat
-{
-    PF_UNKNOWN        = -1,
-    PF_RGBA32, //        = agg::pix_format_rgba32,
-    PF_RGB24, //        = agg::pix_format_rgb24,
+enum PixFormat {
+    PF_UNKNOWN                  = -1,
+    PF_RGBA32,                       // = agg::pix_format_rgba32,
+    PF_RGB24,                        // = agg::pix_format_rgb24,
     PF_PALLETE256,
     PF_PALLETE16,
     PF_PALLETE2,
 };
 
-typedef uint32_t        BlendPixMode;
+typedef uint32_t BlendPixMode;
 
-enum _BlendPixMode
-{
+enum _BlendPixMode {
     // Target Channel
-    BPM_CHANNEL_RGB        = 1,
-    BPM_CHANNEL_ALPHA    = 1 << 1,
+    BPM_CHANNEL_RGB             = 1,
+    BPM_CHANNEL_ALPHA           = 1 << 1,
 
     // Operation
-    BPM_OP_COPY            = 1 << 8,
-    BPM_OP_BLEND        = 1 << 9,
-    BPM_OP_XOR            = 1 << 10,
-    BPM_OP_MULTIPLY        = 1 << 11,
+    BPM_OP_COPY                 = 1 << 8,
+    BPM_OP_BLEND                = 1 << 9,
+    BPM_OP_XOR                  = 1 << 10,
+    BPM_OP_MULTIPLY             = 1 << 11,
 
-    //
+
     // Combined Channel and operaton:
-    //
 
-    BPM_COPY            = BPM_CHANNEL_RGB | BPM_CHANNEL_ALPHA | BPM_OP_COPY,
-    BPM_BLEND            = BPM_CHANNEL_RGB | BPM_CHANNEL_ALPHA | BPM_OP_BLEND,
-    BPM_MULTIPLY        = BPM_CHANNEL_RGB | BPM_CHANNEL_ALPHA | BPM_OP_MULTIPLY,
 
-    BPM_BLEND_RGB        = BPM_CHANNEL_RGB | BPM_OP_BLEND,
-    BPM_BLEND_ALPHA        = BPM_CHANNEL_ALPHA | BPM_OP_BLEND,
+    BPM_COPY                    = BPM_CHANNEL_RGB | BPM_CHANNEL_ALPHA | BPM_OP_COPY,
+    BPM_BLEND                   = BPM_CHANNEL_RGB | BPM_CHANNEL_ALPHA | BPM_OP_BLEND,
+    BPM_MULTIPLY                = BPM_CHANNEL_RGB | BPM_CHANNEL_ALPHA | BPM_OP_MULTIPLY,
 
-    BPM_COPY_ALPHA        = BPM_CHANNEL_ALPHA | BPM_OP_COPY,
-    BPM_COPY_RGB        = BPM_CHANNEL_RGB | BPM_OP_COPY,
+    BPM_BLEND_RGB               = BPM_CHANNEL_RGB | BPM_OP_BLEND,
+    BPM_BLEND_ALPHA             = BPM_CHANNEL_ALPHA | BPM_OP_BLEND,
 
-    BPM_XOR_RGB            = BPM_CHANNEL_RGB | BPM_OP_XOR,
+    BPM_COPY_ALPHA              = BPM_CHANNEL_ALPHA | BPM_OP_COPY,
+    BPM_COPY_RGB                = BPM_CHANNEL_RGB | BPM_OP_COPY,
 
-    BPM_BILINEAR        = 1 << 17,        // available option for stretch blt
+    BPM_XOR_RGB                 = BPM_CHANNEL_RGB | BPM_OP_XOR,
+
+    BPM_BILINEAR                = 1 << 17, // available option for stretch blt
 };
 
-class RawImageData
-{
+class RawImageData {
 public:
     RawImageData();
     virtual ~RawImageData();
@@ -76,7 +68,7 @@ public:
 
     bool create(int nWidth, int nHeight, int nBitCount);
     bool createReverse(int nWidth, int nHeight, int nBitCount);
-    
+
     void reverseUpDown() { stride = -stride; }
 
     void free();
@@ -84,19 +76,18 @@ public:
     void setClrUsed(int _nClrUsed);
 
     uint8_t *rowPtr(int y) const {
-        if (stride > 0)
+        if (stride > 0) {
             return buff + stride * y;
-        else
+        } else {
             return buff - stride * (height - 1 - y);
+        }
     }
 
-    uint8_t *pixPtr(int x, int y) const
-    {
-        uint8_t        *p;
+    uint8_t *pixPtr(int x, int y) const {
+        uint8_t *p;
 
         p = rowPtr(y);
-        switch (pixFormat)
-        {
+        switch (pixFormat) {
         case PF_RGBA32:
             p += x * 4;
             break;
@@ -119,19 +110,19 @@ public:
 
     RGBQUAD getPixel(int x, int y) const;
 
-    size_t getBuffSize() { return (stride > 0 ? stride : -stride) * height; }
+    uint32_t getBuffSize() { return (stride > 0 ? stride : -stride) * (uint32_t)height; }
 
     int absStride() { return stride > 0 ? stride : -stride; }
 
 public:
-    uint8_t             *buff;
-    uint16_t            width, height;
-    int16_t             stride;
-    int16_t             bitCount;
-    PixFormat           pixFormat;
+    uint8_t                     *buff;
+    uint16_t                    width, height;
+    int16_t                     stride;
+    int16_t                     bitCount;
+    PixFormat                   pixFormat;
 
-    uint8_t             nClrUsed;
-    RGBQUAD             *pallete;
+    uint8_t                     nClrUsed;
+    RGBQUAD                     *pallete;
 
 };
 
@@ -162,4 +153,4 @@ COLORREF HLSToRGB(float hue, float saturation, float luminance);
 
 void RGBToHLS(COLORREF clr, float &hue, float &saturation, float &luminance);
 
-#endif // !defined(AFX_RAWIMAGEDATA_H__99C17B14_06C0_4675_8030_19018283D265__INCLUDED_)
+#endif // !defined(ImageLib_RawImageData_h)

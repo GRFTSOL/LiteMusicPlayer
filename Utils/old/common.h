@@ -1,113 +1,100 @@
-// MLError.h: interface for the CMLError class.
-//
-//////////////////////////////////////////////////////////////////////
+#pragma once
 
 #ifndef _ML_COMMON_INC_
 #define _ML_COMMON_INC_
 
-enum FILE_ENCODING
-{
+enum FILE_ENCODING {
     FE_ANSI,
     FE_UCS2,
     FE_UCS2_BE,
     FE_UTF8
 };
 
-#define SZ_FE_UCS2            "\xFF\xFE"
-#define SZ_FE_UCS2_BE        "\xFE\xFF"
-#define SZ_FE_UTF8            "\xEF\xBB\xBF"
+#define SZ_FE_UCS2          "\xFF\xFE"
+#define SZ_FE_UCS2_BE       "\xFE\xFF"
+#define SZ_FE_UTF8          "\xEF\xBB\xBF"
 
 template<int n> struct __sizeof_at_compile_helper;
-#define sizeof_at_compile(obj)    __sizeof_at_compile_helper<sizeof(obj)> v
+#define sizeof_at_compile(obj)  __sizeof_at_compile_helper<sizeof(obj)> v
 
 #define CountOf(arr)        (sizeof(arr) / sizeof(arr[0]))
 
-#define isEmptyString(str)    ((str) == nullptr || (str)[0] == '\0')
+#define isEmptyString(str)  ((str) == nullptr || (str)[0] == '\0')
 
-#define emptyStr(str)    ((str)[0] = '\0')
+#define emptyStr(str)       ((str)[0] = '\0')
 
-#define IsFlagValid(value, flag)    (((value) & (flag)) == (flg))
-#define isFlagSet(value, flag)    (((value) & (flag)) == (flag))
+#define IsFlagValid(value, flag) (((value) & (flag)) == (flg))
+#define isFlagSet(value, flag)  (((value) & (flag)) == (flag))
 
-#define tobool(bValue)        ((bValue) != 0)
+#define tobool(bValue)      ((bValue) != 0)
 
-inline uint32_t uint32FromBE(uint8_t *byData)
-{
+inline uint32_t uint32FromBE(uint8_t *byData) {
     return byData[3] | (byData[2] << 8) | (byData[1] << 16) | (byData[0] << 24);
 }
 
-inline void uint32ToBE(uint32_t value, uint8_t *byData)
-{
+inline void uint32ToBE(uint32_t value, uint8_t *byData) {
     byData[3] = value & 0xFF;
     byData[2] = (value >> 8) & 0xFF;
     byData[1] = (value >> 16) & 0xFF;
     byData[0] = (value >> 24) & 0xFF;
 }
 
-inline uint32_t uint16FromBE(uint8_t *byData)
-{
+inline uint32_t uint16FromBE(uint8_t *byData) {
     return byData[1] | (byData[0] << 8);
 }
 
-inline void uint16ToBE(uint32_t value, uint8_t *byData)
-{
+inline void uint16ToBE(uint32_t value, uint8_t *byData) {
     byData[1] = value & 0xFF;
     byData[0] = (value >> 8) & 0xFF;
 }
 
-inline uint32_t uint32FromLE(uint8_t *byData)
-{
+inline uint32_t uint32FromLE(uint8_t *byData) {
     return byData[0] | (byData[1] << 8) | (byData[2] << 16) | (byData[3] << 24);
 }
 
-inline void uint32ToLE(uint32_t value, uint8_t *byData)
-{
+inline void uint32ToLE(uint32_t value, uint8_t *byData) {
     byData[0] = value & 0xFF;
     byData[1] = (value >> 8) & 0xFF;
     byData[2] = (value >> 16) & 0xFF;
     byData[3] = (value >> 24) & 0xFF;
 }
 
-inline uint16_t uint16FromLE(uint8_t *byData)
-{
+inline uint16_t uint16FromLE(uint8_t *byData) {
     return byData[0] | (byData[1] << 8);
 }
 
-inline void uint16ToLE(uint16_t value, uint8_t *byData)
-{
+inline void uint16ToLE(uint16_t value, uint8_t *byData) {
     byData[0] = value & 0xFF;
     byData[1] = (value >> 8) & 0xFF;
 }
 
 template<class int_t1, class int_t2>
-int_t1 inline max_fun(int_t1 a, int_t2 b)
-{
+int_t1 inline max_fun(int_t1 a, int_t2 b) {
     return (((a) > (b)) ? (a) : (b));
 }
 
 template<class int_t1, class int_t2>
-int_t1 inline min_fun(int_t1 a, int_t2 b)
-{
+int_t1 inline min_fun(int_t1 a, int_t2 b) {
     return (((a) < (b)) ? (a) : (b));
 }
 
 #ifdef _WIN32
-#define PATH_SEP_CHAR        '\\'
-#define PATH_SEP_STR    "\\"
+#define PATH_SEP_CHAR       '\\'
+#define PATH_SEP_STR        "\\"
 #else
-#define PATH_SEP_CHAR        '/'
-#define PATH_SEP_STR    "/"
+#define PATH_SEP_CHAR       '/'
+#define PATH_SEP_STR        "/"
 #endif
 
 #define CHAR_SPACE        ' '
-#define CHAR_TAB        '\t'
-#define CHAR_NEWLINE    '\n'
-#define CHAR_RETURN        '\r'
-#define CHAR_NULL        '\0'
-#define CHAR_COMMA        ','
-#define CHAR_SEMICOLON    ';'
+#define CHAR_TAB            '\t'
+#define CHAR_NEWLINE        '\n'
+#define CHAR_RETURN         '\r'
+#define CHAR_NULL           '\0'
+#define CHAR_COMMA          ','
+#define CHAR_SEMICOLON      ';'
 
-#define SZ_RETURN        "\r\n"
+#define SZ_RETURN           "\r\n"
 
 #ifndef _WIN32
 #define MAKEWORD(a, b)      ((uint16_t)(((uint8_t)((a) & 0xff)) | ((uint16_t)((uint8_t)((b) & 0xff))) << 8))
@@ -128,13 +115,11 @@ int_t1 inline min_fun(int_t1 a, int_t2 b)
 
 #ifndef _WIN32
 
-inline void interlockedIncrement(long *nReference)
-{
+inline void interlockedIncrement(long *nReference) {
     (*nReference)++;
 }
 
-inline long interlockedDecrement(long *nReference)
-{
+inline long interlockedDecrement(long *nReference) {
     return --(*nReference);
 }
 
@@ -159,86 +144,77 @@ protected:\
     { _class *p = new _class(); p->addRef() }\
 
 template <class T>
-class CMPAutoPtr
-{
+class CMPAutoPtr {
 public:
     typedef T _PtrClass;
-    CMPAutoPtr()
-    {
+    CMPAutoPtr() {
         p=nullptr;
     }
-    CMPAutoPtr(T* lp)
-    {
-        if ((p = lp) != nullptr)
+    CMPAutoPtr(T* lp) {
+        if ((p = lp) != nullptr) {
             p->addRef();
+        }
     }
-    CMPAutoPtr(const CMPAutoPtr<T>& lp)
-    {
-        if ((p = lp.p) != nullptr)
+    CMPAutoPtr(const CMPAutoPtr<T>& lp) {
+        if ((p = lp.p) != nullptr) {
             p->addRef();
+        }
     }
-    ~CMPAutoPtr()
-    {
-        if (p)
+    ~CMPAutoPtr() {
+        if (p) {
             p->release();
+        }
     }
-    void release()
-    {
-        if (p)
-        {
+    void release() {
+        if (p) {
             p->release();
             p = nullptr;
         }
     }
-    operator T*() const
-    {
+    operator T*() const {
         return (T*)p;
     }
-    T& operator*() const
-    {
+    T& operator*() const {
         assert(p!=nullptr);
         return *p;
     }
     //The assert on operator& usually indicates a bug.  If this is really
     //what is needed, however, take the address of the p member explicitly.
-    T** operator&()
-    {
+    T** operator&() {
         assert(p==nullptr);
         return &p;
     }
-    T* operator->() const
-    {
+    T* operator->() const {
         assert(p!=nullptr);
         return p;
     }
-    T* operator=(T* lp)
-    {
-        if (lp)
+    T* operator=(T* lp) {
+        if (lp) {
             lp->addRef();
-        if (p)
+        }
+        if (p) {
             (p)->release();
+        }
         p = lp;
         return (T*)lp;
     }
-    T* operator=(const CMPAutoPtr<T>& lp)
-    {
-        if (lp.p)
+    T* operator=(const CMPAutoPtr<T>& lp) {
+        if (lp.p) {
             lp.p->addRef();
-        if (p)
+        }
+        if (p) {
             (p)->release();
+        }
         p = lp.p;
         return (T*)lp.p;
     }
-    bool operator!() const
-    {
+    bool operator!() const {
         return (p == nullptr);
     }
-    bool operator<(T* pT) const
-    {
+    bool operator<(T* pT) const {
         return p < pT;
     }
-    bool operator==(T* pT) const
-    {
+    bool operator==(T* pT) const {
         return p == pT;
     }
 
@@ -248,8 +224,7 @@ public:
 #ifdef _WIN32
 
 // Simplified bstr
-class bstr_s
-{
+class bstr_s {
 public:
     bstr_s() { m_str = nullptr; }
     bstr_s(const OLECHAR * psz) { m_str = SysAllocString(psz); }
@@ -259,14 +234,13 @@ public:
     BSTR c_str() const { return m_str; }
     operator BSTR() const { return m_str; }
 
-    BSTR* operator&()
-    {
+    BSTR* operator&() {
         assert(m_str == nullptr);
         return &m_str;
     }
 
 protected:
-    BSTR        m_str;
+    BSTR                        m_str;
 
 };
 

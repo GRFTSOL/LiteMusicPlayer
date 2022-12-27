@@ -6,29 +6,24 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-CSkinApp    * CSkinApp::m_pInstance = nullptr;
+CSkinApp * CSkinApp::m_pInstance = nullptr;
 
-CSkinApp::CSkinApp(void)
-{
+CSkinApp::CSkinApp(void) {
 }
 
-CSkinApp::~CSkinApp(void)
-{
+CSkinApp::~CSkinApp(void) {
 }
 
-CSkinApp *CSkinApp::getInstance()
-{
+CSkinApp *CSkinApp::getInstance() {
     assert(m_pInstance);
     return m_pInstance;
 }
 
-bool CSkinApp::init()
-{
+bool CSkinApp::init() {
     m_pEventDispatcher = newEventPatcher();
     m_pSkinFactory = newSkinFactory();
 
-    if (!isDirExist(m_pSkinFactory->getSkinRootDir()))
-    {
+    if (!isDirExist(m_pSkinFactory->getSkinRootDir())) {
         // Sometimes, uninstallation can't be remove MiniLyrics.dll till next restart,
         // So, don't start MiniLyrics, after uninstallation.
         ERR_LOG1("Skin root folder: %s doesn't exist.", m_pSkinFactory->getSkinRootDir());
@@ -45,13 +40,11 @@ bool CSkinApp::init()
     return true;
 }
 
-int CSkinApp::loadDefaultSkin(cstr_t szDefaultSkin, bool bCreateSkinWnd)
-{
-    bool        bLoadSkinTheme = false;
+int CSkinApp::loadDefaultSkin(cstr_t szDefaultSkin, bool bCreateSkinWnd) {
+    bool bLoadSkinTheme = false;
 
     string strSkin = getDefaultSkin();
-    if (strSkin.empty())
-    {
+    if (strSkin.empty()) {
         strSkin = szDefaultSkin;
         bLoadSkinTheme = true;
         writeDefaultSkin(szDefaultSkin);
@@ -60,28 +53,23 @@ int CSkinApp::loadDefaultSkin(cstr_t szDefaultSkin, bool bCreateSkinWnd)
     return m_pSkinFactory->changeSkin(strSkin.c_str(), "", "", bLoadSkinTheme, bCreateSkinWnd);
 }
 
-string CSkinApp::getDefaultSkin()
-{
+string CSkinApp::getDefaultSkin() {
     return g_profile.getString(m_pSkinFactory->getSkinFileName(), "DefaultSkin", "");
 }
 
-void CSkinApp::writeDefaultSkin(cstr_t szDefaultSkin)
-{
+void CSkinApp::writeDefaultSkin(cstr_t szDefaultSkin) {
     g_profile.writeString(m_pSkinFactory->getSkinFileName(), "DefaultSkin", szDefaultSkin);
 }
 
 template <class _T>
-void safeDelete(_T &p)
-{
-    if (p)
-    {
+void safeDelete(_T &p) {
+    if (p) {
         delete p;
         p = nullptr;
     }
 }
 
-void CSkinApp::quit()
-{
+void CSkinApp::quit() {
     m_pEventDispatcher->quit();
     m_pSkinFactory->quit();
 
@@ -89,8 +77,7 @@ void CSkinApp::quit()
     safeDelete(m_pSkinFactory);
 }
 
-void CSkinApp::postQuitMessage()
-{
+void CSkinApp::postQuitMessage() {
 #ifdef _WIN32
     ::postQuitMessage(0);
 #else
@@ -98,20 +85,17 @@ void CSkinApp::postQuitMessage()
 #endif
 }
 
-int CSkinApp::showDialog(Window *pWndParent, cstr_t szDialogName)
-{
-    SkinWndStartupInfo skinWndStartupInfo(_SZ_SKINWND_CLASS_NAME, _SZ_SKINWND_CLASS_NAME, 
+int CSkinApp::showDialog(Window *pWndParent, cstr_t szDialogName) {
+    SkinWndStartupInfo skinWndStartupInfo(_SZ_SKINWND_CLASS_NAME, _SZ_SKINWND_CLASS_NAME,
         szDialogName, pWndParent);
 
     return getSkinFactory()->activeOrCreateSkinWnd(skinWndStartupInfo);
 }
 
-CEventsDispatcher *CSkinApp::newEventPatcher()
-{
+CEventsDispatcher *CSkinApp::newEventPatcher() {
     return new CEventsDispatcher();
 }
 
-CSkinFactory *CSkinApp::newSkinFactory()
-{
+CSkinFactory *CSkinApp::newSkinFactory() {
     return new CSkinFactory(this, nullptr);
 }

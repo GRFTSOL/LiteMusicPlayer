@@ -1,47 +1,42 @@
-// SkinContainer.h: interface for the CSkinContainer class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #pragma once
 
 #include <stack>
 #include "UIObject.h"
 
+
 class CMenu;
 
-class CSkinContainer : public CUIObject
-{
+class CSkinContainer : public CUIObject {
     UIOBJECT_CLASS_NAME_DECLARE(CUIObject)
 public:
-    enum ResultCode
-    {
-        RESULT_OK = 0,
-        RESULT_CANCELD = 1,
+    enum ResultCode {
+        RESULT_OK                   = 0,
+        RESULT_CANCELD              = 1,
     };
 
     CSkinContainer();
     virtual ~CSkinContainer();
 
-    virtual void onInitialUpdate();
-    virtual void onDestroy();
+    virtual void onInitialUpdate() override;
+    virtual void onDestroy() override;
 
-    virtual void onKeyUp(uint32_t nChar, uint32_t nFlags);
-    virtual void onKeyDown(uint32_t nChar, uint32_t nFlags);
-    virtual bool onMouseDrag(CPoint point);
-    virtual bool onMouseMove(CPoint point);
-    virtual bool onLButtonDown(uint32_t nFlags, CPoint point);
-    virtual bool onLButtonDblClk(uint32_t nFlags, CPoint point);
-    virtual bool onLButtonUp(uint32_t nFlags, CPoint point);
-    virtual bool onRButtonUp(uint32_t nFlags, CPoint point);
-    virtual bool onRButtonDown(uint32_t nFlags, CPoint point);
-    virtual void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt);
+    virtual void onKeyUp(uint32_t nChar, uint32_t nFlags) override;
+    virtual void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
+    virtual bool onMouseDrag(CPoint point) override;
+    virtual bool onMouseMove(CPoint point) override;
+    virtual bool onLButtonDown(uint32_t nFlags, CPoint point) override;
+    virtual bool onLButtonDblClk(uint32_t nFlags, CPoint point) override;
+    virtual bool onLButtonUp(uint32_t nFlags, CPoint point) override;
+    virtual bool onRButtonUp(uint32_t nFlags, CPoint point) override;
+    virtual bool onRButtonDown(uint32_t nFlags, CPoint point) override;
+    virtual void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) override;
 
-    virtual bool onMenuKey(uint32_t nChar, uint32_t nFlags);
+    virtual bool onMenuKey(uint32_t nChar, uint32_t nFlags) override;
 
-    virtual void onSize();
+    virtual void onSize() override;
 
-    virtual bool onCommand(int nID);
-    virtual bool onCustomCommand(int nId);
+    virtual bool onCommand(int nID) override;
+    virtual bool onCustomCommand(int nId) override;
 
     virtual void onSwitchTo();
 
@@ -50,21 +45,21 @@ public:
 
     virtual bool onUserMessage(int nMessageID, LPARAM param);
 
-    virtual bool onClose();    // Return false, if don't want to be closed.
+    virtual bool onClose(); // Return false, if don't want to be closed.
     virtual bool onOK();
     virtual bool onCancel();
 
-    void draw(CRawGraph *canvas);
+    virtual void draw(CRawGraph *canvas) override;
 
-    int fromXML(SXNode *pXmlNode);
+    virtual int fromXML(SXNode *pXmlNode) override;
     void createChild(SXNode *pXmlNode);
 
-    virtual bool setProperty(cstr_t szProperty, cstr_t szValue);
+    virtual bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 #ifdef _SKIN_EDITOR_
     void enumProperties(CUIObjProperties &listProperties);
 #endif // _SKIN_EDITOR_
 
-    virtual void onLanguageChanged();
+    virtual void onLanguageChanged() override;
 
 public:
     // functions for CSkinWnd
@@ -137,11 +132,11 @@ public:
 
     CUIObject *getChildByClass(cstr_t szClassName);
 
-    virtual bool isContainer() const { return true; }
-    virtual CSkinContainer *getContainerIf() { return this; }
+    virtual bool isContainer() const override { return true; }
+    virtual CSkinContainer *getContainerIf() override { return this; }
 
-    virtual void onAdjustHue(float hue, float saturation, float luminance);
-    virtual void onSkinFontChanged();
+    virtual void onAdjustHue(float hue, float saturation, float luminance) override;
+    virtual void onSkinFontChanged() override;
 
     virtual void onSetChildVisible(CUIObject *pChild, bool bVisible, bool bRedraw) { }
 
@@ -182,37 +177,34 @@ protected:
 protected:
     // All the children UIObject
 
-    VecUIObjects        m_vUIObjs;
-    int                    m_nFocusUIObj;
+    VecUIObjects                m_vUIObjs;
+    int                         m_nFocusUIObj;
 
-    bool                m_bClipChildren;
-    string                m_strContextMenu;
-    CMenu                *m_pMenu;
+    bool                        m_bClipChildren;
+    string                      m_strContextMenu;
+    CMenu                       *m_pMenu;
 
     // Status for Page view
-    struct PageViewItem
-    {
-        bool                bWaitResultOfNextPage;
-        int                    nRequestCodeOfNextPage;
-        CSkinContainer        *pContainerPage;
-        PageViewItem(CSkinContainer *pContainerPage, bool bWaitResultOfNextPage, int nRequestCodeOfNextPage)
-        {
+    struct PageViewItem {
+        bool                        bWaitResultOfNextPage;
+        int                         nRequestCodeOfNextPage;
+        CSkinContainer              *pContainerPage;
+        PageViewItem(CSkinContainer *pContainerPage, bool bWaitResultOfNextPage, int nRequestCodeOfNextPage) {
             this->bWaitResultOfNextPage = bWaitResultOfNextPage;
             this->nRequestCodeOfNextPage = nRequestCodeOfNextPage;
             this->pContainerPage = pContainerPage;
         }
     };
     typedef std::stack<PageViewItem>    VecStackPageView;
-    VecStackPageView    m_vStackPageView;
-    string                m_strDefaultPageClass;
+    VecStackPageView            m_vStackPageView;
+    string                      m_strDefaultPageClass;
 
 };
 
-class CSkinClientArea : public CSkinContainer
-{
+class CSkinClientArea : public CSkinContainer {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinContainer)
 public:
-    virtual bool setProperty(cstr_t szProperty, cstr_t szValue)
+    virtual bool setProperty(cstr_t szProperty, cstr_t szValue) override
         { return CSkinContainer::setProperty(szProperty, szValue); }
 
 };

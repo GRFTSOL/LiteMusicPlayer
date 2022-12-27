@@ -7,8 +7,7 @@ struct WindowHandleHolder;
 class Window;
 typedef struct CGContext *CGContextRef;
 
-class CRawGraphData
-{
+class CRawGraphData {
 public:
     CRawGraphData();
     virtual ~CRawGraphData();
@@ -31,9 +30,9 @@ public:
     CGContextRef getHandle() const { return m_context; }
 
 protected:
-    RawImageData            m_imageData;
-    CGContextRef            m_context;
-    WindowHandleHolder      *m_windowHandle;
+    RawImageData                m_imageData;
+    CGContextRef                m_context;
+    WindowHandleHolder          *m_windowHandle;
 
 };
 

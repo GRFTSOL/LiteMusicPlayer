@@ -14,8 +14,7 @@ Purpose  :    调整窗口的大小
 #define SIZING_REGION        5        // 调整大小的范围
 
 #ifdef _WIN32
-void myRectangle(HDC hdc, int x, int y, int x2, int y2)
-{
+void myRectangle(HDC hdc, int x, int y, int x2, int y2) {
     MoveToEx(hdc, x, y2, nullptr);
     LineTo(hdc, x, y);
     LineTo(hdc, x2, y);
@@ -24,12 +23,9 @@ void myRectangle(HDC hdc, int x, int y, int x2, int y2)
 }
 #endif // #ifdef _WIN32
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
-WndResizer::WndResizer()
-{
+
+WndResizer::WndResizer() {
     m_nMincx = 0;
     m_nMincy = 0;
 
@@ -47,53 +43,48 @@ WndResizer::WndResizer()
     m_ptOld.x = m_ptOld.y = 0;
 }
 
-WndResizer::~WndResizer()
-{
+WndResizer::~WndResizer() {
 
 }
 
-void WndResizer::onMouseMessage(uint32_t fwKeys, CPoint pt)
-{
-    if (m_fixedWidth && m_fixedHeight)
+void WndResizer::onMouseMessage(uint32_t fwKeys, CPoint pt) {
+    if (m_fixedWidth && m_fixedHeight) {
         return;
-    if (m_pWnd->isZoomed())
+    }
+    if (m_pWnd->isZoomed()) {
         return;
+    }
 
-    if (m_bResizing)
+    if (m_bResizing) {
         setCursor();
-    else
-    {
+    } else {
         // Need to do Hit test.
-        CRect        rc;
+        CRect rc;
         m_pWnd->getWindowRect(&rc);
 
         CPoint point = getCursorPos();
 
-        if (rc.ptInRect(point))
-        {
+        if (rc.ptInRect(point)) {
             m_pWnd->screenToClient(rc);
             m_ResizeDirection = hitTestResizeArea(pt, rc);
             setCursor();
         }
     }
 
-    if (fwKeys & MK_LBUTTON)
-    {
-        if (m_bResizing)
+    if (fwKeys & MK_LBUTTON) {
+        if (m_bResizing) {
             onSizing(fwKeys, pt);
-        else
+        } else {
             beginSize(fwKeys, pt);
-    }
-    else if (m_bResizing)
-    {
+        }
+    } else if (m_bResizing) {
         endSizing(fwKeys, pt);
 
         ::setCursor(m_cursorArrow);
     }
 }
 
-void WndResizer::init(Window *pWnd)
-{
+void WndResizer::init(Window *pWnd) {
     m_pWnd = pWnd;
 
     m_cursorArrow.loadStdCursor(Cursor::C_ARROW);
@@ -103,30 +94,28 @@ void WndResizer::init(Window *pWnd)
     m_cursorNS.loadStdCursor(Cursor::C_SIZENS);
 }
 
-bool WndResizer::isSizing()
-{
+bool WndResizer::isSizing() {
     return m_bResizing;
 }
 
-void WndResizer::beginSize(uint32_t fwKeys, CPoint &pt)
-{
+void WndResizer::beginSize(uint32_t fwKeys, CPoint &pt) {
     // 记住鼠标位置
     m_ptOld = getCursorPos();
 
     // 记住窗口位置
     m_pWnd->getWindowRect(&m_rcResizing);
 
-    if (m_ResizeDirection != 0)
+    if (m_ResizeDirection != 0) {
         m_bResizing = true;
+    }
 
     m_pWnd->setCapture();
 
 #ifdef _WIN32
-    if (m_bResizing && !m_bInstanceResizing)
-    {
-        HDC            hdc;
-        HBRUSH        hbrOld;
-        HPEN        hpenOld;
+    if (m_bResizing && !m_bInstanceResizing) {
+        HDC hdc;
+        HBRUSH hbrOld;
+        HPEN hpenOld;
 
         hdc = GetDC(nullptr);
         hbrOld = (HBRUSH)SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
@@ -145,88 +134,85 @@ void WndResizer::beginSize(uint32_t fwKeys, CPoint &pt)
 #endif // #ifdef _WIN32
 }
 
-void WndResizer::onSizing(uint32_t fwKeys, CPoint &pt)
-{
+void WndResizer::onSizing(uint32_t fwKeys, CPoint &pt) {
     // 正在调整大小
-    int            nOffx;
-    int            nOffy;
+    int nOffx;
+    int nOffy;
 
     pt = getCursorPos();
 
     // 只有鼠标移动了才调整大小
-    if ((pt.x == m_ptOld.x) && (pt.y == m_ptOld.y))
+    if ((pt.x == m_ptOld.x) && (pt.y == m_ptOld.y)) {
         return;
+    }
 
-    nOffx = pt.x - m_ptOld.x;    // x 偏移
-    nOffy = pt.y - m_ptOld.y;    // y 偏移
+    nOffx = pt.x - m_ptOld.x; // x 偏移
+    nOffy = pt.y - m_ptOld.y; // y 偏移
 
     // 限制最小的宽度
-    if (m_ResizeDirection & RD_LEFT)
-    {
-        if (m_rcResizing.right - (m_rcResizing.left + nOffx) <= m_nMincx)
+    if (m_ResizeDirection & RD_LEFT) {
+        if (m_rcResizing.right - (m_rcResizing.left + nOffx) <= m_nMincx) {
             nOffx = m_rcResizing.width() - m_nMincx;
+        }
 
         m_rcResizing.left += nOffx;
     }
 
     // 限制最小的高度
-    if (m_ResizeDirection & RD_TOP)
-    {
-        if (m_rcResizing.bottom - (m_rcResizing.top + nOffy) <= m_nMincy)
+    if (m_ResizeDirection & RD_TOP) {
+        if (m_rcResizing.bottom - (m_rcResizing.top + nOffy) <= m_nMincy) {
             nOffy = m_rcResizing.height() - m_nMincy;
+        }
 
         m_rcResizing.top += nOffy;
     }
 
     // 限制最小的宽度
-    if (m_ResizeDirection & RD_RIGHT)
-    {
-        if ((m_rcResizing.right + nOffx) - m_rcResizing.left <= m_nMincx)
+    if (m_ResizeDirection & RD_RIGHT) {
+        if ((m_rcResizing.right + nOffx) - m_rcResizing.left <= m_nMincx) {
             nOffx = m_nMincx - m_rcResizing.width();
+        }
 
         m_rcResizing.right += nOffx;
     }
 
     // 限制最小的高度
-    if (m_ResizeDirection & RD_BOTTOM)
-    {
-        if ((m_rcResizing.bottom + nOffy) - m_rcResizing.top <= m_nMincy)
+    if (m_ResizeDirection & RD_BOTTOM) {
+        if ((m_rcResizing.bottom + nOffy) - m_rcResizing.top <= m_nMincy) {
             nOffy = m_nMincy - m_rcResizing.height();
+        }
 
         m_rcResizing.bottom += nOffy;
     }
 
     // 保存上一次鼠标的位置
-    if (nOffx != 0)
+    if (nOffx != 0) {
         m_ptOld.x = pt.x;
-    if (nOffy != 0)
+    }
+    if (nOffy != 0) {
         m_ptOld.y = pt.y;
+    }
 
     // 如果调整窗口时自动靠近则通过改变 nOffx, nOffy来调整
-    if (m_bResizingAutoCloseto)
-    {
+    if (m_bResizingAutoCloseto) {
         autoCloseToWindows(nOffx, nOffy);
         m_ptOld.x += nOffx;
         m_ptOld.y += nOffy;
     }
 
     // remove old lines and draw new lines
-    if (m_bInstanceResizing)
-    {
-        CRect        rc;
+    if (m_bInstanceResizing) {
+        CRect rc;
         m_pWnd->getWindowRect(&rc);
-        if (!rc.equal(m_rcResizing))
-        {
+        if (!rc.equal(m_rcResizing)) {
             // m_ptOld = pt;
             m_pWnd->moveWindowSafely(m_rcResizing.left, m_rcResizing.top, m_rcResizing.width(), m_rcResizing.height(), true);
         }
-    }
-    else
-    {
+    } else {
 #ifdef _WIN32
-        HDC            hdc;
-        HBRUSH        hbrOld;
-        HPEN        hpenOld;
+        HDC hdc;
+        HBRUSH hbrOld;
+        HPEN hpenOld;
 
         hdc = GetDC(nullptr);
         hbrOld = (HBRUSH)SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
@@ -246,18 +232,14 @@ void WndResizer::onSizing(uint32_t fwKeys, CPoint &pt)
     }
 }
 
-void WndResizer::setResizeArea(int nIDArea, uint32_t resizeDirection, CRect &rcResizeArea)
-{
-    ResizeArea    ra;
-    ListResizeArea::iterator    it;
+void WndResizer::setResizeArea(int nIDArea, uint32_t resizeDirection, CRect &rcResizeArea) {
+    ResizeArea ra;
+    ListResizeArea::iterator it;
 
-    if (nIDArea != -1)
-    {
-        for (it = m_listResizeArea.begin(); it != m_listResizeArea.end(); ++it)
-        {
-            ResizeArea    &t = *it;
-            if (t.nID == nIDArea)
-            {
+    if (nIDArea != -1) {
+        for (it = m_listResizeArea.begin(); it != m_listResizeArea.end(); ++it) {
+            ResizeArea &t = *it;
+            if (t.nID == nIDArea) {
                 t.resizeDirection = resizeDirection;
                 t.rcResizeArea = rcResizeArea;
                 return;
@@ -271,17 +253,13 @@ void WndResizer::setResizeArea(int nIDArea, uint32_t resizeDirection, CRect &rcR
     m_listResizeArea.push_back(ra);
 }
 
-void WndResizer::removeResizeArea(int nIDArea)
-{
-    ListResizeArea::iterator    it;
+void WndResizer::removeResizeArea(int nIDArea) {
+    ListResizeArea::iterator it;
 
-    if (nIDArea != -1)
-    {
-        for (it = m_listResizeArea.begin(); it != m_listResizeArea.end(); ++it)
-        {
-            ResizeArea    &t = *it;
-            if (t.nID == nIDArea)
-            {
+    if (nIDArea != -1) {
+        for (it = m_listResizeArea.begin(); it != m_listResizeArea.end(); ++it) {
+            ResizeArea &t = *it;
+            if (t.nID == nIDArea) {
                 m_listResizeArea.erase(it);
                 return;
             }
@@ -290,20 +268,18 @@ void WndResizer::removeResizeArea(int nIDArea)
 }
 
 // 结束调整窗口大小
-void WndResizer::endSizing(uint32_t fwKeys, CPoint &pt)
-{
+void WndResizer::endSizing(uint32_t fwKeys, CPoint &pt) {
     m_bResizing = false;
 
     m_ResizeDirection = 0;
 
     m_pWnd->releaseCapture();
 
-    if (!m_bInstanceResizing)
-    {
+    if (!m_bInstanceResizing) {
 #ifdef _WIN32
-        HDC            hdc;
-        HBRUSH        hbrOld;
-        HPEN        hpenOld;
+        HDC hdc;
+        HBRUSH hbrOld;
+        HPEN hpenOld;
 
         hdc = GetDC(nullptr);
         hbrOld = (HBRUSH)SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
@@ -320,72 +296,76 @@ void WndResizer::endSizing(uint32_t fwKeys, CPoint &pt)
         LockWindowUpdate(nullptr);
 #endif // #ifdef _WIN32
 
-        CRect        rc;
+        CRect rc;
         m_pWnd->getWindowRect(&rc);
-        if (!rc.equal(m_rcResizing))
-        {
+        if (!rc.equal(m_rcResizing)) {
             m_pWnd->moveWindowSafely(m_rcResizing.left, m_rcResizing.top, m_rcResizing.width(), m_rcResizing.height(), true);
         }
     }
 }
 
-void WndResizer::autoCloseToWindows(int &nOffx, int &nOffy)
-{
+void WndResizer::autoCloseToWindows(int &nOffx, int &nOffy) {
     nOffx = 0;
     nOffy = 0;
 }
 
-uint32_t WndResizer::hitTestResizeArea(CPoint &pt, const CRect &rc)
-{
-    ListResizeArea::iterator    it;
+uint32_t WndResizer::hitTestResizeArea(CPoint &pt, const CRect &rc) {
+    ListResizeArea::iterator it;
 
     uint32_t resizeDirection = 0;
 
-    for (it = m_listResizeArea.begin(); it != m_listResizeArea.end(); ++it)
-    {
-        ResizeArea        &t = *it;
-        if (t.rcResizeArea.ptInRect(pt))
+    for (it = m_listResizeArea.begin(); it != m_listResizeArea.end(); ++it) {
+        ResizeArea &t = *it;
+        if (t.rcResizeArea.ptInRect(pt)) {
             resizeDirection |= t.resizeDirection;
+        }
     }
 
-    if (pt.x <= rc.left + SIZING_REGION)
+    if (pt.x <= rc.left + SIZING_REGION) {
         resizeDirection |= RD_LEFT;
-    else if (pt.x >= rc.right - SIZING_REGION)
+    } else if (pt.x >= rc.right - SIZING_REGION) {
         resizeDirection |= RD_RIGHT;
+    }
 
-    if (pt.y <= rc.top + SIZING_REGION)
+    if (pt.y <= rc.top + SIZING_REGION) {
         resizeDirection |= RD_TOP;
-    else if (pt.y >= rc.bottom - SIZING_REGION)
+    } else if (pt.y >= rc.bottom - SIZING_REGION) {
         resizeDirection |= RD_BOTTOM;
+    }
 
-    if (pt.x > rc.right - SIZING_REGION * 2 && pt.y > rc.bottom - SIZING_REGION * 2)
+    if (pt.x > rc.right - SIZING_REGION * 2 && pt.y > rc.bottom - SIZING_REGION * 2) {
         resizeDirection |= RD_RIGHT | RD_BOTTOM;
+    }
 
     // remove fixed direction
-    if (m_fixedWidth)
+    if (m_fixedWidth) {
         resizeDirection &= ~ (RD_LEFT | RD_RIGHT);
-    if (m_fixedHeight)
+    }
+    if (m_fixedHeight) {
         resizeDirection &= ~ (RD_TOP | RD_BOTTOM);
+    }
 
     // remove exclude area
-    if (resizeDirection & RD_LEFT)
+    if (resizeDirection & RD_LEFT) {
         resizeDirection &= ~RD_RIGHT;
-    if (resizeDirection & RD_TOP)
+    }
+    if (resizeDirection & RD_TOP) {
         resizeDirection &= ~RD_BOTTOM;
+    }
 
     return resizeDirection;
 }
 
-void WndResizer::setCursor()
-{
+void WndResizer::setCursor() {
     if (isFlagSet(m_ResizeDirection, RD_LEFT | RD_TOP)
-        || isFlagSet(m_ResizeDirection, RD_RIGHT | RD_BOTTOM))
+        || isFlagSet(m_ResizeDirection, RD_RIGHT | RD_BOTTOM)) {
         ::setCursor(m_cursorNWSE);
-    else if (isFlagSet(m_ResizeDirection, RD_LEFT | RD_BOTTOM)
-        || isFlagSet(m_ResizeDirection, RD_RIGHT | RD_TOP))
+    } else if (isFlagSet(m_ResizeDirection, RD_LEFT | RD_BOTTOM)
+        || isFlagSet(m_ResizeDirection, RD_RIGHT | RD_TOP)) {
         ::setCursor(m_cursorNESW);
-    else if (m_ResizeDirection & (RD_LEFT | RD_RIGHT))
+    } else if (m_ResizeDirection & (RD_LEFT | RD_RIGHT)) {
         ::setCursor(m_cursorWE);
-    else if (m_ResizeDirection & (RD_TOP | RD_BOTTOM))
+    } else if (m_ResizeDirection & (RD_TOP | RD_BOTTOM)) {
         ::setCursor(m_cursorNS);
+    }
 }

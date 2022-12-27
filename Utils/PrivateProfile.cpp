@@ -1,45 +1,50 @@
 #include "Utils.h"
 
 
-uint32_t GetPrivateProfileString(cstr_t lpAppName, cstr_t lpKeyName, cstr_t lpDefault, char * lpReturnedString, uint32_t nSize, cstr_t lpFileName)
-{
-    char        szBuff[1024];
-    size_t            nAppName;
-    size_t            nKeyName;
-    bool        bFoundAppName = false;
-    int            n;
+uint32_t GetPrivateProfileString(cstr_t lpAppName, cstr_t lpKeyName, cstr_t lpDefault, char * lpReturnedString, uint32_t nSize, cstr_t lpFileName) {
+    char szBuff[1024];
+    size_t nAppName;
+    size_t nKeyName;
+    bool bFoundAppName = false;
+    int n;
 
     FILE *fp = fopen(lpFileName, "r");
-    if (!fp)
+    if (!fp) {
         goto R_FAILED;
+    }
 
     nAppName = strlen(lpAppName);
     nKeyName = strlen(lpKeyName);
 
     //
     // 查找 AppName
-    while (fgets(szBuff, CountOf(szBuff), fp))
-    {
-        cstr_t        szBeg = szBuff;
-        while (*szBeg == ' ' || *szBeg == '\t')
+    while (fgets(szBuff, CountOf(szBuff), fp)) {
+        cstr_t szBeg = szBuff;
+        while (*szBeg == ' ' || *szBeg == '\t') {
             szBeg++;
+        }
 
-        if (*szBeg != '[')
+        if (*szBeg != '[') {
             continue;
+        }
         szBeg++;
 
-        while (*szBeg == ' ' || *szBeg == '\t')
+        while (*szBeg == ' ' || *szBeg == '\t') {
             szBeg++;
+        }
 
-        if (strncasecmp(lpAppName, szBeg, nAppName) != 0)
+        if (strncasecmp(lpAppName, szBeg, nAppName) != 0) {
             continue;
+        }
         szBeg += nAppName;
 
-        while (*szBeg == ' ' || *szBeg == '\t')
+        while (*szBeg == ' ' || *szBeg == '\t') {
             szBeg++;
+        }
 
-        if (*szBeg != ']')
+        if (*szBeg != ']') {
             continue;
+        }
         szBeg++;
 
         bFoundAppName = true;
@@ -47,63 +52,71 @@ uint32_t GetPrivateProfileString(cstr_t lpAppName, cstr_t lpKeyName, cstr_t lpDe
         break;
     }
 
-    if (!bFoundAppName)
+    if (!bFoundAppName) {
         goto R_FAILED;
+    }
 
     //
     // 查找 KeyName
-    while (fgets(szBuff, CountOf(szBuff), fp))
-    {
-        cstr_t        szBeg = szBuff;
-        while (*szBeg == ' ' || *szBeg == '\t')
+    while (fgets(szBuff, CountOf(szBuff), fp)) {
+        cstr_t szBeg = szBuff;
+        while (*szBeg == ' ' || *szBeg == '\t') {
             szBeg++;
+        }
 
-        if (*szBeg == '[')
+        if (*szBeg == '[') {
             goto R_FAILED;
+        }
 
-        if (strncasecmp(lpKeyName, szBeg, nKeyName) != 0)
+        if (strncasecmp(lpKeyName, szBeg, nKeyName) != 0) {
             continue;
+        }
         szBeg += nKeyName;
 
-        while (*szBeg == ' ' || *szBeg == '\t')
+        while (*szBeg == ' ' || *szBeg == '\t') {
             szBeg++;
+        }
 
-        if (*szBeg != '=')
+        if (*szBeg != '=') {
             continue;
+        }
         szBeg++;
 
-        while (*szBeg == ' ' || *szBeg == '\t')
+        while (*szBeg == ' ' || *szBeg == '\t') {
             szBeg++;
+        }
 
         strcpy_safe(lpReturnedString, nSize, szBeg);
 
-        n = strlen(lpReturnedString);
+        n = (int)strlen(lpReturnedString);
 
-        while (n > 0 && (lpReturnedString[n - 1] == '\r' || lpReturnedString[n - 1] == '\n'))
+        while (n > 0 && (lpReturnedString[n - 1] == '\r' || lpReturnedString[n - 1] == '\n')) {
             n--;
+        }
 
         lpReturnedString[n] = '\0';
 
-        if (fp)
+        if (fp) {
             fclose(fp);
+        }
 
         return n;
     }
 
 R_FAILED:
-    if (fp)
+    if (fp) {
         fclose(fp);
+    }
 
     strcpy_safe(lpReturnedString, nSize, lpDefault);
 
-    return strlen(lpReturnedString);
+    return (int)strlen(lpReturnedString);
 }
 
 
-uint32_t GetPrivateProfileInt(cstr_t lpAppName, cstr_t lpKeyName, int nDefault, cstr_t lpFileName)
-{
-    char    szValue[64];
-    char    szDefault[64];
+uint32_t GetPrivateProfileInt(cstr_t lpAppName, cstr_t lpKeyName, int nDefault, cstr_t lpFileName) {
+    char szValue[64];
+    char szDefault[64];
     sprintf(szDefault, "%d", nDefault);
 
     GetPrivateProfileString(lpAppName, lpKeyName, szDefault, szValue, 64, lpFileName);
@@ -112,40 +125,44 @@ uint32_t GetPrivateProfileInt(cstr_t lpAppName, cstr_t lpKeyName, int nDefault, 
 }
 
 
-bool replacePrivateProfileStr(string &buff, const char *lpAppName, const char *lpKeyName, const char *lpString)
-{
-    const char    *szBeg;
-    size_t            nAppName;
-    size_t            nKeyName;
-    bool        bFoundAppName = false;
-    char    szBuff[512];
+bool replacePrivateProfileStr(string &buff, const char *lpAppName, const char *lpKeyName, const char *lpString) {
+    const char *szBeg;
+    size_t nAppName;
+    size_t nKeyName;
+    bool bFoundAppName = false;
+    char szBuff[512];
 
     nAppName = strlen(lpAppName);
     nKeyName = strlen(lpKeyName);
 
     szBeg = buff.c_str();
 
-    for (szBeg = buff.c_str(); szBeg != nullptr; szBeg = strchr(szBeg, '\n'))
-    {
-        while (*szBeg == '\r' || *szBeg == '\n')
+    for (szBeg = buff.c_str(); szBeg != nullptr; szBeg = strchr(szBeg, '\n')) {
+        while (*szBeg == '\r' || *szBeg == '\n') {
             szBeg++;
+        }
 
-        while (*szBeg == ' ' || *szBeg == '\t')
+        while (*szBeg == ' ' || *szBeg == '\t') {
             szBeg++;
+        }
 
-        if (*szBeg != '[')
+        if (*szBeg != '[') {
             continue;
+        }
         szBeg++;
 
-        if (strncasecmp(lpAppName, szBeg, nAppName) != 0)
+        if (strncasecmp(lpAppName, szBeg, nAppName) != 0) {
             continue;
+        }
         szBeg += nAppName;
 
-        while (*szBeg == ' ' || *szBeg == '\t')
+        while (*szBeg == ' ' || *szBeg == '\t') {
             szBeg++;
+        }
 
-        if (*szBeg != ']')
+        if (*szBeg != ']') {
             continue;
+        }
         szBeg++;
 
         bFoundAppName = true;
@@ -153,12 +170,9 @@ bool replacePrivateProfileStr(string &buff, const char *lpAppName, const char *l
         break;
     }
 
-    if (!bFoundAppName)
-    {
-        if (buff.size())
-        {
-            if (buff[int(buff.size() -1)] != '\n')
-            {
+    if (!bFoundAppName) {
+        if (buff.size()) {
+            if (buff[int(buff.size() -1)] != '\n') {
                 buff.append("\r\n", 2);
             }
         }
@@ -173,37 +187,41 @@ bool replacePrivateProfileStr(string &buff, const char *lpAppName, const char *l
 
     //
     // 查找 KeyName
-    for (; szBeg != nullptr; szBeg = strchr(szBeg, '\n'))
-    {
+    for (; szBeg != nullptr; szBeg = strchr(szBeg, '\n')) {
         szBeg = strchr(szBeg, '\n');
-        while (*szBeg == '\r' || *szBeg == '\n')
+        while (*szBeg == '\r' || *szBeg == '\n') {
             szBeg++;
+        }
 
-        const char*        szInsert = szBeg;
-        while (*szBeg == ' ' || *szBeg == '\t')
+        const char* szInsert = szBeg;
+        while (*szBeg == ' ' || *szBeg == '\t') {
             szBeg++;
+        }
 
-        if (*szBeg == '[')
-        {
+        if (*szBeg == '[') {
             sprintf(szBuff, "%s=%s\r\n", lpKeyName, lpString);
             buff.insert(int(szInsert - buff.c_str()), szBuff, strlen(szBuff));
             return true;
         }
 
-        if (strncasecmp(lpKeyName, szBeg, nKeyName) != 0)
+        if (strncasecmp(lpKeyName, szBeg, nKeyName) != 0) {
             continue;
+        }
         szBeg += nKeyName;
 
-        while (*szBeg == ' ' || *szBeg == '\t')
+        while (*szBeg == ' ' || *szBeg == '\t') {
             szBeg++;
+        }
 
-        if (*szBeg != '=')
+        if (*szBeg != '=') {
             continue;
+        }
         szBeg++;
         szInsert = szBeg;
 
-        while (*szBeg && *szBeg != '\r' && *szBeg != '\n')
+        while (*szBeg && *szBeg != '\r' && *szBeg != '\n') {
             szBeg++;
+        }
 
         buff.replace(int(szInsert - buff.c_str()), int(szBeg - szInsert), lpString, strlen(lpString));
 
@@ -211,8 +229,7 @@ bool replacePrivateProfileStr(string &buff, const char *lpAppName, const char *l
     }
 
     // the key name doesn't exist in this section.
-    if (buff[int(buff.size() -1)] != '\n')
-    {
+    if (buff[int(buff.size() -1)] != '\n') {
         buff.append("\r\n", 2);
     }
     sprintf(szBuff, "%s=%s\r\n", lpKeyName, lpString);
@@ -221,13 +238,13 @@ bool replacePrivateProfileStr(string &buff, const char *lpAppName, const char *l
     return true;
 }
 
-bool WritePrivateProfileString(cstr_t appName, cstr_t keyName, cstr_t value, cstr_t fileName)
-{
+bool WritePrivateProfileString(cstr_t appName, cstr_t keyName, cstr_t value, cstr_t fileName) {
     // Unicode isn't being supported.
     string buff;
 
-    if (isFileExist(fileName) && !readFile(fileName, buff))
+    if (isFileExist(fileName) && !readFile(fileName, buff)) {
         return false;
+    }
 
     replacePrivateProfileStr(buff, appName, keyName, value);
 

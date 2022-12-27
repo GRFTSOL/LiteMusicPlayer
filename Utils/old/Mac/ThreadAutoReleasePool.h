@@ -2,8 +2,8 @@
 
 #include "Thread.h"
 
-class CThreadAutoReleasePool : public CThread
-{
+
+class CThreadAutoReleasePool : public CThread {
 public:
     bool create(FUNThread function, void* lpData);
 

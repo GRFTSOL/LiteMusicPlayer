@@ -142,7 +142,7 @@ void CLyrDisplayClrListWnd::selectCurrentSetting()
             addGradientColor(tob.clr[CLyricShowObj::TCI_GRADIENT1].get(), 
                 tob.clr[CLyricShowObj::TCI_GRADIENT2].get(), 
                 tob.clr[CLyricShowObj::TCI_GRADIENT3].get());
-            nToSelect = m_vFontClr.size() - 1;
+            nToSelect = (int)m_vFontClr.size() - 1;
         }
     }
     else if (tob.obm == OBM_PATTERN)
@@ -153,7 +153,7 @@ void CLyrDisplayClrListWnd::selectCurrentSetting()
             addImage(tob.imgPattern.getHandle());
             m_vFontClr.push_back(FontClrOpt(tob.strPatternFile.c_str()));
             tob.imgPattern.detach();
-            nToSelect = m_vFontClr.size() - 1;
+            nToSelect = (int)m_vFontClr.size() - 1;
         }
     }
 

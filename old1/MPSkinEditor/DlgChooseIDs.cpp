@@ -15,7 +15,7 @@ static char THIS_FILE[] = __FILE__;
 // CDlgChooseIDs dialog
 
 
-CDlgChooseIDs::CDlgChooseIDs(CWnd* pParent /*=nullptr*/)
+CDlgChooseIDs::CDlgChooseIDs(CWnd* pParent)
     : CDialog(CDlgChooseIDs::IDD, pParent)
 {
     //{{AFX_DATA_INIT(CDlgChooseIDs)

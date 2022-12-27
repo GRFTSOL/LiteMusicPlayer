@@ -1,3 +1,5 @@
+#pragma once
+
 /* fft.h: Header for iterative implementation of a FFT
  * Copyright (C) 1999 Richard Boulton <richard@tartarus.org>
  *
@@ -31,11 +33,11 @@ typedef char sound_sample;
 extern "C" {
 #endif
 
-/* FFT library */
-typedef struct _struct_fft_state fft_state;
-fft_state *fft_init (void);
-void fft_perform (const sound_sample *input, float *output, fft_state *state);
-void fft_close (fft_state *state);
+    /* FFT library */
+    typedef struct _struct_fft_state fft_state;
+    fft_state *fft_init (void);
+    void fft_perform (const sound_sample *input, float *output, fft_state *state);
+    void fft_close (fft_state *state);
 
 
 

@@ -3,8 +3,7 @@
 
 #pragma once
 
-class CSFImgList : public CSFImage
-{
+class CSFImgList : public CSFImage {
 public:
     CSFImgList();
     virtual ~CSFImgList();
@@ -20,7 +19,7 @@ public:
         { m_nItemCx = nIconCx; }
 
 protected:
-    int                m_nItemCx;
+    int                         m_nItemCx;
 
 };
 

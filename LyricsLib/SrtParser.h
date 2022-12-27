@@ -1,18 +1,13 @@
-// SrtParser.h: interface for the CSrtParser class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_SRTPARSER_H__C4C41834_C58B_4D99_BD54_B42E3F58DB90__INCLUDED_)
-#define AFX_SRTPARSER_H__C4C41834_C58B_4D99_BD54_B42E3F58DB90__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef LyricsLib_SrtParser_h
+#define LyricsLib_SrtParser_h
+
 
 #include "LyricsParser.h"
 
-class CSrtParser : public CLyricsParser  
-{
+
+class CSrtParser : public CLyricsParser {
 public:
     CSrtParser(CMLData *pMLData);
     virtual ~CSrtParser();
@@ -25,7 +20,7 @@ public:
 
 protected:
     bool lyricsLineToText(LyricsLine *pLine, string &strBuff);
-    
+
 };
 
-#endif // !defined(AFX_SRTPARSER_H__C4C41834_C58B_4D99_BD54_B42E3F58DB90__INCLUDED_)
+#endif // !defined(LyricsLib_SrtParser_h)

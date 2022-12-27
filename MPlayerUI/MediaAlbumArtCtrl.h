@@ -16,21 +16,21 @@ public:
     CMediaAlbumArtCtrl();
     virtual ~CMediaAlbumArtCtrl();
 
-    void onCreate();
+    void onCreate() override;
 
-    virtual void onEvent(const IEvent *pEvent);
+    virtual void onEvent(const IEvent *pEvent) override;
 
-    virtual bool onLButtonUp( uint32_t nFlags, CPoint point );
+    virtual bool onLButtonUp( uint32_t nFlags, CPoint point ) override;
 
-    virtual bool onLButtonDown(uint32_t nFlags, CPoint point);
+    virtual bool onLButtonDown(uint32_t nFlags, CPoint point) override;
 
-    void onTimer(int nId);
+    void onTimer(int nId) override;
 
-    void onSize();
+    void onSize() override;
 
-    void draw(CRawGraph *canvas);
+    void draw(CRawGraph *canvas) override;
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 #ifdef _SKIN_EDITOR_
     void enumProperties(CUIObjProperties &listProperties);
 #endif // _SKIN_EDITOR_

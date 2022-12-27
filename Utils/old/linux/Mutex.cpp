@@ -1,27 +1,16 @@
-// Mutex.cpp: implementation of the Mutex class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "../stdafx.h"
 #include "Mutex.h"
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
-Mutex::Mutex()
-{
+Mutex::Mutex() {
 }
 
-Mutex::~Mutex()
-{
+Mutex::~Mutex() {
 }
 
-bool Mutex::acquire(uint32_t nTimeOut)
-{
+bool Mutex::acquire(uint32_t nTimeOut) {
     return false;
 }
 
-void Mutex::release()
-{
+void Mutex::release() {
 }

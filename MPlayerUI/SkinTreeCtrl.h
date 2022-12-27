@@ -177,25 +177,25 @@ public:
 
     virtual void setDataSrc(ISkinTree *pTree) { m_pTreeData = pTree; }
 
-    void draw(CRawGraph *canvas);
+    void draw(CRawGraph *canvas) override;
 
     TreeArea hitTest(CPoint point, ISkinTreeNode **ppNode);
 
-    void onKeyDown(uint32_t nChar, uint32_t nFlags);
+    void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
 
-    bool onLButtonUp(uint32_t nFlags, CPoint point);
-    bool onLButtonDown(uint32_t nFlags, CPoint point);
-    bool onLButtonDblClk(uint32_t nFlags, CPoint point);
-    void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt);
+    bool onLButtonUp(uint32_t nFlags, CPoint point) override;
+    bool onLButtonDown(uint32_t nFlags, CPoint point) override;
+    bool onLButtonDblClk(uint32_t nFlags, CPoint point) override;
+    void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) override;
 
-    void onCreate();
-    void onSize();
+    void onCreate() override;
+    void onSize() override;
 
-    virtual void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar);
-    virtual void onHScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar);
+    virtual void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override;
+    virtual void onHScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override;
 
 
-    virtual bool setProperty(cstr_t szProperty, cstr_t szValue);
+    virtual bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 
 #ifdef _SKIN_EDITOR_
     void enumProperties(CUIObjProperties &listProperties);

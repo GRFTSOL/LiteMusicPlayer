@@ -4,19 +4,17 @@
 
 
 class CEventsDispatcherBase;
-typedef uint32_t        EventType;
+typedef uint32_t EventType;
 
-class IEvent
-{
+class IEvent {
 public:
     virtual ~IEvent() {}
-    EventType        eventType;
-    string            name;
-    string            strValue;
+    EventType                   eventType;
+    string                      name;
+    string                      strValue;
 };
 
-class IEventHandler
-{
+class IEventHandler {
 public:
     IEventHandler() { m_pEventDispatcher = nullptr; }
 
@@ -30,12 +28,11 @@ public:
 
     void unregisterHandler();
 
-    CEventsDispatcherBase        *m_pEventDispatcher;
+    CEventsDispatcherBase       *m_pEventDispatcher;
 
 };
 
-class CEventsDispatcherBase
-{
+class CEventsDispatcherBase {
 public:
     CEventsDispatcherBase();
     virtual ~CEventsDispatcherBase();
@@ -49,18 +46,16 @@ public:
 
     // CEventsDispatcher will delete pEvent, after pass through it to all handlers.
     void dispatchSyncEvent(IEvent *pEvent);
-    void dispatchSyncEvent(EventType eventType)
-    {
-        IEvent        *pEvent = new IEvent;
+    void dispatchSyncEvent(EventType eventType) {
+        IEvent *pEvent = new IEvent;
         pEvent->eventType = eventType;
         dispatchSyncEvent(pEvent);
     }
 
     virtual void dispatchSyncEventByNoUIThread(IEvent *pEvent) = 0;
     virtual void dispatchUnsyncEvent(IEvent *pEvent) = 0;
-    void dispatchUnsyncEvent(EventType eventType)
-    {
-        IEvent        *pEvent = new IEvent;
+    void dispatchUnsyncEvent(EventType eventType) {
+        IEvent *pEvent = new IEvent;
         pEvent->eventType = eventType;
         dispatchUnsyncEvent(pEvent);
     }
@@ -68,7 +63,7 @@ public:
 protected:
     typedef list<IEventHandler *>            LIST_EVENTHANDLER;
     typedef vector<LIST_EVENTHANDLER>        VecListEventHandler;
-    VecListEventHandler        m_vListEventHandler;
-    std::mutex                 m_mutex;
+    VecListEventHandler         m_vListEventHandler;
+    std::mutex                  m_mutex;
 
 };

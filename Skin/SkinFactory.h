@@ -1,9 +1,7 @@
-// SkinFactory.h: interface for the CSkinFactory class.
-//
-//////////////////////////////////////////////////////////////////////
+#pragma once
 
-#if !defined(AFX_SKINFACTORY_H__A24C811F_2487_4750_8378_C7876023C863__INCLUDED_)
-#define AFX_SKINFACTORY_H__A24C811F_2487_4750_8378_C7876023C863__INCLUDED_
+#ifndef Skin_SkinFactory_h
+#define Skin_SkinFactory_h
 
 class CSkinWnd;
 class CMenu;
@@ -19,43 +17,38 @@ class CSkinContainer;
 #include "../third-parties/rapidjson/rapidjson/document.h"
 
 
-struct SkinWndStartupInfo
-{
-    string            strClassName, strCaptionText;
-    string            strSkinWnd;
-    bool            bMainWnd;
-    CSkinWnd        *pSkinWnd;
-    Window        *pWndParent;
-    MapStrings        mapExchangePool;
+struct SkinWndStartupInfo {
+    string                      strClassName, strCaptionText;
+    string                      strSkinWnd;
+    bool                        bMainWnd;
+    CSkinWnd                    *pSkinWnd;
+    Window                      *pWndParent;
+    MapStrings                  mapExchangePool;
 
     SkinWndStartupInfo(cstr_t szClassName, cstr_t szCaptionText, cstr_t szSkinWnd,
         Window *pWndParent, bool bMainWnd = false);
 };
 
 // UIObject ID text to int
-struct UIObjectIDDefinition
-{
-    const char        *szId;
-    uint16_t            nId;
-    uint16_t            nIdMenu;
-    const char        *szToolTip;
+struct UIObjectIDDefinition {
+    const char                  *szId;
+    uint16_t                    nId;
+    uint16_t                    nIdMenu;
+    const char                  *szToolTip;
 };
 
-class UIObjectIDDefinitionLessCmp
-{
+class UIObjectIDDefinitionLessCmp {
 public:
-    bool operator()(UIObjectIDDefinition *l1, UIObjectIDDefinition *l2) const
-    {
+    bool operator()(UIObjectIDDefinition *l1, UIObjectIDDefinition *l2) const {
         return strcmp(l1->szId, l2->szId) < 0;
     }
 };
 
-typedef set<UIObjectIDDefinition *, UIObjectIDDefinitionLessCmp>    SetUIObjectIDDefinition;
+typedef set<UIObjectIDDefinition *, UIObjectIDDefinitionLessCmp> SetUIObjectIDDefinition;
 
-enum UIObjectId
-{
-    UID_INVALID = 0,
-    CMD_MINIMIZE = 1,
+enum UIObjectId {
+    UID_INVALID                 = 0,
+    CMD_MINIMIZE                = 1,
     CMD_MAXIMIZE,
     CMD_CLOSE,
     CMD_QUIT,
@@ -66,9 +59,9 @@ enum UIObjectId
     CMD_CANCEL,
 
     CMD_EXEC_FUNCTION,
-    
+
     CMD_BASE_END,
-    CMD_ID_CUSTOM_BASE = 1000,        // system alloc id begins from here
+    CMD_ID_CUSTOM_BASE          = 1000, // system alloc id begins from here
 
 };
 
@@ -77,8 +70,7 @@ enum UIObjectId
 //
 // Define the map of new UIObject.
 //
-class IUIObjNewer
-{
+class IUIObjNewer {
 public:
     virtual ~IUIObjNewer() { }
     virtual CUIObject *New() = 0;
@@ -86,35 +78,32 @@ public:
 };
 
 template<class _CUIObj_t>
-class CUIObjectNewer : public IUIObjNewer
-{
+class CUIObjectNewer : public IUIObjNewer {
 public:
     virtual ~CUIObjectNewer() { }
     virtual CUIObject *New() { return new _CUIObj_t(); }
 
 };
 
-class CUIObjectNewerLessCmp
-{
+class CUIObjectNewerLessCmp {
 public:
     bool operator()(cstr_t s1, cstr_t s2) const
         { return strcasecmp(s1, s2) < 0; }
 
 };
 
-typedef map<cstr_t, IUIObjNewer *, CUIObjectNewerLessCmp>        MapUIObjNewer;
+typedef map<cstr_t, IUIObjNewer *, CUIObjectNewerLessCmp> MapUIObjNewer;
 
-#define AddUIObjNewer(_uiobj_class)        m_mapUIObjNewer[_uiobj_class::className()] = new CUIObjectNewer< _uiobj_class >()
-#define AddUIObjNewer2(_skinFactory, _uiobj_class)        _skinFactory->registerUIObjNewer(_uiobj_class::className(), new CUIObjectNewer< _uiobj_class >())
+#define AddUIObjNewer(_uiobj_class) m_mapUIObjNewer[_uiobj_class::className()] = new CUIObjectNewer< _uiobj_class >()
+#define AddUIObjNewer2(_skinFactory, _uiobj_class)  _skinFactory->registerUIObjNewer(_uiobj_class::className(), new CUIObjectNewer< _uiobj_class >())
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define _SZ_SKINWND_CLASS_NAME    "CMPSkin"
+#define _SZ_SKINWND_CLASS_NAME  "CMPSkin"
 
 //
 // 打开，保存XML格式的skin文件
-class CSkinFileXML
-{
+class CSkinFileXML {
 public:
     CSkinFileXML();
     ~CSkinFileXML();
@@ -158,13 +147,12 @@ protected:
     int setNode(cstr_t szName, SXNode *pNode);
 
 protected:
-    CSimpleXML            m_xml;
-    string                m_strFile;
+    CSimpleXML                  m_xml;
+    string                      m_strFile;
 
 };
 
-class CSkinStyles
-{
+class CSkinStyles {
 public:
     CSkinStyles();
     ~CSkinStyles();
@@ -175,18 +163,16 @@ public:
     SXNode *getClassNode(cstr_t szClassName) const;
 
 protected:
-    SXNode::LIST_CHILDREN    m_listStyleNodes;
+    SXNode::LIST_CHILDREN       m_listStyleNodes;
 
 };
 
-class CDynamicCmds
-{
+class CDynamicCmds {
 public:
-    struct DynamicCmd
-    {
-        int            nID;
-        string        strFunction;
-        string        strParam;
+    struct DynamicCmd {
+        int                         nID;
+        string                      strFunction;
+        string                      strParam;
     };
     typedef list<DynamicCmd>        LIST_DYNCMD;
 
@@ -209,13 +195,12 @@ public:
     LIST_DYNCMD &getDataList() { return m_listDynCmd; }
 
 protected:
-    CSkinFactory    *m_pSkinFactory;
-    LIST_DYNCMD        m_listDynCmd;
+    CSkinFactory                *m_pSkinFactory;
+    LIST_DYNCMD                 m_listDynCmd;
 
 };
 
-class CSkinFactory : public ISkinWndDragHost
-{
+class CSkinFactory : public ISkinWndDragHost {
 public:
     CSkinFactory(CSkinApp *pApp, UIObjectIDDefinition uidDefinition[]);
     virtual ~CSkinFactory();
@@ -279,7 +264,7 @@ public:
     // create new uiobject by class name
     virtual CUIObject * createUIObject(CSkinWnd *pSkin, cstr_t szClassName, CSkinContainer *pContainer);
 
-    // 
+    //
     virtual CUIObject *createDynamicCtrl(CSkinContainer *pContainer, cstr_t szClassName, int nIDAssign = UID_INVALID, cstr_t szLeft = nullptr, cstr_t szTop = nullptr, cstr_t szWidth = nullptr, cstr_t szHeight = nullptr);
 
     //
@@ -346,31 +331,31 @@ protected:
     void applyDefaultThemeOfSkin();
 
 protected:
-    string                        m_strSkinRootDir;
-    string                        m_strSkinFileName;
-    string                        m_strSkinName;
+    string                      m_strSkinRootDir;
+    string                      m_strSkinFileName;
+    string                      m_strSkinName;
 
     CSkinFileXML                m_skinFile;
 
     // resource manager
-    CSkinResMgr                    m_resourceMgr;
+    CSkinResMgr                 m_resourceMgr;
 
     // Skin styles
-    CSkinStyles                    m_skinStyle;
+    CSkinStyles                 m_skinStyle;
 
     // Menus
-    rapidjson::Document             m_menus;
+    rapidjson::Document         m_menus;
 
     //
     // Dynamic commands define
     CDynamicCmds                m_dynamicCmds;
 
-    SetUIObjectIDDefinition        m_setUIDDefinition;
-    AllocatorPool                  m_allocator;
-    int                            m_nCustomCmdIDNext;
-    int                            m_nMenuIDNext;
+    SetUIObjectIDDefinition     m_setUIDDefinition;
+    AllocatorPool               m_allocator;
+    int                         m_nCustomCmdIDNext;
+    int                         m_nMenuIDNext;
 
-    MapUIObjNewer                m_mapUIObjNewer;
+    MapUIObjNewer               m_mapUIObjNewer;
 
     typedef    list<CSkinWnd*>        ListSkinWnds;
 
@@ -380,4 +365,4 @@ protected:
 
 };
 
-#endif // !defined(AFX_SKINFACTORY_H__A24C811F_2487_4750_8378_C7876023C863__INCLUDED_)
+#endif // !defined(Skin_SkinFactory_h)

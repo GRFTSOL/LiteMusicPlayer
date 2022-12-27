@@ -1,6 +1,4 @@
-// MLHandleMap.h: interface for the CMLHandleMap class.
-//
-//////////////////////////////////////////////////////////////////////
+#pragma once
 
 #ifndef _ML_HANDLE_MAP_INC_
 #define _ML_HANDLE_MAP_INC_
@@ -10,18 +8,15 @@
 
 
 template <class handle_t, class object_t>
-class CMLHandleMap
-{
+class CMLHandleMap {
 public:
     CMLHandleMap() {
     }
 
-    ~CMLHandleMap()
-    {
+    ~CMLHandleMap() {
         MutexAutolock autoLock(m_mutex);
 
-        for (auto it = m_map.begin(); it != m_map.end(); it++)
-        {
+        for (auto it = m_map.begin(); it != m_map.end(); it++) {
             (*it).second->detach();
             delete (*it).second;
         }
@@ -29,32 +24,26 @@ public:
         m_map.clear();
     }
 
-    object_t *fromhandle(handle_t handle)
-    {
+    object_t *fromhandle(handle_t handle) {
         MutexAutolock autoLock(m_mutex);
 
         auto it = m_map.find(handle);
-        if (it == m_map.end())
-        {
-            object_t    *pObj;
+        if (it == m_map.end()) {
+            object_t *pObj;
             pObj = new object_t();
             m_map[handle] = pObj;
             pObj->attach(handle);
             return pObj;
-        }
-        else
-        {
+        } else {
             return (*it).second;
         }
     }
 
-    void remove(handle_t handle)
-    {
+    void remove(handle_t handle) {
         MutexAutolock autoLock(m_mutex);
 
         auto it = m_map.find(handle);
-        if (it != m_map.end())
-        {
+        if (it != m_map.end()) {
             (*it).second->detach();
             delete (*it).second;
             m_map.erase(it);
@@ -63,7 +52,7 @@ public:
 
 protected:
     std::map<handle_t, object_t *>  m_map;
-    std::mutex                      m_mutex;
+    std::mutex                  m_mutex;
 
 };
 

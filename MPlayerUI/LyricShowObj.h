@@ -114,24 +114,24 @@ public:
     };
 
 public:
-    virtual void onCreate();
+    virtual void onCreate() override;
 
-    // IEventHandler
-    virtual void onEvent(const IEvent *pEvent);
+    // IEventHandle overrider
+    virtual void onEvent(const IEvent *pEvent) override;
 
-    virtual void onKeyDown(uint32_t nChar, uint32_t nFlags);
+    virtual void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
 
-    void draw(CRawGraph *canvas);
+    void draw(CRawGraph *canvas) override;
 
     // 快速绘画
     // OUTPUT:
     //        rcUpdate    -    更新的矩形区域
     virtual void fastDraw(CRawGraph *canvas, CRect *prcUpdate = nullptr);
 
-    virtual bool onLButtonUp(uint32_t nFlags, CPoint point);
-    virtual bool onLButtonDown(uint32_t nFlags, CPoint point);
-    virtual bool onMouseDrag(CPoint point);
-    virtual void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt);
+    virtual bool onLButtonUp(uint32_t nFlags, CPoint point) override;
+    virtual bool onLButtonDown(uint32_t nFlags, CPoint point) override;
+    virtual bool onMouseDrag(CPoint point) override;
+    virtual void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) override;
 
     virtual void onPlayTimeChangedUpdate();
 
@@ -150,7 +150,7 @@ public:
     //
     // set setting values
     //
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 
     CLyricsLines &getLyrics() { return m_lyrLines; }
 
@@ -159,12 +159,12 @@ protected:
 
     void updateBgImage();
 
-    void onSize();
+    void onSize() override;
 
     virtual void onLyrDrawContextChanged();
     virtual int getAutoHeightLines() { return 0; }
 
-    void onAdjustHue(float hue, float saturation, float luminance);
+    void onAdjustHue(float hue, float saturation, float luminance) override;
 
     void wrapLyricsLines();
 
@@ -192,7 +192,7 @@ protected:
 
     void loadNextBgImage();
 
-    void onTimer(int nId);
+    void onTimer(int nId) override;
 
     bool isOutlineLyrics() const { return m_bOutlineLyrics || m_img.isValid(); }
 

@@ -300,12 +300,12 @@ uint32 CMDFlac::GetPos()
 		return m_nSeekPos;
 }
 
-MLRESULT CMDFlac::setVolume(int nVolume, int nBanlance)
+MLRESULT CMDFlac::setVolume(int volume, int nBanlance)
 {
 	if (!m_pOutput)
 		return ERR_PLAYER_INVALID_STATE;
 
-	return m_pOutput->setVolume(nVolume, nBanlance);
+	return m_pOutput->setVolume(volume, nBanlance);
 }
 
 void CMDFlac::DecodeThread(LPVOID lpParam)

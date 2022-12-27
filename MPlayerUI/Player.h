@@ -46,8 +46,8 @@ public:
     MP_LOOP_MODE getLoop();
     bool isShuffle();
 
-    long getVolume();
-    void setVolume(long nVol);
+    int getVolume();
+    void setVolume(int nVol);
 
     bool isMute();
     void setMute(bool bValue);
@@ -75,9 +75,9 @@ public:
 
     bool isMediaOpened();
 
-    long getCurrentMediaIndex();
+    int getCurrentMediaIndex();
 
-    void playMedia(long nPlaylistIndex);
+    void playMedia(int nPlaylistIndex);
 
     void getFileOpenDlgExtention(string &strExtentions) const;
     void getSupportedExtentions(vector<string> &vExtentions) const;
@@ -104,7 +104,7 @@ public:
     MLRESULT getCurrentPlaylist(IPlaylist **ppPlaylist);
     MLRESULT newPlaylist(IPlaylist **ppPlaylist);
     MLRESULT setCurrentPlaylist(IPlaylist *pPlaylist);
-    MLRESULT setCurrentMediaInPlaylist(long nIndex);
+    MLRESULT setCurrentMediaInPlaylist(int nIndex);
     MLRESULT newMedia(IMedia **ppMedia, cstr_t szUrl);
 
     int unregisterVis(IVis *pVis);
@@ -150,7 +150,7 @@ protected:
     CMPAutoPtr<CMPluginManager>    m_pPluginMgr;
     string                    m_strCurrentPlaylist;
     bool                    m_bPlModified;
-    int                        m_nRatingFilterMin;
+    int                        m_ratingFilterMin;
 
     IMPlayer                *m_spPlayer;
     CMPlayerEventHandler    *m_pEventHandler;

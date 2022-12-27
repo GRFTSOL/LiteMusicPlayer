@@ -469,9 +469,9 @@ void CMPlaylistSearchObj::updatePlaylist()
 
 void CMPlaylistSearchObj::addInRecentPlaylist(cstr_t szName, cstr_t szFile, int nPos)
 {
-    VecStrings::size_type i;
+    int i;
 
-    for (i = PN_CUSTOMIZED; i < m_vRecentPL.size(); i++)
+    for (i = PN_CUSTOMIZED; i < (int)m_vRecentPL.size(); i++)
     {
         string            str;
         m_pCtrlPlaylistList->getItemText(i, 0, str);
@@ -483,7 +483,7 @@ void CMPlaylistSearchObj::addInRecentPlaylist(cstr_t szName, cstr_t szFile, int 
         }
     }
 
-    if (i == m_vRecentPL.size())
+    if (i == (int)m_vRecentPL.size())
     {
         if (nPos == -1)
         {

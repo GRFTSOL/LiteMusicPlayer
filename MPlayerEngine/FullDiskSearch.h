@@ -1,3 +1,5 @@
+#pragma once
+
 ﻿/******************************************************************************
 The idea here to keep media libarary are updated in time. The detail requirements are:
     1>  每次软件启动之后都做一次“几乎不能被用户感知的的后台扫描”，扫描中自动增加新的歌曲，删除已经不存在的文件
@@ -14,8 +16,7 @@ The idea here to keep media libarary are updated in time. The detail requirement
 
 
 ///////////////////////////////////////////////////////////////////////////////
-class CFullDiskSearch
-{
+class CFullDiskSearch {
 public:
     virtual bool start(void);
 
@@ -33,7 +34,7 @@ protected:
     static void seachWholeDisk(void * param);
     bool isDiskIdle(const char* disk);
 protected:
-    CThread        m_threadWorking;
+    CThread                     m_threadWorking;
 
 };
 ///////////////////////////////////////////////////////////////////////////////

@@ -1,22 +1,16 @@
-// SplashScreenWnd.cpp: implementation of the CSplashScreenWnd class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "SkinTypes.h"
 #include "Skin.h"
 #include "SplashScreenWnd.h"
 
-CSplashScreenWnd::CSplashScreenWnd()
-{
+
+CSplashScreenWnd::CSplashScreenWnd() {
 }
 
-CSplashScreenWnd::~CSplashScreenWnd()
-{
+CSplashScreenWnd::~CSplashScreenWnd() {
 }
 
-bool CSplashScreenWnd::show(cstr_t szImageFile)
-{
-/*    // load image, then display it.
+bool CSplashScreenWnd::show(cstr_t szImageFile) {
+    /*    // load image, then display it.
     CRawImage        image;
     CRawGraph        memGraph;
 

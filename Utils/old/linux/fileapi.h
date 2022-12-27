@@ -5,8 +5,7 @@ bool removeDirectory(cstr_t lpPathName);
 bool moveFile(const char *oldname, const char *newname);
 bool copyFile(const char *oldname, const char *newname, bool bFailIfExists);
 
-class FileFind
-{
+class FileFind {
 public:
     FileFind();
     virtual ~FileFind();
@@ -24,10 +23,10 @@ public:
 protected:
     bool getCurStat();
 
-    dirent        *m_dirp;
-    DIR            *m_dp;
-    bool        m_bStatValid;
+    dirent                      *m_dirp;
+    DIR                         *m_dp;
+    bool                        m_bStatValid;
     struct stat    m_stat;
-    char        m_szDir[MAX_PATH];
+    char                        m_szDir[MAX_PATH];
 
 };

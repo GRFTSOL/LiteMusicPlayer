@@ -13,10 +13,9 @@
 
 @implementation ViewMacImp
 
-- (id)initWithFrame:(NSRect)frame
-{
+- (id)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
-    
+
     return self;
 }
 
@@ -34,13 +33,13 @@
 
 
 
-//    NSRect r = [self frame];
-//    printf("Frame: x: %f, y: %f, width: %f, height: %f", r.origin.x, r.origin.y, r.size.width, r.size.height);
-//    printf("ClipRect: x: %f, y: %f, width: %f, height: %f", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-    
+    //    NSRect r = [self frame];
+    //    printf("Frame: x: %f, y: %f, width: %f, height: %f", r.origin.x, r.origin.y, r.size.width, r.size.height);
+    //    printf("ClipRect: x: %f, y: %f, width: %f, height: %f", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+
     // A boolean tracks the previous shape of the window. If the shape changes, it's necessary for the
     // window to recalculate its shape and shadow.
-/*    bool shouldDisplayWindow = NO;
+    /*    bool shouldDisplayWindow = NO;
     // If the window transparency is > 0.7, draw the circle, otherwise, draw the pentagon. 
     if ([[self window] alphaValue] > 0.7) {
         shouldDisplayWindow = (showingPentagon == YES);
@@ -74,7 +73,7 @@
 }
 
 - (void)keyDown:(NSEvent *)theEvent {
-//    mBaseWnd->onKeyDown([theEvent keyCode], 0);
+    //    mBaseWnd->onKeyDown([theEvent keyCode], 0);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -86,8 +85,8 @@
 }*/
 
 - (void)viewDidEndLiveResize {
-//    NSRect rc = [self frame];
-//    mBaseWnd->onSize(rc.size.width, rc.size.height);
+    //    NSRect rc = [self frame];
+    //    mBaseWnd->onSize(rc.size.width, rc.size.height);
 }
 
 @end

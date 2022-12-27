@@ -2,8 +2,8 @@
 
 #include "MDAgent.h"
 
-class CMDLrc: public CMDAgent
-{
+
+class CMDLrc: public CMDAgent {
     OBJ_REFERENCE_DECL
 public:
     CMDLrc(void);
@@ -40,7 +40,7 @@ public:
     virtual uint32_t getPos();
 
     // volume
-    virtual MLRESULT setVolume(int nVolume, int nBanlance);
+    virtual MLRESULT setVolume(int volume, int nBanlance);
 
 protected:
     bool init();
@@ -53,11 +53,10 @@ protected:
     bool isOK();
 
 protected:
-    int                m_nLength;
-    uint32_t            m_dwBeginTime;
-    int                m_nPausedPos;
-    uint32_t            m_dwPausedTime;
-    PLAYER_STATE    m_state;
+    int                         m_nLength;
+    uint32_t                    m_dwBeginTime;
+    int                         m_nPausedPos;
+    uint32_t                    m_dwPausedTime;
+    PLAYER_STATE                m_state;
 
 };
-

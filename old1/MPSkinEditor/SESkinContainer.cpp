@@ -5,11 +5,6 @@
 #include "SESkinWnd.h"
 #include "SESkinContainer.h"
 
-#ifdef _DEBUG
-#undef THIS_FILE
-static char THIS_FILE[]=__FILE__;
-#define new DEBUG_NEW
-#endif
 /*
 
 class CSESkinContainer : public CSkinContainer  
@@ -25,7 +20,7 @@ public:
 
     void draw(IMLGraphicsBase *canvas);
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 
     void setNotify(ISESkinNotify *pNotify) { m_pNotify = pNotify; }
 

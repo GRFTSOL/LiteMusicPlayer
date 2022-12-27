@@ -1,39 +1,32 @@
-// WndHelper.h: interface for the CWndHelper class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_WNDHELPER_H__45A76D39_017B_41E8_A838_312A5F92D1AF__INCLUDED_)
-#define AFX_WNDHELPER_H__45A76D39_017B_41E8_A838_312A5F92D1AF__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef Utils_old_win32_WndHelper_h
+#define Utils_old_win32_WndHelper_h
 
 // using STL
 #pragma warning(disable:4786)
 #pragma warning(disable:4503)
 #include <vector>
+
+
 using namespace std;
 
-class CWndHelper  
-{
-    struct ChildWndProp
-    {
-        HWND        hWnd;
-        HWND        hWndRelation;
-        bool        bAlignRight;
-        bool        bAlignBottom;
-        int            nMarginX, nMarginY;
+class CWndHelper {
+    struct ChildWndProp {
+        HWND                        hWnd;
+        HWND                        hWndRelation;
+        bool                        bAlignRight;
+        bool                        bAlignBottom;
+        int                         nMarginX, nMarginY;
 
-        bool        bSizeXFix, bSizeYFix;
-        int            nX, nY;
-        int            nCx, nCy;
+        bool                        bSizeXFix, bSizeYFix;
+        int                         nX, nY;
+        int                         nCx, nCy;
     };
-    struct ChildAlignCenter
-    {
-        HWND        hWnd;
-        bool        bVert;
-        int            nOffsetToCenter;
+    struct ChildAlignCenter {
+        HWND                        hWnd;
+        bool                        bVert;
+        int                         nOffsetToCenter;
     };
 
 public:
@@ -54,11 +47,11 @@ public:
     void onResize();
 
 protected:
-    HWND        m_hWndParent;
+    HWND                        m_hWndParent;
 
     vector<ChildWndProp>        m_vChildWnd;
     vector<ChildAlignCenter>    m_vAlignCenterWnds;
 
 };
 
-#endif // !defined(AFX_WNDHELPER_H__45A76D39_017B_41E8_A838_312A5F92D1AF__INCLUDED_)
+#endif // !defined(Utils_old_win32_WndHelper_h)

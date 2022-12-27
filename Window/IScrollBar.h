@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef _HEADER_WIDGETIF_H_
 #define _HEADER_WIDGETIF_H_
 
@@ -8,13 +10,15 @@
 //
 #ifdef _MAC_OS
 #include "mac/Constants.h"
+
+
 #endif
 
 #define ID_UNDEFINE        (0)
 
 #ifdef _WIN32
 #ifndef MK_ALT
-#define MK_ALT         0x0080
+#define MK_ALT              0x0080
 #endif
 #endif
 
@@ -22,8 +26,7 @@
 // Scroll info define
 //
 class IScrollNotify;
-class IScrollBar
-{
+class IScrollBar {
 public:
     virtual void setScrollInfo(int nMin, int nMax, int nPage, int nPos = 0, int nLine = 1, bool bRedraw = true) = 0;
     virtual int setScrollPos(int nPos, bool bRedraw = true) = 0;
@@ -47,8 +50,7 @@ public:
 
 };
 
-class IScrollNotify
-{
+class IScrollNotify {
 public:
     virtual void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) = 0;
     virtual void onHScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) = 0;

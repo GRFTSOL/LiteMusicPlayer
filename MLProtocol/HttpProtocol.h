@@ -1,28 +1,22 @@
-// HttpProtocol.h: interface for the CHttpProtocol class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_HTTPPROTOCOL_H__A612E857_D7A5_437D_9549_08501DBCCB83__INCLUDED_)
-#define AFX_HTTPPROTOCOL_H__A612E857_D7A5_437D_9549_08501DBCCB83__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef MLProtocol_HttpProtocol_h
+#define MLProtocol_HttpProtocol_h
+
 
 #include "ClientCom.h"
 
-#define __HTTP_PORT        80
 
-class CHttpProtocol  
-{
+#define __HTTP_PORT         80
+
+class CHttpProtocol {
 public:
-    enum HTTP_VER
-    {
+    enum HTTP_VER {
         HTTP_V_1_0,
         HTTP_V_1_1,
         HTTP_V_UK,
     };
-    
+
 public:
     CHttpProtocol();
     virtual ~CHttpProtocol();
@@ -48,20 +42,20 @@ public:
 protected:
     virtual int parseHead() = 0;
 
-//
-//protected:
-//    virtual int getPropValue(const char * szName, string &strValue);
-//    virtual int setPropValue(const char * szName, const char * szValue);
+    //
+    //protected:
+    //    virtual int getPropValue(const char * szName, string &strValue);
+    //    virtual int setPropValue(const char * szName, const char * szValue);
 
 protected:
-    bool            m_bHeadParsed;
-    HTTP_VER        m_httpVer;
-    string        m_buffHead;
-    CNetFile        *m_pNetFile;
-    int                m_nHeadEndPos;
-    uint32_t            m_dwContentLen;
+    bool                        m_bHeadParsed;
+    HTTP_VER                    m_httpVer;
+    string                      m_buffHead;
+    CNetFile                    *m_pNetFile;
+    int                         m_nHeadEndPos;
+    uint32_t                    m_dwContentLen;
 
-    string            m_strCookie;
+    string                      m_strCookie;
     //char            m_szCookie[512];
 
 };
@@ -83,35 +77,32 @@ protected:
 // Proxy-Authorization: Basic dGVzdDoxMjM=
 // Proxy-Authorization: Basic User:Pass
 // Proxy-Connection: close
-class CHttpRequestProtocol : public CHttpProtocol
-{
+class CHttpRequestProtocol : public CHttpProtocol {
 public:
-    enum REQUEST_TYPE
-    {
+    enum REQUEST_TYPE {
         RQ_UNKNOWN,
         RQ_GET,
         RQ_POST,
     };
 
-    enum REQUEST_PROPERTY
-    {
-        RP_HOST            = 1 << 0,
-        RP_ACCEPT        = 1 << 1,
-        RP_REFERER        = 1 << 2,
-        RP_CONTENT_LENGTH= 1 << 3,
-        RP_USER_PWD        = 1 << 4,
-        RP_CONTENT_TYPE    = 1 << 5,
-        RP_USER_AGENT    = 1 << 6,
-        RP_RANGE        = 1 << 7,
-        RP_CONNECTION    = 1 << 8,
-        RP_PRAGMA        = 1 << 9,
-        RP_CACHE_CONTROL= 1 << 10,
-        RP_COOKIE        = 1 << 11,
-        RP_PROXY_AUTHORIZATION    = 1 << 12,
+    enum REQUEST_PROPERTY {
+        RP_HOST                     = 1 << 0,
+        RP_ACCEPT                   = 1 << 1,
+        RP_REFERER                  = 1 << 2,
+        RP_CONTENT_LENGTH           = 1 << 3,
+        RP_USER_PWD                 = 1 << 4,
+        RP_CONTENT_TYPE             = 1 << 5,
+        RP_USER_AGENT               = 1 << 6,
+        RP_RANGE                    = 1 << 7,
+        RP_CONNECTION               = 1 << 8,
+        RP_PRAGMA                   = 1 << 9,
+        RP_CACHE_CONTROL            = 1 << 10,
+        RP_COOKIE                   = 1 << 11,
+        RP_PROXY_AUTHORIZATION      = 1 << 12,
 
-        RP_BASE_GET    = RP_HOST | RP_ACCEPT | RP_REFERER | RP_USER_AGENT,
-        RP_BASE_POST= RP_HOST | RP_ACCEPT | RP_REFERER | RP_USER_AGENT | RP_CONTENT_LENGTH,
-        RP_POST_MIN = RP_HOST | RP_USER_AGENT | RP_CONTENT_LENGTH,
+        RP_BASE_GET                 = RP_HOST | RP_ACCEPT | RP_REFERER | RP_USER_AGENT,
+        RP_BASE_POST                = RP_HOST | RP_ACCEPT | RP_REFERER | RP_USER_AGENT | RP_CONTENT_LENGTH,
+        RP_POST_MIN                 = RP_HOST | RP_USER_AGENT | RP_CONTENT_LENGTH,
     };
 
 public:
@@ -149,38 +140,37 @@ public:
 
     bool isCookieAvail() { return (m_dwAvailProp & RP_COOKIE) == RP_COOKIE; }
     cstr_t getCookie() { if (isCookieAvail()) return m_strCookie.c_str(); else return ""; }
-    void setCookie(const char *szCookie)
-    {
+    void setCookie(const char *szCookie) {
         m_strCookie = szCookie;
         m_dwAvailProp |= RP_COOKIE;
     }
 
 protected:
-    uint32_t                m_dwAvailProp;
-    REQUEST_TYPE        m_RequestType;
+    uint32_t                    m_dwAvailProp;
+    REQUEST_TYPE                m_RequestType;
 
     // char                m_szUrl[512];
-    string                m_strUrl;
+    string                      m_strUrl;
 
-    int                    m_nHostPort;
-    char                m_szHost[128];
-    char                m_szAccept[128];
-    char                m_szRefer[512];
+    int                         m_nHostPort;
+    char                        m_szHost[128];
+    char                        m_szAccept[128];
+    char                        m_szRefer[512];
     // uint32_t                m_dwContentLen;
-    char                m_szUserPwd[128];
-    char                m_szContentType[128];
-    char                m_szUserAgent[128];
-    uint32_t                m_dwRangeBeg;
-    uint32_t                m_dwRangeEnd;
-    char                m_szConnection[128];
-    char                m_szPragma[128];
-    char                m_szCacheControl[128];
+    char                        m_szUserPwd[128];
+    char                        m_szContentType[128];
+    char                        m_szUserAgent[128];
+    uint32_t                    m_dwRangeBeg;
+    uint32_t                    m_dwRangeEnd;
+    char                        m_szConnection[128];
+    char                        m_szPragma[128];
+    char                        m_szCacheControl[128];
 
     //
     // proxy
-    bool            m_bUseProxy;
-    string            m_strProxyServer;
-    string            m_strBase64ProxyUserPass;
+    bool                        m_bUseProxy;
+    string                      m_strProxyServer;
+    string                      m_strBase64ProxyUserPass;
 
 };
 
@@ -202,26 +192,24 @@ WWW-Authenticate: Negotiate
 WWW-Authenticate: NTLM
 WWW-Authenticate: Basic realm="localhost"
 */
-class CHttpReturnProtocol : public CHttpProtocol
-{
+class CHttpReturnProtocol : public CHttpProtocol {
 public:
-    enum RET_PROPERTY
-    {
-        RP_SERVER            = 1 << 0,
-        RP_CONNECTION        = 1 << 1,
-        RP_DATE                = 1 << 2,
-        RP_LOCATION            = 1 << 3,        // for redirect...
-        RP_CONTENT_TYPE        = 1 << 4,
-        RP_CONTENT_RANGE    = 1 << 5,
-        RP_LAST_MODIFIED    = 1 << 6,
-        RP_ETAG                = 1 << 7,
-        RP_CONTENT_LENGTH    = 1 << 8,
-        RP_SET_COOKIE        = 1 << 9,
-        RP_CONTENT_DISP_FILE = 1 << 10,
-        RP_CACHE_CONTROL    = 1 << 11,
+    enum RET_PROPERTY {
+        RP_SERVER                   = 1 << 0,
+        RP_CONNECTION               = 1 << 1,
+        RP_DATE                     = 1 << 2,
+        RP_LOCATION                 = 1 << 3, // for redirect...
+        RP_CONTENT_TYPE             = 1 << 4,
+        RP_CONTENT_RANGE            = 1 << 5,
+        RP_LAST_MODIFIED            = 1 << 6,
+        RP_ETAG                     = 1 << 7,
+        RP_CONTENT_LENGTH           = 1 << 8,
+        RP_SET_COOKIE               = 1 << 9,
+        RP_CONTENT_DISP_FILE        = 1 << 10,
+        RP_CACHE_CONTROL            = 1 << 11,
 
-        RP_BASE_RET            = RP_SERVER | RP_CONNECTION | RP_DATE | RP_CONTENT_TYPE | RP_CONTENT_LENGTH,
-        RP_MIN_RET            = RP_SERVER | RP_CONNECTION | RP_CONTENT_LENGTH,
+        RP_BASE_RET                 = RP_SERVER | RP_CONNECTION | RP_DATE | RP_CONTENT_TYPE | RP_CONTENT_LENGTH,
+        RP_MIN_RET                  = RP_SERVER | RP_CONNECTION | RP_CONTENT_LENGTH,
     };
 
 public:
@@ -255,47 +243,44 @@ public:
 
     bool isCookieAvail() { return (m_dwAvailProp & RP_SET_COOKIE) == RP_SET_COOKIE; }
     cstr_t getCookie() { if (isCookieAvail()) return m_strCookie.c_str(); else return ""; }
-    void setCookie(const char *szCookie)
-    {
+    void setCookie(const char *szCookie) {
         m_strCookie = szCookie;
         m_dwAvailProp |= RP_SET_COOKIE;
     }
 
-    void setContentType(const char *szContentType)
-    {
+    void setContentType(const char *szContentType) {
         strcpy_safe(m_szContentType, CountOf(m_szContentType), szContentType);
         m_dwAvailProp |= RP_CONTENT_TYPE;
     }
 
-    void setDate(const char *szDate)
-    {
+    void setDate(const char *szDate) {
         strcpy_safe(m_szDate, CountOf(m_szDate), szDate);
         m_dwAvailProp |= RP_DATE;
     }
 
 protected:
-    uint32_t        m_dwAvailProp;
+    uint32_t                    m_dwAvailProp;
 
-    uint32_t        m_dwResultCode;
-    char        m_szResult[128];
+    uint32_t                    m_dwResultCode;
+    char                        m_szResult[128];
 
-    char        m_szServer[128];
-    char        m_szConnection[128];
-    char        m_szDate[128];
-    char        m_szContentType[128];
-    char        m_szLastModified[128];
-    char        m_szEtag[128];
-    char        m_szLocation[512];
-    char        m_szCacheControl[128];
-    char        m_szContentFileName[128];        // Content-Disposition: attachment;filename=l黎明 - That's Life.lrc
-    bool        m_bTransfEncChunked;    
+    char                        m_szServer[128];
+    char                        m_szConnection[128];
+    char                        m_szDate[128];
+    char                        m_szContentType[128];
+    char                        m_szLastModified[128];
+    char                        m_szEtag[128];
+    char                        m_szLocation[512];
+    char                        m_szCacheControl[128];
+    char                        m_szContentFileName[128]; // Content-Disposition: attachment;filename=l黎明 - That's Life.lrc
+    bool                        m_bTransfEncChunked;
     // char        m_szContentLen
-    uint32_t        m_dwContentLen;
-    uint32_t        m_dwRangeBeg, m_dwRangeEnd;
+    uint32_t                    m_dwContentLen;
+    uint32_t                    m_dwRangeBeg, m_dwRangeEnd;
 
 };
 
 int getMonthByStr(cstr_t szMonth);
 int getDayOfWeekByStr(cstr_t szDayOfWeek);
 
-#endif // !defined(AFX_HTTPPROTOCOL_H__A612E857_D7A5_437D_9549_08501DBCCB83__INCLUDED_)
+#endif // !defined(MLProtocol_HttpProtocol_h)

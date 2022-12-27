@@ -1,23 +1,17 @@
-// DlgChooseColor.cpp: implementation of the CDlgChooseColor class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "BaseWnd.h"
 #include "DlgChooseColor.h"
 
-CDlgChooseColor::CDlgChooseColor()
-{
+
+CDlgChooseColor::CDlgChooseColor() {
     m_clr = RGB(255, 255, 255);
 }
 
-CDlgChooseColor::~CDlgChooseColor()
-{
+CDlgChooseColor::~CDlgChooseColor() {
 
 }
 
-int CDlgChooseColor::doModal(Window *pWndParent, const CColor &clr)
-{
-    static COLORREF     _clrCustom[16];
+int CDlgChooseColor::doModal(Window *pWndParent, const CColor &clr) {
+    static COLORREF _clrCustom[16];
 
     m_clr = clr;
 
@@ -27,8 +21,7 @@ int CDlgChooseColor::doModal(Window *pWndParent, const CColor &clr)
     choosecolor.lpCustColors = _clrCustom;
     choosecolor.Flags = CC_RGBINIT;
     choosecolor.rgbResult = clr.get();
-    if (ChooseColor(&choosecolor))
-    {
+    if (ChooseColor(&choosecolor)) {
         m_clr.set(choosecolor.rgbResult);
         return IDOK;
     }

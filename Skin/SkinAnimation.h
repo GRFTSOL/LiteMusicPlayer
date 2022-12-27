@@ -8,25 +8,23 @@ class CUIObject;
 
 extern const int DEFAULT_ANIMATION_DURATION;
 
-enum AnimateState
-{
+enum AnimateState {
     AS_INIT,
     AS_MOVE,
     AS_DONE
 };
 
-class CAnimationMotion
-{
+class CAnimationMotion {
 public:
     CAnimationMotion(int nId) : m_id(nId) { }
     virtual ~CAnimationMotion() { }
 
     virtual void animate(AnimateState as, int nMotionPercent, CUIObject *pObj) = 0;
 
-    int            m_id;
+    int                         m_id;
 
 };
-typedef list<CAnimationMotion *>    ListObjAnimation;
+typedef list<CAnimationMotion *> ListObjAnimation;
 
 
 enum AnimateType {
@@ -35,8 +33,7 @@ enum AnimateType {
     AT_MOVE,
 };
 
-enum AnimateDirection
-{
+enum AnimateDirection {
     AD_LEFT,
     AD_TOP,
     AD_RIGHT,
@@ -50,11 +47,10 @@ CAnimationMotion *newAnimate(AnimateType type, bool bHide, CUIObject *pUIObjTarg
 //
 // Definition the animation process: start, running and stop.
 //
-class CSkinAnimation
-{
+class CSkinAnimation {
 public:
-    CSkinAnimation(CSkinAnimationUIObj *pObjTarget);    // CSkinAnimationUIObj::onAnimate() to process the animation
-    CSkinAnimation(CUIObject *pObjTarget, int nAnimateId, int nDurationTime);    // CUIObject::onAnimate() to process the animation
+    CSkinAnimation(CSkinAnimationUIObj *pObjTarget); // CSkinAnimationUIObj::onAnimate() to process the animation
+    CSkinAnimation(CUIObject *pObjTarget, int nAnimateId, int nDurationTime); // CUIObject::onAnimate() to process the animation
     CSkinAnimation(CUIObject *pObjTarget, CAnimationMotion *pAnimation, int nDurationTime); // Construct a temporarily Animation
     virtual ~CSkinAnimation();
 
@@ -74,14 +70,14 @@ protected:
     void initStart();
 
 protected:
-    AnimateState        m_animateState;
-    uint32_t                m_dwTimeBegin;
-    int                    m_nMotionPercent;
-    int                    m_nMotionTimeOffset;
-    float                m_nOneMotionTime;
-    int                    m_nAnimateId;
+    AnimateState                m_animateState;
+    int64_t                     m_timeBegin;
+    int                         m_nMotionPercent;
+    int                         m_nMotionTimeOffset;
+    float                       m_nOneMotionTime;
+    int                         m_nAnimateId;
 
-    CUIObject            *m_pObjTarget;
-    CAnimationMotion    *m_pMotion;
+    CUIObject                   *m_pObjTarget;
+    CAnimationMotion            *m_pMotion;
 
 };

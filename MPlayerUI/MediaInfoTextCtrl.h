@@ -9,13 +9,13 @@ public:
     CMediaInfoTextCtrl();
     virtual ~CMediaInfoTextCtrl();
 
-    void onCreate();
+    void onCreate() override;
 
-    virtual void onEvent(const IEvent *pEvent);
+    virtual void onEvent(const IEvent *pEvent) override;
 
-    void onTimer(int nId);
+    void onTimer(int nId) override;
 
-    virtual bool setProperty(cstr_t szProperty, cstr_t szValue);
+    virtual bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 #ifdef _SKIN_EDITOR_
     void enumProperties(CUIObjProperties &listProperties);
 #endif // _SKIN_EDITOR_

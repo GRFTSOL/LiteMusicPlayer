@@ -282,7 +282,7 @@ int CAutoProcessEmbeddedLyrics::dealSaveEmbeddedLyrics(Item &item)
         && MediaTags::isID3v2TagSupported(item.m_strSongFile.c_str()))
     {
         CLyrics3v2    lyrics3v2;
-        nRet = lyrics3v2.writeLyrcsInfo(item.m_strSongFile.c_str(), item.m_strLyrics.c_str(), item.m_strLyrics.size());
+        nRet = lyrics3v2.writeLyrcsInfo(item.m_strSongFile.c_str(), item.m_strLyrics.c_str(), (int)item.m_strLyrics.size());
         if (nRet != ERR_OK && nRet != ERR_NOT_FIND_LRC3V2)
             return nRet;
         item.m_nSucceededCount++;
@@ -295,7 +295,7 @@ int CAutoProcessEmbeddedLyrics::dealSaveEmbeddedLyrics(Item &item)
         // save lyrics as id3v2 sylt and uslt
         CMLData        lyricsData;
 
-        nRet = lyricsData.openLyrics(item.m_strSongFile.c_str(), 0, (uint8_t *)item.m_strLyrics.c_str(), item.m_strLyrics.size());
+        nRet = lyricsData.openLyrics(item.m_strSongFile.c_str(), 0, (uint8_t *)item.m_strLyrics.c_str(), (int)item.m_strLyrics.size());
         if (nRet == ERR_OK)
         {
             nRet = lyricsData.saveLyricsInSongOfID3v2(item.m_vLyrNames);
@@ -311,7 +311,7 @@ int CAutoProcessEmbeddedLyrics::dealSaveEmbeddedLyrics(Item &item)
     {
         CMLData        lyricsData;
 
-        nRet = lyricsData.openLyrics(item.m_strSongFile.c_str(), 0, (uint8_t *)item.m_strLyrics.c_str(), item.m_strLyrics.size());
+        nRet = lyricsData.openLyrics(item.m_strSongFile.c_str(), 0, (uint8_t *)item.m_strLyrics.c_str(), (int)item.m_strLyrics.size());
         if (nRet == ERR_OK)
         {
             nRet = lyricsData.saveLyricsInSongOfM4a();

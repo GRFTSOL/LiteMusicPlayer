@@ -18,18 +18,18 @@ public:
     CMPSkinInfoTextCtrl();
     virtual ~CMPSkinInfoTextCtrl();
 
-    void onCreate();
+    void onCreate() override;
 
-    virtual void onEvent(const IEvent *pEvent);
+    virtual void onEvent(const IEvent *pEvent) override;
 
-    bool onMouseMove(CPoint point);
+    bool onMouseMove(CPoint point) override;
 
-    virtual bool onLButtonUp(uint32_t nFlags, CPoint point);
-    virtual bool onLButtonDown(uint32_t nFlags, CPoint point);
+    virtual bool onLButtonUp(uint32_t nFlags, CPoint point) override;
+    virtual bool onLButtonDown(uint32_t nFlags, CPoint point) override;
 
-    void onTimer(int nId);
+    void onTimer(int nId) override;
 
-    void draw(CRawGraph *canvas);
+    void draw(CRawGraph *canvas) override;
 
 protected:
     void updateShowDefaultInfo();

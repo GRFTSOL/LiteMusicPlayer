@@ -1,16 +1,15 @@
 #include "base.h"
 
-OSError::~OSError()
-{
-    if (m_szErrMsg)
+
+OSError::~OSError() {
+    if (m_szErrMsg) {
         ::LocalFree(m_szErrMsg);
+    }
 }
 
-void OSError::doFormatMessage(unsigned int dwLastErr)
-{
+void OSError::doFormatMessage(unsigned int dwLastErr) {
     m_dwErrCode = dwLastErr;
-    if (m_szErrMsg)
-    {
+    if (m_szErrMsg) {
         ::LocalFree(m_szErrMsg);
         m_szErrMsg = nullptr;
     }
@@ -21,12 +20,11 @@ void OSError::doFormatMessage(unsigned int dwLastErr)
         nullptr,
         dwLastErr,
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT ),
-        (char *)&m_szErrMsg, 
+        (char *)&m_szErrMsg,
         1,
         nullptr );
 }
 
-uint32_t OSError::getLastError()
-{
+uint32_t OSError::getLastError() {
     return ::getLastError();
 }

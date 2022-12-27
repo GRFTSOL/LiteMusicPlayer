@@ -17,7 +17,7 @@ public:
         m_bIntialized = false;
     }
 
-    void onInitialUpdate()
+    void onInitialUpdate() override
     {
         CPagePfBase::onInitialUpdate();
 
@@ -39,7 +39,7 @@ public:
 
     }
 
-    void onDestroy()
+    void onDestroy() override
     {
         if (m_bIntialized)
         {
@@ -63,7 +63,7 @@ public:
         CPagePfBase::onDestroy();
     }
 
-    bool onCustomCommand(int nId)
+    bool onCustomCommand(int nId) override
     {
         if (nId == getIDByName("CID_BR_PIC_FOLDER"))
         {
@@ -130,7 +130,7 @@ protected:
     ColorOption        m_ColorSet[CS_SIZE];
 
 public:
-    virtual void popupSkinWndOnSelected()
+    virtual void popupSkinWndOnSelected() override
     {
         createLOBXlightBmp(true);
         createLOBXlightBmp(false);
@@ -152,7 +152,7 @@ public:
         m_eventType = ET_LYRICS_DISPLAY_SETTINGS;
     }
 
-    void onInitialUpdate()
+    void onInitialUpdate() override
     {
         CPagePfBase::onInitialUpdate();
 
@@ -187,7 +187,7 @@ public:
         setSettingType(m_eventType == ET_LYRICS_FLOATING_SETTINGS ? ST_FLOATING_LYR : ST_NORMAL_LYR);
     }
 
-    void onUIObjNotify(IUIObjNotify *pNotify)
+    void onUIObjNotify(IUIObjNotify *pNotify) override
     {
         CPagePfBase::onUIObjNotify(pNotify);
 
@@ -204,7 +204,7 @@ public:
         }
     }
 
-    bool onCustomCommand(int nId)
+    bool onCustomCommand(int nId) override
     {
         if (nId == CID_DS_LOAD_LATIN_FONT || nId == CID_DS_LOAD_OTHER_FONT)
         {
@@ -470,7 +470,7 @@ public:
         m_nThemeListID = 0;
     }
 
-    virtual void onUIObjNotify(IUIObjNotify *pNotify)
+    virtual void onUIObjNotify(IUIObjNotify *pNotify) override
     {
         if (pNotify->nID == m_nThemeListID && pNotify->isKindOf(CSkinListCtrl::className()))
         {
@@ -486,7 +486,7 @@ public:
         }
     }
 
-    void onInitialUpdate()
+    void onInitialUpdate() override
     {
         CPagePfBase::onInitialUpdate();
 
@@ -502,14 +502,14 @@ public:
         updateThemesList();
     }
 
-    void onDestroy()
+    void onDestroy() override
     {
         m_pSkin->unregisterUIObjNotifyHandler(this);
 
         CPagePfBase::onDestroy();
     }
 
-    bool onCustomCommand(int nId)
+    bool onCustomCommand(int nId) override
     {
         if (nId == getIDByName("CID_LOAD_THEME"))
         {

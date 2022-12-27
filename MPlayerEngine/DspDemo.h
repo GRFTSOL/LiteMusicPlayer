@@ -1,18 +1,13 @@
-// DspDemo.h: interface for the CDspDemo class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_DSPDEMO_H__39A6AE2E_E737_4081_8959_E85041B73335__INCLUDED_)
-#define AFX_DSPDEMO_H__39A6AE2E_E737_4081_8959_E85041B73335__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef MPlayerEngine_DspDemo_h
+#define MPlayerEngine_DspDemo_h
+
 
 #include "IMPlayer.h"
 
-class CDspDemo : public IDSP  
-{
+
+class CDspDemo : public IDSP {
     OBJ_REFERENCE_DECL
 
 public:
@@ -31,9 +26,9 @@ public:
     virtual void processVoice(IFBuffer *pBuf, int nBps, int nChannels, int nSampleRate);
 
 protected:
-    CMPAutoPtr<IMPlayer>    m_pPlayer;
-    string                m_buffPitch;
+    CMPAutoPtr<IMPlayer>        m_pPlayer;
+    string                      m_buffPitch;
 
 };
 
-#endif // !defined(AFX_DSPDEMO_H__39A6AE2E_E737_4081_8959_E85041B73335__INCLUDED_)
+#endif // !defined(MPlayerEngine_DspDemo_h)

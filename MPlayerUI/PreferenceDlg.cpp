@@ -24,7 +24,7 @@ class CPagePfRoot : public CPagePfBase
 public:
     CPagePfRoot();
 
-    void onInitialUpdate();
+    void onInitialUpdate() override;
 
 };
 

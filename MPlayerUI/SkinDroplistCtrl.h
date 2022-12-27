@@ -101,7 +101,7 @@ public:
 
     int getChildrenCount()
     {
-        return m_pCurNode->vChildren.size();
+        return (int)m_pCurNode->vChildren.size();
     }
 
     _DataType &getChild(int nIndex)
@@ -295,7 +295,7 @@ public:
 
     virtual void onSelChanged();
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 #ifdef _SKIN_EDITOR_
     void enumProperties(CUIObjProperties &listProperties);
 #endif // _SKIN_EDITOR_

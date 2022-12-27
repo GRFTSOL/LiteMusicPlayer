@@ -2,10 +2,10 @@
 
 #include "MDAgent.h"
 
+
 typedef void * _MDAVPlayerInternal;
 
-class CMDAVPlayer: public CMDAgent
-{
+class CMDAVPlayer: public CMDAgent {
     OBJ_REFERENCE_DECL
 public:
     CMDAVPlayer(void);
@@ -42,11 +42,11 @@ public:
     virtual uint32_t getPos();
 
     // volume
-    virtual MLRESULT setVolume(int nVolume, int nBanlance);
+    virtual MLRESULT setVolume(int volume, int nBanlance);
 
 public:
     CMPlayer *getMPlayer() { return m_pPlayer; }
-    
+
 protected:
     bool init();
 
@@ -58,7 +58,6 @@ protected:
     bool isOK();
 
 protected:
-    _MDAVPlayerInternal        m_player;
+    _MDAVPlayerInternal         m_player;
 
 };
-

@@ -16,14 +16,14 @@ public:
     CSkinPicText();
     virtual ~CSkinPicText();
 
-    void draw(CRawGraph *canvas);
+    void draw(CRawGraph *canvas) override;
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 #ifdef _SKIN_EDITOR_
     void enumProperties(CUIObjProperties &listProperties);
 #endif // _SKIN_EDITOR_
 
-    void setText(cstr_t szText);
+    void setText(cstr_t szText) override;
 
 protected:
     string            m_strImgText;

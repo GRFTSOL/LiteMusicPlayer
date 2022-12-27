@@ -39,7 +39,7 @@ public:
     public:
         CLyrOneLine()
         {
-            nBegTime = 0, nEndTime = 0;
+            nBegTime = 0; nEndTime = 0;
             bTimeLine = false;
             bTempBegTime = true;
             bTempEndTime = true;
@@ -57,7 +57,7 @@ public:
         FTF_WHOLEWORD    = 0x1 << 2,        // 
     };
 
-    void onKeyDown(uint32_t nChar, uint32_t nFlags);
+    void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
 
     void autoVScrollDown(int nDownLine);
 
@@ -76,9 +76,9 @@ public:
     bool isTextChanged();
 
 public:
-    virtual void onCmdDelete();
+    virtual void onCmdDelete() override;
 
-    virtual COneLine *newOneLine() { return new CLyrOneLine; }
+    virtual COneLine *newOneLine() override { return new CLyrOneLine; }
 
 public:
     //
@@ -88,29 +88,29 @@ public:
     bool findNext(bool bSearchDown = true);
 
 protected:
-    virtual int getCaretLineHomePos();
+    virtual int getCaretLineHomePos() override;
 
 public:
-    virtual void onCreate();
-    virtual void onDestroy();
+    virtual void onCreate() override;
+    virtual void onDestroy() override;
 
-    virtual void onEvent(const IEvent *pEvent);
+    virtual void onEvent(const IEvent *pEvent) override;
 
-    virtual bool onCustomCommand(int nId);
+    virtual bool onCustomCommand(int nId) override;
 
     virtual void onSaveLyrics();
 
-    virtual void draw(CRawGraph *canvas);
+    virtual void draw(CRawGraph *canvas) override;
 
 public:
     void updateLyricsProperties(bool bRedraw = false);
     void onLyricsChanged();
 
 public:
-    virtual void onStatusChanged(IEditNotification::Status status, bool bVal);
-    virtual void onTextChanged();
+    virtual void onStatusChanged(IEditNotification::Status status, bool bVal) override;
+    virtual void onTextChanged() override;
 
-    virtual void onTimer(int nId);
+    virtual void onTimer(int nId) override;
 
 protected:
     void updateTextFontColor();

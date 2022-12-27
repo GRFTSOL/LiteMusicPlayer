@@ -26,7 +26,7 @@ CLyricShowVobSub::~CLyricShowVobSub()
 
 }
 
-void CLyricShowVobSub::fastDraw(CRawGraph *canvas, CRect *prcUpdate/* = nullptr*/)
+void CLyricShowVobSub::fastDraw(CRawGraph *canvas, CRect *prcUpdate)
 {
     int            y;
     LyricsLine *pLyricRow = nullptr, *pLyricRowNext = nullptr;

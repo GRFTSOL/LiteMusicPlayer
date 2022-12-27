@@ -6,8 +6,7 @@
 namespace GfxRaw
 {
 
-class CRawGlyphBuilder
-{
+class CRawGlyphBuilder {
 public:
     CRawGlyphBuilder();
     virtual ~CRawGlyphBuilder();
@@ -20,11 +19,11 @@ protected:
     int getHeightBitmap() { return m_font.getHeight() + MARGIN_FONT * 2; }
 
 protected:
-    cairo_t                    *m_cr;
-    cairo_surface_t            *m_surface;
+    cairo_t                     *m_cr;
+    cairo_surface_t             *m_surface;
 
-    CMLFont                    m_font;
-    int                        m_nWidthGraph;
+    CMLFont                     m_font;
+    int                         m_nWidthGraph;
 
 };
 

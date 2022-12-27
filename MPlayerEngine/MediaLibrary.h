@@ -1,13 +1,8 @@
-// MediaLibrary.h: interface for the CMediaLibrary class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MEDIALIBRARY_H__12D1F10C_DB4B_4E0A_AE95_30251D39B91B__INCLUDED_)
-#define AFX_MEDIALIBRARY_H__12D1F10C_DB4B_4E0A_AE95_30251D39B91B__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef MPlayerEngine_MediaLibrary_h
+#define MPlayerEngine_MediaLibrary_h
+
 
 #include "../third-parties/sqlite/Sqlite3.hpp"
 
@@ -17,8 +12,7 @@
 
 class CMPlayer;
 
-class CMediaLibrary : public IMediaLibrary  
-{
+class CMediaLibrary : public IMediaLibrary {
     OBJ_REFERENCE_DECL
 public:
     CMediaLibrary();
@@ -123,9 +117,9 @@ protected:
     CSqlite3                    m_db;
     std::mutex                  m_mutexDataAccess;
 
-    CSqlite3Stmt        m_sqlAdd, m_sqlAddFast, m_sqlQueryByUrl;
-    int                    m_nInitResult;
+    CSqlite3Stmt                m_sqlAdd, m_sqlAddFast, m_sqlQueryByUrl;
+    int                         m_nInitResult;
 
 };
 
-#endif // !defined(AFX_MEDIALIBRARY_H__12D1F10C_DB4B_4E0A_AE95_30251D39B91B__INCLUDED_)
+#endif // !defined(MPlayerEngine_MediaLibrary_h)

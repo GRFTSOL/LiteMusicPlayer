@@ -26,20 +26,20 @@ public:
     virtual ~CLyricShowTxtObj();
 
 public:
-    void onKeyDown(uint32_t nChar, uint32_t nFlags);
-    void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt);
-    void onLyricsChanged();
+    void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
+    void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) override;
+    void onLyricsChanged() override;
 
-    void onCreate();
-    void onEvent(const IEvent *pEvent);
-    void onSize();
+    void onCreate() override;
+    void onEvent(const IEvent *pEvent) override;
+    void onSize() override;
 
-    void onTimer(int nId);
+    void onTimer(int nId) override;
 
-    virtual void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar);
-    virtual void onHScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) { }
+    virtual void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override;
+    virtual void onHScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override { }
 
-    void onPlayTimeChangedUpdate();
+    void onPlayTimeChangedUpdate() override;
 
     bool isRecordScrollingActionsEnabled()
         const { return m_bRecordScrollingActionsEnabled; };
@@ -50,13 +50,13 @@ public:
     void enableReplayScrollingActions(bool bEnable);
 
 protected:
-    void onLyrDrawContextChanged();
+    void onLyrDrawContextChanged() override;
 
-    void fastDraw(CRawGraph *canvas, CRect *prcUpdate = nullptr);
+    void fastDraw(CRawGraph *canvas, CRect *prcUpdate = nullptr) override;
 
     void setScrollInfo();
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 
     int getLinesPerPage();
 
@@ -72,7 +72,7 @@ protected:
     int                        m_nCurLineNew;
     int                        m_yCurLineLatest, m_nCurLineLatest;
     int                        m_yOffsetScroll;
-    uint32_t                    m_nBeginScrollTime;
+    int64_t                    m_timeBeginScroll;
 
     bool                    m_bInVerticalScrollingMode;
 

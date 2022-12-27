@@ -1,9 +1,5 @@
-// RawImage.h: interface for the CRawImage class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_RAWIMAGE_H__23B94FD7_4391_4E37_87FC_1404458B776E__INCLUDED_)
-#define AFX_RAWIMAGE_H__23B94FD7_4391_4E37_87FC_1404458B776E__INCLUDED_
+#ifndef GfxRaw_RawImage_h
+#define GfxRaw_RawImage_h
 
 #pragma once
 
@@ -21,8 +17,7 @@ void fillRect(RawImageData *pImage, int x, int y, int xMax, int yMax, const CCol
 //
 //
 //
-class CRawImage  
-{
+class CRawImage {
 public:
     CRawImage();
     virtual ~CRawImage();
@@ -67,14 +62,14 @@ protected:
     bool maskBlt(RawImageData *pImageDst, CRect &rcDst, int xSrc, int ySrc, RawImageData *pImageMask, int xMask, int yMask, BlendPixMode bpm, int nOpacitySrc);
 
 public:
-    int            m_x;
-    int            m_y;
-    int            m_cx;
-    int            m_cy;
-    
+    int                         m_x;
+    int                         m_y;
+    int                         m_cx;
+    int                         m_cy;
+
 protected:
-    RawImageData        *m_image;
+    RawImageData                *m_image;
 
 };
 
-#endif // !defined(AFX_RAWIMAGE_H__23B94FD7_4391_4E37_87FC_1404458B776E__INCLUDED_)
+#endif // !defined(GfxRaw_RawImage_h)

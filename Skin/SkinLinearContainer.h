@@ -3,28 +3,26 @@
 #include "SkinContainer.h"
 
 
-class CSkinLinearContainer : public CSkinContainer  
-{
+class CSkinLinearContainer : public CSkinContainer {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinContainer)
 public:
     CSkinLinearContainer();
     virtual ~CSkinLinearContainer();
 
-    void recalculateUIObjSizePos(CUIObject *pObj);
+    void recalculateUIObjSizePos(CUIObject *pObj) override;
 
-    void onMeasureSizeByContent();
-    void onSize();
+    void onMeasureSizeByContent() override;
+    void onSize() override;
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 
 protected:
     void onSizeForVert();
     void onSizeForHorz();
 
-    struct Item
-    {
-        uint16_t        minSize, size;
-        uint16_t        weight;
+    struct Item {
+        uint16_t                    minSize, size;
+        uint16_t                    weight;
 
         void set(uint16_t minSize, uint16_t size, uint16_t weight) {
             this->minSize = minSize;
@@ -44,12 +42,12 @@ protected:
     void resizeFromItemsToUIObjsForVert(VecItems &vItems, VecUIObjects::iterator itBeg, VecUIObjects::iterator itEnd, int startPos);
     void resizeFromItemsToUIObjsForHorz(VecItems &vItems, VecUIObjects::iterator itBeg, VecUIObjects::iterator itEnd, int startPos);
 
-    virtual void onSetChildVisible(CUIObject *pChild, bool bVisible, bool bRedraw);
+    virtual void onSetChildVisible(CUIObject *pChild, bool bVisible, bool bRedraw) override;
 
 protected:
     friend class CTestCaseCSkinLinearContainer;
 
-    bool            m_bVertical;
-    int                m_nSeparatorThickness;
+    bool                        m_bVertical;
+    int                         m_nSeparatorThickness;
 
 };

@@ -15,13 +15,13 @@ public:
     CSkinRateCtrl();
     virtual ~CSkinRateCtrl();
 
-    cstr_t getClassName();
+    cstr_t getClassName() override;
 
-    bool onMouseMove(CPoint point);
-    bool onLButtonUp(uint32_t nFlags, CPoint point);
-    bool onLButtonDown(uint32_t nFlags, CPoint point);
-    void draw(CRawGraph *canvas);
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool onMouseMove(CPoint point) override;
+    bool onLButtonUp(uint32_t nFlags, CPoint point) override;
+    bool onLButtonDown(uint32_t nFlags, CPoint point) override;
+    void draw(CRawGraph *canvas) override;
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 #ifdef _SKIN_EDITOR_
     void enumProperties(CUIObjProperties &listProperties);
 #endif // _SKIN_EDITOR_
@@ -31,7 +31,7 @@ public:
 
 public:
     static cstr_t className() { return ms_szClassName; }
-    bool isKindOf(cstr_t szClassName);
+    bool isKindOf(cstr_t szClassName) override;
 
 protected:
     string                m_strBmpFile;

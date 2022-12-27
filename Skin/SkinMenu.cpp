@@ -1,35 +1,30 @@
-// SkinMenu.cpp: implementation of the CSkinMenu class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "SkinTypes.h"
 #include "Skin.h"
 #include "SkinMenu.h"
 
+
 //////////////////////////////////////////////////////////////////////////
 
-int CSkinMenu::Item::fromXML(CSkinFactory *pSkinFactory, SXNode *pNode)
-{
+int CSkinMenu::Item::fromXML(CSkinFactory *pSkinFactory, SXNode *pNode) {
     // <Item Action="append" Type="item" Name="Playlist Editor..." IDCmd="dyncmd_openclose_playlist_wnd" CanCheck="true" IsCheckedCmd="dyncmd_is_mediainfo_bar_visible"/>
-    cstr_t        szValue;
+    cstr_t szValue;
 
     szValue = pNode->getPropertySafe("Type");
-    if (strcasecmp(szValue, "item") == 0)
+    if (strcasecmp(szValue, "item") == 0) {
         type = IT_ITEM;
-    else if (strcasecmp(szValue, "popup") == 0)
+    } else if (strcasecmp(szValue, "popup") == 0) {
         type = IT_POPUP;
-    else if (strcasecmp(szValue, "seperator") == 0)
+    } else if (strcasecmp(szValue, "seperator") == 0) {
         type = IT_SEPERATOR;
-    else
+    } else {
         type = IT_ITEM;
+    }
 
     szValue = pNode->getPropertySafe("Action");
-    if (strcasecmp(szValue, "append") == 0 || strcasecmp(szValue, "InsertByID") == 0)
-    {
-        if (strcasecmp(szValue, "append") == 0)
+    if (strcasecmp(szValue, "append") == 0 || strcasecmp(szValue, "InsertByID") == 0) {
+        if (strcasecmp(szValue, "append") == 0) {
             action = A_APPEND;
-        else
-        {
+        } else {
             action = A_INSERT_BY_ID;
             nPos = pSkinFactory->getIDByName(pNode->getPropertySafe("Position"));
             nPos = pSkinFactory->getMenuIDByUID(nPos, false);
@@ -40,31 +35,26 @@ int CSkinMenu::Item::fromXML(CSkinFactory *pSkinFactory, SXNode *pNode)
         nIDCmd = pSkinFactory->getIDByName(pNode->getPropertySafe("IDCmd"));
         nIDCmdIsChecked = pSkinFactory->getIDByName(pNode->getPropertySafe("IsCheckedCmd"));
         nMenuID = pSkinFactory->getMenuIDByUID(nIDCmd, true);
-    }
-    else if (strcasecmp(szValue, "remove") == 0)
-    {
+    } else if (strcasecmp(szValue, "remove") == 0) {
         action = A_REMOVE;
         nPos = pNode->getPropertyInt("Position");
-    }
-    else
+    } else {
         action = A_UNKNOWN;
+    }
 
     return ERR_OK;
 }
 
-CSkinMenu::CSkinMenu()
-{
+CSkinMenu::CSkinMenu() {
     m_nOrgAppenPos = 0;
     m_nAppendPosition = 0;
 }
 
-CSkinMenu::~CSkinMenu()
-{
+CSkinMenu::~CSkinMenu() {
 
 }
 
-int CSkinMenu::loadMenu(const rapidjson::Value &items)
-{
+int CSkinMenu::loadMenu(const rapidjson::Value &items) {
     createPopupMenu();
 
     assert(items.IsArray());
@@ -74,8 +64,7 @@ int CSkinMenu::loadMenu(const rapidjson::Value &items)
     return ERR_OK;
 }
 
-void CSkinMenu::loadMenu(const rapidjson::Value &items, CMenu &menu)
-{
+void CSkinMenu::loadMenu(const rapidjson::Value &items, CMenu &menu) {
     assert(items.IsArray());
 
     for (int i = 0; i < items.Size(); i++) {
@@ -102,18 +91,15 @@ void CSkinMenu::loadMenu(const rapidjson::Value &items, CMenu &menu)
     onLoadMenu();
 }
 
-void CSkinMenu::trackPopupMenu(int x, int y, Window *pWnd, CRect *prcNotOverlap)
-{
+void CSkinMenu::trackPopupMenu(int x, int y, Window *pWnd, CRect *prcNotOverlap) {
     CSkinFactory *pSkinFactory = CSkinApp::getInstance()->getSkinFactory();
-    LIST_ITEMS::iterator    it, itEnd;
-    int                        nRet;
+    LIST_ITEMS::iterator it, itEnd;
+    int nRet;
 
     itEnd = m_listItems.end();
-    for (it = m_listItems.begin(); it != itEnd; ++it)
-    {
-        Item    &item = *it;
-        if (item.nIDCmdIsChecked != UID_INVALID && item.bCanCheck)
-        {
+    for (it = m_listItems.begin(); it != itEnd; ++it) {
+        Item &item = *it;
+        if (item.nIDCmdIsChecked != UID_INVALID && item.bCanCheck) {
             nRet = pSkinFactory->onDynamicCmd(item.nIDCmdIsChecked, (CSkinWnd *)pWnd);
             checkItem(item.nMenuID, nRet == ERR_OK);
         }
@@ -122,18 +108,15 @@ void CSkinMenu::trackPopupMenu(int x, int y, Window *pWnd, CRect *prcNotOverlap)
     CMenu::trackPopupMenu(x, y, pWnd, prcNotOverlap);
 }
 
-void CSkinMenu::trackPopupSubMenu(int x, int y, int nSubMenu, Window *pWnd, CRect *prcNotOverlap)
-{
+void CSkinMenu::trackPopupSubMenu(int x, int y, int nSubMenu, Window *pWnd, CRect *prcNotOverlap) {
     CSkinFactory *pSkinFactory = CSkinApp::getInstance()->getSkinFactory();
-    LIST_ITEMS::iterator    it, itEnd;
-    int                        nRet;
+    LIST_ITEMS::iterator it, itEnd;
+    int nRet;
 
     itEnd = m_listItems.end();
-    for (it = m_listItems.begin(); it != itEnd; ++it)
-    {
-        Item    &item = *it;
-        if (item.nIDCmdIsChecked != UID_INVALID && item.bCanCheck)
-        {
+    for (it = m_listItems.begin(); it != itEnd; ++it) {
+        Item &item = *it;
+        if (item.nIDCmdIsChecked != UID_INVALID && item.bCanCheck) {
             nRet = pSkinFactory->onDynamicCmd(item.nIDCmdIsChecked, (CSkinWnd *)pWnd);
             checkItem(item.nMenuID, nRet == ERR_OK);
         }
@@ -142,45 +125,40 @@ void CSkinMenu::trackPopupSubMenu(int x, int y, int nSubMenu, Window *pWnd, CRec
     CMenu::trackPopupSubMenu(x, y, nSubMenu, pWnd, prcNotOverlap);
 }
 
-int CSkinMenu::fromXML(SXNode *pNodeMenu, int nAppendPos)
-{
-    if (!pNodeMenu)
+int CSkinMenu::fromXML(SXNode *pNodeMenu, int nAppendPos) {
+    if (!pNodeMenu) {
         return ERR_NOT_FOUND;
+    }
 
     assert(strcasecmp(pNodeMenu->name.c_str(), "Menu") == 0);
 
-    if (!isValid())
+    if (!isValid()) {
         createPopupMenu();
+    }
 
     m_nAppendPosition = nAppendPos;
 
     SXNode::iterator it, itEnd;
     itEnd = pNodeMenu->listChildren.end();
-    for (it = pNodeMenu->listChildren.begin(); it != itEnd; ++it)
-    {
-        SXNode        *pNode = *it;
+    for (it = pNodeMenu->listChildren.begin(); it != itEnd; ++it) {
+        SXNode *pNode = *it;
 
         // OK, found the control
-        if (strcasecmp(pNode->name.c_str(), "Item") == 0)
-        {
-            Item    item;
+        if (strcasecmp(pNode->name.c_str(), "Item") == 0) {
+            Item item;
             item.fromXML(CSkinApp::getInstance()->getSkinFactory(), pNode);
 
             m_listItems.push_back(item);
-            if (item.action == A_APPEND)
-            {
+            if (item.action == A_APPEND) {
                 insertItem(m_nAppendPosition, item.nMenuID,
                     _TL(item.name.c_str()));
                 m_nAppendPosition++;
-            }
-            else if (item.action == A_REMOVE)
-            {
+            } else if (item.action == A_REMOVE) {
                 removeItem(item.nPos);
-                if (item.nPos < m_nAppendPosition)
+                if (item.nPos < m_nAppendPosition) {
                     m_nAppendPosition--;
-            }
-            else  if (item.action == A_INSERT_BY_ID)
-            {
+                }
+            } else  if (item.action == A_INSERT_BY_ID) {
                 insertItemByID(item.nPos, item.nMenuID,
                     _TL(item.name.c_str()));
             }
@@ -190,10 +168,10 @@ int CSkinMenu::fromXML(SXNode *pNodeMenu, int nAppendPos)
     return ERR_OK;
 }
 
-int CSkinMenu::getSubMenuPos(int nSubMenu) const
-{
-    if (nSubMenu > m_nOrgAppenPos)
+int CSkinMenu::getSubMenuPos(int nSubMenu) const {
+    if (nSubMenu > m_nOrgAppenPos) {
         return nSubMenu + m_nAppendPosition - m_nOrgAppenPos;
-    else
+    } else {
         return nSubMenu;
+    }
 }

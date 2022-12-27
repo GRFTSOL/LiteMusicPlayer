@@ -111,16 +111,16 @@ public:
     CMPlayerAppBase();
     virtual ~CMPlayerAppBase();
 
-    virtual bool init();
-    virtual void quit();
+    virtual bool init() override;
+    virtual void quit() override;
 
-    virtual void onEvent(const IEvent *pEvent);
+    virtual void onEvent(const IEvent *pEvent) override;
 
-    virtual void postQuitMessage();
+    virtual void postQuitMessage() override;
 
 protected:
-    virtual CEventsDispatcher *newEventPatcher();
-    virtual CSkinFactory *newSkinFactory();
+    virtual CEventsDispatcher *newEventPatcher() override;
+    virtual CSkinFactory *newSkinFactory() override;
 
 public:
     static CMPlayerApp *getInstance();

@@ -1,7 +1,7 @@
 #include "NetSDK.h"
 
-NETLIB_API bool InitNetLib()
-{
+
+NETLIB_API bool InitNetLib() {
 #ifdef _WIN32
     uint16_t sockVersion;
     WSADATA wsaData;

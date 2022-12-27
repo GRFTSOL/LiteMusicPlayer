@@ -4,8 +4,7 @@
 #pragma once
 
 
-class CUndoAction
-{
+class CUndoAction {
 public:
     CUndoAction() {}
     virtual ~CUndoAction() {}
@@ -15,8 +14,7 @@ public:
 };
 
 
-class CBatchUndoAction : public CUndoAction
-{
+class CBatchUndoAction : public CUndoAction {
 public:
     typedef vector<CUndoAction*>        ListActions;
 
@@ -30,22 +28,19 @@ public:
     bool isEmpty();
 
 protected:
-    ListActions            m_listActions;
+    ListActions                 m_listActions;
 
 };
 
 
-class IUndoMgrNotify
-{
+class IUndoMgrNotify {
 public:
-    enum Status
-    {
+    enum Status {
         S_CAN_UNDO,
         S_CAN_REDO,
     };
 
-    enum Action
-    {
+    enum Action {
         A_UNDO,
         A_REDO,
         A_ADD,
@@ -60,8 +55,7 @@ public:
 //
 // Common undo and redo manager
 //
-class CUndoMgr
-{
+class CUndoMgr {
 public:
     typedef vector<CUndoAction*>        ListActions;
 
@@ -91,16 +85,15 @@ protected:
     void doAddAction(CUndoAction *pAction);
 
 protected:
-    ListActions            m_listActions;
-    int                        m_posUndo;
-    IUndoMgrNotify            *m_pNotify;
+    ListActions                 m_listActions;
+    int                         m_posUndo;
+    IUndoMgrNotify              *m_pNotify;
 
-    CBatchUndoAction        *m_pBatchUndoAction;
+    CBatchUndoAction            *m_pBatchUndoAction;
 
-    bool                    m_bCanUndoPrev, m_bCanRedoPrev;
+    bool                        m_bCanUndoPrev, m_bCanRedoPrev;
 
 };
 
 
 #endif // _UNDOMGR_H__
-

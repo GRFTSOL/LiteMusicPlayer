@@ -1,47 +1,41 @@
-// SkinTextButton.h: interface for the CSkinTextButton class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_SKINTEXTBUTTON_H__86F68037_E86D_4927_8B88_47034765E7D0__INCLUDED_)
-#define AFX_SKINTEXTBUTTON_H__86F68037_E86D_4927_8B88_47034765E7D0__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-class CSkinTextButton : public CSkinButton
-{
+#ifndef Skin_SkinTextButton_h
+#define Skin_SkinTextButton_h
+
+
+class CSkinTextButton : public CSkinButton {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinButton)
 public:
     CSkinTextButton();
     virtual ~CSkinTextButton();
 
-    void draw(CRawGraph *canvas);
+    void draw(CRawGraph *canvas) override;
 
-    virtual void onCreate();
+    virtual void onCreate() override;
 
-    virtual bool onMenuKey(uint32_t nChar, uint32_t nFlags);
+    virtual bool onMenuKey(uint32_t nChar, uint32_t nFlags) override;
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 #ifdef _SKIN_EDITOR_
     void enumProperties(CUIObjProperties &listProperties);
 #endif // _SKIN_EDITOR_
 
-    virtual void setText(cstr_t szText);
+    virtual void setText(cstr_t szText) override;
 
-    virtual void onLanguageChanged();
+    virtual void onLanguageChanged() override;
 
 protected:
-    uint32_t                m_dwAlignTextFlags;
-    bool                m_bResizeToContent;
-    CSFImage            m_imgContent;
+    uint32_t                    m_dwAlignTextFlags;
+    bool                        m_bResizeToContent;
+    CSFImage                    m_imgContent;
 
-    int                    m_chMenuKey;    // Menu Key: Alt + VK_X to execute it.
+    int                         m_chMenuKey;        // Menu Key: Alt + VK_X to execute it.
 
-    int                    m_nTextLeftMargin, m_nTextRightMargin;
+    int                         m_nTextLeftMargin, m_nTextRightMargin;
 
-    CSkinFontProperty    m_font;
+    CSkinFontProperty           m_font;
 
 };
 
-#endif // !defined(AFX_SKINTEXTBUTTON_H__86F68037_E86D_4927_8B88_47034765E7D0__INCLUDED_)
+#endif // !defined(Skin_SkinTextButton_h)

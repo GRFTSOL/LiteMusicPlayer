@@ -77,7 +77,7 @@ public:
         CMPlayerAppBase::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
     }
 
-    virtual void onCurrentPlaylistChanged(IMPEvent::MP_PLAYLIST_CHANGE_ACTION action, long nIndex, long nIndexOld)
+    virtual void onCurrentPlaylistChanged(IMPEvent::MP_PLAYLIST_CHANGE_ACTION action, int nIndex, int nIndexOld)
     {
         CEventPlaylistChanged    *pEvent = new CEventPlaylistChanged();
         pEvent->eventType = ET_PLAYER_CUR_PLAYLIST_CHANGED;
@@ -87,7 +87,7 @@ public:
         CMPlayerAppBase::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
     }
 
-    virtual void onSettingChanged(MP_SETTING_TYPE settingType, long value)
+    virtual void onSettingChanged(MP_SETTING_TYPE settingType, int value)
     {
         CEventPlayerSettingChanged    *pEvent = new CEventPlayerSettingChanged();
         pEvent->eventType = ET_PLAYER_SETTING_CHANGED;
@@ -118,7 +118,7 @@ CPlayer::CPlayer()
     emptyStr(m_szTitle);
     emptyStr(m_szSrcMedia);
     m_pEventHandler = nullptr;
-    m_nRatingFilterMin = 3;
+    m_ratingFilterMin = 3;
 
     m_bUseSeekTimeAsPlayingTime = false;
     m_nMediaLength = 0;
@@ -208,7 +208,7 @@ void CPlayer::onQuit()
         saveCurrentPlaylist();
 
         // save latest playing song file
-        g_profile.writeInt(SZ_SECT_PLAYER, "NowPlayingIdx", (int)m_spPlayer->getCurrentMediaInPlaylist());
+        g_profile.writeInt(SZ_SECT_PLAYER, "NowPlayingIdx", m_spPlayer->getCurrentMediaInPlaylist());
 
         if (m_pEventHandler)
         {
@@ -375,7 +375,7 @@ bool CPlayer::isShuffle()
         return false;
 }
 
-long CPlayer::getVolume()
+int CPlayer::getVolume()
 {
     if (m_spPlayer)
         return m_spPlayer->getVolume();
@@ -383,7 +383,7 @@ long CPlayer::getVolume()
         return g_playerEventDispatcher.getMasterVolume();
 }
 
-void CPlayer::setVolume(long nVol)
+void CPlayer::setVolume(int nVol)
 {
     if (m_spPlayer)
     {
@@ -532,9 +532,8 @@ bool CPlayer::isMediaInPlaylist(cstr_t szMedia)
     nRet = m_spPlayer->getCurrentPlaylist(&playList);
     if (nRet == ERR_OK)
     {
-        long            nCount;
-        nCount = playList->getCount();
-        for (long i = 0; i < nCount; i++)
+        auto nCount = playList->getCount();
+        for (int i = 0; i < nCount; i++)
         {
             CMPAutoPtr<IMedia>    media;
             nRet = playList->getItem(i, &media);
@@ -587,7 +586,7 @@ bool CPlayer::loadPlaylist(cstr_t szFile, bool bClear)
     return nRet == ERR_OK;
 }
 
-long CPlayer::getCurrentMediaIndex()
+int CPlayer::getCurrentMediaIndex()
 {
     if (!m_spPlayer)
         return 0;
@@ -621,7 +620,7 @@ bool CPlayer::isMediaOpened()
     }
 }
 
-void CPlayer::playMedia(long nPlaylistIndex)
+void CPlayer::playMedia(int nPlaylistIndex)
 {
     if (!m_spPlayer)
         return;
@@ -788,16 +787,15 @@ string CPlayer::formatMediaTitle(IMedia *pMedia)
 
 void CPlayer::filterLowRatingMedia(IPlaylist *playlist)
 {
-    int        nRating;
-
-    for (long i = playlist->getCount() - 1; i >= 0; i--)
+    for (int i = playlist->getCount() - 1; i >= 0; i--)
     {
         CMPAutoPtr<IMedia>        media;
 
         if (playlist->getItem(i, &media) == ERR_OK)
         {
-            media->getAttribute(MA_RATING, &nRating);
-            if (nRating < m_nRatingFilterMin)
+            int rating;
+            media->getAttribute(MA_RATING, &rating);
+            if (rating < m_ratingFilterMin)
             {
                 playlist->removeItem(i);
             }
@@ -842,7 +840,7 @@ MLRESULT CPlayer::setCurrentPlaylist(IPlaylist *pPlaylist)
         return ERR_NOT_IMPLEMENTED;
 }
 
-MLRESULT CPlayer::setCurrentMediaInPlaylist(long nIndex)
+MLRESULT CPlayer::setCurrentMediaInPlaylist(int nIndex)
 {
     if (m_spPlayer)
         return m_spPlayer->setCurrentMediaInPlaylist(nIndex);

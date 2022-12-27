@@ -2,12 +2,12 @@
     Created  :    2001/07/06
     FileName :    SkinWnd.h
     Author   :    xhy
-    
+
     Purpose  :    
 *********************************************************************/
 
-#if !defined(AFX_SKIN_H__A1FDC39A_7098_11D5_9E04_02608CAD9330__INCLUDED_)
-#define AFX_SKIN_H__A1FDC39A_7098_11D5_9E04_02608CAD9330__INCLUDED_
+#ifndef Skin_SkinWnd_h
+#define Skin_SkinWnd_h
 
 #pragma once
 
@@ -23,10 +23,8 @@ class CSkinContainer;
 class CSFImage;
 
 
-#define UIOBJ_ID_BEGIN_ALLOC        0xFFFFF
+#define UIOBJ_ID_BEGIN_ALLOC 0xFFFFF
 
-// COMMENT:
-//        窗口的位置是否合法（显示位置是否正常）
 bool isWndOutOfScreen(const CRect &rc);
 
 // 0, 0, 10, 20
@@ -48,11 +46,9 @@ int getMenuKey(cstr_t szText);
 //
 // Base interface of UIObject Notification data
 //
-class IUIObjNotify
-{
+class IUIObjNotify {
 public:
-    IUIObjNotify(CUIObject *pObject)
-    {
+    IUIObjNotify(CUIObject *pObject) {
         assert(pObject);
         pUIObject = pObject;
         nID = pObject->m_id;
@@ -60,8 +56,8 @@ public:
     virtual cstr_t getClassName() { if (pUIObject) return pUIObject->getClassName(); else return ""; }
     virtual bool isKindOf(cstr_t szClassName) { if (pUIObject) return pUIObject->isKindOf(szClassName); else return false; }
 
-    int            nID;
-    CUIObject    *pUIObject;
+    int                         nID;
+    CUIObject                   *pUIObject;
 
 };
 
@@ -69,16 +65,14 @@ public:
 //
 // Base interface of handle IUIObjNotify.
 //
-class IUIObjNotifyHandler
-{
+class IUIObjNotifyHandler {
 public:
     virtual void onUIObjNotify(IUIObjNotify *pNotify) = 0;
 
 };
 
 
-class IUICheckStatus
-{
+class IUICheckStatus {
 public:
     virtual bool getChecked(uint32_t nID, bool &bChecked) = 0;
     virtual bool getRadioChecked(vector<uint32_t> &vIDs, uint32_t &nIDChecked) = 0;
@@ -87,8 +81,7 @@ public:
 class CSkinWnd :
     public Window,
     public ISkinWndDragHost,
-    public IUICheckStatus
-{
+    public IUICheckStatus {
 public:
     CSkinWnd();
     virtual ~CSkinWnd();
@@ -96,7 +89,7 @@ public:
 public:
     virtual int create(SkinWndStartupInfo &skinWndStartupInfo, CSkinFactory *pSkinFactory, bool bToolWindow = true, bool bTopmost = false, bool bVisible = true);
 
-    virtual void destroy();
+    virtual void destroy() override;
 
     virtual int openDefaultSkin();
     virtual int openSkin(cstr_t szSkinWndName);
@@ -176,54 +169,54 @@ public:
 
 public:
     // ISkinWndDragHost
-    virtual void getWndDragAutoCloseTo(vector<Window *> &vWnd);
-    virtual void getWndDragTrackMove(vector<Window *> &vWnd);
+    virtual void getWndDragAutoCloseTo(vector<Window *> &vWnd) override;
+    virtual void getWndDragTrackMove(vector<Window *> &vWnd) override;
 
 public:
     // IUICheckStatus interface
-    virtual bool getChecked(uint32_t nID, bool &bChecked) { return false; }
-    virtual bool getRadioChecked(vector<uint32_t> &vIDs, uint32_t &nIDChecked) { return false; }
+    virtual bool getChecked(uint32_t nID, bool &bChecked) override { return false; }
+    virtual bool getRadioChecked(vector<uint32_t> &vIDs, uint32_t &nIDChecked) override { return false; }
 
 public:
     //
     // Messages of the window
     //
-    virtual void onActivate(bool bActived);
+    virtual void onActivate(bool bActived) override;
     virtual void onPreCreate(bool &bTopmost, bool &bVisible) { }
-    virtual void onCreate();
-    virtual void onDestroy();
-    virtual void onPaint(CRawGraph *surface, CRect *rcClip);
+    virtual void onCreate() override;
+    virtual void onDestroy() override;
+    virtual void onPaint(CRawGraph *surface, CRect *rcClip) override;
 
-    virtual void onContexMenu(int xPos, int yPos);
+    virtual void onContexMenu(int xPos, int yPos) override;
 
-    virtual void onCommand(uint32_t uID, uint32_t nNotifyCode);
+    virtual void onCommand(uint32_t uID, uint32_t nNotifyCode) override;
 
     virtual void onOK();
     virtual void onCancel();
 
     // normal input message
-    virtual void onKeyDown(uint32_t nChar, uint32_t nFlags);
-    virtual void onKeyUp(uint32_t nChar, uint32_t nFlags);
-    virtual void onChar(uint32_t nChar);
-    virtual void onLButtonUp(uint32_t nFlags, CPoint point );
-    virtual void onLButtonDown(uint32_t nFlags, CPoint point );
-    virtual void onLButtonDblClk(uint32_t nFlags, CPoint point);
-    virtual void onRButtonUp(uint32_t nFlags, CPoint point );
-    virtual void onRButtonDown(uint32_t nFlags, CPoint point );
-    virtual void onMouseDrag(uint32_t nFlags, CPoint point );
-    virtual void onMouseMove(CPoint point );
-    virtual void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt);
+    virtual void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
+    virtual void onKeyUp(uint32_t nChar, uint32_t nFlags) override;
+    virtual void onChar(uint32_t nChar) override;
+    virtual void onLButtonUp(uint32_t nFlags, CPoint point ) override;
+    virtual void onLButtonDown(uint32_t nFlags, CPoint point ) override;
+    virtual void onLButtonDblClk(uint32_t nFlags, CPoint point) override;
+    virtual void onRButtonUp(uint32_t nFlags, CPoint point ) override;
+    virtual void onRButtonDown(uint32_t nFlags, CPoint point ) override;
+    virtual void onMouseDrag(uint32_t nFlags, CPoint point ) override;
+    virtual void onMouseMove(CPoint point ) override;
+    virtual void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) override;
 
-    virtual void onMove(int x, int y);
+    virtual void onMove(int x, int y) override;
 
-    virtual void onSize(int cx, int cy);
-    virtual void onSetFocus();
-    virtual void onKillFocus();
+    virtual void onSize(int cx, int cy) override;
+    virtual void onSetFocus() override;
+    virtual void onKillFocus() override;
 
-    virtual void onTimer(uint32_t nIDEvent);
+    virtual void onTimer(uint32_t nIDEvent) override;
 
-    virtual void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) { }
-    virtual void onHScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) { }
+    virtual void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override { }
+    virtual void onHScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override { }
 
     // messages to process
     virtual void onSkinLoaded();
@@ -237,21 +230,21 @@ public:
 
     virtual void postExecOnMainThread(const std::function<void()> &f);
 
-    virtual void onUserMessage(int nMessageID, LPARAM param);
+    virtual void onUserMessage(int nMessageID, LPARAM param) override;
 
     virtual void onUIObjNotify(IUIObjNotify *pNotify) { }
 
     virtual void onRemoveUIObj(CUIObject *pObj);
     virtual void onAddUIObj(CUIObject *pObj);
 
-    virtual void onLanguageChanged();
+    virtual void onLanguageChanged() override;
 
     virtual void onAdjustHue(float hue, float saturation, float luminance);
 
     virtual void updateMemGraphicsToScreen(const CRect* lpRect);
 
 #ifdef _WIN32
-    static int ms_msgIDCustomCommand;
+    static int                  ms_msgIDCustomCommand;
 
     virtual LRESULT wndProc(uint32_t message, WPARAM wParam, LPARAM lParam);
 #endif
@@ -275,26 +268,25 @@ public:
 
     void onTimerDynamicAlphaChange();
 
-    virtual bool isClickThrough() { return m_bEnableClickThrough && m_bClickThrough && !m_bActived; }
+    virtual bool isClickThrough() override { return m_bEnableClickThrough && m_bClickThrough && !m_bActived; }
 
-    enum TranslucencyStatus
-    {
+    enum TranslucencyStatus {
         TS_NORMAL,
         TS_ON_ACTIVE,
         TS_ON_HOVER,
     };
 
-    int                    m_nTranslucencyAlphaDefault;        // Alpha on inactivate
-    uint32_t                m_dwTransFadeinBegTime;                // Begin time of fade in/out translucency
-    int                    m_nTransAlphaBeg;                    // The alpha value of begin fade in/out.
-    int                    m_nTranslucencyAlphaOnActive;        // Alpha on activate
-    int                    m_nTranslucencyAlphaOnHover;        // Alpha on mouse hover
-    int                    m_nCurTranslucencyAlpha;            // Current translucency alpha value
+    int                         m_nTranslucencyAlphaDefault; // Alpha on inactivate
+    int64_t                     m_dwTransFadeinBegTime; // Begin time of fade in/out translucency
+    int                         m_nTransAlphaBeg;   // The alpha value of begin fade in/out.
+    int                         m_nTranslucencyAlphaOnActive; // Alpha on activate
+    int                         m_nTranslucencyAlphaOnHover; // Alpha on mouse hover
+    int                         m_nCurTranslucencyAlpha; // Current translucency alpha value
 
-    TranslucencyStatus    m_translucencyStatus;
-    bool                m_bOnMouseHover;
+    TranslucencyStatus          m_translucencyStatus;
+    bool                        m_bOnMouseHover;
 
-    bool                m_bEnableClickThrough;
+    bool                        m_bEnableClickThrough;
 
 
 public:
@@ -366,7 +358,7 @@ protected:
     void processMouseMove(CPoint point);
 
     void onExecOnMainThread();
-    
+
     friend class CSkinContainer;
     friend class CUIObject;
 
@@ -374,8 +366,8 @@ protected:
     //
     // Hide UIObject, if mouse is inactive in 3 seconds.
     //
-    uint32_t            m_nTimeLatestMouseMsg;
-    bool            m_bMouseActive;
+    int64_t                     m_timeLatestMouseMsg;
+    bool                        m_bMouseActive;
 
     void onMouseActiveMsg();
     void onTimerMouseInactive();
@@ -393,7 +385,7 @@ public:
         }
 
     protected:
-        CSkinWnd    *m_pSkinWnd;
+        CSkinWnd                    *m_pSkinWnd;
 
     };
 
@@ -404,114 +396,112 @@ public:
     bool isMouseActive() { return m_bMouseActive; }
 
 public:
-    CSkinWndDrag    m_WndDrag;
-    CSkinWndResizer    m_wndResizer;
+    CSkinWndDrag                m_WndDrag;
+    CSkinWndResizer             m_wndResizer;
 
     // default width and height
-    int                m_nWidth, m_nHeight;
-    bool            m_bRememberSizePos;
+    int                         m_nWidth, m_nHeight;
+    bool                        m_bRememberSizePos;
 
 protected:
-    bool            m_bFreeOnDestory;
-    bool            m_bManageBySkinFactory;
+    bool                        m_bFreeOnDestory;
+    bool                        m_bManageBySkinFactory;
 
-    bool            m_bOnDestroy;
+    bool                        m_bOnDestroy;
 
     // flag to indicate whether the skin was opened.
-    bool            m_bSkinOpened;
-    bool            m_bInEditorMode;    // Is in skin editor mode?
+    bool                        m_bSkinOpened;
+    bool                        m_bInEditorMode;    // Is in skin editor mode?
 
-    bool            m_needRedraw;
-    int                m_nInRedrawUpdate;
+    bool                        m_needRedraw;
+    int                         m_nInRedrawUpdate;
 
-    CSkinFactory    *m_pSkinFactory;
+    CSkinFactory                *m_pSkinFactory;
 
-    string            m_strSkinWndName;        // skin 名
-    string            m_strCaption;
+    string                      m_strSkinWndName;   // skin 名
+    string                      m_strCaption;
 
-    string            m_strMenuName;
+    string                      m_strMenuName;
 
-    CSkinToolTip    m_wndToolTip;
+    CSkinToolTip                m_wndToolTip;
 
     //
     // Status
     //
-    bool            m_bActived;        // 当前窗口是否为激活状态Focus?
-    bool            m_bMainAppWnd;    // true: when the Window is closed, exit process.
-    bool            m_bDialogWnd;    // For dialog Skin: Enter key = OK, Escape key = cancel.
+    bool                        m_bActived;         // 当前窗口是否为激活状态Focus?
+    bool                        m_bMainAppWnd;      // true: when the Window is closed, exit process.
+    bool                        m_bDialogWnd;       // For dialog Skin: Enter key = OK, Escape key = cancel.
 
-    double            m_dbScale;        // 窗口是否进行缩放
-    CRect            m_rcReal;        // 窗口的实际大小
+    double                      m_dbScale;          // 窗口是否进行缩放
+    CRect                       m_rcReal;           // 窗口的实际大小
 
     //
     // properties
     //
-    Cursor            m_cursor;
-    string            m_strCusor;        // 光标文件
+    Cursor                      m_cursor;
+    string                      m_strCusor;         // 光标文件
 
-    bool            m_bWindowsAppearance;
-    bool            m_bAeroGlass;
+    bool                        m_bWindowsAppearance;
+    bool                        m_bAeroGlass;
 
-    CRect            m_rcBoundBox;  // skin的矩形
+    CRect                       m_rcBoundBox;       // skin的矩形
 
-    CSkinFontProperty    m_fontProperty;    // Default font property.
+    CSkinFontProperty           m_fontProperty;     // Default font property.
 
     // Unprocessed properties
-    SXNode::ListProperties    m_listUnprocessedProperties;
+    SXNode::ListProperties      m_listUnprocessedProperties;
 
 #ifndef _WIN32
-    CRect            m_rcMemUpdate;
+    CRect                       m_rcMemUpdate;
 #endif
 
     //
     // Timer IDs
     //
-    typedef struct TIMER_OBJECT
-    {
-        CUIObject    *pObj;
-        int            nTimeDuration;
-    }TIMER_OBJECT;
-    int                m_timerIDMax;
+    struct TIMER_OBJECT {
+        CUIObject                   *pObj;
+        int                         nTimeDuration;
+    };
+    int                         m_timerIDMax;
 
     typedef map<int, TIMER_OBJECT>    MAP_TIMER_OBJS;
-    MAP_TIMER_OBJS    m_mapTimerObjs;
+    MAP_TIMER_OBJS              m_mapTimerObjs;
 
 
     // root skin uiobject container
-    CSkinClientArea    m_rootConainter;
+    CSkinClientArea             m_rootConainter;
 
     // only one ui object can capture the mouse at any time
-    CUIObject        *m_pUIObjCapMouse;
+    CUIObject                   *m_pUIObjCapMouse;
 
     // The UIObject registered to handle context menu command.
-    CUIObject        *m_pUIObjHandleContextMenuCmd;
+    CUIObject                   *m_pUIObjHandleContextMenuCmd;
 
     // auto allocated uni-ID
-    int                m_nextAuoUniID;
+    int                         m_nextAuoUniID;
 
-    int                m_nextUIObjIDAlloc;
+    int                         m_nextUIObjIDAlloc;
 
-    bool            m_bIgnoreNextOnCharMsg;
+    bool                        m_bIgnoreNextOnCharMsg;
 
     //
     // UIObject notification handler : register, Unregister and dispatch
     //
-    struct UIObjNotifyHandlerInfo
-    {
-        int                    nIDUIObj;
-        IUIObjNotifyHandler    *pHandler;
+    struct UIObjNotifyHandlerInfo {
+        int                         nIDUIObj;
+        IUIObjNotifyHandler         *pHandler;
     };
     typedef vector<UIObjNotifyHandlerInfo>    VecUIObjNotifyHandlers;
-    VecUIObjNotifyHandlers        m_vUIObjNotifyHandlers;
+    VecUIObjNotifyHandlers      m_vUIObjNotifyHandlers;
 
     // exchange Pool is used to exchange data between pages.
-    MapStrings                m_mapExchangePool;
+    MapStrings                  m_mapExchangePool;
 
     //
     // 将在主线程待执行的函数列表
     //
-    std::recursive_mutex                m_mutex;
-    std::list<std::function<void()>>    m_functionsToExecOnMainThread;
+    std::recursive_mutex        m_mutex;
+    std::list<std::function<void()>> m_functionsToExecOnMainThread;
 
     //
     // Skin script releated members.
@@ -519,15 +509,15 @@ protected:
 protected:
     friend class JsSkinDocument;
 
-    string                  m_scriptFile;
-    JsVirtualMachine        *m_vm;
+    string                      m_scriptFile;
+    JsVirtualMachine            *m_vm;
 
-    JsValue                 m_onMouseMoveListener;
-    JsValue                 m_onSizeListener;
-    JsValue                 m_onActivateListener;
-    JsValue                 m_onDestoryListener;
-    JsValue                 m_onCommandListener;
-    JsValue                 m_onMouseActivateListener;
+    JsValue                     m_onMouseMoveListener;
+    JsValue                     m_onSizeListener;
+    JsValue                     m_onActivateListener;
+    JsValue                     m_onDestoryListener;
+    JsValue                     m_onCommandListener;
+    JsValue                     m_onMouseActivateListener;
 
     //
     // Skin animation object
@@ -544,13 +534,13 @@ public:
 
 protected:
     typedef list<std::unique_ptr<CSkinAnimation>>    ListAnimation;
-    ListAnimation                    m_listAnimations;
+    ListAnimation               m_listAnimations;
 
-    AnimateType                        m_animateType;
-    int                                m_animateDuration;
+    AnimateType                 m_animateType;
+    int                         m_animateDuration;
 
     void onTimerAnimation();
 
 };
 
-#endif // !defined(AFX_SKIN_H__A1FDC39A_7098_11D5_9E04_02608CAD9330__INCLUDED_)
+#endif // !defined(Skin_SkinWnd_h)

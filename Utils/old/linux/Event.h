@@ -1,18 +1,15 @@
-// Event.h: interface for the CEvent class.
-//
-//////////////////////////////////////////////////////////////////////
+#pragma once
 
-#if !defined(AFX_EVENT_H__DE7B3789_C417_4C03_90FF_BB9711A08C92__INCLUDED_)
-#define AFX_EVENT_H__DE7B3789_C417_4C03_90FF_BB9711A08C92__INCLUDED_
+#ifndef Utils_old_linux_Event_h
+#define Utils_old_linux_Event_h
 
 #ifndef INFINITE
-#define INFINITE 0xFFFFFFFF
+#define INFINITE            0xFFFFFFFF
 #endif
 
-#define WAIT_FOREVER INFINITE
+#define WAIT_FOREVER        INFINITE
 
-class Event  
-{
+class Event {
 public:
     Event(bool bManualSet, bool bInitialStat);
     virtual ~Event();
@@ -25,4 +22,4 @@ protected:
 
 };
 
-#endif // !defined(AFX_EVENT_H__DE7B3789_C417_4C03_90FF_BB9711A08C92__INCLUDED_)
+#endif // !defined(Utils_old_linux_Event_h)

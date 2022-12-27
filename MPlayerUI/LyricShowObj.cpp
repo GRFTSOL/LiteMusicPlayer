@@ -221,7 +221,7 @@ bool wrapDisplayLyrics(CLyricsLines &lyrLinesSrc, CLyricsLines &lyrLinesOut, CRa
                 {
                     int nEndTime;
                     if (nLen > 0)
-                        nEndTime = nBegTime + (vStr[k].size() * nTimeSpan) / nLen;
+                        nEndTime = nBegTime + (int)(vStr[k].size() * nTimeSpan) / nLen;
                     else
                         nEndTime = nBegTime + nTimeSpan;
                     pLine = newLyricsLine(nBegTime,  nEndTime, pLineSrc->szContent, -1, pLineSrc->bLyricsLine);
@@ -731,7 +731,7 @@ void CLyricShowObj::draw(CRawGraph *canvas)
 // 快速绘画
 // OUTPUT:
 //        rcUpdate    -    更新的矩形区域
-void CLyricShowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate/* = nullptr*/)
+void CLyricShowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate)
 {
     if (prcUpdate)
     {
@@ -752,9 +752,9 @@ void CLyricShowObj::fastDrawMediaInfo(CRawGraph *canvas, CRect *prcUpdate)
 
     canvas->setFont(&m_font);
 
-    int        nLineHeight = (m_etDispSettings == ET_LYRICS_FLOATING_SETTINGS ? m_nFontHeight : getLineHeight());
-    int        y = (m_rcObj.top + m_rcObj.bottom) / 2 - m_lyrLines.size() * nLineHeight / 2;
-    int        x;
+    int nLineHeight = (m_etDispSettings == ET_LYRICS_FLOATING_SETTINGS ? m_nFontHeight : getLineHeight());
+    int y = (m_rcObj.top + m_rcObj.bottom) / 2 - (int)m_lyrLines.size() * nLineHeight / 2;
+    int x;
 
     if (m_lyrLines.size() > 1)
         x = m_rcObj.left + m_nXMargin;
@@ -822,7 +822,7 @@ bool CLyricShowObj::drawRow(CRawGraph *canvas, LyricsLine *pLyricRow, int x, int
 {
     int            nSize;
     CColor        clrTxt, clrTxtBorder;
-    int            nAlpha = 255, alphaOld;
+    int            nAlpha = 255, alphaOld = 255;
     bool        bSetOpacityPainting = false;
     LYR_COLOR_TRANSFORM        lct;
 
@@ -1026,7 +1026,7 @@ bool CLyricShowObj::drawRow(CRawGraph *canvas, LyricsLine *pLyricRow, int x, int
         x = getLyricRowAlignPos(canvas, pLyricRow);
 
     // 画出此行歌词
-    nSize = pLyricRow->vFrags.size();
+    nSize = (int)pLyricRow->vFrags.size();
     for (int i = 0; i < nSize; i++)
     {
         LyricsPiece *pPiece;
@@ -1068,7 +1068,7 @@ void CLyricShowObj::drawRow(CRawGraph *canvas, LyricsLine *pLyricRow, int x, int
         x = getLyricRowAlignPos(canvas, pLyricRow);
 
     // 画出此行歌词
-    nSize = pLyricRow->vFrags.size();
+    nSize = (int)pLyricRow->vFrags.size();
     for (int i = 0; i < nSize; i++)
     {
         LyricsPiece *pPiece;
@@ -1115,7 +1115,7 @@ void CLyricShowObj::drawRowKaraoke(CRawGraph    *canvas, LyricsLine *pLyricRow, 
         return;
     }
 
-    nSize = pLyricRow->vFrags.size();
+    nSize = (int)pLyricRow->vFrags.size();
 
     // 取得该行歌词显示的X座标
     if (x == AUTO_CAL_X)
@@ -1323,7 +1323,7 @@ int CLyricShowObj::getLyricRowTextWidth(CRawGraph    *canvas, LyricsLine *pLyric
     int            nSize;
     LyricsPiece *pPiece;
 
-    nSize = pLyricRow->vFrags.size();
+    nSize = (int)pLyricRow->vFrags.size();
     for (int i = 0; i < nSize; i++)
     {
         pPiece = pLyricRow->vFrags[i];
@@ -1356,14 +1356,12 @@ void CLyricShowObj::updateLyricDrawBufferBackground(CRawGraph *canvas, CRect &rc
 
 void CLyricShowObj::darkenLyricsBg(CRawGraph *canvas, CRect &rc)
 {
-    int            nFillTop, nFillBottom;
-    int            nLineHeight = getLineHeight();
+    int nLineHeight = getLineHeight();
 
-    int            nDarkenTop, nDarkenBottom;
-    nDarkenTop = getLineVertAlignPos() - int(nLineHeight * m_nDarkenTopArea);
-    nDarkenBottom = getLineVertAlignPos() + int(nLineHeight * m_nDarkenBottomArea);
-    nFillBottom = min((long)rc.bottom, (long)nDarkenBottom);
-    nFillTop = max((long)rc.top, (long)nDarkenTop);
+    auto nDarkenTop = getLineVertAlignPos() - int(nLineHeight * m_nDarkenTopArea);
+    auto nDarkenBottom = getLineVertAlignPos() + int(nLineHeight * m_nDarkenBottomArea);
+    auto nFillBottom = min(rc.bottom, nDarkenBottom);
+    auto nFillTop = max(rc.top, nDarkenTop);
     if (nFillBottom > nFillTop)
         canvas->fillRect(rc.left, nFillTop, rc.width(), nFillBottom - nFillTop, m_clrDarken, BPM_BLEND);
 }

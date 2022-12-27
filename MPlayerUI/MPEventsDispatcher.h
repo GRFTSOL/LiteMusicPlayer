@@ -71,13 +71,13 @@ struct CEventPlayerStatusChanged : public IEvent
 struct CEventPlayerSettingChanged : public IEvent
 {
     IMPEvent::MP_SETTING_TYPE        settingType;
-    long                value;
+    int                 value;
 };
 
 struct CEventPlaylistChanged : public IEvent
 {
     IMPEvent::MP_PLAYLIST_CHANGE_ACTION        action;
-    long                nIndex, nIndexOld;
+    int                 nIndex, nIndexOld;
 };
 
 struct CEventPlayerEQChanged : public IEvent

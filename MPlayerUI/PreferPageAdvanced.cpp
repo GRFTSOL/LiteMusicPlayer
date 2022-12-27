@@ -985,12 +985,12 @@ void CPagePfAdvanced::onTimer(int nId)
     m_vFilteredItems.clear();
 
     // List results.
-    for (size_t i = 0; i < m_vPreferItems.size(); i++)
+    for (int i = 0; i < (int)m_vPreferItems.size(); i++)
     {
         CPreferItem    *item = m_vPreferItems[i];
         bool        bMatch = true;
 
-        for (size_t k = 0; k < vKeyWords.size(); k++)
+        for (int k = 0; k < (int)vKeyWords.size(); k++)
         {
             if (!stristr(_TL(item->m_strName.c_str()), vKeyWords[k].c_str()))
             {
@@ -1002,7 +1002,7 @@ void CPagePfAdvanced::onTimer(int nId)
         if (bMatch)
         {
             m_vFilteredItems.push_back(item);
-            int    n = m_pListItems->insertItem(i, _TL(item->m_strName.c_str()), item->isDefault() ? IMG_UNMODIFIED : IMG_MODIFIED, 0, false);
+            int n = m_pListItems->insertItem(i, _TL(item->m_strName.c_str()), item->isDefault() ? IMG_UNMODIFIED : IMG_MODIFIED, 0, false);
             m_pListItems->setItemText(n, 1, item->getValue().c_str(), false);
         }
     }
@@ -1074,7 +1074,7 @@ bool CPagePfAdvanced::onCommand(int nId)
 
 void CPagePfAdvanced::updateValues()
 {
-    for (size_t i = 0; i < m_vFilteredItems.size(); i++)
+    for (int i = 0; i < (int)m_vFilteredItems.size(); i++)
     {
         CPreferItem    *item = m_vFilteredItems[i];
         m_pListItems->setItemText(i, 1, item->getValue().c_str(), false);
@@ -1162,10 +1162,10 @@ void CPagePfAdvanced::listAllItems()
 
     m_vFilteredItems = m_vPreferItems;
 
-    for (size_t i = 0; i < m_vPreferItems.size(); i++)
+    for (int i = 0; i < (int)m_vPreferItems.size(); i++)
     {
         CPreferItem    *item = m_vPreferItems[i];
-        int    n = m_pListItems->insertItem(i, _TL(item->m_strName.c_str()), item->isDefault() ? IMG_UNMODIFIED : IMG_MODIFIED, 0, false);
+        int n = m_pListItems->insertItem(i, _TL(item->m_strName.c_str()), item->isDefault() ? IMG_UNMODIFIED : IMG_MODIFIED, 0, false);
         m_pListItems->setItemText(n, 1, item->getValue().c_str(), false);
     }
 

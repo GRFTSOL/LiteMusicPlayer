@@ -10,17 +10,17 @@ public:
     CMPSkinInfoTextCtrlEx();
     virtual ~CMPSkinInfoTextCtrlEx();
 
-    void onCreate();
+    void onCreate() override;
 
-    void draw(CRawGraph *canvas);
+    void draw(CRawGraph *canvas) override;
 
-    void onEvent(const IEvent *pEvent);
+    void onEvent(const IEvent *pEvent) override;
 
-    void onLyrDrawContextChanged();
+    void onLyrDrawContextChanged() override;
 
-    void onPlayTimeChangedUpdate();
+    void onPlayTimeChangedUpdate() override;
 
-    void onSize();
+    void onSize() override;
 
     void reloadThemeOfSkin(bool bSavetoProfile) { }
 

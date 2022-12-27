@@ -14,7 +14,7 @@ static char THIS_FILE[] = __FILE__;
 // CDlgOpenSkin dialog
 
 
-CDlgOpenSkin::CDlgOpenSkin(CWnd* pParent /*=nullptr*/)
+CDlgOpenSkin::CDlgOpenSkin(CWnd* pParent)
     : CDialog(CDlgOpenSkin::IDD, pParent)
 {
     //{{AFX_DATA_INIT(CDlgOpenSkin)

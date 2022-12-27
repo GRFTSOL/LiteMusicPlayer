@@ -5,8 +5,9 @@
 #include "EventsDispatcher.h"
 #include "Skin.h"
 
+
 @interface EventsDispatchItem : NSObject {
-    IEvent        *m_pEvent;
+    IEvent *m_pEvent;
     CEventsDispatcher *m_pDispacher;
 }
 
@@ -32,37 +33,33 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-int CEventsDispatcher::init()
-{
+int CEventsDispatcher::init() {
 
     return CEventsDispatcherBase::init();
 }
 
-void CEventsDispatcher::quit()
-{
+void CEventsDispatcher::quit() {
     CEventsDispatcherBase::quit();
 
 }
 
-void CEventsDispatcher::dispatchSyncEventByNoUIThread(IEvent *pEvent)
-{
+void CEventsDispatcher::dispatchSyncEventByNoUIThread(IEvent *pEvent) {
     EventsDispatchItem *dispatchItem = [[EventsDispatchItem alloc] initWithEvent:pEvent
-                                                                      dispatcher:this];
+        dispatcher:this];
 
     [dispatchItem performSelectorOnMainThread:@selector(dispatch)
-                                     withObject:nil
-                                  waitUntilDone:true];
+        withObject:nil
+        waitUntilDone:true];
     [dispatchItem release];
 }
 
-void CEventsDispatcher::dispatchUnsyncEvent(IEvent *pEvent)
-{
+void CEventsDispatcher::dispatchUnsyncEvent(IEvent *pEvent) {
     EventsDispatchItem *dispatchItem = [[EventsDispatchItem alloc] initWithEvent:pEvent
-                                                                      dispatcher:this];
-    
+        dispatcher:this];
+
     [dispatchItem performSelectorOnMainThread:@selector(dispatch)
-                                   withObject:nil
-                                waitUntilDone:false];
+        withObject:nil
+        waitUntilDone:false];
     [dispatchItem release];
 }
 
@@ -71,9 +68,9 @@ void CEventsDispatcher::dispatchUnsyncEvent(IEvent *pEvent)
 //////////////////////////////////////////////////////////////////////
 
 @interface CustomCmdPoster : NSObject {
-    CSkinWnd        *mSkinWnd;
+    CSkinWnd *mSkinWnd;
     int mCmdId;
-    
+
 }
 
 - (void) onCustomCommand;
@@ -95,19 +92,15 @@ void CEventsDispatcher::dispatchUnsyncEvent(IEvent *pEvent)
 
 @end
 
-void postCustomCommandMsgMac(CSkinWnd *pSkinWnd, int cmd)
-{
+void postCustomCommandMsgMac(CSkinWnd *pSkinWnd, int cmd) {
     CustomCmdPoster *poster = [[CustomCmdPoster alloc] init:pSkinWnd cmd:cmd];
     [poster performSelectorOnMainThread:@selector(onCustomCommand)
-                             withObject:nil
-                          waitUntilDone:NO];
+        withObject:nil
+        waitUntilDone:NO];
     [poster release];
 }
 
-void postQuitMessageMac()
-{
+void postQuitMessageMac() {
     [NSApp performSelectorOnMainThread:@selector(terminate:) withObject:nil waitUntilDone:NO];
-//    [NSApp terminate:nil];
+    //    [NSApp terminate:nil];
 }
-
-

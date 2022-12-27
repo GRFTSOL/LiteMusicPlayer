@@ -1,7 +1,3 @@
-// log.cpp: implementation of the CLog class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "Utils.h"
 #ifdef _WIN32
 #include <wtypes.h>
@@ -24,6 +20,7 @@
 
 static HWND _hDebugWnd;
 #include <tchar.h>
+
 
 #define SENDDEBUGMESSAGE    19771212
 #define    DEBUGCLASSNAME        "Debug Tracer Class"
@@ -71,49 +68,49 @@ void DBG_LOG0(cstr_t szData)
 
 #ifdef _WIN32_DESKTOP
 #define SENDDEBUGMESSAGE    19771212
-#define    DEBUGCLASSNAME        "Debug Tracer Class"
-#define    DEBUGWNDNAME        "Debug Tracer"
+#define    DEBUGCLASSNAME   "Debug Tracer Class"
+#define    DEBUGWNDNAME     "Debug Tracer"
 
 static HWND _hDebugWnd;
 
-void logTrace(void *lpData, int nSize)
-{
+void logTrace(void *lpData, int nSize) {
     data.dwData = SENDDEBUGMESSAGE;
     data.lpData = (void *)lpData;
     data.cbData = strlen((cstr_t)lpData) + 1;
 
-    if (_hDebugWnd == nullptr)
+    if (_hDebugWnd == nullptr) {
         _hDebugWnd = findWindow(DEBUGCLASSNAME, DEBUGWNDNAME);
+    }
 
-    if (_hDebugWnd)
+    if (_hDebugWnd) {
         ::sendMessage(_hDebugWnd, WM_COPYDATA, nullptr, (LPARAM)&data);
+    }
 }
 #else
 
 
-void logTraceToPipe(void *lpData, int nSize)
-{
+void logTraceToPipe(void *lpData, int nSize) {
     static int _fd = -1;
-    if (_fd == -1)
-    {
+    if (_fd == -1) {
         cstr_t SZ_PIPE_NAME = "/tmp/debug.pipe";
         int nRet = mkfifo(SZ_PIPE_NAME, S_IRWXO | S_IRWXG | S_IRWXU);
-        if (nRet != 0 && errno != EEXIST)
+        if (nRet != 0 && errno != EEXIST) {
             return;
-        
+        }
+
         _fd = ::open(SZ_PIPE_NAME, O_NONBLOCK | O_WRONLY);
-        if (_fd == -1)
+        if (_fd == -1) {
             return;
+        }
     }
-    
+
     write(_fd, lpData, nSize);
     write(_fd, "\n", 1);
 }
 
-void logTrace(void *lpData, int nSize)
-{
+void logTrace(void *lpData, int nSize) {
     printf("%s\n", (const char*)lpData);
-    
+
     logTraceToPipe(lpData, nSize);
 }
 
@@ -129,15 +126,14 @@ E: lEvel  (Error)
 M: Message
 */
 
-size_t fwriteWT(const char *szBuffer, size_t n, size_t nLen, FILE *fp)
-{
-    size_t        nLenWrite;
+size_t fwriteWT(const char *szBuffer, size_t n, size_t nLen, FILE *fp) {
+    size_t nLenWrite;
 #if defined(_WIN32)
     USES_CONVERSION;
-    cstr_t    szMsgAssii = T2CA((char *)szBuffer);
+    cstr_t szMsgAssii = T2CA((char *)szBuffer);
     nLenWrite = strlen(szMsgAssii);
 #else
-    cstr_t    szMsgAssii = (cstr_t)szBuffer;
+    cstr_t szMsgAssii = (cstr_t)szBuffer;
     nLenWrite = sizeof(char) * nLen;
 #endif
     return fwrite(szMsgAssii, 1, nLenWrite, fp);
@@ -147,36 +143,33 @@ size_t fwriteWT(const char *szBuffer, size_t n, size_t nLen, FILE *fp)
 //////////////////////////////////////////////////////////////////////
 
 
-static cstr_t ignoreRootDir(cstr_t szFile, cstr_t szRootDir)
-{
-    cstr_t        szRet = szFile;
+static cstr_t ignoreRootDir(cstr_t szFile, cstr_t szRootDir) {
+    cstr_t szRet = szFile;
 
-    while (*szRet && *szRet == *szRootDir)
-    {
+    while (*szRet && *szRet == *szRootDir) {
         szRootDir++;
         szRet++;
     }
 
-    if (*szRootDir == '\0')
+    if (*szRootDir == '\0') {
         return szRet;
-    else
+    } else {
         return szFile;
+    }
 }
 
 
-CLog::CLog()
-{
+CLog::CLog() {
     m_fpLog = nullptr;
 }
 
-CLog::~CLog()
-{
-    if (m_fpLog)
+CLog::~CLog() {
+    if (m_fpLog) {
         fclose(m_fpLog);
+    }
 }
 
-void CLog::logDumpStr(uint8_t byLevel, cstr_t szFile, int nLine, cstr_t szStr, int nStrLen)
-{
+void CLog::logDumpStr(uint8_t byLevel, cstr_t szFile, int nLine, cstr_t szStr, int nStrLen) {
     char *msg = new char[nStrLen + 1];
     assert(msg);
 
@@ -188,20 +181,20 @@ void CLog::logDumpStr(uint8_t byLevel, cstr_t szFile, int nLine, cstr_t szStr, i
     delete[] msg;
 }
 
-void CLog::writeLog( uint8_t byLevel, cstr_t szFile, int nLine, cstr_t szFormat, ...)
-{
+void CLog::writeLog( uint8_t byLevel, cstr_t szFile, int nLine, cstr_t szFormat, ...) {
 #ifndef _DEBUG
     // 将发行版本中的调试信息去掉
-    if (byLevel == LOG_LVL_DEBUG)
+    if (byLevel == LOG_LVL_DEBUG) {
         return;
+    }
 #endif    // _DEBUG
 
     szFile = ignoreRootDir(szFile, m_srcRootDir.c_str());
 
-    va_list        args;
+    va_list args;
 
-    char        szBuffer[MAX_MSG_LEN] = "";
-    int            nLen = 0;
+    char szBuffer[MAX_MSG_LEN] = "";
+    int nLen = 0;
 
     auto time = DateTime::localTime();
 
@@ -214,21 +207,21 @@ void CLog::writeLog( uint8_t byLevel, cstr_t szFile, int nLine, cstr_t szFormat,
             szFile, nLine, byLevel);
 
         // 格式化日志
-        char        *szMsg = nullptr;
+        char *szMsg = nullptr;
         va_start(args, szFormat);
         szMsg = szBuffer + nLen;
         int nBuf = vsnprintf(szMsg, CountOf(szBuffer) - nLen, szFormat, args);
         va_end(args);
 
         // was there an error? was the expanded string too long?
-        if (nBuf < 0 || nBuf >= CountOf(szBuffer) - nLen)
+        if (nBuf < 0 || nBuf >= CountOf(szBuffer) - nLen) {
             strcpy(szMsg, "Insufficient log buffer space.");
-        else
+        } else {
             szMsg[nBuf] = '\0';
+        }
     }
 #if defined(_WIN32_DESKTOP)
-    __except(EXCEPTION_EXECUTE_HANDLER)
-    {
+    __except(EXCEPTION_EXECUTE_HANDLER) {
         // 有异常发生！
         strcpy_safe(szBuffer + nLen, CountOf(szBuffer) - nLen, "Exception error in format.");
     }
@@ -242,55 +235,47 @@ void CLog::writeLog( uint8_t byLevel, cstr_t szFile, int nLine, cstr_t szFormat,
 
     // 写入日志文件
     MutexAutolock autoLock(m_mutex);
-    if (m_fpLog)
-    {
-        if (ftell(m_fpLog) >= MAX_LOG_FILE_LEN)
-        {
+    if (m_fpLog) {
+        if (ftell(m_fpLog) >= MAX_LOG_FILE_LEN) {
             fclose(m_fpLog);
             m_fpLog = nullptr;
             openLogFile();
         }
-    }
-    else
-    {
+    } else {
         //
         // 没有打开日志文件，试着重新打开日志文件
-        if (openLogFile())
-        {
+        if (openLogFile()) {
             writeLog(LOG_LVL_INFO, __FILE__, __LINE__, "log File is NOT opened, open it At %d-%d-%d %d:%d:%d. LOG STARTED:)\n",
                 time.year(), time.month(), time.day(), time.hour(), time.minute(), time.second());
         }
     }
 
-    if (m_fpLog)
-    {
+    if (m_fpLog) {
         fwriteWT(szBuffer, sizeof(char), (nLen - 1), m_fpLog);
         fwriteWT("\n", sizeof(char), strlen("\n"), m_fpLog);
         fflush(m_fpLog);
+    } else {
+        printf("%s\n", szBuffer);
     }
-    else
-        sprintf("%s\n", szBuffer);
 }
 
-void CLog::init(cstr_t szLogFileName)
-{
-    if (!szLogFileName)
+void CLog::init(cstr_t szLogFileName) {
+    if (!szLogFileName) {
         return;
+    }
 
-    if (strchr(szLogFileName, PATH_SEP_CHAR) != nullptr)
-    {
+    if (strchr(szLogFileName, PATH_SEP_CHAR) != nullptr) {
         // It might be full file path
         m_logFile = szLogFileName;
-    }
-    else
-    {
+    } else {
         m_logFile = szLogFileName;
         // getAppDataDir(m_szLogFile);
         // strcat_safe(m_szLogFile, CountOf(m_szLogFile), szLogFileName);
     }
 
-    if (!openLogFile())
+    if (!openLogFile()) {
         return;
+    }
 
     auto time = DateTime::localTime();
 
@@ -298,29 +283,25 @@ void CLog::init(cstr_t szLogFileName)
         time.year(), time.month(), time.day(), time.hour(), time.minute(), time.second());
 }
 
-void CLog::close()
-{
-    if (m_fpLog)
-    {
+void CLog::close() {
+    if (m_fpLog) {
         fclose(m_fpLog);
         m_fpLog = nullptr;
     }
 }
 
-void CLog::setSrcRootDir(cstr_t szSrcFile, int nCurFileDeep)
-{
-    cstr_t        szDirEndPos = nullptr;
+void CLog::setSrcRootDir(cstr_t szSrcFile, int nCurFileDeep) {
+    cstr_t szDirEndPos = nullptr;
 
     szDirEndPos = szSrcFile + strlen(szSrcFile);
 
-    while (szDirEndPos > szSrcFile)
-    {
-        if (*szDirEndPos == PATH_SEP_CHAR)
-        {
-            if (nCurFileDeep > 0)
+    while (szDirEndPos > szSrcFile) {
+        if (*szDirEndPos == PATH_SEP_CHAR) {
+            if (nCurFileDeep > 0) {
                 nCurFileDeep--;
-            else
+            } else {
                 break;
+            }
         }
         szDirEndPos--;
     }
@@ -328,20 +309,20 @@ void CLog::setSrcRootDir(cstr_t szSrcFile, int nCurFileDeep)
     m_srcRootDir.assign(szSrcFile, int(szDirEndPos - szSrcFile));
 }
 
-bool CLog::openLogFile()
-{
-    if (m_logFile.empty())
+bool CLog::openLogFile() {
+    if (m_logFile.empty()) {
         return false;
+    }
 
-    if (m_fpLog)
-    {
+    if (m_fpLog) {
         fclose(m_fpLog);
         m_fpLog = nullptr;
     }
 
-    uint64_t        nFileLength;
-    if (getFileLength(m_logFile.c_str(), nFileLength) && nFileLength >= MAX_LOG_FILE_LEN)
+    uint64_t nFileLength;
+    if (getFileLength(m_logFile.c_str(), nFileLength) && nFileLength >= MAX_LOG_FILE_LEN) {
         deleteFile(m_logFile.c_str());
+    }
 
     m_fpLog = fopen(m_logFile.c_str(), "a+");
 

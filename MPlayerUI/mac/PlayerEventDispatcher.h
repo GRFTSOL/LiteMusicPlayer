@@ -19,12 +19,12 @@ public:
     {
     }
     
-    long getMasterVolume()
+    int getMasterVolume()
     {
         return 0;
     }
     
-    void setMasterVolume(long volume)
+    void setMasterVolume(int volume)
     {
     }
 

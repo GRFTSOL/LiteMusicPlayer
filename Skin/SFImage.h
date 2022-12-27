@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef _SKIN_IMAGE_INC_
 #define _SKIN_IMAGE_INC_
 
@@ -20,31 +22,28 @@ The image with --- is expandable
 \************************************************************************/
 
 
-class CScaleImagePainter
-{
+class CScaleImagePainter {
 public:
-    CScaleImagePainter()
-    {
+    CScaleImagePainter() {
         bDrawCenterArea = true;
     }
 
-    int            srcX, srcY, srcWidth, srcHeight;
-    int            srcHorzExtendStart, srcHorzExtendEnd;
-    int            srcVertExtendStart, srcVertExtendEnd;
-    bool        bDrawCenterArea;
+    int                         srcX, srcY, srcWidth, srcHeight;
+    int                         srcHorzExtendStart, srcHorzExtendEnd;
+    int                         srcVertExtendStart, srcVertExtendEnd;
+    bool                        bDrawCenterArea;
 
 public:
     template<class _DrawImageFun>
-    void blt(int nDstX, int nDstY, int nDstW, int nDstH, _DrawImageFun &blter)
-    {
+    void blt(int nDstX, int nDstY, int nDstW, int nDstH, _DrawImageFun &blter) {
         //             ********---****
         //             ***A****-B-**C*
         //             ********---****
         //             ---D-----E---F-
         //             ---------------
         //             ***G****-H-**J*
-        int            nDstHorzExtendStart, nDstHorzExtendEnd;
-        int            nDstVertExtendStart, nDstVertExtendEnd;
+        int nDstHorzExtendStart, nDstHorzExtendEnd;
+        int nDstVertExtendStart, nDstVertExtendEnd;
 
         nDstHorzExtendStart = nDstX + srcHorzExtendStart;
         nDstHorzExtendEnd = nDstX + nDstW - (srcWidth - (srcHorzExtendEnd - srcX));
@@ -57,13 +56,12 @@ public:
             srcX, srcY);
 
         // draw area B
-        if (nDstHorzExtendStart < nDstHorzExtendEnd)
-        {
-            tileBltT(nDstHorzExtendStart, nDstY, 
+        if (nDstHorzExtendStart < nDstHorzExtendEnd) {
+            tileBltT(nDstHorzExtendStart, nDstY,
                 nDstHorzExtendEnd - nDstHorzExtendStart,
                 srcVertExtendStart - srcY,    // Destination cy
                 srcHorzExtendStart, srcY,        // Source x, y
-                srcHorzExtendEnd - srcHorzExtendStart, 
+                srcHorzExtendEnd - srcHorzExtendStart,
                 srcVertExtendStart - srcY, blter);
         }
 
@@ -86,8 +84,7 @@ public:
             srcVertExtendEnd - srcVertExtendStart, blter);
 
         // draw area E
-        if (bDrawCenterArea)
-        {
+        if (bDrawCenterArea) {
             tileBltT(nDstHorzExtendStart, nDstVertExtendStart,
                 nDstHorzExtendEnd - nDstHorzExtendStart,
                 nDstVertExtendEnd - nDstVertExtendStart,
@@ -114,13 +111,12 @@ public:
             srcX, srcVertExtendEnd);
 
         // draw area H
-        if (nDstHorzExtendStart < nDstHorzExtendEnd)
-        {
-            tileBltT(nDstHorzExtendStart, nDstVertExtendEnd, 
+        if (nDstHorzExtendStart < nDstHorzExtendEnd) {
+            tileBltT(nDstHorzExtendStart, nDstVertExtendEnd,
                 nDstHorzExtendEnd - nDstHorzExtendStart,
                 nDstY + nDstH - srcVertExtendEnd,    // Destination cy
                 srcHorzExtendStart, srcVertExtendEnd,        // Source x, y
-                srcHorzExtendEnd - srcHorzExtendStart, 
+                srcHorzExtendEnd - srcHorzExtendStart,
                 srcVertExtendStart - srcY, blter);
         }
 
@@ -134,23 +130,21 @@ public:
 };
 
 template<class _DrawImageFun>
-void tileBltT(int xDest, int yDest, int nWidthDest, int nHeightDest, int xSrc, int ySrc, int cxSrcUnit, int cySrcUnit, _DrawImageFun &drawFunc)
-{
-    if (cySrcUnit <= 0 || cxSrcUnit <= 0)
+void tileBltT(int xDest, int yDest, int nWidthDest, int nHeightDest, int xSrc, int ySrc, int cxSrcUnit, int cySrcUnit, _DrawImageFun &drawFunc) {
+    if (cySrcUnit <= 0 || cxSrcUnit <= 0) {
         return;
+    }
 
-    int            x, y;
+    int x, y;
 
     //
     // 先将Y方向的绘画了
     // 1111 1111 1111 222
     // 1111 1111 1111 222
     // 3333 3333 3333 444
-    for (y = yDest; y + cySrcUnit < yDest + nHeightDest; y += cySrcUnit)
-    {
+    for (y = yDest; y + cySrcUnit < yDest + nHeightDest; y += cySrcUnit) {
         // 1111
-        for (x = xDest; x + cxSrcUnit <= xDest + nWidthDest; x += cxSrcUnit)
-        {
+        for (x = xDest; x + cxSrcUnit <= xDest + nWidthDest; x += cxSrcUnit) {
             drawFunc(
                 x, y,
                 cxSrcUnit, cySrcUnit,
@@ -158,8 +152,7 @@ void tileBltT(int xDest, int yDest, int nWidthDest, int nHeightDest, int xSrc, i
         }
 
         // 2222
-        if (x < xDest + nWidthDest)
-        {
+        if (x < xDest + nWidthDest) {
             drawFunc(
                 x, y,
                 xDest + nWidthDest - x, cySrcUnit,
@@ -167,15 +160,13 @@ void tileBltT(int xDest, int yDest, int nWidthDest, int nHeightDest, int xSrc, i
         }
     }
 
-    if (y < yDest + nHeightDest)
-    {
-        int        nLeftCy;
+    if (y < yDest + nHeightDest) {
+        int nLeftCy;
 
         nLeftCy = yDest + nHeightDest - y;
 
         // 3333
-        for (x = xDest; x + cxSrcUnit <= xDest + nWidthDest; x += cxSrcUnit)
-        {
+        for (x = xDest; x + cxSrcUnit <= xDest + nWidthDest; x += cxSrcUnit) {
             drawFunc(
                 x, y,
                 cxSrcUnit, nLeftCy,
@@ -183,8 +174,7 @@ void tileBltT(int xDest, int yDest, int nWidthDest, int nHeightDest, int xSrc, i
         }
 
         // 444
-        if (x < xDest + nWidthDest)
-        {
+        if (x < xDest + nWidthDest) {
             drawFunc(
                 x, y,
                 xDest + nWidthDest - x, nLeftCy,
@@ -194,8 +184,7 @@ void tileBltT(int xDest, int yDest, int nWidthDest, int nHeightDest, int xSrc, i
 }
 
 // CSFImage = CSkinFactoryImage
-class CSFImage : public CRawImage
-{
+class CSFImage : public CRawImage {
 public:
     CSFImage(void);
     CSFImage(const CSFImage &src);
@@ -228,14 +217,14 @@ public:
 protected:
 
     template<class _DrawImageFun>
-    void tileBltExT(CRawGraph *canvas, int xOrg, int yOrg, int xDest, int yDest, int nWidthDest, int nHeightDest, _DrawImageFun &drawFunc)
-    {
-        if (m_cy <= 0 || m_cx <= 0)
+    void tileBltExT(CRawGraph *canvas, int xOrg, int yOrg, int xDest, int yDest, int nWidthDest, int nHeightDest, _DrawImageFun &drawFunc) {
+        if (m_cy <= 0 || m_cx <= 0) {
             return;
+        }
 
-        int            xSrc, ySrc, x, y;
-        int            nTileX, nTileY;
-        int            nW;
+        int xSrc, ySrc, x, y;
+        int nTileX, nTileY;
+        int nW;
 
         //
         // 先将Y方向的绘画了
@@ -246,27 +235,24 @@ protected:
 
         // BBB
         {
-            int        nLeftCy;
+            int nLeftCy;
             xSrc = (xDest - xOrg) % m_cx;
             ySrc = (yDest - yOrg) % m_cy;
             nLeftCy = min(m_cy - ySrc, nHeightDest);
-            if (xSrc != 0)
-            {
+            if (xSrc != 0) {
                 nW = min(m_cx - xSrc, nWidthDest);
                 drawFunc(
                     xDest, yDest,
                     nW, nLeftCy,
                     m_x + xSrc, m_y + ySrc);
                 nTileX = xDest + (m_cx - xSrc);
-            }
-            else
+            } else {
                 nTileX = xDest;
+            }
 
             // 0000
-            if (ySrc != 0)
-            {
-                for (x = nTileX; x + m_cx <= xDest + nWidthDest; x += m_cx)
-                {
+            if (ySrc != 0) {
+                for (x = nTileX; x + m_cx <= xDest + nWidthDest; x += m_cx) {
                     drawFunc(
                         x, yDest,
                         m_cx, nLeftCy,
@@ -274,24 +260,21 @@ protected:
                 }
 
                 // AAA
-                if (x < xDest + nWidthDest)
-                {
+                if (x < xDest + nWidthDest) {
                     drawFunc(
                         x, yDest,
                         xDest + nWidthDest - x, nLeftCy,
                         m_x, m_y + ySrc);
                 }
                 nTileY = yDest + (m_cy - ySrc);
-            }
-            else
+            } else {
                 nTileY = yDest;
+            }
         }
 
-        for (y = nTileY; y + m_cy < yDest + nHeightDest; y += m_cy)
-        {
+        for (y = nTileY; y + m_cy < yDest + nHeightDest; y += m_cy) {
             // CCCC
-            if (xSrc != 0)
-            {
+            if (xSrc != 0) {
                 nW = min(m_cx - xSrc, nWidthDest);
                 drawFunc(
                     xDest, y,
@@ -300,8 +283,7 @@ protected:
             }
 
             // 1111
-            for (x = nTileX; x + m_cx < xDest + nWidthDest; x += m_cx)
-            {
+            for (x = nTileX; x + m_cx < xDest + nWidthDest; x += m_cx) {
                 drawFunc(
                     x, y,
                     m_cx, m_cy,
@@ -309,8 +291,7 @@ protected:
             }
 
             // 222
-            if (x < xDest + nWidthDest)
-            {
+            if (x < xDest + nWidthDest) {
                 drawFunc(
                     x, y,
                     xDest + nWidthDest - x, m_cy,
@@ -318,15 +299,13 @@ protected:
             }
         }
 
-        if (y < yDest + nHeightDest)
-        {
-            int        nLeftCy;
+        if (y < yDest + nHeightDest) {
+            int nLeftCy;
 
             nLeftCy = yDest + nHeightDest - y;
 
             // DDD
-            if (xSrc != 0)
-            {
+            if (xSrc != 0) {
                 nW = min(m_cx - xSrc, nWidthDest);
                 drawFunc(
                     xDest, y,
@@ -335,8 +314,7 @@ protected:
             }
 
             // 3333
-            for (x = nTileX; x + m_cx <= xDest + nWidthDest; x += m_cx)
-            {
+            for (x = nTileX; x + m_cx <= xDest + nWidthDest; x += m_cx) {
                 drawFunc(
                     x, y,
                     m_cx, nLeftCy,
@@ -344,8 +322,7 @@ protected:
             }
 
             // 444
-            if (x < xDest + nWidthDest)
-            {
+            if (x < xDest + nWidthDest) {
                 drawFunc(
                     x, y,
                     xDest + nWidthDest - x, nLeftCy,
@@ -357,12 +334,11 @@ protected:
     void copyFrom(const CSFImage &src);
 
 public:
-    CSkinFactory    *m_pSkinFactory;
+    CSkinFactory                *m_pSkinFactory;
 
 };
 
-class CDrawImageFun
-{
+class CDrawImageFun {
 public:
     CDrawImageFun(CRawGraph *canvas, CRawImage *image, BlendPixMode bpm) : m_canvas(canvas), m_image(image), m_bpm(bpm) { }
 
@@ -371,14 +347,13 @@ public:
     }
 
 public:
-    CRawImage        *m_image;
-    CRawGraph        *m_canvas;
-    BlendPixMode    m_bpm;
+    CRawImage                   *m_image;
+    CRawGraph                   *m_canvas;
+    BlendPixMode                m_bpm;
 
 };
 
-class CDrawImageFunMask
-{
+class CDrawImageFunMask {
 public:
     CDrawImageFunMask(CRawGraph *canvas, CRawImage *image, CRawImage *imageMask, BlendPixMode bpm) {
         m_canvas = canvas;
@@ -388,17 +363,18 @@ public:
     }
 
     void operator()(int xdest, int ydest, int width, int height, int xsrc, int ysrc) {
-        if (m_imageMask)
+        if (m_imageMask) {
             m_image->maskBlt(m_canvas, xdest, ydest, width, height, xsrc, ysrc, m_imageMask, m_bpm);
-        else
+        } else {
             m_image->blt(m_canvas, xdest, ydest, width, height, xsrc, ysrc, m_bpm);
+        }
     }
 
 public:
-    CRawImage        *m_image;
-    CRawImage        *m_imageMask;
-    CRawGraph        *m_canvas;
-    BlendPixMode    m_bpm;
+    CRawImage                   *m_image;
+    CRawImage                   *m_imageMask;
+    CRawGraph                   *m_canvas;
+    BlendPixMode                m_bpm;
 
 };
 

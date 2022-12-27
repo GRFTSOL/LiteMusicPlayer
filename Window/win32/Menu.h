@@ -1,14 +1,11 @@
-// Menu.h: interface for the CMenu class.
-//
-//////////////////////////////////////////////////////////////////////
+#pragma once
 
-#if !defined(AFX_MENU_H__4207B3F1_5148_479E_9F72_167E76626985__INCLUDED_)
-#define AFX_MENU_H__4207B3F1_5148_479E_9F72_167E76626985__INCLUDED_
+#ifndef Window_win32_Menu_h
+#define Window_win32_Menu_h
 
 class Window;
 
-class CMenu  
-{
+class CMenu {
 public:
     CMenu();
     virtual ~CMenu();
@@ -68,13 +65,13 @@ public:
     HMENU findMenuPos(HMENU hMenu, uint32_t nIDMenu);
 
 protected:
-    HMENU            m_hMenu;
-    int                m_nSubMenu;
-    bool            m_bFree;
+    HMENU                       m_hMenu;
+    int                         m_nSubMenu;
+    bool                        m_bFree;
 
 };
 
 bool toLocalMenu(CMenu *pMenu);
 bool toLocalMenu(HMENU hMenu);
 
-#endif // !defined(AFX_MENU_H__4207B3F1_5148_479E_9F72_167E76626985__INCLUDED_)
+#endif // !defined(Window_win32_Menu_h)

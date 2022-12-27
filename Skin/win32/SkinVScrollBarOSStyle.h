@@ -1,29 +1,24 @@
-﻿// SkinVScrollBarOSStyle.h: interface for the CSkinVScrollBarOSStyle class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_SKINVSCROLLBAROSSTYLE_H__122A87BD_1DC8_4EA7_A35E_F85FC32AB87B__INCLUDED_)
-#define AFX_SKINVSCROLLBAROSSTYLE_H__122A87BD_1DC8_4EA7_A35E_F85FC32AB87B__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+﻿
+
+#ifndef Skin_win32_SkinVScrollBarOSStyle_h
+#define Skin_win32_SkinVScrollBarOSStyle_h
+
 
 #include "UIObject.h"
 #include "../widget/win32/CommonWidget.h"
 
-class CSkinScrollBarOSStyleBase : public CUIObject, public IScrollBar, public IScrollNotify
-{
+
+class CSkinScrollBarOSStyleBase : public CUIObject, public IScrollBar, public IScrollNotify {
 public:
     CSkinScrollBarOSStyleBase();
     virtual ~CSkinScrollBarOSStyleBase();
 
-    void setScrollInfo(int nMin, int nMax, int nPage, int nPos = 0, int nLine = 1, bool bRedraw = true)
-    {
+    void setScrollInfo(int nMin, int nMax, int nPage, int nPos = 0, int nLine = 1, bool bRedraw = true) {
         m_scrollbar.setScrollInfo(nMin, nMax, nPage, nPos, nLine, bRedraw);
     }
-    int setScrollPos(int nPos, bool bRedraw = true)
-    {
+    int setScrollPos(int nPos, bool bRedraw = true) {
         return m_scrollbar.setScrollPos(nPos, bRedraw);
     }
 
@@ -50,14 +45,13 @@ public:
 
 protected:
     // 基本设置
-    CWidgetScrollBar    m_scrollbar;
-    IScrollNotify        *m_pScrollNotify;
+    CWidgetScrollBar            m_scrollbar;
+    IScrollNotify               *m_pScrollNotify;
 
 };
 
-class CSkinVScrollBarOSStyle : public CSkinScrollBarOSStyleBase
-{
-UIOBJECT_CLASS_NAME_DECLARE(CUIObject)
+class CSkinVScrollBarOSStyle : public CSkinScrollBarOSStyleBase {
+    UIOBJECT_CLASS_NAME_DECLARE(CUIObject)
 public:
     CSkinVScrollBarOSStyle();
 
@@ -65,9 +59,8 @@ public:
 
 };
 
-class CSkinHScrollBarOSStyle : public CSkinScrollBarOSStyleBase
-{
-UIOBJECT_CLASS_NAME_DECLARE(CUIObject)
+class CSkinHScrollBarOSStyle : public CSkinScrollBarOSStyleBase {
+    UIOBJECT_CLASS_NAME_DECLARE(CUIObject)
 public:
     CSkinHScrollBarOSStyle();
 
@@ -75,4 +68,4 @@ public:
 
 };
 
-#endif // !defined(AFX_SKINVSCROLLBAROSSTYLE_H__122A87BD_1DC8_4EA7_A35E_F85FC32AB87B__INCLUDED_)
+#endif // !defined(Skin_win32_SkinVScrollBarOSStyle_h)

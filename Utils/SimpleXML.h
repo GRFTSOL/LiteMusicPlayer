@@ -1,9 +1,7 @@
-// SimpleXML.h: interface for the CSimpleXML class.
-//
-//////////////////////////////////////////////////////////////////////
+#pragma once
 
-#if !defined(AFX_SIMPLEXML_H__C6DFE0B7_DFB0_4DF5_937A_406F7FB35C5D__INCLUDED_)
-#define AFX_SIMPLEXML_H__C6DFE0B7_DFB0_4DF5_937A_406F7FB35C5D__INCLUDED_
+#ifndef Utils_SimpleXML_h
+#define Utils_SimpleXML_h
 
 
 class CSimpleXML;
@@ -13,7 +11,7 @@ class SXNode;
 
 SXNode *dupSXNode(SXNode *pOrgNode);
 
-#define SURETEXT(p1)    (p1 ? p1 : "")
+#define SURETEXT(p1)        (p1 ? p1 : "")
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -22,25 +20,23 @@ SXNode *dupSXNode(SXNode *pOrgNode);
 // <name property="value">
 //   <name>Content</name>
 // </StrName>
-class SXNode
-{
+class SXNode {
 public:
     typedef list<SXNode*>    LIST_CHILDREN;
     typedef list<string>    LIST_STRING;
 
-    struct Property
-    {
-        string            name;
-        string            strValue;
+    struct Property {
+        string                      name;
+        string                      strValue;
     };
     typedef list<Property>    ListProperties;
     typedef ListProperties::iterator    iterProperties;
     typedef LIST_CHILDREN::iterator    iterator;
 
-    string                name;
-    string                strContent;        // the content <nodeName>content</nodeName>
-    ListProperties        listProperties;
-    LIST_CHILDREN        listChildren;
+    string                      name;
+    string                      strContent;         // the content <nodeName>content</nodeName>
+    ListProperties              listProperties;
+    LIST_CHILDREN               listChildren;
 
 public:
     // Can't be inherited.
@@ -74,8 +70,7 @@ protected:
 
 };
 
-class CSimpleXML  
-{
+class CSimpleXML {
 public:
     CSimpleXML();
 
@@ -93,9 +88,9 @@ public:
     void free();
 
 public:
-    SXNode        *m_pRoot;
-    string        m_encoding;
+    SXNode                      *m_pRoot;
+    string                      m_encoding;
 
 };
 
-#endif // !defined(AFX_SIMPLEXML_H__C6DFE0B7_DFB0_4DF5_937A_406F7FB35C5D__INCLUDED_)
+#endif // !defined(Utils_SimpleXML_h)

@@ -2,8 +2,7 @@
 
 struct    _EVENT_DISPATCHER;
 
-class CEventsDispatcher : public CEventsDispatcherBase
-{
+class CEventsDispatcher : public CEventsDispatcherBase {
 public:
     int init();
     void quit();

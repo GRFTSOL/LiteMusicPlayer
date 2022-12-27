@@ -149,108 +149,6 @@ bool loadProxySvrFromIE(bool &bUseProxy, string &strSvr, int &nPort)
     return bRet;
 }
 
-
-static bool findStringValue(cstr_t szBuff, cstr_t szName, cstr_t szEndTag, string &strValue)
-{
-    cstr_t        szBeg, szEnd;
-
-    strValue.resize(0);
-
-    szBeg = strstr(szBuff, szName);
-    if (!szBeg)
-        return false;
-
-    szBeg += strlen(szName);
-
-    szEnd = strstr(szBeg, szEndTag);
-    if (!szEnd)
-        return false;
-
-    strValue.append(szBeg, szEnd);
-
-    return true;
-}
-
-bool loadProxySvrFromFireFox(bool &bUseProxy, string &strSvr, int &nPort)
-{
-    char        szFireFoxDir[MAX_PATH];
-
-    if (!SUCCEEDED(SHGetSpecialFolderPath(nullptr, szFireFoxDir, CSIDL_APPDATA, false)))
-        return false;
-
-    dirStringAddSep(szFireFoxDir);
-    strcat_safe(szFireFoxDir, CountOf(szFireFoxDir), "Mozilla\\Firefox\\");
-    // C:\Documents and Settings\username\Application Data\Mozilla\Firefox
-
-    string        strProfileFile, strProfilePath;
-    CProfile    profile;
-
-    strProfileFile = szFireFoxDir;
-    strProfileFile += "profiles.ini";
-    if (!isFileExist(strProfileFile.c_str()))
-        return false;
-
-    profile.init(strProfileFile.c_str());
-
-    {
-        //
-        // get current profile path.
-        //
-
-        int        nDefault = 0;
-        // get current profile folder.
-        for (int i = 0; i < 10; i++)
-        {
-            if (1 == profile.getInt(stringPrintf("Profile%d", i).c_str(), "Default", 0))
-            {
-                // Find the default profile.
-                nDefault = i;
-                break;
-            }
-        }
-
-        string        strPath = profile.getString(stringPrintf("Profile%d", nDefault).c_str(), "Path", "");
-        if (strPath.empty())
-            return false;
-
-        if (strPath.size() > 2 && strPath[1] == ':')
-            strProfilePath = strPath;
-        else
-        {
-            strProfilePath = szFireFoxDir;
-            strProfilePath += strPath;
-        }
-        dirStringAddSep(strProfilePath);
-    }
-
-    // get proxy settings.
-    string        strPrefJSFile;
-    string    strPrefJS;
-
-    strPrefJSFile = strProfilePath;
-    strPrefJSFile += "prefs.js";
-
-    if (!readFileByBom(strPrefJSFile.c_str(), strPrefJS))
-        return false;
-
-    string        strProxy, strPort, strType;
-
-    // user_pref("network.proxy.http", "192.168.1.112");
-    // user_pref("network.proxy.http_port", 80);
-    // user_pref("network.proxy.type", 1);
-    findStringValue(strPrefJS.c_str(), "user_pref(\"network.proxy.http\", \"", "\";"), strSvr);
-    findStringValue(strPrefJS.c_str(), "user_pref(\"network.proxy.http_port\", ", ");", strPort);
-    findStringValue(strPrefJS.c_str(), "user_pref(\"network.proxy.type\", ", ");", strType);
-
-    if (atoi(strType.c_str()) == 1)
-    {
-        nPort = atoi(strPort.c_str());
-        return true;
-    }
-
-    return false;
-}
-
 void getNotepadEditor(string &strEditor)
 {
     char        szBuffer[MAX_PATH];
@@ -272,9 +170,4 @@ void getNotepadEditor(string &strEditor)
     strEditor += "system\\notepad.exe";
     if (isFileExist(strEditor.c_str()))
         return;
-}
-
-uint32_t getSecCount()
-{
-    return getTickCount() / 1000;
 }

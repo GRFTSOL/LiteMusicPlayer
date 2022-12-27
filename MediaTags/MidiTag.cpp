@@ -2,6 +2,7 @@
 #include "MediaTags.h"
 #include "MidiTag.h"
 
+
 using namespace MidiTag;
 
 
@@ -168,106 +169,113 @@ The text even has a very simple format to him:
  * when you encounter a uint8_t that doesn't have the 8th bit set
  * (a uint8_t less than 0x80).
  */
-int readVarlen(CFileEx &file, int &len)
-{
+int readVarlen(CFileEx &file, int &len) {
     uint8_t b;
     len = 0;
 
-    for (int i = 0; i < 4; i++)
-    {
+    for (int i = 0; i < 4; i++) {
         int nRet = file.readByte(b);
-        if (nRet != ERR_OK)
+        if (nRet != ERR_OK) {
             return nRet;
+        }
 
         len = (len << 7) | (b & 0x7f);
-        if ((b & 0x80) == 0)
+        if ((b & 0x80) == 0) {
             break;
+        }
     }
 
     return ERR_OK;
 }
 
-CMidiTag::CMidiTag()
-{
+CMidiTag::CMidiTag() {
     m_tempo = 0;
     m_dominator = 4;
     m_numberator = 4;
 }
 
-CMidiTag::~CMidiTag()
-{
+CMidiTag::~CMidiTag() {
     close();
 }
 
-int CMidiTag::open(cstr_t szFile)
-{
+int CMidiTag::open(cstr_t szFile) {
     close();
 
     int nRet = m_file.open(szFile, "rb");
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         return nRet;
+    }
 
     char header[4];
     nRet = m_file.readCount(header, CountOf(header));
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         return nRet;
-    if (memcmp(header, MIDI_HEADER, CountOf(header)) != 0)
+    }
+    if (memcmp(header, MIDI_HEADER, CountOf(header)) != 0) {
         return ERR_NOT_SUPPORT_FILE_FORMAT;
+    }
 
     uint32_t trunkLen;
     nRet = m_file.readUInt32BE(trunkLen);
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         return nRet;
-    if (trunkLen != 6)
+    }
+    if (trunkLen != 6) {
         return ERR_NOT_SUPPORT_FILE_FORMAT;
+    }
 
     uint16_t formatType, numbTracks;
     nRet = m_file.readUInt16BE(formatType);
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         return nRet;
+    }
     nRet = m_file.readUInt16BE(numbTracks);
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         return nRet;
+    }
     nRet = m_file.readUInt16BE(m_timeDivision);
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         return nRet;
+    }
 
-    while (!m_file.isEOF())
-    {
+    while (!m_file.isEOF()) {
         TrackTrunk trunk;
-        trunk.offset = m_file.getPos();
+        trunk.offset = (uint32_t)m_file.getPos();
 
         nRet = m_file.readCount(header, CountOf(header));
-        if (nRet != ERR_OK)
-        {
-            if (m_file.isEOF())
+        if (nRet != ERR_OK) {
+            if (m_file.isEOF()) {
                 break;
+            }
             return nRet;
         }
-        if (memcmp(header, TRACK_HEADER, CountOf(header)) != 0)
+        if (memcmp(header, TRACK_HEADER, CountOf(header)) != 0) {
             return ERR_NOT_SUPPORT_FILE_FORMAT;
+        }
 
         nRet = m_file.readUInt32BE(trunk.sizeOfData);
-        if (nRet != ERR_OK)
+        if (nRet != ERR_OK) {
             return nRet;
+        }
 
         nRet = readTrackTrunk(trunk);
-        if (nRet != ERR_OK)
+        if (nRet != ERR_OK) {
             return nRet;
+        }
 
         m_listTrunks.push_back(trunk);
 
         m_file.seek(trunk.sizeOfData + TRUNK_HEADER_LEN + trunk.offset, SEEK_SET);
     }
 
-    if (m_tempo == 0)
-        m_tempo = 500000;    // 120 beats/minute
+    if (m_tempo == 0) {
+        m_tempo = 500000; // 120 beats/minute
+    }
 
     return ERR_OK;
 }
 
-void CMidiTag::close()
-{
+void CMidiTag::close() {
     m_listTrunks.clear();
     m_file.close();
     m_tempo = 0;
@@ -275,21 +283,19 @@ void CMidiTag::close()
     m_numberator = 4;
 }
 
-int CMidiTag::listLyrics(VecStrings &vLyrNames)
-{
-    if (hasLyrics())
-    {
+int CMidiTag::listLyrics(VecStrings &vLyrNames) {
+    if (hasLyrics()) {
         vLyrNames.push_back(SZ_SONG_KAR_LYRICS);
         return ERR_OK;
     }
     return ERR_NOT_FOUND;
 }
 
-int CMidiTag::getLyrics(CLyricsLines &lyricsLines)
-{
+int CMidiTag::getLyrics(CLyricsLines &lyricsLines) {
     TrackTrunk *pTrunk = FindLyricsTrunk();
-    if (pTrunk == nullptr)
+    if (pTrunk == nullptr) {
         return ERR_NOT_FOUND;
+    }
 
     m_file.seek(pTrunk->offset + TRUNK_HEADER_LEN, SEEK_SET);
 
@@ -298,99 +304,93 @@ int CMidiTag::getLyrics(CLyricsLines &lyricsLines)
     LyricsLine *line = nullptr;
     float startTime = 0;
     uint8_t eventCode = 0;
-    while (m_file.getPos() < long(pTrunk->offset + pTrunk->sizeOfData))
-    {
+    while (m_file.getPos() < long(pTrunk->offset + pTrunk->sizeOfData)) {
         int deltaTime;
         int nRet = readVarlen(m_file, deltaTime);
-        if (nRet != ERR_OK)
+        if (nRet != ERR_OK) {
             return nRet;
+        }
 
         uint8_t newEventCode;
         nRet = m_file.readByte(newEventCode);
-        if (nRet != ERR_OK)
+        if (nRet != ERR_OK) {
             return nRet;
-        if (newEventCode >= MET_NOTE_OFF)
+        }
+        if (newEventCode >= MET_NOTE_OFF) {
             eventCode = newEventCode;
-        else
+        } else {
             m_file.seek(-1, SEEK_CUR);
+        }
 
-        if (eventCode >= MET_NOTE_OFF && eventCode <= MET_CONTROL_CHANGE)
-        {
+        if (eventCode >= MET_NOTE_OFF && eventCode <= MET_CONTROL_CHANGE) {
             // DBG_LOG1("  MidiEvent, code: 0x%x", eventCode);
             m_file.seek(2, SEEK_CUR);
-        }
-        else if (eventCode >= MET_PROGRAM_CHANGE && eventCode <= MET_PITCH_BEND)
-        {
-            if (eventCode == MET_PROGRAM_CHANGE)
+        } else if (eventCode >= MET_PROGRAM_CHANGE && eventCode <= MET_PITCH_BEND) {
+            if (eventCode == MET_PROGRAM_CHANGE) {
                 startTime += (float)deltaTime * m_tempo / 1000 / m_numberator;
+            }
 
             // DBG_LOG1("  MidiEvent, code: 0x%x", eventCode);
             m_file.seek(1, SEEK_CUR);
-        }
-        else if (eventCode >= MET_SYSEX1 && eventCode <= MET_SYSEX2)
-        {
+        } else if (eventCode >= MET_SYSEX1 && eventCode <= MET_SYSEX2) {
             // DBG_LOG1("  MidiEvent, code: 0x%x", eventCode);
             int len;
             nRet = readVarlen(m_file, len);
-            if (nRet != ERR_OK)
+            if (nRet != ERR_OK) {
                 return nRet;
+            }
             m_file.seek(len, SEEK_CUR);
-        }
-        else if (eventCode == MET_META)
-        {
+        } else if (eventCode == MET_META) {
             uint8_t metaEvent;
             nRet = m_file.readByte(metaEvent);
-            if (nRet != ERR_OK)
+            if (nRet != ERR_OK) {
                 return nRet;
+            }
 
             int len;
             nRet = readVarlen(m_file, len);
-            if (nRet != ERR_OK)
+            if (nRet != ERR_OK) {
                 return nRet;
+            }
 
             string buf;
             buf.resize(len);
             nRet = m_file.readCount((char *)buf.data(), len);
-            if (nRet != ERR_OK)
+            if (nRet != ERR_OK) {
                 return nRet;
+            }
 
-            if (metaEvent == MAT_END_OF_TRACK)
+            if (metaEvent == MAT_END_OF_TRACK) {
                 break;
+            }
 
             string str;
             bool bNewLine = (buf[0] == '/' || buf[0] == '\\' || buf[0] == '\n');
-            if (bNewLine)
+            if (bNewLine) {
                 str.assign(buf.c_str() + 1, buf.size() - 1);
-            else
+            } else {
                 str = buf;
+            }
 
-            if (metaEvent == MAT_TEMPO)
-            {
+            if (metaEvent == MAT_TEMPO) {
                 m_tempo = (uint8_t)buf[2] | ((uint8_t)buf[1] << 8) | ((uint8_t)buf[0] << 16);
                 DBG_LOG1("  Tempo: %d", m_tempo);
-            }
-            else if (metaEvent == MAT_SEQUENCE_NAME)
-            {
+            } else if (metaEvent == MAT_SEQUENCE_NAME) {
                 // assert(strcmp(str.c_str(), "Words") == 0);
-            }
-            else if (metaEvent == MAT_TEXT)
-            {
+            } else if (metaEvent == MAT_TEXT) {
                 startTime += (float)deltaTime * m_tempo / 1000 / m_timeDivision;
-                if (buf[0] == '@')
+                if (buf[0] == '@') {
                     continue;
-                if (bNewLine || line == nullptr)
-                {
+                }
+                if (bNewLine || line == nullptr) {
                     line = newLyricsLine((int)startTime, TEMP_TIME);
                     lyricsLines.push_back(line);
                 }
                 line->appendPiece((int)startTime, TEMP_TIME, str.c_str(), str.size(), false, true);
 
                 // DBG_LOG0(stringPrintf("Time division: %d, delta: %d, time: %d, %s", m_timeDivision, deltaTime, (int)startTime, str.c_str()).c_str());
-            }
-            else if (metaEvent == MAT_LYRIC)
-            {
-                if (bNewLine || line == nullptr)
-                {
+            } else if (metaEvent == MAT_LYRIC) {
+                if (bNewLine || line == nullptr) {
                     line = newLyricsLine((int)startTime, TEMP_TIME);
                     lyricsLines.push_back(line);
                 }
@@ -404,83 +404,78 @@ int CMidiTag::getLyrics(CLyricsLines &lyricsLines)
     return ERR_OK;
 }
 
-bool CMidiTag::hasLyrics()
-{
+bool CMidiTag::hasLyrics() {
     TrackTrunk *pTrunk = FindLyricsTrunk();
     return pTrunk != nullptr;
 }
 
-int CMidiTag::readTrackTrunk(TrackTrunk &trunk)
-{
+int CMidiTag::readTrackTrunk(TrackTrunk &trunk) {
     m_file.seek(trunk.offset + TRUNK_HEADER_LEN, SEEK_SET);
 
     // DBG_LOG2("Trunk, offset: %d, len: %d", trunk.offset, trunk.sizeOfData);
 
     string buf;
     uint8_t eventCode = 0;
-    while (m_file.getPos() < long(trunk.offset + trunk.sizeOfData))
-    {
+    while (m_file.getPos() < long(trunk.offset + trunk.sizeOfData)) {
         int deltaTime;
         int nRet = readVarlen(m_file, deltaTime);
-        if (nRet != ERR_OK)
+        if (nRet != ERR_OK) {
             return nRet;
+        }
 
         uint8_t newEventCode;
         nRet = m_file.readByte(newEventCode);
-        if (nRet != ERR_OK)
+        if (nRet != ERR_OK) {
             return nRet;
-        if (newEventCode >= MET_NOTE_OFF)
+        }
+        if (newEventCode >= MET_NOTE_OFF) {
             eventCode = newEventCode;
-        else
+        } else {
             m_file.seek(-1, SEEK_CUR);
+        }
 
-        if (eventCode >= MET_NOTE_OFF && eventCode <= MET_CONTROL_CHANGE)
-        {
+        if (eventCode >= MET_NOTE_OFF && eventCode <= MET_CONTROL_CHANGE) {
             // DBG_LOG2("  MidiEvent, code: 0x%x, delta: %d", eventCode, deltaTime);
             m_file.seek(2, SEEK_CUR);
-        }
-        else if (eventCode >= MET_PROGRAM_CHANGE && eventCode <= MET_PITCH_BEND)
-        {
+        } else if (eventCode >= MET_PROGRAM_CHANGE && eventCode <= MET_PITCH_BEND) {
             // DBG_LOG2("  MidiEvent, code: 0x%x, delta: %d", eventCode, deltaTime);
             m_file.seek(1, SEEK_CUR);
-        }
-        else if (eventCode >= MET_SYSEX1 && eventCode <= MET_SYSEX2)
-        {
+        } else if (eventCode >= MET_SYSEX1 && eventCode <= MET_SYSEX2) {
             // DBG_LOG2("  MidiEvent, code: 0x%x, delta: %d", eventCode, deltaTime);
             int len;
             nRet = readVarlen(m_file, len);
-            if (nRet != ERR_OK)
+            if (nRet != ERR_OK) {
                 return nRet;
+            }
             m_file.seek(len, SEEK_CUR);
-        }
-        else if (eventCode == MET_META)
-        {
+        } else if (eventCode == MET_META) {
             uint8_t metaEvent;
             nRet = m_file.readByte(metaEvent);
-            if (nRet != ERR_OK)
+            if (nRet != ERR_OK) {
                 return nRet;
+            }
 
             int len;
             nRet = readVarlen(m_file, len);
-            if (nRet != ERR_OK)
+            if (nRet != ERR_OK) {
                 return nRet;
+            }
             // m_file.seek(len, SEEK_CUR);
             buf.resize(len);
             nRet = m_file.readCount((uint8_t *)buf.data(), len);
-            if (nRet != ERR_OK)
+            if (nRet != ERR_OK) {
                 return nRet;
+            }
 
-            if (metaEvent == MAT_END_OF_TRACK)
+            if (metaEvent == MAT_END_OF_TRACK) {
                 break;
+            }
 
-            if (metaEvent == MAT_TIMESIGNATURE)
-            {
+            if (metaEvent == MAT_TIMESIGNATURE) {
                 m_numberator = buf[0];
                 m_dominator = buf[1];
                 DBG_LOG2("  Time Signature: %d, %d", m_numberator, m_dominator);
-            }
-            else if (metaEvent == MAT_TEMPO && m_tempo == 0)
-            {
+            } else if (metaEvent == MAT_TEMPO && m_tempo == 0) {
                 m_tempo = buf[2] | (buf[1] << 8) | (buf[0] << 16);
                 DBG_LOG1("  Tempo: %d", m_tempo);
             }
@@ -492,51 +487,57 @@ int CMidiTag::readTrackTrunk(TrackTrunk &trunk)
     return ERR_OK;
 }
 
-TrackTrunk *CMidiTag::FindLyricsTrunk()
-{
-    for (ListTrackTrunk::iterator it = m_listTrunks.begin(); it != m_listTrunks.end(); ++it)
-    {
+TrackTrunk *CMidiTag::FindLyricsTrunk() {
+    for (ListTrackTrunk::iterator it = m_listTrunks.begin(); it != m_listTrunks.end(); ++it) {
         TrackTrunk &trunk = *it;
 
         m_file.seek(trunk.offset + TRUNK_HEADER_LEN, SEEK_SET);
 
-        for (int i = 0; i < 20 && m_file.getPos() < long(trunk.offset + trunk.sizeOfData); i++)
-        {
+        for (int i = 0; i < 20 && m_file.getPos() < long(trunk.offset + trunk.sizeOfData); i++) {
             int deltaTime;
             int nRet = readVarlen(m_file, deltaTime);
-            if (nRet != ERR_OK)
+            if (nRet != ERR_OK) {
                 break;
-            if (deltaTime != 0)
+            }
+            if (deltaTime != 0) {
                 continue;
+            }
 
             uint8_t eventCode = 0;
             nRet = m_file.readByte(eventCode);
-            if (nRet != ERR_OK)
+            if (nRet != ERR_OK) {
                 break;
-            if (eventCode != MET_META)
+            }
+            if (eventCode != MET_META) {
                 continue;
+            }
 
             uint8_t metaEvent;
             nRet = m_file.readByte(metaEvent);
-            if (nRet != ERR_OK)
+            if (nRet != ERR_OK) {
                 return nullptr;
+            }
 
-            if (metaEvent == MAT_LYRIC)
+            if (metaEvent == MAT_LYRIC) {
                 return &(*it);
+            }
 
             int len;
             nRet = readVarlen(m_file, len);
-            if (nRet != ERR_OK)
+            if (nRet != ERR_OK) {
                 return nullptr;
+            }
 
             string buf;
             buf.resize(len);
             nRet = m_file.readCount((uint8_t *)buf.data(), len);
-            if (nRet != ERR_OK)
+            if (nRet != ERR_OK) {
                 return nullptr;
+            }
 
-            if (strcmp(buf.c_str(), "Words") == 0)
+            if (strcmp(buf.c_str(), "Words") == 0) {
                 return &(*it);
+            }
         }
     }
 

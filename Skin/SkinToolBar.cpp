@@ -1,35 +1,29 @@
-// SkinToolBar.cpp: implementation of the CSkinToolbar class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "SkinTypes.h"
 #include "Skin.h"
 #include "SkinToolBar.h"
 
+
 #define INVALID_POS        (-1)
 
-#define FADE_BUTTON_TIME_OUT        300
+#define FADE_BUTTON_TIME_OUT 300
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
+
 
 // <Toolbar name="selfedit" image="toolbar.bmp" enablehover="1" height="22"
 //     units_x="22" blank_x="638">
 //   <buttons ID="ID_NEW" left="1" width="1" CanCheck="0" Checked="0"/>
 //     <buttons ID="ID_OPEN" left="3" width="1" CanCheck="0" Checked="0"/>
-//     <buttons ID="ID_EDIT_MODE" left="6" width="1" CanCheck="1" Checked="0" 
+//     <buttons ID="ID_EDIT_MODE" left="6" width="1" CanCheck="1" Checked="0"
 //     checked_left="7" disabled_left="8"/>
 //   <seperator left="1" width="1"/>
 // </Toolbar>
 
-#define SZ_LEFT_OF_STATUS "left_of_status_"
-#define LEN_LEFT_OF_STATUS    (CountOf(SZ_LEFT_OF_STATUS) - 1)
+#define SZ_LEFT_OF_STATUS   "left_of_status_"
+#define LEN_LEFT_OF_STATUS    (CountOf(SZ_LEFT_OF_STATUS)   - 1)
 
 UIOBJECT_CLASS_NAME_IMP(CSkinToolbar, "Toolbar")
 
-CSkinToolbar::CSkinToolbar()
-{
+CSkinToolbar::CSkinToolbar() {
     m_msgNeed = UO_MSG_WANT_MOUSEMOVE | UO_MSG_WANT_LBUTTON;
 
     m_nUnitsOfX = 1;
@@ -57,16 +51,14 @@ CSkinToolbar::CSkinToolbar()
     m_bContinuousBegin = false;
 
     m_bFadein = true;
-    m_dwBeginFadeinTime = 0;
+    m_timeBeginFadein = 0;
 }
 
-CSkinToolbar::~CSkinToolbar()
-{
+CSkinToolbar::~CSkinToolbar() {
     delTooltip();
 }
 
-CSkinToolbar::Button::Button()
-{
+CSkinToolbar::Button::Button() {
     nID = UID_INVALID;
     nWidth = 1;
     nWidthImage = 1;
@@ -76,77 +68,68 @@ CSkinToolbar::Button::Button()
     nCurStatus = STATUS_NORMAL;
     bEnabled = true;
     bTempToolTip = true;
-    nLeftOfDiabled = -1;        // Image position of disabled
+    nLeftOfDiabled = -1; // Image position of disabled
     bContinuousCmd = false;
     nAutoUniID = 0;
 }
 
-void CSkinToolbar::Button::fromXML(CSkinToolbar *pToolbar, SXNode *pNode)
-{
+void CSkinToolbar::Button::fromXML(CSkinToolbar *pToolbar, SXNode *pNode) {
     nAutoUniID = pToolbar->m_pSkin->allocAutoUniID();
 
-    SXNode::iterProperties    it, itEnd;
+    SXNode::iterProperties it, itEnd;
 
     itEnd = pNode->listProperties.end();
-    for (it = pNode->listProperties.begin(); it != itEnd; ++it)
-    {
-        SXNode::Property    &prop = *it;
-        cstr_t        szProperty = prop.name.c_str();
-        cstr_t        szValue = prop.strValue.c_str();
+    for (it = pNode->listProperties.begin(); it != itEnd; ++it) {
+        SXNode::Property &prop = *it;
+        cstr_t szProperty = prop.name.c_str();
+        cstr_t szValue = prop.strValue.c_str();
 
-        if (strcasecmp(szProperty, "CanCheck") == 0)
+        if (strcasecmp(szProperty, "CanCheck") == 0) {
             nStatusMax = isTRUE(szValue);
-        else if (strcasecmp(szProperty, "Checked") == 0)
+        } else if (strcasecmp(szProperty, "Checked") == 0) {
             nCurStatus = isTRUE(szValue);
-        else if (strcasecmp(szProperty, "Enabled") == 0)
+        } else if (strcasecmp(szProperty, "Enabled") == 0) {
             bEnabled = isTRUE(szValue);
-        else if (isPropertyName(szProperty, "Text"))
-        {
+        } else if (isPropertyName(szProperty, "Text")) {
             strTextEnglish = szValue;
             strText = _TL(szValue);
-        }
-        else if (isPropertyName(szProperty, "RadioGroup"))
+        } else if (isPropertyName(szProperty, "RadioGroup")) {
             nGroup = atoi(szValue);
-        else if (strcasecmp(szProperty, "left") == 0)
+        } else if (strcasecmp(szProperty, "left") == 0) {
             nLeftPositon[STATUS_NORMAL] = atoi(szValue) * pToolbar->m_nUnitsOfX;
-        else if (strcasecmp(szProperty, "width") == 0)
+        } else if (strcasecmp(szProperty, "width") == 0) {
             nWidthImage = nWidth = atoi(szValue) * pToolbar->m_nUnitsOfX;
-        else if (strcasecmp(szProperty, "checked_left") == 0)
-        {
+        } else if (strcasecmp(szProperty, "checked_left") == 0) {
             nLeftPositon[STATUS_CHECKED] = atoi(szValue) * pToolbar->m_nUnitsOfX;
-            if (nStatusMax < STATUS_CHECKED)
+            if (nStatusMax < STATUS_CHECKED) {
                 nStatusMax = STATUS_CHECKED;
-        }
-        else if (strcasecmp(szProperty, "disabled_left") == 0)
-            nLeftOfDiabled = atoi(szValue) * pToolbar->m_nUnitsOfX;
-        else if (strncasecmp(szProperty, SZ_LEFT_OF_STATUS, LEN_LEFT_OF_STATUS) == 0)
-        {
-            // "left_of_status_" property
-            int        n = atoi(szProperty + LEN_LEFT_OF_STATUS);
-            if (n > Button::STATUS_MAX)
-                return;
-            if (n > nStatusMax)
-                nStatusMax = n;
-            nLeftPositon[n] = atoi(szValue) * pToolbar->m_nUnitsOfX;
-        }
-        else if (strcasecmp(szProperty, "Continuous") == 0)
-            bContinuousCmd = isTRUE(szValue);
-        else if (strcasecmp(szProperty, SZ_PN_ID) == 0)
-        {
-            if (strTooltip.empty())
-            {
-                nID = pToolbar->m_pSkin->getSkinFactory()->getIDByNameEx(szValue, strTooltip);
-                if (!strTooltip.empty())
-                    bTempToolTip = true;
             }
-            else
+        } else if (strcasecmp(szProperty, "disabled_left") == 0) {
+            nLeftOfDiabled = atoi(szValue) * pToolbar->m_nUnitsOfX;
+        } else if (strncasecmp(szProperty, SZ_LEFT_OF_STATUS, LEN_LEFT_OF_STATUS) == 0) {
+            // "left_of_status_" property
+            int n = atoi(szProperty + LEN_LEFT_OF_STATUS);
+            if (n > Button::STATUS_MAX) {
+                return;
+            }
+            if (n > nStatusMax) {
+                nStatusMax = n;
+            }
+            nLeftPositon[n] = atoi(szValue) * pToolbar->m_nUnitsOfX;
+        } else if (strcasecmp(szProperty, "Continuous") == 0) {
+            bContinuousCmd = isTRUE(szValue);
+        } else if (strcasecmp(szProperty, SZ_PN_ID) == 0) {
+            if (strTooltip.empty()) {
+                nID = pToolbar->m_pSkin->getSkinFactory()->getIDByNameEx(szValue, strTooltip);
+                if (!strTooltip.empty()) {
+                    bTempToolTip = true;
+                }
+            } else {
                 nID = pToolbar->m_pSkin->getSkinFactory()->getIDByName(szValue);
-        }
-        else if (strcasecmp(szProperty, "ToolTip") == 0)
-        {
+            }
+        } else if (strcasecmp(szProperty, "ToolTip") == 0) {
             string str = _TL(szValue);
-            if (strcmp(strTooltip.c_str(), str.c_str()) != 0)
-            {
+            if (strcmp(strTooltip.c_str(), str.c_str()) != 0) {
                 strTooltip = str.c_str();
                 bTempToolTip = false;
             }
@@ -155,76 +138,78 @@ void CSkinToolbar::Button::fromXML(CSkinToolbar *pToolbar, SXNode *pNode)
 }
 
 #ifdef _SKIN_EDITOR_
-void CSkinToolbar::Button::toXML(CSkinToolbar *pToolbar, CXMLWriter &xml)
-{
-    if (bSeperator)
-    {
+void CSkinToolbar::Button::toXML(CSkinToolbar *pToolbar, CXMLWriter &xml) {
+    if (bSeperator) {
         xml.writeStartElement("seperator");
         xml.writeEndElement();
-    }
-    else
-    {
+    } else {
         xml.writeStartElement("button");
 
-        if (nID != UID_INVALID)
+        if (nID != UID_INVALID) {
             xml.writeAttribute(SZ_PN_ID, pToolbar->m_pSkin->getSkinFactory()->getStringOfID(nID).c_str());
+        }
 
-        if (bCanCheck)
+        if (bCanCheck) {
             xml.writeAttribute("CanCheck", bCanCheck);
-        if (bCanCheck)
+        }
+        if (bCanCheck) {
             xml.writeAttribute("Checked", bChecked);
-        if (!bEnabled)
+        }
+        if (!bEnabled) {
             xml.writeAttribute("Enabled", bEnabled);
+        }
 
-        if (pToolbar->m_nUnitsOfX <= 0)
+        if (pToolbar->m_nUnitsOfX <= 0) {
             pToolbar->m_nUnitsOfX = 1;
+        }
         xml.writeAttribute("left", nLeft / pToolbar->m_nUnitsOfX);
-        if (nWidth != pToolbar->m_nUnitsOfX)
+        if (nWidth != pToolbar->m_nUnitsOfX) {
             xml.writeAttribute("width", nWidth / pToolbar->m_nUnitsOfX);
-        if (nLeftOfChecked != -1)
+        }
+        if (nLeftOfChecked != -1) {
             xml.writeAttribute("checked_left", nLeftOfChecked / pToolbar->m_nUnitsOfX);
-        if (nLeftOfDiabled != -1)
+        }
+        if (nLeftOfDiabled != -1) {
             xml.writeAttribute("disabled_left", nLeftOfDiabled / pToolbar->m_nUnitsOfX);
-        if (bContinuousCmd)
+        }
+        if (bContinuousCmd) {
             xml.writeAttribute("Continuous", bContinuousCmd);
-        if (!strTooltip.empty() && !bTempToolTip)
+        }
+        if (!strTooltip.empty() && !bTempToolTip) {
             xml.writeAttribute("ToolTip", strTooltip.c_str());
+        }
 
         xml.writeEndElement();
     }
 }
 #endif // _SKIN_EDITOR_
 
-void CSkinToolbar::onCreate()
-{
+void CSkinToolbar::onCreate() {
     CUIObject::onCreate();
 
     m_font.onCreate(m_pSkin);
-    if (m_nImageHeight == 0)
+    if (m_nImageHeight == 0) {
         m_nImageHeight = atoi(m_formHeight.getFormula());
+    }
 }
 
-void CSkinToolbar::onAdjustHue(float hue, float saturation, float luminance)
-{
+void CSkinToolbar::onAdjustHue(float hue, float saturation, float luminance) {
     m_font.onAdjustHue(m_pSkin, hue, saturation, luminance);
 }
 
-bool CSkinToolbar::onLButtonDown(uint32_t nFlags, CPoint point)
-{
+bool CSkinToolbar::onLButtonDown(uint32_t nFlags, CPoint point) {
     m_nCurButton = getCurButton(point);
-    if (m_nCurButton == -1)
+    if (m_nCurButton == -1) {
         return false;
+    }
 
-    if (m_bFadein && m_bFullStatusImage)
-    {
+    if (m_bFadein && m_bFullStatusImage) {
         m_pSkin->registerTimerObject(this, 50);
-        m_dwBeginFadeinTime = getTickCount();
+        m_timeBeginFadein = getTickCount();
         Button &bt = m_vButtons[m_nCurButton];
         m_nLastImageLeft = bt.nLeftPositon[bt.nCurStatus];
         m_nLastImageDrawState = ROW_HOVER;
-    }
-    else if (m_vButtons[m_nCurButton].bContinuousCmd)
-    {
+    } else if (m_vButtons[m_nCurButton].bContinuousCmd) {
         m_bContinuousBegin = true;
         m_pSkin->registerTimerObject(this, 500);
     }
@@ -233,10 +218,9 @@ bool CSkinToolbar::onLButtonDown(uint32_t nFlags, CPoint point)
 
     m_bLBtDown = true;
 
-    if (m_bHover)
+    if (m_bHover) {
         m_bHover = false;
-    else
-    {
+    } else {
         // 捕捉鼠标输入
         m_pSkin->setCaptureMouse(this);
     }
@@ -246,14 +230,12 @@ bool CSkinToolbar::onLButtonDown(uint32_t nFlags, CPoint point)
     return true;
 }
 
-bool CSkinToolbar::onLButtonUp(uint32_t nFlags, CPoint point)
-{
+bool CSkinToolbar::onLButtonUp(uint32_t nFlags, CPoint point) {
     m_pSkin->unregisterTimerObject(this);
 
-    if (m_bFadein && m_bFullStatusImage && m_nCurButton != -1)
-    {
+    if (m_bFadein && m_bFullStatusImage && m_nCurButton != -1) {
         m_pSkin->registerTimerObject(this, 50);
-        m_dwBeginFadeinTime = getTickCount();
+        m_timeBeginFadein = getTickCount();
         Button &bt = m_vButtons[m_nCurButton];
         m_nLastImageLeft = bt.nLeftPositon[bt.nCurStatus];
         m_nLastImageDrawState = ROW_DOWN;
@@ -265,147 +247,134 @@ bool CSkinToolbar::onLButtonUp(uint32_t nFlags, CPoint point)
     m_pSkin->releaseCaptureMouse(this);
 
     // 转换按钮的状态
-    if (m_nCurButton != -1)
-    {
+    if (m_nCurButton != -1) {
         assert(m_nCurButton >= 0 && m_nCurButton <= (int)m_vButtons.size());
-        Button        &bt = m_vButtons[m_nCurButton];
-        if (!(bt.nGroup != -1 && bt.nCurStatus == Button::STATUS_CHECKED))
-        {
-            if (bt.nCurStatus < bt.nStatusMax)
+        Button &bt = m_vButtons[m_nCurButton];
+        if (!(bt.nGroup != -1 && bt.nCurStatus == Button::STATUS_CHECKED)) {
+            if (bt.nCurStatus < bt.nStatusMax) {
                 bt.nCurStatus++;
-            else if (bt.nCurStatus > 0)
+            } else if (bt.nCurStatus > 0) {
                 bt.nCurStatus = 0;
+            }
 
-            if (bt.nGroup != -1)
+            if (bt.nGroup != -1) {
                 groupButtonUncheckOld(bt.nGroup, m_nCurButton);
+            }
 
             invalidateButton(m_nCurButton);
 
-            if (bt.nID != UID_INVALID)
+            if (bt.nID != UID_INVALID) {
                 m_pSkin->postCustomCommandMsg(bt.nID);
+            }
         }
     }
 
     return true;
 }
 
-void CSkinToolbar::onSize()
-{
+void CSkinToolbar::onSize() {
     // The whole toolbar can't have the tooltip
-    if (m_strTooltip.size())
+    if (m_strTooltip.size()) {
         m_strTooltip.resize(0);
+    }
 
     CUIObject::onSize();
 
-    if (m_visible)
+    if (m_visible) {
         addTooltip();
+    }
 }
 
-void CSkinToolbar::onTimer(int nId)
-{
-    if (m_dwBeginFadeinTime != 0)
-    {
+void CSkinToolbar::onTimer(int nId) {
+    if (m_timeBeginFadein != 0) {
         // In fade in, just redraw
         invalidate();
         return;
     }
 
-    if (m_bLBtDown)
-    {
-        if (m_nCurButton != -1)
-        {
-            if (m_vButtons[m_nCurButton].nID != UID_INVALID)
+    if (m_bLBtDown) {
+        if (m_nCurButton != -1) {
+            if (m_vButtons[m_nCurButton].nID != UID_INVALID) {
                 m_pSkin->postCustomCommandMsg(m_vButtons[m_nCurButton].nID);
+            }
         }
 
-        if (m_bContinuousBegin)
-        {
+        if (m_bContinuousBegin) {
             m_pSkin->unregisterTimerObject(this);
             m_pSkin->registerTimerObject(this, 100);
             m_bContinuousBegin = false;
         }
-    }
-    else
+    } else {
         m_pSkin->unregisterTimerObject(this);
+    }
 }
 
-bool CSkinToolbar::onMouseDrag(CPoint point)
-{
-    int        nOldCurButton = m_nCurButton;
-    bool    bUpdate = false;
+bool CSkinToolbar::onMouseDrag(CPoint point) {
+    int nOldCurButton = m_nCurButton;
+    bool bUpdate = false;
 
     m_nCurButton = getCurButton(point);
 
-    if (isPtIn(point))
-    {
-        if (!m_bLBtDown)
-        {
+    if (isPtIn(point)) {
+        if (!m_bLBtDown) {
             m_bLBtDown = true;
             bUpdate = true;
 
-            if (m_bHover)
+            if (m_bHover) {
                 m_bHover = false;
-            else
+            } else {
                 m_pSkin->setCaptureMouse(this);
+            }
         }
-    }
-    else
-    {
-        if (m_bLBtDown)
-        {
+    } else {
+        if (m_bLBtDown) {
             m_bLBtDown = false;
             bUpdate = true;
         }
     }
 
-    if (m_nCurButton != nOldCurButton || bUpdate)
+    if (m_nCurButton != nOldCurButton || bUpdate) {
         invalidate();
+    }
 
     return true;
 }
 
-bool CSkinToolbar::onMouseMove(CPoint point)
-{
-    int        nOldCurButton = m_nCurButton;
-    bool    bHoverOld = m_bHover;
+bool CSkinToolbar::onMouseMove(CPoint point) {
+    int nOldCurButton = m_nCurButton;
+    bool bHoverOld = m_bHover;
     m_nCurButton = getCurButton(point);
 
-    if (isPtIn(point))
-    {
-        if (m_bEnableHover)
-        {
+    if (isPtIn(point)) {
+        if (m_bEnableHover) {
             m_bHover = true;
             m_pSkin->setCaptureMouse(this);
         }
-    }
-    else
-    {
-        if (m_bHover)
-        {
+    } else {
+        if (m_bHover) {
             m_bHover = false;
             m_pSkin->releaseCaptureMouse(this);
         }
     }
 
-    if (m_nCurButton != nOldCurButton || bHoverOld != m_bHover)
+    if (m_nCurButton != nOldCurButton || bHoverOld != m_bHover) {
         invalidate();
+    }
 
     return true;
 }
 
-void CSkinToolbar::onLanguageChanged()
-{
-    for (int i = 0; i < (int)m_vButtons.size(); i++)
-    {
+void CSkinToolbar::onLanguageChanged() {
+    for (int i = 0; i < (int)m_vButtons.size(); i++) {
         m_vButtons[i].strText = _TL(m_vButtons[i].strTextEnglish.c_str());
-        if (m_vButtons[i].strTooltip.size())
+        if (m_vButtons[i].strTooltip.size()) {
             m_pSkin->getSkinFactory()->getTooltip(m_vButtons[i].nID, m_vButtons[i].strTooltip);
+        }
     }
 }
 
-void draw3DFrame(CRawGraph *canvas, CRect &rc, CColor &clrHigh, CColor &clrLow)
-{
-    CRawPen    penLow, penHigh;
+void draw3DFrame(CRawGraph *canvas, CRect &rc, CColor &clrHigh, CColor &clrLow) {
+    CRawPen penLow, penHigh;
 
     penLow.createSolidPen(1, clrLow);
     penHigh.createSolidPen(1, clrHigh);
@@ -419,10 +388,9 @@ void draw3DFrame(CRawGraph *canvas, CRect &rc, CColor &clrHigh, CColor &clrLow)
     canvas->line(rc.right, rc.bottom, rc.left, rc.bottom);
 }
 
-void drawSeperator(CRawGraph *canvas, CRect &rc, CColor &clrHigh, CColor &clrLow)
-{
-    CRawPen    penLow, penHigh;
-    int        x;
+void drawSeperator(CRawGraph *canvas, CRect &rc, CColor &clrHigh, CColor &clrLow) {
+    CRawPen penLow, penHigh;
+    int x;
 
     penLow.createSolidPen(1, clrLow);
     penHigh.createSolidPen(1, clrHigh);
@@ -437,158 +405,148 @@ void drawSeperator(CRawGraph *canvas, CRect &rc, CColor &clrHigh, CColor &clrLow
     canvas->line(x, rc.top, x, rc.bottom);
 }
 
-void CSkinToolbar::draw(CRawGraph *canvas)
-{
-    BT_DRAW_STATE        btDrawState = ROW_NORMAL;
+void CSkinToolbar::draw(CRawGraph *canvas) {
+    BT_DRAW_STATE btDrawState = ROW_NORMAL;
 
-    CRawGraph::CClipBoxAutoRecovery    autoCBR(canvas);
+    CRawGraph::CClipBoxAutoRecovery autoCBR(canvas);
     canvas->setClipBoundBox(m_rcObj);
 
-    int        x, y;
-    int        nHeight = m_rcObj.height();
+    int x, y;
+    int nHeight = m_rcObj.height();
 
-    if (m_bDrawBtText && m_font.isGood())
-    {
+    if (m_bDrawBtText && m_font.isGood()) {
         canvas->setFont(m_font.getFont());
         canvas->setTextColor(m_font.getTextColor(m_enable));
     }
 
-    if (m_imageBg.isValid())
+    if (m_imageBg.isValid()) {
         m_imageBg.blt(canvas, m_rcObj.left, m_rcObj.top, m_nMarginX, m_rcObj.height(), 0, 0);
+    }
 
-    if (m_nBlankX != INVALID_POS)
+    if (m_nBlankX != INVALID_POS) {
         m_image.blt(canvas, m_rcObj.left, m_rcObj.top, m_nMarginX, m_nImageHeight, m_nBlankX, 0);
+    }
 
     x = m_rcObj.left + m_nMarginX;
     y = m_rcObj.top;
 
-    for (int i = 0; i < (int)m_vButtons.size(); i++)
-    {
-        Button        &bt = m_vButtons[i];
-        int            nBtImageLeft;
+    for (int i = 0; i < (int)m_vButtons.size(); i++) {
+        Button &bt = m_vButtons[i];
+        int nBtImageLeft;
 
-        if (bt.bEnabled || bt.nLeftOfDiabled == -1)
-        {
+        if (bt.bEnabled || bt.nLeftOfDiabled == -1) {
             assert(bt.nCurStatus <= bt.nStatusMax);
             nBtImageLeft = bt.nLeftPositon[bt.nCurStatus];
 
-            if (i == m_nCurButton)
-            {
-                if (m_bLBtDown)
+            if (i == m_nCurButton) {
+                if (m_bLBtDown) {
                     btDrawState = ROW_DOWN;
-                else if (m_bHover)
+                } else if (m_bHover) {
                     btDrawState = ROW_HOVER;
-                else
+                } else {
                     btDrawState = ROW_NORMAL;
-            }
-            else
+                }
+            } else {
                 btDrawState = ROW_NORMAL;
-        }
-        else
-        {
+            }
+        } else {
             nBtImageLeft = bt.nLeftOfDiabled;
             btDrawState = ROW_NORMAL;
         }
 
-        if (bt.bSeperator)
+        if (bt.bSeperator) {
             btDrawState = ROW_NORMAL;
+        }
 
-        if (i == m_nCurButton && m_dwBeginFadeinTime != 0)
+        if (i == m_nCurButton && m_timeBeginFadein != 0) {
             drawCurButtonFadein(canvas, i, btDrawState, x, y, nHeight, nBtImageLeft);
-        else
+        } else {
             drawButton(canvas, i, btDrawState, x, y, nHeight, nBtImageLeft);
+        }
 
         x += bt.nWidth + m_nBtSpacesCX;
-        if (x >= m_rcObj.right)
+        if (x >= m_rcObj.right) {
             break;
+        }
 
         // draw button spaces?
-        if (m_nBtSpacesCX > 0 && m_nBlankX != INVALID_POS)
+        if (m_nBtSpacesCX > 0 && m_nBlankX != INVALID_POS) {
             m_image.blt(canvas, x - m_nBtSpacesCX, y, m_nBtSpacesCX, m_nImageHeight, m_nBlankX, 0);
+        }
     }
 
-    if (x < m_rcObj.right && m_nBlankX != INVALID_POS)
-    {
+    if (x < m_rcObj.right && m_nBlankX != INVALID_POS) {
         m_image.xTileBlt(canvas, x, y, m_rcObj.right - x, nHeight, m_nBlankX, 0, m_nBlankCX, nHeight);
-        if (m_imageBg.isValid())
+        if (m_imageBg.isValid()) {
             m_imageBg.xTileBlt(canvas, x, m_rcObj.top, m_rcObj.right - x, m_rcObj.height());
+        }
     }
 }
 
-void CSkinToolbar::setVisible(bool bVisible, bool bRedraw)
-{
+void CSkinToolbar::setVisible(bool bVisible, bool bRedraw) {
     CUIObject::setVisible(bVisible, bRedraw);
 
-    if (bVisible)
+    if (bVisible) {
         addTooltip();
-    else
+    } else {
         delTooltip();
+    }
 }
 
-bool CSkinToolbar::setProperty(cstr_t szProperty, cstr_t szValue)
-{
-    if (CUIObject::setProperty(szProperty, szValue))
-    {
+bool CSkinToolbar::setProperty(cstr_t szProperty, cstr_t szValue) {
+    if (CUIObject::setProperty(szProperty, szValue)) {
         return true;
     }
 
-    if (isPropertyName(szProperty, "DrawBtText"))
+    if (isPropertyName(szProperty, "DrawBtText")) {
         m_bDrawBtText = isTRUE(szValue);
-    else if (m_font.setProperty(szProperty, szValue))
+    } else if (m_font.setProperty(szProperty, szValue)) {
         return true;
-    else if (isPropertyName(szProperty, "BgImage"))
-    {
+    } else if (isPropertyName(szProperty, "BgImage")) {
         m_strImageBgFile = szValue;
         m_imageBg.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
         m_imageBg.getOrginalSize(m_imageBg.m_cx, m_imageBg.m_cy);
-    }
-    else if (isPropertyName(szProperty, "BgImageChecked"))
-    {
+    } else if (isPropertyName(szProperty, "BgImageChecked")) {
         m_strImageBgCheckedFile = szValue;
         m_imageBgChecked.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
         m_imageBgChecked.getOrginalSize(m_imageBgChecked.m_cx, m_imageBgChecked.m_cy);
-    }
-    else if (strcasecmp(szProperty, SZ_PN_IMAGE) == 0)
-    {
+    } else if (strcasecmp(szProperty, SZ_PN_IMAGE) == 0) {
         m_strImageFile = szValue;
         m_image.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
         m_image.getOrginalSize(m_image.m_cx, m_image.m_cy);
-    }
-    else if (isPropertyName(szProperty, "ImageHeight"))
+    } else if (isPropertyName(szProperty, "ImageHeight")) {
         m_nImageHeight = atoi(szValue);
-    else if (strcasecmp(szProperty, "units_x") == 0)
+    } else if (strcasecmp(szProperty, "units_x") == 0) {
         m_nUnitsOfX = atoi(szValue);
-    else if (strcasecmp(szProperty, "blank_x") == 0)
+    } else if (strcasecmp(szProperty, "blank_x") == 0) {
         m_nBlankX = atoi(szValue);
-    else if (strcasecmp(szProperty, "blank_cx") == 0)
+    } else if (strcasecmp(szProperty, "blank_cx") == 0) {
         m_nBlankCX = atoi(szValue);
-    else if (strcasecmp(szProperty, "seperator_x") == 0)
+    } else if (strcasecmp(szProperty, "seperator_x") == 0) {
         m_nSeperatorX = atoi(szValue);
-    else if (strcasecmp(szProperty, "seperator_cx") == 0)
+    } else if (strcasecmp(szProperty, "seperator_cx") == 0) {
         m_nSeperatorCX = atoi(szValue);
-    else if (strcasecmp(szProperty, "enablehover") == 0)
+    } else if (strcasecmp(szProperty, "enablehover") == 0) {
         m_bEnableHover = isTRUE(szValue);
-    else if (strcasecmp(szProperty, "MarginX") == 0)
+    } else if (strcasecmp(szProperty, "MarginX") == 0) {
         m_nMarginX = atoi(szValue);
-    else if (strcasecmp(szProperty, "MarginY") == 0)
+    } else if (strcasecmp(szProperty, "MarginY") == 0) {
         m_nMarginY = atoi(szValue);
-    else if (strcasecmp(szProperty, "ButtonSpacesCX") == 0)
+    } else if (strcasecmp(szProperty, "ButtonSpacesCX") == 0) {
         m_nBtSpacesCX = atoi(szValue);
-    else if (strcasecmp(szProperty, "FullStatusImage") == 0)
+    } else if (strcasecmp(szProperty, "FullStatusImage") == 0) {
         m_bFullStatusImage = isTRUE(szValue);
-    else if (isPropertyName(szProperty, "Fadein"))
-    {
+    } else if (isPropertyName(szProperty, "Fadein")) {
         m_bFadein = isTRUE(szValue);
-    }
-    else
+    } else {
         return false;
+    }
 
     return true;
 }
 
 #ifdef _SKIN_EDITOR_
-void CSkinToolbar::enumProperties(CUIObjProperties &listProperties)
-{
+void CSkinToolbar::enumProperties(CUIObjProperties &listProperties) {
     CUIObject::enumProperties(listProperties);
 
     listProperties.addPropImageFile(SZ_PN_IMAGE, m_strImageFile.c_str());
@@ -604,29 +562,26 @@ void CSkinToolbar::enumProperties(CUIObjProperties &listProperties)
 }
 #endif // _SKIN_EDITOR_
 
-int CSkinToolbar::fromXML(SXNode *pXmlNode)
-{
-    int        nRet;
+int CSkinToolbar::fromXML(SXNode *pXmlNode) {
+    int nRet;
 
     nRet = CUIObject::fromXML(pXmlNode);
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         return nRet;
+    }
 
-    for (SXNode::iterator it = pXmlNode->listChildren.begin(); 
-        it != pXmlNode->listChildren.end(); ++it)
-    {
-        SXNode        *pChild = *it;
-
-        if (strcasecmp(pChild->name.c_str(), "button") == 0)
+    for (SXNode::iterator it = pXmlNode->listChildren.begin();
+    it != pXmlNode->listChildren.end(); ++it)
         {
-            Button    bt;
+        SXNode *pChild = *it;
+
+        if (strcasecmp(pChild->name.c_str(), "button") == 0) {
+            Button bt;
             bt.nWidthImage = bt.nWidth = m_nUnitsOfX;
             bt.fromXML(this, pChild);
             m_vButtons.push_back(bt);
-        }
-        else if (strcasecmp(pChild->name.c_str(), "seperator") == 0)
-        {
-            Button    bt;
+        } else if (strcasecmp(pChild->name.c_str(), "seperator") == 0) {
+            Button bt;
             bt.bSeperator = true;
             bt.nLeftPositon[0] = bt.nLeftOfDiabled = (m_nSeperatorX == -1 ? m_nBlankX : m_nSeperatorX);
             bt.nWidthImage = bt.nWidth = (m_nSeperatorX == -1 ? m_nBlankCX : m_nSeperatorCX);
@@ -638,72 +593,64 @@ int CSkinToolbar::fromXML(SXNode *pXmlNode)
 }
 
 #ifdef _SKIN_EDITOR_
-void CSkinToolbar::onToXMLChild(CXMLWriter &xmlStream)
-{
-    for (int i = 0; i < (int)m_vButtons.size(); i++)
-    {
-        Button    &bt = m_vButtons[i];
+void CSkinToolbar::onToXMLChild(CXMLWriter &xmlStream) {
+    for (int i = 0; i < (int)m_vButtons.size(); i++) {
+        Button &bt = m_vButtons[i];
 
         bt.toXML(this, xmlStream);
     }
 }
 #endif // _SKIN_EDITOR_
 
-void CSkinToolbar::invalidateButton(int nButton)
-{
+void CSkinToolbar::invalidateButton(int nButton) {
     invalidate();
 }
 
-int CSkinToolbar::getCurButton(CPoint pt)
-{
-    if (pt.y <= m_rcObj.top || pt.y >= m_rcObj.bottom)
+int CSkinToolbar::getCurButton(CPoint pt) {
+    if (pt.y <= m_rcObj.top || pt.y >= m_rcObj.bottom) {
         return -1;
-    if (pt.x <= m_rcObj.left + m_nMarginX || pt.x >= m_rcObj.right)
+    }
+    if (pt.x <= m_rcObj.left + m_nMarginX || pt.x >= m_rcObj.right) {
         return -1;
+    }
 
     pt.x -= m_rcObj.left + m_nMarginX;
     pt.y -= m_rcObj.top;
 
-    int        x = 0;
+    int x = 0;
 
-    for (int i = 0; i < (int)m_vButtons.size(); i++)
-    {
-        Button        &bt = m_vButtons[i];
+    for (int i = 0; i < (int)m_vButtons.size(); i++) {
+        Button &bt = m_vButtons[i];
         x += bt.nWidth;
-        if (pt.x < x)
-        {
-            if (bt.bSeperator)
+        if (pt.x < x) {
+            if (bt.bSeperator) {
                 return -1;
+            }
             return i;
         }
         x += m_nBtSpacesCX;
-        if (pt.x < x)
+        if (pt.x < x) {
             return -1;
+        }
     }
 
     return -1;
 }
 
-void CSkinToolbar::groupButtonUncheckOld(int nGroup, int nCurButton)
-{
+void CSkinToolbar::groupButtonUncheckOld(int nGroup, int nCurButton) {
     assert(nGroup != -1);
-    for (int i = 0; i < (int)m_vButtons.size(); i++)
-    {
-        Button        &bt = m_vButtons[i];
-        if (bt.nGroup == nGroup && i != nCurButton)
-        {
+    for (int i = 0; i < (int)m_vButtons.size(); i++) {
+        Button &bt = m_vButtons[i];
+        if (bt.nGroup == nGroup && i != nCurButton) {
             bt.nCurStatus = 0;
         }
     }
 }
 
-bool CSkinToolbar::isCheck(int nCmdID)
-{
-    for (int i = 0; i < (int)m_vButtons.size(); i++)
-    {
-        Button        &bt = m_vButtons[i];
-        if (bt.nID == nCmdID)
-        {
+bool CSkinToolbar::isCheck(int nCmdID) {
+    for (int i = 0; i < (int)m_vButtons.size(); i++) {
+        Button &bt = m_vButtons[i];
+        if (bt.nID == nCmdID) {
             return bt.nCurStatus == Button::STATUS_CHECKED;
         }
     }
@@ -711,68 +658,58 @@ bool CSkinToolbar::isCheck(int nCmdID)
     return false;
 }
 
-void CSkinToolbar::setCheck(int nCmdID, bool bCheck, bool bRedraw)
-{
-    for (int i = 0; i < (int)m_vButtons.size(); i++)
-    {
-        Button        &bt = m_vButtons[i];
-        if (bt.nID == nCmdID)
-        {
-            if (bCheck)
-            {
-                if (bt.nStatusMax >= Button::STATUS_CHECKED)
-                {
+void CSkinToolbar::setCheck(int nCmdID, bool bCheck, bool bRedraw) {
+    for (int i = 0; i < (int)m_vButtons.size(); i++) {
+        Button &bt = m_vButtons[i];
+        if (bt.nID == nCmdID) {
+            if (bCheck) {
+                if (bt.nStatusMax >= Button::STATUS_CHECKED) {
                     bt.nCurStatus = Button::STATUS_CHECKED;
-                    if (bt.nGroup != -1)
+                    if (bt.nGroup != -1) {
                         groupButtonUncheckOld(bt.nGroup, i);
-                    if (bRedraw)
+                    }
+                    if (bRedraw) {
                         invalidate();
+                    }
+                }
+            } else {
+                bt.nCurStatus = Button::STATUS_NORMAL;
+            }
+            return;
+        }
+    }
+}
+
+void CSkinToolbar::setBtStatus(int nCmdID, int nStatus, bool bRedraw) {
+    for (int i = 0; i < (int)m_vButtons.size(); i++) {
+        Button &bt = m_vButtons[i];
+        if (bt.nID == nCmdID) {
+            if (nStatus <= bt.nStatusMax) {
+                bt.nCurStatus = nStatus;
+                if (bRedraw) {
+                    invalidate();
                 }
             }
-            else
-                bt.nCurStatus = Button::STATUS_NORMAL;
             return;
         }
     }
 }
 
-void CSkinToolbar::setBtStatus(int nCmdID, int nStatus, bool bRedraw)
-{
-    for (int i = 0; i < (int)m_vButtons.size(); i++)
-    {
-        Button        &bt = m_vButtons[i];
-        if (bt.nID == nCmdID)
-        {
-            if (nStatus <= bt.nStatusMax)
-            {
-                bt.nCurStatus = nStatus;
-                if (bRedraw)
-                    invalidate();
-            }
-            return;
-        }
-    }
-}
-
-int CSkinToolbar::getBtStatus(int nCmdID)
-{
-    for (int i = 0; i < (int)m_vButtons.size(); i++)
-    {
-        Button        &bt = m_vButtons[i];
-        if (bt.nID == nCmdID)
+int CSkinToolbar::getBtStatus(int nCmdID) {
+    for (int i = 0; i < (int)m_vButtons.size(); i++) {
+        Button &bt = m_vButtons[i];
+        if (bt.nID == nCmdID) {
             return bt.nCurStatus;
+        }
     }
 
     return 0;
 }
 
-bool CSkinToolbar::isBtEnabled(int nCmdID)
-{
-    for (int i = 0; i < (int)m_vButtons.size(); i++)
-    {
-        Button        &bt = m_vButtons[i];
-        if (bt.nID == nCmdID)
-        {
+bool CSkinToolbar::isBtEnabled(int nCmdID) {
+    for (int i = 0; i < (int)m_vButtons.size(); i++) {
+        Button &bt = m_vButtons[i];
+        if (bt.nID == nCmdID) {
             return bt.bEnabled;
         }
     }
@@ -780,26 +717,20 @@ bool CSkinToolbar::isBtEnabled(int nCmdID)
     return false;
 }
 
-void CSkinToolbar::enableBt(int nCmdID, bool bEnable)
-{
-    for (int i = 0; i < (int)m_vButtons.size(); i++)
-    {
-        Button        &bt = m_vButtons[i];
-        if (bt.nID == nCmdID)
-        {
+void CSkinToolbar::enableBt(int nCmdID, bool bEnable) {
+    for (int i = 0; i < (int)m_vButtons.size(); i++) {
+        Button &bt = m_vButtons[i];
+        if (bt.nID == nCmdID) {
             bt.bEnabled = bEnable;
             return;
         }
     }
 }
 
-bool CSkinToolbar::isButtonExist(int nCmdID)
-{
-    for (int i = 0; i < (int)m_vButtons.size(); i++)
-    {
-        Button        &bt = m_vButtons[i];
-        if (bt.nID == nCmdID)
-        {
+bool CSkinToolbar::isButtonExist(int nCmdID) {
+    for (int i = 0; i < (int)m_vButtons.size(); i++) {
+        Button &bt = m_vButtons[i];
+        if (bt.nID == nCmdID) {
             return true;
         }
     }
@@ -807,53 +738,50 @@ bool CSkinToolbar::isButtonExist(int nCmdID)
     return false;
 }
 
-void CSkinToolbar::calculateBtWidth(CRawGraph *canvas, Button &bt)
-{
-    if (m_bDrawBtText && bt.strText.size())
-    {
+void CSkinToolbar::calculateBtWidth(CRawGraph *canvas, Button &bt) {
+    if (m_bDrawBtText && bt.strText.size()) {
         CSize size;
-        if (canvas->getTextExtentPoint32(bt.strText.c_str(), bt.strText.size(), &size))
-        {
+        if (canvas->getTextExtentPoint32(bt.strText.c_str(), bt.strText.size(), &size)) {
             const int TEXT_SEPERATOR_WIDTH = 20;
-            if (size.cx + TEXT_SEPERATOR_WIDTH > bt.nWidthImage)
+            if (size.cx + TEXT_SEPERATOR_WIDTH > bt.nWidthImage) {
                 bt.nWidth = (int16_t)size.cx + TEXT_SEPERATOR_WIDTH;
-            else
+            } else {
                 bt.nWidthImage = bt.nWidth;
+            }
         }
     }
 }
 
-void CSkinToolbar::drawButton(CRawGraph *canvas, int nButton, BT_DRAW_STATE btDrawState, int x, int y, int nHeight, int nBtImageLeft)
-{
+void CSkinToolbar::drawButton(CRawGraph *canvas, int nButton, BT_DRAW_STATE btDrawState, int x, int y, int nHeight, int nBtImageLeft) {
     Button &bt = m_vButtons[nButton];
 
     calculateBtWidth(canvas, bt);
 
-    int        xDrawImage = x + (bt.nWidth - bt.nWidthImage) / 2;
+    int xDrawImage = x + (bt.nWidth - bt.nWidthImage) / 2;
 
-    CSFImage    *pImage = nullptr;
-    if (bt.nCurStatus == Button::STATUS_CHECKED)
+    CSFImage *pImage = nullptr;
+    if (bt.nCurStatus == Button::STATUS_CHECKED) {
         pImage = &m_imageBgChecked;
-    else
+    } else {
         pImage = &m_imageBg;
+    }
 
     const int BUTTON_BG_BORDER = 5;
-    if (pImage->isValid())
+    if (pImage->isValid()) {
         pImage->xScaleBlt(canvas, x, y, bt.nWidth, m_rcObj.height(),
             BUTTON_BG_BORDER, pImage->m_cx - BUTTON_BG_BORDER, true);
+    }
 
     // draw Button text
-    if (m_bDrawBtText && bt.strText.size())
-    {
-        CRect    rcText(x, y + m_nImageHeight, x + bt.nWidth, y + nHeight);
+    if (m_bDrawBtText && bt.strText.size()) {
+        CRect rcText(x, y + m_nImageHeight, x + bt.nWidth, y + nHeight);
 
         canvas->drawText(bt.strText.c_str(), bt.strText.size(), rcText, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     }
 
-    if (m_bFullStatusImage)
-    {
+    if (m_bFullStatusImage) {
         //
-        int        nBtImageTop;
+        int nBtImageTop;
 
         nBtImageTop = m_nImageHeight * btDrawState;
 
@@ -863,31 +791,31 @@ void CSkinToolbar::drawButton(CRawGraph *canvas, int nButton, BT_DRAW_STATE btDr
         return;
     }
 
-    CColor                clrHigh(RGB(255, 255, 255)), clrLow(RGB(128, 128,128));
+    CColor clrHigh(RGB(255, 255, 255)), clrLow(RGB(128, 128,128));
 
-    if (btDrawState == ROW_DOWN)
+    if (btDrawState == ROW_DOWN) {
         m_image.blt(canvas, xDrawImage + 1, y + 1, bt.nWidthImage - 1, m_nImageHeight - 1,
-        nBtImageLeft, 0);
-    else
+            nBtImageLeft, 0);
+    } else {
         m_image.blt(canvas, xDrawImage, y, bt.nWidthImage, m_nImageHeight,
-        nBtImageLeft, 0);
+            nBtImageLeft, 0);
+    }
 
-    if (btDrawState != ROW_NORMAL)
-    {
-        CRect    rc;
+    if (btDrawState != ROW_NORMAL) {
+        CRect rc;
         rc.left = x;
         rc.top = y + m_nMarginY;
         rc.right = rc.left + bt.nWidth - 1;
         rc.bottom = y + nHeight - m_nMarginY - 1;
-        if (btDrawState == ROW_HOVER)
+        if (btDrawState == ROW_HOVER) {
             draw3DFrame(canvas, rc, clrHigh, clrLow);
-        else if (btDrawState == ROW_DOWN)
+        } else if (btDrawState == ROW_DOWN) {
             draw3DFrame(canvas, rc, clrLow, clrHigh);
+        }
     }
 
-    if (bt.bSeperator)
-    {
-        CRect    rc;
+    if (bt.bSeperator) {
+        CRect rc;
         rc.left = x;
         rc.top = y + m_nMarginY;
         rc.right = rc.left + bt.nWidth - 1;
@@ -896,21 +824,19 @@ void CSkinToolbar::drawButton(CRawGraph *canvas, int nButton, BT_DRAW_STATE btDr
     }
 }
 
-void CSkinToolbar::drawCurButtonFadein(CRawGraph *canvas, int nButton, BT_DRAW_STATE btDrawState, int x, int y, int nHeight, int nBtImageLeft)
-{
+void CSkinToolbar::drawCurButtonFadein(CRawGraph *canvas, int nButton, BT_DRAW_STATE btDrawState, int x, int y, int nHeight, int nBtImageLeft) {
     assert(m_bFullStatusImage);
 
-    uint32_t        dwTimeCur = getTickCount();
+    auto now = getTickCount();
 
-    if (dwTimeCur - m_dwBeginFadeinTime >= FADE_BUTTON_TIME_OUT)
-    {
-        m_dwBeginFadeinTime = 0;
+    if (now - m_timeBeginFadein >= FADE_BUTTON_TIME_OUT) {
+        m_timeBeginFadein = 0;
         m_pSkin->unregisterTimerObject(this);
         drawButton(canvas, nButton, btDrawState, x, y, nHeight, nBtImageLeft);
         return;
     }
-    int        nAlpha = (dwTimeCur - m_dwBeginFadeinTime) * 255 / FADE_BUTTON_TIME_OUT;
-    int        nAlphaOld = canvas->getOpacityPainting();
+    int nAlpha = (int)(now - m_timeBeginFadein) * 255 / FADE_BUTTON_TIME_OUT;
+    int nAlphaOld = canvas->getOpacityPainting();
 
     canvas->setOpacityPainting((255 - nAlpha) * nAlphaOld / 255);
 
@@ -923,43 +849,39 @@ void CSkinToolbar::drawCurButtonFadein(CRawGraph *canvas, int nButton, BT_DRAW_S
     canvas->setOpacityPainting(nAlphaOld);
 }
 
-void CSkinToolbar::addTooltip()
-{
-    CRect    rcBt;
-    int        i;
+void CSkinToolbar::addTooltip() {
+    CRect rcBt;
+    int i;
 
     // add tooltip of all the buttons.
     rcBt.left = m_rcObj.left + m_nMarginX;
     rcBt.top = m_rcObj.top;
     rcBt.bottom = m_rcObj.bottom;
 
-    for (i = 0; i < (int)m_vButtons.size(); i++)
-    {
-        Button        &bt = m_vButtons[i];
-        if (bt.strTooltip.size())
-        {
-            if (rcBt.left + bt.nWidth < m_rcObj.right)
+    for (i = 0; i < (int)m_vButtons.size(); i++) {
+        Button &bt = m_vButtons[i];
+        if (bt.strTooltip.size()) {
+            if (rcBt.left + bt.nWidth < m_rcObj.right) {
                 rcBt.right = rcBt.left + bt.nWidth;
-            else
+            } else {
                 rcBt.right = m_rcObj.right;
+            }
 
             m_pSkin->delTool(bt.nAutoUniID);
             m_pSkin->addTool(_TL(bt.strTooltip.c_str()), &rcBt, bt.nAutoUniID);
         }
 
         rcBt.left += bt.nWidth + m_nBtSpacesCX;
-        if (rcBt.left >= m_rcObj.right)
+        if (rcBt.left >= m_rcObj.right) {
             break;
+        }
     }
 }
 
-void CSkinToolbar::delTooltip()
-{
-    for (int i = 0; i < (int)m_vButtons.size(); i++)
-    {
-        Button        &bt = m_vButtons[i];
-        if (bt.strTooltip.size())
-        {
+void CSkinToolbar::delTooltip() {
+    for (int i = 0; i < (int)m_vButtons.size(); i++) {
+        Button &bt = m_vButtons[i];
+        if (bt.strTooltip.size()) {
             m_pSkin->delTool(bt.nAutoUniID);
         }
     }

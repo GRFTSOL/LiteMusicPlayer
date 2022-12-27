@@ -9,7 +9,7 @@ class CPagePfSystemRoot : public CPagePfBase
 public:
     CPagePfSystemRoot();
 
-    void onInitialUpdate();
+    void onInitialUpdate() override;
 
     // bool onCustomCommand(int nId);
 

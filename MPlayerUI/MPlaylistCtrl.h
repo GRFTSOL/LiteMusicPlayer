@@ -7,12 +7,12 @@ public:
     CMPlaylistCtrl();
     virtual ~CMPlaylistCtrl();
 
-    void onCreate();
-    void onEvent(const IEvent *pEvent);
+    void onCreate() override;
+    void onEvent(const IEvent *pEvent) override;
 
-    void onKeyDown(uint32_t nChar, uint32_t nFlags);
+    void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
 
-    void sendNotifyEvent(CSkinListCtrlEventNotify::Command cmd, int nClickedRow, int nClickedCol);
+    void sendNotifyEvent(CSkinListCtrlEventNotify::Command cmd, int nClickedRow, int nClickedCol) override;
 
     void deleteSelectedItems();
     void offsetAllSelectedItems(bool bMoveDown);
@@ -28,7 +28,7 @@ public:
 protected:
     void updatePlaylist(CEventPlaylistChanged *pEventPlaylistChanged = nullptr);
 
-    int getItemImageIndex(int nItem);
+    int getItemImageIndex(int nItem) override;
 
     int            m_nNowPlaying;
 

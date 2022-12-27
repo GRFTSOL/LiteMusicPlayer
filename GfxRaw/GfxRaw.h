@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef _ML_GFX_RAW_H_
 #define _ML_GFX_RAW_H_
 
@@ -13,5 +15,6 @@
 #include "RawPen.h"
 #include "RawGraph.h"
 #include "RawBmpFont.h"
+
 
 #endif // _ML_GFX_RAW_H_

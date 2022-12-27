@@ -19,41 +19,41 @@ public:
     CMPSkinWnd();
     virtual ~CMPSkinWnd();
 
-    virtual void onPreCreate(bool &bTopmost, bool &bVisible);
+    virtual void onPreCreate(bool &bTopmost, bool &bVisible) override;
 
-    virtual void onCreate();
-    virtual void onEvent(const IEvent *pEvent) { };
+    virtual void onCreate() override;
+    virtual void onEvent(const IEvent *pEvent) override { };
 
-    void onCommand(uint32_t uID, uint32_t nNotifyCode);
+    void onCommand(uint32_t uID, uint32_t nNotifyCode) override;
 
-    bool onCustomCommand(int nId);
+    bool onCustomCommand(int nId) override;
 
-    void onUIObjNotify(IUIObjNotify *pNotify);
+    void onUIObjNotify(IUIObjNotify *pNotify) override;
 
-    void onKeyDown(uint32_t nChar, uint32_t nFlags);
+    void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
 
-    void onSizeModeChanged(WndSizeMode sizeMode);
+    void onSizeModeChanged(WndSizeMode sizeMode) override;
 
-    void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar);
+    void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override;
 
-    virtual void onSkinLoaded();
+    virtual void onSkinLoaded() override;
 
-    virtual void onAddUIObj(CUIObject *pObj);
+    virtual void onAddUIObj(CUIObject *pObj) override;
 
-    virtual void onRemoveUIObj(CUIObject *pObj);
+    virtual void onRemoveUIObj(CUIObject *pObj) override;
 
-    virtual bool setProperty(cstr_t szProperty, cstr_t szValue);
+    virtual bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 
-    virtual void closeSkin();
+    virtual void closeSkin() override;
 
 
 public:
     // IUICheckStatus interface
-    virtual bool getChecked(uint32_t nID, bool &bChecked);
-    virtual bool getRadioChecked(vector<uint32_t> &vIDs, uint32_t &nIDChecked);
+    virtual bool getChecked(uint32_t nID, bool &bChecked) override;
+    virtual bool getRadioChecked(vector<uint32_t> &vIDs, uint32_t &nIDChecked) override;
 
-    virtual void postCustomCommandMsg(int nId);
-    virtual void postShortcutKeyCmd(int nId);
+    virtual void postCustomCommandMsg(int nId) override;
+    virtual void postShortcutKeyCmd(int nId) override;
 
 #ifdef _WIN32_DESKTOP
 protected:

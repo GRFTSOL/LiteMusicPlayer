@@ -144,7 +144,7 @@ bool CMediaLibTreeProvider::chToChild(int nIndex)
         nRet = m_mediaLib->getAllArtist(&pvStr);
         if (nRet == ERR_OK)
         {
-            int        nCount = pvStr->size();
+            int nCount = (int)pvStr->size();
             for (int i = 0; i < nCount; i++)
             {
                 newitem.name = pvStr->at(i);
@@ -173,7 +173,7 @@ bool CMediaLibTreeProvider::chToChild(int nIndex)
         nRet = m_mediaLib->getAllAlbum(&pvStr);
         if (nRet == ERR_OK)
         {
-            int        nCount = pvStr->size();
+            int nCount = (int)pvStr->size();
             for (int i = 0; i < nCount; i++)
             {
                 newitem.name = pvStr->at(i);
@@ -214,7 +214,7 @@ bool CMediaLibTreeProvider::chToChild(int nIndex)
         nRet = m_mediaLib->getAlbumOfArtist(item.getValue(), &pvStr);
         if (nRet == ERR_OK)
         {
-            int        nCount = pvStr->size();
+            int nCount = (int)pvStr->size();
             for (int i = 0; i < nCount; i++)
             {
                 newitem.name = pvStr->at(i);
@@ -480,7 +480,7 @@ bool CMPMediaLibCmdHandler::onCommand(int nId)
                         vIndex.push_back(nSel);
                         nSel = pMediaList->getNextSelectedItem(nSel);
                     }
-                    for (int i = vIndex.size() - 1; i >= 0; i--)
+                    for (int i = (int)vIndex.size() - 1; i >= 0; i--)
                     {
                         nSel = vIndex[i];
                         if (playlist->getItem(nSel, &media) == ERR_OK)

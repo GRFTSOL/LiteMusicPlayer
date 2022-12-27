@@ -23,7 +23,7 @@ public:
 
     void onTimer(int nId);
 
-    virtual bool setProperty(cstr_t szProperty, cstr_t szValue);
+    virtual bool setProperty(cstr_t szProperty, cstr_t szValue) override;
     void enumProperties(CUIObjProperties &listProperties);
 
 protected:

@@ -7,8 +7,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 
-class CClientCom
-{
+class CClientCom {
 public:
     CClientCom();
     virtual ~CClientCom();
@@ -28,15 +27,14 @@ public:
     SOCKET getSocket() { return m_s; }
 
 protected:
-    SOCKET        m_s;
+    SOCKET                      m_s;
 
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 
-class CNetFile
-{
+class CNetFile {
 public:
     CNetFile();
     ~CNetFile();
@@ -55,6 +53,6 @@ public:
     int write(const char *szBuffer, int nLen, int *pnWrite);
 
 protected:
-    SOCKET        m_s;
+    SOCKET                      m_s;
 
 };

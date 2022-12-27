@@ -2,7 +2,7 @@
     Created  :    2001-12-15 2:36:55
     FileName :    SkinWnd.cpp
     Author   :    xhy
-    
+
     Purpose  :    
 *********************************************************************/
 
@@ -15,75 +15,74 @@
 #include "api-js/SkinJsAPI.hpp"
 
 
-#define _SZ_SKINWND            "skinwnd"
+#define _SZ_SKINWND         "skinwnd"
 
 
-#define TIMER_ID_BEG_ALLOC        120
-#define TIMER_ID_TINY_JS_VM       116
-#define TIMER_ID_ANIMATION        117
-#define TIMER_ID_DYNAMIC_TRANS    118
-#define TIMER_ID_MOUSE_INACTIVE   119
+#define TIMER_ID_BEG_ALLOC  120
+#define TIMER_ID_TINY_JS_VM 116
+#define TIMER_ID_ANIMATION  117
+#define TIMER_ID_DYNAMIC_TRANS  118
+#define TIMER_ID_MOUSE_INACTIVE 119
 
 #define TIMER_SPAN_MOUSE_INACTIVE    (3 * 1000)
 
-#define TIMER_SPAN_DYNAMIC_TRANS    30
-#define TIME_OUT_TRANS_FADEIN        500
-#define TIME_OUT_ANIMATION        30
+#define TIMER_SPAN_DYNAMIC_TRANS 30
+#define TIME_OUT_TRANS_FADEIN   500
+#define TIME_OUT_ANIMATION      30
 
 #define _TRANSLUCENCY_ENABLED
 
-bool isWndOutOfScreen(const CRect &rc)
-{
-    CRect        rcRestrict;
+bool isWndOutOfScreen(const CRect &rc) {
+    CRect rcRestrict;
 
-    if (getMonitorRestrictRect(rc, rcRestrict))
-    {
+    if (getMonitorRestrictRect(rc, rcRestrict)) {
         return ((rc.right < rcRestrict.left + 20) || (rc.left > rcRestrict.right - 20) ||
             (rc.bottom < rcRestrict.top + 10) || (rc.top > rcRestrict.bottom - 40));
-    }
-    else
+    } else {
         return false;
+    }
 }
 
 
 template<class _TCHAR>
-uint32_t getColorValue_t(_TCHAR *szColor, uint32_t nDefault)
-{
-    uint32_t    uRet = 0;
+uint32_t getColorValue_t(_TCHAR *szColor, uint32_t nDefault) {
+    uint32_t uRet = 0;
 
-    if (*szColor == '#')
+    if (*szColor == '#') {
         szColor++;
+    }
 
-    if (*szColor == '\0')
+    if (*szColor == '\0') {
         return nDefault;
+    }
 
-    int        n;
+    int n;
 
-    while (*szColor)
-    {
-        if (*szColor >= '0' && *szColor <= '9')
+    while (*szColor) {
+        if (*szColor >= '0' && *szColor <= '9') {
             n = *szColor - '0';
-        else if (*szColor >= 'a' && *szColor <= 'f')
+        } else if (*szColor >= 'a' && *szColor <= 'f') {
             n = 10 + *szColor - 'a';
-        else if (*szColor >= 'A' && *szColor <= 'F')
+        } else if (*szColor >= 'A' && *szColor <= 'F') {
             n = 10 + *szColor - 'A';
-        else
+        } else {
             break;
+        }
 
         uRet = uRet * 16 + n;
         szColor++;
     }
 
-    if (*szColor != '\0')
+    if (*szColor != '\0') {
         return nDefault;
+    }
 
     uRet = ((uRet & 0xFF) << 16) + (uRet & 0xFF00) + ((uRet & 0xFF0000) >> 16);
 
-    return uRet;    
+    return uRet;
 }
 
-bool getRectValue(cstr_t szValue, CSFImage &image)
-{
+bool getRectValue(cstr_t szValue, CSFImage &image) {
     int x, y, cx, cy;
     if (scan4IntX(szValue, x, y, cx, cy)) {
         image.setXYWH(x, y, cx, cy);
@@ -92,24 +91,22 @@ bool getRectValue(cstr_t szValue, CSFImage &image)
     return false;
 }
 
-bool getRectValue(cstr_t szValue, int &x, int &y, int &cx, int &cy)
-{
+bool getRectValue(cstr_t szValue, int &x, int &y, int &cx, int &cy) {
     return scan4IntX(szValue, x, y, cx, cy);
 }
 
-bool getRectValue(cstr_t szValue, CRect &rc)
-{
-    if (!scan4IntX(szValue, rc.left, rc.top, rc.right, rc.bottom))
+bool getRectValue(cstr_t szValue, CRect &rc) {
+    if (!scan4IntX(szValue, rc.left, rc.top, rc.right, rc.bottom)) {
         return false;
+    }
     rc.right += rc.left;
     rc.bottom += rc.top;
     return true;
 }
 
 
-string colorToStr(const CColor &clr)
-{
-    char                szValue[128];
+string colorToStr(const CColor &clr) {
+    char szValue[128];
 
     stringFromColor(szValue, clr.get());
 
@@ -117,18 +114,16 @@ string colorToStr(const CColor &clr)
 }
 
 // FgColor="#FFFFFF"
-void getColorValue(CColor &clr, cstr_t szColor)
-{
+void getColorValue(CColor &clr, cstr_t szColor) {
     clr.set(stringToColor(szColor, clr.get()));
 }
 
-int getMenuKey(cstr_t szText)
-{
-    while (*szText && *szText != '&')
+int getMenuKey(cstr_t szText) {
+    while (*szText && *szText != '&') {
         szText++;
+    }
 
-    if (*szText == '&')
-    {
+    if (*szText == '&') {
         return szText[1];
     }
 
@@ -138,8 +133,7 @@ int getMenuKey(cstr_t szText)
 
 //////////////////////////////////////////////////////////////////////
 
-CSkinWnd::CSkinWnd()
-{
+CSkinWnd::CSkinWnd() {
     m_bFreeOnDestory = false;
     m_bManageBySkinFactory = true;
 
@@ -186,7 +180,7 @@ CSkinWnd::CSkinWnd()
 
     m_bIgnoreNextOnCharMsg = false;
 
-    m_nTimeLatestMouseMsg = 0;
+    m_timeLatestMouseMsg = 0;
     m_bMouseActive = false;
 
     m_animateType = AT_UNKNOWN;
@@ -213,13 +207,11 @@ CSkinWnd::CSkinWnd()
 #endif
 }
 
-CSkinWnd::~CSkinWnd()
-{
+CSkinWnd::~CSkinWnd() {
     closeSkin();
 }
 
-int CSkinWnd::create(SkinWndStartupInfo &skinWndStartupInfo, CSkinFactory *pSkinFactory, bool bToolWindow, bool bTopmost, bool bVisible)
-{
+int CSkinWnd::create(SkinWndStartupInfo &skinWndStartupInfo, CSkinFactory *pSkinFactory, bool bToolWindow, bool bTopmost, bool bVisible) {
     m_pSkinFactory = pSkinFactory;
     m_strSkinWndName = skinWndStartupInfo.strSkinWnd;
     m_mapExchangePool = skinWndStartupInfo.mapExchangePool;
@@ -236,55 +228,54 @@ int CSkinWnd::create(SkinWndStartupInfo &skinWndStartupInfo, CSkinFactory *pSkin
     return ERR_OK;
 }
 
-void CSkinWnd::destroy()
-{
+void CSkinWnd::destroy() {
     m_bOnDestroy = true;
 
     Window::destroy();
 }
 
-int CSkinWnd::openDefaultSkin()
-{
-    if (m_strSkinWndName.empty())
+int CSkinWnd::openDefaultSkin() {
+    if (m_strSkinWndName.empty()) {
         return ERR_NOT_FOUND;
+    }
 
-    string            strSkinWndName = m_strSkinWndName;
+    string strSkinWndName = m_strSkinWndName;
 
     return openSkin(strSkinWndName.c_str());
 }
 
-int CSkinWnd::openSkin(cstr_t szSkinWndName)
-{
-    SXNode            *pNode;
-    CSimpleXML        xml;
+int CSkinWnd::openSkin(cstr_t szSkinWndName) {
+    SXNode *pNode;
+    CSimpleXML xml;
 
     // before load it we close old first.
     closeSkin();
 
     pNode = m_pSkinFactory->getSkinWndNode(szSkinWndName);
-    if (!pNode)
-    {
+    if (!pNode) {
         int nRet = m_pSkinFactory->loadAppResSkinWndXml(szSkinWndName, xml);
-        if (nRet != ERR_OK)
+        if (nRet != ERR_OK) {
             return nRet;
+        }
         pNode = xml.m_pRoot;
     }
 
     m_strSkinWndName = szSkinWndName;
 
-    CAutoRedrawLock    redrawLock(this);
+    CAutoRedrawLock redrawLock(this);
 
     return fromXML(pNode);
 }
 
-void CSkinWnd::closeSkin()
-{
-    if (!m_bSkinOpened)
+void CSkinWnd::closeSkin() {
+    if (!m_bSkinOpened) {
         return;
+    }
 
     // the skin was opened before, so save latest settings.
-    if (m_bRememberSizePos)
+    if (m_bRememberSizePos) {
         saveWndPos();
+    }
 
     killTimer(TIMER_ID_ANIMATION);
     m_listAnimations.clear();
@@ -305,20 +296,17 @@ void CSkinWnd::closeSkin()
     killTimer(TIMER_ID_TINY_JS_VM);
 
     if (m_vm) {
-        auto ctx = m_vm->defaultRuntime()->mainCtx();
         delete m_vm;
         m_vm = nullptr;
     }
 
 #ifdef _WIN32_DESKTOP
-    if (m_bWindowsAppearance)
-    {
+    if (m_bWindowsAppearance) {
         SetWindowLong(m_hWnd, GWL_STYLE, GetWindowLong(m_hWnd, GWL_STYLE) & ~(WS_CAPTION | WS_THICKFRAME));
         ::setWindowPos(m_hWnd, nullptr, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED | SWP_NOOWNERZORDER | SWP_NOMOVE);
         m_bWindowsAppearance = false;
     }
-    if (m_bAeroGlass)
-    {
+    if (m_bAeroGlass) {
         m_bAeroGlass = false;
         extendIntoWholeClient(m_hWnd, false);
     }
@@ -339,10 +327,9 @@ void CSkinWnd::closeSkin()
 
     //
     // kill timers
-    MAP_TIMER_OBJS::iterator    it;
+    MAP_TIMER_OBJS::iterator it;
 
-    for (it = m_mapTimerObjs.begin(); it != m_mapTimerObjs.end(); it++)
-    {
+    for (it = m_mapTimerObjs.begin(); it != m_mapTimerObjs.end(); it++) {
         killTimer((*it).first);
     }
     m_mapTimerObjs.clear();
@@ -380,7 +367,7 @@ void CSkinWnd::closeSkin()
 
     m_fontProperty.create("Tohama", "", 14, FW_NORMAL, false, false);
 
-    m_nTimeLatestMouseMsg = 0;
+    m_timeLatestMouseMsg = 0;
     m_bMouseActive = false;
     killTimer(TIMER_ID_MOUSE_INACTIVE);
 
@@ -390,18 +377,15 @@ void CSkinWnd::closeSkin()
     m_animateDuration = 0;
 }
 
-CUIObject *CSkinWnd::getUIObjectByClassName(cstr_t szClassName)
-{
+CUIObject *CSkinWnd::getUIObjectByClassName(cstr_t szClassName) {
     return m_rootConainter.getUIObjectByClassName(szClassName);
 }
 
-CUIObject * CSkinWnd::getUIObjectById(int nId, cstr_t szClassName)
-{
+CUIObject * CSkinWnd::getUIObjectById(int nId, cstr_t szClassName) {
     return m_rootConainter.getUIObjectById(nId, szClassName);
 }
 
-void CSkinWnd::processMouseMove(CPoint point)
-{
+void CSkinWnd::processMouseMove(CPoint point) {
     onMouseActiveMsg();
 
 #ifdef _TRANSLUCENCY_ENABLED
@@ -410,8 +394,7 @@ void CSkinWnd::processMouseMove(CPoint point)
     //
     if (m_bTranslucencyLayered
         && m_translucencyStatus == TS_NORMAL
-        && !m_bActived)
-    {
+        && !m_bActived) {
         m_translucencyStatus = TS_ON_HOVER;
 
         m_bOnMouseHover = m_rcBoundBox.ptInRect(point);
@@ -420,84 +403,73 @@ void CSkinWnd::processMouseMove(CPoint point)
     }
 #endif    // _TRANSLUCENCY_ENABLED
 
-    if (m_cursor.isValid())
+    if (m_cursor.isValid()) {
         setCursor(m_cursor);
+    }
 }
 
-void CSkinWnd::onMouseDrag(uint32_t nFlags, CPoint point)
-{
+void CSkinWnd::onMouseDrag(uint32_t nFlags, CPoint point) {
     processMouseMove(point);
 
     point.x = (int)(point.x / m_dbScale);
     point.y = (int)(point.y / m_dbScale);
 
-    if (m_wndResizer.isSizing())
-    {
+    if (m_wndResizer.isSizing()) {
         m_wndResizer.onMouseMessage(nFlags, point);
         return;
     }
 
-    if (m_WndDrag.isDragging())
-    {
+    if (m_WndDrag.isDragging()) {
         point = getCursorPos();
         m_WndDrag.onDrag(nFlags, point);
         return;
     }
 
     // first send message to ui objects that captured the mouse
-    if (m_pUIObjCapMouse)
-    {
-        if (isMouseCaptured())
-        {
-            if (m_pUIObjCapMouse->onMouseDrag(point))
+    if (m_pUIObjCapMouse) {
+        if (isMouseCaptured()) {
+            if (m_pUIObjCapMouse->onMouseDrag(point)) {
                 return;
-        }
-        else
-        {
+            }
+        } else {
             // capture lost!
         }
     }
 
     // then let root container to process it
-    if (!m_rootConainter.onMouseDrag(point))
-    {
+    if (!m_rootConainter.onMouseDrag(point)) {
         // else, should set mouse resizing cursor
         m_wndResizer.onMouseMessage(nFlags, point);
     }
 }
 
-void CSkinWnd::onMouseMove(CPoint point)
-{
+void CSkinWnd::onMouseMove(CPoint point) {
     processMouseMove(point);
 
     // first send message to ui objects that captured the mouse
-    if (m_pUIObjCapMouse)
-    {
-        if (isMouseCaptured())
-        {
-            if (m_pUIObjCapMouse->onMouseMove(point))
+    if (m_pUIObjCapMouse) {
+        if (isMouseCaptured()) {
+            if (m_pUIObjCapMouse->onMouseMove(point)) {
                 return;
-        }
-        else
-        {
+            }
+        } else {
             // capture lost!
         }
     }
 
     // then let root container to process it
-    if (!m_rootConainter.onMouseMove(point))
-    {
+    if (!m_rootConainter.onMouseMove(point)) {
         // else, should set mouse resizing cursor
         m_wndResizer.onMouseMessage(0, point);
     }
 }
 
-void CSkinWnd::onLButtonDown(uint32_t nFlags, CPoint point)
-{
+void CSkinWnd::onLButtonDown(uint32_t nFlags, CPoint point) {
     onMouseActiveMsg();
 
-    if (m_cursor.isValid())
+    if (m_cursor.isValid()) {
         setCursor(m_cursor);
+    }
 
     point.x = (int)(point.x / m_dbScale);
     point.y = (int)(point.y / m_dbScale);
@@ -505,38 +477,33 @@ void CSkinWnd::onLButtonDown(uint32_t nFlags, CPoint point)
     setFocus();
 
     // first send message to ui objects that captured the mouse!
-    if (m_pUIObjCapMouse)
-    {
-        if (isMouseCaptured())
-        {
-            if (m_pUIObjCapMouse->onLButtonDown(nFlags, point))
+    if (m_pUIObjCapMouse) {
+        if (isMouseCaptured()) {
+            if (m_pUIObjCapMouse->onLButtonDown(nFlags, point)) {
                 return;
-        }
-        else
-        {
+            }
+        } else {
             // capture lost!
         }
     }
 
     // then let root container to process it
-    if (!m_rootConainter.onLButtonDown(nFlags, point))
-    {
+    if (!m_rootConainter.onLButtonDown(nFlags, point)) {
         m_wndResizer.onMouseMessage(nFlags, point);
 
-        if (!m_wndResizer.isSizing())
-        {
+        if (!m_wndResizer.isSizing()) {
             point = getCursorPos();
             m_WndDrag.onDrag(nFlags, point);
         }
     }
 }
 
-void CSkinWnd::onLButtonDblClk(uint32_t nFlags, CPoint point)
-{
+void CSkinWnd::onLButtonDblClk(uint32_t nFlags, CPoint point) {
     onMouseActiveMsg();
 
-    if (m_cursor.isValid())
+    if (m_cursor.isValid()) {
         setCursor(m_cursor);
+    }
 
     point.x = (int)(point.x / m_dbScale);
     point.y = (int)(point.y / m_dbScale);
@@ -544,15 +511,12 @@ void CSkinWnd::onLButtonDblClk(uint32_t nFlags, CPoint point)
     setFocus();
 
     // first send message to ui objects that captured the mouse!
-    if (m_pUIObjCapMouse)
-    {
-        if (isMouseCaptured())
-        {
-            if (m_pUIObjCapMouse->onLButtonDblClk(nFlags, point))
+    if (m_pUIObjCapMouse) {
+        if (isMouseCaptured()) {
+            if (m_pUIObjCapMouse->onLButtonDblClk(nFlags, point)) {
                 return;
-        }
-        else
-        {
+            }
+        } else {
             // capture lost!
         }
     }
@@ -561,11 +525,9 @@ void CSkinWnd::onLButtonDblClk(uint32_t nFlags, CPoint point)
     m_rootConainter.onLButtonDblClk(nFlags, point);
 }
 
-void CSkinWnd::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt)
-{
-    CUIObject    *pObjFocus = getFocusUIObj();
-    if (pObjFocus && pObjFocus->needMsgMouseWheel())
-    {
+void CSkinWnd::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) {
+    CUIObject *pObjFocus = getFocusUIObj();
+    if (pObjFocus && pObjFocus->needMsgMouseWheel()) {
         pObjFocus->onMouseWheel(nWheelDistance, nMkeys, pt);
         return;
     }
@@ -574,44 +536,39 @@ void CSkinWnd::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt)
     m_rootConainter.onMouseWheel(nWheelDistance, nMkeys, pt);
 }
 
-void CSkinWnd::onLButtonUp(uint32_t nFlags, CPoint point)
-{
-/*    invalidateRect();
-    
+void CSkinWnd::onLButtonUp(uint32_t nFlags, CPoint point) {
+    /*    invalidateRect();
+
     onSize(m_rcBoundBox.width(), m_rcBoundBox.height());
-    
+
     moveWindow(m_rcReal);*/
-    
-    if (m_cursor.isValid())
+
+    if (m_cursor.isValid()) {
         setCursor(m_cursor);
+    }
 
     point.x = (int)(point.x / m_dbScale);
     point.y = (int)(point.y / m_dbScale);
 
-    if (m_wndResizer.isSizing())
-    {
+    if (m_wndResizer.isSizing()) {
         m_wndResizer.onMouseMessage(nFlags, point);
-//        bMsgProceed = true;
+        //        bMsgProceed = true;
         return;
     }
 
-    if (m_WndDrag.isDragging())
-    {
+    if (m_WndDrag.isDragging()) {
         CPoint ptTemp = getCursorPos();
         m_WndDrag.onDrag(nFlags, ptTemp);
-//        return;
+        //        return;
     }
 
     // first send message to ui objects that captured the mouse!
-    if (m_pUIObjCapMouse)
-    {
-        if (isMouseCaptured())
-        {
-            if (m_pUIObjCapMouse->onLButtonUp(nFlags, point))
+    if (m_pUIObjCapMouse) {
+        if (isMouseCaptured()) {
+            if (m_pUIObjCapMouse->onLButtonUp(nFlags, point)) {
                 return;
-        }
-        else
-        {
+            }
+        } else {
             // capture lost!
         }
     }
@@ -620,24 +577,21 @@ void CSkinWnd::onLButtonUp(uint32_t nFlags, CPoint point)
     m_rootConainter.onLButtonUp(nFlags, point);
 }
 
-void CSkinWnd::onRButtonDown(uint32_t nFlags, CPoint point)
-{
-    if (m_cursor.isValid())
+void CSkinWnd::onRButtonDown(uint32_t nFlags, CPoint point) {
+    if (m_cursor.isValid()) {
         setCursor(m_cursor);
+    }
 
     point.x = (int)(point.x / m_dbScale);
     point.y = (int)(point.y / m_dbScale);
 
     // first send message to ui objects that captured the mouse!
-    if (m_pUIObjCapMouse)
-    {
-        if (isMouseCaptured() && m_pUIObjCapMouse->needMsgRButton())
-        {
-            if (m_pUIObjCapMouse->onRButtonDown(nFlags, point))
+    if (m_pUIObjCapMouse) {
+        if (isMouseCaptured() && m_pUIObjCapMouse->needMsgRButton()) {
+            if (m_pUIObjCapMouse->onRButtonDown(nFlags, point)) {
                 return;
-        }
-        else
-        {
+            }
+        } else {
             // capture lost!
         }
     }
@@ -646,24 +600,21 @@ void CSkinWnd::onRButtonDown(uint32_t nFlags, CPoint point)
     m_rootConainter.onRButtonDown(nFlags, point);
 }
 
-void CSkinWnd::onRButtonUp(uint32_t nFlags, CPoint point)
-{
-    if (m_cursor.isValid())
+void CSkinWnd::onRButtonUp(uint32_t nFlags, CPoint point) {
+    if (m_cursor.isValid()) {
         setCursor(m_cursor);
+    }
 
     point.x = (int)(point.x / m_dbScale);
     point.y = (int)(point.y / m_dbScale);
 
     // first send message to ui objects that captured the mouse!
-    if (m_pUIObjCapMouse)
-    {
-        if (isMouseCaptured() && m_pUIObjCapMouse->needMsgRButton())
-        {
-            if (m_pUIObjCapMouse->onRButtonUp(nFlags, point))
+    if (m_pUIObjCapMouse) {
+        if (isMouseCaptured() && m_pUIObjCapMouse->needMsgRButton()) {
+            if (m_pUIObjCapMouse->onRButtonUp(nFlags, point)) {
                 return;
-        }
-        else
-        {
+            }
+        } else {
             // capture lost!
         }
     }
@@ -677,53 +628,40 @@ void CSkinWnd::onRButtonUp(uint32_t nFlags, CPoint point)
 //            return true;
 //        else
 //            return false;
-void CSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags)
-{
+void CSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags) {
 #ifdef _DEBUG
     {
         // dump UIObject
-        if (isModifierKeyPressed(MK_CONTROL, nFlags))
-        {
-            if (nChar == VK_F1)
-            {
+        if (isModifierKeyPressed(MK_CONTROL, nFlags)) {
+            if (nChar == VK_F1) {
                 int nDeep = 0;
                 m_rootConainter.dumpUIObject(nDeep, nullptr);
-            }
-            else if (nChar == VK_F2)
-            {
+            } else if (nChar == VK_F2) {
                 CPoint pt = getCursorPos();
                 screenToClient(pt);
                 DBG_LOG2("Current Pos: %d, %d", pt.x, pt.y);
 
                 int nDeep = 0;
                 m_rootConainter.dumpUIObject(nDeep, &pt);
-            }
-            else if (nChar == VK_F3)
-            {
+            } else if (nChar == VK_F3) {
                 m_pSkinFactory->dumpUID();
             }
         }
     }
 #endif
 
-    CUIObject    *pObjFocus = getFocusUIObj();
-    if (pObjFocus)
-    {
-        if (pObjFocus->needMsgAllKeys())
-        {
+    CUIObject *pObjFocus = getFocusUIObj();
+    if (pObjFocus) {
+        if (pObjFocus->needMsgAllKeys()) {
             pObjFocus->onKeyDown(nChar, nFlags);
             return;
         }
 
-        if (isDialogWnd())
-        {
-            if (nChar == VK_ESCAPE)
-            {
+        if (isDialogWnd()) {
+            if (nChar == VK_ESCAPE) {
                 onCancel();
                 return;
-            }
-            else if (nChar == VK_RETURN && !pObjFocus->needMsgEnterKey())
-            {
+            } else if (nChar == VK_RETURN && !pObjFocus->needMsgEnterKey()) {
                 onOK();
                 return;
             }
@@ -731,14 +669,14 @@ void CSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags)
     }
 
     // tab key to switch between uiobject
-    if (nChar == VK_TAB)    //TAB
-    {
+    if (nChar == VK_TAB) { // TAB
         bool bShitDown = isModifierKeyPressed(MK_SHIFT, nFlags);
         // shift + VK_TAB
-        if (bShitDown)
+        if (bShitDown) {
             m_rootConainter.focusToPrev();
-        else
+        } else {
             m_rootConainter.focusToNext();
+        }
 
         // Ignore '\t' WM_CHAR message.
         m_bIgnoreNextOnCharMsg = true;
@@ -749,112 +687,107 @@ void CSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags)
     m_rootConainter.onKeyDown(nChar, nFlags);
 }
 
-void CSkinWnd::onKeyUp(uint32_t nChar, uint32_t nFlags)
-{
+void CSkinWnd::onKeyUp(uint32_t nChar, uint32_t nFlags) {
     // Let focus UIObject to process key message
-    CUIObject    *pObjFocus = getFocusUIObj();
-    if (pObjFocus && pObjFocus->needMsgKey())
+    CUIObject *pObjFocus = getFocusUIObj();
+    if (pObjFocus && pObjFocus->needMsgKey()) {
         pObjFocus->onKeyUp(nChar, nFlags);
-    else
+    } else {
         m_rootConainter.onKeyUp(nChar, nFlags);
+    }
 }
 
-void CSkinWnd::onContexMenu(int xPos, int yPos)
-{
-    if (m_rootConainter.getMenu())
+void CSkinWnd::onContexMenu(int xPos, int yPos) {
+    if (m_rootConainter.getMenu()) {
         m_rootConainter.getMenu()->trackPopupMenu(xPos, yPos, this);
+    }
 }
 
-void CSkinWnd::onCommand(uint32_t uID, uint32_t nNotifyCode)
-{
-    if (m_pUIObjHandleContextMenuCmd)
-    {
+void CSkinWnd::onCommand(uint32_t uID, uint32_t nNotifyCode) {
+    if (m_pUIObjHandleContextMenuCmd) {
         // Only handle 1 command.
-        if (m_pUIObjHandleContextMenuCmd->onCommand(uID))
-        {
+        if (m_pUIObjHandleContextMenuCmd->onCommand(uID)) {
             m_pUIObjHandleContextMenuCmd = nullptr;
             return;
         }
         m_pUIObjHandleContextMenuCmd = nullptr;
     }
 
-    if (m_rootConainter.onCommand(uID))
+    if (m_rootConainter.onCommand(uID)) {
         return;
+    }
 
-    int    nUID = m_pSkinFactory->getUIDByMenuID(uID);
-    if (nUID != UID_INVALID)
+    int nUID = m_pSkinFactory->getUIDByMenuID(uID);
+    if (nUID != UID_INVALID) {
         onCustomCommand(nUID);
-    else
+    } else {
         Window::onCommand(uID, nNotifyCode);
+    }
 }
 
-void CSkinWnd::onOK()
-{
-    if (m_rootConainter.onOK())
+void CSkinWnd::onOK() {
+    if (m_rootConainter.onOK()) {
         postDestroy();
+    }
 }
 
-void CSkinWnd::onCancel()
-{
-    if (m_rootConainter.onCancel())
+void CSkinWnd::onCancel() {
+    if (m_rootConainter.onCancel()) {
         postDestroy();
+    }
 }
 
-void CSkinWnd::onChar(uint32_t nChar)
-{
-    if (m_bIgnoreNextOnCharMsg)
-    {
+void CSkinWnd::onChar(uint32_t nChar) {
+    if (m_bIgnoreNextOnCharMsg) {
         m_bIgnoreNextOnCharMsg = false;
         return;
     }
 
     // let focus uiobject to process key message
-    CUIObject    *pObjFocus = getFocusUIObj();
-    if (pObjFocus && pObjFocus->needMsgKey())
+    CUIObject *pObjFocus = getFocusUIObj();
+    if (pObjFocus && pObjFocus->needMsgKey()) {
         pObjFocus->onChar(nChar);
+    }
 }
 
-bool CSkinWnd::updateSkinProperty()
-{
+bool CSkinWnd::updateSkinProperty() {
 #ifdef _WIN32
     setUseWindowsAppearance(m_bWindowsAppearance);
 #endif
 
-    if (!m_cursor.isValid())
-    {
+    if (!m_cursor.isValid()) {
         m_cursor.loadStdCursor(Cursor::C_ARROW);
     }
-    if (m_cursor.isValid())
+    if (m_cursor.isValid()) {
         setCursor(m_cursor);
+    }
 
-    if (m_bTranslucencyLayered)
-    {
-        if (m_bActived)
+    if (m_bTranslucencyLayered) {
+        if (m_bActived) {
             m_nCurTranslucencyAlpha = m_nTranslucencyAlphaOnActive;
-        else
+        } else {
             m_nCurTranslucencyAlpha = m_nTranslucencyAlphaDefault;
+        }
     }
 
 #ifdef _WIN32_DESKTOP
-    if (m_bWindowsAppearance)
-    {
+    if (m_bWindowsAppearance) {
         SetWindowLong(m_hWnd, GWL_STYLE, GetWindowLong(m_hWnd, GWL_STYLE) | WS_CAPTION | WS_THICKFRAME);
         ::setWindowPos(m_hWnd, nullptr, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_DEFERERASE);
     }
 
-    if (m_bAeroGlass)
-    {
-        if (!extendIntoWholeClient(m_hWnd, true))
-        {
+    if (m_bAeroGlass) {
+        if (!extendIntoWholeClient(m_hWnd, true)) {
             // Failed to set to Aero mode
             m_bAeroGlass = false;
         }
-        if (m_bAeroGlass)
+        if (m_bAeroGlass) {
             m_rootConainter.m_clrBg.setAlpha(0);
+        }
     }
 #endif // #ifdef _WIN32_DESKTOP
 
-    // init 
+    // init
     onSize(m_rcBoundBox.width(), m_rcBoundBox.height());
 
     setMinSize(m_wndResizer.getMinCx(), m_wndResizer.getMinCy());
@@ -862,94 +795,90 @@ bool CSkinWnd::updateSkinProperty()
     return true;
 }
 
-void CSkinWnd::onPaint(CRawGraph *canvas, CRect *rcClip)
-{
-    if (isIconic() || m_bOnDestroy)
+void CSkinWnd::onPaint(CRawGraph *canvas, CRect *rcClip) {
+    if (isIconic() || m_bOnDestroy) {
         return;
+    }
 
-    bool        bRedraw = true;
+    bool bRedraw = true;
 #ifndef _WIN32
-    if (m_rcMemUpdate.top != m_rcMemUpdate.bottom)
-    {
+    if (m_rcMemUpdate.top != m_rcMemUpdate.bottom) {
         m_rcMemUpdate.top = m_rcMemUpdate.bottom = 0;
-        if (m_rcMemUpdate == *rcClip)
+        if (m_rcMemUpdate == *rcClip) {
             bRedraw = false;
+        }
     }
 #endif // #ifdef _WIN32
 
-    if (bRedraw)
-    {
+    if (bRedraw) {
         canvas->resetClipBoundBox(*rcClip);
 
         // draw every UI objects on back buffer one by one
         m_rootConainter.draw(canvas);
     }
 
-///*    CRect rc(20, 20, 50, 30);
-//    CColor clr(RGB(10, 10, 10));
-//    clr.setAlpha(50);
-//    memCanvas->fillRect(&rc, clr);*/
-//
-//    // from buffer to screen
-//    // if (m_dbScale == 1.0)
+    ///*    CRect rc(20, 20, 50, 30);
+    //    CColor clr(RGB(10, 10, 10));
+    //    clr.setAlpha(50);
+    //    memCanvas->fillRect(&rc, clr);*/
+    //
+    //    // from buffer to screen
+    //    // if (m_dbScale == 1.0)
     canvas->drawToWindow(rcClip->left, rcClip->top, rcClip->width(), rcClip->height(), rcClip->left, rcClip->top);
-//    //memCanvas->drawToWindow(canvas, 0, 0, m_rcBoundBox.width(), m_rcBoundBox.height(), 0, 0);
-//    // else
-//        // memCanvas->drawToWindowStretch(canvas, 0, 0, m_rcReal.width(), m_rcReal.height(), 0, 0, m_rcBoundBox.width(), m_rcBoundBox.height());
+    //    //memCanvas->drawToWindow(canvas, 0, 0, m_rcBoundBox.width(), m_rcBoundBox.height(), 0, 0);
+    //    // else
+    //        // memCanvas->drawToWindowStretch(canvas, 0, 0, m_rcReal.width(), m_rcReal.height(), 0, 0, m_rcBoundBox.width(), m_rcBoundBox.height());
 }
 
 
-CColor CSkinWnd::getTranslucencyColor(const CColor &clr) const
-{
-    if (m_bTranslucencyLayered)
-    {
+CColor CSkinWnd::getTranslucencyColor(const CColor &clr) const {
+    if (m_bTranslucencyLayered) {
         CColor clrNew = clr;
         clrNew.setAlpha((uint8_t)m_nCurTranslucencyAlpha);
         preMultiplyColor(clrNew, (uint8_t)m_nCurTranslucencyAlpha);
         return clrNew;
-    }
-    else
+    } else {
         return clr;
+    }
 }
 
-void CSkinWnd::addTool(cstr_t szText, CRect *lpRectTool, uint32_t nIDTool)
-{
+void CSkinWnd::addTool(cstr_t szText, CRect *lpRectTool, uint32_t nIDTool) {
     assert(!isEmptyString(szText));
     m_wndToolTip.addTool(szText, lpRectTool, nIDTool);
 }
 
-void CSkinWnd::delTool(uint32_t nIDTool)
-{
-    if (m_wndToolTip.isValid())
+void CSkinWnd::delTool(uint32_t nIDTool) {
+    if (m_wndToolTip.isValid()) {
         m_wndToolTip.delTool(nIDTool);
+    }
 }
 
-void CSkinWnd::invalidateUIObject(CUIObject *pObj)
-{
+void CSkinWnd::invalidateUIObject(CUIObject *pObj) {
     assert(pObj);
 
-    if (!isVisible() || isIconic())
+    if (!isVisible() || isIconic()) {
         return;
+    }
 
-    if (m_nInRedrawUpdate > 0)
-    {
+    if (m_nInRedrawUpdate > 0) {
         m_needRedraw = true;
         return;
     }
 
-    if (!pObj->isVisible() || !pObj->isParentVisible())
+    if (!pObj->isVisible() || !pObj->isParentVisible()) {
         return;
+    }
 
-    if (!m_pmemGraph)
-        return;    // SkinWnd isn't created yet.
+    if (!m_pmemGraph) {
+        return; // SkinWnd isn't created yet.
+    }
 
 #ifdef _WIN32
-    CRawGraph::CClipBoxAutoRecovery    autoCBR(m_pmemGraph);
+    CRawGraph::CClipBoxAutoRecovery autoCBR(m_pmemGraph);
 
     m_pmemGraph->setClipBoundBox(pObj->m_rcObj);
 
-    if (pObj->isUseParentBg())
-    {
+    if (pObj->isUseParentBg()) {
         // Redraw background
         assert(pObj->getParent() != nullptr);
         pObj->getParent()->redrawBackground(m_pmemGraph, pObj->m_rcObj);
@@ -965,28 +894,24 @@ void CSkinWnd::invalidateUIObject(CUIObject *pObj)
     autoCBR.recover();
 
 #ifdef _WIN32_DESKTOP
-    if (m_bTranslucencyLayered)
-    {
+    if (m_bTranslucencyLayered) {
         updateLayeredWindowUsingMemGraph(m_pmemGraph);
         return;
     }
 #endif
 
-    CGraphics        *canvas;
+    CGraphics *canvas;
 
     canvas = getGraphics();
 
-    if (m_dbScale == 1.0)
-    {
+    if (m_dbScale == 1.0) {
         m_pmemGraph->drawToWindow(canvas,
-            pObj->m_rcObj.left, pObj->m_rcObj.top, 
+            pObj->m_rcObj.left, pObj->m_rcObj.top,
             pObj->m_rcObj.width(), pObj->m_rcObj.height(),
             pObj->m_rcObj.left, pObj->m_rcObj.top);
-    }
-    else
-    {
+    } else {
         m_pmemGraph->drawToWindowStretch(canvas,
-            (int)(pObj->m_rcObj.left * m_dbScale), (int)(pObj->m_rcObj.top * m_dbScale), 
+            (int)(pObj->m_rcObj.left * m_dbScale), (int)(pObj->m_rcObj.top * m_dbScale),
             (int)((pObj->m_rcObj.width() + 1) * m_dbScale), (int)((pObj->m_rcObj.height() + 1) * m_dbScale),
             pObj->m_rcObj.left, pObj->m_rcObj.top, pObj->m_rcObj.width(), pObj->m_rcObj.height());
     }
@@ -997,40 +922,35 @@ void CSkinWnd::invalidateUIObject(CUIObject *pObj)
 #endif
 }
 
-void CSkinWnd::enterInDrawUpdate()
-{
+void CSkinWnd::enterInDrawUpdate() {
     m_nInRedrawUpdate++;
 }
 
-void CSkinWnd::leaveInDrawUpdate()
-{
+void CSkinWnd::leaveInDrawUpdate() {
     m_nInRedrawUpdate--;
     assert(m_nInRedrawUpdate >= 0);
-    if (m_nInRedrawUpdate == 0)
-    {
-        if (m_needRedraw)
+    if (m_nInRedrawUpdate == 0) {
+        if (m_needRedraw) {
             invalidateRect();
+        }
     }
 }
 
-void CSkinWnd::setMainAppWnd(bool bMainAppWnd)
-{
+void CSkinWnd::setMainAppWnd(bool bMainAppWnd) {
     m_bMainAppWnd = bMainAppWnd;
 }
 
-void CSkinWnd::getWndDragAutoCloseTo(vector<Window *> &vWnd)
-{
+void CSkinWnd::getWndDragAutoCloseTo(vector<Window *> &vWnd) {
     m_pSkinFactory->getWndDragAutoCloseTo(vWnd);
 }
 
-void CSkinWnd::getWndDragTrackMove(vector<Window *> &vWnd)
-{
-    if (m_bMainAppWnd)
+void CSkinWnd::getWndDragTrackMove(vector<Window *> &vWnd) {
+    if (m_bMainAppWnd) {
         m_pSkinFactory->getWndDragTrackMove(vWnd);
+    }
 }
 
-void CSkinWnd::setCaptureMouse(CUIObject *pUIObj)
-{
+void CSkinWnd::setCaptureMouse(CUIObject *pUIObj) {
     assert(pUIObj);
 
     setCapture();
@@ -1038,31 +958,29 @@ void CSkinWnd::setCaptureMouse(CUIObject *pUIObj)
     m_pUIObjCapMouse = pUIObj;
 }
 
-CUIObject * CSkinWnd::getCaptureMouse()
-{
+CUIObject * CSkinWnd::getCaptureMouse() {
     return m_pUIObjCapMouse;
 }
 
-void CSkinWnd::releaseCaptureMouse(CUIObject *pUIObj)
-{
+void CSkinWnd::releaseCaptureMouse(CUIObject *pUIObj) {
     releaseCapture();
-    
+
     m_pUIObjCapMouse = nullptr;
 }
 
-void CSkinWnd::onMove(int x, int y)
-{
-    if (!isWindow())
+void CSkinWnd::onMove(int x, int y) {
+    if (!isWindow()) {
         return;
-    
-    if (isIconic())
-        return;
+    }
 
-    CRect        rc;
+    if (isIconic()) {
+        return;
+    }
+
+    CRect rc;
 
     getWindowRect(&rc);
-    if (!isWndOutOfScreen(rc))
-    {
+    if (!isWndOutOfScreen(rc)) {
         rc.right = rc.left + m_rcReal.width();
         rc.bottom = rc.top + m_rcReal.height();
         m_rcReal = rc;
@@ -1080,26 +998,21 @@ void CSkinWnd::onMove(int x, int y)
     }
 }
 
-void CSkinWnd::onSize(int cx, int cy)
-{
+void CSkinWnd::onSize(int cx, int cy) {
     // uint32_t        dwStyle = GetWindowLong(m_hWnd, GWL_STYLE);
     // bool        bCaption = isFlagSet(dwStyle, WS_CAPTION);
-    if (!isIconic())
-    {
-        CAutoRedrawLock    redrawLock(this);
+    if (!isIconic()) {
+        CAutoRedrawLock redrawLock(this);
 
-        CRect        rc;
+        CRect rc;
         getWindowRect(&rc);
         rc.right = rc.left + cx;
         rc.bottom = rc.top + cy;
-        if (isWndOutOfScreen(rc))
-        {
+        if (isWndOutOfScreen(rc)) {
             moveWindow(m_rcReal);
-        }
-        else
-        {
-//            if (m_rcReal.requal(rc))
-//                return;
+        } else {
+            //            if (m_rcReal.requal(rc))
+            //                return;
 
             m_rcReal = rc;
             m_rcBoundBox.setLTWH(rc.left, rc.top, (int)(rc.width() / m_dbScale), (int)(rc.height() / m_dbScale));
@@ -1124,53 +1037,50 @@ void CSkinWnd::onSize(int cx, int cy)
     }
 }
 
-void CSkinWnd::onSetFocus()
-{
+void CSkinWnd::onSetFocus() {
     CUIObject *pObj = getFocusUIObj();
-    if (pObj)
+    if (pObj) {
         pObj->onSetFocus();
+    }
 }
 
-void CSkinWnd::onKillFocus()
-{
+void CSkinWnd::onKillFocus() {
     CUIObject *pObj = getFocusUIObj();
-    if (pObj)
-        pObj->onKillFocus();    
+    if (pObj) {
+        pObj->onKillFocus();
+    }
 }
 
-bool CSkinWnd::moveWindow(int X, int Y, int nWidth, int nHeight, bool bRepaint/* = true*/)
-{
-    if (nHeight < m_wndResizer.getMinCy())
+bool CSkinWnd::moveWindow(int X, int Y, int nWidth, int nHeight, bool bRepaint) {
+    if (nHeight < m_wndResizer.getMinCy()) {
         nHeight = m_wndResizer.getMinCy();
-    if (nWidth < m_wndResizer.getMinCx())
+    }
+    if (nWidth < m_wndResizer.getMinCx()) {
         nWidth = m_wndResizer.getMinCx();
+    }
 
 #ifdef _WIN32
-    if (::getParent(m_hWnd))
+    if (::getParent(m_hWnd)) {
         return true;
+    }
 
-    if (m_bWindowsAppearance)
+    if (m_bWindowsAppearance) {
         return ::moveWindow(m_hWnd, X, Y, nWidth, nHeight, bRepaint);
-    else
+    }
 #endif
-        return moveWindowSafely(X, Y, nWidth, nHeight);
+    return moveWindowSafely(X, Y, nWidth, nHeight);
 }
 
-bool CSkinWnd::moveWindow(CRect &rc, bool bRepaint/* = true*/)
-{
+bool CSkinWnd::moveWindow(CRect &rc, bool bRepaint) {
     return moveWindow(rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, bRepaint);
 }
 
-void CSkinWnd::setProperies(SXNode::ListProperties &listProperties)
-{
-    SXNode::iterProperties    it;
-    for (it = listProperties.begin(); it != listProperties.end(); ++it)
-    {
-        SXNode::Property    &prop = *it;
-        if (!setProperty(prop.name.c_str(), prop.strValue.c_str()))
-        {
-            if (!isPropertyName(prop.name.c_str(), SZ_PN_EXTENDS)) // Do NOT log extends
-            {
+void CSkinWnd::setProperies(SXNode::ListProperties &listProperties) {
+    SXNode::iterProperties it;
+    for (it = listProperties.begin(); it != listProperties.end(); ++it) {
+        SXNode::Property &prop = *it;
+        if (!setProperty(prop.name.c_str(), prop.strValue.c_str())) {
+            if (!isPropertyName(prop.name.c_str(), SZ_PN_EXTENDS)) { // Do NOT log extends
                 m_listUnprocessedProperties.push_back(prop);
                 DBG_LOG2("Unknow Property: %s, %s", prop.name.c_str(), prop.strValue.c_str());
             }
@@ -1178,62 +1088,45 @@ void CSkinWnd::setProperies(SXNode::ListProperties &listProperties)
     }
 }
 
-bool CSkinWnd::setProperty(cstr_t szProperty, cstr_t szValue)
-{
+bool CSkinWnd::setProperty(cstr_t szProperty, cstr_t szValue) {
     assert(isWindow());
 
-    if (strcasecmp(szProperty, "MinWidth") == 0)
+    if (strcasecmp(szProperty, "MinWidth") == 0) {
         m_wndResizer.setMinCx(atoi(szValue));
-    else if (strcasecmp(szProperty, "MinHeight") == 0)
+    } else if (strcasecmp(szProperty, "MinHeight") == 0) {
         m_wndResizer.setMinCy(atoi(szValue));
-    else if (strcasecmp(szProperty, SZ_PN_WIDTH) == 0)
-    {
+    } else if (strcasecmp(szProperty, SZ_PN_WIDTH) == 0) {
         m_nWidth = atoi(szValue);
-    }
-    else if (strcasecmp(szProperty, SZ_PN_HEIGHT) == 0)
-    {
+    } else if (strcasecmp(szProperty, SZ_PN_HEIGHT) == 0) {
         m_nHeight = atoi(szValue);
-    }
-    else if (isPropertyName(szProperty, "RememberSizePos"))
+    } else if (isPropertyName(szProperty, "RememberSizePos")) {
         m_bRememberSizePos = isTRUE(szValue);
-    else if (strcasecmp(szProperty, "Cursor") == 0)
-    {
+    } else if (strcasecmp(szProperty, "Cursor") == 0) {
         m_cursor.destroy();
         m_strCusor = szValue;
-        if (!m_strCusor.empty())
-        {
+        if (!m_strCusor.empty()) {
             string fileName;
-            if (m_pSkinFactory->getResourceMgr()->getResourcePathName(szValue, fileName))
+            if (m_pSkinFactory->getResourceMgr()->getResourcePathName(szValue, fileName)) {
                 m_cursor.loadCursorFromFile(fileName.c_str());
-            else
+            } else {
                 ERR_LOG1("Can't load cursor file: %s", szValue);
+            }
         }
-    }
-    else if (strcasecmp(szProperty, "fixedWidth") == 0)
+    } else if (strcasecmp(szProperty, "fixedWidth") == 0) {
         m_wndResizer.fixedWidth(isTRUE(szValue));
-    else if (strcasecmp(szProperty, "fixedHeight") == 0)
+    } else if (strcasecmp(szProperty, "fixedHeight") == 0) {
         m_wndResizer.fixedHeight(isTRUE(szValue));
-    else if (strcasecmp(szProperty, SZ_PN_NAME) == 0)
-    {
+    } else if (strcasecmp(szProperty, SZ_PN_NAME) == 0) {
         m_strSkinWndName = szValue;
-    }
-    else if (isPropertyName(szProperty, "Caption"))
-    {
+    } else if (isPropertyName(szProperty, "Caption")) {
         m_strCaption = _TL(szValue);
         setTitle(m_strCaption.c_str());
-    }
-    else if (strcasecmp(szProperty, "ContextMenu") == 0)
-    {
+    } else if (strcasecmp(szProperty, "ContextMenu") == 0) {
         m_rootConainter.setProperty(szProperty, szValue);
-    }
-    else if (strcasecmp(szProperty, "Menu") == 0)
-    {
+    } else if (strcasecmp(szProperty, "Menu") == 0) {
         m_strMenuName = szValue;
-    }
-    else if (m_fontProperty.setProperty(szProperty, szValue))
-    {
-        if (m_bSkinOpened)
-        {
+    } else if (m_fontProperty.setProperty(szProperty, szValue)) {
+        if (m_bSkinOpened) {
             // Notify every child to change its font if needed.
             m_rootConainter.onSkinFontChanged();
 
@@ -1243,72 +1136,61 @@ bool CSkinWnd::setProperty(cstr_t szProperty, cstr_t szValue)
         return true;
     }
 #ifdef _WIN32_DESKTOP
-    else if (isPropertyName(szProperty, "WindowsAppearance"))
-    {
+    else if (isPropertyName(szProperty, "WindowsAppearance")) {
         m_bWindowsAppearance = isTRUE(szValue);
-    }
-    else if (isPropertyName(szProperty, "AeroGlass"))
-    {
+    } else if (isPropertyName(szProperty, "AeroGlass")) {
         m_bAeroGlass = isTRUE(szValue);
-    }
-    else if (isPropertyName(szProperty, "EnableClickThrough"))
-    {
+    } else if (isPropertyName(szProperty, "EnableClickThrough")) {
         m_bEnableClickThrough = isTRUE(szValue);
     }
 #endif
-    else if (isPropertyName(szProperty, "EnableTranslucency"))
-    {
+    else if (isPropertyName(szProperty, "EnableTranslucency")) {
         m_bTranslucencyLayered = isTRUE(szValue);
-        if (m_pmemGraph)
-        {
+        if (m_pmemGraph) {
             delete m_pmemGraph;
             m_pmemGraph = nullptr;
         }
-    }
-    else if (isPropertyName(szProperty, "TranslucencyAlpha"))
-    {
+    } else if (isPropertyName(szProperty, "TranslucencyAlpha")) {
         m_nTranslucencyAlphaDefault = atoi(szValue);
-        if (m_nTranslucencyAlphaOnActive == -1)
+        if (m_nTranslucencyAlphaOnActive == -1) {
             m_nTranslucencyAlphaOnActive = m_nTranslucencyAlphaDefault;
-        if (m_nTranslucencyAlphaOnHover == -1)
+        }
+        if (m_nTranslucencyAlphaOnHover == -1) {
             m_nTranslucencyAlphaOnHover = m_nTranslucencyAlphaDefault;
-        if (m_bSkinOpened)
+        }
+        if (m_bSkinOpened) {
             startTranslucencyFade();
-    }
-    else if (isPropertyName(szProperty, "TranslucencyAlphaOnActive"))
-    {
+        }
+    } else if (isPropertyName(szProperty, "TranslucencyAlphaOnActive")) {
         m_nTranslucencyAlphaOnActive = atoi(szValue);
-        if (m_nTranslucencyAlphaDefault == -1)
+        if (m_nTranslucencyAlphaDefault == -1) {
             m_nTranslucencyAlphaDefault = m_nTranslucencyAlphaOnActive;
-        if (m_bSkinOpened)
+        }
+        if (m_bSkinOpened) {
             startTranslucencyFade();
-    }
-    else if (isPropertyName(szProperty, "TranslucencyAlphaOnHover"))
-    {
+        }
+    } else if (isPropertyName(szProperty, "TranslucencyAlphaOnHover")) {
         m_nTranslucencyAlphaOnHover = atoi(szValue);
-    }
-    else if (isPropertyName(szProperty, "IsDialog"))
+    } else if (isPropertyName(szProperty, "IsDialog")) {
         m_bDialogWnd = isTRUE(szValue);
-    else if (isPropertyName(szProperty, "animate"))
+    } else if (isPropertyName(szProperty, "animate")) {
         m_animateType = animateTypeFromString(szValue);
-    else if (isPropertyName(szProperty, "AnimateDuration"))
+    } else if (isPropertyName(szProperty, "AnimateDuration")) {
         m_animateDuration = atoi(szValue);
-    else if (isPropertyName(szProperty, "Script"))
+    } else if (isPropertyName(szProperty, "Script")) {
         m_scriptFile = szValue;
-    else if (m_rootConainter.setProperty(szProperty, szValue))
-    {
+    } else if (m_rootConainter.setProperty(szProperty, szValue)) {
         DBG_LOG2("Property is set to Root Container: %s, %s", szProperty, szValue);
         return true;
-    }
-    else
+    } else {
         return false;
+    }
 
     return true;
 }
 
 #ifdef _SKIN_EDITOR_
-void CSkinWnd::enumProperties(CUIObjProperties &listProperties)
-{
+void CSkinWnd::enumProperties(CUIObjProperties &listProperties) {
     listProperties.addPropStr(SZ_PN_NAME, m_strSkinWndName.c_str());
     listProperties.addPropStr("Caption", m_strCaption.c_str(), !m_strCaption.empty());
 
@@ -1335,13 +1217,10 @@ void CSkinWnd::enumProperties(CUIObjProperties &listProperties)
 }
 #endif // _SKIN_EDITOR_
 
-bool CSkinWnd::getUnprocessedProperty(cstr_t szProperty, string &strValue)
-{
-    for (SXNode::iterProperties it = m_listUnprocessedProperties.begin(); it != m_listUnprocessedProperties.end(); ++it)
-    {
-        SXNode::Property    &prop = *it;
-        if (strcasecmp(szProperty, prop.name.c_str()) == 0)
-        {
+bool CSkinWnd::getUnprocessedProperty(cstr_t szProperty, string &strValue) {
+    for (SXNode::iterProperties it = m_listUnprocessedProperties.begin(); it != m_listUnprocessedProperties.end(); ++it) {
+        SXNode::Property &prop = *it;
+        if (strcasecmp(szProperty, prop.name.c_str()) == 0) {
             strValue = prop.strValue;
             return true;
         }
@@ -1350,96 +1229,82 @@ bool CSkinWnd::getUnprocessedProperty(cstr_t szProperty, string &strValue)
     return false;
 }
 
-void CSkinWnd::setFocusUIObject(int nId)
-{
+void CSkinWnd::setFocusUIObject(int nId) {
     m_rootConainter.setFocusUIObject(nId);
 }
 
-CUIObject *CSkinWnd::getFocusUIObj()
-{
+CUIObject *CSkinWnd::getFocusUIObj() {
     return m_rootConainter.getFocusUIObject();
 }
 
-bool CSkinWnd::enableUIObject(int nId, bool bEnable, bool bRedraw)
-{
+bool CSkinWnd::enableUIObject(int nId, bool bEnable, bool bRedraw) {
     return m_rootConainter.enableUIObject(nId, bEnable, bRedraw);
 }
 
-bool CSkinWnd::setUIObjectProperty(int nId, cstr_t szProperty, cstr_t szValue)
-{
+bool CSkinWnd::setUIObjectProperty(int nId, cstr_t szProperty, cstr_t szValue) {
     return m_rootConainter.setUIObjectProperty(nId, szProperty, szValue);
 }
 
-void CSkinWnd::setUIObjectVisible(int nId, bool bVisible, bool bRedraw)
-{
+void CSkinWnd::setUIObjectVisible(int nId, bool bVisible, bool bRedraw) {
     m_rootConainter.setUIObjectVisible(nId, bVisible, bRedraw);
 }
 
-void CSkinWnd::invalidateUIObject(int nId)
-{
+void CSkinWnd::invalidateUIObject(int nId) {
     m_rootConainter.invalidateUIObject(nId);
 }
 
-string CSkinWnd::getUIObjectText(int nId)
-{
+string CSkinWnd::getUIObjectText(int nId) {
     return m_rootConainter.getUIObjectText(nId);
 }
 
-void CSkinWnd::setUIObjectText(int nId, cstr_t szText, bool bRedraw)
-{
+void CSkinWnd::setUIObjectText(int nId, cstr_t szText, bool bRedraw) {
     m_rootConainter.setUIObjectText(nId, szText, bRedraw);
 }
 
-void CSkinWnd::checkButton(int nId, bool bCheck)
-{
+void CSkinWnd::checkButton(int nId, bool bCheck) {
     m_rootConainter.checkButton(nId, bCheck);
 }
 
-bool CSkinWnd::isButtonChecked(int nId)
-{
+bool CSkinWnd::isButtonChecked(int nId) {
     return m_rootConainter.isButtonChecked(nId);
 }
 
-void CSkinWnd::checkToolbarButton(cstr_t szToolbarId, cstr_t szButtonId, bool bCheck)
-{
+void CSkinWnd::checkToolbarButton(cstr_t szToolbarId, cstr_t szButtonId, bool bCheck) {
     m_rootConainter.checkToolbarButton(szToolbarId, szButtonId, bCheck);
 }
 
-void CSkinWnd::checkToolbarButton(int nToolbarId, int nButtonId, bool bCheck)
-{
+void CSkinWnd::checkToolbarButton(int nToolbarId, int nButtonId, bool bCheck) {
     m_rootConainter.checkToolbarButton(nToolbarId, nButtonId, bCheck);
 }
 
-CUIObject *CSkinWnd::removeUIObjectById(int nId)
-{
+CUIObject *CSkinWnd::removeUIObjectById(int nId) {
     return m_rootConainter.removeUIObjectById(nId);
 }
 
-bool CSkinWnd::removeUIObject(CUIObject *pObj, bool bFree)
-{
+bool CSkinWnd::removeUIObject(CUIObject *pObj, bool bFree) {
     return m_rootConainter.removeUIObject(pObj, bFree);
 }
 
-void CSkinWnd::onDestroy()
-{
+void CSkinWnd::onDestroy() {
     closeSkin();
 
     m_wndToolTip.destroy();
 
     Window::onDestroy();
 
-    if (m_bMainAppWnd)
+    if (m_bMainAppWnd) {
         m_pSkinFactory->onMainSkinWndDestory(this);
+    }
 
-    if (m_bManageBySkinFactory)
+    if (m_bManageBySkinFactory) {
         m_pSkinFactory->onSkinWndDestory(this);
+    }
 }
 
 
 // COMMENT:
 //        onCreate must return true to continue the creation of the CWnd object. If the application returns false, the window will be destroyed.
-void CSkinWnd::onCreate()
-{
+void CSkinWnd::onCreate() {
     m_bOnDestroy = false;
 
     Window::onCreate();
@@ -1447,8 +1312,9 @@ void CSkinWnd::onCreate()
     //assert(!m_wndToolTip.isValid());
     m_wndToolTip.create(this);
 
-    if (m_bManageBySkinFactory)
+    if (m_bManageBySkinFactory) {
         m_pSkinFactory->onSkinWndCreate(this);
+    }
 
     m_WndDrag.init(this, this);//, arrszClassCloseTo);
     m_wndResizer.init(this, this);//, arrszClassCloseTo, this);
@@ -1457,40 +1323,39 @@ void CSkinWnd::onCreate()
     openDefaultSkin();
 
     // If translucency is used, call this to update screen explicitly
-    if (m_bTranslucencyLayered)
+    if (m_bTranslucencyLayered) {
         invalidateRect(nullptr);
+    }
 }
 
-bool CSkinWnd::isWndActive()
-{
+bool CSkinWnd::isWndActive() {
     return m_bActived;
 }
 
-void CSkinWnd::onActivate(bool bActived)
-{
-    CAutoRedrawLock    redrawLock(this);
+void CSkinWnd::onActivate(bool bActived) {
+    CAutoRedrawLock redrawLock(this);
 
     m_bActived = bActived;
 
-    if (!m_bOnDestroy)
-    {
+    if (!m_bOnDestroy) {
 #ifdef _TRANSLUCENCY_ENABLED
         startTranslucencyFade();
 
-        if (bActived)
+        if (bActived) {
             m_translucencyStatus = TS_ON_ACTIVE;
-        else
+        } else {
             m_translucencyStatus = TS_NORMAL;
+        }
 
-        if (m_bEnableClickThrough && m_bClickThrough)
+        if (m_bEnableClickThrough && m_bClickThrough) {
             setTransparent(m_nAlpha, m_bClickThrough);
-        
+        }
+
 #ifdef _MAC_OS
         setHasShadow(bActived);
 #endif
 #endif
-        if (bActived != m_bMouseActive)
-        {
+        if (bActived != m_bMouseActive) {
             m_bMouseActive = bActived;
             onMouseActive(m_bMouseActive);
         }
@@ -1503,51 +1368,49 @@ void CSkinWnd::onActivate(bool bActived)
         }
     }
 
-    if (bActived && !isIconic())
+    if (bActived && !isIconic()) {
         m_pSkinFactory->onSkinWndActivate(this);
+    }
 }
 
-void CSkinWnd::addWndCloseto(Window *pWnd, cstr_t szWndClass, cstr_t szWndName)
-{
+void CSkinWnd::addWndCloseto(Window *pWnd, cstr_t szWndClass, cstr_t szWndName) {
     m_WndDrag.addWndCloseto(pWnd, szWndClass, szWndName);
 }
 
-void CSkinWnd::trackMove(Window *pWnd, int x, int y)
-{
+void CSkinWnd::trackMove(Window *pWnd, int x, int y) {
     m_WndDrag.trackMoveWith(pWnd, x, y);
-//    m_WndDrag.TrackCheck();
+    //    m_WndDrag.TrackCheck();
 }
 
-void CSkinWnd::updateMemGraphicsToScreen(const CRect* lpRect)
-{
-    if (!isVisible() || isIconic())
+void CSkinWnd::updateMemGraphicsToScreen(const CRect* lpRect) {
+    if (!isVisible() || isIconic()) {
         return;
+    }
 
-    if (m_nInRedrawUpdate > 0)
-    {
+    if (m_nInRedrawUpdate > 0) {
         m_needRedraw = true;
         return;
     }
 
 #ifdef _WIN32
-    if (getEnableTranslucencyLayered())
+    if (getEnableTranslucencyLayered()) {
         updateLayeredWindowUsingMemGraph(m_pmemGraph);
-    else
-    {
-        CGraphics        *canvas;
+    } else {
+        CGraphics *canvas;
 
         canvas = getGraphics();
 
-        m_pmemGraph->drawToWindow(canvas, 
-            lpRect->left, lpRect->top, 
+        m_pmemGraph->drawToWindow(canvas,
+            lpRect->left, lpRect->top,
             lpRect->right - lpRect->left, lpRect->bottom - lpRect->top,
             lpRect->left, lpRect->top);
 
         releaseGraphics(canvas);
     }
 #else // #ifdef _WIN32
-    if (m_rcMemUpdate.top == m_rcMemUpdate.bottom)
+    if (m_rcMemUpdate.top == m_rcMemUpdate.bottom) {
         m_rcMemUpdate = *lpRect;
+    }
 
     invalidateRect(lpRect);
 #endif // #ifdef _WIN32
@@ -1557,11 +1420,9 @@ void CSkinWnd::updateMemGraphicsToScreen(const CRect* lpRect)
 
 int CSkinWnd::ms_msgIDCustomCommand = RegisterWindowMessage("SkinWndCustomMsgID");
 
-LRESULT CSkinWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam)
-{
-    if (message >= WM_MOUSEFIRST && message <= WM_MOUSELAST && m_wndToolTip.isValid())
-    {
-        MSG        msgRelay;
+LRESULT CSkinWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
+    if (message >= WM_MOUSEFIRST && message <= WM_MOUSELAST && m_wndToolTip.isValid()) {
+        MSG msgRelay;
 
         msgRelay.hwnd = m_hWnd;
         msgRelay.message = message;
@@ -1569,86 +1430,75 @@ LRESULT CSkinWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam)
         msgRelay.wParam = wParam;
 
         m_wndToolTip.relayEvent(&msgRelay);
-    }
-    else if (message == WM_NOTIFY)
-    {
-        NMHDR    *pnmh = (NMHDR *)lParam;
+    } else if (message == WM_NOTIFY) {
+        NMHDR *pnmh = (NMHDR *)lParam;
 
-        if (pnmh->code == TTN_GETDISPINFO)
-        {
-            NMTTDISPINFO    *lpnmtdi = (NMTTDISPINFO *)lParam;
+        if (pnmh->code == TTN_GETDISPINFO) {
+            NMTTDISPINFO *lpnmtdi = (NMTTDISPINFO *)lParam;
 
-            if ((lpnmtdi->uFlags & TTF_IDISHWND) != TTF_IDISHWND)
-            {
-                int        nId;
+            if ((lpnmtdi->uFlags & TTF_IDISHWND) != TTF_IDISHWND) {
+                int nId;
 
                 nId = lpnmtdi->hdr.idFrom;
 
-                CUIObject    *pObj;
+                CUIObject *pObj;
 
                 pObj = getUIObjectById(nId);
-                if (pObj)
-                {
+                if (pObj) {
                     strcpy_safe(lpnmtdi->szText, CountOf(lpnmtdi->szText), _TL(pObj->m_strTooltip.c_str()));
                     lpnmtdi->lpszText = lpnmtdi->szText;
                     lpnmtdi->hinst = nullptr;
                 }
             }
         }
-    }
-    else if (message == WM_GETDLGCODE)
-    {
+    } else if (message == WM_GETDLGCODE) {
         return DLGC_WANTMESSAGE;
-    }
-    else if (message == WM_CAPTURECHANGED)
-    {
+    } else if (message == WM_CAPTURECHANGED) {
         m_pUIObjCapMouse = nullptr;
-    }
-    else if (message == WM_SYSCHAR)
-    {
-        if (m_rootConainter.onMenuKey(wParam, lParam))
+    } else if (message == WM_SYSCHAR) {
+        if (m_rootConainter.onMenuKey(wParam, lParam)) {
             return 0;
+        }
     }
-//     else if (message == WM_SYSCOMMAND)
-//     {
-//         
-//         return 0;
-//     }
+    //     else if (message == WM_SYSCOMMAND)
+    //     {
+    //
+    //         return 0;
+    //     }
 
-    if (message == ms_msgIDCustomCommand)
-    {
+    if (message == ms_msgIDCustomCommand) {
         onCustomCommand(wParam);
         return 0;
     }
 
-    switch (message)
-    {
+    switch (message) {
     case WM_NCCALCSIZE:
         {
             // reset its client area.
-//            fCalcValidRects = (bool) wParam;        // valid area flag 
-//            lpncsp = (LPNCCALCSIZE_PARAMS) lParam;    // size calculation data    or     
-//            OnNcCalcSize((bool)wParam, (LPNCCALCSIZE_PARAMS)lParam);
-            if (m_bWindowsAppearance)
+            //            fCalcValidRects = (bool) wParam;        // valid area flag
+            //            lpncsp = (LPNCCALCSIZE_PARAMS) lParam;    // size calculation data    or
+            //            OnNcCalcSize((bool)wParam, (LPNCCALCSIZE_PARAMS)lParam);
+            if (m_bWindowsAppearance) {
                 break;
+            }
             return 0;
         }
-//     case WM_CAPTURECHANGED:
-//         if (m_pUIObjCapMouse)
-//             releaseCaptureMouse(m_pUIObjCapMouse);
-//         break;
+        //     case WM_CAPTURECHANGED:
+        //         if (m_pUIObjCapMouse)
+        //             releaseCaptureMouse(m_pUIObjCapMouse);
+        //         break;
     case WM_DESTROY:
         {
             // after process WM_DESTORY, delete this.
             onDestroy();
-            if (m_hWnd)
-            {
+            if (m_hWnd) {
                 SetWindowLong(m_hWnd, GWL_USERDATA, (LONG)0);
                 defWindowProc(m_hWnd, message, wParam, lParam);
                 m_hWnd = nullptr;
             }
-            if (m_bFreeOnDestory)
+            if (m_bFreeOnDestory) {
                 delete this;
+            }
             // g_mapWnd.remove(m_hWnd);
         }
         return 0;
@@ -1656,21 +1506,19 @@ LRESULT CSkinWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam)
         return 0;
     case WM_PAINT:
         {
-            if (m_bTranslucencyLayered)
-            {
+            if (m_bTranslucencyLayered) {
                 // updates the position, size, shape, content, and translucency of a layered window
                 return defWindowProc(m_hWnd, message, wParam, lParam);
-            }
-            else
-            {
+            } else {
                 CRect rcClip;
-                if (!::getUpdateRect(m_hWnd, &rcClip, false))
+                if (!::getUpdateRect(m_hWnd, &rcClip, false)) {
                     return 0;
+                }
 
-                PAINTSTRUCT        ps;
-                HDC                hdc;
+                PAINTSTRUCT ps;
+                HDC hdc;
                 hdc = BeginPaint(m_hWnd, &ps);
-                CGraphics    *canvas;
+                CGraphics *canvas;
 
                 canvas = new CGraphics;
                 canvas->attach(hdc);
@@ -1689,49 +1537,48 @@ LRESULT CSkinWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam)
 }
 #endif
 
-void CSkinWnd::enableTranslucencyLayered(bool bTranslucencyLayered)
-{
-    if (m_pmemGraph)
-    {
+void CSkinWnd::enableTranslucencyLayered(bool bTranslucencyLayered) {
+    if (m_pmemGraph) {
         delete m_pmemGraph;
         m_pmemGraph = nullptr;
     }
 
     m_bTranslucencyLayered = bTranslucencyLayered;
-    if (!bTranslucencyLayered)
+    if (!bTranslucencyLayered) {
         m_nCurTranslucencyAlpha = 255;
+    }
 }
 
 #ifdef _WIN32
 
-bool CSkinWnd::invalidateRect(const CRect *lpRect, bool bErase)
-{
-    if (!isVisible() || isIconic())
+bool CSkinWnd::invalidateRect(const CRect *lpRect, bool bErase) {
+    if (!isVisible() || isIconic()) {
         return false;
+    }
 
-    if (m_nInRedrawUpdate > 0)
-    {
+    if (m_nInRedrawUpdate > 0) {
         m_needRedraw = true;
         return false;
     }
 
-    if (!m_bTranslucencyLayered)
+    if (!m_bTranslucencyLayered) {
         return Window::invalidateRect(lpRect, bErase);
+    }
 
     invalidateRectOfLayeredWindow(lpRect);
 
     return true;
 }
 
-void CSkinWnd::invalidateRectOfLayeredWindow(const CRect* lpRect)
-{
+void CSkinWnd::invalidateRectOfLayeredWindow(const CRect* lpRect) {
     assert(m_bTranslucencyLayered);
-    CRawGraph    *memCanvas;
+    CRawGraph *memCanvas;
 
     memCanvas = getMemGraphics();
-    CRawGraph::CClipBoxAutoRecovery    autoCBR(memCanvas);
-    if (lpRect)
+    CRawGraph::CClipBoxAutoRecovery autoCBR(memCanvas);
+    if (lpRect) {
         memCanvas->setClipBoundBox(*lpRect);
+    }
 
     // draw every ui objects on back buffer one by one
     m_rootConainter.draw(memCanvas);
@@ -1804,10 +1651,8 @@ HBITMAP load32Bitbmp(cstr_t szImage, int &nWidth, int &nHeight)
     return imgData.ToHBitmap(nullptr);
 }*/
 
-void CSkinWnd::startTranslucencyFade()
-{
-    if (m_bTranslucencyLayered)
-    {
+void CSkinWnd::startTranslucencyFade() {
+    if (m_bTranslucencyLayered) {
         m_dwTransFadeinBegTime = getTickCount();
         m_nTransAlphaBeg = m_nCurTranslucencyAlpha;
 
@@ -1816,51 +1661,46 @@ void CSkinWnd::startTranslucencyFade()
     }
 }
 
-void CSkinWnd::onTimerDynamicAlphaChange()
-{
-    int            nTargetAlpha;
+void CSkinWnd::onTimerDynamicAlphaChange() {
+    int nTargetAlpha;
 
-    if (m_translucencyStatus == TS_ON_HOVER)
-    {
+    if (m_translucencyStatus == TS_ON_HOVER) {
         //
         // Adjust translucency alpha on mouse hover in/out.
         //
 
-        CPoint        point = getCursorPos();
+        CPoint point = getCursorPos();
         bool bOnMouseHover = m_rcBoundBox.ptInRect(point);
-        if (m_bOnMouseHover != bOnMouseHover)
-        {
+        if (m_bOnMouseHover != bOnMouseHover) {
             m_bOnMouseHover = bOnMouseHover;
             m_dwTransFadeinBegTime = getTickCount();
             m_nTransAlphaBeg = m_nCurTranslucencyAlpha;
         }
 
-        if (m_bOnMouseHover)
+        if (m_bOnMouseHover) {
             nTargetAlpha = m_nTranslucencyAlphaOnHover;
-        else
+        } else {
             nTargetAlpha = m_nTranslucencyAlphaDefault;
-    }
-    else if (isWndActive())
+        }
+    } else if (isWndActive()) {
         nTargetAlpha = m_nTranslucencyAlphaOnActive;
-    else
+    } else {
         nTargetAlpha = m_nTranslucencyAlphaDefault;
-
-    uint32_t        dwTimeCur = getTickCount();
-    int            nAlphaNew;
-    if (dwTimeCur - m_dwTransFadeinBegTime > TIME_OUT_TRANS_FADEIN)
-    {
-        killTimer(TIMER_ID_DYNAMIC_TRANS);
-        if (m_translucencyStatus == TS_ON_HOVER)
-            m_translucencyStatus = TS_NORMAL;
-        nAlphaNew = nTargetAlpha;
     }
-    else
-    {
-        float        fRadio = ((float)(dwTimeCur - m_dwTransFadeinBegTime)) / TIME_OUT_TRANS_FADEIN;
+
+    auto now = getTickCount();
+    int nAlphaNew;
+    if (now - m_dwTransFadeinBegTime > TIME_OUT_TRANS_FADEIN) {
+        killTimer(TIMER_ID_DYNAMIC_TRANS);
+        if (m_translucencyStatus == TS_ON_HOVER) {
+            m_translucencyStatus = TS_NORMAL;
+        }
+        nAlphaNew = nTargetAlpha;
+    } else {
+        float fRadio = ((float)(now - m_dwTransFadeinBegTime)) / TIME_OUT_TRANS_FADEIN;
         nAlphaNew = m_nTransAlphaBeg + int((nTargetAlpha - m_nTransAlphaBeg) * fRadio);
     }
-    if (m_nCurTranslucencyAlpha != nAlphaNew && m_bTranslucencyLayered)
-    {
+    if (m_nCurTranslucencyAlpha != nAlphaNew && m_bTranslucencyLayered) {
         m_nCurTranslucencyAlpha = nAlphaNew;
         assert(m_nCurTranslucencyAlpha >= 0 && m_nCurTranslucencyAlpha <= 255);
 
@@ -1868,10 +1708,10 @@ void CSkinWnd::onTimerDynamicAlphaChange()
     }
 }
 
-void CSkinWnd::onSkinLoaded()
-{
-    if (getFocusUIObj() == nullptr)
+void CSkinWnd::onSkinLoaded() {
+    if (getFocusUIObj() == nullptr) {
         m_rootConainter.focusToNext();
+    }
 
     if (!m_scriptFile.empty()) {
         assert(m_vm == nullptr);
@@ -1900,12 +1740,10 @@ void CSkinWnd::onSkinLoaded()
 }
 
 #ifdef _WIN32_DESKTOP
-bool showAsAppWindowNoRefresh(HWND hWnd)
-{
+bool showAsAppWindowNoRefresh(HWND hWnd) {
     uint32_t dwStyleEx;
     dwStyleEx = (uint32_t)GetWindowLong(hWnd, GWL_EXSTYLE);
-    if (isFlagSet(dwStyleEx, WS_EX_TOOLWINDOW) || isFlagSet(dwStyleEx, WS_EX_PALETTEWINDOW))
-    {
+    if (isFlagSet(dwStyleEx, WS_EX_TOOLWINDOW) || isFlagSet(dwStyleEx, WS_EX_PALETTEWINDOW)) {
         dwStyleEx &= ~(WS_EX_TOOLWINDOW | WS_EX_PALETTEWINDOW);
         dwStyleEx |= WS_EX_APPWINDOW;
         SetWindowLong(hWnd, GWL_EXSTYLE, dwStyleEx);
@@ -1914,12 +1752,10 @@ bool showAsAppWindowNoRefresh(HWND hWnd)
     return false;
 }
 
-bool showAsToolWindowNoRefresh(HWND hWnd)
-{
+bool showAsToolWindowNoRefresh(HWND hWnd) {
     uint32_t dwStyleEx;
     dwStyleEx = (uint32_t)GetWindowLong(hWnd, GWL_EXSTYLE);
-    if (!isFlagSet(dwStyleEx, WS_EX_TOOLWINDOW) && !isFlagSet(dwStyleEx, WS_EX_PALETTEWINDOW))
-    {
+    if (!isFlagSet(dwStyleEx, WS_EX_TOOLWINDOW) && !isFlagSet(dwStyleEx, WS_EX_PALETTEWINDOW)) {
         dwStyleEx |= WS_EX_TOOLWINDOW;// | WS_EX_PALETTEWINDOW;
         dwStyleEx &= ~WS_EX_APPWINDOW;
         SetWindowLong(hWnd, GWL_EXSTYLE, dwStyleEx);
@@ -1929,8 +1765,7 @@ bool showAsToolWindowNoRefresh(HWND hWnd)
 }
 #endif // #ifdef _WIN32_DESKTOP
 
-bool CSkinWnd::onCustomCommand(int nId)
-{
+bool CSkinWnd::onCustomCommand(int nId) {
     if (m_onCommandListener.isFunction()) {
         auto ctx = m_vm->defaultRuntime()->mainCtx();
         ctx->error = JE_OK;
@@ -1938,15 +1773,16 @@ bool CSkinWnd::onCustomCommand(int nId)
             ArgumentsX(makeJsValueInt32(nId)));
     }
 
-    if (m_rootConainter.onCustomCommand(nId))
+    if (m_rootConainter.onCustomCommand(nId)) {
         return true;
+    }
 
-    int        nRet = m_pSkinFactory->onDynamicCmd(nId, this);
-    if (nRet != ERR_NOT_FOUND && nRet != ERR_OK)
+    int nRet = m_pSkinFactory->onDynamicCmd(nId, this);
+    if (nRet != ERR_NOT_FOUND && nRet != ERR_OK) {
         ERR_LOG2("execute Dynamic Command failed: %s, %s", m_pSkinFactory->getStringOfID(nId).c_str(), (cstr_t)Error2Str(nRet));
+    }
 
-    switch (nId)
-    {
+    switch (nId) {
     case CMD_OK:
         onOK();
         break;
@@ -1954,32 +1790,35 @@ bool CSkinWnd::onCustomCommand(int nId)
         onCancel();
         break;
     case CMD_CLOSE:
-        if (m_rootConainter.onClose())
+        if (m_rootConainter.onClose()) {
             postDestroy();
+        }
         break;
     case CMD_QUIT:
         CSkinApp::getInstance()->postQuitMessage();
         break;
     case CMD_MINIMIZE:
-        if (isToolWindow())
+        if (isToolWindow()) {
             hide();
-        else
+        } else {
             minimize();// (SW_SHOWMINIMIZED);
+        }
         break;
     case CMD_MAXIMIZE:
-        if (isZoomed())
+        if (isZoomed()) {
             restore();
-        else
-        {
+        } else {
 #ifdef WIN32
             bool bToolWindow = isToolWindow();
-            if (bToolWindow)
+            if (bToolWindow) {
                 showAsAppWindowNoRefresh(getHandle());
+            }
 
             showWindow(SW_SHOWMAXIMIZED);
 
-            if (bToolWindow)
+            if (bToolWindow) {
                 showAsToolWindowNoRefresh(getHandle());
+            }
 #else
             maximize();
 #endif
@@ -2001,8 +1840,7 @@ bool CSkinWnd::onCustomCommand(int nId)
     return true;
 }
 
-void CSkinWnd::postCustomCommandMsg(int nId)
-{
+void CSkinWnd::postCustomCommandMsg(int nId) {
 #ifdef _WIN32
     ::PostMessage(m_hWnd, ms_msgIDCustomCommand, nId, 0);
 #else // #ifdef _WIN32
@@ -2029,49 +1867,43 @@ void CSkinWnd::onExecOnMainThread() {
     }
 }
 
-void CSkinWnd::postShortcutKeyCmd(int nId)
-{
+void CSkinWnd::postShortcutKeyCmd(int nId) {
     postCustomCommandMsg(nId);
 }
 
-void CSkinWnd::onUserMessage(int nMessageID, LPARAM param)
-{
+void CSkinWnd::onUserMessage(int nMessageID, LPARAM param) {
     m_rootConainter.onUserMessage(nMessageID, param);
 }
 
-void CSkinWnd::onRemoveUIObj(CUIObject *pObj)
-{
-    if (pObj == m_pUIObjCapMouse)
+void CSkinWnd::onRemoveUIObj(CUIObject *pObj) {
+    if (pObj == m_pUIObjCapMouse) {
         releaseCaptureMouse(m_pUIObjCapMouse);
+    }
 }
 
-void CSkinWnd::onAddUIObj(CUIObject *pObj)
-{
+void CSkinWnd::onAddUIObj(CUIObject *pObj) {
 }
 
-void CSkinWnd::onLanguageChanged()
-{
+void CSkinWnd::onLanguageChanged() {
     m_rootConainter.onLanguageChanged();
     invalidateRect(nullptr, true);
 }
 
-void CSkinWnd::onAdjustHue(float hue, float saturation, float luminance)
-{
-    if (!m_bSkinOpened)
+void CSkinWnd::onAdjustHue(float hue, float saturation, float luminance) {
+    if (!m_bSkinOpened) {
         return;
+    }
 
     m_fontProperty.onAdjustHue(this, hue, saturation, luminance);
 
     m_rootConainter.onAdjustHue(hue, saturation, luminance);
 }
 
-int CSkinWnd::registerTimerObject(CUIObject *pObj, int nTimeDuration)
-{
+int CSkinWnd::registerTimerObject(CUIObject *pObj, int nTimeDuration) {
     m_timerIDMax++;
     int nTimerId = m_timerIDMax;
-    if (pObj != nullptr)
-    {
-        TIMER_OBJECT        TimerObj;
+    if (pObj != nullptr) {
+        TIMER_OBJECT TimerObj;
 
         TimerObj.nTimeDuration = nTimeDuration;
         TimerObj.pObj = pObj;
@@ -2084,48 +1916,42 @@ int CSkinWnd::registerTimerObject(CUIObject *pObj, int nTimeDuration)
     return nTimerId;
 }
 
-void CSkinWnd::unregisterTimerObject(CUIObject *pObj, int nTimerId)
-{
+void CSkinWnd::unregisterTimerObject(CUIObject *pObj, int nTimerId) {
     MAP_TIMER_OBJS::iterator it = m_mapTimerObjs.find(nTimerId);
-    if (it != m_mapTimerObjs.end())
+    if (it != m_mapTimerObjs.end()) {
         m_mapTimerObjs.erase(it);
+    }
 
     killTimer(nTimerId);
 }
 
-void CSkinWnd::unregisterTimerObject(CUIObject *pObj)
-{
-    MAP_TIMER_OBJS::iterator    it;
+void CSkinWnd::unregisterTimerObject(CUIObject *pObj) {
+    MAP_TIMER_OBJS::iterator it;
 
-    for (it = m_mapTimerObjs.begin(); it != m_mapTimerObjs.end(); )
-    {
-        TIMER_OBJECT    &timerObj = (*it).second;
+    for (it = m_mapTimerObjs.begin(); it != m_mapTimerObjs.end(); ) {
+        TIMER_OBJECT &timerObj = (*it).second;
 
-        if (timerObj.pObj == pObj)
-        {
+        if (timerObj.pObj == pObj) {
             killTimer((*it).first);
             m_mapTimerObjs.erase(it);
             it = m_mapTimerObjs.begin();
-        }
-        else
+        } else {
             it++;
+        }
     }
 }
 
-void CSkinWnd::onTimer(uint32_t nIDEvent)
-{
-    MAP_TIMER_OBJS::iterator    it;
+void CSkinWnd::onTimer(uint32_t nIDEvent) {
+    MAP_TIMER_OBJS::iterator it;
 
 #ifdef _TRANSLUCENCY_ENABLED
-    if (nIDEvent == TIMER_ID_DYNAMIC_TRANS)
-    {
+    if (nIDEvent == TIMER_ID_DYNAMIC_TRANS) {
         onTimerDynamicAlphaChange();
         return;
     }
 #endif // #ifdef _TRANSLUCENCY_ENABLED
 
-    if (nIDEvent == TIMER_ID_TINY_JS_VM)
-    {
+    if (nIDEvent == TIMER_ID_TINY_JS_VM) {
         auto runtime = m_vm->defaultRuntime();
         runtime->onRunTasks();
 
@@ -2142,14 +1968,10 @@ void CSkinWnd::onTimer(uint32_t nIDEvent)
 #endif
         }
         return;
-    }
-    else if (nIDEvent == TIMER_ID_MOUSE_INACTIVE)
-    {
+    } else if (nIDEvent == TIMER_ID_MOUSE_INACTIVE) {
         onTimerMouseInactive();
         return;
-    }
-    else if (nIDEvent == TIMER_ID_ANIMATION)
-    {
+    } else if (nIDEvent == TIMER_ID_ANIMATION) {
         onTimerAnimation();
         return;
     }
@@ -2159,33 +1981,30 @@ void CSkinWnd::onTimer(uint32_t nIDEvent)
     it = m_mapTimerObjs.find(nIDEvent);
     assert(it != m_mapTimerObjs.end());
 
-    if (it != m_mapTimerObjs.end())
-    {
+    if (it != m_mapTimerObjs.end()) {
         (*it).second.pObj->onTimer(nIDEvent);
         return;
     }
 }
 
-void CSkinWnd::getCursorClientPos(CPoint &pt)
-{
+void CSkinWnd::getCursorClientPos(CPoint &pt) {
     pt = getCursorPos();
 
     screenToClient(pt);
 }
 
 
-bool CSkinWnd::registerUIObjNotifyHandler(int nIDUIObj, IUIObjNotifyHandler *pHandler)
-{
+bool CSkinWnd::registerUIObjNotifyHandler(int nIDUIObj, IUIObjNotifyHandler *pHandler) {
     VecUIObjNotifyHandlers::iterator it;
 
-    for (it = m_vUIObjNotifyHandlers.begin(); it != m_vUIObjNotifyHandlers.end(); ++it)
-    {
-        UIObjNotifyHandlerInfo    &h = *it;
-        if (h.nIDUIObj == nIDUIObj && h.pHandler == pHandler)
+    for (it = m_vUIObjNotifyHandlers.begin(); it != m_vUIObjNotifyHandlers.end(); ++it) {
+        UIObjNotifyHandlerInfo &h = *it;
+        if (h.nIDUIObj == nIDUIObj && h.pHandler == pHandler) {
             return false;
+        }
     }
 
-    UIObjNotifyHandlerInfo        h;
+    UIObjNotifyHandlerInfo h;
     h.nIDUIObj = nIDUIObj;
     h.pHandler = pHandler;
     m_vUIObjNotifyHandlers.push_back(h);
@@ -2194,15 +2013,12 @@ bool CSkinWnd::registerUIObjNotifyHandler(int nIDUIObj, IUIObjNotifyHandler *pHa
 }
 
 
-bool CSkinWnd::unregisterUIObjNotifyHandler(IUIObjNotifyHandler *pHandler)
-{
-    bool        bRet = false;
+bool CSkinWnd::unregisterUIObjNotifyHandler(IUIObjNotifyHandler *pHandler) {
+    bool bRet = false;
 
-    for (int i = (int)m_vUIObjNotifyHandlers.size() - 1; i >= 0; i--)
-    {
-        UIObjNotifyHandlerInfo    &h = m_vUIObjNotifyHandlers[i];
-        if (h.pHandler == pHandler)
-        {
+    for (int i = (int)m_vUIObjNotifyHandlers.size() - 1; i >= 0; i--) {
+        UIObjNotifyHandlerInfo &h = m_vUIObjNotifyHandlers[i];
+        if (h.pHandler == pHandler) {
             m_vUIObjNotifyHandlers.erase(m_vUIObjNotifyHandlers.begin() + i);
             bRet = true;
         }
@@ -2212,13 +2028,10 @@ bool CSkinWnd::unregisterUIObjNotifyHandler(IUIObjNotifyHandler *pHandler)
 }
 
 
-void CSkinWnd::dispatchUIObjNotify(IUIObjNotify *pNotify)
-{
-    for (int i = 0; i < (int)m_vUIObjNotifyHandlers.size(); i++)
-    {
-        UIObjNotifyHandlerInfo    &h = m_vUIObjNotifyHandlers[i];
-        if (h.nIDUIObj == pNotify->nID)
-        {
+void CSkinWnd::dispatchUIObjNotify(IUIObjNotify *pNotify) {
+    for (int i = 0; i < (int)m_vUIObjNotifyHandlers.size(); i++) {
+        UIObjNotifyHandlerInfo &h = m_vUIObjNotifyHandlers[i];
+        if (h.nIDUIObj == pNotify->nID) {
             h.pHandler->onUIObjNotify(pNotify);
         }
     }
@@ -2226,8 +2039,7 @@ void CSkinWnd::dispatchUIObjNotify(IUIObjNotify *pNotify)
     onUIObjNotify(pNotify);
 }
 
-int CSkinWnd::fromXML(SXNode *pXmlNode)
-{
+int CSkinWnd::fromXML(SXNode *pXmlNode) {
     m_bTranslucencyLayered = false;
 
     getWindowRect(&m_rcBoundBox);
@@ -2236,15 +2048,15 @@ int CSkinWnd::fromXML(SXNode *pXmlNode)
 
     m_fontProperty.create("Tohama", "", 14, FW_NORMAL, false, false);
 
-    SXNode    *pNodeExtends = nullptr;
+    SXNode *pNodeExtends = nullptr;
     cstr_t szExtends = pXmlNode->getProperty(SZ_PN_EXTENDS);
-    if (szExtends && !isEmptyString(szExtends))
-    {
+    if (szExtends && !isEmptyString(szExtends)) {
         pNodeExtends = m_pSkinFactory->getExtendsStyle(szExtends);
     }
 
-    if (pNodeExtends)
+    if (pNodeExtends) {
         setProperies(pNodeExtends->listProperties);
+    }
 
     setProperies(pXmlNode->listProperties);
 
@@ -2252,20 +2064,21 @@ int CSkinWnd::fromXML(SXNode *pXmlNode)
     onLoadWndSizePos();
 
     // create UIObjects defined in Extends window
-    CSkinContainer    *pContainterClientArea = nullptr;
-    if (pNodeExtends)
-    {
+    CSkinContainer *pContainterClientArea = nullptr;
+    if (pNodeExtends) {
         m_rootConainter.createChild(pNodeExtends);
         pContainterClientArea = (CSkinContainer*)m_rootConainter.getUIObjectByClassName(CSkinClientArea::className());
 
         // set properties to client area.
         cstr_t szDefaultPage = pXmlNode->getProperty("DefaultPage");
-        if (szDefaultPage)
+        if (szDefaultPage) {
             pContainterClientArea->setProperty("DefaultPage", szDefaultPage);
+        }
     }
 
-    if (pContainterClientArea == nullptr)
+    if (pContainterClientArea == nullptr) {
         pContainterClientArea = &m_rootConainter;
+    }
 
     pContainterClientArea->createChild(pXmlNode);
 
@@ -2276,21 +2089,19 @@ int CSkinWnd::fromXML(SXNode *pXmlNode)
     //
     m_rootConainter.dispatchOnCreateMsg();
 
-    // 
+    //
     updateSkinProperty();
 
     onSkinLoaded();
 
-    string            strOnCreateCmd;
+    string strOnCreateCmd;
     strOnCreateCmd = pXmlNode->getPropertySafe("OnCreateCommand");
 
-    if (!strOnCreateCmd.empty())
-    {
-        VecStrings        vStrParam;
+    if (!strOnCreateCmd.empty()) {
+        VecStrings vStrParam;
 
         strSplit(strOnCreateCmd.c_str(), ',', vStrParam);
-        for (int i = 0; i < (int)vStrParam.size(); i++)
-        {
+        for (int i = 0; i < (int)vStrParam.size(); i++) {
             trimStr(vStrParam[i]);
             onCustomCommand(m_pSkinFactory->getIDByName(vStrParam[i].c_str()));
         }
@@ -2298,20 +2109,20 @@ int CSkinWnd::fromXML(SXNode *pXmlNode)
 
     float hue, saturation, luminance;
     m_pSkinFactory->getResourceMgr()->getAdjustHueParam(hue, saturation, luminance);
-    if (hue != 0.0f)
+    if (hue != 0.0f) {
         onAdjustHue(hue, saturation, luminance);
+    }
 
     return ERR_OK;
 }
 
 #ifdef _SKIN_EDITOR_
-void CSkinWnd::toXML(CXMLWriter &xmlStream)
-{
+void CSkinWnd::toXML(CXMLWriter &xmlStream) {
     xmlStream.writeStartElement(_SZ_SKINWND);
 
     // m_rootConainter.toXML(xmlStream);
 
-    CUIObjProperties    properties;
+    CUIObjProperties properties;
 
     enumProperties(properties);
     properties.toXMLCategoryAttrib(xmlStream);
@@ -2322,36 +2133,33 @@ void CSkinWnd::toXML(CXMLWriter &xmlStream)
 }
 #endif // _SKIN_EDITOR_
 
-void CSkinWnd::onSwitchChildFocus(CUIObject *pUIObjFocusOld, CUIObject *pUIObjFocusNew)
-{
-    if (pUIObjFocusOld != pUIObjFocusNew)
-    {
-        if (pUIObjFocusOld)
+void CSkinWnd::onSwitchChildFocus(CUIObject *pUIObjFocusOld, CUIObject *pUIObjFocusNew) {
+    if (pUIObjFocusOld != pUIObjFocusNew) {
+        if (pUIObjFocusOld) {
             pUIObjFocusOld->onKillFocus();
+        }
 
-        if (pUIObjFocusNew)
+        if (pUIObjFocusNew) {
             pUIObjFocusNew->onSetFocus();
+        }
     }
 }
 
 
-void CSkinWnd::onMouseActiveMsg()
-{
-    m_nTimeLatestMouseMsg = getTickCount();
+void CSkinWnd::onMouseActiveMsg() {
+    m_timeLatestMouseMsg = getTickCount();
 
     killTimer(TIMER_ID_MOUSE_INACTIVE);
     setTimer(TIMER_ID_MOUSE_INACTIVE, TIMER_SPAN_MOUSE_INACTIVE);
 
-    if (!m_bMouseActive)
-    {
+    if (!m_bMouseActive) {
         m_bMouseActive = true;
         onMouseActive(m_bMouseActive);
         invalidateRect();
     }
 }
 
-void CSkinWnd::onTimerMouseInactive()
-{
+void CSkinWnd::onTimerMouseInactive() {
     m_bMouseActive = false;
     onMouseActive(m_bMouseActive);
 
@@ -2360,8 +2168,7 @@ void CSkinWnd::onTimerMouseInactive()
     invalidateRect();
 }
 
-void CSkinWnd::onMouseActive(bool bMouseActive)
-{
+void CSkinWnd::onMouseActive(bool bMouseActive) {
     if (m_onMouseActivateListener.isFunction()) {
         auto ctx = m_vm->defaultRuntime()->mainCtx();
         m_vm->callMember(ctx, jsValueGlobalThis, m_onMouseActivateListener,
@@ -2369,98 +2176,91 @@ void CSkinWnd::onMouseActive(bool bMouseActive)
     }
 }
 
-void CSkinWnd::startAnimation(int nUIDAnimation)
-{
-    for (auto &am : m_listAnimations)
-    {
-        if (am->getUIObjectID() == nUIDAnimation)
+void CSkinWnd::startAnimation(int nUIDAnimation) {
+    for (auto &am : m_listAnimations) {
+        if (am->getUIObjectID() == nUIDAnimation) {
             return;
+        }
     }
 
     CSkinAnimationUIObj *pObj = (CSkinAnimationUIObj*)getUIObjectById(nUIDAnimation, CSkinAnimationUIObj::className());
-    if (pObj)
-    {
-        if (m_listAnimations.empty())
+    if (pObj) {
+        if (m_listAnimations.empty()) {
             setTimer(TIMER_ID_ANIMATION, TIME_OUT_ANIMATION);
+        }
 
         m_listAnimations.push_back(std::make_unique<CSkinAnimation>(pObj));
-    }
-    else
+    } else {
         ERR_LOG1("Invalid animation id: %s", m_pSkinFactory->getStringOfID(nUIDAnimation).c_str());
+    }
 }
 
-void CSkinWnd::startAnimation(CUIObject *pObjTarget, CAnimationMotion *pAnimation, int nDurationTime)
-{
-    if (m_listAnimations.empty())
+void CSkinWnd::startAnimation(CUIObject *pObjTarget, CAnimationMotion *pAnimation, int nDurationTime) {
+    if (m_listAnimations.empty()) {
         setTimer(TIMER_ID_ANIMATION, TIME_OUT_ANIMATION);
+    }
 
     m_listAnimations.push_back(std::make_unique<CSkinAnimation>(pObjTarget, pAnimation, nDurationTime));
 }
 
-void CSkinWnd::stopAnimation(int nIDAnimation)
-{
-    for (ListAnimation::iterator it = m_listAnimations.begin(); it != m_listAnimations.end(); ++it)
-    {
+void CSkinWnd::stopAnimation(int nIDAnimation) {
+    for (ListAnimation::iterator it = m_listAnimations.begin(); it != m_listAnimations.end(); ++it) {
         CSkinAnimation *am = (*it).get();
-        if (am->getUIObjectID() == nIDAnimation)
-        {
+        if (am->getUIObjectID() == nIDAnimation) {
             m_listAnimations.erase(it);
-            if (m_listAnimations.empty())
+            if (m_listAnimations.empty()) {
                 killTimer(TIMER_ID_ANIMATION);
+            }
             return;
         }
     }
 }
 
-void CSkinWnd::stopAnimation(CUIObject *pObjTarget)
-{
-    for (ListAnimation::iterator it = m_listAnimations.begin(); it != m_listAnimations.end(); ++it)
-    {
+void CSkinWnd::stopAnimation(CUIObject *pObjTarget) {
+    for (ListAnimation::iterator it = m_listAnimations.begin(); it != m_listAnimations.end(); ++it) {
         CSkinAnimation *am = (*it).get();
-        if (am->getUIObject() == pObjTarget)
-        {
+        if (am->getUIObject() == pObjTarget) {
             m_listAnimations.erase(it);
-            if (m_listAnimations.empty())
+            if (m_listAnimations.empty()) {
                 killTimer(TIMER_ID_ANIMATION);
+            }
             return;
         }
     }
 }
 
-AnimateType CSkinWnd::getAnimationType() const
-{
-    if (m_animateType == AT_UNKNOWN)
+AnimateType CSkinWnd::getAnimationType() const {
+    if (m_animateType == AT_UNKNOWN) {
         return AT_MOVE;
+    }
     return m_animateType;
 }
 
-int CSkinWnd::getAnimationDuration() const
-{
-    if (m_animateDuration > 0)
+int CSkinWnd::getAnimationDuration() const {
+    if (m_animateDuration > 0) {
         return m_animateDuration;
+    }
 
     return DEFAULT_ANIMATION_DURATION;
 }
 
-void CSkinWnd::onTimerAnimation()
-{
-    CAutoRedrawLock    redrawLock(this);
+void CSkinWnd::onTimerAnimation() {
+    CAutoRedrawLock redrawLock(this);
 
-    for (ListAnimation::iterator it = m_listAnimations.begin(); it != m_listAnimations.end();)
-    {
+    for (ListAnimation::iterator it = m_listAnimations.begin(); it != m_listAnimations.end();) {
         CSkinAnimation *am = (*it).get();
-        if (!am->onAnimate())
-        {
+        if (!am->onAnimate()) {
             it = m_listAnimations.erase(it);
-        }
-        else
+        } else {
             ++it;
+        }
     }
-    
+
     invalidateRect();
 
-    if (m_listAnimations.empty())
+    if (m_listAnimations.empty()) {
         killTimer(TIMER_ID_ANIMATION);
+    }
 }
 
 /*void CSkinWnd::onLoadWndSizePos()
@@ -2482,26 +2282,26 @@ void CSkinWnd::onTimerAnimation()
         moveWindow(rcNew);
 }*/
 
-void CSkinWnd::onLoadWndSizePos()
-{
+void CSkinWnd::onLoadWndSizePos() {
 #ifdef _WIN32
-    if (::getParent(m_hWnd))
+    if (::getParent(m_hWnd)) {
         return;
+    }
 #endif
 
     // WndSizeMode        sizeMode;
-    CRect            rcNew;
-    bool            bCenterWnd = true;
+    CRect rcNew;
+    bool bCenterWnd = true;
 
-    if (isZoomed())
+    if (isZoomed()) {
         restore();
+    }
 
     getWindowRect(&m_rcReal);
 
     rcNew = m_rcReal;
 
-    if (m_bRememberSizePos)
-    {
+    if (m_bRememberSizePos) {
         rcNew.left = g_profile.getInt(getSkinWndName(), "wnd_left", rcNew.left);
         rcNew.top = g_profile.getInt(getSkinWndName(), "wnd_top", rcNew.top);
         rcNew.right = rcNew.left + g_profile.getInt(getSkinWndName(), "wnd_width", m_nWidth);
@@ -2510,29 +2310,29 @@ void CSkinWnd::onLoadWndSizePos()
         //    bCenterWnd = false;
         bCenterWnd = false;
 
-        if (m_wndResizer.isFixedWidth())
+        if (m_wndResizer.isFixedWidth()) {
             rcNew.right = int(rcNew.left + m_nWidth * m_dbScale);
-        if (m_wndResizer.isFixedHeight())
+        }
+        if (m_wndResizer.isFixedHeight()) {
             rcNew.bottom = int(rcNew.top + m_nHeight * m_dbScale);
-    }
-    else
-    {
+        }
+    } else {
         rcNew.right = int(rcNew.left + m_nWidth * m_dbScale);
         rcNew.bottom = int(rcNew.top + m_nHeight * m_dbScale);
     }
 
-    if (rcNew.width() < m_wndResizer.getMinCx())
+    if (rcNew.width() < m_wndResizer.getMinCx()) {
         rcNew.right = rcNew.left + m_wndResizer.getMinCx();
-    if (rcNew.height() < m_wndResizer.getMinCy())
+    }
+    if (rcNew.height() < m_wndResizer.getMinCy()) {
         rcNew.bottom = rcNew.top + m_wndResizer.getMinCy();
+    }
 
-    if (bCenterWnd)
-    {
-        CRect    rcScreen;
-        int        w = rcNew.width(), h = rcNew.height();
+    if (bCenterWnd) {
+        CRect rcScreen;
+        int w = rcNew.width(), h = rcNew.height();
 
-        if (getMonitorRestrictRect(rcNew, rcScreen))
-        {
+        if (getMonitorRestrictRect(rcNew, rcScreen)) {
             rcNew.left = (rcScreen.left + rcScreen.right - w) / 2;
             rcNew.top = (rcScreen.top + rcScreen.bottom - h) / 2;
             rcNew.right = rcNew.left + w;
@@ -2540,10 +2340,11 @@ void CSkinWnd::onLoadWndSizePos()
         }
     }
 
-    if (!rcNew.equal(m_rcReal))
+    if (!rcNew.equal(m_rcReal)) {
         moveWindowSafely(rcNew.left, rcNew.top, rcNew.width(), rcNew.height(), true);
+    }
 
-/*    if (!m_wndResizer.isFixedWidth() && !m_wndResizer.isFixedHeight())
+    /*    if (!m_wndResizer.isFixedWidth() && !m_wndResizer.isFixedHeight())
     {
 //         sizeMode = (WndSizeMode)g_profile.getInt(getSkinWndName(), "SizeMode", WndSizeMode_Normal);
 //         if (sizeMode == WndSizeMode_Maximized)
@@ -2554,7 +2355,7 @@ void CSkinWnd::onLoadWndSizePos()
             // showWindow(SW_MINIMIZE);
     }*/
 
-/*    WINDOWPLACEMENT        wp;
+    /*    WINDOWPLACEMENT        wp;
     memset(&wp, 0, sizeof(wp));
     wp.length = sizeof(wp);
     wp.flags = 0;
@@ -2567,36 +2368,37 @@ void CSkinWnd::onLoadWndSizePos()
 
 // COMMENT:
 //        save current skin window size pos.
-void CSkinWnd::saveWndPos()
-{
-    CRect            rcToSave;
+void CSkinWnd::saveWndPos() {
+    CRect rcToSave;
 
 #ifdef _WIN32_DESKTOP
-    if (::getParent(m_hWnd))
+    if (::getParent(m_hWnd)) {
         return;
+    }
 
-    WINDOWPLACEMENT    wp;
+    WINDOWPLACEMENT wp;
 
     wp.length = sizeof(wp);
-    if (GetWindowPlacement(m_hWnd, &wp))
-    {
+    if (GetWindowPlacement(m_hWnd, &wp)) {
         rcToSave = wp.rcNormalPosition;
-    }
-    else
+    } else {
         rcToSave = m_rcReal;
+    }
 
-    WndSizeMode        sizeMode;
-    if (isFlagSet(wp.showCmd, SW_SHOWMAXIMIZED))
+    WndSizeMode sizeMode;
+    if (isFlagSet(wp.showCmd, SW_SHOWMAXIMIZED)) {
         sizeMode = WndSizeMode_Maximized;
-    else if (isFlagSet(wp.showCmd, SW_SHOWMINIMIZED))
+    } else if (isFlagSet(wp.showCmd, SW_SHOWMINIMIZED)) {
         sizeMode = WndSizeMode_Minimized;
-    else
+    } else {
         sizeMode = WndSizeMode_Normal;
+    }
 
     g_profile.writeInt(getSkinWndName(), "SizeMode", sizeMode);
 #else
-    if (!getWindowRect(&rcToSave))
+    if (!getWindowRect(&rcToSave)) {
         return;
+    }
 #endif
 
     g_profile.writeInt(getSkinWndName(), "wnd_left", rcToSave.left);

@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef __DX_SKIN_INC_
 #define __DX_SKIN_INC_
 
@@ -36,5 +38,6 @@ class CSkinWnd;
 #include "SkinTabButton.h"
 #include "EventsDispatcherBase.h"
 #include "SkinApp.h"
+
 
 #endif // __DX_SKIN_INC_

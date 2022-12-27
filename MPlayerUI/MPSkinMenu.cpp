@@ -8,13 +8,13 @@
 #include "LyricShowTextEditObj.h"
 
 
-typedef struct _CMDID_ENCODING
+struct CommandIDEncoding
 {
     int                                nCmdId;
     CharEncodingType    nEncodingId;
-}_CMDID_ENCODING;
+};
 
-_CMDID_ENCODING    _arrCmdIdCharset[] = 
+CommandIDEncoding    _arrCmdIdCharset[] = 
 {
     {IDC_ENC_DEFAULT, ED_SYSDEF },
     {IDC_ENC_UNICODE, ED_UNICODE },

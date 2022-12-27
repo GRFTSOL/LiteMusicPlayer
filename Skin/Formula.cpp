@@ -2,7 +2,7 @@
     Created  :    2001/7/17    12:03:00
     FileName :    Formula.cpp
     Author   :    xhy
-    
+
     Purpose  :    
 *********************************************************************/
 
@@ -10,7 +10,7 @@
 #include "Formula.h"
 
 
-#define _IsOperator(type)    (type > FW_OPTR)
+#define _IsOperator(type)   (type > FW_OPTR)
 #define _IsOperand(type)    (type < FW_OPTR)
 
 //                  1, 2, 3, 4, 5,  6, 7, 8
@@ -19,59 +19,53 @@ int OpPriorF[]={-1, 2, 2, 4, 4, 0, 6, 0, 0};
 int OpPriorG[]={-1, 1, 1, 3, 3, 7, 0, 0, 0};
 
 
-CFormula::CFormula()
-{
+CFormula::CFormula() {
 }
 
-CFormula::~CFormula()
-{
+CFormula::~CFormula() {
 }
 
-void CFormula::setFormula(cstr_t szForm)
-{
+void CFormula::setFormula(cstr_t szForm) {
     m_strFormula = szForm;
 
     simpleOptimize();
 }
 
-void CFormula::setFormula(int nConstValue)
-{
+void CFormula::setFormula(int nConstValue) {
     m_strFormula = stringFromInt(nConstValue);
 }
 
-void CFormula::append(cstr_t szFormula)
-{
+void CFormula::append(cstr_t szFormula) {
     m_strFormula += szFormula;
 
     simpleOptimize();
 }
 
-void CFormula::increase(int value)
-{
-    if (value < 0)
+void CFormula::increase(int value) {
+    if (value < 0) {
         m_strFormula += stringPrintf("%d", value).c_str();
-    else
+    } else {
         m_strFormula += stringPrintf("+%d", value).c_str();
+    }
     simpleOptimize();
 }
 
-bool CFormula::calCualteValue(int &nRetValue)
-{
+bool CFormula::calCualteValue(int &nRetValue) {
     FORMULA_VAR var[] = { 0, 0 };
 
     return calCualteValue(var, nRetValue);
 }
 
-bool CFormula::calCualteValue(FORMULA_VAR var[], int &nRetValue)
-{
-    bool    bRet = false;
+bool CFormula::calCualteValue(FORMULA_VAR var[], int &nRetValue) {
+    bool bRet = false;
 
-    FormulaArray        vWords;
+    FormulaArray vWords;
 
-    FormulaArray        arrOptr, arrOpnd;
+    FormulaArray arrOptr, arrOpnd;
 
-    if (!phraseAnalyse(vWords))
+    if (!phraseAnalyse(vWords)) {
         goto FAILED;
+    }
 
 
     size_t nSize, cur;
@@ -81,19 +75,19 @@ bool CFormula::calCualteValue(FORMULA_VAR var[], int &nRetValue)
         goto FAILED;
     }
 
-    PFORMULA_WORD    pOptrTop;
-    PFORMULA_WORD    pWordCur, pWordPrev;
+    PFORMULA_WORD pOptrTop;
+    PFORMULA_WORD pWordCur, pWordPrev;
 
     // init
     cur = 0;
-    
-    pWordCur = vWords[cur];    // read '#' optr
+
+    pWordCur = vWords[cur]; // read '#' optr
     pOptrTop = pWordCur;
     arrOptr.push_back(pOptrTop);
     cur ++;
 
     pWordPrev = pWordCur;
-    pWordCur = vWords[cur];    // read word
+    pWordCur = vWords[cur]; // read word
     cur ++;
 
     while (1){
@@ -107,20 +101,19 @@ bool CFormula::calCualteValue(FORMULA_VAR var[], int &nRetValue)
 
             // read next word
             pWordPrev = pWordCur;
-            pWordCur = vWords[cur];    // read word
+            pWordCur = vWords[cur]; // read word
             cur ++;
         }
         // operator
         else if (_IsOperator(pWordCur->nWordType)){
             // 语法错误！
-//            if ( /*' 2 ( '*/ (pWordCur->nWordType == FW_OPTR_LBRACKET && _IsOperand(pWordPrev->dwWordType)) ||    
-//                /*' ( + '*/ (pWordCur->nWordType != FW_OPTR_LBRACKET && pWordPrev->nWordType == FW_OPTR_LBRACKET) ||
-//                /*' # ) '*/ (pWordCur->nWordType == FW_OPTR_RBRACKET && pWordPrev->nWordType != FW_OPTR_RBRACKET)){
-//                goto FAILED;
-//            }
+            //            if ( /*' 2 ( '*/ (pWordCur->nWordType == FW_OPTR_LBRACKET && _IsOperand(pWordPrev->dwWordType)) ||
+            //                /*' ( + '*/ (pWordCur->nWordType != FW_OPTR_LBRACKET && pWordPrev->nWordType == FW_OPTR_LBRACKET) ||
+            //                /*' # ) '*/ (pWordCur->nWordType == FW_OPTR_RBRACKET && pWordPrev->nWordType != FW_OPTR_RBRACKET)){
+            //                goto FAILED;
+            //            }
             // 判断操作符的优先级....
-            if (OpPriorF[pOptrTop->nWordType - FW_OPTR] < OpPriorG[pWordCur->nWordType - FW_OPTR])
-            {
+            if (OpPriorF[pOptrTop->nWordType - FW_OPTR] < OpPriorG[pWordCur->nWordType - FW_OPTR]) {
                 // 将 pWordCur 入栈
                 arrOptr.push_back(pWordCur);
                 pOptrTop = pWordCur;
@@ -129,30 +122,29 @@ bool CFormula::calCualteValue(FORMULA_VAR var[], int &nRetValue)
                     goto FAILED;
                 }
                 pWordPrev = pWordCur;
-                pWordCur = vWords[cur];    // read word
+                pWordCur = vWords[cur]; // read word
                 cur ++;
-            }
-            else if (OpPriorF[pOptrTop->nWordType - FW_OPTR] > OpPriorG[pWordCur->nWordType - FW_OPTR]){
+            } else if (OpPriorF[pOptrTop->nWordType - FW_OPTR] > OpPriorG[pWordCur->nWordType - FW_OPTR]){
                 // calculate the value:
                 size_t tmp;
                 tmp = arrOpnd.size();
-                if (tmp < 2)
-                {
+                if (tmp < 2) {
                     // must be: -1 or +2 ....
-                    if (tmp == 0)
+                    if (tmp == 0) {
                         goto FAILED;
-                    PFORMULA_WORD    pOpnd1;
-                    int                nVal1;
+                    }
+                    PFORMULA_WORD pOpnd1;
+                    int nVal1;
 
                     // get the operand
                     pOpnd1 = arrOpnd[0];
-                    if (pOpnd1->nWordType == FW_OPND_VAR_LONG)
-                    {
-                        if (!getVarValue(pOpnd1->Value, var, nVal1))
+                    if (pOpnd1->nWordType == FW_OPND_VAR_LONG) {
+                        if (!getVarValue(pOpnd1->Value, var, nVal1)) {
                             goto FAILED;
-                    }
-                    else
+                        }
+                    } else {
                         nVal1 = pOpnd1->Value;
+                    }
 
                     switch (pOptrTop->nWordType){
                     case FW_OPTR_ADD:
@@ -172,30 +164,28 @@ bool CFormula::calCualteValue(FORMULA_VAR var[], int &nRetValue)
                     // popup optrTop
                     arrOptr.pop_back();
                     pOptrTop = arrOptr[arrOptr.size() - 1];
-                }
-                else
-                {
-                    PFORMULA_WORD    pOpnd1, pOpnd2;
-                    int                nVal1, nVal2;
+                } else {
+                    PFORMULA_WORD pOpnd1, pOpnd2;
+                    int nVal1, nVal2;
 
                     // get the two operand
                     pOpnd1 = arrOpnd[tmp - 2];
                     pOpnd2 = arrOpnd[tmp - 1];
-                    if (pOpnd1->nWordType == FW_OPND_VAR_LONG)
-                    {
-                        if (!getVarValue(pOpnd1->Value, var, nVal1))
+                    if (pOpnd1->nWordType == FW_OPND_VAR_LONG) {
+                        if (!getVarValue(pOpnd1->Value, var, nVal1)) {
                             goto FAILED;
-                    }
-                    else
+                        }
+                    } else {
                         nVal1 = pOpnd1->Value;
-                    if (pOpnd2->nWordType == FW_OPND_VAR_LONG)
-                    {
-                        if (!getVarValue(pOpnd2->Value, var, nVal2))
-                            goto FAILED;
                     }
-                    else
+                    if (pOpnd2->nWordType == FW_OPND_VAR_LONG) {
+                        if (!getVarValue(pOpnd2->Value, var, nVal2)) {
+                            goto FAILED;
+                        }
+                    } else {
                         nVal2 = pOpnd2->Value;
-                    
+                    }
+
                     switch (pOptrTop->nWordType){
                     case FW_OPTR_ADD:
                         pOpnd1->Value = nVal1 + nVal2;
@@ -224,9 +214,9 @@ bool CFormula::calCualteValue(FORMULA_VAR var[], int &nRetValue)
                 }
             }
             else{
-//                if (! ((pOptrTop->nWordType == FW_OPTR_LBRACKET && pWordCur->nWordType == FW_OPTR_RBRACKET) ||
-//                    (pOptrTop->nWordType == FW_OPTR_BEGIN && pWordCur->nWordType == FW_OPTR_END)) )
-//                    goto FAILED;
+                //                if (! ((pOptrTop->nWordType == FW_OPTR_LBRACKET && pWordCur->nWordType == FW_OPTR_RBRACKET) ||
+                //                    (pOptrTop->nWordType == FW_OPTR_BEGIN && pWordCur->nWordType == FW_OPTR_END)) )
+                //                    goto FAILED;
                 switch (pOptrTop->nWordType){
                 case FW_OPTR_LBRACKET:
                     // popup optrTop
@@ -238,7 +228,7 @@ bool CFormula::calCualteValue(FORMULA_VAR var[], int &nRetValue)
                         goto FAILED;
                     }
                     pWordPrev = pWordCur;
-                    pWordCur = vWords[cur];    // read word
+                    pWordCur = vWords[cur]; // read word
                     cur ++;
                     break;
                 case FW_OPTR_BEGIN:
@@ -248,15 +238,15 @@ bool CFormula::calCualteValue(FORMULA_VAR var[], int &nRetValue)
                         goto FAILED;
                     }
 
-                    PFORMULA_WORD    pOpnd;
+                    PFORMULA_WORD pOpnd;
                     pOpnd = arrOpnd[0];
 
-                    if (pOpnd->nWordType == FW_OPND_VAR_LONG)
-                    {
-                        if (!getVarValue(pOpnd->Value, var, pOpnd->Value))
+                    if (pOpnd->nWordType == FW_OPND_VAR_LONG) {
+                        if (!getVarValue(pOpnd->Value, var, pOpnd->Value)) {
                             goto FAILED;
+                        }
                     }
-                    
+
                     nRetValue = pOpnd->Value;
                     goto SUCEED;
                 default:
@@ -265,9 +255,9 @@ bool CFormula::calCualteValue(FORMULA_VAR var[], int &nRetValue)
                     break;
                 }
             }
-        }
-        else
+        } else {
             goto FAILED;
+        }
     }
 FAILED:
     if (m_strFormula.size() > 0) {
@@ -280,10 +270,9 @@ SUCEED:
     bRet = true;
 END:
     // remove old data
-    size_t    nCount;
+    size_t nCount;
     nCount = vWords.size();
-    for (size_t i = 0; i < nCount; i++)
-    {
+    for (size_t i = 0; i < nCount; i++) {
         delete vWords[i];
     }
     vWords.clear();
@@ -294,14 +283,14 @@ END:
     return bRet;
 }
 
-bool CFormula::phraseAnalyse(FormulaArray &vWords)
-{
-    if (m_strFormula.empty())
+bool CFormula::phraseAnalyse(FormulaArray &vWords) {
+    if (m_strFormula.empty()) {
         return false;
+    }
 
     int cur, prev = -1;
-    PFORMULA_WORD    pWord;
-    cstr_t            m_szFormula;
+    PFORMULA_WORD pWord;
+    cstr_t m_szFormula;
     cur = 0;
 
     m_szFormula = m_strFormula.c_str();
@@ -313,12 +302,12 @@ bool CFormula::phraseAnalyse(FormulaArray &vWords)
     pWord = nullptr;
 
 S_BEGIN:
-    if (m_szFormula[cur] == 0 || prev == cur)
+    if (m_szFormula[cur] == 0 || prev == cur) {
         goto S_END;
+    }
     prev = cur;
 
-    if (isDigit(m_szFormula[cur]))
-    {
+    if (isDigit(m_szFormula[cur])) {
         // 作为整数处理
         pWord = new FORMULA_WORD;
         pWord->nWordType = FW_OPND_LONG;
@@ -326,14 +315,14 @@ S_BEGIN:
         vWords.push_back(pWord);
         pWord = nullptr;
 
-        while (isDigit(m_szFormula[cur]))
+        while (isDigit(m_szFormula[cur])) {
             cur++;
+        }
         goto S_BEGIN;
     }
 
     // 算符+
-    switch (m_szFormula[cur])
-    {
+    switch (m_szFormula[cur]) {
     case '+':
         pWord = new FORMULA_WORD;
         pWord->nWordType = FW_OPTR_ADD;
@@ -361,20 +350,20 @@ S_BEGIN:
     }
 
     // 变量 variable
-    if (isalpha(m_szFormula[cur]))
-    {
+    if (isalpha(m_szFormula[cur])) {
         pWord = new FORMULA_WORD;
         pWord->nWordType = FW_OPND_VAR_LONG;
         pWord->Value = m_szFormula[cur];
         vWords.push_back(pWord);
         pWord = nullptr;
-        
+
         cur ++;
         goto S_BEGIN;
     }
 
-    while (isWhiteSpace(m_szFormula[cur]))
+    while (isWhiteSpace(m_szFormula[cur])) {
         cur ++;
+    }
 
     goto S_BEGIN;
 
@@ -382,7 +371,7 @@ S_OPTR:
     pWord->Value = 0;
     vWords.push_back(pWord);
     pWord = nullptr;
-    
+
     cur ++;
     goto S_BEGIN;
 
@@ -396,12 +385,9 @@ S_END:
     return true;
 }
 
-bool CFormula::getVarValue(int nVar, FORMULA_VAR vars[], int &nRetValue)
-{
-    for (int i = 0; vars[i].nVarName != 0; i ++)
-    {
-        if (nVar == vars[i].nVarName)
-        {
+bool CFormula::getVarValue(int nVar, FORMULA_VAR vars[], int &nRetValue) {
+    for (int i = 0; vars[i].nVarName != 0; i ++) {
+        if (nVar == vars[i].nVarName) {
             nRetValue = vars[i].Value;
             return true;
         }
@@ -410,105 +396,98 @@ bool CFormula::getVarValue(int nVar, FORMULA_VAR vars[], int &nRetValue)
     return false;
 }
 
-CFormula& CFormula::operator =(CFormula &fRight)
-{
+CFormula& CFormula::operator =(CFormula &fRight) {
     m_strFormula = fRight.m_strFormula;
 
     return *this;
 }
 
-cstr_t ignoreNumb(cstr_t szStr)
-{
-    while (*szStr >= '0' && *szStr <= '9')
+cstr_t ignoreNumb(cstr_t szStr) {
+    while (*szStr >= '0' && *szStr <= '9') {
         szStr++;
+    }
 
     return szStr;
 }
 
-void CFormula::simpleOptimize()
-{
-    if (m_strFormula.empty())
+void CFormula::simpleOptimize() {
+    if (m_strFormula.empty()) {
         return;
+    }
 
-    cstr_t        szEnd, szBeg, szPos, szOtherEnd;
+    cstr_t szEnd, szBeg, szPos, szOtherEnd;
 
     szPos = szEnd = m_strFormula.c_str() + m_strFormula.size() - 1;
     szBeg = m_strFormula.c_str();
 
-    while (szPos >= szBeg && (isDigit(*szPos) || *szPos == ' ' || *szPos == '+' || *szPos == '-' || *szPos == '\t'))
+    while (szPos >= szBeg && (isDigit(*szPos) || *szPos == ' ' || *szPos == '+' || *szPos == '-' || *szPos == '\t')) {
         szPos--;
+    }
 
-    if (*szPos == '/' || *szPos == '*')
-    {
+    if (*szPos == '/' || *szPos == '*') {
         szPos++;
         szPos = strignore(szPos, " \t");
-        if (!isDigit(*szPos))
+        if (!isDigit(*szPos)) {
             return;
+        }
         szPos = ignoreNumb(szPos);
-    }
-    else
+    } else {
         szPos++;
+    }
 
-    int        nResult = 0;
+    int nResult = 0;
 
     szOtherEnd = szPos;
     // szPos + , - .....
-    if (szPos == szBeg)
-    {
+    if (szPos == szBeg) {
         // 换算为+....
         szPos = strignore(szPos, " \t");
-        if (isEmptyString(szPos))
+        if (isEmptyString(szPos)) {
             return;
-        if (isDigit(*szPos))
-        {
+        }
+        if (isDigit(*szPos)) {
             nResult = atoi(szPos);
             szPos = ignoreNumb(szPos);
         }
     }
 
     szPos = strignore(szPos, " \t");
-    while (*szPos)
-    {
-        if (*szPos == '+')
-        {
+    while (*szPos) {
+        if (*szPos == '+') {
             szPos++;
             szPos = strignore(szPos, " \t");
-            if (isDigit(*szPos))
+            if (isDigit(*szPos)) {
                 nResult += atoi(szPos);
-            else
+            } else {
                 return;
-        }
-        else if (*szPos == '-')
-        {
+            }
+        } else if (*szPos == '-') {
             szPos++;
             szPos = strignore(szPos, " \t");
-            if (isDigit(*szPos))
+            if (isDigit(*szPos)) {
                 nResult -= atoi(szPos);
-            else
+            } else {
                 return;
-        }
-        else
+            }
+        } else {
             assert(0);
+        }
 
         szPos = ignoreNumb(szPos);
         szPos = strignore(szPos, " \t");
     }
 
-    if (szOtherEnd < szEnd)
-    {
+    if (szOtherEnd < szEnd) {
         m_strFormula.erase(m_strFormula.begin() + (int)(szOtherEnd - szBeg), m_strFormula.end());
-        if (m_strFormula.size() == 0)
-        {
+        if (m_strFormula.size() == 0) {
             m_strFormula = itos(nResult);
-        }
-        else
-        {
-            if (nResult != 0)
-            {
-                if (nResult > 0)
+        } else {
+            if (nResult != 0) {
+                if (nResult > 0) {
                     m_strFormula += "+" + itos(nResult);
-                else
+                } else {
                     m_strFormula += itos(nResult);
+                }
             }
         }
     }

@@ -1,18 +1,13 @@
-// MDWave.h: interface for the CMDWave class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MDWAVE_H__1B71B4A4_E1A4_42A8_8A4E_AEFE1D6EAE1A__INCLUDED_)
-#define AFX_MDWAVE_H__1B71B4A4_E1A4_42A8_8A4E_AEFE1D6EAE1A__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef MPlayerEngine_MDWave_h
+#define MPlayerEngine_MDWave_h
+
 
 #include "IMPlayer.h"
 
-class CMDWave : public IMediaDecode  
-{
+
+class CMDWave : public IMediaDecode {
 OBJ_REFERENCE_DECL
 public:
     CMDWave();
@@ -44,17 +39,16 @@ public:
     virtual uint32_t getPos();
 
     // volume
-    virtual MLRESULT setVolume(int nVolume, int nBanlance);
+    virtual MLRESULT setVolume(int volume, int nBanlance);
 
 protected:
-    struct WaveFileInfo
-    {
-        short    format_tag, channels, block_align, bits_per_sample;
-        long    samples_per_sec, avg_bytes_per_sec;
-        unsigned long position, length;
-        uint32_t    nMediaFileSize;
-        int        nMediaLength;    // ms
-        long    data_offset;
+    struct WaveFileInfo {
+        short                       format_tag, channels, block_align, bits_per_sample;
+        long                        samples_per_sec, avg_bytes_per_sec;
+        unsigned long               position, length;
+        uint32_t                    nMediaFileSize;
+        int                         nMediaLength;       // ms
+        long                        data_offset;
     };
 
     MLRESULT getHeadInfo(IMediaInput *pInput);
@@ -64,21 +58,21 @@ protected:
     void decodeThreadProc();
 
 public:
-    IMediaOutput    *m_pOutput;
-    IMediaInput        *m_pInput;
-    IMPlayer        *m_pPlayer;
-    IMemAllocator    *m_pMemAllocator;
-    PLAYER_STATE    m_state;
-    bool            m_bPaused;
-    bool            m_bKillThread;
-    int32_t            m_nSeekPos;
-    bool            m_bSeekFlag;
+    IMediaOutput                *m_pOutput;
+    IMediaInput                 *m_pInput;
+    IMPlayer                    *m_pPlayer;
+    IMemAllocator               *m_pMemAllocator;
+    PLAYER_STATE                m_state;
+    bool                        m_bPaused;
+    bool                        m_bKillThread;
+    int32_t                     m_nSeekPos;
+    bool                        m_bSeekFlag;
 
-    WaveFileInfo    m_audioInfo;
+    WaveFileInfo                m_audioInfo;
 
-    string        m_bufInput;
-    CThread            m_threadDecode;
+    string                      m_bufInput;
+    CThread                     m_threadDecode;
 
 };
 
-#endif // !defined(AFX_MDWAVE_H__1B71B4A4_E1A4_42A8_8A4E_AEFE1D6EAE1A__INCLUDED_)
+#endif // !defined(MPlayerEngine_MDWave_h)

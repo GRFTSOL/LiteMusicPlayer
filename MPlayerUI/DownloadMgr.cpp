@@ -392,7 +392,7 @@ void CDownloadMgr::onEndDownload(CDownloadTask *pTask)
         //
         {
             if (saveDownloadedLyrics(pTask->strMediaKey.c_str(), pTask->m_strLyrFileName.c_str(), 
-                pTask->buffContent.c_str(), pTask->buffContent.size()) == ERR_OK)
+                pTask->buffContent.c_str(), (int)pTask->buffContent.size()) == ERR_OK)
             {
                 CMPlayerAppBase::getInstance()->dispatchResearchLyrics();
 

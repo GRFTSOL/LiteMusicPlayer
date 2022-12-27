@@ -41,38 +41,6 @@ bool loadProxySvrFromIE(bool &bUseProxy, string &strSvr, int &nPort)
     return false;
 }
 
-static bool findStringValue(cstr_t szBuff, cstr_t szName, cstr_t szEndTag, string &strValue)
-{
-    cstr_t        szBeg, szEnd;
-
-    strValue.resize(0);
-
-    szBeg = strstr(szBuff, szName);
-    if (!szBeg)
-        return false;
-
-    szBeg += strlen(szName);
-
-    szEnd = strstr(szBeg, szEndTag);
-    if (!szEnd)
-        return false;
-
-    strValue.append(szBeg, szEnd);
-
-    return true;
-}
-
-bool loadProxySvrFromFireFox(bool &bUseProxy, string &strSvr, int &nPort)
-{
-    return false;
-}
-
-
 void getNotepadEditor(string &strEditor)
 {
-}
-
-uint32_t getSecCount()
-{
-    return getTickCount() / 1000;
 }

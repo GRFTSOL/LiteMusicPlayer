@@ -1,10 +1,10 @@
-
 #include "UnicodeRange.h"
 
-// This table depends on unicode range definitions. 
+
+// This table depends on unicode range definitions.
 // Each item's index must correspond unicode range value
 // eg. x-cyrillic = LangGroupTable[kRangeCyrillic]
-//const char *gUnicodeRangeToLangGroupTable[] = 
+//const char *gUnicodeRangeToLangGroupTable[] =
 //{
 //  "x-cyrillic",
 //  "el",
@@ -161,12 +161,11 @@
 
 
 
-#define NUM_OF_SUBTABLES      7
-#define SUBTABLE_SIZE         16
+#define NUM_OF_SUBTABLES    7
+#define SUBTABLE_SIZE       16
 
-static uint8_t gUnicodeSubrangeTable[NUM_OF_SUBTABLES][SUBTABLE_SIZE] = 
-{ 
-  { // table for X---
+static uint8_t gUnicodeSubrangeTable[NUM_OF_SUBTABLES][SUBTABLE_SIZE] = {
+    { // table for X---
     kRangeTableBase+1,  //u0xxx
     kRangeTableBase+2,  //u1xxx
     kRangeTableBase+3,  //u2xxx
@@ -183,8 +182,8 @@ static uint8_t gUnicodeSubrangeTable[NUM_OF_SUBTABLES][SUBTABLE_SIZE] =
     kRangeTableBase+5,  //udxxx  
     kRangePrivate,      //uexxx
     kRangeTableBase+6   //ufxxx
-  },
-  { //table for 0X--
+    },
+    { //table for 0X--
     kRangeSetLatin,          //u00xx
     kRangeSetLatin,          //u01xx
     kRangeSetLatin,          //u02xx
@@ -201,8 +200,8 @@ static uint8_t gUnicodeSubrangeTable[NUM_OF_SUBTABLES][SUBTABLE_SIZE] =
     kRangeTertiaryTable,     //u0dxx
     kRangeTertiaryTable,     //u0exx
     kRangeTertiaryTable,     //u0fxx
-  },
-  { //table for 1x--
+    },
+    { //table for 1x--
     kRangeTertiaryTable,     //u10xx
     kRangeKorean,            //u11xx
     kRangeEthiopic,          //u12xx
@@ -219,8 +218,8 @@ static uint8_t gUnicodeSubrangeTable[NUM_OF_SUBTABLES][SUBTABLE_SIZE] =
     kRangeUnassigned,        //u1dxx
     kRangeSetLatin,          //u1exx
     kRangeGreek,             //u1fxx
-  },
-  { //table for 2x--
+    },
+    { //table for 2x--
     kRangeSetLatin,          //u20xx
     kRangeSetLatin,          //u21xx
     kRangeMathOperators,     //u22xx
@@ -237,8 +236,8 @@ static uint8_t gUnicodeSubrangeTable[NUM_OF_SUBTABLES][SUBTABLE_SIZE] =
     kRangeUnassigned,        //u2dxx
     kRangeSetCJK,            //u2exx
     kRangeSetCJK,            //u2fxx                      
-  },
-  {  //table for ax--
+    },
+    {  //table for ax--
     kRangeYi,                //ua0xx
     kRangeYi,                //ua1xx
     kRangeYi,                //ua2xx
@@ -255,8 +254,8 @@ static uint8_t gUnicodeSubrangeTable[NUM_OF_SUBTABLES][SUBTABLE_SIZE] =
     kRangeKorean,            //uadxx
     kRangeKorean,            //uaexx
     kRangeKorean,            //uafxx
-  },
-  {  //table for dx--
+    },
+    {  //table for dx--
     kRangeKorean,            //ud0xx
     kRangeKorean,            //ud1xx
     kRangeKorean,            //ud2xx
@@ -273,8 +272,8 @@ static uint8_t gUnicodeSubrangeTable[NUM_OF_SUBTABLES][SUBTABLE_SIZE] =
     kRangeSurrogate,         //uddxx
     kRangeSurrogate,         //udexx
     kRangeSurrogate,         //udfxx
-  },
-  { // table for fx--
+    },
+    { // table for fx--
     kRangePrivate,           //uf0xx 
     kRangePrivate,           //uf1xx 
     kRangePrivate,           //uf2xx 
@@ -290,23 +289,22 @@ static uint8_t gUnicodeSubrangeTable[NUM_OF_SUBTABLES][SUBTABLE_SIZE] =
     kRangeArabic,            //ufcxx
     kRangeArabic,            //ufdxx
     kRangeArabic,            //ufexx, includes Combining half marks, 
-                             //                CJK compatibility forms, 
-                             //                CJK compatibility forms, 
-                             //                small form variants
-    
+        //                CJK compatibility forms,
+        //                CJK compatibility forms,
+        //                small form variants
+
     kRangeSetCJK,            //uffxx, halfwidth and fullwidth forms, includes Special
-  }
+    }
 };
 
-// Most scripts between U+0700 and U+16FF are assigned a chunk of 128 (0x80) 
+// Most scripts between U+0700 and U+16FF are assigned a chunk of 128 (0x80)
 // code points  so that the number of entries in the tertiary range
 // table for that range is obtained by dividing (0x1700 - 0x0700) by 128.
-// Exceptions: Ethiopic, Tibetan, Hangul Jamo and Canadian aboriginal 
+// Exceptions: Ethiopic, Tibetan, Hangul Jamo and Canadian aboriginal
 // syllabaries take multiple chunks and Ogham and Runic share  a single chunk.
-#define TERTIARY_TABLE_SIZE ((0x1700 - 0x0700) / 0x80)
+#define TERTIARY_TABLE_SIZE ((0x1700 - 0x0700)  / 0x80)
 
-static uint8_t gUnicodeTertiaryRangeTable[TERTIARY_TABLE_SIZE] =
-{ //table for 0x0700 - 0x1600 
+static uint8_t gUnicodeTertiaryRangeTable[TERTIARY_TABLE_SIZE] = { //table for 0x0700 - 0x1600
     kRangeSyriac,            //u070x
     kRangeThaana,            //u078x
     kRangeUnassigned,        //u080x  place holder(resolved in the 2ndary tab.)
@@ -341,39 +339,40 @@ static uint8_t gUnicodeTertiaryRangeTable[TERTIARY_TABLE_SIZE] =
     kRangeOghamRunic,        //u168x  this contains two scripts, Ogham & Runic
 };
 
-// A two level index is almost enough for locating a range, with the 
+// A two level index is almost enough for locating a range, with the
 // exception of u03xx and u05xx. Since we don't really care about range for
-// Armenian and combining diacritical marks in our font application, they are 
-// not discriminated further. But future adoption of this module for other use 
-// should be aware of this limitation. The implementation can be extended if 
+// Armenian and combining diacritical marks in our font application, they are
+// not discriminated further. But future adoption of this module for other use
+// should be aware of this limitation. The implementation can be extended if
 // there is such a need.
 // For Indic, Southeast Asian scripts and some other scripts between
 // U+0700 and U+16FF, it's extended to the third level.
-uint32_t findCharUnicodeRange(WCHAR ch)
-{
-  uint32_t range;
+uint32_t findCharUnicodeRange(WCHAR ch) {
+    uint32_t range;
 
-  //search the first table
-  range = gUnicodeSubrangeTable[0][ch >> 12];
-  
-  if (range < kRangeTableBase)
-    // we try to get a specific range 
+    //search the first table
+    range = gUnicodeSubrangeTable[0][ch >> 12];
+
+    if (range < kRangeTableBase) {
+        // we try to get a specific range
+    }
     return range;
 
-  // otherwise, we have one more table to look at
-  range = gUnicodeSubrangeTable[range - kRangeTableBase][(ch & 0x0f00) >> 8];
-  if (range < kRangeTertiaryTable)
-    return range;     
+    // otherwise, we have one more table to look at
+    range = gUnicodeSubrangeTable[range - kRangeTableBase][(ch & 0x0f00) >> 8];
+    if (range < kRangeTertiaryTable) {
+        return range;
+    }
 
-  // Yet another table to look at : U+0700 - U+16FF : 128 code point blocks
-  return  gUnicodeTertiaryRangeTable[(ch - 0x0700) >> 7];
+    // Yet another table to look at : U+0700 - U+16FF : 128 code point blocks
+    return gUnicodeTertiaryRangeTable[(ch - 0x0700) >> 7];
 }
 
-extern CharEncodingType FindCharEncUnicodeRange(WCHAR ch)
-{
-    uint32_t    range = findCharUnicodeRange(ch);
-    if (range >= ED_END)
+extern CharEncodingType FindCharEncUnicodeRange(WCHAR ch) {
+    uint32_t range = findCharUnicodeRange(ch);
+    if (range >= ED_END) {
         range = ED_SYSDEF;
+    }
 
     return (CharEncodingType)range;
 }

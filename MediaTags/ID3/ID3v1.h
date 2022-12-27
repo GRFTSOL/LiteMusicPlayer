@@ -1,57 +1,49 @@
-// ID3v1.h: interface for the CID3v1 class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_ID3V1_H__02584EC3_8F78_4370_8044_71FE6A670146__INCLUDED_)
-#define AFX_ID3V1_H__02584EC3_8F78_4370_8044_71FE6A670146__INCLUDED_
+#ifndef MediaTags_ID3_ID3v1_h
+#define MediaTags_ID3_ID3v1_h
 
 #pragma once
 
 #include "../../Utils/Utils.h"
 
 
-enum ID3_V1Lengths
-{
-  ID3_V1_LEN         = 128,
-  ID3_V1_LEN_ID      =   3,
-  ID3_V1_LEN_TITLE   =  30,
-  ID3_V1_LEN_ARTIST  =  30,
-  ID3_V1_LEN_ALBUM   =  30,
-  ID3_V1_LEN_YEAR    =   4,
-  ID3_V1_LEN_COMMENT =  29,
-  ID3_V1_LEN_TRACK   =   1,
-  ID3_V1_LEN_GENRE   =   1
+enum ID3_V1Lengths {
+    ID3_V1_LEN                  = 128,
+    ID3_V1_LEN_ID               =   3,
+    ID3_V1_LEN_TITLE            =  30,
+    ID3_V1_LEN_ARTIST           =  30,
+    ID3_V1_LEN_ALBUM            =  30,
+    ID3_V1_LEN_YEAR             =   4,
+    ID3_V1_LEN_COMMENT          =  29,
+    ID3_V1_LEN_TRACK            =   1,
+    ID3_V1_LEN_GENRE            =   1
 };
 
-struct ID3V1
-{
-    char    szTitle[ID3_V1_LEN_TITLE + 1];
-    char    szArtist[ID3_V1_LEN_ARTIST + 1];
-    char    szAlbum[ID3_V1_LEN_ALBUM + 1];
-    char    szYear[ID3_V1_LEN_YEAR + 1];
-    char    szComment[ID3_V1_LEN_COMMENT + 1];
-    uint8_t    byTrack;
-    uint8_t    byGenre;
+struct ID3V1 {
+    char                        szTitle[ID3_V1_LEN_TITLE + 1];
+    char                        szArtist[ID3_V1_LEN_ARTIST + 1];
+    char                        szAlbum[ID3_V1_LEN_ALBUM + 1];
+    char                        szYear[ID3_V1_LEN_YEAR + 1];
+    char                        szComment[ID3_V1_LEN_COMMENT + 1];
+    uint8_t                     byTrack;
+    uint8_t                     byGenre;
 };
 
-class CID3v1  
-{
+class CID3v1 {
 public:
     CID3v1();
     virtual ~CID3v1();
 
 #pragma pack(push)
 #pragma pack(1)
-    struct ID3v1Data
-    {
-        char    szID3ID[ID3_V1_LEN_ID];
-        char    szTitle[ID3_V1_LEN_TITLE];
-        char    szArtist[ID3_V1_LEN_ARTIST];
-        char    szAlbum[ID3_V1_LEN_ALBUM];
-        char    szYear[ID3_V1_LEN_YEAR];
-        char    szComment[ID3_V1_LEN_COMMENT];
-        uint8_t    byTrack;
-        uint8_t    byGenre;
+    struct ID3v1Data {
+        char                        szID3ID[ID3_V1_LEN_ID];
+        char                        szTitle[ID3_V1_LEN_TITLE];
+        char                        szArtist[ID3_V1_LEN_ARTIST];
+        char                        szAlbum[ID3_V1_LEN_ALBUM];
+        char                        szYear[ID3_V1_LEN_YEAR];
+        char                        szComment[ID3_V1_LEN_COMMENT];
+        uint8_t                     byTrack;
+        uint8_t                     byGenre;
     };
 #pragma pack(pop)
 
@@ -70,4 +62,4 @@ public:
 
 };
 
-#endif // !defined(AFX_ID3V1_H__02584EC3_8F78_4370_8044_71FE6A670146__INCLUDED_)
+#endif // !defined(MediaTags_ID3_ID3v1_h)

@@ -7,17 +7,16 @@
 
 #include <android/log.h>
 
+
 // log level
-enum
-{
-    LOG_LVL_ERROR                = ANDROID_LOG_ERROR,
-    LOG_LVL_WARNING                = ANDROID_LOG_WARN,
+enum {
+    LOG_LVL_ERROR               = ANDROID_LOG_ERROR,
+    LOG_LVL_WARNING             = ANDROID_LOG_WARN,
     LOG_LVL_INFO                = ANDROID_LOG_INFO,
-    LOG_LVL_DEBUG                = ANDROID_LOG_DEBUG,
+    LOG_LVL_DEBUG               = ANDROID_LOG_DEBUG,
 };
 
-class CLog  
-{
+class CLog {
 public:
     CLog();
     virtual ~CLog();
@@ -32,7 +31,7 @@ public:
     void logDumpStr(uint8_t byLevel, cstr_t szFile, int nLine, cstr_t szStr, int nStrLen);
 
 protected:
-    char        m_szTag[32];
-    char        m_szSrcRootDir[128];
+    char                        m_szTag[32];
+    char                        m_szSrcRootDir[128];
 
 };

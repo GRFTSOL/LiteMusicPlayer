@@ -9,24 +9,24 @@ public:
     CMPlaylistSearchObj();
     virtual ~CMPlaylistSearchObj();
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 #ifdef _SKIN_EDITOR_
     void enumProperties(CUIObjProperties &listProperties);
 #endif // _SKIN_EDITOR_
 
-    void onCreate();
+    void onCreate() override;
 
     void onSize(int cx, int cy) { }
 
-    void onTimer(int nId);
+    void onTimer(int nId) override;
 
 public:
-    virtual void onTextChanged();
+    virtual void onTextChanged() override;
 
     // if this key is processed, return true.
-    virtual void onSpecialKey(SpecialKey key);
+    virtual void onSpecialKey(SpecialKey key) override;
 
-    virtual void onUIObjNotify(IUIObjNotify *pNotify);
+    virtual void onUIObjNotify(IUIObjNotify *pNotify) override;
 
 protected:
     void doSearch(cstr_t szText);

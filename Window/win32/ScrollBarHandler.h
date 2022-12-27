@@ -1,18 +1,12 @@
-// ScrollBarHandler.h: interface for the CScrollBarHandler class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_SCROLLBARHANDLER_H__5D3E5098_074F_4ECD_A670_4030CB63F97A__INCLUDED_)
-#define AFX_SCROLLBARHANDLER_H__5D3E5098_074F_4ECD_A670_4030CB63F97A__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef Window_win32_ScrollBarHandler_h
+#define Window_win32_ScrollBarHandler_h
+
 
 class Window;
 
-class CScrollBarHandler : public IScrollBar  
-{
+class CScrollBarHandler : public IScrollBar {
 public:
     CScrollBarHandler();
     virtual ~CScrollBarHandler();
@@ -42,12 +36,12 @@ public:
     bool isVertBar() { return m_nScrollBar == SB_VERT; }
 
 protected:
-    HWND            m_hWnd;
-    SCROLLINFO        m_si;
-    int                m_nScrollBar;
-    bool            m_bDisabled;
-    int                m_nOneline;
+    HWND                        m_hWnd;
+    SCROLLINFO                  m_si;
+    int                         m_nScrollBar;
+    bool                        m_bDisabled;
+    int                         m_nOneline;
 
 };
 
-#endif // !defined(AFX_SCROLLBARHANDLER_H__5D3E5098_074F_4ECD_A670_4030CB63F97A__INCLUDED_)
+#endif // !defined(Window_win32_ScrollBarHandler_h)

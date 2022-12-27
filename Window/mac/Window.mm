@@ -12,31 +12,28 @@
 #import "WindowHandleHolder.h"
 
 
-Window::Window()
-{
+Window::Window() {
     m_handleHolder = new WindowHandleHolder();
     m_handleHolder->window = nullptr;
     m_handleHolder->view = nullptr;
     m_bMouseCaptured = false;
-    
+
     m_parent = nullptr;
 }
 
-Window::~Window()
-{
+Window::~Window() {
     delete m_handleHolder;
 }
 
-bool Window::createForSkin(cstr_t szClassName, cstr_t szCaption, int x, int y, int nWidth, int nHeight, Window *pWndParent, bool bToolWindow, bool bTopmost, bool bVisible)
-{
+bool Window::createForSkin(cstr_t szClassName, cstr_t szCaption, int x, int y, int nWidth, int nHeight, Window *pWndParent, bool bToolWindow, bool bTopmost, bool bVisible) {
     NSRect frame = NSMakeRect(x, y, nWidth, nHeight);
     WindowMacImp* w = [[WindowMacImp alloc] initWithContentRect:frame
-//                                              styleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable
-                                              styleMask:NSResizableWindowMask
-                                                backing:NSBackingStoreBuffered
-                                                  defer:NO];
+        //                                              styleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable
+        styleMask:NSResizableWindowMask
+        backing:NSBackingStoreBuffered
+        defer:NO];
     [w setOwnerBaseWnd:this];
-    
+
     ViewMacImp* view = [[ViewMacImp alloc] initWithFrame:frame];
     [view setOwnerBaseWnd:this];
 
@@ -46,42 +43,44 @@ bool Window::createForSkin(cstr_t szClassName, cstr_t szCaption, int x, int y, i
 
     [w setContentView:view];
     // [w setBackgroundColor:[NSColor blueColor]];
-//    [w makeFirstResponder:view];
-//    [w setAcceptsMouseMovedEvents:YES];
-//    [w setRestorable:NO];
+    //    [w makeFirstResponder:view];
+    //    [w setAcceptsMouseMovedEvents:YES];
+    //    [w setRestorable:NO];
 
-    if (szCaption)
+    if (szCaption) {
         [w setTitle: [NSString stringWithUTF8String:szCaption]];
+    }
 
-    if (pWndParent && pWndParent->m_handleHolder->window)
+    if (pWndParent && pWndParent->m_handleHolder->window) {
         [w setParentWindow:pWndParent->m_handleHolder->window];
+    }
 
     m_wndSize.cx = (int)[w frame].size.width;
     m_wndSize.cy = (int)[w frame].size.height;
-    
+
     //[w setOpaque:NO];
     // [w setAlphaValue:(float)128 / 255];
 
     onCreate();
 
-    if (bVisible)
+    if (bVisible) {
         [w makeKeyAndOrderFront:w];
-        // [w orderFront:NSApp];
+    }
+    // [w orderFront:NSApp];
 
-    if (bTopmost)
+    if (bTopmost) {
         [w setLevel:NSFloatingWindowLevel];
+    }
 
     return true;
 }
 
-void Window::setHasShadow(bool hasShadow)
-{
+void Window::setHasShadow(bool hasShadow) {
     [m_handleHolder->window setHasShadow:hasShadow ? YES : NO];
     [m_handleHolder->window invalidateShadow];
 }
 
-void Window::destroy()
-{
+void Window::destroy() {
     if (m_handleHolder->window) {
         [m_handleHolder->window close];
         m_handleHolder->window = nullptr;
@@ -89,17 +88,14 @@ void Window::destroy()
     }
 }
 
-void Window::postDestroy()
-{
+void Window::postDestroy() {
     destroy();
 }
 
-void Window::onPaint(CRawGraph *surface, CRect *rc)
-{
+void Window::onPaint(CRawGraph *surface, CRect *rc) {
 }
 
-void Window::activateWindow()
-{
+void Window::activateWindow() {
 }
 
 void Window::showNoActivate() {
@@ -107,30 +103,35 @@ void Window::showNoActivate() {
 }
 
 void Window::show() {
-    if (m_handleHolder->window)
+    if (m_handleHolder->window) {
         [m_handleHolder->window orderFront:NSApp];
+    }
 }
 
 void Window::hide() {
-    if (m_handleHolder->window)
+    if (m_handleHolder->window) {
         [m_handleHolder->window miniaturize:m_handleHolder->window];
+    }
 }
 
 void Window::minimize() {
-    if (m_handleHolder->window)
+    if (m_handleHolder->window) {
         [m_handleHolder->window miniaturize:m_handleHolder->window];
+    }
 }
 
 void Window::maximize() {
-    if (m_handleHolder->window)
+    if (m_handleHolder->window) {
         [m_handleHolder->window zoom:m_handleHolder->window];
+    }
 }
 
 void Window::restore() {
-    if (isZoomed())
+    if (isZoomed()) {
         maximize();
-    else
+    } else {
         minimize();
+    }
 }
 
 void Window::minimizeNoActivate() {
@@ -156,10 +157,10 @@ void Window::setMaxSize(uint32_t width, uint32_t height) {
     [m_handleHolder->window setMaxSize:NSMakeSize(width, height)];
 }
 
-void Window::screenToClient(CRect &rc)
-{
-    if (m_handleHolder->window == nullptr)
+void Window::screenToClient(CRect &rc) {
+    if (m_handleHolder->window == nullptr) {
         return;
+    }
 
     NSRect nsrc = NSMakeRect(rc);
     NSRect rcRet = [m_handleHolder->window convertRectFromScreen:nsrc];
@@ -167,10 +168,10 @@ void Window::screenToClient(CRect &rc)
     NSRectToRect(rcRet, rc);
 }
 
-void Window::clientToScreen(CRect &rc)
-{
-    if (m_handleHolder->window == nullptr)
+void Window::clientToScreen(CRect &rc) {
+    if (m_handleHolder->window == nullptr) {
         return;
+    }
 
     NSRect nsrc = NSMakeRect(rc);
     nsrc.origin.y = [m_handleHolder->window frame].size.height - rc.top - nsrc.size.height;
@@ -179,11 +180,11 @@ void Window::clientToScreen(CRect &rc)
     NSRectToRect(rcRet, rc);
 }
 
-void Window::screenToClient(CPoint &pt)
-{
-    if (m_handleHolder->window == nullptr)
+void Window::screenToClient(CPoint &pt) {
+    if (m_handleHolder->window == nullptr) {
         return;
-    
+    }
+
     NSRect nsrc = NSMakeRect(pt.x, pt.y, 0, 0);
     NSRect rcRet = [m_handleHolder->window convertRectFromScreen:nsrc];
 
@@ -191,117 +192,114 @@ void Window::screenToClient(CPoint &pt)
     pt.y = rcRet.origin.y;
 }
 
-void Window::clientToScreen(CPoint &pt)
-{
-    if (m_handleHolder->window == nullptr)
+void Window::clientToScreen(CPoint &pt) {
+    if (m_handleHolder->window == nullptr) {
         return;
-    
+    }
+
     NSRect nsrc = NSMakeRect(pt.x, pt.y, 0, 0);
     nsrc.origin.y = [m_handleHolder->window frame].size.height - pt.y;
     NSRect rcRet = [m_handleHolder->window convertRectToScreen:nsrc];
-    
+
     pt.x = rcRet.origin.x;
     pt.y = rcRet.origin.y;
 }
 
-bool Window::getWindowRect(CRect* lpRect)
-{
-    if (m_handleHolder->window == nullptr)
+bool Window::getWindowRect(CRect* lpRect) {
+    if (m_handleHolder->window == nullptr) {
         return false;
-    
+    }
+
     NSRect rcRet = [m_handleHolder->window frame];
     NSRectToRect(rcRet, *lpRect);
 
     return true;
 }
 
-bool Window::getClientRect(CRect* lpRect)
-{
-    if (m_handleHolder->view == nullptr)
+bool Window::getClientRect(CRect* lpRect) {
+    if (m_handleHolder->view == nullptr) {
         return false;
-    
+    }
+
     NSRect rcRet = [m_handleHolder->view frame];
     NSRectToRect(rcRet, *lpRect);
 
     return true;
 }
 
-void Window::setParent(Window *pWndParent)
-{
+void Window::setParent(Window *pWndParent) {
     m_parent = pWndParent;
 
-    if (m_handleHolder->window == nullptr)
+    if (m_handleHolder->window == nullptr) {
         return;
+    }
 
-    if (pWndParent && pWndParent->m_handleHolder->window)
+    if (pWndParent && pWndParent->m_handleHolder->window) {
         [m_handleHolder->window setParentWindow:pWndParent->m_handleHolder->window];
-    else
+    } else {
         [m_handleHolder->window setParentWindow:nullptr];
+    }
 }
 
-Window *Window::getParent()
-{
+Window *Window::getParent() {
     return m_parent;
 }
 
-bool Window::setTimer(uint32_t nTimerId, uint32_t nElapse)
-{
-    if (m_handleHolder->window == nullptr)
+bool Window::setTimer(uint32_t nTimerId, uint32_t nElapse) {
+    if (m_handleHolder->window == nullptr) {
         return false;
+    }
 
     [m_handleHolder->window setTimer:nTimerId duration:nElapse];
 
     return true;
 }
 
-void Window::killTimer(uint32_t nTimerId)
-{
-    if (m_handleHolder->window)
+void Window::killTimer(uint32_t nTimerId) {
+    if (m_handleHolder->window) {
         [m_handleHolder->window killTimer:nTimerId];
+    }
 }
 
-string Window::getTitle()
-{
-    if (m_handleHolder->window == nullptr)
+string Window::getTitle() {
+    if (m_handleHolder->window == nullptr) {
         return 0;
-    
+    }
+
     NSString *s = [m_handleHolder->window title];
-    if (s == nil)
+    if (s == nil) {
         return 0;
-    
+    }
+
     string str = [s UTF8String];
 
     return str;
 }
 
-void Window::setTitle(cstr_t szText)
-{
-    if (m_handleHolder->window != nullptr)
+void Window::setTitle(cstr_t szText) {
+    if (m_handleHolder->window != nullptr) {
         [m_handleHolder->window setTitle: [NSString stringWithUTF8String:szText]];
+    }
 }
 
-bool Window::setWndCursor(Cursor *pCursor)
-{
+bool Window::setWndCursor(Cursor *pCursor) {
     return true;
 }
 
-bool Window::setFocus()
-{
+bool Window::setFocus() {
     [m_handleHolder->window makeKeyAndOrderFront:m_handleHolder->window];
     //[m_handleHolder->window orderFront:NSApp];
     // [m_handleHolder->window makeKeyWindow];
     return true;
 }
 
-bool Window::setCapture()
-{
+bool Window::setCapture() {
     m_bMouseCaptured = true;
 
     return true;
 }
 
-void Window::releaseCapture()
-{
+void Window::releaseCapture() {
     m_bMouseCaptured = false;
 }
 //
@@ -337,12 +335,11 @@ void Window::releaseCapture()
 //    delete canvas;
 //}
 
-bool Window::invalidateRect(const CRect *lpRect, bool bErase)
-{
+bool Window::invalidateRect(const CRect *lpRect, bool bErase) {
     if (m_handleHolder->window != nullptr) {
-        if (lpRect == nullptr)
+        if (lpRect == nullptr) {
             [m_handleHolder->view setNeedsDisplay:YES];
-        else {
+        } else {
             int h = lpRect->bottom - lpRect->top;
             [m_handleHolder->view setNeedsDisplayInRect: NSMakeRect(lpRect->left, [m_handleHolder->view frame].size.height - lpRect->bottom, lpRect->right - lpRect->left, h)];
         }
@@ -351,120 +348,116 @@ bool Window::invalidateRect(const CRect *lpRect, bool bErase)
     return true;
 }
 
-bool Window::isChild()
-{
+bool Window::isChild() {
     return false;
 }
 
-bool Window::isMouseCaptured()
-{
+bool Window::isMouseCaptured() {
     return m_bMouseCaptured;
 }
 
-bool Window::isIconic()
-{
-    if (m_handleHolder->window == nullptr)
+bool Window::isIconic() {
+    if (m_handleHolder->window == nullptr) {
         return false;
+    }
 
     return [m_handleHolder->window isMiniaturized] == YES;
 }
 
-bool Window::isZoomed()
-{
-    if (m_handleHolder->window == nullptr)
+bool Window::isZoomed() {
+    if (m_handleHolder->window == nullptr) {
         return false;
-    
+    }
+
     return [m_handleHolder->window isZoomed] == YES;
 }
 
-bool Window::isWindow()
-{
+bool Window::isWindow() {
     return m_handleHolder->window != nullptr;
 }
 
-bool Window::isValid()
-{
+bool Window::isValid() {
     return m_handleHolder->window != nullptr;
 }
 
-bool Window::isVisible()
-{
-    if (m_handleHolder->window == nullptr)
+bool Window::isVisible() {
+    if (m_handleHolder->window == nullptr) {
         return false;
-    
+    }
+
     return [m_handleHolder->window isVisible] == YES;
 }
 
-bool Window::isTopmost()
-{
-    if (m_handleHolder->window == nullptr)
+bool Window::isTopmost() {
+    if (m_handleHolder->window == nullptr) {
         return false;
+    }
 
     return [m_handleHolder->window level] == NSFloatingWindowLevel;
 }
 
-bool Window::isSameWnd(Window *pWnd)
-{
+bool Window::isSameWnd(Window *pWnd) {
     return this == pWnd;
 }
 
-void Window::setTopmost(bool bTopmost)
-{
-    if (m_handleHolder->window == nullptr)
+void Window::setTopmost(bool bTopmost) {
+    if (m_handleHolder->window == nullptr) {
         return;
+    }
 
-    if (bTopmost)
+    if (bTopmost) {
         [m_handleHolder->window setLevel: NSFloatingWindowLevel];
-    else
+    } else {
         [m_handleHolder->window setLevel: NSNormalWindowLevel];
+    }
 }
 
-bool Window::isToolWindow()
-{
-    if (m_handleHolder->window == nullptr)
+bool Window::isToolWindow() {
+    if (m_handleHolder->window == nullptr) {
         return false;
-    
+    }
+
     return [m_handleHolder->window level] == NSFloatingWindowLevel;
 }
 
-void Window::setToolWindow(bool bToolWindow)
-{
-    if (m_handleHolder->window == nullptr)
+void Window::setToolWindow(bool bToolWindow) {
+    if (m_handleHolder->window == nullptr) {
         return;
-    
-    if (bToolWindow)
+    }
+
+    if (bToolWindow) {
         [m_handleHolder->window setLevel: NSFloatingWindowLevel];
-    else
+    } else {
         [m_handleHolder->window setLevel: NSNormalWindowLevel];
+    }
 }
 
-bool Window::setForeground()
-{
-    if (m_handleHolder->window == nullptr)
+bool Window::setForeground() {
+    if (m_handleHolder->window == nullptr) {
         return false;
-    
+    }
+
     [m_handleHolder->window orderFront:NSApp];
 
     return true;
 }
 
-void Window::setWindowPos(int x, int y)
-{
-    if (m_handleHolder->window == nullptr)
+void Window::setWindowPos(int x, int y) {
+    if (m_handleHolder->window == nullptr) {
         return;
+    }
 
     [m_handleHolder->window setFrameOrigin:NSMakePoint(x, y)];
 }
 
-void Window::setWindowPosSafely(int x, int y)
-{
+void Window::setWindowPosSafely(int x, int y) {
     setWindowPos(x, y);
 }
 
-bool Window::moveWindow(int X, int Y, int nWidth, int nHeight, bool bRepaint)
-{
-    if (m_handleHolder->window == nullptr)
+bool Window::moveWindow(int X, int Y, int nWidth, int nHeight, bool bRepaint) {
+    if (m_handleHolder->window == nullptr) {
         return false;
+    }
 
     NSRect rc = [m_handleHolder->window frame];
     if (rc.origin.y == Y) {
@@ -472,17 +465,15 @@ bool Window::moveWindow(int X, int Y, int nWidth, int nHeight, bool bRepaint)
     }
 
     [m_handleHolder->window setFrame:NSMakeRect(X, Y, nWidth, nHeight) display: bRepaint ? YES : NO];
-    
+
     return true;
 }
 
-bool Window::moveWindowSafely(int X, int Y, int nWidth, int nHeight, bool bRepaint)
-{
+bool Window::moveWindowSafely(int X, int Y, int nWidth, int nHeight, bool bRepaint) {
     return moveWindow(X, Y, nWidth, nHeight, bRepaint);
 }
 
-int messageOut(cstr_t lpText, uint32_t uType, cstr_t lpCaption)
-{
+int messageOut(cstr_t lpText, uint32_t uType, cstr_t lpCaption) {
     uint32_t btType = uType & 0xF;
     NSString *defBt = nil;
     NSString *alterBt = nil;
@@ -498,38 +489,40 @@ int messageOut(cstr_t lpText, uint32_t uType, cstr_t lpCaption)
         defBt = [NSString stringWithUTF8String:("Yes")];
         alterBt = [NSString stringWithUTF8String:("NO")];
     }
-    
+
     NSAlert *alert = [NSAlert alertWithMessageText:[NSString stringWithUTF8String:lpCaption]
-                                     defaultButton:defBt
-                                   alternateButton:alterBt
-                                       otherButton:otherBt
-                         informativeTextWithFormat:@"%@", [NSString stringWithUTF8String:lpText]];
-    
+        defaultButton:defBt
+        alternateButton:alterBt
+        otherButton:otherBt
+        informativeTextWithFormat:@"%@", [NSString stringWithUTF8String:lpText]];
+
     int nRet = (int)[alert runModal];
     if (btType == MB_OKCANCEL) {
-        if (nRet == NSAlertFirstButtonReturn)
+        if (nRet == NSAlertFirstButtonReturn) {
             return IDOK;
-        else
+        } else {
             return IDCANCEL;
+        }
     } else if (btType == MB_YESNOCANCEL) {
-        if (nRet == NSAlertFirstButtonReturn)
+        if (nRet == NSAlertFirstButtonReturn) {
             return IDYES;
-        else if (nRet == NSAlertOtherReturn)
+        } else if (nRet == NSAlertOtherReturn) {
             return IDNO;
-        else
+        } else {
             return IDCANCEL;
+        }
     } else if (btType == MB_YESNO) {
-        if (nRet == NSAlertFirstButtonReturn)
+        if (nRet == NSAlertFirstButtonReturn) {
             return IDYES;
-        else
+        } else {
             return IDNO;
+        }
     } else {
         return IDOK;
     }
 }
 
-int Window::messageOut(cstr_t lpText, uint32_t uType, cstr_t lpCaption)
-{
+int Window::messageOut(cstr_t lpText, uint32_t uType, cstr_t lpCaption) {
     uint32_t btType = uType & 0xF;
     NSString *defBt = nil;
     NSString *alterBt = nil;
@@ -545,78 +538,78 @@ int Window::messageOut(cstr_t lpText, uint32_t uType, cstr_t lpCaption)
         defBt = [NSString stringWithUTF8String:("Yes")];
         alterBt = [NSString stringWithUTF8String:("NO")];
     }
-    
+
     NSString *title;
-    if (lpCaption == nullptr)
+    if (lpCaption == nullptr) {
         title = [m_handleHolder->window title];
-    else
+    } else {
         title = [NSString stringWithUTF8String:lpCaption];
+    }
     NSAlert *alert = [NSAlert alertWithMessageText:title
-                                    defaultButton:defBt
-                                  alternateButton:alterBt
-                                      otherButton:otherBt
-                        informativeTextWithFormat:@"%@", [NSString stringWithUTF8String:lpText]];
-    
+        defaultButton:defBt
+        alternateButton:alterBt
+        otherButton:otherBt
+        informativeTextWithFormat:@"%@", [NSString stringWithUTF8String:lpText]];
+
     int nRet = (int)[alert runModal];
     if (btType == MB_OKCANCEL) {
-        if (nRet == NSAlertFirstButtonReturn)
+        if (nRet == NSAlertFirstButtonReturn) {
             return IDOK;
-        else
+        } else {
             return IDCANCEL;
+        }
     } else if (btType == MB_YESNOCANCEL) {
-        if (nRet == NSAlertFirstButtonReturn)
+        if (nRet == NSAlertFirstButtonReturn) {
             return IDYES;
-        else if (nRet == NSAlertOtherReturn)
+        } else if (nRet == NSAlertOtherReturn) {
             return IDNO;
-        else
+        } else {
             return IDCANCEL;
+        }
     } else if (btType == MB_YESNO) {
-        if (nRet == NSAlertFirstButtonReturn)
+        if (nRet == NSAlertFirstButtonReturn) {
             return IDYES;
-        else
+        } else {
             return IDNO;
+        }
     } else {
         return IDOK;
     }
 }
 
-bool Window::replaceChildPos(int nIDChildSrcPos, Window *pChildNew)
-{
+bool Window::replaceChildPos(int nIDChildSrcPos, Window *pChildNew) {
     return true;
 }
 
-void Window::postUserMessage(int nMessageID, LPARAM param)
-{
-    if (m_handleHolder->window == nullptr)
+void Window::postUserMessage(int nMessageID, LPARAM param) {
+    if (m_handleHolder->window == nullptr) {
         return;
-    
+    }
+
     NSArray *msg = [NSArray arrayWithObjects:[NSNumber numberWithInt:nMessageID], [NSNumber numberWithLong:param], nil];
-    
+
     [m_handleHolder->window performSelectorOnMainThread:@selector(onUserMsg:)
-                                     withObject:msg
-                                  waitUntilDone:false];
+        withObject:msg
+        waitUntilDone:false];
 }
 
-void Window::setTransparent(uint8_t nAlpha, bool bClickThrough)
-{
+void Window::setTransparent(uint8_t nAlpha, bool bClickThrough) {
     m_nAlpha = nAlpha;
     m_bClickThrough = bClickThrough;
-    
-    if (nAlpha == 255)
-    {
+
+    if (nAlpha == 255) {
         // [m_handleHolder->window setOpaque:YES];
         [m_handleHolder->window setAlphaValue:1.0];
-    }
-    else
-    {
+    } else {
         // [m_handleHolder->window setOpaque:NO];
         [m_handleHolder->window setAlphaValue:(float)nAlpha / 255];
     }
 
     // NOTE: [window setIgnoresMouseEvents] or NSResizableWindowMask flag will affect the mouse click through
     bool ignoresMouseEvents = isClickThrough() ? YES : NO;
-    if ([m_handleHolder->window ignoresMouseEvents] != ignoresMouseEvents)
+    if ([m_handleHolder->window ignoresMouseEvents] != ignoresMouseEvents) {
         [m_handleHolder->window setIgnoresMouseEvents: ignoresMouseEvents];
+    }
 }
 //
 //bool Window::UpdateLayeredWindowUsingMemGraph(CRawGraph *canvas)

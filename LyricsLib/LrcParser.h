@@ -2,7 +2,7 @@
     Created  :    2002/01/04    21:40
     FileName :    LrcParser.h
     Author   :    xhy
-    
+
     Purpose  :    
 *********************************************************************/
 
@@ -11,8 +11,7 @@
 #include "LyricsParser.h"
 
 
-class CLrcParser : public CLyricsParser
-{
+class CLrcParser : public CLyricsParser {
 public:
     CLrcParser(CMLData *pMLData, bool bTurnOffPref = false);
     virtual ~CLrcParser();

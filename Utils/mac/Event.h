@@ -1,23 +1,20 @@
-// Event.h: interface for the CEvent class.
-//
-//////////////////////////////////////////////////////////////////////
+#pragma once
 
-#if !defined(AFX_EVENT_H__DE7B3789_C417_4C03_90FF_BB9711A08C92__INCLUDED_)
-#define AFX_EVENT_H__DE7B3789_C417_4C03_90FF_BB9711A08C92__INCLUDED_
+#ifndef Utils_mac_Event_h
+#define Utils_mac_Event_h
 
 
 #ifndef INFINITE
-#define INFINITE 0xFFFFFFFF
+#define INFINITE            0xFFFFFFFF
 #endif
 
 #ifndef WAIT_FOREVER
-#define WAIT_FOREVER 0xFFFFFFFF
+#define WAIT_FOREVER        0xFFFFFFFF
 #endif
 
 class _NSConditionInternal;
 
-class Event  
-{
+class Event {
 public:
     Event(bool bManualSet, bool isSingaled);
     virtual ~Event();
@@ -27,10 +24,10 @@ public:
     bool acquire(uint32_t nTimeOut = WAIT_FOREVER);
 
 protected:
-    bool    m_bMaualset;
-    
-    _NSConditionInternal *m_nsCondition;
+    bool                        m_bMaualset;
+
+    _NSConditionInternal        *m_nsCondition;
 
 };
 
-#endif // !defined(AFX_EVENT_H__DE7B3789_C417_4C03_90FF_BB9711A08C92__INCLUDED_)
+#endif // !defined(Utils_mac_Event_h)

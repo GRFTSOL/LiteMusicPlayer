@@ -2,21 +2,21 @@
     Created  :    2002/01/04    21:30
     FileName :    CProfile.h
     Author   :    xhy
-    
+
     Purpose  :    
 *********************************************************************/
 
-#if !defined(AFX_PROFILE_H__2102F360_D5B3_45ED_921E_6A155BD28862__INCLUDED_)
-#define AFX_PROFILE_H__2102F360_D5B3_45ED_921E_6A155BD28862__INCLUDED_
+#ifndef Utils_Profile_h
+#define Utils_Profile_h
 
 #pragma once
 
 bool writePrivateProfileInt(
-                            cstr_t lpAppName,  // section name
-                            cstr_t lpKeyName,  // key name
-                            int value,            // int to add
-                            cstr_t lpFileName  // initialization file
-                            );
+    cstr_t lpAppName,  // section name
+    cstr_t lpKeyName,  // key name
+    int value,            // int to add
+    cstr_t lpFileName  // initialization file
+    );
 
 #ifndef WIN32
 uint32_t GetPrivateProfileString(cstr_t lpAppName, cstr_t lpKeyName, cstr_t lpDefault, char * lpReturnedString, uint32_t nSize, cstr_t lpFileName);
@@ -29,23 +29,21 @@ uint32_t GetPrivateProfileInt(cstr_t lpAppName, cstr_t lpKeyName, int nDefault, 
 // 为了提高效率，使用缓冲，将访问过的key都保存在m_mapAppName2Keys中。
 // 在保存的时候，没有使用缓冲，即只要修改，就会更新；因为修改不多，所以直接保存
 //
-class CProfile  
-{
+class CProfile {
 public:
     CProfile();
     virtual ~CProfile();
 
 protected:
-    struct Section
-    {
-        string        strAppName;
-        MapStrings    mapKeys;        // all keyname will be converted to lowercase.
+    struct Section {
+        string                      strAppName;
+        MapStrings                  mapKeys;            // all keyname will be converted to lowercase.
     };
     typedef list<Section*>        ListSections;
 
-    string              m_strProfile;
-    ListSections        m_listAppSect;
-    string              m_strDefAppName;
+    string                      m_strProfile;
+    ListSections                m_listAppSect;
+    string                      m_strDefAppName;
 
 protected:
     void addKeys(cstr_t szAppName, cstr_t szKeyName, cstr_t szValue);
@@ -106,4 +104,4 @@ public:
 };
 
 
-#endif // !defined(AFX_PROFILE_H__2102F360_D5B3_45ED_921E_6A155BD28862__INCLUDED_)
+#endif // !defined(Utils_Profile_h)

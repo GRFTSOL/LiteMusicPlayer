@@ -163,7 +163,7 @@ public:
 
     void setLoginWork(bool bLoginWork) { m_bLoginWork = bLoginWork; }
 
-    virtual void onWorkEnd();
+    virtual void onWorkEnd() override;
 
 protected:
     bool                m_bLoginWork;
@@ -181,7 +181,7 @@ public:
     CPageLogin()
         { CID_E_PASSWORD = CID_REMEMBER_PWD = CID_E_NAME = 0; m_strText = _TLM("log in"); }
 
-    void onInitialUpdate()
+    void onInitialUpdate() override
     {
         CSkinContainer::onInitialUpdate();
 
@@ -196,7 +196,7 @@ public:
         checkButton(CID_REMEMBER_PWD, bRememberPwd);
     }
 
-    void onSwitchTo()
+    void onSwitchTo() override
     {
         CSkinContainer::onSwitchTo();
 
@@ -215,7 +215,7 @@ public:
         }
     }
 
-    bool onOK()
+    bool onOK() override
     {
         string name = getUIObjectText(CID_E_NAME);
         string strPwd = getUIObjectText(CID_E_PASSWORD);
@@ -240,7 +240,7 @@ public:
         return false;
     }
 
-    bool onCancel()
+    bool onCancel() override
     {
         m_pContainer->switchToLastPage(0, true);
         return true;
@@ -266,7 +266,7 @@ public:
         m_strText = _TLM("upload Lyrics");
     }
 
-    void onCreate()
+    void onCreate() override
     {
         CSkinContainer::onCreate();
 
@@ -276,7 +276,7 @@ public:
         GET_ID_BY_NAME(CID_CHANGE_ACCOUNT);
     }
 
-    void onSwitchTo()
+    void onSwitchTo() override
     {
         CSkinContainer::onSwitchTo();
 
@@ -285,7 +285,7 @@ public:
             stringPrintf(_TLT("Your lyrics will be uploaded under account: %s"), g_sessionUpload.getLoginName()).c_str(), false);
     }
 
-    bool onOK()
+    bool onOK() override
     {
         CPageUploadWaitMessage *pPageWait = (CPageUploadWaitMessage *)m_pContainer->getChildByClass(CPageUploadWaitMessage::className());
         assert(pPageWait);
@@ -300,7 +300,7 @@ public:
         return false;
     }
 
-    bool onCustomCommand(int nId)
+    bool onCustomCommand(int nId) override
     {
         if (nId == CID_CHANGE_ACCOUNT)
             m_pContainer->switchToPage(CPageLogin::className(), false, 0, true);
@@ -324,14 +324,14 @@ class CPageUploadResult : public CSkinContainer
 {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinContainer)
 public:
-    void onCreate()
+    void onCreate() override
     {
         CSkinContainer::onCreate();
 
         GET_ID_BY_NAME(CID_TRY_AGAIN);
     }
 
-    void onSwitchTo()
+    void onSwitchTo() override
     {
         CSkinContainer::onSwitchTo();
 
@@ -351,7 +351,7 @@ public:
         }
     }
 
-    bool onCustomCommand(int nId)
+    bool onCustomCommand(int nId) override
     {
         if (nId == CMD_SHOW_ERR_RESULT)
         {

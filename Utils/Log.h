@@ -9,22 +9,20 @@
 
 
 // log level
-enum
-{
-    LOG_LVL_ERROR                = 2,
-    LOG_LVL_WARNING                = 3,
+enum {
+    LOG_LVL_ERROR               = 2,
+    LOG_LVL_WARNING             = 3,
     LOG_LVL_INFO                = 4,
-    LOG_LVL_DEBUG                = 5,
+    LOG_LVL_DEBUG               = 5,
 };
 
-class CLog  
-{
+class CLog {
 protected:
-    FILE        *m_fpLog;
-    string      m_logFile;
-    string      m_srcRootDir;
+    FILE                        *m_fpLog;
+    string                      m_logFile;
+    string                      m_srcRootDir;
 
-    std::mutex  m_mutex;
+    std::mutex                  m_mutex;
 
 public:
     CLog();

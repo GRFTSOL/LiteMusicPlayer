@@ -28,8 +28,9 @@ CLyricShowTxtObj::CLyricShowTxtObj()
 
     m_bInScrollingToNewLine = false;
     m_nCurLineNew = 0;
-    m_yCurLineLatest = 0, m_nCurLineLatest = 0;
-    m_nBeginScrollTime = 0;
+    m_yCurLineLatest = 0;
+    m_nCurLineLatest = 0;
+    m_timeBeginScroll = 0;
     m_bInVerticalScrollingMode = false;
 
     m_bRecordScrollingActionsEnabled = true;
@@ -52,7 +53,7 @@ void CLyricShowTxtObj::onKeyDown(uint32_t nChar, uint32_t nFlags)
     bool    bProcessed = false;
     int        nCurLineNew = m_nCurLineNew;
 
-    int        nMax = m_lyrLines.size() - 1;
+    int nMax = (int)m_lyrLines.size() - 1;
     if (m_pScrollBar)
         nMax = m_pScrollBar->getMax();
 
@@ -112,7 +113,7 @@ void CLyricShowTxtObj::onKeyDown(uint32_t nChar, uint32_t nFlags)
     }
 }
 
-void CLyricShowTxtObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate/* = nullptr*/)
+void CLyricShowTxtObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate)
 {
     if (!m_pMLData->hasLyricsOpened() || m_lyrLines.size() == 0)
     {
@@ -173,9 +174,9 @@ void CLyricShowTxtObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate/* = nullptr*
 
     if (m_bInScrollingToNewLine)
     {
-        uint32_t nTimeCur = getTickCount();
-        if (nTimeCur < m_nBeginScrollTime
-            || (nTimeCur - m_nBeginScrollTime) >= SCROLL_ANIMATION_DURATION)
+        auto now = getTickCount();
+        if (now < m_timeBeginScroll
+            || (now - m_timeBeginScroll) >= SCROLL_ANIMATION_DURATION)
         {
             m_bInScrollingToNewLine = false;
             m_nCurLine = m_nCurLineNew;
@@ -185,7 +186,7 @@ void CLyricShowTxtObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate/* = nullptr*
         {
             int    distance = (m_nCurLine - m_nCurLineNew) * nLineHeight
                 - m_yOffsetScroll;
-            yCurLine = yCurLine + m_yOffsetScroll + (distance * (int)(nTimeCur - m_nBeginScrollTime) / SCROLL_ANIMATION_DURATION);
+            yCurLine = yCurLine + m_yOffsetScroll + (distance * (int)(now - m_timeBeginScroll) / SCROLL_ANIMATION_DURATION);
         }
 
         if (prcUpdate
@@ -281,7 +282,7 @@ void CLyricShowTxtObj::setScrollInfo()
         if (m_nCurLine < 0 || m_nCurLine >= (int)m_lyrLines.size())
             m_nCurLine = 0;
 
-        m_pScrollBar->setScrollInfo(0, m_lyrLines.size() + getLinesPerPage() - 1, getLinesPerPage(), m_nCurLine);
+        m_pScrollBar->setScrollInfo(0, (int)m_lyrLines.size() + getLinesPerPage() - 1, getLinesPerPage(), m_nCurLine);
     }
 }
 
@@ -417,7 +418,7 @@ void CLyricShowTxtObj::startScrollAnimation(int nCurLineNew)
 
     m_nCurLineNew = nCurLineNew;
     m_bInScrollingToNewLine = true;
-    m_nBeginScrollTime = getTickCount();
+    m_timeBeginScroll = getTickCount();
 
     m_pSkin->registerTimerObject(this, SCROLL_ANIMATION_TIMEOUT);
 }

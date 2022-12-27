@@ -5,6 +5,8 @@
 //  Created by henry_xiao on 2022/12/21.
 //
 
+#pragma once
+
 #ifndef JsUIObject_hpp
 #define JsUIObject_hpp
 

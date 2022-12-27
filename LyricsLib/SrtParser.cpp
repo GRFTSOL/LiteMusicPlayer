@@ -1,12 +1,10 @@
-// SrtParser.cpp: implementation of the CSrtParser class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "MLLib.h"
 #include "HelperFun.h"
 #include "LyricsParser.h"
 #include "LrcParser.h"
 #include "SrtParser.h"
+
+
 //
 //7
 //00:00:18,454 --> 00:00:21,172
@@ -17,56 +15,47 @@
 //就像佛洛伊飞船出场前
 //你得耐著性子先看完脱口秀
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
-CSrtParser::CSrtParser(CMLData *pMLData) : CLyricsParser(pMLData)
-{
+
+CSrtParser::CSrtParser(CMLData *pMLData) : CLyricsParser(pMLData) {
 
 }
 
-CSrtParser::~CSrtParser()
-{
+CSrtParser::~CSrtParser() {
 
 }
 
-int CSrtParser::saveAsFile(cstr_t file)
-{
-    string    strData;
-    string    strBuff;
-    char        szTime[256];
+int CSrtParser::saveAsFile(cstr_t file) {
+    string strData;
+    string strBuff;
+    char szTime[256];
 
     //8
     //00:00:21,657 --> 00:00:26,516
     //就像佛洛伊飞船出场前
     //你得耐著性子先看完脱口秀
-    int            nBegOld = -1, nEndOld = -1;
+    int nBegOld = -1, nEndOld = -1;
 
     int index = 1;
     int nCount = (int)m_pMLData->m_arrFileLines.size();
-    for (int i = 0; i < nCount; i++)
-    {
+    for (int i = 0; i < nCount; i++) {
         LyricsLine *pLine;
 
         pLine = m_pMLData->m_arrFileLines[i];
 
-        if (pLine && lyricsLineToText(pLine, strBuff))
-        {
-            if (pLine->nBegTime == nBegOld && pLine->nEndTime == nEndOld)
-            {
+        if (pLine && lyricsLineToText(pLine, strBuff)) {
+            if (pLine->nBegTime == nBegOld && pLine->nEndTime == nEndOld) {
                 // 时间相同的行
                 strData += strBuff;
-            }
-            else
-            {
+            } else {
                 nBegOld = pLine->nBegTime;
                 nEndOld = pLine->nEndTime;
 
-                if (index > 1)
+                if (index > 1) {
                     strData += "\n";
+                }
 
-                int        nHour, nMinute, nSec, nMs;
+                int nHour, nMinute, nSec, nMs;
                 nMs = pLine->nBegTime % 1000;
                 nSec = pLine->nBegTime / 1000;
                 nMinute = nSec / 60;
@@ -90,43 +79,50 @@ int CSrtParser::saveAsFile(cstr_t file)
         }
     }
 
-    if (!writeFile(file, strData))
+    if (!writeFile(file, strData)) {
         return ERR_WRITE_FILE;
+    }
 
     return ERR_OK;
 }
 
 // //00:00:21,657
-static cstr_t readTime(cstr_t szBeg, uint32_t &dwTime)
-{
-    int        n;
+static cstr_t readTime(cstr_t szBeg, uint32_t &dwTime) {
+    int n;
 
-    while (*szBeg == ' ')
+    while (*szBeg == ' ') {
         szBeg++;
+    }
     szBeg = readInt_t(szBeg, n);
-    if (*szBeg != ':')
+    if (*szBeg != ':') {
         return nullptr;
+    }
     szBeg++;
     dwTime = n;
 
-    while (*szBeg == ' ')
+    while (*szBeg == ' ') {
         szBeg++;
+    }
     szBeg = readInt_t(szBeg, n);
-    if (*szBeg != ':')
+    if (*szBeg != ':') {
         return nullptr;
+    }
     szBeg++;
     dwTime = dwTime * 60 + n;
 
-    while (*szBeg == ' ')
+    while (*szBeg == ' ') {
         szBeg++;
+    }
     szBeg = readInt_t(szBeg, n);
-    if (*szBeg != ',')
+    if (*szBeg != ',') {
         return nullptr;
+    }
     szBeg++;
     dwTime = dwTime * 60 + n;
 
-    while (*szBeg == ' ')
+    while (*szBeg == ' ') {
         szBeg++;
+    }
     szBeg = readInt_t(szBeg, n);
     dwTime = dwTime * 1000 + n;
 
@@ -134,13 +130,12 @@ static cstr_t readTime(cstr_t szBeg, uint32_t &dwTime)
 }
 
 // 分析歌词文件，并且存储到 pMLData 中
-int CSrtParser::parseFile(bool bUseSpecifiedEncoding, CharEncodingType encoding)
-{
+int CSrtParser::parseFile(bool bUseSpecifiedEncoding, CharEncodingType encoding) {
     //8
     //00:00:21,657 --> 00:00:26,516
     //就像佛洛伊飞船出场前
     //你得耐著性子先看完脱口秀
-    CTextFile    file;
+    CTextFile file;
 
     enum Parse_State {
         PS_NUMBER,
@@ -148,54 +143,54 @@ int CSrtParser::parseFile(bool bUseSpecifiedEncoding, CharEncodingType encoding)
         PS_TXT,
         PS_NEWLINE,
     };
-    Parse_State    state;
-    uint32_t        dwBegTime, dwEndTime;
+    Parse_State state;
+    uint32_t dwBegTime, dwEndTime;
 
     int nRet = file.open(m_pMLData->getLyricsFileName(), true, encoding);
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         return nRet;
+    }
 
     state = PS_NUMBER;
     string line;
-    while (file.readLine(line))
-    {
+    while (file.readLine(line)) {
         trimStr(line, "\r\n");
 
         cstr_t szBeg = line.c_str();
-        if (state == PS_NUMBER)
-        {
-            while (isDigit(*szBeg))
+        if (state == PS_NUMBER) {
+            while (isDigit(*szBeg)) {
                 szBeg++;
-            if (*szBeg != '\0')
+            }
+            if (*szBeg != '\0') {
                 continue;
+            }
 
             state = PS_TIME;
             continue;
-        }
-        else if (state == PS_TIME)
-        {
+        } else if (state == PS_TIME) {
             szBeg = readTime(szBeg, dwBegTime);
-            if (szBeg == nullptr)
+            if (szBeg == nullptr) {
                 continue;
+            }
 
-            if (strncmp(szBeg, " --> ", 5) != 0)
+            if (strncmp(szBeg, " --> ", 5) != 0) {
                 continue;
+            }
             szBeg += 5;
 
             szBeg = readTime(szBeg, dwEndTime);
-            if (szBeg == nullptr)
+            if (szBeg == nullptr) {
                 continue;
+            }
 
-            if (*szBeg != '\0')
+            if (*szBeg != '\0') {
                 continue;
+            }
 
             state = PS_TXT;
             continue;
-        }
-        else if (state == PS_TXT)
-        {
-            if (line.empty())
-            {
+        } else if (state == PS_TXT) {
+            if (line.empty()) {
                 state = PS_NUMBER;
                 continue;
             }
@@ -211,24 +206,25 @@ int CSrtParser::parseFile(bool bUseSpecifiedEncoding, CharEncodingType encoding)
     return ERR_OK;
 }
 
-LYRICS_CONTENT_TYPE CSrtParser::getLyrContentType()
-{
+LYRICS_CONTENT_TYPE CSrtParser::getLyrContentType() {
     return LCT_LRC;
 }
 
-bool CSrtParser::lyricsLineToText(LyricsLine *pLine, string &strBuff)
-{
+bool CSrtParser::lyricsLineToText(LyricsLine *pLine, string &strBuff) {
     strBuff.clear();
-    if (!pLine->bLyricsLine)
+    if (!pLine->bLyricsLine) {
         return false;
+    }
 
-    if (pLine->isTempLine())
+    if (pLine->isTempLine()) {
         return false;
+    }
 
-    for (int i = 0; i < (int)pLine->vFrags.size(); i++)
+    for (int i = 0; i < (int)pLine->vFrags.size(); i++) {
         strBuff += pLine->vFrags[i]->szLyric;
+    }
 
-    strBuff +=  "\r\n";
+    strBuff += "\r\n";
 
     return true;
 }

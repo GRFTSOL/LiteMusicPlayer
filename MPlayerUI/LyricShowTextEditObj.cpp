@@ -491,7 +491,7 @@ void CLyricShowTextEditObj::draw(CRawGraph *canvas)
     CSkinEditCtrl::draw(canvas);
 }
 
-void CLyricShowTextEditObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate/* = nullptr*/)
+void CLyricShowTextEditObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate)
 {
     CRect    rc = m_rcContent;
     canvas->setFont(m_font.getFont());
@@ -1105,7 +1105,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId)
                 if (!getTimeTagOfLine(strLine.c_str(), strTimeTag))
                     continue;
 
-                setSelOfLine(i, 0, strTimeTag.size());
+                setSelOfLine(i, 0, (int)strTimeTag.size());
                 removeSel();
             }
 
@@ -1158,7 +1158,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId)
 
                     string newTimeTag = formtLrcTimeTag(nTime, true);
 
-                    setSelOfLine(i, 0, strTimeTag.size());
+                    setSelOfLine(i, 0, (int)strTimeTag.size());
                     replaceSel(newTimeTag.c_str());
                 }
             }
@@ -1225,7 +1225,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId)
                 if (!getTimeTagOfLine(strLine.c_str(), strTimeTag))
                     continue;
 
-                setSelOfLine(i, 0, strTimeTag.size());
+                setSelOfLine(i, 0, (int)strTimeTag.size());
                 removeSel();
             }
         }
@@ -1246,7 +1246,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId)
                     continue;
 
                 if (i == getLineCount() - 1)
-                    setSel(i, 0, i, strLine.size());
+                    setSel(i, 0, i, (int)strLine.size());
                 else
                     setSel(i, 0, i + 1, 0);
                 removeSel();
@@ -1286,7 +1286,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId)
                         szPtr++;
                     if (szPtr != strLine.c_str() + strTimeTag.size())
                     {
-                        setSelOfLine(i, strTimeTag.size(), (int)(szPtr - strLine.c_str() - strTimeTag.size()));
+                        setSelOfLine(i, (int)strTimeTag.size(), (int)(szPtr - strLine.c_str() - strTimeTag.size()));
                         removeSel();
                     }
                 }
@@ -1320,7 +1320,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId)
                 if (pLine && !pLine->bTimeLine && !getTimeTagOfLine(strLine.c_str(), strTimeTag))
                 {
                     if (i == getLineCount() - 1)
-                        setSel(i, 0, i, strLine.size());
+                        setSel(i, 0, i, (int)strLine.size());
                     else
                         setSel(i, 0, i + 1, 0);
                     removeSel();
@@ -1400,7 +1400,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId)
                 }
                 if (bConverted)
                 {
-                    setSel(i, 0, i, strLine.size());
+                    setSel(i, 0, i, (int)strLine.size());
                     replaceSel(strLine.c_str());
                 }
             }
@@ -1634,7 +1634,7 @@ void CLyricShowTextEditObj::updateTextFontColor()
 void CLyricShowTextEditObj::syncTimeTag(bool bMoveToNextLine)
 {
     int        nBegLine, nEndLine, nCol = 0;
-    int        nBegCol, nEndCol;
+    int        nBegCol = 0, nEndCol = 0;
     bool    bSelectedEmpty = true;
     string    strLine, strTimeTag;
     int        nTime;
@@ -1689,7 +1689,7 @@ void CLyricShowTextEditObj::syncTimeTag(bool bMoveToNextLine)
         // set new time
         string newTimeTag = formtLrcTimeTag(nTime, true);
 
-        setSelOfLine(nLine, 0, strTimeTag.size());
+        setSelOfLine(nLine, 0, (int)strTimeTag.size());
         replaceSel(newTimeTag.c_str());
     }
 
@@ -1713,7 +1713,7 @@ void CLyricShowTextEditObj::adjustSyncTimeOfSelected(bool bIncreaseTime)
     int        nBegLine, nEndLine, nCol;
     string    strLine, strTimeTag;
     int        nTime;
-    int        nBegCol, nEndCol;
+    int        nBegCol = 0, nEndCol = 0;
     bool    bSelectedEmpty = true;
 
     if (m_nBegSelRow != -1)
@@ -1750,7 +1750,7 @@ void CLyricShowTextEditObj::adjustSyncTimeOfSelected(bool bIncreaseTime)
         // set new time
         string newTimeTag = formtLrcTimeTag(nTime, true);
 
-        setSelOfLine(nLine, 0, strTimeTag.size());
+        setSelOfLine(nLine, 0, (int)strTimeTag.size());
         replaceSel(newTimeTag.c_str());
     }
 

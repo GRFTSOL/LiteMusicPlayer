@@ -1,25 +1,24 @@
 #pragma once
 
-class CSkinTabButton : public CSkinToolbar
-{
+class CSkinTabButton : public CSkinToolbar {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinToolbar)
 public:
     CSkinTabButton();
     virtual ~CSkinTabButton();
 
-    void draw(CRawGraph *canvas);
+    void draw(CRawGraph *canvas) override;
 
-    virtual void onCreate();
+    virtual void onCreate() override;
 
-    virtual bool onMenuKey(uint32_t nChar, uint32_t nFlags);
+    virtual bool onMenuKey(uint32_t nChar, uint32_t nFlags) override;
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
-
-protected:
-    virtual void drawButton(CRawGraph *canvas, int nButton, BT_DRAW_STATE btDrawState, int x, int y, int nHeight, int nBtImageLeft);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 
 protected:
-    int                    m_nSperatorLineWidth;
-    int                    m_nButtonFaceWidth, m_nButtonBorderWidth;
+    virtual void drawButton(CRawGraph *canvas, int nButton, BT_DRAW_STATE btDrawState, int x, int y, int nHeight, int nBtImageLeft) override;
+
+protected:
+    int                         m_nSperatorLineWidth;
+    int                         m_nButtonFaceWidth, m_nButtonBorderWidth;
 
 };

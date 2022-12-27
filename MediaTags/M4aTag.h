@@ -8,16 +8,15 @@
 // http://atomicparsley.sourceforge.net/mpeg-4files.html
 //////////////////////////////////////////////////////////////////////////
 
-class M4aBox
-{
+class M4aBox {
 public:
     M4aBox(cstr_t szType, size_t offset, size_t size);
     virtual ~M4aBox();
 
     typedef vector<M4aBox*> VecBoxes;
     enum {
-        TYPE_SIZE = 4,
-        HEADER_SIZE = 8,
+        TYPE_SIZE                   = 4,
+        HEADER_SIZE                 = 8,
     };
 
     void addChild(M4aBox *box);
@@ -38,19 +37,18 @@ public:
     size_t getDataSize() { return m_nSize - HEADER_SIZE; }
 
 public:
-    size_t        m_nOffset;    // The offset of the box
-    size_t        m_nSize;    // The size of the whole box.
-    char        m_szType[TYPE_SIZE + 1];
-    string        m_data;
+    size_t                      m_nOffset;          // The offset of the box
+    size_t                      m_nSize;            // The size of the whole box.
+    char                        m_szType[TYPE_SIZE + 1];
+    string                      m_data;
 
-    size_t        m_nSizeNew;
+    size_t                      m_nSizeNew;
 
-    VecBoxes    m_vChildren;
+    VecBoxes                    m_vChildren;
 
 };
 
-class CM4aTag
-{
+class CM4aTag {
 public:
     CM4aTag();
     virtual ~CM4aTag();
@@ -79,7 +77,7 @@ protected:
     int read(M4aBox *parent);
     int write(string &buf, size_t offset);
 
-    FILE            *m_fp;
-    M4aBox            m_root;        // The virtual root box
+    FILE                        *m_fp;
+    M4aBox                      m_root;             // The virtual root box
 
 };

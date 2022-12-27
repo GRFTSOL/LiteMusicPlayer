@@ -1,18 +1,7 @@
-// MORaw.cpp: implementation of the CMORaw class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "MORaw.h"
 
-#ifdef _DEBUG
-#undef THIS_FILE
-static char THIS_FILE[]=__FILE__;
-#define new DEBUG_NEW
-#endif
 
-
-CMORaw::CMORaw() : m_eventCanWrite(false, true)
-{
+CMORaw::CMORaw() : m_eventCanWrite(false, true) {
     OBJ_REFERENCE_INIT;
 
     m_dwTotolBytesOffset = 0;
@@ -23,17 +12,14 @@ CMORaw::CMORaw() : m_eventCanWrite(false, true)
     m_nBps = 0;
 }
 
-CMORaw::~CMORaw()
-{
+CMORaw::~CMORaw() {
 }
 
-cstr_t CMORaw::getDescription()
-{
+cstr_t CMORaw::getDescription() {
     return "MPlayer Raw file output 1.0";
 }
 
-MLRESULT CMORaw::open(int nSampleRate, int nNumChannels, int nBitsPerSamp)
-{
+MLRESULT CMORaw::open(int nSampleRate, int nNumChannels, int nBitsPerSamp) {
     m_bPaused = false;
     m_nChannels = nNumChannels;
     m_nSamplerate = nSampleRate;
@@ -41,18 +27,18 @@ MLRESULT CMORaw::open(int nSampleRate, int nNumChannels, int nBitsPerSamp)
 
     m_nBytesPerSample = nNumChannels * (nBitsPerSamp / 8);
 
-    char        szFile[MAX_PATH];
+    char szFile[MAX_PATH];
     getAppResourceDir(szFile);
     strcat_safe(szFile, CountOf(szFile), "mout.raw");
     m_fp = fopen(szFile, "wb");
-    if (!m_fp)
+    if (!m_fp) {
         return ERR_OPEN_FILE;
+    }
 
     return ERR_OK;
 }
 
-MLRESULT CMORaw::waitForWrite()
-{
+MLRESULT CMORaw::waitForWrite() {
     sleep(10);
 
     m_eventCanWrite.acquire();
@@ -61,22 +47,21 @@ MLRESULT CMORaw::waitForWrite()
     return ERR_OK;
 }
 
-MLRESULT CMORaw::write(IFBuffer *pBuf)
-{
-    int        nRet = ERR_OK;
+MLRESULT CMORaw::write(IFBuffer *pBuf) {
+    int nRet = ERR_OK;
 
     m_dwTotolBytesOffset += pBuf->size();
 
-    static    int        iii = 0;
+    static int iii = 0;
     ERR_LOG2("write: %d, %d", iii, pBuf->size());
     iii++;
 
-    if (m_fp && pBuf->size())
-    {
-        if (fwrite(pBuf->data(), 1, pBuf->size(), m_fp) > 0)
+    if (m_fp && pBuf->size()) {
+        if (fwrite(pBuf->data(), 1, pBuf->size(), m_fp) > 0) {
             nRet = ERR_OK;
-        else
+        } else {
             nRet = ERR_WRITE_FILE;
+        }
     }
 
     pBuf->release();
@@ -84,42 +69,36 @@ MLRESULT CMORaw::write(IFBuffer *pBuf)
     return nRet;
 }
 
-MLRESULT CMORaw::flush()
-{
-    if (m_bPaused)
-    {
+MLRESULT CMORaw::flush() {
+    if (m_bPaused) {
         m_bPaused = false;
         m_eventCanWrite.set();
     }
     return ERR_OK;
 }
 
-MLRESULT CMORaw::pause(bool bPause)
-{
+MLRESULT CMORaw::pause(bool bPause) {
     m_bPaused = bPause;
-    if (bPause)
+    if (bPause) {
         m_eventCanWrite.reset();
-    else
+    } else {
         m_eventCanWrite.set();
+    }
 
     return ERR_OK;
 }
 
-bool CMORaw::isPlaying()
-{
+bool CMORaw::isPlaying() {
     return false;
 }
 
-MLRESULT CMORaw::stop()
-{
-    if (m_fp)
-    {
+MLRESULT CMORaw::stop() {
+    if (m_fp) {
         fclose(m_fp);
         m_fp = nullptr;
     }
 
-    if (m_bPaused)
-    {
+    if (m_bPaused) {
         m_bPaused = false;
         m_eventCanWrite.set();
     }
@@ -127,19 +106,16 @@ MLRESULT CMORaw::stop()
     return ERR_OK;
 }
 
-bool CMORaw::isOpened()
-{
+bool CMORaw::isOpened() {
     return m_nBps != 0;
 }
 
 // volume
-MLRESULT CMORaw::setVolume(int nVolume, int nBanlance)
-{
+MLRESULT CMORaw::setVolume(int volume, int nBanlance) {
     return ERR_OK;
 }
 
-uint32_t CMORaw::getPos()
-{
+uint32_t CMORaw::getPos() {
     uint32_t nTime = (uint32_t)((double)m_dwTotolBytesOffset * 1000 / (m_nBytesPerSample * m_nSamplerate));
 
     return nTime;

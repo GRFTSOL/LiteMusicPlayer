@@ -7,8 +7,8 @@ typedef const struct __CFDictionary * CFDictionaryRef;
 
 #include "MLFont.h"
 
-class CRawGlyphBuilder
-{
+
+class CRawGlyphBuilder {
 public:
     CRawGlyphBuilder();
     virtual ~CRawGlyphBuilder();
@@ -18,7 +18,7 @@ public:
     int getHeight() const;
 
     void destroy();
-    
+
     Glyph *buildGlyph(string &ch);
 
 protected:

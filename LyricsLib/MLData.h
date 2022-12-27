@@ -20,10 +20,10 @@
 
 #include "LyrScrollActionRecorder.h"
 
+
 MLFileType lyricsConentTypeToFileType(LYRICS_CONTENT_TYPE lyrContentType);
 
-class CMLData  
-{
+class CMLData {
 public:
     CMLData();
     virtual ~CMLData();
@@ -56,7 +56,7 @@ public:
 
     int getCurPlayLine(const CLyricsLines &lyrLines);
 
-    size_t getLyricsLinesCount() { return m_arrLyricsLines.size(); }
+    uint32_t getLyricsLinesCount() { return (uint32_t)m_arrLyricsLines.size(); }
     LyricsLine *getLyricsLine(int nLine);
     CLyricsLines &getRawLyrics() { return m_arrLyricsLines; }
     CLyricsLines &getFileLines() { return m_arrFileLines; }
@@ -108,12 +108,12 @@ public:
         { assert(getLyrContentType() == LCT_TXT); m_lyrScrollActionRecorder.updateTimeTagByEvents(lyrLines); }
 
     void lyrScrollActionsToTag() {
-        if (getLyrContentType() == LCT_TXT)
+        if (getLyrContentType() == LCT_TXT) {
             m_lyrProperties.setTxtLyrScrollEvents(m_lyrScrollActionRecorder.eventsDataToString().c_str());
+        }
     }
 
-    void lyrScrollToLine(CLyricsLines &lyrLines, int nLine, int nTime, bool bUpdateTimeTag = true)
-    {
+    void lyrScrollToLine(CLyricsLines &lyrLines, int nLine, int nTime, bool bUpdateTimeTag = true) {
         assert(getLyrContentType() == LCT_TXT);
         m_lyrScrollActionRecorder.scrollToLine(lyrLines, nLine, nTime, bUpdateTimeTag);
     }
@@ -162,9 +162,9 @@ protected:
 
     int updateTagToID3v2DescTxt();
 #endif // #ifdef _ID3V2_SUPPORT
-    
+
     void onLyricsOpened();
-    
+
     bool saveTag();
 
     void resetModificationFlag();
@@ -180,55 +180,54 @@ protected:
 public:
 
     // All the file lines of the lyrics file.
-    CLyricsLines            m_arrFileLines;
+    CLyricsLines                m_arrFileLines;
 
-    int                        m_nGlobalOffsetTime;
+    int                         m_nGlobalOffsetTime;
 
 protected:
     // Only lyrics lines are saved here, it's just a sub copy of m_arrFileLines.
-    CLyricsLines            m_arrLyricsLines;
+    CLyricsLines                m_arrLyricsLines;
 
 protected:
     CLyrScrollActionRecorder    m_lyrScrollActionRecorder;
 
 #ifdef _ID3V2_SUPPORT
     // save id3v2 lyrics information for cache.
-    struct ID3v2LyricsSaveCacheInfo
-    {
+    struct ID3v2LyricsSaveCacheInfo {
         ID3v2LyricsSaveCacheInfo();
-        string        m_strLrcDescription;    // save id3v2 lyrics description
-        string            m_strLanguage;
+        string                      m_strLrcDescription; // save id3v2 lyrics description
+        string                      m_strLanguage;
 
-        bool            m_bAllSyllableIsNewLine;
+        bool                        m_bAllSyllableIsNewLine;
         void clear();
     };
     ID3v2LyricsSaveCacheInfo    m_id3v2SaveCacheInfo;
 #endif // #ifdef _ID3V2_SUPPORT
 
     // 歌词文件
-    string                    m_strLrcSource;
-    string                    m_strSongFile;
+    string                      m_strLrcSource;
+    string                      m_strSongFile;
 
     // lyrics source type: file, id3v2, lyrics3v2
-    LRC_SOURCE_TYPE            m_lrcSourceType;
+    LRC_SOURCE_TYPE             m_lrcSourceType;
 
     // lyrics properties: tag(artist, title...)
-    LyricsProperties        m_lyrProperties;
+    LyricsProperties            m_lyrProperties;
 
     // original lyrics info.
-    string                  m_md5OrgLyrContent;    // used for lyrics modification compare.
-    LyricsProperties        m_lyrPropertiesOrg;
+    string                      m_md5OrgLyrContent; // used for lyrics modification compare.
+    LyricsProperties            m_lyrPropertiesOrg;
 
     // 协助判断是否仅仅保存 tags
-    bool                    m_isUsedSpecifiedEncoding;
+    bool                        m_isUsedSpecifiedEncoding;
 
     // lyrics display style
-    bool                    m_bKaraokeStyle;
+    bool                        m_bKaraokeStyle;
 
     // current playing position of lyrics
-    int                        m_nTimeElapsed;
+    int                         m_nTimeElapsed;
 
     // length of the current media file
-    int                        m_nMediaLength;
+    int                         m_nMediaLength;
 
 };

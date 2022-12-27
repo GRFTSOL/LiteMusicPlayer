@@ -1,21 +1,16 @@
-// MDAgent.h: interface for the CMDAgent class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MDAGENT_H__F55CB451_C05E_470A_BCB1_5EB56764D42E__INCLUDED_)
-#define AFX_MDAGENT_H__F55CB451_C05E_470A_BCB1_5EB56764D42E__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef MPlayerEngine_MDAgent_h
+#define MPlayerEngine_MDAgent_h
+
 
 #include "IMPlayer.h"
 #include "MPTools.h"
 
+
 class CMPlayer;
 
-class CMDAgent : public IMediaDecode
-{
+class CMDAgent : public IMediaDecode {
     OBJ_REFERENCE_DECL
 public:
     //
@@ -48,7 +43,7 @@ public:
     virtual uint32_t getPos();
 
     // volume
-    virtual MLRESULT setVolume(int nVolume, int nBanlance);
+    virtual MLRESULT setVolume(int volume, int nBanlance);
 
 public:
     CMDAgent();
@@ -60,11 +55,11 @@ public:
     virtual void notifyEod(IMediaDecode *pDecoder, MLRESULT nError);
 
 protected:
-    CMPAutoPtr<IMedia>                m_pMedia;
-    CMPAutoPtr<IMediaInput>            m_pMediaInput;
-    CMPAutoPtr<IMediaDecode>        m_pMediaDecode;
-    CMPAutoPtr<CMPlayer>            m_pPlayer;
+    CMPAutoPtr<IMedia>          m_pMedia;
+    CMPAutoPtr<IMediaInput>     m_pMediaInput;
+    CMPAutoPtr<IMediaDecode>    m_pMediaDecode;
+    CMPAutoPtr<CMPlayer>        m_pPlayer;
 
 };
 
-#endif // !defined(AFX_MDAGENT_H__F55CB451_C05E_470A_BCB1_5EB56764D42E__INCLUDED_)
+#endif // !defined(MPlayerEngine_MDAgent_h)

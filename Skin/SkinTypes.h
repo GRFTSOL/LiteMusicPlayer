@@ -3,8 +3,7 @@
 #include "../Window/WindowLib.h"
 
 
-extern class CProfile            g_profile;
+extern class CProfile g_profile;
 
 const string &getAppResourceDir();
 const string &getAppDataDir();
-

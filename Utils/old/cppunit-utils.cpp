@@ -22,67 +22,62 @@ using namespace CppUnit;
 #include <io.h>
 
 
-#define SZ_CLASSNAME "UnitTest"
-#define SZ_WNDNAME    "UnitTest"
+#define SZ_CLASSNAME        "UnitTest"
+#define SZ_WNDNAME          "UnitTest"
 
-LRESULT CALLBACK LogWndProc(HWND hWnd, uint32_t uMsg, WPARAM wParam, LPARAM lParam)
-{
-    if (uMsg == WM_TIMER)
-    {
+LRESULT CALLBACK LogWndProc(HWND hWnd, uint32_t uMsg, WPARAM wParam, LPARAM lParam) {
+    if (uMsg == WM_TIMER) {
         destroyWindow(hWnd);
         return 0;
-    }
-    else
+    } else {
         return defWindowProc(hWnd, uMsg, wParam, lParam);
+    }
 }
 
-ATOM unitTestRegisterClass(HINSTANCE hInstance)
-{
+ATOM unitTestRegisterClass(HINSTANCE hInstance) {
     WNDCLASSEX wcex;
 
     memset(&wcex, 0, sizeof(wcex));
     wcex.cbSize = sizeof(WNDCLASSEX);
-    wcex.style            = CS_HREDRAW | CS_VREDRAW;
-    wcex.lpfnWndProc    = LogWndProc;
-    wcex.hInstance        = hInstance;
-    wcex.hbrBackground    = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszClassName    = SZ_CLASSNAME;
+    wcex.style = CS_HREDRAW | CS_VREDRAW;
+    wcex.lpfnWndProc = LogWndProc;
+    wcex.hInstance = hInstance;
+    wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
+    wcex.lpszClassName = SZ_CLASSNAME;
 
     return registerClassEx(&wcex);
 }
 
 HWND g_hWndLogEdit = nullptr;
-HWND g_hWndLog =  nullptr;
+HWND g_hWndLog = nullptr;
 
-void logUnitTestResult(cstr_t szStr)
-{
-    if (g_hWndLogEdit == nullptr)
-    {
+void logUnitTestResult(cstr_t szStr) {
+    if (g_hWndLogEdit == nullptr) {
         printf(szStr);
         return;
     }
 
-    int    len = GetWindowTextLength(g_hWndLogEdit);
+    int len = GetWindowTextLength(g_hWndLogEdit);
     sendMessage(g_hWndLogEdit, EM_SETSEL, len, len);
 
     sendMessage(g_hWndLogEdit, EM_REPLACESEL, false, (WPARAM)szStr);
 }
 
-void createUnitResultWnd(HINSTANCE hInstance)
-{
+void createUnitResultWnd(HINSTANCE hInstance) {
     unitTestRegisterClass(hInstance);
 
     g_hWndLog = CreateWindow(SZ_CLASSNAME, SZ_WNDNAME, WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
-    if (!g_hWndLog)
+    if (!g_hWndLog) {
         return;
+    }
 
     CRect rc;
     ::getClientRect(g_hWndLog, &rc);
 
     // create Edit
-    uint32_t    dwStyle = WS_CHILD | WS_VISIBLE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | WS_VSCROLL | WS_HSCROLL| ES_MULTILINE | ES_WANTRETURN;
-    g_hWndLogEdit = CreateWindow("EDIT", "", dwStyle, 
+    uint32_t dwStyle = WS_CHILD | WS_VISIBLE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | WS_VSCROLL | WS_HSCROLL| ES_MULTILINE | ES_WANTRETURN;
+    g_hWndLogEdit = CreateWindow("EDIT", "", dwStyle,
         0, 0, rc.right, rc.bottom, g_hWndLog, nullptr, hInstance, nullptr);
 
     showWindow(g_hWndLog, SW_SHOW);
@@ -131,34 +126,30 @@ void redirectIOToConsole()
     ios::sync_with_stdio();
 }*/
 #else
-void logUnitTestResult(cstr_t str)
-{
+void logUnitTestResult(cstr_t str) {
     printf("%s", str);
 }
 #endif // _WIN32
 
 
-class LogStreamBuffer : public StreamBuffer
-{
+class LogStreamBuffer : public StreamBuffer {
 public:
-    virtual void write( const char *text, unsigned int length )
-    {
-        string    str;
+    virtual void write( const char *text, unsigned int length ) {
+        string str;
         str.append(text, length);
         logUnitTestResult(str.c_str());
     }
 
 };
 
-void runUnitTest()
-{
+void runUnitTest() {
     // create the event manager and test controller
     CPPUNIT_NS::TestResult controller;
-    string            testPath;
+    string testPath;
 
     // add a listener that colllects test result
     CPPUNIT_NS::TestResultCollector result;
-    controller.addListener(&result);        
+    controller.addListener(&result);
 
     // add a listener that print dots as test run.
 #ifdef WIN32
@@ -166,7 +157,7 @@ void runUnitTest()
 #else
     CPPUNIT_NS::BriefTestProgressListener progress;
 #endif
-    controller.addListener( &progress );      
+    controller.addListener( &progress );
 
     LogStreamBuffer buf;
     OStream streamLog(&buf);
@@ -175,7 +166,7 @@ void runUnitTest()
 
     // add the top suite to the test runner
     CPPUNIT_NS::TestRunner runner;
-    runner.addTest( CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest() );   
+    runner.addTest( CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest() );
     try
     {
         logUnitTestResult(("Running " + testPath).c_str());
@@ -187,7 +178,7 @@ void runUnitTest()
 
         // print test in a compiler compatible format.
         CPPUNIT_NS::CompilerOutputter outputter(&result, streamLog);
-        outputter.write(); 
+        outputter.write();
 
         // Uncomment this for XML output
         //    std::ofstream file( "tests.xml" );
@@ -196,22 +187,23 @@ void runUnitTest()
         //    xml.write();
         //    file.close();
     }
-    catch (std::invalid_argument &e)  // test path not resolved
-    {
+    catch (std::invalid_argument &e) {
+        // test path not resolved
         logUnitTestResult("\r\nERROR: ");
         logUnitTestResult(e.what());
         logUnitTestResult("\r\n");
-//         std::cerr  <<  std::endl  
-//             <<  "ERROR: "  <<  e.what()
-//             << std::endl;
+        //         std::cerr  <<  std::endl
+        //             <<  "ERROR: "  <<  e.what()
+        //             << std::endl;
         return;
     }
 
     stdCOut().setBuffer(nullptr);
 
 #ifdef _WIN32
-    if (result.wasSuccessful())
+    if (result.wasSuccessful()) {
         setTimer(g_hWndLog, 0, 1000, nullptr);
+    }
 #endif
 }
 

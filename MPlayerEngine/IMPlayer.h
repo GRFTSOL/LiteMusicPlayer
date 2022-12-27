@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef _IMPLAYER_H_
 #define _IMPLAYER_H_
 
@@ -5,7 +7,7 @@
 
 
 #ifndef _WIN32
-#define interface struct
+#define interface           struct
 #endif
 
 interface IMediaDecode;
@@ -17,24 +19,23 @@ interface IDSP;
 
 typedef int MLRESULT;
 
-enum MPLAYER_ERROR_CODE
-{
+enum MPLAYER_ERROR_CODE {
     ERR_AUDIO_DECODE_INITFAILED = ERR_PLAYER_ERROR_BASE + 1,
     ERR_END_OF_STREAM,
     ERR_DECODE_FAILED,
-    ERR_BUFFER_FULL,        // 缓冲区已经写满了，需要等待
-    ERR_NOT_INITED,            // 未初始化
+    ERR_BUFFER_FULL,                 // 缓冲区已经写满了，需要等待
+    ERR_NOT_INITED,                  // 未初始化
     ERR_NOT_SUPPORT,
     ERR_READ_ONLY,
 
     ERR_MI_OPEN_SRC,
-    ERR_MI_NOT_FOUND,        // the media source doesn't exist.
+    ERR_MI_NOT_FOUND,                // the media source doesn't exist.
     ERR_MI_SEEK,
     ERR_MI_READ,
     ERR_MI_WRITE,
 
     ERR_PLAYER_INVALID_STATE,        // Invalid state of current object.
-    ERR_PLAYER_INVALID_FILE,        // 
+    ERR_PLAYER_INVALID_FILE,
     ERR_SOUND_DEVICE_OPEN,
     ERR_SOUND_DEVICE_WRITE,
     ERR_DECODER_INNER_ERROR,
@@ -43,7 +44,7 @@ enum MPLAYER_ERROR_CODE
     ERR_DISK_FULL,
     ERR_CREATE_THREAD,
     ERR_INVALID_HANDLE,
-    ERR_END_OF_PLAYLIST,            // end of playlist, prev, next will return this value
+    ERR_END_OF_PLAYLIST,             // end of playlist, prev, next will return this value
     ERR_EMPTY_PLAYLIST,
     ERR_NO_DEVICE,
 
@@ -53,16 +54,14 @@ enum MPLAYER_ERROR_CODE
 //
 // IMPlayer constant
 //
-enum
-{
-    MP_VOLUME_MAX            = 100,
-    MP_VOL_BALANCE_MIN        = -100,
-    MP_VOL_BALANCE_MAX        = 100,
+enum {
+    MP_VOLUME_MAX               = 100,
+    MP_VOL_BALANCE_MIN          = -100,
+    MP_VOL_BALANCE_MAX          = 100,
 
 };
 
-enum MP_LOOP_MODE
-{
+enum MP_LOOP_MODE {
     MP_LOOP_OFF,
     MP_LOOP_ALL,
     MP_LOOP_TRACK,
@@ -70,47 +69,42 @@ enum MP_LOOP_MODE
 
 #ifndef _PLAYER_STATE_DEFINED
 #define _PLAYER_STATE_DEFINED
-enum PLAYER_STATE
-{
-    PS_STOPED                = 1,
-    PS_PLAYING                = 2,
-    PS_PAUSED                = 3
+enum PLAYER_STATE {
+    PS_STOPED                   = 1,
+    PS_PLAYING                  = 2,
+    PS_PAUSED                   = 3
 };
 #endif // _PLAYER_STATE_DEFINED
 
-enum MPInterfaceType
-{
-    MPIT_INVALID            = 0,
-    MPIT_INPUT                = 1,
-    MPIT_OUTPUT                = 2,
-    MPIT_DECODE                = 3,
-    MPIT_VIS                = 4,
-    MPIT_DSP                = 5,
-    MPIT_MEMALLOCATOR        = 6,
-    MPIT_MEDIA_LIB            = 7,
-    MPIT_GENERAL_PLUGIN        = 8,
-    MPIT_INPUT_DECTOR        = 9,
+enum MPInterfaceType {
+    MPIT_INVALID                = 0,
+    MPIT_INPUT                  = 1,
+    MPIT_OUTPUT                 = 2,
+    MPIT_DECODE                 = 3,
+    MPIT_VIS                    = 4,
+    MPIT_DSP                    = 5,
+    MPIT_MEMALLOCATOR           = 6,
+    MPIT_MEDIA_LIB              = 7,
+    MPIT_GENERAL_PLUGIN         = 8,
+    MPIT_INPUT_DECTOR           = 9,
 
 };
 
-enum
-{
-    EQ_BANDS_COUNT            = 18,
-    EQ_dB_MIN                = -20,
-    EQ_dB_DEF                = 0,
-    EQ_dB_MAX                = 20,
+enum {
+    EQ_BANDS_COUNT              = 18,
+    EQ_dB_MIN                   = -20,
+    EQ_dB_DEF                   = 0,
+    EQ_dB_MAX                   = 20,
 };
 
-struct EQualizer
-{
-    bool    bEnable;
-    int        nPreamp;                //set value EQ_dB_MAX to EQ_dB_MIN (default EQ_dB_DEF)
-    int        vData[EQ_BANDS_COUNT];    //set value EQ_dB_MAX to EQ_dB_MIN (default EQ_dB_DEF)
+struct EQualizer {
+    bool                        bEnable;
+    int                         nPreamp;            // set value EQ_dB_MAX to EQ_dB_MIN (default EQ_dB_DEF)
+    int                         vData[EQ_BANDS_COUNT]; // set value EQ_dB_MAX to EQ_dB_MIN (default EQ_dB_DEF)
 };
 
 
-interface IString
-{
+interface IString {
     virtual ~IString() { }
 
     virtual void addRef() = 0;
@@ -131,8 +125,7 @@ interface IString
 
 };
 
-interface IVString
-{
+interface IVString {
     virtual ~IVString() { }
 
     virtual void addRef() = 0;
@@ -147,8 +140,7 @@ interface IVString
 
 };
 
-interface IVector
-{
+interface IVector {
     virtual ~IVector() { }
 
     virtual void addRef() = 0;
@@ -163,8 +155,7 @@ interface IVector
 
 };
 
-interface IVInt
-{
+interface IVInt {
     virtual ~IVInt() { }
 
     virtual void addRef() = 0;
@@ -179,8 +170,7 @@ interface IVInt
 
 };
 
-interface IFBuffer
-{
+interface IFBuffer {
     virtual ~IFBuffer() { }
 
     virtual void addRef() = 0;
@@ -194,10 +184,9 @@ interface IFBuffer
 
 };
 
-interface IMemAllocator
-{
+interface IMemAllocator {
     virtual ~IMemAllocator() { }
-    
+
     virtual void addRef() = 0;
     virtual void release() = 0;
 
@@ -215,54 +204,52 @@ interface IMediaTag
 };
 */
 
-#define MEDIA_LENGTH_INVALID    0
-#define MEDIA_ID_INVALID        0
+#define MEDIA_LENGTH_INVALID 0
+#define MEDIA_ID_INVALID    0
 
-enum MediaAttribute
-{
-    MA_ARTIST        = 0,
-    MA_ALBUM        = 1,
-    MA_TITLE        = 2,
-    MA_TRACK_NUMB    = 3,
-    MA_YEAR            = 4,
-    MA_GENRE        = 5,
-    MA_COMMENT        = 6,
-    MA_DURATION        = 7,
-    MA_FILESIZE        = 8,
-    MA_TIME_ADDED    = 9,
-    MA_TIME_PLAYED    = 10,
-    MA_IS_USER_RATING    = 12,
-    MA_RATING        = 11,
-    MA_TIMES_PLAYED    = 13,
-    MA_TIMES_PLAY_SKIPPED    = 14,
-    MA_LYRICS_FILE    = 15,
+enum MediaAttribute {
+    MA_ARTIST                   = 0,
+    MA_ALBUM                    = 1,
+    MA_TITLE                    = 2,
+    MA_TRACK_NUMB               = 3,
+    MA_YEAR                     = 4,
+    MA_GENRE                    = 5,
+    MA_COMMENT                  = 6,
+    MA_DURATION                 = 7,
+    MA_FILESIZE                 = 8,
+    MA_TIME_ADDED               = 9,
+    MA_TIME_PLAYED              = 10,
+    MA_IS_USER_RATING           = 12,
+    MA_RATING                   = 11,
+    MA_TIMES_PLAYED             = 13,
+    MA_TIMES_PLAY_SKIPPED       = 14,
+    MA_LYRICS_FILE              = 15,
 
     // the following info will not be stored in media library
-    MA_FORMAT        = 16,
-    MA_ISVBR        = 17,
-    MA_BITRATE        = 18,
-    MA_BPS            = 19,
-    MA_CHANNELS        = 20,
-    MA_SAMPLE_RATE    = 21,
-    MA_EXTRA_INFO    = 22,
+    MA_FORMAT                   = 16,
+    MA_ISVBR                    = 17,
+    MA_BITRATE                  = 18,
+    MA_BPS                      = 19,
+    MA_CHANNELS                 = 20,
+    MA_SAMPLE_RATE              = 21,
+    MA_EXTRA_INFO               = 22,
 };
 
-interface IMedia
-{
+interface IMedia {
     virtual ~IMedia() { }
 
     virtual void addRef() = 0;
     virtual void release() = 0;
 
     // the ID in media library, 0 for not existing in media library
-    virtual long getID() = 0;
+    virtual int getID() = 0;
 
     virtual MLRESULT getSourceUrl(IString *strUrl) = 0;
     virtual MLRESULT getArtist(IString *strArtist) = 0;
     virtual MLRESULT getTitle(IString *strTitle) = 0;
     virtual MLRESULT getAlbum(IString *strAlbum) = 0;
 
-    virtual long getDuration() = 0;
+    virtual int getDuration() = 0;
 
     virtual MLRESULT setSourceUrl(cstr_t strUrl) = 0;
 
@@ -280,8 +267,7 @@ interface IMedia
 
 };
 
-interface IPlaylist
-{
+interface IPlaylist {
     virtual ~IPlaylist() { }
 
     virtual void addRef() = 0;
@@ -289,21 +275,20 @@ interface IPlaylist
 
     virtual uint32_t getCount() = 0;
 
-    virtual MLRESULT getItem(long nIndex, IMedia **ppMedia) = 0;
+    virtual MLRESULT getItem(int nIndex, IMedia **ppMedia) = 0;
 
     virtual MLRESULT getName(IString *str) = 0;
 
-    virtual MLRESULT insertItem(long nIndex, IMedia *pMedia) = 0;
+    virtual MLRESULT insertItem(int nIndex, IMedia *pMedia) = 0;
 
-    virtual MLRESULT moveItem(long nIndexOld, long nIndexNew) = 0;
+    virtual MLRESULT moveItem(int nIndexOld, int nIndexNew) = 0;
 
-    virtual MLRESULT removeItem(long nIndex) = 0;
+    virtual MLRESULT removeItem(int nIndex) = 0;
 
     virtual MLRESULT clear() = 0;
 };
 
-enum MediaLibOrderBy
-{
+enum MediaLibOrderBy {
     MLOB_NONE,
     MLOB_ARTIST,
     MLOB_ALBUM,
@@ -313,8 +298,7 @@ enum MediaLibOrderBy
 
 };
 
-interface IMediaLibrary
-{
+interface IMediaLibrary {
     virtual ~IMediaLibrary() { }
 
     virtual void addRef() = 0;
@@ -387,21 +371,18 @@ interface IMediaLibrary
 
 };
 
-interface IMPEvent
-{
+interface IMPEvent {
     virtual ~IMPEvent() { }
 
-    enum MP_SETTING_TYPE
-    {
-        MPS_SHUFFLE,    // bool
-        MPS_LOOP,        // bool
-        MPS_MUTE,        // bool
-        MPS_VOLUME,        // long
-        MPS_BALANCE,    // long
+    enum MP_SETTING_TYPE {
+        MPS_SHUFFLE,                     // bool
+        MPS_LOOP,                        // bool
+        MPS_MUTE,                        // bool
+        MPS_VOLUME,                      // int
+        MPS_BALANCE,                     // int
     };
 
-    enum MP_PLAYLIST_CHANGE_ACTION
-    {
+    enum MP_PLAYLIST_CHANGE_ACTION {
         PCA_FULL_UPDATE,
         PCA_INSERT,
         PCA_MOVE,
@@ -416,17 +397,16 @@ interface IMPEvent
     virtual void onSeek() = 0;
     virtual void onCurrentMediaChanged() = 0;
     // nIndex the new/cur item which was modified. nIndexOld, is used for move.
-    virtual void onCurrentPlaylistChanged(MP_PLAYLIST_CHANGE_ACTION action, long nIndex, long nIndexOld) = 0;
+    virtual void onCurrentPlaylistChanged(MP_PLAYLIST_CHANGE_ACTION action, int nIndex, int nIndexOld) = 0;
 
-    virtual void onSettingChanged(MP_SETTING_TYPE settingType, long value) = 0;
+    virtual void onSettingChanged(MP_SETTING_TYPE settingType, int value) = 0;
     virtual void onEQSettingChanged(const EQualizer *eq) = 0;
 
     virtual void onPlayHaltError(MLRESULT nError) = 0;
 
 };
 
-interface IMPluginManager
-{
+interface IMPluginManager {
     virtual ~IMPluginManager() { }
 
     virtual void addRef() = 0;
@@ -444,8 +424,7 @@ interface IMPluginManager
 
 };
 
-interface IMPlayer
-{
+interface IMPlayer {
     virtual ~IMPlayer() { }
 
     virtual void addRef() = 0;
@@ -474,8 +453,8 @@ interface IMPlayer
     virtual MLRESULT getCurrentPlaylist(IPlaylist **ppPlaylist) = 0;
     virtual MLRESULT getCurrentMedia(IMedia **ppMedia) = 0;
 
-    virtual long getCurrentMediaInPlaylist() = 0;
-    virtual MLRESULT setCurrentMediaInPlaylist(long nIndex) = 0;
+    virtual int getCurrentMediaInPlaylist() = 0;
+    virtual MLRESULT setCurrentMediaInPlaylist(int nIndex) = 0;
 
     virtual MLRESULT setCurrentPlaylist(IPlaylist *pPlaylist) = 0;
     virtual MLRESULT setCurrentMedia(IMedia *pMedia) = 0;
@@ -496,10 +475,10 @@ interface IMPlayer
     // write sound data, and do dsp and vis processing.
     virtual void outputWrite(IFBuffer *pBuf, int nBps, int nChannels, int nSampleRate) = 0;
 
-//     virtual bool IsDspActive() = 0;
-//     virtual void DspProcess(IFBuffer *pBuf, int nBps, int nChannels, int nSampleRate) = 0;
-// 
-//     virtual void addVisData(IFBuffer *pBuf, int nBps, int nChannels, int nSampleRate) = 0;
+    //     virtual bool IsDspActive() = 0;
+    //     virtual void DspProcess(IFBuffer *pBuf, int nBps, int nChannels, int nSampleRate) = 0;
+    //
+    //     virtual void addVisData(IFBuffer *pBuf, int nBps, int nChannels, int nSampleRate) = 0;
 
     //
     // Player settings
@@ -513,12 +492,12 @@ interface IMPlayer
     virtual bool getMute() = 0;
 
     // 0 ~ 100
-    virtual MLRESULT setVolume(long nVolume) = 0;
-    virtual long getVolume() = 0;
+    virtual MLRESULT setVolume(int volume) = 0;
+    virtual int getVolume() = 0;
 
     // -100 ~ 100
-    virtual MLRESULT setBalance(long nBalance) = 0;
-    virtual long getBalance() = 0;
+    virtual MLRESULT setBalance(int balance) = 0;
+    virtual int getBalance() = 0;
 
     virtual MLRESULT setEQ(const EQualizer *eq) = 0;
     virtual MLRESULT getEQ(EQualizer *eq) = 0;
@@ -546,20 +525,18 @@ interface IMPlayer
 
 };
 
-#define MAXCHANNELS        2
+#define MAXCHANNELS         2
 
-#define VIS_N_WAVE_SAMPLE        512
-#define VIS_N_SPTR_SAMPLE        512
+#define VIS_N_WAVE_SAMPLE   512
+#define VIS_N_SPTR_SAMPLE   512
 
-struct VisParam
-{
-    int                nChannels;                // number of channels
-    unsigned char    spectrumData[2][VIS_N_WAVE_SAMPLE];    // 
-    unsigned char    waveformData[2][VIS_N_SPTR_SAMPLE];
+struct VisParam {
+    int                         nChannels;          // number of channels
+    unsigned char               spectrumData[2][VIS_N_WAVE_SAMPLE]; //
+    unsigned char               waveformData[2][VIS_N_SPTR_SAMPLE];
 };
 
-interface IVis
-{
+interface IVis {
     virtual ~IVis() { }
     virtual void addRef() = 0;
     virtual void release() = 0;
@@ -570,8 +547,7 @@ interface IVis
     virtual int render(VisParam *visParam) = 0;
 };
 
-interface IDSP
-{
+interface IDSP {
     virtual ~IDSP() { }
 
     virtual void addRef() = 0;
@@ -583,8 +559,7 @@ interface IDSP
     virtual void process(IFBuffer *pBuf, int nBps, int nChannels, int nSampleRate) = 0;
 };
 
-interface IMediaOutput// : IUnknown
-{
+interface IMediaOutput { // : IUnknown
     IMediaOutput() : m_nChannels(0), m_nSamplerate(0), m_nBitsPerSamp(0) { }
     virtual ~IMediaOutput() { }
 
@@ -612,22 +587,21 @@ interface IMediaOutput// : IUnknown
     virtual uint32_t getPos() = 0;
 
     // volume
-    virtual MLRESULT setVolume(int nVolume, int nBanlance) = 0;
+    virtual MLRESULT setVolume(int volume, int nBanlance) = 0;
 
     int getChannels() { return m_nChannels; }
     int getSamplerate() { return m_nSamplerate; }
     int getBPS() { return m_nBitsPerSamp; }
 protected:
-    int            m_nChannels;
-    int            m_nSamplerate;
-    int            m_nBitsPerSamp;
+    int                         m_nChannels;
+    int                         m_nSamplerate;
+    int                         m_nBitsPerSamp;
 
 };
 
-interface IMediaInputDetector
-{
+interface IMediaInputDetector {
     virtual ~IMediaInputDetector() { }
-    
+
     virtual void addRef() = 0;
     virtual void release() = 0;
 
@@ -636,8 +610,7 @@ interface IMediaInputDetector
 
 };
 
-interface IMediaInput
-{
+interface IMediaInput {
     virtual ~IMediaInput() { }
     virtual void addRef() = 0;
     virtual void release() = 0;
@@ -692,8 +665,7 @@ interface IMediaDecodeSimple
 };
 */
 
-interface IMediaDecode// : IUnknown
-{
+interface IMediaDecode { // : IUnknown
     virtual ~IMediaDecode() { }
 
     virtual void addRef() = 0;
@@ -730,7 +702,7 @@ interface IMediaDecode// : IUnknown
     virtual uint32_t getPos() = 0;
 
     // volume
-    virtual MLRESULT setVolume(int nVolume, int nBanlance) = 0;
+    virtual MLRESULT setVolume(int volume, int nBanlance) = 0;
 
 };
 
@@ -756,8 +728,8 @@ typedef MLRESULT (*ZikiPlayerQueryPluginIF_t)(
     MPInterfaceType *pInterfaceType,
     IString *strDescription,
     void **lpInterface
-);
+    );
 
-#define SZ_FUNC_ZP_QUERY_PLUGIN_IF        "zikiPlayerQueryPluginIF"
+#define SZ_FUNC_ZP_QUERY_PLUGIN_IF  "zikiPlayerQueryPluginIF"
 
 #endif // _IMPLAYER_H_

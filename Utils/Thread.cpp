@@ -1,7 +1,3 @@
-// Thread.cpp: implementation of the CThread class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "Thread.h"
 #include <pthread.h>
 
@@ -34,14 +30,12 @@ void CThread::join() {
     }
 }
 
-bool CThread::isRunning()
-{
+bool CThread::isRunning() {
     return m_threadID != 0;
 }
 
-void *CThread::threadFunction(void *lpParam)
-{
-    CThread    *pThis = (CThread *)lpParam;
+void *CThread::threadFunction(void *lpParam) {
+    CThread *pThis = (CThread *)lpParam;
 
     pThis->m_funThead(pThis->m_lpData);
     pThis->m_threadID = 0;

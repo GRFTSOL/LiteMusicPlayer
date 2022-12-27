@@ -1,9 +1,5 @@
-// RawGraph.h: interface for the CRawGraph class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_RAWGRAPH_H__DB0AA2D5_3D46_4B35_9FF4_F93C76ED577B__INCLUDED_)
-#define AFX_RAWGRAPH_H__DB0AA2D5_3D46_4B35_9FF4_F93C76ED577B__INCLUDED_
+#ifndef GfxRaw_RawGraph_h
+#define GfxRaw_RawGraph_h
 
 #pragma once
 
@@ -11,22 +7,20 @@
 
 
 #ifdef _WIN32
-enum PixPosition
-{
-    PIX_B                   = 0,
-    PIX_G                   = 1,
-    PIX_R                   = 2,
-    PIX_A                   = 3,        // Alpha channel
-    PIX_SIZE                = 4
+enum PixPosition {
+    PIX_B                       = 0,
+    PIX_G                       = 1,
+    PIX_R                       = 2,
+    PIX_A                       = 3, // Alpha channel
+    PIX_SIZE                    = 4
 };
 #else // #ifdef _WIN32
-enum PixPosition
-{
-    PIX_R                   = 0,
-    PIX_G                   = 1,
-    PIX_B                   = 2,
-    PIX_A                   = 3,        // Alpha channel
-    PIX_SIZE                = 4
+enum PixPosition {
+    PIX_R                       = 0,
+    PIX_G                       = 1,
+    PIX_B                       = 2,
+    PIX_A                       = 3, // Alpha channel
+    PIX_SIZE                    = 4
 };
 #endif // #ifdef _WIN32
 
@@ -51,8 +45,7 @@ class CRawBmpFont;
 //
 // Its graph buffer can be accessed directly.
 //
-class CRawGraph : public CRawGraphData
-{
+class CRawGraph : public CRawGraphData {
 public:
     CRawGraph();
     virtual ~CRawGraph();
@@ -64,8 +57,9 @@ public:
             canvas->getClipBoundBox(m_rcClipOrg);
         }
         ~CClipBoxAutoRecovery() {
-            if (m_canvas)
+            if (m_canvas) {
                 m_canvas->resetClipBoundBox(m_rcClipOrg);
+            }
         }
 
         void recover() {
@@ -76,28 +70,28 @@ public:
         }
 
     protected:
-        CRawGraph    *m_canvas;
-        CRect        m_rcClipOrg;
+        CRawGraph                   *m_canvas;
+        CRect                       m_rcClipOrg;
 
     };
 
     class COpacityBlendAutoRecovery {
     public:
         COpacityBlendAutoRecovery(CRawGraph *canvas, int nOpacityPainting) {
-            if (nOpacityPainting != 255)
-            {
+            if (nOpacityPainting != 255) {
                 m_canvas = canvas;
                 m_nOpacityPainting = canvas->getOpacityPainting();
 
                 nOpacityPainting = m_nOpacityPainting * nOpacityPainting / 255;
                 m_canvas->setOpacityPainting(nOpacityPainting);
-            }
-            else
+            } else {
                 m_canvas = nullptr;
+            }
         }
         ~COpacityBlendAutoRecovery() {
-            if (m_canvas)
+            if (m_canvas) {
                 m_canvas->setOpacityPainting(m_nOpacityPainting);
+            }
         }
 
         void recover() {
@@ -108,8 +102,8 @@ public:
         }
 
     protected:
-        CRawGraph    *m_canvas;
-        int            m_nOpacityPainting;
+        CRawGraph                   *m_canvas;
+        int                         m_nOpacityPainting;
 
     };
 
@@ -126,20 +120,19 @@ public:
     virtual void resetClipBoundBox(const CRect &rc);
     virtual void clearClipBoundBox();
 
-    virtual bool textOut(int x, int y, cstr_t szText, int nLen);
-    virtual bool drawTextClip(cstr_t szText, int nLen, const CRect &rcPos, int xLeftClipOffset = 0);
+    virtual bool textOut(int x, int y, cstr_t szText, size_t nLen);
+    virtual bool drawTextClip(cstr_t szText, size_t nLen, const CRect &rcPos, int xLeftClipOffset = 0);
 
-    virtual bool textOutOutlined(int x, int y, cstr_t szText, int nLen, const CColor &clrText, const CColor &clrBorder);
-    virtual bool drawTextClipOutlined(cstr_t szText, int nLen, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, int xLeftClipOffset = 0);
-    virtual bool drawTextOutlined(cstr_t szText, int nLen, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, uint32_t uFormat = DT_SINGLELINE | DT_LEFT);
+    virtual bool textOutOutlined(int x, int y, cstr_t szText, size_t nLen, const CColor &clrText, const CColor &clrBorder);
+    virtual bool drawTextClipOutlined(cstr_t szText, size_t nLen, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, int xLeftClipOffset = 0);
+    virtual bool drawTextOutlined(cstr_t szText, size_t nLen, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, uint32_t uFormat = DT_SINGLELINE | DT_LEFT);
 
-    virtual bool drawText(cstr_t szText, int nLen, const CRect &rcPos, uint32_t uFormat = DT_SINGLELINE | DT_LEFT);
+    virtual bool drawText(cstr_t szText, size_t nLen, const CRect &rcPos, uint32_t uFormat = DT_SINGLELINE | DT_LEFT);
 
-    virtual bool getTextExtentPoint32(cstr_t szText, int nLen, CSize *pSize);
+    virtual bool getTextExtentPoint32(cstr_t szText, size_t nLen, CSize *pSize);
 
 
-    virtual void setTextColor(const CColor &color)
-    {
+    virtual void setTextColor(const CColor &color) {
         m_clrText = color;
     }
 
@@ -160,9 +153,8 @@ public:
     void fillRect(const CRect *lpRect, RawImageData *pImgMask, const CRect *rcMask, const CColor &clrFill, BlendPixMode bpm = BPM_COPY);
     void fillRect(const CRect *lpRect, const CColor &clrFill, BlendPixMode bpm = BPM_COPY);
 
-    void fillRect(int x, int y, int nWidth, int nHeight, const CColor &clrFill, BlendPixMode bpm = BPM_COPY)
-    {
-        CRect    rc(x, y, x + nWidth, y + nHeight);
+    void fillRect(int x, int y, int nWidth, int nHeight, const CColor &clrFill, BlendPixMode bpm = BPM_COPY) {
+        CRect rc(x, y, x + nWidth, y + nHeight);
 
         fillRect(&rc, clrFill, bpm);
     }
@@ -200,25 +192,26 @@ protected:
     void clipAndMapRect(const CRect *lpRect, int &x, int &y, int &xMax, int &yMax);
 
 protected:
-    CColor            m_clrText;
+    CColor                      m_clrText;
 
-    CRawPen            m_pen;
+    CRawPen                     m_pen;
 
-    CRect            m_rcClip;
+    CRect                       m_rcClip;
 
-    CRawBmpFont        *m_rawBmpFont;
+    CRawBmpFont                 *m_rawBmpFont;
 
     // The Opacity of painting (lines, text, images) to graph
-    int                m_nOpacityPainting;
+    int                         m_nOpacityPainting;
 
     // The origin of graph, default is 0, 0.
-    CPoint            m_ptOrigin;
-    
-    bool            m_bAlphaChannelEnabled;
+    CPoint                      m_ptOrigin;
+
+    bool                        m_bAlphaChannelEnabled;
 
 };
 
 #include "RawImage.h"
 // #include "RawBmpFont.h"
 
-#endif // !defined(AFX_RAWGRAPH_H__DB0AA2D5_3D46_4B35_9FF4_F93C76ED577B__INCLUDED_)
+
+#endif // !defined(GfxRaw_RawGraph_h)

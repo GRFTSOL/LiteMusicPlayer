@@ -4,16 +4,15 @@
 #endif
 #include "LrcTag.h"
 
+
 //////////////////////////////////////////////////////////////////////////
 //
 
-void analyseLyricsFileNameEx(string &strArtist, string &strTitle, cstr_t szFile)
-{
+void analyseLyricsFileNameEx(string &strArtist, string &strTitle, cstr_t szFile) {
     string fileTitle = fileGetTitle(szFile);
 
     if (!strSplit(fileTitle.c_str(), " - ", strArtist, strTitle)
-        && !strSplit(fileTitle.c_str(), '-', strArtist, strTitle))
-    {
+        && !strSplit(fileTitle.c_str(), '-', strArtist, strTitle)) {
         strArtist.resize(0);
         strTitle = fileTitle;
     }
@@ -22,11 +21,11 @@ void analyseLyricsFileNameEx(string &strArtist, string &strTitle, cstr_t szFile)
     trimStr(strTitle);
 }
 
-string formatMediaTitle(cstr_t szArtist, cstr_t szTitle)
-{
+string formatMediaTitle(cstr_t szArtist, cstr_t szTitle) {
     string mediaTitle = szArtist;
-    if (mediaTitle.size() > 0 && !isEmptyString(szTitle))
+    if (mediaTitle.size() > 0 && !isEmptyString(szTitle)) {
         mediaTitle += " - ";
+    }
     mediaTitle += szTitle;
 
     return mediaTitle;
@@ -35,18 +34,14 @@ string formatMediaTitle(cstr_t szArtist, cstr_t szTitle)
 //////////////////////////////////////////////////////////////////////////
 //
 
-void analyseProxySetting(cstr_t szProxySetting, char szServer[], int nMaxSize, int &nPort)
-{
-    cstr_t        szColon;
+void analyseProxySetting(cstr_t szProxySetting, char szServer[], int nMaxSize, int &nPort) {
+    cstr_t szColon;
 
     szColon = strchr(szProxySetting, ':');
-    if (szColon == nullptr)
-    {
+    if (szColon == nullptr) {
         strcpy_safe(szServer, nMaxSize, szProxySetting);
         nPort = 80;
-    }
-    else
-    {
+    } else {
         strncpy_safe(szServer, nMaxSize, szProxySetting,
             int(szColon - szProxySetting));
         nPort = atoi(szColon + 1);
@@ -54,16 +49,16 @@ void analyseProxySetting(cstr_t szProxySetting, char szServer[], int nMaxSize, i
 }
 
 #ifdef WIN32
-bool getMLEncriptyData(string &strData)
-{
-    char            szFile[MAX_PATH];
-    string        str;
-    char            szMD5[64];
+bool getMLEncriptyData(string &strData) {
+    char szFile[MAX_PATH];
+    string str;
+    char szMD5[64];
 
     GetModuleFileName(getAppInstance(), szFile, CountOf(szFile));
 
-    if (!readFile(szFile, str))
+    if (!readFile(szFile, str)) {
         return false;
+    }
 
     md5ToString(str.c_str() + 0x100, str.size() - 0x100, szMD5);
 
@@ -71,8 +66,9 @@ bool getMLEncriptyData(string &strData)
     // decodebase64(str.c_str() + 0x51, 0x78 - 0x51, strData);
     strData.append(str.c_str() + 0x51, 0x78 - 0x51);
 
-    for (uint32_t i = 0; i < 32; i++)
+    for (uint32_t i = 0; i < 32; i++) {
         strData[i] = strData[i] ^ szMD5[i];
+    }
 
     // 解密之后的数据了，这里存储的是核心数据
 
@@ -87,15 +83,13 @@ bool getMLEncriptyData(string &strData)
 
 IMPLEMENT_CPPUNIT_TEST_REG(HelperFun)
 
-class CTestCaseStringEx : public CppUnit::TestFixture
-{
+class CTestCaseStringEx : public CppUnit::TestFixture {
     CPPUNIT_TEST_SUITE(CTestCaseStringEx);
     CPPUNIT_TEST(testAnalyseLyricsFileNameEx);
     CPPUNIT_TEST_SUITE_END();
 
 protected:
-    void testAnalyseLyricsFileNameEx()
-    {
+    void testAnalyseLyricsFileNameEx() {
         string artist, title;
         cstr_t szFile;
 

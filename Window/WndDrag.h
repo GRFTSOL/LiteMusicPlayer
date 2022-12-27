@@ -2,29 +2,29 @@
     Created  :    2002/01/04    21:43
     FileName :    WndDrag.h
     Author   :    xhy
-    
+
     Purpose  :    
 *********************************************************************/
 
-#if !defined(AFX_WNDDRAG_H__54E078FE_AFB3_4369_8EF6_5E00313640DC__INCLUDED_)
-#define AFX_WNDDRAG_H__54E078FE_AFB3_4369_8EF6_5E00313640DC__INCLUDED_
+#pragma once
+
+#ifndef Window_WndDrag_h
+#define Window_WndDrag_h
 
 #include <vector>
 
 
 class Window;
 
-class WndDrag  
-{
+class WndDrag {
 public:
-    typedef struct WndCloseTo
-    {
-        Window *pWnd;
-        string    strClass;
-        string    strWndName;
-    }WndCloseTo;
+    struct WndCloseTo {
+        Window                      *pWnd;
+        string                      strClass;
+        string                      strWndName;
+    };
 
-    std::vector<WndCloseTo>    m_vWndCloseTo;
+    std::vector<WndCloseTo>     m_vWndCloseTo;
 
 public:
     WndDrag();
@@ -48,22 +48,22 @@ protected:
     virtual bool autoCloseToWindows(int &nOffx, int &nOffy, bool bMoveWindow = true);
 
 protected:
-    Window        *m_pWnd;            // ������
+    Window                      *m_pWnd;
 
-    bool            m_bDragWnd;        // dragging window?
+    bool                        m_bDragWnd;         // dragging window?
 
-    CPoint            m_ptDragOld;            // drag begin pos
+    CPoint                      m_ptDragOld;        // drag begin pos
 
-    bool            m_bDragAutoCloseto;
+    bool                        m_bDragAutoCloseto;
 
-    bool            m_bSticked;        // ճס��Ŀ�괰�ڣ�
-    Window        *m_pWndToTrack;    // ճס��Ŀ�괰��
-    CPoint            m_ptWndTrack;    // ճס��Ŀ�괰�ڵ����Ͻ�
+    bool                        m_bSticked;
+    Window                      *m_pWndToTrack;
+    CPoint                      m_ptWndTrack;
 
-    bool            m_bEnableDrag;
+    bool                        m_bEnableDrag;
 
     // vector<string>        *m_pvWndClassCloseTo;
     // char *          *m_arrszWndClassCloseTo;
 };
 
-#endif // !defined(AFX_WNDDRAG_H__54E078FE_AFB3_4369_8EF6_5E00313640DC__INCLUDED_)
+#endif // !defined(Window_WndDrag_h)

@@ -1,44 +1,35 @@
-// Event.cpp: implementation of the Event class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "../UtilsTypes.h"
 #include "Event.h"
 #import <pthread.h>
 #import <sys/time.h>
 
 
-class _NSConditionInternal
-{
+class _NSConditionInternal {
 public:
-    _NSConditionInternal(bool isSingaled)
-    {
+    _NSConditionInternal(bool isSingaled) {
         pthread_cond_init(&condition, nullptr);
         pthread_mutex_init(&mutex, nullptr);
         read_to_go = isSingaled;
     }
 
-    pthread_cond_t    condition;
-    pthread_mutex_t mutex;
-    volatile bool read_to_go;
+    pthread_cond_t              condition;
+    pthread_mutex_t             mutex;
+    volatile bool               read_to_go;
 
 };
 
 //////////////////////////////////////////////////////////////////////
 
-Event::Event(bool bManualSet, bool isSingaled)
-{
+Event::Event(bool bManualSet, bool isSingaled) {
     m_nsCondition = new _NSConditionInternal(isSingaled);
 
     m_bMaualset = bManualSet;
 }
 
-Event::~Event()
-{
+Event::~Event() {
 }
 
-bool Event::set()
-{
+bool Event::set() {
     pthread_mutex_lock(&m_nsCondition->mutex);
     m_nsCondition->read_to_go = true;
     pthread_cond_signal(&m_nsCondition->condition);
@@ -46,30 +37,28 @@ bool Event::set()
     return true;
 }
 
-bool Event::reset()
-{
+bool Event::reset() {
     m_nsCondition->read_to_go = false;
     return true;
 }
 
-bool Event::acquire(uint32_t nTimeOut)
-{
-    if (nTimeOut == 0)
+bool Event::acquire(uint32_t nTimeOut) {
+    if (nTimeOut == 0) {
         return m_nsCondition->read_to_go;
+    }
 
     bool ret = false;
     pthread_mutex_lock(&m_nsCondition->mutex);
-    if (nTimeOut == WAIT_FOREVER)
-    {
-        while (!m_nsCondition->read_to_go)
+    if (nTimeOut == WAIT_FOREVER) {
+        while (!m_nsCondition->read_to_go) {
             pthread_cond_wait(&m_nsCondition->condition, &m_nsCondition->mutex);
-        if (!m_bMaualset) // For manual set event, need to call reset() manually.
+        }
+        if (!m_bMaualset) {
             m_nsCondition->read_to_go = false;
+        }
         pthread_mutex_unlock(&m_nsCondition->mutex);
         ret = true;
-    }
-    else
-    {
+    } else {
         struct timeval tv;
         struct timespec ts;
         gettimeofday(&tv, nullptr);
@@ -79,14 +68,15 @@ bool Event::acquire(uint32_t nTimeOut)
         ts.tv_nsec %= (1000 * 1000 * 1000);
 
         int n = 0;
-        if (!m_nsCondition->read_to_go)
+        if (!m_nsCondition->read_to_go) {
             n = pthread_cond_timedwait(&m_nsCondition->condition, &m_nsCondition->mutex, &ts);
+        }
 
-        if (n == 0)
-        {
+        if (n == 0) {
             ret = true;
-            if (!m_bMaualset) // For manual set event, need to call reset() manually.
+            if (!m_bMaualset) {
                 m_nsCondition->read_to_go = false;
+            }
         }
         pthread_mutex_unlock(&m_nsCondition->mutex);
     }
@@ -101,18 +91,16 @@ bool Event::acquire(uint32_t nTimeOut)
 
 IMPLEMENT_CPPUNIT_TEST_REG(CEvent)
 
-class CTestCaseCEvent : public CppUnit::TestFixture
-{
+class CTestCaseCEvent : public CppUnit::TestFixture {
     CPPUNIT_TEST_SUITE(CTestCaseCEvent);
     CPPUNIT_TEST(TestAcquire);
     CPPUNIT_TEST(TestAll);
     CPPUNIT_TEST_SUITE_END();
-    
+
 protected:
-    void TestAcquire()
-    {
+    void TestAcquire() {
         Event e(false, false);
-        
+
         {
             // Step 1
             uint32_t start = GetTickCount();
@@ -122,7 +110,7 @@ protected:
             uint32_t cost = GetTickCount() - start;
             assert(cost >= 1000 && cost < 1500);
         }
-        
+
         {
             // Step 2
             uint32_t start = GetTickCount();
@@ -134,8 +122,8 @@ protected:
             uint32_t cost = GetTickCount() - start;
             assert(cost >= 1000 && cost < 2000);
         }
-        
-        
+
+
         {
             // Step 3: Compete
             uint32_t start = GetTickCount();
@@ -143,7 +131,7 @@ protected:
             thread.create(ThreadSetEvent, &e);
             CThread thread2;
             thread2.create(ThreadCompete, &e);
-            
+
             assert(e.Acquire(0) == false);
             assert(e.Acquire(500) == false);
             uint32_t cost = GetTickCount() - start;
@@ -153,23 +141,20 @@ protected:
             assert(cost >= 1000 && cost < 2000);
         }
     }
-    
-    static void ThreadSetEvent(void *param)
-    {
+
+    static void ThreadSetEvent(void *param) {
         Event *e = (Event *)param;
         Sleep(1000);
         e->Set();
     }
-    
-    static void ThreadCompete(void *param)
-    {
+
+    static void ThreadCompete(void *param) {
         Event *e = (Event *)param;
         assert(e->Acquire());
     }
-    
+
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(CTestCaseCEvent);
 
 #endif // _CPPUNIT_TEST
-

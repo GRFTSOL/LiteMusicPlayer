@@ -1,13 +1,11 @@
 #pragma once
 
-class CLyrScrollActionRecorder
-{
+class CLyrScrollActionRecorder {
 public:
-    struct ScrollTo
-    {
-        int            nTime;
-        int            distance;        // The character offset of lyrics.
-        double        speed;
+    struct ScrollTo {
+        int                         nTime;
+        int                         distance;           // The character offset of lyrics.
+        double                      speed;
 
         ScrollTo() { }
         ScrollTo(int d, int t) {
@@ -21,8 +19,7 @@ public:
         MAX_TIME                    = 0xFFFFFF
     };
 
-    class ListScrollTo : public vector<ScrollTo>
-    {
+    class ListScrollTo : public vector<ScrollTo> {
     public:
 
     };
@@ -58,8 +55,8 @@ protected:
     friend class CTestCaseLyrScrollActionRecorder;
 
 protected:
-    ListScrollTo            m_listEvents;
-    int                        m_nLyrCharCount;
-    bool                    m_bHasActions;
+    ListScrollTo                m_listEvents;
+    int                         m_nLyrCharCount;
+    bool                        m_bHasActions;
 
 };

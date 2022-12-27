@@ -1,24 +1,22 @@
-// SkinFadeArea.h: interface for the CSkinFadeArea class.
-//
-//////////////////////////////////////////////////////////////////////
+#pragma once
 
-#if !defined(AFX_SKINFADEAREA_H__FE68860E_70C8_4775_82AA_58E760E09473__INCLUDED_)
-#define AFX_SKINFADEAREA_H__FE68860E_70C8_4775_82AA_58E760E09473__INCLUDED_
+#ifndef Skin_SkinFadeArea_h
+#define Skin_SkinFadeArea_h
 
 #include "UIObject.h"
+
 
 //
 // This control is used to fade in/out the area that it covered.
 //
-class CSkinFadeArea : public CUIObject  
-{
-UIOBJECT_CLASS_NAME_DECLARE(CUIObject)
+class CSkinFadeArea : public CUIObject {
+    UIOBJECT_CLASS_NAME_DECLARE(CUIObject)
 public:
     CSkinFadeArea();
     virtual ~CSkinFadeArea();
 
-    void draw(CRawGraph *canvas);
+    void draw(CRawGraph *canvas) override;
 
 };
 
-#endif // !defined(AFX_SKINFADEAREA_H__FE68860E_70C8_4775_82AA_58E760E09473__INCLUDED_)
+#endif // !defined(Skin_SkinFadeArea_h)

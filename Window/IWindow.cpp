@@ -16,8 +16,7 @@ IWindow::IWindow() {
 
 
 IWindow::~IWindow() {
-    if (m_pmemGraph)
-    {
+    if (m_pmemGraph) {
         delete m_pmemGraph;
         m_pmemGraph = nullptr;
     }
@@ -47,11 +46,11 @@ void IWindow::onResized(int width, int height) {
 //}
 
 
-CRawGraph *IWindow::getMemGraphics()
-{
+CRawGraph *IWindow::getMemGraphics() {
     //    assert(m_pmemGraph);
-    if (!m_pmemGraph)
+    if (!m_pmemGraph) {
         recreateMemGraphics();
+    }
 
     m_pmemGraph->resetClipBoundBox(CRect(0, 0, m_pmemGraph->width(), m_pmemGraph->height()));
     m_pmemGraph->setOrigin(CPoint(0, 0));
@@ -59,8 +58,7 @@ CRawGraph *IWindow::getMemGraphics()
     return m_pmemGraph;
 }
 
-bool IWindow::recreateMemGraphics()
-{
+bool IWindow::recreateMemGraphics() {
     if (m_pmemGraph) {
         delete m_pmemGraph;
     }

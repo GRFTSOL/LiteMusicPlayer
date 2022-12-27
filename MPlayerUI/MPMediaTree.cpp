@@ -52,7 +52,7 @@ void CMPMTNMediaLibrary::onUpdate()
         nRet = mediaLib->getAllArtist(&pvStr);
         if (nRet == ERR_OK)
         {
-            int        nCount = pvStr->size();
+            int nCount = (int)pvStr->size();
             for (int i = 0; i < nCount; i++)
             {
                 if (isEmptyString(pvStr->at(i)))
@@ -70,7 +70,7 @@ void CMPMTNMediaLibrary::onUpdate()
         nRet = mediaLib->getAllAlbum(&pvStr);
         if (nRet == ERR_OK)
         {
-            int        nCount = pvStr->size();
+            int nCount = (int)pvStr->size();
             for (int i = 0; i < nCount; i++)
             {
                 if (isEmptyString(pvStr->at(i)))
@@ -98,7 +98,7 @@ void CMPMTNMediaLibrary::onUpdate()
             mediaLib->getAlbumOfArtist(m_strName.c_str(), &pvStr);
         }
 
-        int        nCount = pvStr->size();
+        int nCount = (int)pvStr->size();
         for (int i = 0; i < nCount; i++)
         {
             if (isEmptyString(pvStr->at(i)))
@@ -151,7 +151,7 @@ void CMPMTNMediaLibrary::onUpdate()
         nRet = mediaLib->getAllGenre(&pvStr);
         if (nRet == ERR_OK)
         {
-            int        nCount = pvStr->size();
+            int nCount = (int)pvStr->size();
             for (int i = 0; i < nCount; i++)
             {
                 if (isEmptyString(pvStr->at(i)))
@@ -180,7 +180,7 @@ void CMPMTNMediaLibrary::onUpdate()
         nRet = mediaLib->getAllYear(&pvInt);
         if (nRet == ERR_OK)
         {
-            int        nCount = pvInt->size();
+            int nCount = (int)pvInt->size();
             for (i = 0; i < nCount; i++)
             {
                 vTenYear.add(pvInt->at(i) / 10);

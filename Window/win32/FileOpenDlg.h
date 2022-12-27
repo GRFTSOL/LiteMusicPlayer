@@ -1,15 +1,12 @@
-
 #pragma once
 
-class CFileDlgExtFilter : public string
-{
+class CFileDlgExtFilter : public string {
 public:
     void addExtention(cstr_t szDesc, cstr_t szExt);
 
 };
 
-class CFileOpenDlg  
-{
+class CFileOpenDlg {
 public:
     CFileOpenDlg(cstr_t szTitle, cstr_t szFile, cstr_t extFilter, int nDefFileType, bool bAllowMultiSel = false);
     virtual ~CFileOpenDlg();
@@ -25,9 +22,9 @@ public:
     void getOpenFile(vector<string> &vFiles);
 
 public:
-    OPENFILENAME    m_openfile;
-    char *            m_szFile;
-    int                m_nBufLen;
-    bool            m_bAllowMultiSel;
+    OPENFILENAME                m_openfile;
+    char                        *            m_szFile;
+    int                         m_nBufLen;
+    bool                        m_bAllowMultiSel;
 
 };

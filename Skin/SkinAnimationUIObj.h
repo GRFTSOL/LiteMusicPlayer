@@ -1,19 +1,18 @@
 #pragma once
 
-class CSkinAnimationUIObj : public CUIObject
-{
+class CSkinAnimationUIObj : public CUIObject {
     UIOBJECT_CLASS_NAME_DECLARE(CUIObject)
 public:
     CSkinAnimationUIObj();
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 
-    virtual void onAnimate(CSkinAnimation *pAnimation);
+    virtual void onAnimate(CSkinAnimation *pAnimation) override;
 
     int getDuration() const { return m_nDuration; }
 
 protected:
-    ListObjAnimation    m_listObjAnimation;
-    int                    m_nDuration;
+    ListObjAnimation            m_listObjAnimation;
+    int                         m_nDuration;
 
 };

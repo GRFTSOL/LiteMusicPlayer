@@ -2,39 +2,38 @@
 
 #include "SkinContainer.h"
 
+
 //
 // This container will toggle sub UIObject with various effect, such as Fade in/Out
 //
-class CSkinToggleCtrlContainer : public CSkinContainer
-{
+class CSkinToggleCtrlContainer : public CSkinContainer {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinContainer)
 public:
     CSkinToggleCtrlContainer(void);
     ~CSkinToggleCtrlContainer(void);
 
-    enum TimerID
-    {
-        T_ANIMATION    = 1
+    enum TimerID {
+        T_ANIMATION                 = 1
     };
 
-    void invalidateUIObject(CUIObject *pObj);
+    void invalidateUIObject(CUIObject *pObj) override;
 
-    void updateMemGraphicsToScreen(const CRect* lpRect, CUIObject *pObjCallUpdate);
+    void updateMemGraphicsToScreen(const CRect* lpRect, CUIObject *pObjCallUpdate) override;
 
-    void draw(CRawGraph *canvas);
+    void draw(CRawGraph *canvas) override;
 
-    virtual bool setProperty(cstr_t szProperty, cstr_t szValue);
+    virtual bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 
-    virtual void onCreate();
+    virtual void onCreate() override;
 
-    virtual void onTimer(int nId);
+    virtual void onTimer(int nId) override;
 
 protected:
-    int                     m_nActiveCtrl, m_nToggleToCtrl;
-    int                     m_nIDTimerAnimation;
-    uint32_t                m_nTimeBeginAni;
-    int                     m_nAnimateDuration;
+    int                         m_nActiveCtrl, m_nToggleToCtrl;
+    int                         m_nIDTimerAnimation;
+    int64_t                     m_timeBeginAni;
+    int                         m_nAnimateDuration;
 
-    CRawGraph               m_memGraph;
+    CRawGraph                   m_memGraph;
 
 };

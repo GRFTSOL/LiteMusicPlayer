@@ -2,35 +2,28 @@
 #include "Cursor.h"
 
 
-Cursor::Cursor(void)
-{
+Cursor::Cursor(void) {
     m_cursor = nullptr;
 }
 
-Cursor::~Cursor(void)
-{
+Cursor::~Cursor(void) {
     destroy();
 }
 
-bool Cursor::loadStdCursor(STD_CURSOR_TYPE cusorType)
-{
+bool Cursor::loadStdCursor(STD_CURSOR_TYPE cusorType) {
     return m_cursor != nullptr;
 }
 
-bool Cursor::loadCursorFromFile(cstr_t szFile)
-{
+bool Cursor::loadCursorFromFile(cstr_t szFile) {
     return m_cursor != nullptr;
 }
 
-bool Cursor::loadCursorFromRes(int nID)
-{
+bool Cursor::loadCursorFromRes(int nID) {
     return m_cursor != nullptr;
 }
 
-void Cursor::destroy()
-{
-    if (m_cursor)
-    {
+void Cursor::destroy() {
+    if (m_cursor) {
         m_cursor = nullptr;
     }
 }

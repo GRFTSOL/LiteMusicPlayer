@@ -1,42 +1,40 @@
-// SkinCaption.h: interface for the CSkinCaption class.
-//
-//////////////////////////////////////////////////////////////////////
+#pragma once
 
-#if !defined(AFX_SKINCAPTION_H__FE68860E_70C8_4775_82AA_58E760E09473__INCLUDED_)
-#define AFX_SKINCAPTION_H__FE68860E_70C8_4775_82AA_58E760E09473__INCLUDED_
+#ifndef Skin_SkinCaption_h
+#define Skin_SkinCaption_h
 
 #include "UIObject.h"
 
-class CSkinCaption : public CUIObject  
-{
-UIOBJECT_CLASS_NAME_DECLARE(CUIObject)
+
+class CSkinCaption : public CUIObject {
+    UIOBJECT_CLASS_NAME_DECLARE(CUIObject)
 public:
     CSkinCaption();
     virtual ~CSkinCaption();
 
-    void draw(CRawGraph *canvas);
+    void draw(CRawGraph *canvas) override;
 
-    bool onLButtonDown(uint32_t nFlags, CPoint point);
-    bool onLButtonUp(uint32_t nFlags, CPoint point);
-    bool onLButtonDblClk(uint32_t nFlags, CPoint point);
+    bool onLButtonDown(uint32_t nFlags, CPoint point) override;
+    bool onLButtonUp(uint32_t nFlags, CPoint point) override;
+    bool onLButtonDblClk(uint32_t nFlags, CPoint point) override;
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 #ifdef _SKIN_EDITOR_
     void enumProperties(CUIObjProperties &listProperties);
 #endif // _SKIN_EDITOR_
 
 protected:
-    CSFImage        m_imgBk, m_imgFocus;
+    CSFImage                    m_imgBk, m_imgFocus;
 
-    string          m_strBmpBkFile;
-    string          m_strBmpFocusFile;
+    string                      m_strBmpBkFile;
+    string                      m_strBmpFocusFile;
 
-    bool            m_bEnableMaximize;
+    bool                        m_bEnableMaximize;
 
-    int             m_nCutPos1, m_nCutPos2, m_nCutPos3, m_nCutPos4;
+    int                         m_nCutPos1, m_nCutPos2, m_nCutPos3, m_nCutPos4;
 
-    BlendPixMode    m_bpm;
+    BlendPixMode                m_bpm;
 
 };
 
-#endif // !defined(AFX_SKINCAPTION_H__FE68860E_70C8_4775_82AA_58E760E09473__INCLUDED_)
+#endif // !defined(Skin_SkinCaption_h)

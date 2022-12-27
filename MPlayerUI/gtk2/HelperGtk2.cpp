@@ -16,7 +16,7 @@ bool setClipboardText(Window *pWnd, cstr_t szText)
 }
 
 // 向用户显示消息框
-int messageOut(cstr_t lpText, cstr_t szSaveDefault,Window *pWnd/* = nullptr*/, uint32_t uType/* = MB_ICONINFORMATION*/, cstr_t lpCaption/* = nullptr*/)
+int messageOut(cstr_t lpText, cstr_t szSaveDefault,Window *pWnd/* = nullptr*/, uint32_t uType, cstr_t lpCaption)
 {
     GtkWidget        *msgDlg;
     int                nRet;
@@ -75,10 +75,4 @@ bool loadProxySvrFromIE(bool &bUseProxy, string &strSvr, int &nPort)
 
 void getNotepadEditor(string &strEditor)
 {
-}
-
-uint32_t getSecCount()
-{
-    time_t        curTime;
-    return time(&curTime);
 }

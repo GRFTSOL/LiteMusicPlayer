@@ -1,8 +1,6 @@
-
 #pragma once
 
-class IRunnable
-{
+class IRunnable {
 public:
     IRunnable() { m_bFreeAfterRun = false; }
     virtual ~IRunnable() { }
@@ -12,12 +10,11 @@ public:
     // inline bool IsFreeAfterRun() const { return m_bFreeAfterRun; }
 private:
     friend class CLooper;
-    bool        m_bFreeAfterRun;
+    bool                        m_bFreeAfterRun;
 
 };
 
-class CRunnableQueue
-{
+class CRunnableQueue {
 public:
     CRunnableQueue();
 
@@ -28,15 +25,14 @@ public:
 protected:
     typedef list<IRunnable *>        ListRunnable;
 
-    Event            m_event;
-    std::mutex            m_mutex;
+    Event                       m_event;
+    std::mutex                  m_mutex;
 
-    ListRunnable    m_listRunnable;
+    ListRunnable                m_listRunnable;
 
 };
 
-class CLooper
-{
+class CLooper {
 public:
     CLooper();
     virtual ~CLooper() { }
@@ -50,15 +46,14 @@ public:
 
     bool isIdle() const { return m_bIdle; }
 
-    bool                m_bLog;
+    bool                        m_bLog;
 protected:
-    CRunnableQueue        m_queue;
-    volatile bool        m_bIdle;
+    CRunnableQueue              m_queue;
+    volatile bool               m_bIdle;
 
 };
 
-class CLooperThread
-{
+class CLooperThread {
 public:
     bool start();
 
@@ -66,7 +61,7 @@ protected:
     static void threadLoop(void *lpParam);
 
 private:
-    CThread            m_thread;
-    CLooper            m_looper;
+    CThread                     m_thread;
+    CLooper                     m_looper;
 
 };

@@ -3,8 +3,7 @@
 
 #pragma once
 
-class CRawGraphData
-{
+class CRawGraphData {
 public:
     CRawGraphData();
     virtual ~CRawGraphData();
@@ -24,21 +23,21 @@ public:
     virtual void drawToWindow(int xdest, int ydest, int width, int height, int xsrc, int ysrc);
     virtual void drawToWindowStretch(int xdest, int ydest, int width, int height, int xsrc, int ysrc, int widthsrc, int heightsrc);
 
-//     virtual void DrawGraphicsAlphaBlend(CGraphics *pSrc, int xdest, int ydest, int width, int height, int xsrc, int ysrc, uint8_t nAlpha, bool bPerPixelAlpha);
-//     virtual void DrawGraphicsStretchAlphaBlend(CGraphics *pSrc, int xdest, int ydest, int width, int height, int xsrc, int ysrc, int widthsrc, int heightsrc, uint8_t nAlpha, bool bPerPixelAlpha);
+    //     virtual void DrawGraphicsAlphaBlend(CGraphics *pSrc, int xdest, int ydest, int width, int height, int xsrc, int ysrc, uint8_t nAlpha, bool bPerPixelAlpha);
+    //     virtual void DrawGraphicsStretchAlphaBlend(CGraphics *pSrc, int xdest, int ydest, int width, int height, int xsrc, int ysrc, int widthsrc, int heightsrc, uint8_t nAlpha, bool bPerPixelAlpha);
 
 public:
     // For win32 only
     HDC getHandle() const { return m_hdc; }
 
 protected:
-    Window              *m_window;
-    RawImageData        m_imageData;
-    HDC                 m_hdc;
-    HBITMAP             m_bmpMem;
-    HBITMAP             m_bmpOld;
+    Window                      *m_window;
+    RawImageData                m_imageData;
+    HDC                         m_hdc;
+    HBITMAP                     m_bmpMem;
+    HBITMAP                     m_bmpOld;
 
-    BITMAPINFO          m_bmpInfo;
+    BITMAPINFO                  m_bmpInfo;
 
 };
 

@@ -17,11 +17,11 @@ public:
     CMPSkinMainWndBase();
     virtual ~CMPSkinMainWndBase();
 
-    virtual void onCreate();
-    virtual void onDestroy();
+    virtual void onCreate() override;
+    virtual void onDestroy() override;
 
     // IEventHandler
-    virtual void onEvent(const IEvent *pEvent);
+    virtual void onEvent(const IEvent *pEvent) override;
 
 protected:
     void updateCaptionText();

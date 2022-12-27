@@ -1,7 +1,6 @@
 #pragma once
 
-class CFileEx
-{
+class CFileEx {
 public:
     CFileEx();
     virtual ~CFileEx();
@@ -36,6 +35,6 @@ public:
     int readUInt32BE(uint32_t &v);
 
 protected:
-    FILE            *m_fp;
+    FILE                        *m_fp;
 
 };

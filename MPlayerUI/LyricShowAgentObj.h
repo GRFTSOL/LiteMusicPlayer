@@ -24,12 +24,12 @@ public:
     CLyricShowAgentObj();
     virtual ~CLyricShowAgentObj();
     
-    virtual void onCreate();
+    virtual void onCreate() override;
 
     // IEventHandler
-    virtual void onEvent(const IEvent *pEvent);
+    virtual void onEvent(const IEvent *pEvent) override;
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 
 public:
     static void getLyrDispStylePropName(CSkinWnd *pSkinWnd, bool &bFloatingLyr, string &strLyrStylePropName);

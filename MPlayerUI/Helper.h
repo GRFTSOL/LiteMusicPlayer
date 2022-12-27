@@ -26,11 +26,7 @@ bool setFileNoReadOnly(cstr_t szFile);
 
 bool loadProxySvrFromIE(bool &bUseProxy, string &strSvr, int &nPort);
 
-bool loadProxySvrFromFireFox(bool &bUseProxy, string &strSvr, int &nPort);
-
 void getNotepadEditor(string &strEditor);
-
-uint32_t getSecCount();
 
 void profileGetColorValue(COLORREF &clr, cstr_t szSectName, cstr_t szKeyName);
 

@@ -11,12 +11,12 @@ class CPageAdjustHue : public CSkinContainer, public IScrollNotify
     UIOBJECT_CLASS_NAME_DECLARE(CSkinContainer)
 public:
     // IScrollNotify
-    virtual void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar)
+    virtual void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override
     {
         updateAdjustHue((float)nPos);
     }
 
-    virtual void onHScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar)
+    virtual void onHScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override
     {
         updateAdjustHue((float)nPos);
     }
@@ -27,7 +27,7 @@ public:
         CMPlayerAppBase::getMPSkinFactory()->adjustHue(hue);
     }
 
-    void onCreate()
+    void onCreate() override
     {
         CSkinContainer::onCreate();
 
@@ -41,7 +41,7 @@ public:
         }
     }
 
-    bool onCustomCommand(int nId)
+    bool onCustomCommand(int nId) override
     {
         if (nId == getIDByName("CID_RESET"))
         {
@@ -55,7 +55,7 @@ public:
         return CSkinContainer::onCustomCommand(nId);
     }
 
-    bool onCancel()
+    bool onCancel() override
     {
         updateAdjustHue(m_hueOld);
         return CSkinContainer::onCancel();

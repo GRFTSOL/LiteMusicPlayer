@@ -39,7 +39,7 @@ void CLyricShowMultiRowObj::invalidate()
     CLyricShowObj::invalidate();
 }
 
-void CLyricShowMultiRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate/* = nullptr*/)
+void CLyricShowMultiRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate)
 {
     assert(m_pMLData);
     if (m_pMLData == nullptr)
@@ -163,7 +163,7 @@ void CLyricShowMultiRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate/* = nul
     }
 
     // draw lyrics lines below current line
-    nRowEnd = m_lyrLines.size();
+    nRowEnd = (int)m_lyrLines.size();
     for (; y < rcClip.bottom && nRow < nRowEnd; y += nRowHeight)
     {
         pLine = m_lyrLines[nRow];

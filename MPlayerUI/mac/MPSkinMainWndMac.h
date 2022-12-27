@@ -11,11 +11,11 @@ public:
     CMPSkinMainWnd();
     virtual ~CMPSkinMainWnd();
 
-    virtual void onCreate();
-    virtual void onDestroy();
+    virtual void onCreate() override;
+    virtual void onDestroy() override;
 
     // IEventHandler
-    virtual void onEvent(const IEvent *pEvent);
+    virtual void onEvent(const IEvent *pEvent) override;
 
     void updatePlayerSysTrayIcon() { m_mlTrayIcon.updatePlayerSysTrayIcon(); }
 

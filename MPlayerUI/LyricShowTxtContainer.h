@@ -9,9 +9,9 @@ public:
     CLyricShowTxtContainer();
     virtual ~CLyricShowTxtContainer();
 
-    void onCreate();
+    void onCreate() override;
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 
 protected:
     vector<string>            m_vProperties;

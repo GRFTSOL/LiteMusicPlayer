@@ -1,6 +1,6 @@
-﻿// xstr.h: interface for the Cxstr class.
-//
-//////////////////////////////////////////////////////////////////////
+#pragma once
+
+﻿
 
 #if !defined(_ML_MISC_INC_)
 #define _ML_MISC_INC_

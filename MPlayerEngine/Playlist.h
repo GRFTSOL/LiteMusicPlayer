@@ -5,10 +5,10 @@
 #include "MPTime.h"
 #include "Media.h"
 
+
 class CMPlayer;
 
-class CPlaylist : public IPlaylist  
-{
+class CPlaylist : public IPlaylist {
     OBJ_REFERENCE_DECL
 public:
     CPlaylist(CMPlayer *pPlayer);
@@ -16,20 +16,20 @@ public:
 
     virtual uint32_t getCount();
 
-    virtual MLRESULT getItem(long nIndex, IMedia **ppMedia);
+    virtual MLRESULT getItem(int nIndex, IMedia **ppMedia);
 
     virtual MLRESULT getName(IString *str);
 
-    virtual MLRESULT insertItem(long nIndex, IMedia *pMedia);
+    virtual MLRESULT insertItem(int nIndex, IMedia *pMedia);
 
-    virtual MLRESULT moveItem(long nIndexOld, long nIndexNew);
+    virtual MLRESULT moveItem(int nIndexOld, int nIndexNew);
 
-    virtual MLRESULT removeItem(long nIndex);
+    virtual MLRESULT removeItem(int nIndex);
 
     virtual MLRESULT clear();
 
 public:
-    MLRESULT getItemIndex(IMedia *pMedia, long &nIndex);
+    MLRESULT getItemIndex(IMedia *pMedia, int &nIndex);
 
 protected:
     typedef vector<CMedia *>        V_MEDIA;

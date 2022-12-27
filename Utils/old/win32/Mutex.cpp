@@ -1,29 +1,18 @@
-// Mutex.cpp: implementation of the Mutex class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "Mutex.h"
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
-Mutex::Mutex()
-{
+Mutex::Mutex() {
     m_hMutex = CreateMutex(    nullptr,
         false,
         nullptr);
 }
 
-Mutex::~Mutex()
-{
+Mutex::~Mutex() {
     CloseHandle(m_hMutex);
 }
 
-bool Mutex::acquire(uint32_t nTimeOut)
-{
-    switch (WaitForSingleObject(m_hMutex, nTimeOut))
-    {
+bool Mutex::acquire(uint32_t nTimeOut) {
+    switch (WaitForSingleObject(m_hMutex, nTimeOut)) {
     case WAIT_ABANDONED:
     case WAIT_OBJECT_0:
         return true;
@@ -31,11 +20,10 @@ bool Mutex::acquire(uint32_t nTimeOut)
     case WAIT_FAILED:
         break;
     }
-    
+
     return false;
 }
 
-void Mutex::release()
-{
+void Mutex::release() {
     ReleaseMutex(m_hMutex);
 }

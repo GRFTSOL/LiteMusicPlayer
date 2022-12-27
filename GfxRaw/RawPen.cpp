@@ -1,22 +1,16 @@
-// RawPen.cpp: implementation of the CRawPen class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "RawPen.h"
+
 
 //////////////////////////////////////////////////////////////////////////
 
-CRawPen::CRawPen()
-{
+CRawPen::CRawPen() {
     m_nWidth = 1;
 }
 
-CRawPen::~CRawPen()
-{
+CRawPen::~CRawPen() {
 }
 
-bool CRawPen::createSolidPen(int nWidth, CColor &color)
-{
+bool CRawPen::createSolidPen(int nWidth, CColor &color) {
     m_nWidth = nWidth;
     m_clrPen = color;
 

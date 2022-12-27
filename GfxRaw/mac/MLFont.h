@@ -4,13 +4,12 @@
 #pragma once
 
 #ifndef DEFAULT_CHARSET
-#define DEFAULT_CHARSET        1
+#define DEFAULT_CHARSET     1
 #endif
 
 typedef const struct __CTFont * CTFontRef;
 
-class CMLFont : public CFontInfo
-{
+class CMLFont : public CFontInfo {
 public:
     CMLFont(void);
     virtual ~CMLFont(void);
@@ -27,7 +26,7 @@ public:
     CTFontRef getHandle() const { return m_font; }
 
 protected:
-    CTFontRef        m_font;
+    CTFontRef                   m_font;
 
 };
 

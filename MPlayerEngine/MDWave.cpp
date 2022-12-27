@@ -1,8 +1,5 @@
-// MDWave.cpp: implementation of the CMDWave class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "MDWave.h"
+
 
 #define    WAVE_FORMAT_UNKNOWN        (0x0000)
 #define    WAVE_FORMAT_PCM            (0x0001)
@@ -17,8 +14,7 @@
 #define    IBM_FORMAT_ADPCM             (0x0103)
 
 
-CMDWave::CMDWave()
-{
+CMDWave::CMDWave() {
     OBJ_REFERENCE_INIT;
 
     m_pInput = nullptr;
@@ -32,62 +28,56 @@ CMDWave::CMDWave()
     m_bufInput.reserve(1024 * 16);
 }
 
-CMDWave::~CMDWave()
-{
-    if (m_pPlayer)
-    {
+CMDWave::~CMDWave() {
+    if (m_pPlayer) {
         m_pPlayer->release();
         m_pPlayer = nullptr;
     }
 }
 
-cstr_t CMDWave::getDescription()
-{
+cstr_t CMDWave::getDescription() {
     return "Wave File decoder";
 }
 
-cstr_t CMDWave::getFileExtentions()
-{
+cstr_t CMDWave::getFileExtentions() {
     return ".wav|wave files";
 }
 
-MLRESULT CMDWave::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia)
-{
-    MLRESULT        nRet;
+MLRESULT CMDWave::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia) {
+    MLRESULT nRet;
 
     nRet = getHeadInfo(pInput);
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         return nRet;
+    }
 
     pMedia->setAttribute(MA_FILESIZE, m_audioInfo.nMediaFileSize);
-     pMedia->setAttribute(MA_DURATION, m_audioInfo.nMediaLength);
-     pMedia->setAttribute(MA_SAMPLE_RATE, m_audioInfo.samples_per_sec);
-     pMedia->setAttribute(MA_CHANNELS, m_audioInfo.channels);
-     pMedia->setAttribute(MA_BPS, m_audioInfo.bits_per_sample);
+    pMedia->setAttribute(MA_DURATION, m_audioInfo.nMediaLength);
+    pMedia->setAttribute(MA_SAMPLE_RATE, m_audioInfo.samples_per_sec);
+    pMedia->setAttribute(MA_CHANNELS, m_audioInfo.channels);
+    pMedia->setAttribute(MA_BPS, m_audioInfo.bits_per_sample);
     pMedia->setAttribute(MA_BITRATE, m_audioInfo.avg_bytes_per_sec);
 
     return nRet;
 }
 
-bool CMDWave::isSeekable()
-{
+bool CMDWave::isSeekable() {
     return true;
 }
 
-bool CMDWave::isUseOutputPlug()
-{
+bool CMDWave::isUseOutputPlug() {
     return true;
 }
 
-MLRESULT CMDWave::play(IMPlayer *pPlayer, IMediaInput *pInput)
-{
+MLRESULT CMDWave::play(IMPlayer *pPlayer, IMediaInput *pInput) {
     assert(pPlayer && pInput);
-    if (!pPlayer || !pInput)
+    if (!pPlayer || !pInput) {
         return ERR_INVALID_HANDLE;
+    }
 
     stop();
 
-    MLRESULT        nRet;
+    MLRESULT nRet;
 
     m_state = PS_STOPED;
     m_bPaused = false;
@@ -101,20 +91,24 @@ MLRESULT CMDWave::play(IMPlayer *pPlayer, IMediaInput *pInput)
     m_pInput->addRef();
 
     nRet = m_pPlayer->queryInterface(MPIT_OUTPUT, (void **)&m_pOutput);
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         goto R_FAILED;
+    }
 
     nRet = m_pPlayer->queryInterface(MPIT_MEMALLOCATOR, (void **)&m_pMemAllocator);
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         goto R_FAILED;
+    }
 
     nRet = getHeadInfo(m_pInput);
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         goto R_FAILED;
+    }
 
     nRet = m_pOutput->open(m_audioInfo.samples_per_sec, m_audioInfo.channels, m_audioInfo.bits_per_sample);
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         goto R_FAILED;
+    }
 
     m_state = PS_PLAYING;
     m_bKillThread = false;
@@ -125,47 +119,39 @@ MLRESULT CMDWave::play(IMPlayer *pPlayer, IMediaInput *pInput)
     return ERR_OK;
 
 R_FAILED:
-    if (m_pPlayer)
-    {
+    if (m_pPlayer) {
         m_pPlayer->release();
         m_pPlayer = nullptr;
     }
-    if (m_pInput)
-    {
+    if (m_pInput) {
         m_pInput->release();
         m_pInput = nullptr;
     }
-    if (m_pOutput)
-    {
+    if (m_pOutput) {
         m_pOutput->release();
         m_pOutput = nullptr;
     }
-    if (m_pMemAllocator)
-    {
+    if (m_pMemAllocator) {
         m_pMemAllocator->release();
         m_pMemAllocator = nullptr;
     }
     return nRet;
 }
 
-MLRESULT CMDWave::pause()
-{
+MLRESULT CMDWave::pause() {
     m_state = PS_PAUSED;
     return m_pOutput->pause(true);
 }
 
-MLRESULT CMDWave::unpause()
-{
+MLRESULT CMDWave::unpause() {
     m_state = PS_PLAYING;
     return m_pOutput->pause(false);
 }
 
-MLRESULT CMDWave::stop()
-{
+MLRESULT CMDWave::stop() {
     m_bKillThread = true;
 
-    if (m_state == PS_PAUSED)
-    {
+    if (m_state == PS_PAUSED) {
         m_pOutput->flush();
     }
 
@@ -174,13 +160,11 @@ MLRESULT CMDWave::stop()
     return ERR_OK;
 }
 
-uint32_t CMDWave::getLength()
-{
+uint32_t CMDWave::getLength() {
     return m_audioInfo.nMediaLength;
 }
 
-MLRESULT CMDWave::seek(uint32_t dwPos)
-{
+MLRESULT CMDWave::seek(uint32_t dwPos) {
     m_bSeekFlag = true;
     m_nSeekPos = dwPos;
 
@@ -189,22 +173,20 @@ MLRESULT CMDWave::seek(uint32_t dwPos)
     return ERR_OK;
 }
 
-uint32_t CMDWave::getPos()
-{
-    if (m_pOutput)
+uint32_t CMDWave::getPos() {
+    if (m_pOutput) {
         return m_nSeekPos + m_pOutput->getPos();
-    else
+    } else {
         return m_nSeekPos;
+    }
 }
 
-MLRESULT CMDWave::setVolume(int nVolume, int nBanlance)
-{
-    return m_pOutput->setVolume(nVolume, nBanlance);
+MLRESULT CMDWave::setVolume(int volume, int nBanlance) {
+    return m_pOutput->setVolume(volume, nBanlance);
 }
 
-void CMDWave::decodeThread(void *lpParam)
-{
-    CMDWave        *pMDRow;
+void CMDWave::decodeThread(void *lpParam) {
+    CMDWave *pMDRow;
 
     pMDRow = (CMDWave *)lpParam;
 
@@ -214,77 +196,67 @@ void CMDWave::decodeThread(void *lpParam)
 }
 
 
-int read_le_long(IMediaInput *pInput, long *ret)
-{
+int read_le_long(IMediaInput *pInput, long *ret) {
     unsigned char buf[4];
 
-    if (pInput->read(buf, 4) != 4)
+    if (pInput->read(buf, 4) != 4) {
         return 0;
+    }
 
     *ret = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
     return 4;
 }
 
-int read_le_short(IMediaInput *pInput, short *ret)
-{
+int read_le_short(IMediaInput *pInput, short *ret) {
     unsigned char buf[2];
 
-    if (pInput->read(buf, 2) != 2)
+    if (pInput->read(buf, 2) != 2) {
         return 0;
+    }
 
     *ret = (buf[1] << 8) | buf[0];
     return true;
 }
 
-void CMDWave::decodeThreadProc()
-{
+void CMDWave::decodeThreadProc() {
     int bytes, blk_size, size_per_second;
     int actual_read;
 
     size_per_second = m_audioInfo.samples_per_sec * m_audioInfo.channels *
-        (m_audioInfo.bits_per_sample / 8);
+    (m_audioInfo.bits_per_sample / 8);
     blk_size = size_per_second / 8;
 
-    IFBuffer    *pBuf;
+    IFBuffer *pBuf;
 
-    while (!m_bKillThread)
-    {
+    while (!m_bKillThread) {
         bytes = blk_size;
-        if (int(m_audioInfo.length - m_audioInfo.position) < bytes)
+        if (int(m_audioInfo.length - m_audioInfo.position) < bytes) {
             bytes = m_audioInfo.length - m_audioInfo.position;
-        if (bytes > 0)
-        {
+        }
+        if (bytes > 0) {
             pBuf = m_pMemAllocator->allocFBuffer(blk_size);
             actual_read = m_pInput->read(pBuf->data(), bytes);
-            if (actual_read == 0)
-            {
+            if (actual_read == 0) {
                 pBuf->release();
                 break;
-            }
-            else
-            {
+            } else {
                 pBuf->resize(actual_read);
                 m_pOutput->waitForWrite();
-                if (m_bKillThread)
-                {
+                if (m_bKillThread) {
                     pBuf->release();
                     break;
                 }
-                if (m_bSeekFlag)
+                if (m_bSeekFlag) {
                     pBuf->release();
-                else
-                {
+                } else {
                     m_pPlayer->outputWrite(pBuf, m_audioInfo.bits_per_sample, m_audioInfo.channels, m_audioInfo.samples_per_sec);
                 }
                 m_audioInfo.position += actual_read;
             }
-        }
-        else
-        {
+        } else {
             break;
         }
-        if (m_bSeekFlag)
-        {
+        if (m_bSeekFlag) {
             m_audioInfo.position = m_nSeekPos * (size_per_second / 1000);
             m_pInput->seek(m_audioInfo.position + m_audioInfo.data_offset, SEEK_SET);
             m_pOutput->flush();
@@ -293,8 +265,7 @@ void CMDWave::decodeThreadProc()
 
     }
 
-    while (!m_bKillThread && m_pOutput->isPlaying())
-    {
+    while (!m_bKillThread && m_pOutput->isPlaying()) {
         sleep(10);
     }
 
@@ -317,79 +288,90 @@ void CMDWave::decodeThreadProc()
     ERR_LOG0("End of decode thread! quit.");
 }
 
-MLRESULT CMDWave::getHeadInfo(IMediaInput *pInput)
-{
+MLRESULT CMDWave::getHeadInfo(IMediaInput *pInput) {
     m_bufInput.clear();
     pInput->seek(0, SEEK_SET);
 
-    char            szMagic[4];
-    char            magic[4];
-    long            len;
+    char szMagic[4];
+    char magic[4];
+    long len;
 
     memset(&m_audioInfo, 0, sizeof(m_audioInfo));
 
     pInput->getSize(m_audioInfo.nMediaFileSize);
 
-    if (pInput->read(szMagic, 4) != 4)
+    if (pInput->read(szMagic, 4) != 4) {
         return ERR_BAD_FILE_FORMAT;
-    if (strncmp(szMagic, "RIFF", 4))
+    }
+    if (strncmp(szMagic, "RIFF", 4)) {
         return ERR_BAD_FILE_FORMAT;
-    if (!read_le_long(pInput, &len))
+    }
+    if (!read_le_long(pInput, &len)) {
         return ERR_BAD_FILE_FORMAT;
-    if (pInput->read(szMagic, 4) != 4)
+    }
+    if (pInput->read(szMagic, 4) != 4) {
         return ERR_BAD_FILE_FORMAT;
-    if (strncmp(szMagic, "WAVE", 4) != 0)
+    }
+    if (strncmp(szMagic, "WAVE", 4) != 0) {
         return ERR_BAD_FILE_FORMAT;
+    }
 
-    for (;;)
-    {
-        if (pInput->read(magic, 4) != 4)
+    for (;;) {
+        if (pInput->read(magic, 4) != 4) {
             return ERR_BAD_FILE_FORMAT;
-        if (!read_le_long(pInput, &len))
+        }
+        if (!read_le_long(pInput, &len)) {
             return ERR_BAD_FILE_FORMAT;
-        if (!strncmp("fmt ", magic, 4))
+        }
+        if (!strncmp("fmt ", magic, 4)) {
             break;
+        }
         pInput->seek(len, SEEK_CUR);
     }
-    if (len < 16)
+    if (len < 16) {
         return ERR_BAD_FILE_FORMAT;
-    if (!read_le_short(pInput, &m_audioInfo.format_tag))
+    }
+    if (!read_le_short(pInput, &m_audioInfo.format_tag)) {
         return ERR_BAD_FILE_FORMAT;
+    }
 
-    switch (m_audioInfo.format_tag)
-    {
-        case WAVE_FORMAT_UNKNOWN:
-        case WAVE_FORMAT_ALAW:
-        case WAVE_FORMAT_MULAW:
-        case WAVE_FORMAT_ADPCM:
-        case WAVE_FORMAT_OKI_ADPCM:
-        case WAVE_FORMAT_DIGISTD:
-        case WAVE_FORMAT_DIGIFIX:
-        case IBM_FORMAT_MULAW:
-        case IBM_FORMAT_ALAW:
-        case IBM_FORMAT_ADPCM:
-            return ERR_BAD_FILE_FORMAT;
+    switch (m_audioInfo.format_tag) {
+    case WAVE_FORMAT_UNKNOWN:
+    case WAVE_FORMAT_ALAW:
+    case WAVE_FORMAT_MULAW:
+    case WAVE_FORMAT_ADPCM:
+    case WAVE_FORMAT_OKI_ADPCM:
+    case WAVE_FORMAT_DIGISTD:
+    case WAVE_FORMAT_DIGIFIX:
+    case IBM_FORMAT_MULAW:
+    case IBM_FORMAT_ALAW:
+    case IBM_FORMAT_ADPCM:
+        return ERR_BAD_FILE_FORMAT;
     }
     read_le_short(pInput, &m_audioInfo.channels);
     read_le_long(pInput, &m_audioInfo.samples_per_sec);
     read_le_long(pInput, &m_audioInfo.avg_bytes_per_sec);
     read_le_short(pInput, &m_audioInfo.block_align);
     read_le_short(pInput, &m_audioInfo.bits_per_sample);
-    if (m_audioInfo.bits_per_sample != 8 && m_audioInfo.bits_per_sample != 16)
+    if (m_audioInfo.bits_per_sample != 8 && m_audioInfo.bits_per_sample != 16) {
         return ERR_BAD_FILE_FORMAT;
+    }
     len -= 16;
-    if (len)
+    if (len) {
         pInput->seek(len, SEEK_CUR);
+    }
 
-    for (;;)
-    {
-        if (pInput->read(magic, 4) != 4)
+    for (;;) {
+        if (pInput->read(magic, 4) != 4) {
             return ERR_BAD_FILE_FORMAT;
+        }
 
-        if (!read_le_long(pInput, &len))
+        if (!read_le_long(pInput, &len)) {
             return ERR_BAD_FILE_FORMAT;
-        if (!strncmp("data", magic, 4))
+        }
+        if (!strncmp("data", magic, 4)) {
             break;
+        }
         pInput->seek(len, SEEK_CUR);
     }
     m_audioInfo.data_offset = pInput->getPos();

@@ -47,7 +47,7 @@ public:
 
     bool setTimer(uint32_t nTimerId, uint32_t nElapse);
     void killTimer(uint32_t nTimerId);
-    
+
     string getTitle();
     void setTitle(cstr_t szText);
 
@@ -76,7 +76,7 @@ public:
 
     void checkButton(int nIDButton, bool bCheck);
     bool isButtonChecked(int nIDButton);
-    
+
     bool isSameWnd(Window *pWnd);
 
     bool isChild();
@@ -117,25 +117,25 @@ public:
 
 public:
     // Translucency related APIs
-    bool                    m_bTranslucencyLayered;                // Is following alpha setting enabled?
+    bool                        m_bTranslucencyLayered; // Is following alpha setting enabled?
 
     // Alpha
-    int                     m_nAlpha;
-    bool                    m_bClickThrough;
+    int                         m_nAlpha;
+    bool                        m_bClickThrough;
 
     virtual void setTransparent(uint8_t nAlpha, bool bClickThrough);
     virtual bool isClickThrough() { return m_bClickThrough; }
-    
-//    bool updateLayeredWindowUsingMemGraph(CRawGraph *canvas);
 
-    bool                    m_bMouseCaptured;
-    
+    //    bool updateLayeredWindowUsingMemGraph(CRawGraph *canvas);
+
+    bool                        m_bMouseCaptured;
+
     // For Mac
     // void *getHandle();
     void setHasShadow(bool hasShadow);
 
 protected:
-    WndSizeMode             m_WndSizeMode;
-    Window                  *m_parent;
+    WndSizeMode                 m_WndSizeMode;
+    Window                      *m_parent;
 
 };

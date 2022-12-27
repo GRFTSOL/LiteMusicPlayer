@@ -1,39 +1,34 @@
-// SkinNStatusButton.h: interface for the CSkinNStatusButton class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_SKINNSTATUSBUTTON_H__DE43DEFF_B449_473B_8C7D_D648AFD8C519__INCLUDED_)
-#define AFX_SKINNSTATUSBUTTON_H__DE43DEFF_B449_473B_8C7D_D648AFD8C519__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef Skin_SkinNStatusButton_h
+#define Skin_SkinNStatusButton_h
+
 
 #include "UIObject.h"
 
-class CSkinNStatusButton : public CUIObject  
-{
+
+class CSkinNStatusButton : public CUIObject {
     UIOBJECT_CLASS_NAME_DECLARE(CUIObject)
 public:
     CSkinNStatusButton();
     virtual ~CSkinNStatusButton();
 
-    void onTimer(int nId);
+    void onTimer(int nId) override;
 
-    bool onMouseDrag(CPoint point);
-    bool onMouseMove(CPoint point);
-    bool onLButtonUp(uint32_t nFlags, CPoint point);
-    bool onLButtonDown(uint32_t nFlags, CPoint point);
+    bool onMouseDrag(CPoint point) override;
+    bool onMouseMove(CPoint point) override;
+    bool onLButtonUp(uint32_t nFlags, CPoint point) override;
+    bool onLButtonDown(uint32_t nFlags, CPoint point) override;
 
-    virtual void onKeyUp(uint32_t nChar, uint32_t nFlags);
-    virtual void onKeyDown(uint32_t nChar, uint32_t nFlags);
+    virtual void onKeyUp(uint32_t nChar, uint32_t nFlags) override;
+    virtual void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
 
-    virtual void onSetFocus();
-    virtual void onKillFocus();
+    virtual void onSetFocus() override;
+    virtual void onKillFocus() override;
 
-    void draw(CRawGraph *canvas);
+    void draw(CRawGraph *canvas) override;
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 #ifdef _SKIN_EDITOR_
     void enumProperties(CUIObjProperties &listProperties);
 #endif // _SKIN_EDITOR_
@@ -57,39 +52,38 @@ protected:
 
 protected:
 
-    struct BtStatImg
-    {
+    struct BtStatImg {
         BtStatImg() : nIDCmd(0) { }
-        string            strBkFile, strSelFile, strHoverFile, strDisabledFile;
-        CSFImage        imgBk, imgSel, imgHover, imgDisabled;
-        int                nIDCmd;
+        string                      strBkFile, strSelFile, strHoverFile, strDisabledFile;
+        CSFImage                    imgBk, imgSel, imgHover, imgDisabled;
+        int                         nIDCmd;
     };
 
     typedef vector<BtStatImg *>        V_BTSTATIMG;
 
-    V_BTSTATIMG        m_vBtStatImg;
+    V_BTSTATIMG                 m_vBtStatImg;
 
-    int                m_xExtendStart, m_xExtendEnd;
-    bool            m_bTile;
+    int                         m_xExtendStart, m_xExtendEnd;
+    bool                        m_bTile;
 
-    int                m_nCurStatus;
+    int                         m_nCurStatus;
 
-    bool            m_bEnableHover;
-    bool            m_bHover;
-    bool            m_bLBtDown;
+    bool                        m_bEnableHover;
+    bool                        m_bHover;
+    bool                        m_bLBtDown;
 
     // Will the cmd be triggered continuous?
-    int                m_nTimerIdContinuous;
-    bool            m_bContinuousCmd;
-    bool            m_bContinuousBegin;
+    int                         m_nTimerIdContinuous;
+    bool                        m_bContinuousCmd;
+    bool                        m_bContinuousBegin;
 
-    bool            m_bFadein;
-    uint32_t            m_dwBeginFadeinTime;
-    int                m_nTimerIdFadein;
-    CSFImage        *m_pLastImage;
+    bool                        m_bFadein;
+    int64_t                     m_timeBeginFadein;
+    int                         m_nTimerIdFadein;
+    CSFImage                    *m_pLastImage;
 
-    BlendPixMode    m_bpm;
+    BlendPixMode                m_bpm;
 
 };
 
-#endif // !defined(AFX_SKINNSTATUSBUTTON_H__DE43DEFF_B449_473B_8C7D_D648AFD8C519__INCLUDED_)
+#endif // !defined(Skin_SkinNStatusButton_h)

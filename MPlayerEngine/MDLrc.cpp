@@ -1,26 +1,22 @@
 #include "MDLrc.h"
 #include "../LyricsLib/MLLib.h"
 
-CMDLrc::CMDLrc(void)
-{
+
+CMDLrc::CMDLrc(void) {
 }
 
-CMDLrc::~CMDLrc(void)
-{
+CMDLrc::~CMDLrc(void) {
 }
 
-cstr_t CMDLrc::getDescription()
-{
+cstr_t CMDLrc::getDescription() {
     return "LRC decoder";
 }
 
-cstr_t CMDLrc::getFileExtentions()
-{
+cstr_t CMDLrc::getFileExtentions() {
     return ".lrc|LRC file";
 }
 
-MLRESULT CMDLrc::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia)
-{
+MLRESULT CMDLrc::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia) {
     CMLData data;
     int nRet = data.openLyrics(pInput->getSource(), 0, pInput->getSource());
 
@@ -33,13 +29,11 @@ MLRESULT CMDLrc::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pM
 // decode media file related methods
 //
 
-bool CMDLrc::isSeekable()
-{
+bool CMDLrc::isSeekable() {
     return true;
 }
 
-bool CMDLrc::isUseOutputPlug()
-{
+bool CMDLrc::isUseOutputPlug() {
     return false;
 }
 
@@ -47,16 +41,13 @@ bool CMDLrc::isUseOutputPlug()
 // ERR_DECODER_INNER_ERROR: inner error occurs at decoder
 // ERR_DECODER_UNSUPPORTED_FEATURE:
 // ERR_DECODER_INIT_FAILED:
-MLRESULT CMDLrc::play(IMPlayer *pPlayer, IMediaInput *pInput)
-{
+MLRESULT CMDLrc::play(IMPlayer *pPlayer, IMediaInput *pInput) {
     m_dwBeginTime = getTickCount();
     return ERR_OK;
 }
 
-MLRESULT CMDLrc::pause()
-{
-    if (m_state == PS_PLAYING)
-    {
+MLRESULT CMDLrc::pause() {
+    if (m_state == PS_PLAYING) {
         m_state = PS_PAUSED;
         m_nPausedPos = getTickCount() - m_dwBeginTime;
     }
@@ -64,10 +55,8 @@ MLRESULT CMDLrc::pause()
     return ERR_OK;
 }
 
-MLRESULT CMDLrc::unpause()
-{
-    if (m_state == PS_PAUSED)
-    {
+MLRESULT CMDLrc::unpause() {
+    if (m_state == PS_PAUSED) {
         m_state = PS_PLAYING;
         m_dwBeginTime = getTickCount() - m_nPausedPos;
     }
@@ -75,8 +64,7 @@ MLRESULT CMDLrc::unpause()
     return ERR_OK;
 }
 
-MLRESULT CMDLrc::stop()
-{
+MLRESULT CMDLrc::stop() {
     m_dwBeginTime = 0;
     m_nPausedPos = 0;
     m_state = PS_STOPED;
@@ -84,20 +72,20 @@ MLRESULT CMDLrc::stop()
 }
 
 // media length, pos related functions, unit: ms
-uint32_t CMDLrc::getLength()
-{
+uint32_t CMDLrc::getLength() {
     return m_nLength;
 }
 
-MLRESULT CMDLrc::seek(uint32_t nPos)
-{
-    if (m_state == PS_STOPED)
+MLRESULT CMDLrc::seek(uint32_t nPos) {
+    if (m_state == PS_STOPED) {
         return ERR_OK;
+    }
 
-    if (nPos < 0)
+    if (nPos < 0) {
         nPos = 0;
-    else if (nPos > m_nLength)
+    } else if (nPos > m_nLength) {
         nPos = m_nLength;
+    }
 
     m_dwBeginTime = getTickCount() - nPos;
     m_nPausedPos = nPos;
@@ -105,29 +93,26 @@ MLRESULT CMDLrc::seek(uint32_t nPos)
     return ERR_OK;
 }
 
-uint32_t CMDLrc::getPos()
-{
+uint32_t CMDLrc::getPos() {
     return getTickCount() - m_dwBeginTime;
 }
 
 // volume
-MLRESULT CMDLrc::setVolume(int nVolume, int nBanlance)
-{
+MLRESULT CMDLrc::setVolume(int volume, int nBanlance) {
     return ERR_OK;
 }
 
-bool CMDLrc::init()
-{
+bool CMDLrc::init() {
     return true;
 }
 
-MLRESULT CMDLrc::doDecode(IMedia *pMedia)
-{
-    CXStr                        strMedia;
+MLRESULT CMDLrc::doDecode(IMedia *pMedia) {
+    CXStr strMedia;
 
     MLRESULT nRet = pMedia->getSourceUrl(&strMedia);
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         return nRet;
+    }
 
     CMLData data;
     nRet = data.openLyrics(strMedia.c_str(), 0, strMedia.c_str());
@@ -140,12 +125,10 @@ MLRESULT CMDLrc::doDecode(IMedia *pMedia)
     return ERR_OK;
 }
 
-void CMDLrc::notifyEod(IMediaDecode *pDecoder, MLRESULT nError)
-{
+void CMDLrc::notifyEod(IMediaDecode *pDecoder, MLRESULT nError) {
     m_state = PS_STOPED;
 }
 
-bool CMDLrc::isOK()
-{
+bool CMDLrc::isOK() {
     return true;
 }

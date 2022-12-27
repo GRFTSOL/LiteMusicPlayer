@@ -90,7 +90,7 @@ void CLyricsLocalSearch::saveLyricFolderCfg()
     }
 
     // set end positions.
-    snprintf(szKeyName, CountOf(szKeyName), "%s%d", SZ_FOLDER_PREFIX, m_vLyricsFolders.size());
+    snprintf(szKeyName, CountOf(szKeyName), "%s%d", SZ_FOLDER_PREFIX, (int)m_vLyricsFolders.size());
     g_profile.writeString(SZ_SECT_SEARCH_FOLDER, szKeyName, "");
 }
 
@@ -204,7 +204,7 @@ bool CLyricsLocalSearch::setFolder(cstr_t szFolder)
 
 int CLyricsLocalSearch::getSearchFolerCount()
 {
-    return m_vLyricsFolders.size();
+    return (int)m_vLyricsFolders.size();
 }
 
 bool CLyricsLocalSearch::removeFolder(int nIndex)
@@ -416,7 +416,7 @@ void CLyricsLocalSearch::loadLyricsAssociation()
     while (fgets(szBuff, CountOf(szBuff), fp))
     {
         szStr = szBuff;
-        nLenBuff = strlen(szBuff);
+        nLenBuff = (int)strlen(szBuff);
 
         // get song file name.
         szStr = readInt_t(szStr, nLen); if (nLen > nLenBuff - int(szStr - szBuff)) continue;
@@ -491,7 +491,7 @@ void CLyricsLocalSearch::saveLyricsAssociation()
         strUtf8 = (*it).first.c_str();
 
         // len
-        snprintf(szTemp, CountOf(szTemp), "%d", strUtf8.size());
+        snprintf(szTemp, CountOf(szTemp), "%d", (int)strUtf8.size());
         str += szTemp; str += ",";
 
         // file
@@ -504,7 +504,7 @@ void CLyricsLocalSearch::saveLyricsAssociation()
         strUtf8 = (*it).second.c_str();
 
         // len
-        snprintf(szTemp, CountOf(szTemp), "%d", strUtf8.size());
+        snprintf(szTemp, CountOf(szTemp), "%d", (int)strUtf8.size());
         str += szTemp; str += ",";
 
         // file

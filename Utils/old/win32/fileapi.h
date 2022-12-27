@@ -11,8 +11,7 @@ setFileTime(
 bool isDiskIdle(const char* disk);
 void getLogicalDrives(VecStrings &vDrives);
 
-class FileFind
-{
+class FileFind {
 public:
     FileFind();
     virtual ~FileFind();
@@ -33,8 +32,8 @@ public:
         { return FindData.nFileSizeLow; }
 
 protected:
-    HANDLE                hFileFind;
-    WIN32_FIND_DATA        FindData;
-    bool                bFirst;
+    HANDLE                      hFileFind;
+    WIN32_FIND_DATA             FindData;
+    bool                        bFirst;
 
 };

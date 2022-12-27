@@ -8,7 +8,7 @@ class CPagePfThemeRoot : public CPagePfBase
 public:
     CPagePfThemeRoot();
 
-    void onInitialUpdate();
+    void onInitialUpdate() override;
 
 };
 

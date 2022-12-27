@@ -140,7 +140,7 @@ void CLyricShowSingleRowObj::drawCurLineFadeInNextLine(CRawGraph *canvas, Lyrics
 
 // OUTPUT:
 //        rcUpdate    -    更新的矩形区域
-void CLyricShowSingleRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate/* = nullptr*/)
+void CLyricShowSingleRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate)
 {
     int            y;
     LyricsLine *pLyricRow;

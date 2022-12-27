@@ -44,7 +44,7 @@ class CPageRename : public CSkinContainer
 {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinContainer)
 public:
-    void onSwitchTo()
+    void onSwitchTo() override
     {
         CSkinContainer::onSwitchTo();
 
@@ -54,7 +54,7 @@ public:
         setExPool("RenameDlgResult", IDCANCEL);
     }
 
-    bool onOK()
+    bool onOK() override
     {
         setExPool("FileTitle", getUIObjectText("CID_E_FILENAME").c_str());
         setExPool("RenameDlgResult", IDOK);
@@ -62,7 +62,7 @@ public:
         return false;
     }
 
-    bool onCancel()
+    bool onCancel() override
     {
         m_pContainer->switchToLastPage(0, true);
         return false;
@@ -170,7 +170,7 @@ public:
     }
 
     // SkinListControl notification
-    void onUIObjNotify(IUIObjNotify *pNotify)
+    void onUIObjNotify(IUIObjNotify *pNotify) override
     {
         if (pNotify->isKindOf(CSkinListCtrl::className()))
         {
@@ -189,7 +189,7 @@ public:
     }
 
     // Edit control notification
-    void onTextChanged()
+    void onTextChanged() override
     {
         if (m_bAutoSearchLocal)
         {
@@ -199,13 +199,13 @@ public:
     }
 
     // Edit control notification
-    void onSpecialKey(SpecialKey key)
+    void onSpecialKey(SpecialKey key) override
     {
         if (key == SK_ENTER)
             onSearch();
     }
 
-    void onCreate()
+    void onCreate() override
     {
         CSkinContainer::onCreate();
 
@@ -256,13 +256,13 @@ public:
         }
     }
 
-    void onDestroy()
+    void onDestroy() override
     {
         m_pSkin->unregisterUIObjNotifyHandler(this);
         m_pLyricsList->saveColumnWidth("OpenLyrics_ListColWidth");
     }
 
-    bool onOK()
+    bool onOK() override
     {
         CUIObject *pObj = m_pSkin->getFocusUIObj();
         if (pObj)
@@ -309,7 +309,7 @@ public:
         m_pSkin->postDestroy();
     }
 
-    void onSwitchTo()
+    void onSwitchTo() override
     {
         CSkinContainer::onSwitchTo();
 
@@ -391,7 +391,7 @@ public:
         return true;
     }
 
-    bool onCommand(int nId)
+    bool onCommand(int nId) override
     {
         switch (nId)
         {
@@ -519,7 +519,7 @@ public:
         return true;
     }
 
-    bool onCustomCommand(int nId)
+    bool onCustomCommand(int nId) override
     {
         if (nId == CID_SEARCH)
             onSearch();
@@ -681,8 +681,8 @@ protected:
     {
         m_vResultsLocal.clear();
 
-        uint32_t            nTimeStart = getTickCount();
-        const int        nAcceptableCostTime = 500;
+        auto nTimeStart = getTickCount();
+        const int nAcceptableCostTime = 500;
 
         g_LyricSearch.searchAllMatchLyrics(m_strSongFile.c_str(), m_strArtist.c_str(), m_strTitle.c_str(), m_vResultsLocal);
 

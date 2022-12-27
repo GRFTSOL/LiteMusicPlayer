@@ -3,8 +3,7 @@
 #include "SkinLinearContainer.h"
 
 
-class CSkinResizableLinearContainer : public CSkinLinearContainer  
-{
+class CSkinResizableLinearContainer : public CSkinLinearContainer {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinContainer)
 public:
     CSkinResizableLinearContainer();
@@ -17,7 +16,6 @@ public:
 
     virtual void onCreate() override;
     virtual void onDestroy() override;
-    virtual void onSize() override;
 
     virtual bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 
@@ -39,12 +37,12 @@ protected:
     static void zoomAll(VecItems &vItems, int nSize);
 
 protected:
-    Cursor                    m_cursorWE, m_cursorNS;
+    Cursor                      m_cursorWE, m_cursorNS;
 
-    bool                    m_bDragWnd;
-    CPoint                    m_ptDragOld;
-    int                        m_nCurrentResizerArea;    // Current drag resizer area, start from 0.
+    bool                        m_bDragWnd;
+    CPoint                      m_ptDragOld;
+    int                         m_nCurrentResizerArea; // Current drag resizer area, start from 0.
 
-    int                        m_nThicknessOfResizer;
+    int                         m_nThicknessOfResizer;
 
 };

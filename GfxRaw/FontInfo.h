@@ -7,13 +7,12 @@
 
 
 #ifndef DEFAULT_CHARSET
-#define DEFAULT_CHARSET        1
+#define DEFAULT_CHARSET     1
 #endif
 
 // Font slant
-enum
-{
-    FS_NORMAL        = 0,
+enum {
+    FS_NORMAL                   = 0,
     FS_OBLIQUE,
     FS_ITALIC,
 };
@@ -38,29 +37,26 @@ enum
 
 #endif
 
-class CFontInfo
-{
+class CFontInfo {
 public:
-    CFontInfo()
-    {
+    CFontInfo() {
         m_nSize = 0;
         m_nFontHeight = 0;
         m_weight = FW_NORMAL;
         m_nItalic = 0;
         m_bUnderline = false;
     }
-    virtual ~CFontInfo()
-    {
+    virtual ~CFontInfo() {
     }
 
 public:
-    virtual bool create(cstr_t szFaceNameLatin9, cstr_t szFaceNameOthers, int nSize, int nWeight, int nItalic, bool bUnderline = false)
-    {
+    virtual bool create(cstr_t szFaceNameLatin9, cstr_t szFaceNameOthers, int nSize, int nWeight, int nItalic, bool bUnderline = false) {
         m_strNameLatin9 = szFaceNameLatin9;
-        if (!szFaceNameOthers || isEmptyString(szFaceNameOthers))
+        if (!szFaceNameOthers || isEmptyString(szFaceNameOthers)) {
             m_strNameOthers = szFaceNameLatin9;
-        else
+        } else {
             m_strNameOthers = szFaceNameOthers;
+        }
 
         m_nFontHeight = m_nSize = nSize;
         m_weight = nWeight;
@@ -70,8 +66,7 @@ public:
         return true;
     }
 
-    virtual bool create(const CFontInfo &font)
-    {
+    virtual bool create(const CFontInfo &font) {
         m_strNameLatin9 = font.m_strNameLatin9;
         m_strNameOthers = font.m_strNameOthers;
         m_nFontHeight = m_nSize = font.m_nSize;
@@ -82,21 +77,22 @@ public:
         return true;
     }
 
-    bool isSame(cstr_t szFaceNameLatin9, cstr_t szFaceNameOthers, int nSize, int nWeight, int nItalic, bool bUnderline)
-    {
-        if (strcmp(szFaceNameLatin9, m_strNameLatin9.c_str()) != 0)
+    bool isSame(cstr_t szFaceNameLatin9, cstr_t szFaceNameOthers, int nSize, int nWeight, int nItalic, bool bUnderline) {
+        if (strcmp(szFaceNameLatin9, m_strNameLatin9.c_str()) != 0) {
             return false;
+        }
 
-        if (!szFaceNameOthers)
+        if (!szFaceNameOthers) {
             szFaceNameOthers = szFaceNameLatin9;
-        if (strcmp(szFaceNameOthers, m_strNameOthers.c_str()) != 0)
+        }
+        if (strcmp(szFaceNameOthers, m_strNameOthers.c_str()) != 0) {
             return false;
+        }
 
         return nSize == m_nSize && nWeight == m_weight && m_nItalic == nItalic && bUnderline == m_bUnderline;
     }
 
-    bool isSame(const CFontInfo &font)
-    {
+    bool isSame(const CFontInfo &font) {
         return font.m_strNameLatin9 == m_strNameLatin9
             && font.m_strNameOthers == m_strNameOthers
             && font.m_nSize == m_nSize
@@ -117,12 +113,12 @@ public:
     virtual int getHeight() const { return m_nFontHeight; }
 
 public:
-    string          m_strNameLatin9, m_strNameOthers;
-    int             m_nSize;
-    int             m_nFontHeight;
-    int             m_weight;
-    uint8_t         m_nItalic;
-    bool            m_bUnderline;
+    string                      m_strNameLatin9, m_strNameOthers;
+    int                         m_nSize;
+    int                         m_nFontHeight;
+    int                         m_weight;
+    uint8_t                     m_nItalic;
+    bool                        m_bUnderline;
 
 };
 

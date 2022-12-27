@@ -4,14 +4,12 @@
 #include "XMLWriter.h"
 
 
-class CMLBinXMLParser
-{
+class CMLBinXMLParser {
 public:
     CMLBinXMLParser(void);
     virtual ~CMLBinXMLParser(void);
 
-    enum MLBinXmlParseError
-    {
+    enum MLBinXmlParseError {
         E_OK,
         E_INVALID_HEADER,
         E_UNKNOWN_VERSION,
@@ -30,8 +28,7 @@ public:
 
 };
 
-class CMLBinXMLWriter : public CXMLWriter
-{
+class CMLBinXMLWriter : public CXMLWriter {
 public:
     CMLBinXMLWriter();
     virtual ~CMLBinXMLWriter();
@@ -73,12 +70,12 @@ protected:
 
 protected:
     typedef map<string, int>    MapStrIndex;
-    MapStrIndex            m_mapStrTable;
+    MapStrIndex                 m_mapStrTable;
 
-    int                    m_nElementDeep;
-    vector<int>            m_vContentBlock;
+    int                         m_nElementDeep;
+    vector<int>                 m_vContentBlock;
 
-    string            m_bufBinTable;
-    size_t                m_nBinItemCount;
+    string                      m_bufBinTable;
+    uint32_t                    m_nBinItemCount;
 
 };

@@ -6,8 +6,7 @@
 namespace GfxRaw
 {
 
-class CRawGlyphBuilder
-{
+class CRawGlyphBuilder {
 public:
     CRawGlyphBuilder();
     virtual ~CRawGlyphBuilder();
@@ -25,9 +24,9 @@ protected:
     int getHeightBitmap() { return m_font.getHeight() + MARGIN_FONT * 2; }
 
 protected:
-    CFontInfo                m_font;
-    CGraphics                *m_pmemGraph;
-    CRawGraph                m_memGraph;
+    CFontInfo                   m_font;
+    CGraphics                   *m_pmemGraph;
+    CRawGraph                   m_memGraph;
 
 };
 

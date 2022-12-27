@@ -8,6 +8,7 @@
 #include "MediaLibrary.h"
 #include "MDAgent.h"
 
+
 interface IMediaInput;
 interface IMediaDecode;
 interface IMediaOutput;
@@ -15,8 +16,7 @@ interface IMediaOutput;
 class CMemAllocator;
 class CMPlayer;
 
-class CFBuffer : public IFBuffer
-{
+class CFBuffer : public IFBuffer {
 public:
     CFBuffer(CMemAllocator *pMemAllocator, uint32_t nCapacity);
     virtual ~CFBuffer();
@@ -31,16 +31,15 @@ public:
     virtual MLRESULT reserve(uint32_t nCapacity);
 
 protected:
-    char                *m_buf;
-    uint32_t            m_nSize, m_nCapacity;
-    CMemAllocator       *m_pMemAllocator;
+    char                        *m_buf;
+    uint32_t                    m_nSize, m_nCapacity;
+    CMemAllocator               *m_pMemAllocator;
 
-    std::atomic<long>   m_nReference;
+    std::atomic<long>           m_nReference;
 
 };
 
-class CMemAllocator : public IMemAllocator
-{
+class CMemAllocator : public IMemAllocator {
 OBJ_REFERENCE_DECL
 public:
     CMemAllocator();
@@ -55,13 +54,12 @@ public:
 
 protected:
     typedef list<IFBuffer *>        LIST_BUF;
-    LIST_BUF                        m_listFree;
-    std::recursive_mutex            m_mutex;
+    LIST_BUF                    m_listFree;
+    std::recursive_mutex        m_mutex;
 
 };
 
-class CMOAgent : public IMediaOutput
-{
+class CMOAgent : public IMediaOutput {
 OBJ_REFERENCE_DECL
 
 public:
@@ -89,15 +87,14 @@ public:
     virtual uint32_t getPos();
 
     // volume
-    virtual MLRESULT setVolume(int nVolume, int nBanlance);
+    virtual MLRESULT setVolume(int volume, int nBanlance);
 
 public:
-    CMPAutoPtr<IMediaOutput>        m_pMediaOutput;
+    CMPAutoPtr<IMediaOutput>    m_pMediaOutput;
 
 };
 
-class CMPluginManagerAgent : public IMPluginManager
-{
+class CMPluginManagerAgent : public IMPluginManager {
 public:
     CMPluginManagerAgent() { }
     virtual ~CMPluginManagerAgent() { }
@@ -117,13 +114,12 @@ public:
     virtual MLRESULT getActiveVis(IVector *pvVis);
 
 public:
-    CMPAutoPtr<IMPluginManager>            m_pluginMgr;
+    CMPAutoPtr<IMPluginManager> m_pluginMgr;
 
 };
 
 
-class CMPlayer : public IMPlayer
-{
+class CMPlayer : public IMPlayer {
     OBJ_REFERENCE_DECL
 public:
     CMPlayer();
@@ -153,8 +149,8 @@ public:
     virtual MLRESULT getCurrentPlaylist(IPlaylist **ppPlaylist);
     virtual MLRESULT getCurrentMedia(IMedia **ppMedia);
 
-    virtual long getCurrentMediaInPlaylist();
-    virtual MLRESULT setCurrentMediaInPlaylist(long nIndex);
+    virtual int getCurrentMediaInPlaylist();
+    virtual MLRESULT setCurrentMediaInPlaylist(int nIndex);
 
     virtual MLRESULT setCurrentPlaylist(IPlaylist *pPlaylist);
     virtual MLRESULT setCurrentMedia(IMedia *pMedia);
@@ -186,12 +182,12 @@ public:
     virtual bool getMute();
 
     // 0 ~ 100
-    virtual MLRESULT setVolume(long nVolume);
-    virtual long getVolume();
+    virtual MLRESULT setVolume(int volume);
+    virtual int getVolume();
 
     // -100 ~ 100
-    virtual MLRESULT setBalance(long nBalance);
-    virtual long getBalance();
+    virtual MLRESULT setBalance(int balance);
+    virtual int getBalance();
 
     virtual MLRESULT setEQ(const EQualizer *eq);
     virtual MLRESULT getEQ(EQualizer *eq);
@@ -227,8 +223,8 @@ protected:
 
     virtual void currentMediaChanged();
     void notifyPlayStateChanged();
-    void notifyCurrentPlaylistChanged(IMPEvent::MP_PLAYLIST_CHANGE_ACTION action, long nIndex, long nIndexOld);
-    void notifySettingsChanged(IMPEvent::MP_SETTING_TYPE settingType, long value);
+    void notifyCurrentPlaylistChanged(IMPEvent::MP_PLAYLIST_CHANGE_ACTION action, int nIndex, int nIndexOld);
+    void notifySettingsChanged(IMPEvent::MP_SETTING_TYPE settingType, int value);
     void notifyEQSettingsChanged(const EQualizer *peq);
     void notifySeek();
 
@@ -241,74 +237,73 @@ public:
     static MLRESULT getInstance(IMPlayer **ppPlayer);
     static MLRESULT quitInstance(IMPlayer **ppPlayer);
 
-    void notifyPlaylistChanged(CPlaylist *playlist, IMPEvent::MP_PLAYLIST_CHANGE_ACTION action, long nIndex, long nIndexOld);
+    void notifyPlaylistChanged(CPlaylist *playlist, IMPEvent::MP_PLAYLIST_CHANGE_ACTION action, int nIndex, int nIndexOld);
 
 protected:
     friend class CMDAgent;
     friend class CMDWmpCore;
     friend class CMDAVPlayer;
 
-    bool                m_bAutoPlayNext;
-    PLAYER_STATE        m_state;
-    static CMPlayer        *m_spPlayer;
+    bool                        m_bAutoPlayNext;
+    PLAYER_STATE                m_state;
+    static CMPlayer             *m_spPlayer;
 
-    CMPluginManagerAgent m_pluginMgrAgent;
+    CMPluginManagerAgent        m_pluginMgrAgent;
 
-    std::recursive_mutex    m_mutexDSP;
-    CMPAutoPtr<IDSP>    m_pDsp;
+    std::recursive_mutex        m_mutexDSP;
+    CMPAutoPtr<IDSP>            m_pDsp;
     CMPAutoPtr<CMDAgent>        m_pMDAgent;
     CMPAutoPtr<CMOAgent>        m_pMOAgent;
 
-    CMPAutoPtr<CMemAllocator>    m_pMemAllocator;
-    CMPAutoPtr<CMediaLibrary>    m_pMediaLib;
+    CMPAutoPtr<CMemAllocator>   m_pMemAllocator;
+    CMPAutoPtr<CMediaLibrary>   m_pMediaLib;
 
-    vector<long>        m_vShuffleMedia;
-    int                    m_nCurrentShuffleMedia;
-    bool                m_bShuffle;
-    bool                m_bMute;
-    MP_LOOP_MODE        m_loopMode;
-    int                    m_nVolume;
-    int                    m_nBalance;
+    vector<int>                 m_vShuffleMedia;
+    int                         m_nCurrentShuffleMedia;
+    bool                        m_bShuffle;
+    bool                        m_bMute;
+    MP_LOOP_MODE                m_loopMode;
+    int                         m_volume;
+    int                         m_balance;
 
-    EQualizer            m_Equalizer;
+    EQualizer                   m_Equalizer;
 
-    CPlaylist            *m_currentPlaylist;
-    IMedia                *m_pCurrentMedia;
-    bool                m_bCurMediaPlayed;
-    long                m_nCurrentMedia;
+    CPlaylist                   *m_currentPlaylist;
+    IMedia                      *m_pCurrentMedia;
+    bool                        m_bCurMediaPlayed;
+    int                         m_nCurrentMedia;
 
-    // 
+    //
     // CMDAgent            *m_pMDAgentPreload;
     // IMedia                *m_pPreloadMedia;
     // long                m_nPreloadMedia;
 
-    list<IMPEvent *>    m_listEventHandler;
-    std::recursive_mutex    m_mutexEventHandler;
-    std::recursive_mutex    m_mutexDataAccess;
+    list<IMPEvent               *>    m_listEventHandler;
+    std::recursive_mutex        m_mutexEventHandler;
+    std::recursive_mutex        m_mutexDataAccess;
 
-    bool                m_bAutoAddToMediaLib;
+    bool                        m_bAutoAddToMediaLib;
 
 protected:
     //
     // Vis
     //
-    struct VisDataPre
-    {
-        IFBuffer    *pBuf;
-        int            nBps;
-        int            nChannels;
-        int            nSampleRate;
-        int            nPlayingPos;
+    struct VisDataPre {
+        IFBuffer                    *pBuf;
+        int                         nBps;
+        int                         nChannels;
+        int                         nSampleRate;
+        int                         nPlayingPos;
     };
     typedef list<VisDataPre>        QueueVisDataPre;
-    QueueVisDataPre        m_queVisDataPre;
-    int                    m_nBufferedVisMs;
-    int                    m_nMODelay;
-    std::recursive_mutex   m_mutexVisdataAccess;
-    std::thread               *m_threadVis;
-    bool                m_bQuitVis;
+    QueueVisDataPre             m_queVisDataPre;
+    int                         m_nBufferedVisMs;
+    int                         m_nMODelay;
+    std::recursive_mutex        m_mutexVisdataAccess;
+    std::thread                 *m_threadVis;
+    bool                        m_bQuitVis;
     typedef vector<IVis*>            V_VIS;
-    V_VIS                m_vVis;
+    V_VIS                       m_vVis;
 
     MLRESULT startVis();
     MLRESULT stopVis();

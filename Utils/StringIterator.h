@@ -4,10 +4,9 @@
 #pragma once
 
 
-class Utf8CharType
-{
+class Utf8CharType {
 protected:
-    char        szChar[4];
+    char                        szChar[4];
 
 public:
     Utf8CharType(cstr_t str) {
@@ -25,8 +24,9 @@ public:
 
     bool operator == (Utf8CharType ch) {
         for (int i = 0; szChar[i] != 0; i++) {
-            if (szChar[i] != ch.szChar[i])
+            if (szChar[i] != ch.szChar[i]) {
                 return false;
+            }
         }
         return true;
     }
@@ -36,24 +36,24 @@ public:
     }
 
     void set(const char *str) {
-        unsigned char    firstChar = (unsigned char)(str[0]);
-        int                n;
+        unsigned char firstChar = (unsigned char)(str[0]);
+        int n;
 
         if (firstChar < 0xc0)            n = 1;
         else if (firstChar < 0xe0)        n = 2;
         else if (firstChar < 0xf0)        n = 3;
         else                            n = 1;
 
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++) {
             szChar[i] = str[i];
+        }
         szChar[n] = 0;
     }
 
     int32_t getIntValue() {
-        uint32_t        value = 0;
+        uint32_t value = 0;
 
-        for (int i = 0; szChar[i] != 0; i++)
-        {
+        for (int i = 0; szChar[i] != 0; i++) {
             value <<= 8;
             value |= uint8_t(szChar[i]);
         }
@@ -68,8 +68,7 @@ public:
 };
 
 template<class _CharType, class _char_t>
-class StringIterator_t
-{
+class StringIterator_t {
 public:
     typedef _CharType        CharType;
 
@@ -101,13 +100,13 @@ public:
     void setPos(int nPos) { m_nPos = nPos; m_ch = m_szText + m_nPos; }
 
 protected:
-    const _char_t       *m_szText;
-    int                 m_nPos;
-    CharType            m_ch;
+    const _char_t               *m_szText;
+    int                         m_nPos;
+    CharType                    m_ch;
 
 };
 
-typedef StringIterator_t<Utf8CharType, char>        StringIterator;
+typedef StringIterator_t<Utf8CharType, char> StringIterator;
 
 
 #endif // _STRING_ITERATOR_H_

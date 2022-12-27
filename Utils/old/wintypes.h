@@ -1,9 +1,12 @@
+#pragma once
+
 #ifndef _WIN_TYPE_H
 #define _WIN_TYPE_H
 
 #ifdef _LINUX_GTK2
 #include "linux/keymap.h"
 #endif
+
 
 #if !defined(WIN32)
 
@@ -23,64 +26,64 @@
 #define FW_ULTRABOLD        FW_EXTRABOLD
 #define FW_BLACK            FW_HEAVY
 
-#define LPSTR_TEXTCALLBACK     ((char *)-1L)
+#define LPSTR_TEXTCALLBACK     ((char *) -1L)
 
-#define _stricmp    strcasecmp
-#define strncasecmp    strncasecmp
+#define _stricmp            strcasecmp
+#define strncasecmp         strncasecmp
 
-#define _stscanf    sscanf
+#define _stscanf            sscanf
 
-#define fopen     fopen
-#define _fgetts        fgets
+#define fopen               fopen
+#define _fgetts             fgets
 
-#define _mbschr        strchr
+#define _mbschr             strchr
 
 /* String functions */
 
-#define strchr     strchr
-#define _tcscspn    strcspn
-#define strncat    strncat
-#define strncpy    strncpy
-#define _tcspbrk    strpbrk
-#define strrchr    strrchr
-#define _tcsspn     strspn
-#define strstr     strstr
-#define _tcstok     strtok
+#define strchr              strchr
+#define _tcscspn            strcspn
+#define strncat             strncat
+#define strncpy             strncpy
+#define _tcspbrk            strpbrk
+#define strrchr             strrchr
+#define _tcsspn             strspn
+#define strstr              strstr
+#define _tcstok             strtok
 
-#define _tcsnset    _strnset
-#define _tcsrev     _strrev
-#define _tcsset     _strset
+#define _tcsnset            _strnset
+#define _tcsrev             _strrev
+#define _tcsset             _strset
 
-#define strcmp     strcmp
-#define strcasecmp    _stricmp
-#define strncmp   strncmp
-#define strncmp    strncmp
-#define strncasecmp   strncasecmp
-#define strcasecmp        strcasecmp
-#define strncasecmp    strncasecmp
+#define strcmp              strcmp
+#define strcasecmp          _stricmp
+#define strncmp             strncmp
+#define strncmp             strncmp
+#define strncasecmp         strncasecmp
+#define strcasecmp          strcasecmp
+#define strncasecmp         strncasecmp
 
-#define atoi       atoi
-#define itoa        itoa
-#define atof        atof
+#define atoi                atoi
+#define itoa                itoa
+#define atof                atof
 
-#define _tcscat     strcat
-#define _tcscpy     strcpy
-#define _tcsdup     _strdup
+#define _tcscat             strcat
+#define _tcscpy             strcpy
+#define _tcsdup             _strdup
 
-#define strlen     strlen
+#define strlen              strlen
 
-#define sprintf    sprintf
-#define _vsntprintf vsnprintf
-#define _sntprintf    snprintf
+#define sprintf             sprintf
+#define _vsntprintf         vsnprintf
+#define _sntprintf          snprintf
 
-#define _tprintf printf
-#define _T(x)       x
+#define _tprintf            printf
+#define _T(x)               x
 
-#define _istalnum    isalnum
+#define _istalnum           isalnum
 
-#define _tcsftime    strftime
+#define _tcsftime           strftime
 
-#define MAX_PATH          260
+#define MAX_PATH            260
 
 /////////////////////////////////////////////////////////////////////////////
 // cSize - An extent, similar to Windows SIZE structure.
@@ -95,9 +98,9 @@ typedef struct  tagSIZE
 }SIZE, *LPSIZE;
 
 #ifdef _LINUX_GTK2
-typedef GdkPoint    tagPOINT;
-typedef GdkPoint    CPoint;
-typedef GdkPoint    *LPPOINT;
+typedef GdkPoint tagPOINT;
+typedef GdkPoint CPoint;
+typedef GdkPoint *LPPOINT;
 #else // _LINUX_GTK2
 typedef struct  tagPOINT
 {
@@ -114,11 +117,10 @@ typedef struct  tagRECT
     int bottom;
 }CRect, *LPRECT;
 
-class cSize : public tagSIZE
-{
+class cSize : public tagSIZE {
 public:
 
-// Constructors
+    // Constructors
     // construct an uninitialized size
     cSize();
     // create from two integers
@@ -130,22 +132,22 @@ public:
     // create from a uint32_t: cx = LOWORD(dw) cy = HIWORD(dw)
     cSize(uint32_t dwSize);
 
-// Operations
+    // Operations
     bool operator==(SIZE size) const;
     bool operator!=(SIZE size) const;
     void operator+=(SIZE size);
     void operator-=(SIZE size);
 
-// Operators returning cSize values
+    // Operators returning cSize values
     cSize operator+(SIZE size) const;
     cSize operator-(SIZE size) const;
     cSize operator-() const;
 
-// Operators returning CPoint values
+    // Operators returning CPoint values
     CPoint operator+(CPoint point) const;
     CPoint operator-(CPoint point) const;
 
-// Operators returning CRect values
+    // Operators returning CRect values
     CRect operator+(const CRect* lpRect) const;
     CRect operator-(const CRect* lpRect) const;
 };
@@ -153,10 +155,9 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 // CPoint - A 2-D point, similar to Windows CPoint structure.
 
-class CPoint : public tagPOINT
-{
+class CPoint : public tagPOINT {
 public:
-// Constructors
+    // Constructors
 
     // create an uninitialized point
     CPoint();
@@ -169,9 +170,9 @@ public:
     // create from a dword: x = LOWORD(dw) y = HIWORD(dw)
     CPoint(uint32_t dwPoint);
 
-// Operations
+    // Operations
 
-// translate the point
+    // translate the point
     void offset(int xOffset, int yOffset);
     void offset(CPoint point);
     void offset(SIZE size);
@@ -183,16 +184,16 @@ public:
     void operator+=(CPoint point);
     void operator-=(CPoint point);
 
-// Operators returning CPoint values
+    // Operators returning CPoint values
     CPoint operator+(SIZE size) const;
     CPoint operator-(SIZE size) const;
     CPoint operator-() const;
     CPoint operator+(CPoint point) const;
 
-// Operators returning cSize values
+    // Operators returning cSize values
     cSize operator-(CPoint point) const;
 
-// Operators returning CRect values
+    // Operators returning CRect values
     CRect operator+(const CRect* lpRect) const;
     CRect operator-(const CRect* lpRect) const;
 };
@@ -200,13 +201,12 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 // CRect - A 2-D rectangle, similar to Windows CRect structure.
 
-typedef const CRect* LPCRECT;    // pointer to read/only CRect
+typedef const CRect* LPCRECT; // pointer to read/only CRect
 
-class CRect : public tagRECT
-{
+class CRect : public tagRECT {
 public:
 
-// Constructors
+    // Constructors
 
     // uninitialized rectangle
     CRect();
@@ -221,7 +221,7 @@ public:
     // from two points
     CRect(CPoint topLeft, CPoint bottomRight);
 
-// Attributes (in addition to CRect members)
+    // Attributes (in addition to CRect members)
 
     // retrieves the width
     int width() const;
@@ -254,7 +254,7 @@ public:
     // returns true if point is within rectangle
     bool ptInRect(CPoint point) const;
 
-// Operations
+    // Operations
 
     // set rectangle from left, top, right, and bottom
     void setLTRB(int x1, int y1, int x2, int y2);
@@ -271,19 +271,19 @@ public:
     void inflateRect(int x, int y);
     void inflateRect(SIZE size);
     void inflateRect(CRect *lpRect);
-//    void inflateRect(int l, int t, int r, int b);
+    //    void inflateRect(int l, int t, int r, int b);
     // deflate the rectangle's width and height without
     // moving its top or left
     void deflateRect(int x, int y);
     void deflateRect(SIZE size);
     void deflateRect(CRect *lpRect);
-//    void deflateRect(int l, int t, int r, int b);
+    //    void deflateRect(int l, int t, int r, int b);
 
     // translate the rectangle by moving its top and left
     void offsetRect(int x, int y);
     void offsetRect(SIZE size);
     void offsetRect(CPoint point);
-//    void NormalizeRect();
+    //    void NormalizeRect();
 
     // set this rectangle to intersection of two others
     bool intersectRect(CRect *lpRect1, CRect *lpRect2);
@@ -292,31 +292,31 @@ public:
     bool unionRect(CRect *lpRect1, CRect *lpRect2);
 
     // set this rectangle to minimum of two others
-//    bool subtractRect(CRect *lpRectSrc1, CRect *lpRectSrc2);
+    //    bool subtractRect(CRect *lpRectSrc1, CRect *lpRectSrc2);
 
-// Additional Operations
+    // Additional Operations
     void operator=(const CRect& srcRect);
     bool operator==(const CRect& rect) const;
     bool operator!=(const CRect& rect) const;
     void operator+=(CPoint point);
     void operator+=(SIZE size);
-//    void operator+=(CRect *lpRect);
+    //    void operator+=(CRect *lpRect);
     void operator-=(CPoint point);
     void operator-=(SIZE size);
-//    void operator-=(CRect *lpRect);
-//    void operator&=(const CRect& rect);
-//    void operator|=(const CRect& rect);
+    //    void operator-=(CRect *lpRect);
+    //    void operator&=(const CRect& rect);
+    //    void operator|=(const CRect& rect);
 
-// Operators returning CRect values
+    // Operators returning CRect values
     CRect operator+(CPoint point) const;
     CRect operator-(CPoint point) const;
     CRect operator+(CRect *lpRect) const;
     CRect operator+(SIZE size) const;
     CRect operator-(SIZE size) const;
     CRect operator-(CRect *lpRect) const;
-//    CRect operator&(const CRect& rect2) const;
-//    CRect operator|(const CRect& rect2) const;
-//    CRect MulDiv(int nMultiplier, int nDivisor) const;
+    //    CRect operator&(const CRect& rect2) const;
+    //    CRect operator|(const CRect& rect2) const;
+    //    CRect MulDiv(int nMultiplier, int nDivisor) const;
 };
 
 inline bool isRectEmpty(CRect *lpRect)
@@ -330,11 +330,10 @@ inline cSize::cSize(SIZE initSize)
     { *(SIZE*)this = initSize; }
 inline cSize::cSize(CPoint initPt)
     { *(CPoint*)this = initPt; }
-inline cSize::cSize(uint32_t dwSize)
-    {
-        cx = (short)LOWORD(dwSize);
-        cy = (short)HIWORD(dwSize);
-    }
+inline cSize::cSize(uint32_t dwSize) {
+    cx = (short)LOWORD(dwSize);
+    cy = (short)HIWORD(dwSize);
+}
 inline bool cSize::operator==(SIZE size) const
     { return (cx == size.cx && cy == size.cy); }
 inline bool cSize::operator!=(SIZE size) const
@@ -367,11 +366,10 @@ inline CPoint::CPoint(CPoint initPt)
     { x = initPt.x; y = initPt.y; }
 inline CPoint::CPoint(SIZE initSize)
     { *(SIZE*)this = initSize; }
-inline CPoint::CPoint(uint32_t dwPoint)
-    {
-        x = (short)LOWORD(dwPoint);
-        y = (short)HIWORD(dwPoint);
-    }
+inline CPoint::CPoint(uint32_t dwPoint) {
+    x = (short)LOWORD(dwPoint);
+    y = (short)HIWORD(dwPoint);
+}
 inline void CPoint::offset(int xOffset, int yOffset)
     { x += xOffset; y += yOffset; }
 inline void CPoint::offset(CPoint point)
@@ -417,8 +415,7 @@ inline CRect::CRect(CRect *lpSrcRect)
 inline CRect::CRect(CPoint point, SIZE size)
     { right = (left = point.x) + size.cx; bottom = (top = point.y) + size.cy; }
 inline CRect::CRect(CPoint topLeft, CPoint bottomRight)
-    { left = topLeft.x; top = topLeft.y;
-        right = bottomRight.x; bottom = bottomRight.y; }
+    { left = topLeft.x; top = topLeft.y; right = bottomRight.x; bottom = bottomRight.y; }
 inline int CRect::width() const
     { return (int)(right - left); }
 inline int CRect::height() const
@@ -455,11 +452,10 @@ inline void CRect::setLTRB(CPoint topLeft, CPoint bottomRight)
     { setLTRB(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y); }
 inline void CRect::setRectEmpty()
     { left = right = top = bottom = 0; }
-inline void CRect::copyRect(CRect *lpSrcRect)
-    {
-        left = lpSrcRect->left; top = lpSrcRect->top;
-        right = lpSrcRect->right; bottom = lpSrcRect->bottom;
-    }
+inline void CRect::copyRect(CRect *lpSrcRect) {
+    left = lpSrcRect->left; top = lpSrcRect->top;
+    right = lpSrcRect->right; bottom = lpSrcRect->bottom;
+}
 inline bool CRect::equalRect(CRect *lpRect) const
     { return left == lpRect->left && top == lpRect->top && right == lpRect->right && bottom == lpRect->bottom; }
 inline void CRect::inflateRect(int x, int y)
@@ -476,47 +472,39 @@ inline void CRect::offsetRect(CPoint point)
     { offsetRect((int)point.x, (int)point.y); }
 inline void CRect::offsetRect(SIZE size)
     { offsetRect((int)size.cx, (int)size.cy); }
-inline bool CRect::intersectRect(CRect *lpRect1, CRect *lpRect2)
-    {
-        if (::isRectEmpty(lpRect1) || ::isRectEmpty(lpRect2) ||
-            (lpRect1->left >= lpRect2->right) || (lpRect2->left >= lpRect1->right) ||
-            (lpRect1->top >= lpRect2->bottom) || (lpRect2->top >= lpRect1->bottom))
-        {
+inline bool CRect::intersectRect(CRect *lpRect1, CRect *lpRect2) {
+    if (::isRectEmpty(lpRect1) || ::isRectEmpty(lpRect2) ||
+        (lpRect1->left >= lpRect2->right) || (lpRect2->left >= lpRect1->right) ||
+        (lpRect1->top >= lpRect2->bottom) || (lpRect2->top >= lpRect1->bottom)) {
+        setRectEmpty();
+        return false;
+    }
+    left = max(lpRect1->left, lpRect2->left);
+    right = min(lpRect1->right, lpRect2->right);
+    top = max(lpRect1->top, lpRect2->top);
+    bottom = min(lpRect1->bottom, lpRect2->bottom);
+    return true;
+}
+inline bool CRect::unionRect(CRect *lpRect1, CRect *lpRect2) {
+    if (::isRectEmpty(lpRect1)) {
+        if (::isRectEmpty(lpRect2)) {
             setRectEmpty();
             return false;
+        } else {
+            *this = *lpRect2;
         }
-        left   = max(lpRect1->left, lpRect2->left);
-        right  = min(lpRect1->right, lpRect2->right);
-        top    = max(lpRect1->top, lpRect2->top);
-        bottom = min(lpRect1->bottom, lpRect2->bottom);
-        return true;
+    } else {
+        if (::isRectEmpty(lpRect2)) {
+            *this = *lpRect1;
+        } else {
+            left = min(lpRect1->left, lpRect2->left);
+            right = max(lpRect1->right, lpRect2->right);
+            top = min(lpRect1->top, lpRect2->top);
+            bottom = max(lpRect1->bottom, lpRect2->bottom);
+        }
     }
-inline bool CRect::unionRect(CRect *lpRect1, CRect *lpRect2)
-    {
-        if (::isRectEmpty(lpRect1))
-        {
-            if (::isRectEmpty(lpRect2))
-            {
-                setRectEmpty();
-                return false;
-            }
-            else
-                *this = *lpRect2;
-        }
-        else
-        {
-            if (::isRectEmpty(lpRect2))
-                *this = *lpRect1;
-            else
-            {
-                left   = min(lpRect1->left, lpRect2->left);
-                right  = max(lpRect1->right, lpRect2->right);
-                top    = min(lpRect1->top, lpRect2->top);
-                bottom = max(lpRect1->bottom, lpRect2->bottom);
-            }
-        }
-        return true;
-    }
+    return true;
+}
 inline void CRect::operator=(const CRect& srcRect)
     { copyRect(&srcRect); }
 inline bool CRect::operator==(const CRect& rect) const

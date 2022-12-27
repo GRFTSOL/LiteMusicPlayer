@@ -1,13 +1,9 @@
-﻿// ID3v1.cpp: implementation of the CID3v1 class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "ID3v1.h"
+
 
 #define ID3_NR_OF_V1_GENRES 148
 
-const char *ID3_v1_genre_description[ID3_NR_OF_V1_GENRES] =
-{
+const char *ID3_v1_genre_description[ID3_NR_OF_V1_GENRES] = {
   "Blues",             //0
   "Classic Rock",      //1
   "Country",           //2
@@ -88,7 +84,7 @@ const char *ID3_v1_genre_description[ID3_NR_OF_V1_GENRES] =
   "Musical",           //77
   "Rock & Roll",       //78
   "Hard Rock",         //79
-// following are winamp extentions
+    // following are winamp extentions
   "Folk",                  //80
   "Folk-Rock",             //81
   "National Folk",         //82
@@ -161,55 +157,50 @@ const char *ID3_v1_genre_description[ID3_NR_OF_V1_GENRES] =
 
 //
 // 去掉字符串两端的空格
-void trimStrA(char *szString)
-{
-    int        nLen;
-    char *   szBeg;
+void trimStrA(char *szString) {
+    char * szBeg;
     szBeg = szString;
 
-    while (*szBeg == ' ')
+    while (*szBeg == ' ') {
         szBeg++;
+    }
 
-    nLen = strlen(szBeg);
-    if (nLen > 0)
-    {
-        while (szBeg[nLen - 1] == ' ')
+    auto nLen = strlen(szBeg);
+    if (nLen > 0) {
+        while (nLen > 0 && szBeg[nLen - 1] == ' ') {
             nLen--;
+        }
         szBeg[nLen] = '\0';
     }
 
-    if (szBeg != szString)
+    if (szBeg != szString) {
         memmove(szString, szBeg, sizeof(char) * (nLen + 1));
+    }
 }
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
-CID3v1::CID3v1()
-{
 
-}
-
-CID3v1::~CID3v1()
-{
+CID3v1::CID3v1() {
 
 }
 
-cstr_t *CID3v1::getSupportedExtArray()
-{
+CID3v1::~CID3v1() {
+
+}
+
+cstr_t *CID3v1::getSupportedExtArray() {
     static cstr_t arr[] = { ".mp3", ".mp2", nullptr };
     return arr;
 }
 
-int CID3v1::getTag(cstr_t szFile, ID3V1 *id3v1)
-{
-    FILE    *fp;
-    int        nRet;
+int CID3v1::getTag(cstr_t szFile, ID3V1 *id3v1) {
+    FILE *fp;
+    int nRet;
 
     fp = fopen(szFile, "rb");
-    if (!fp)
+    if (!fp) {
         return ERR_OPEN_FILE;
+    }
 
     nRet = getTag(fp, id3v1);
     fclose(fp);
@@ -217,21 +208,23 @@ int CID3v1::getTag(cstr_t szFile, ID3V1 *id3v1)
     return nRet;
 }
 
-int CID3v1::getTag(FILE *fp, ID3V1 *id3v1)
-{
+int CID3v1::getTag(FILE *fp, ID3V1 *id3v1) {
     memset(id3v1, 0, sizeof(ID3V1));
 
-    if (fseek(fp, -ID3_V1_LEN, SEEK_END) != 0)
+    if (fseek(fp, -ID3_V1_LEN, SEEK_END) != 0) {
         return ERR_SEEK_FILE;
+    }
 
-    char    szID3v1[ID3_V1_LEN];
-    if (fread(szID3v1, 1, ID3_V1_LEN, fp) != ID3_V1_LEN)
+    char szID3v1[ID3_V1_LEN];
+    if (fread(szID3v1, 1, ID3_V1_LEN, fp) != ID3_V1_LEN) {
         return ERR_READ_FILE;
+    }
 
-    if (memcmp(szID3v1, "TAG", ID3_V1_LEN_ID) != 0)
+    if (memcmp(szID3v1, "TAG", ID3_V1_LEN_ID) != 0) {
         return ERR_NOT_FOUND;
+    }
 
-    char    *szPtr;
+    char *szPtr;
 
     szPtr = szID3v1 + ID3_V1_LEN_ID;
     memcpy(id3v1->szTitle, szPtr, ID3_V1_LEN_TITLE);
@@ -262,14 +255,14 @@ int CID3v1::getTag(FILE *fp, ID3V1 *id3v1)
     return ERR_OK;
 }
 
-int CID3v1::saveTag(cstr_t szFile, ID3V1 *id3v1)
-{
-    FILE    *fp;
-    int        nRet;
+int CID3v1::saveTag(cstr_t szFile, ID3V1 *id3v1) {
+    FILE *fp;
+    int nRet;
 
     fp = fopen(szFile, "r+b");
-    if (!fp)
+    if (!fp) {
         return ERR_OPEN_FILE;
+    }
 
     nRet = saveTag(fp, id3v1);
     fclose(fp);
@@ -277,73 +270,72 @@ int CID3v1::saveTag(cstr_t szFile, ID3V1 *id3v1)
     return nRet;
 }
 
-static int min_fun(int a, int b)
-{
+static int min_fun(int a, int b) {
     return a <= b ? a : b;
 }
 
-int CID3v1::saveTag(FILE *fp, ID3V1 *id3v1)
-{
-    if (fseek(fp, 0, SEEK_END) != 0)
+int CID3v1::saveTag(FILE *fp, ID3V1 *id3v1) {
+    if (fseek(fp, 0, SEEK_END) != 0) {
         return ERR_SEEK_FILE;
-
-    if (ftell(fp) >= sizeof(ID3v1Data))
-    {
-        if (fseek(fp, -ID3_V1_LEN, SEEK_END) != 0)
-            return ERR_SEEK_FILE;
-
-        char    szID3v1[ID3_V1_LEN];
-        if (fread(szID3v1, 1, ID3_V1_LEN, fp) != ID3_V1_LEN)
-            return ERR_READ_FILE;
-
-        if (memcmp(szID3v1, "TAG", ID3_V1_LEN_ID) != 0)
-            fseek(fp, 0, SEEK_END);
-        else
-            fseek(fp, -ID3_V1_LEN, SEEK_END);
     }
 
-    ID3v1Data        data;
+    if (ftell(fp) >= sizeof(ID3v1Data)) {
+        if (fseek(fp, -ID3_V1_LEN, SEEK_END) != 0) {
+            return ERR_SEEK_FILE;
+        }
+
+        char szID3v1[ID3_V1_LEN];
+        if (fread(szID3v1, 1, ID3_V1_LEN, fp) != ID3_V1_LEN) {
+            return ERR_READ_FILE;
+        }
+
+        if (memcmp(szID3v1, "TAG", ID3_V1_LEN_ID) != 0) {
+            fseek(fp, 0, SEEK_END);
+        } else {
+            fseek(fp, -ID3_V1_LEN, SEEK_END);
+        }
+    }
+
+    ID3v1Data data;
 
     memset(&data, 0, sizeof(data));
     memcpy(data.szID3ID, "TAG", 3);
-    memcpy(data.szTitle, id3v1->szTitle, min_fun(strlen(id3v1->szTitle), CountOf(data.szTitle)));
-    memcpy(data.szArtist, id3v1->szArtist, min_fun(strlen(id3v1->szArtist), CountOf(data.szArtist)));
-    memcpy(data.szAlbum, id3v1->szAlbum, min_fun(strlen(id3v1->szAlbum), CountOf(data.szAlbum)));
-    memcpy(data.szYear, id3v1->szYear, min_fun(strlen(id3v1->szYear), CountOf(data.szYear)));
-    memcpy(data.szComment, id3v1->szComment, min_fun(strlen(id3v1->szComment), CountOf(data.szComment)));
+    memcpy(data.szTitle, id3v1->szTitle, min_fun((int)strlen(id3v1->szTitle), CountOf(data.szTitle)));
+    memcpy(data.szArtist, id3v1->szArtist, min_fun((int)strlen(id3v1->szArtist), CountOf(data.szArtist)));
+    memcpy(data.szAlbum, id3v1->szAlbum, min_fun((int)strlen(id3v1->szAlbum), CountOf(data.szAlbum)));
+    memcpy(data.szYear, id3v1->szYear, min_fun((int)strlen(id3v1->szYear), CountOf(data.szYear)));
+    memcpy(data.szComment, id3v1->szComment, min_fun((int)strlen(id3v1->szComment), CountOf(data.szComment)));
     data.byTrack = id3v1->byTrack;
     data.byGenre = id3v1->byGenre;
 
-    if (fwrite(&data, 1, sizeof(ID3v1Data), fp) != sizeof(ID3v1Data))
+    if (fwrite(&data, 1, sizeof(ID3v1Data), fp) != sizeof(ID3v1Data)) {
         return ERR_WRITE_FILE;
+    }
 
     return ERR_OK;
 }
 
-cstr_t* CID3v1::GetAllGenreDescription()
-{
+cstr_t* CID3v1::GetAllGenreDescription() {
     return ID3_v1_genre_description;
 }
 
-unsigned int CID3v1::GetGenreCount()
-{
+unsigned int CID3v1::GetGenreCount() {
     return CountOf(ID3_v1_genre_description);
 }
 
-cstr_t CID3v1::getGenreDescription(unsigned int nGenre)
-{
-    if (nGenre < CountOf(ID3_v1_genre_description))
+cstr_t CID3v1::getGenreDescription(unsigned int nGenre) {
+    if (nGenre < CountOf(ID3_v1_genre_description)) {
         return ID3_v1_genre_description[nGenre];
-    else
+    } else {
         return "";
+    }
 }
 
-int CID3v1::getGenreIndex(cstr_t szGenre)
-{
-    for (int i = 0; i < CountOf(ID3_v1_genre_description); i++)
-    {
-        if (strcmp(ID3_v1_genre_description[i], szGenre) == 0)
+int CID3v1::getGenreIndex(cstr_t szGenre) {
+    for (int i = 0; i < CountOf(ID3_v1_genre_description); i++) {
+        if (strcmp(ID3_v1_genre_description[i], szGenre) == 0) {
             return i;
+        }
     }
 
     return -1;

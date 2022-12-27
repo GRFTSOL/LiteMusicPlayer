@@ -14,7 +14,7 @@ public:
         m_bInitailed = false;
     }
 
-    void onInitialUpdate()
+    void onInitialUpdate() override
     {
         CPagePfBase::onInitialUpdate();
 
@@ -46,14 +46,14 @@ public:
         m_bInitailed = true;
     }
 
-    void onDestroy()
+    void onDestroy() override
     {
         saveProxyServerUserPwd();
 
         CPagePfBase::onDestroy();
     }
 
-    bool onCustomCommand(int nId)
+    bool onCustomCommand(int nId) override
     {
         if (nId == getIDByName("CID_LOAD_IE_PROXY"))
         {
@@ -136,7 +136,7 @@ public:
         m_bInitailed = false;
     }
 
-    void onInitialUpdate()
+    void onInitialUpdate() override
     {
         CPagePfBase::onInitialUpdate();
 
@@ -147,12 +147,12 @@ public:
         initCheckButtons();
     }
 
-    bool onCustomCommand(int nId)
+    bool onCustomCommand(int nId) override
     {
         return CPagePfBase::onCustomCommand(nId);
     }
 
-    void onDestroy()
+    void onDestroy() override
     {
         CPagePfBase::onDestroy();
     }

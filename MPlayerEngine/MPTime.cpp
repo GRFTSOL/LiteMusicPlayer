@@ -1,13 +1,8 @@
-// MPTime.cpp: implementation of the CMPTime class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include <time.h>
 #include "MPTime.h"
 
 
-static int _monthDays[] = // gs_nMonthFirstDayFromYearStart
-{
+static int _monthDays[] = { // gs_nMonthFirstDayFromYearStart
    -1,
    -1 + 31, 
    -1 + 31 + 28, 
@@ -23,8 +18,7 @@ static int _monthDays[] = // gs_nMonthFirstDayFromYearStart
    -1 + 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31
 };
 
-static int _lpMonthDays[] =
-{
+static int _lpMonthDays[] = {
    -1,
    -1 + 31, 
    -1 + 31 + 29, 
@@ -40,9 +34,7 @@ static int _lpMonthDays[] =
    -1 + 31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31
 };
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
+
 /*
     CMPTime test
 
@@ -86,26 +78,22 @@ void test()
 }
 */
 
-CMPTime::CMPTime()
-{
+CMPTime::CMPTime() {
     m_time = -1;
 }
 
-CMPTime::~CMPTime()
-{
+CMPTime::~CMPTime() {
 
 }
 
-void CMPTime::set(int wYear, int wMonth, int wDay, int wHour, int wMinute, int wSecond)
-{
-    int        tmpdays;
+void CMPTime::set(int wYear, int wMonth, int wDay, int wHour, int wMinute, int wSecond) {
+    int tmpdays;
 
     /*
      * Do a quick range check on the year and convert it to a delta
      * off of 1900.
      */
-    if ( ((long)(wYear -= 1900) < _BASE_YEAR) || ((long)wYear > _MAX_YEAR) )
-    {
+    if ( ((long)(wYear -= 1900) < _BASE_YEAR) || ((long)wYear > _MAX_YEAR) ) {
         m_time = -1;
         return;
     }
@@ -116,12 +104,10 @@ void CMPTime::set(int wYear, int wMonth, int wDay, int wHour, int wMinute, int w
      * if this was in range (which it isn't).
      */
     tmpdays = wDay + _monthDays[wMonth - 1];
-    if ( !(wYear & 3) && (wMonth > 2) )
-            /*
-             * in a leap year, after Feb. add one day for elapsed
-             * Feb 29.
-             */
-            tmpdays++;
+    if ( !(wYear & 3) && (wMonth > 2) ) {
+        // in a leap year, after Feb. add one day for elapsed Feb 29.
+        tmpdays++;
+    }
 
     /*
      * Compute the number of elapsed seconds since the Epoch. Note the
@@ -132,45 +118,45 @@ void CMPTime::set(int wYear, int wMonth, int wDay, int wHour, int wMinute, int w
     m_time = (long)wYear - _BASE_YEAR;
 
     m_time = /* 365 days for each year */
-             ( ( ( ( m_time ) * 365L
+    ( ( ( ( m_time ) * 365L
 
-             /* one day for each elapsed leap year */
-             + ((long)(wYear - 1) >> 2) - (long)_LEAP_YEAR_ADJUST
+        /* one day for each elapsed leap year */
+        + ((long)(wYear - 1) >> 2) - (long)_LEAP_YEAR_ADJUST
 
-             /* number of elapsed days in yr */
-             + (long)tmpdays )
+        /* number of elapsed days in yr */
+        + (long)tmpdays )
 
-             /* convert to hours and add in hr */
-             * 24L + (long)wHour )
+        /* convert to hours and add in hr */
+        * 24L + (long)wHour )
 
-             /* convert to minutes and add in mn */
-             * 60L + (long)wMinute )
+        /* convert to minutes and add in mn */
+        * 60L + (long)wMinute )
 
-             /* convert to seconds and add in sec */
-             * 60L + (long)wSecond;
+    /* convert to seconds and add in sec */
+    * 60L + (long)wSecond;
 
     // m_time += _timezone;        //timezone adjustment
 
-    if (m_time < 0)
+    if (m_time < 0) {
         m_time = -1;
+    }
 }
 
-void CMPTime::getCurrentTime()
-{
-    time_t    t = time(&t);
-    tm    *tmCur = gmtime(&t);
+void CMPTime::getCurrentTime() {
+    time_t t = time(&t);
+    tm *tmCur = gmtime(&t);
     set(tmCur->tm_year + 1900, tmCur->tm_mon + 1, tmCur->tm_mday, tmCur->tm_hour, tmCur->tm_min, tmCur->tm_sec);
 }
 
-bool CMPTime::getMPTM(MPTM *ptm)
-{
-    long    caltim = m_time;            /* calendar time to convert */
-    int        islpyr = 0;                 /* is-current-year-a-leap-year flag */
-    int        tmptim;
-    int        *mdays;                /* pointer to days or lpdays */
+bool CMPTime::getMPTM(MPTM *ptm) {
+    long caltim = m_time; /* calendar time to convert */
+    int islpyr = 0; /* is-current-year-a-leap-year flag */
+    int tmptim;
+    int *mdays; /* pointer to days or lpdays */
 
-    if ( caltim < 0L )
+    if ( caltim < 0L ) {
         return false;
+    }
 
     /*
      * Determine years since 1970. First, identify the four-year interval
@@ -183,16 +169,16 @@ bool CMPTime::getMPTM(MPTM *ptm)
     /*
      * Determine which year of the interval
      */
-    tmptim = (tmptim * 4) + 70;         /* 1970, 1974, 1978,...,etc. */
+    tmptim = (tmptim * 4) + 70; /* 1970, 1974, 1978,...,etc. */
 
     if ( caltim >= _YEAR_SEC ) {
 
-        tmptim++;                       /* 1971, 1975, 1979,...,etc. */
+        tmptim++; /* 1971, 1975, 1979,...,etc. */
         caltim -= _YEAR_SEC;
 
         if ( caltim >= _YEAR_SEC ) {
 
-            tmptim++;                   /* 1972, 1976, 1980,...,etc. */
+            tmptim++; /* 1972, 1976, 1980,...,etc. */
             caltim -= _YEAR_SEC;
 
             /*
@@ -201,14 +187,13 @@ bool CMPTime::getMPTM(MPTM *ptm)
              */
             if ( caltim >= (_YEAR_SEC + _DAY_SEC) ) {
 
-                    tmptim++;           /* 1973, 1977, 1981,...,etc. */
-                    caltim -= (_YEAR_SEC + _DAY_SEC);
-            }
-            else {
-                    /*
+                tmptim++; /* 1973, 1977, 1981,...,etc. */
+                caltim -= (_YEAR_SEC + _DAY_SEC);
+            } else {
+                /*
                      * In a leap year after all, set the flag.
                      */
-                    islpyr++;
+                islpyr++;
             }
         }
     }
@@ -229,10 +214,11 @@ bool CMPTime::getMPTM(MPTM *ptm)
     /*
      * Determine months since January (0 - 11) and day of month (1 - 31)
      */
-    if ( islpyr )
+    if ( islpyr ) {
         mdays = _lpMonthDays;
-    else
+    } else {
         mdays = _monthDays;
+    }
 
 
     for ( tmptim = 1 ; mdays[tmptim] < ptm->tm_yday ; tmptim++ ) ;

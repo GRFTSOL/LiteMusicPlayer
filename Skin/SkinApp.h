@@ -6,6 +6,8 @@
 
 #ifdef _MAC_OS
 #include "mac/EventsDispatcher.h"
+
+
 #endif
 
 
@@ -15,8 +17,7 @@ bool initBaseFramework(int argc, const char *argv[], cstr_t logFile, cstr_t prof
 class CEventsDispatcher;
 class CSkinFactory;
 
-class CSkinApp : public IEventHandler
-{
+class CSkinApp : public IEventHandler {
 public:
     CSkinApp(void);
     virtual ~CSkinApp(void);
@@ -45,8 +46,8 @@ protected:
     virtual CSkinFactory *newSkinFactory();
 
 protected:
-    static CSkinApp                 *m_pInstance;
-    CEventsDispatcherBase           *m_pEventDispatcher;
-    CSkinFactory                    *m_pSkinFactory;
+    static CSkinApp             *m_pInstance;
+    CEventsDispatcherBase       *m_pEventDispatcher;
+    CSkinFactory                *m_pSkinFactory;
 
 };

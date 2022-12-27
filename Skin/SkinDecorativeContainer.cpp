@@ -1,7 +1,3 @@
-// SkinDecorativeContainer.cpp: implementation of the CSkinDecorativeContainer class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "SkinTypes.h"
 #include "Skin.h"
 #include "SkinDecorativeContainer.h"
@@ -10,47 +6,41 @@
 UIOBJECT_CLASS_NAME_IMP(CSkinDecorativeContainer, "DecorativeContainer")
 
 
-CSkinDecorativeContainer::CSkinDecorativeContainer()
-{
+CSkinDecorativeContainer::CSkinDecorativeContainer() {
 }
 
 
-CSkinDecorativeContainer::~CSkinDecorativeContainer()
-{
+CSkinDecorativeContainer::~CSkinDecorativeContainer() {
 }
 
 
-void CSkinDecorativeContainer::invalidateUIObject(CUIObject *pObj)
-{
+void CSkinDecorativeContainer::invalidateUIObject(CUIObject *pObj) {
     // Redraw this whole container.
 
-    if (m_pContainer)
+    if (m_pContainer) {
         m_pContainer->invalidateUIObject(this);
-    else
+    } else {
         m_pSkin->invalidateUIObject(this);
+    }
 }
 
 //
 // Redraw this whole container.
 //
-void CSkinDecorativeContainer::updateMemGraphicsToScreen(const CRect* lpRect, CUIObject *pObjCallUpdate)
-{
+void CSkinDecorativeContainer::updateMemGraphicsToScreen(const CRect* lpRect, CUIObject *pObjCallUpdate) {
     assert(lpRect);
 
-    CRawGraph        *pGraphMem = nullptr;
-    CRect            rcClipBoxOrg;
+    CRawGraph *pGraphMem = nullptr;
+    CRect rcClipBoxOrg;
 
     // Check for UIObject overlay, and redraw them?
-    for (VecUIObjects::iterator it = m_vUIObjs.begin(); it != m_vUIObjs.end(); ++it)
-    {
-        CUIObject        *pObj = *it;
-        CRect            rc;
+    for (VecUIObjects::iterator it = m_vUIObjs.begin(); it != m_vUIObjs.end(); ++it) {
+        CUIObject *pObj = *it;
+        CRect rc;
 
         if (pObj != pObjCallUpdate && pObj->isVisible()
-            && rc.intersect(pObj->m_rcObj, *lpRect))
-        {
-            if (!pGraphMem)
-            {
+            && rc.intersect(pObj->m_rcObj, *lpRect)) {
+            if (!pGraphMem) {
                 pGraphMem = m_pContainer->getMemGraph();
                 pGraphMem->getClipBoundBox(rcClipBoxOrg);
                 pGraphMem->setClipBoundBox(*lpRect);
@@ -63,13 +53,13 @@ void CSkinDecorativeContainer::updateMemGraphicsToScreen(const CRect* lpRect, CU
         }
     }
 
-    if (pGraphMem)
-    {
+    if (pGraphMem) {
         pGraphMem->resetClipBoundBox(rcClipBoxOrg);
     }
 
-    if (m_pContainer)
+    if (m_pContainer) {
         m_pContainer->updateMemGraphicsToScreen(lpRect, this);
-    else
+    } else {
         m_pSkin->updateMemGraphicsToScreen(lpRect);
+    }
 }

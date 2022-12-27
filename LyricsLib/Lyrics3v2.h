@@ -1,7 +1,6 @@
 #pragma once
 
-class CLyrics3v2  
-{
+class CLyrics3v2 {
 public:
     CLyrics3v2();
     virtual ~CLyrics3v2();

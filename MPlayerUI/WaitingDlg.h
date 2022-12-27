@@ -46,15 +46,15 @@ public:
 
     void startWork(cstr_t szCaption, cstr_t szInfo, CWorkObjBase *pWorkObj);
 
-    void onSwitchTo();
+    void onSwitchTo() override;
 
-    bool onOK();
+    bool onOK() override;
 
-    bool onCancel();
+    bool onCancel() override;
 
     virtual void onWorkEnd();
 
-    bool onUserMessage(int nMessageID, LPARAM param);
+    bool onUserMessage(int nMessageID, LPARAM param) override;
 
 protected:
     CWorkObjBase    *m_pWorkObj;

@@ -44,14 +44,14 @@ public:
     };
 
 public:
-    virtual Item *newItem(int col);
+    virtual Item *newItem(int col) override;
 
     virtual void addColumn(cstr_t szCol, int nWidth);
 
-    virtual bool setItemText(int nItem, int nSubItem, cstr_t lpszText, bool bRedraw = true);
-    virtual int insertItem(int nItem, cstr_t lpszItem, int nImageIndex = 0, uint32_t nItemData = 0, bool bRedraw = true);
+    virtual bool setItemText(int nItem, int nSubItem, cstr_t lpszText, bool bRedraw = true) override;
+    virtual int insertItem(int nItem, cstr_t lpszItem, int nImageIndex = 0, uint32_t nItemData = 0, bool bRedraw = true) override;
 
-    virtual void drawCell(int row, int col, CRect &rcCell, CRawGraph *canvas, CColor &clrText);
+    virtual void drawCell(int row, int col, CRect &rcCell, CRawGraph *canvas, CColor &clrText) override;
 
     bool setItemTextEx(int nItem, int nSubItem, cstr_t lpszText, const ItemStringEx::VecTextColor & vTextColor);
     int insertItem(int nItem, cstr_t lpszItem, const ItemStringEx::VecTextColor & vTextColor, int nImageIndex = 0, uint32_t nItemData = 0, bool bRedraw = false);

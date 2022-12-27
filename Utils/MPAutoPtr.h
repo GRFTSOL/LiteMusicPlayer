@@ -1,3 +1,5 @@
+#pragma once
+
 //
 //  MPAutoPtr.h
 //  Mp3Player
@@ -30,23 +32,25 @@ protected:\
     { _class *p = new _class(); p->addRef() }\
 
 template <class T>
-class CMPAutoPtr
-{
+class CMPAutoPtr {
 public:
     typedef T _PtrClass;
     CMPAutoPtr() { p = nullptr; }
     CMPAutoPtr(T* lp) {
-        if ((p = lp) != nullptr)
+        if ((p = lp) != nullptr) {
             p->addRef();
+        }
     }
     CMPAutoPtr(const CMPAutoPtr<T>& lp) {
-        if ((p = lp.p) != nullptr)
+        if ((p = lp.p) != nullptr) {
             p->addRef();
+        }
     }
 
     ~CMPAutoPtr() {
-        if (p)
+        if (p) {
             p->release();
+        }
     }
 
     void release() {
@@ -64,20 +68,24 @@ public:
     T** operator & () { assert(p == nullptr); return &p; }
     T* operator -> () const { assert(p != nullptr); return p; }
     T* operator = (T* lp) {
-        if (lp)
+        if (lp) {
             lp->addRef();
+        }
 
-        if (p)
+        if (p) {
             (p)->release();
+        }
         p = lp;
         return (T*)lp;
     }
 
     T* operator = (const CMPAutoPtr<T>& lp) {
-        if (lp.p)
+        if (lp.p) {
             lp.p->addRef();
-        if (p)
+        }
+        if (p) {
             (p)->release();
+        }
         p = lp.p;
         return (T*)lp.p;
     }
@@ -86,7 +94,7 @@ public:
     bool operator < (T* pT) const { return p < pT; }
     bool operator == (T* pT) const { return p == pT; }
 
-    T* p;
+    T                           *p;
 
 };
 

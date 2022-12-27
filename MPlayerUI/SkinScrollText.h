@@ -9,17 +9,17 @@ public:
     CSkinScrollText();
     virtual ~CSkinScrollText();
 
-    void draw(CRawGraph *canvas);
+    void draw(CRawGraph *canvas) override;
 
-//     bool setProperty(cstr_t szProperty, cstr_t szValue);
+//     bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 //     void enumProperties(CUIObjProperties &listProperties);
 
 //    void onCreate();
 
-    bool onLButtonUp(uint32_t nFlags, CPoint point);
-    bool onLButtonDown(uint32_t nFlags, CPoint point);
+    bool onLButtonUp(uint32_t nFlags, CPoint point) override;
+    bool onLButtonDown(uint32_t nFlags, CPoint point) override;
 
-    void onTimer(int nId);
+    void onTimer(int nId) override;
 
 protected:
     int            m_nTimerIDScroll;

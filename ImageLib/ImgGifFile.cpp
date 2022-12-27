@@ -851,8 +851,8 @@ void CImgGifFile::Putword(int w, IILIO *io)
 ////////////////////////////////////////////////////////////////////////////////
 void CImgGifFile::compressNONE( int init_bits, IILIO *io)
 {
-    register long c;
-    register long ent;
+    long c;
+    long ent;
 
     // g_init_bits - initial number of bits
     // g_ioOut   - pointer to output file
@@ -899,12 +899,12 @@ void CImgGifFile::compressNONE( int init_bits, IILIO *io)
 
 void CImgGifFile::compressLZW( int init_bits, IILIO *io)
 {
-    register long fcode;
-    register long c;
-    register long ent;
-    register long hshift;
-    register long disp;
-    register long i;
+    long fcode;
+    long c;
+    long ent;
+    long hshift;
+    long disp;
+    long i;
 
     // g_init_bits - initial number of bits
     // g_ioOut   - pointer to output file
@@ -964,10 +964,12 @@ nomatch:
 }
 ////////////////////////////////////////////////////////////////////////////////
 
-static const unsigned long code_mask[] = { 0x0000, 0x0001, 0x0003, 0x0007, 0x000F,
-                                  0x001F, 0x003F, 0x007F, 0x00FF,
-                                  0x01FF, 0x03FF, 0x07FF, 0x0FFF,
-                                  0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF };
+static const unsigned long code_mask[] = {
+    0x0000, 0x0001, 0x0003, 0x0007, 0x000F,
+    0x001F, 0x003F, 0x007F, 0x00FF,
+    0x01FF, 0x03FF, 0x07FF, 0x0FFF,
+    0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 void CImgGifFile::output( code_int  code)
@@ -1021,13 +1023,13 @@ void CImgGifFile::output( code_int  code)
 }
 ////////////////////////////////////////////////////////////////////////////////
 
-void CImgGifFile::cl_hash(register long hsize)
+void CImgGifFile::cl_hash(long hsize)
 
 {
-    register long *htab_p = htab+hsize;
+    long *htab_p = htab+hsize;
 
-    register long i;
-    register long m1 = -1L;
+    long i;
+    long m1 = -1L;
 
     i = hsize - 16;
 
@@ -1194,9 +1196,9 @@ short CImgGifFile::get_next_code(IILIO *io)
  */
 short CImgGifFile::decoder(IILIO *io, CImageIterator* iter, short linewidth, int &bad_code_count)
 {
-    register uint8_t *sp, *bufptr;
+    uint8_t *sp, *bufptr;
     uint8_t *buf;
-    register short code, fc, oc, bufcnt;
+    short code, fc, oc, bufcnt;
     short c, size, ret;
 
     /* Initialize for decoding a new image... */

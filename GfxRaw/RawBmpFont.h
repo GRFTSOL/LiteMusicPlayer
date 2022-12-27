@@ -1,6 +1,4 @@
-// RawBmpFont.h: interface for the CRawBmpFont class.
-//
-//////////////////////////////////////////////////////////////////////
+#pragma once
 
 #if !defined(_RAW_BMP_FONT_H_)
 #define _RAW_BMP_FONT_H_
@@ -15,33 +13,29 @@ class CRawImage;
 // Glyph pixel format
 //
 #ifdef _CLEAR_TYPE
-enum
-{
-    G_B            = PIX_B,
-    G_G            = PIX_G,
-    G_R            = PIX_R,
-    G_A            = PIX_A,
-    G_PIX_SIZE    = 4,
+enum {
+    G_B                         = PIX_B,
+    G_G                         = PIX_G,
+    G_R                         = PIX_R,
+    G_A                         = PIX_A,
+    G_PIX_SIZE                  = 4,
 };
 #else //  _CLEAR_TYPE
-enum
-{
-    G_R            = 0,
-    G_G            = 0,
-    G_B            = 0,
-    G_A            = 0,
-    G_PIX_SIZE    = 1,
+enum {
+    G_R                         = 0,
+    G_G                         = 0,
+    G_B                         = 0,
+    G_A                         = 0,
+    G_PIX_SIZE                  = 1,
 };
 #endif //  _CLEAR_TYPE
 
-enum
-{
-    MARGIN_FONT            = 1,
+enum {
+    MARGIN_FONT                 = 1,
 };
 
 
-struct Glyph
-{
+struct Glyph {
     Glyph();
     ~Glyph();
 
@@ -51,18 +45,18 @@ struct Glyph
     int widthBytes() const { return widthBitmap * G_PIX_SIZE; }
     int widthBytesOutlined() const { return (widthBitmap + marginOutlined) * G_PIX_SIZE; }
 
-    string        ch;
-    uint16_t        nWidth;                    // width of char
+    string                      ch;
+    uint16_t                    nWidth;             // width of char
 
-    uint8_t        leftOffset, topOffset;    // Left and top offset of bitmap.
-    uint16_t        widthBitmap;
-    uint8_t        heightBitmap;            // width of bitmap
-    uint8_t        marginOutlined;
-    bool        freed;
+    uint8_t                     leftOffset, topOffset; // Left and top offset of bitmap.
+    uint16_t                    widthBitmap;
+    uint8_t                     heightBitmap;       // width of bitmap
+    uint8_t                     marginOutlined;
+    bool                        freed;
 
-    uint8_t        *bitmap;
-    uint8_t        *bitmapOutlined;
-    uint32_t        nLastUsedTime;
+    uint8_t                     *bitmap;
+    uint8_t                     *bitmapOutlined;
+    int64_t                     nLastUsedTime;
 };
 
 
@@ -79,8 +73,7 @@ struct Glyph
 #endif
 
 
-class CRawGlyphSet : public CFontInfo
-{
+class CRawGlyphSet : public CFontInfo {
     OBJ_REFERENCE_DECL
 public:
     CRawGlyphSet();
@@ -103,26 +96,23 @@ protected:
 
     MAP_GLYPH                   m_mapGlyph;
 
-    uint32_t                    m_nLastCleanTime;
+    int64_t                     m_timeLastClean;
 
     CRawGlyphBuilder            m_rawGlyphBuilder;
 
 };
 
 
-class CRawBmpFont
-{
+class CRawBmpFont {
 public:
-    enum OverlayMode
-    {
+    enum OverlayMode {
         OM_COLOR,
         OM_PATTERN,
         OM_DUAL_PATTERN,
         OM_PATTERN_COLOR,
     };
 
-    enum ShadowMode
-    {
+    enum ShadowMode {
         SM_NONE,
         SM_OUTLINE,
         SM_SHADOW,
@@ -140,17 +130,18 @@ public:
     int getHeight() const;
 
 public:
-    bool textOut(CRawGraph *canvas, int x, int y, const CColor &clrText, cstr_t szText, int nLen, bool bDrawAlphaChannel);
-    bool drawText(CRawGraph *canvas, int x, int y, int width, int xLeftClipOffset, const CColor &clrText, cstr_t szText, int nLen, bool bDrawAlphaChannel);
-    bool drawTextEx(CRawGraph *canvas, const CRect &rcPos, const CColor &clrText, cstr_t szText, int nLen, uint32_t uFormat, bool bDrawAlphaChannel);
+    bool textOut(CRawGraph *canvas, int x, int y, const CColor &clrText, cstr_t szText, size_t nLen, bool bDrawAlphaChannel);
+    bool drawText(CRawGraph *canvas, int x, int y, int width, int xLeftClipOffset, const CColor &clrText, cstr_t szText, size_t nLen, bool bDrawAlphaChannel);
+    bool drawTextEx(CRawGraph *canvas, const CRect &rcPos, const CColor &clrText, cstr_t szText, size_t nLen, uint32_t uFormat, bool bDrawAlphaChannel);
 
-    bool outlinedTextOut(CRawGraph *canvas, int x, int y, const CColor &clrText, const CColor &clrBorder, cstr_t szText, int nLen, bool bDrawAlphaChannel);
-    bool outlinedDrawText(CRawGraph *canvas, int x, int y, int width, int xLeftClipOffset, const CColor &clrText, const CColor &clrBorder, cstr_t szText, int nLen, bool bDrawAlphaChannel);
-    bool outlinedDrawTextEx(CRawGraph *canvas, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, cstr_t szText, int nLen, uint32_t uFormat, bool bDrawAlphaChannel);
+    bool outlinedTextOut(CRawGraph *canvas, int x, int y, const CColor &clrText, const CColor &clrBorder, cstr_t szText, size_t nLen, bool bDrawAlphaChannel);
+    bool outlinedDrawText(CRawGraph *canvas, int x, int y, int width, int xLeftClipOffset, const CColor &clrText, const CColor &clrBorder, cstr_t szText, size_t nLen, bool bDrawAlphaChannel);
+    bool outlinedDrawTextEx(CRawGraph *canvas, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, cstr_t szText, size_t nLen, uint32_t uFormat, bool bDrawAlphaChannel);
 
-    bool getTextExtentPoint32(cstr_t szText, int nLen, CSize *pSize)
-        {    if (!m_prawGlyphSet) return false;
-            pSize->cx = getTextWidth(szText, nLen); pSize->cy = m_prawGlyphSet->getHeight(); return true; }
+    bool getTextExtentPoint32(cstr_t szText, size_t nLen, CSize *pSize) {
+        if (!m_prawGlyphSet) return false;
+        pSize->cx = getTextWidth(szText, nLen); pSize->cy = m_prawGlyphSet->getHeight(); return true;
+    }
 
     // void OutlineText
     void setClipBox(CRect &rc);
@@ -165,66 +156,58 @@ public:
 protected:
     int getGlyphHeight() { if (!m_prawGlyphSet) return 0; else return m_prawGlyphSet->getHeight() + MARGIN_FONT * 2; }
 
-    inline void getDrawTextExPosition(cstr_t szText, int nLen, const CRect &rcPos, uint32_t uFormat, int &x, int &y, int &width, int &xLeftClipOffset)
-    {
-        if (!m_prawGlyphSet)
+    inline void getDrawTextExPosition(cstr_t szText, size_t nLen, const CRect &rcPos, uint32_t uFormat, int &x, int &y, int &width, int &xLeftClipOffset) {
+        if (!m_prawGlyphSet) {
             return;
+        }
 
         xLeftClipOffset = 0;
 
-        if (isFlagSet(uFormat, DT_CENTER))
-        {
+        if (isFlagSet(uFormat, DT_CENTER)) {
             // Align at center
-            int        nWidthText = getTextWidth(szText, nLen);
+            int nWidthText = getTextWidth(szText, nLen);
 
             x = (rcPos.right + rcPos.left - nWidthText) / 2;
-        }
-        else if (isFlagSet(uFormat, DT_RIGHT))
-        {
+        } else if (isFlagSet(uFormat, DT_RIGHT)) {
             // Align at right
-            int        nWidthText = getTextWidth(szText, nLen);
+            int nWidthText = getTextWidth(szText, nLen);
 
             x = rcPos.right - nWidthText;
-        }
-        else
+        } else {
             x = rcPos.left;
+        }
 
-        if (isFlagSet(uFormat, DT_VCENTER))
-        {
+        if (isFlagSet(uFormat, DT_VCENTER)) {
             // Align at vertical center
             y = (rcPos.top + rcPos.bottom - m_prawGlyphSet->getHeight()) / 2;
-        }
-        else if (isFlagSet(uFormat, DT_BOTTOM))
-        {
+        } else if (isFlagSet(uFormat, DT_BOTTOM)) {
             // Align at bottom
             y = rcPos.bottom - m_prawGlyphSet->getHeight();
-        }
-        else
+        } else {
             y = rcPos.top;
+        }
 
-        if (!isFlagSet(uFormat, DT_NOCLIP))
-        {
-            if (x < rcPos.left)
+        if (!isFlagSet(uFormat, DT_NOCLIP)) {
+            if (x < rcPos.left) {
                 xLeftClipOffset = rcPos.left - x;
+            }
             // Y is not CLIPPED yet
             // if (y < rcPos.top)
             //    yTopClipOffset = rcPos.top - y;
             width = rcPos.right - x;
-        }
-        else
-        {
+        } else {
             width = getTextWidth(szText, nLen) + m_marginOutlined;
         }
     }
 
-    void splitToMultiLine(const CRect &rcPos, cstr_t szText, int nLen, uint32_t uFormat, VecStrings &vLines);
+    void splitToMultiLine(const CRect &rcPos, cstr_t szText, size_t nLen, uint32_t uFormat, VecStrings &vLines);
 
-    bool shouldDrawTextEllipsis(cstr_t szText, int nLen, int nWidthMax, string &strEllipsis);
+    bool shouldDrawTextEllipsis(cstr_t szText, size_t nLen, int nWidthMax, string &strEllipsis);
 
     // See DT_PREFIX_TEXT declaration
-    bool shouldDrawTextPrefix(cstr_t szText, int nLen, string &strPrfix, int &nXPrefix, int &nWidthPrefix);
+    bool shouldDrawTextPrefix(cstr_t szText, size_t nLen, string &strPrfix, int &nXPrefix, int &nWidthPrefix);
 
-    int getTextWidth(cstr_t szText, int nLen);
+    int getTextWidth(cstr_t szText, size_t nLen);
 
 protected:
     CRawGlyphSet                *m_prawGlyphSet;

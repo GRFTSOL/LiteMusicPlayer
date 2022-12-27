@@ -1,14 +1,11 @@
-// Menu.h: interface for the CMenu class.
-//
-//////////////////////////////////////////////////////////////////////
+#pragma once
 
-#if !defined(AFX_MENU_H__4207B3F1_5148_479E_9F72_167E76626985__INCLUDED_)
-#define AFX_MENU_H__4207B3F1_5148_479E_9F72_167E76626985__INCLUDED_
+#ifndef Window_mac_Menu_h
+#define Window_mac_Menu_h
 
 class Window;
 
-class CMenu  
-{
+class CMenu {
 public:
     CMenu();
     CMenu(const CMenu &src);
@@ -17,7 +14,7 @@ public:
     bool isValid() const;
 
     bool createPopupMenu();
-    
+
     virtual void onLoadMenu() { }
 
     void destroy();
@@ -35,10 +32,10 @@ public:
     virtual void appendItem(uint32_t nID, cstr_t szText, cstr_t szShortcutKey = "");
     virtual void insertItem(int nPos, uint32_t nID, cstr_t szText, cstr_t szShortcutKey = "");
     virtual void insertItemByID(uint32_t nPosID, uint32_t nID, cstr_t szText, cstr_t szShortcutKey = "");
-    
+
     void appendSeperator();
     void insertSeperator(int nPos);
-    
+
     CMenu appendSubmenu(cstr_t szText);
     CMenu insertSubmenu(int nPos, cstr_t szText);
 
@@ -56,7 +53,7 @@ public:
 
     // For Mac
     void *getHandle();
-    
+
 protected:
     struct MLMenuInfo    *m_info;
 
@@ -64,4 +61,4 @@ protected:
 
 bool toLocalMenu(CMenu *pMenu);
 
-#endif // !defined(AFX_MENU_H__4207B3F1_5148_479E_9F72_167E76626985__INCLUDED_)
+#endif // !defined(Window_mac_Menu_h)

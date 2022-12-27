@@ -1,24 +1,24 @@
+#pragma once
+
 /********************************************************************
     Created  :    2002/04/03    19:34
     FileName :    ResManager.h
     Author   :    xhy
-    
+
     Purpose  :    管理资源文件，如位图等的打开和关闭等
 *********************************************************************/
 
-#if !defined(AFX_RESMANAGER_H__BA9335C0_1A94_11D6_B478_00E04C008BA3__INCLUDED_)
-#define AFX_RESMANAGER_H__BA9335C0_1A94_11D6_B478_00E04C008BA3__INCLUDED_
+#ifndef Skin_SkinResMgr_h
+#define Skin_SkinResMgr_h
 
 class RawImageData;
 
 
-class CSkinResMgr  
-{
+class CSkinResMgr {
 public:
-    struct ResourceRef
-    {
-        RawImageData        *image;
-        int                 nCount;
+    struct ResourceRef {
+        RawImageData                *image;
+        int                         nCount;
     };
 
     CSkinResMgr();
@@ -54,14 +54,14 @@ protected:
 protected:
     map<string, ResourceRef>            m_mapBitmap;
 
-    VecStrings                          m_vResSearchDirs;
+    VecStrings                  m_vResSearchDirs;
 
-    bool                                m_bAdjustHue;
+    bool                        m_bAdjustHue;
 
-    float                               m_hue;
-    float                               m_saturation;
-    float                               m_luminance;
+    float                       m_hue;
+    float                       m_saturation;
+    float                       m_luminance;
 
 };
 
-#endif // !defined(AFX_RESMANAGER_H__BA9335C0_1A94_11D6_B478_00E04C008BA3__INCLUDED_)
+#endif // !defined(Skin_SkinResMgr_h)

@@ -1,7 +1,6 @@
 #pragma once
 
-class CFileSaveDlg
-{
+class CFileSaveDlg {
 public:
     CFileSaveDlg(cstr_t szTitle, cstr_t szFile, cstr_t extFilter, int nDefFileType);
     virtual ~CFileSaveDlg(void);
@@ -13,7 +12,7 @@ public:
     cstr_t getSelectedExt();
 
 public:
-    OPENFILENAME    m_openfile;
-    char            m_szFile[MAX_PATH];
+    OPENFILENAME                m_openfile;
+    char                        m_szFile[MAX_PATH];
 
 };

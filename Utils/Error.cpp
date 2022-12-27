@@ -1,7 +1,3 @@
-// Error.cpp: implementation of the CError class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "Utils.h"
 #include "Error.h"
 #include "IdString.h"
@@ -9,10 +5,9 @@
 
 static char g_szCustomErrorDesc[512];
 
-RegErr2Str                            *g_err2StrHeader = nullptr;
+RegErr2Str *g_err2StrHeader = nullptr;
 
-static IdToString __ErrID2Str[] = 
-{
+static IdToString __ErrID2Str[] = {
     { ERR_FALSE, "Failed." },
     { ERR_OK, "Succeed." },
     { ERR_INITDB_FAILED, "Failed to init Database." },
@@ -72,25 +67,21 @@ static IdToString __ErrID2Str[] =
     { 0, nullptr}
 };
 
-static RegErr2Str    __addErr2Str(__ErrID2Str);
+static RegErr2Str __addErr2Str(__ErrID2Str);
 
-void setCustomErrorDesc(cstr_t szErrorDesc)
-{
+void setCustomErrorDesc(cstr_t szErrorDesc) {
     strcpy_safe(g_szCustomErrorDesc, CountOf(g_szCustomErrorDesc), szErrorDesc);
 }
 
-RegErr2Str::RegErr2Str(struct IdToString err2Str[])
-{
+RegErr2Str::RegErr2Str(struct IdToString err2Str[]) {
     m_err2Str = err2Str;
     m_pNext = nullptr;
 
-    if (!g_err2StrHeader)
+    if (!g_err2StrHeader) {
         g_err2StrHeader = this;
-    else
-    {
-        RegErr2Str        *p = g_err2StrHeader;
-        while (p->m_pNext)
-        {
+    } else {
+        RegErr2Str *p = g_err2StrHeader;
+        while (p->m_pNext) {
             p = p->m_pNext;
         }
 
@@ -98,21 +89,16 @@ RegErr2Str::RegErr2Str(struct IdToString err2Str[])
     }
 }
 
-RegErr2Str::~RegErr2Str()
-{
+RegErr2Str::~RegErr2Str() {
     assert(g_err2StrHeader != nullptr);
 
-    if (g_err2StrHeader)
-    {
-        if (g_err2StrHeader == this)
+    if (g_err2StrHeader) {
+        if (g_err2StrHeader == this) {
             g_err2StrHeader = m_pNext;
-        else
-        {
+        } else {
             RegErr2Str *p = g_err2StrHeader;
-            while (p)
-            {
-                if (p->m_pNext == this)
-                {
+            while (p) {
+                if (p->m_pNext == this) {
                     p->m_pNext = m_pNext;
                     return;
                 }
@@ -123,28 +109,28 @@ RegErr2Str::~RegErr2Str()
     }
 }
 
-cstr_t Error2Str::c_str()
-{
-    if (m_nError == ERR_CUSTOM_ERROR)
+cstr_t Error2Str::c_str() {
+    if (m_nError == ERR_CUSTOM_ERROR) {
         return g_szCustomErrorDesc;
+    }
 
-    if (m_nError >= ERR_MAX)
+    if (m_nError >= ERR_MAX) {
         return m_osError.Description();
+    }
 
-    cstr_t                            szError;
-    RegErr2Str                        *it;
+    cstr_t szError;
+    RegErr2Str *it;
 
-    for (it = g_err2StrHeader; it != nullptr; it = it->m_pNext)
-    {
-        IdToString        *pid2str = it->m_err2Str;
+    for (it = g_err2StrHeader; it != nullptr; it = it->m_pNext) {
+        IdToString *pid2str = it->m_err2Str;
         szError = iDToString(pid2str, m_nError, nullptr);
-        if (szError)
+        if (szError) {
             return szError;
+        }
     }
 
 #ifndef _WIN32
-    if (m_nError >= ERR_C_ERRNO_BASE && m_nError - ERR_C_ERRNO_BASE <= 100)
-    {
+    if (m_nError >= ERR_C_ERRNO_BASE && m_nError - ERR_C_ERRNO_BASE <= 100) {
         // C error no, translate it.
         m_osError.doFormatMessage(m_nError - ERR_C_ERRNO_BASE);
         return m_osError.Description();

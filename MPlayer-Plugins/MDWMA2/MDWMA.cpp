@@ -270,12 +270,12 @@ uint32 CMDWMA::GetPos()
 		return m_nSeekPos;
 }
 
-MLRESULT CMDWMA::setVolume(int nVolume, int nBanlance)
+MLRESULT CMDWMA::setVolume(int volume, int nBanlance)
 {
 	if (!m_pOutput)
 		return ERR_PLAYER_INVALID_STATE;
 
-	return m_pOutput->setVolume(nVolume, nBanlance);
+	return m_pOutput->setVolume(volume, nBanlance);
 }
 
 void CMDWMA::DecodeThread(LPVOID lpParam)

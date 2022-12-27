@@ -5,6 +5,8 @@
 //  Created by henry_xiao on 2022/12/23.
 //
 
+#pragma once
+
 #ifndef JsResizableLinearContainer_hpp
 #define JsResizableLinearContainer_hpp
 

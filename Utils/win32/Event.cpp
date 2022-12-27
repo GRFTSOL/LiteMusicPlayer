@@ -1,33 +1,24 @@
-// Event.cpp: implementation of the Event class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "Event.h"
 
-Event::Event(bool bManualSet, bool bInitialStat)
-{
+
+Event::Event(bool bManualSet, bool bInitialStat) {
     m_hObject = CreateEvent(nullptr, bManualSet, bInitialStat, nullptr);
 }
 
-Event::~Event()
-{
+Event::~Event() {
     CloseHandle(m_hObject);
 }
 
-bool Event::set()
-{
+bool Event::set() {
     return setEvent(m_hObject) != 0;
 }
 
-bool Event::reset()
-{
+bool Event::reset() {
     return resetEvent(m_hObject) != 0;
 }
 
-bool Event::acquire(uint32_t nTimeOut)
-{
-    switch (WaitForSingleObject(m_hObject, nTimeOut))
-    {
+bool Event::acquire(uint32_t nTimeOut) {
+    switch (WaitForSingleObject(m_hObject, nTimeOut)) {
     case WAIT_ABANDONED:
     case WAIT_OBJECT_0:
         return true;
@@ -35,7 +26,6 @@ bool Event::acquire(uint32_t nTimeOut)
     case WAIT_FAILED:
         break;
     }
-    
+
     return false;
 }
-

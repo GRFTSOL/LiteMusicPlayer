@@ -1,12 +1,7 @@
-﻿// UUEncode.cpp: implementation of the UUEncode class.
-//
-//////////////////////////////////////////////////////////////////////
+﻿
 
 #include "UUEncode.h"
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
 /*
 一、编码规则
@@ -31,8 +26,7 @@
 
 /* The two currently defined translation tables.  The first is the
    standard uuencoding, the second is base64 encoding.  */
-static const char uu_std[64] =
-{
+static const char uu_std[64] = {
   '`', '!', '"', '#', '$', '%', '&', '\'',
   '(', ')', '*', '+', ',', '-', '.', '/',
   '0', '1', '2', '3', '4', '5', '6', '7',
@@ -43,8 +37,7 @@ static const char uu_std[64] =
   'X', 'Y', 'Z', '[', '\\', ']', '^', '_'
 };
 
-static const char uu_base64[64] =
-{
+static const char uu_base64[64] = {
   'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
   'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
   'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
@@ -55,8 +48,7 @@ static const char uu_base64[64] =
   '4', '5', '6', '7', '8', '9', '+', '/'
 };
 
-const char *getBase64Set()
-{
+const char *getBase64Set() {
     return uu_base64;
 }
 
@@ -64,83 +56,81 @@ const char *getBase64Set()
 const char *trans_ptr = uu_base64;
 
 /* ENC is the basic 1 character encoding function to make a char printing.  */
-#define ENC(Char) (trans_ptr[(Char) & 077])
+#define ENC(Char)           (trans_ptr[(Char) & 077])
 
-void encodeuu(const char *strIn, int nLen, string &str, bool bBase64, bool bIncNewLine)
-{
-    int        n;
-    const char    *p, *p2;
+void encodeuu(const char *strIn, int nLen, string &str, bool bBase64, bool bIncNewLine) {
+    int n;
+    const char *p, *p2;
 
-    if (bBase64)
+    if (bBase64) {
         trans_ptr = uu_base64;
-    else
+    } else {
         trans_ptr = uu_std;
+    }
 
     assert(nLen >= 0);
 
     str.clear();
 
-    for (p2 = strIn; nLen >= 0; nLen-= 45, p2 += 45)
-    {
-        if (nLen > 45)
+    for (p2 = strIn; nLen >= 0; nLen-= 45, p2 += 45) {
+        if (nLen > 45) {
             n = 45;
-        else
+        } else {
             n = nLen;
-        if (trans_ptr == uu_std)
+        }
+        if (trans_ptr == uu_std) {
             str += ENC (n);
-            // putchar (ENC (n));
+        }
+        // putchar (ENC (n));
 
-        for (p = p2; n > 2; n -= 3, p += 3)
-        {
+        for (p = p2; n > 2; n -= 3, p += 3) {
             str += ENC (*p >> 2);
             str += ENC (((*p << 4) & 060) | ((p[1] >> 4) & 017));
             str += ENC (((p[1] << 2) & 074) | ((p[2] >> 6) & 03));
             str += ENC (p[2] & 077);
-//            try_putchar (ENC (*p >> 2));
-//            try_putchar (ENC (((*p << 4) & 060) | ((p[1] >> 4) & 017)));
-//            try_putchar (ENC (((p[1] << 2) & 074) | ((p[2] >> 6) & 03)));
-//            try_putchar (ENC (p[2] & 077));
+            //            try_putchar (ENC (*p >> 2));
+            //            try_putchar (ENC (((*p << 4) & 060) | ((p[1] >> 4) & 017)));
+            //            try_putchar (ENC (((p[1] << 2) & 074) | ((p[2] >> 6) & 03)));
+            //            try_putchar (ENC (p[2] & 077));
         }
 
-        if (nLen >= 45 && bIncNewLine)
+        if (nLen >= 45 && bIncNewLine) {
             str += '\n';
+        }
     }
 
-    if (n > 0)  /* encode the last one or two chars */
-    {
+    if (n > 0)  /* encode the last one or two chars */ {
         char tail = trans_ptr == uu_std ? ENC ('\0') : '=';
         char p1;
-        
-        if (n == 1)
+
+        if (n == 1) {
             p1 = '\0';
-        else
+        } else {
             p1 = p[1];
+        }
 
         str += ENC (*p >> 2);
         str += ENC (((*p << 4) & 060) | ((p1 >> 4) & 017));
         str += n == 1 ? tail : ENC ((p1 << 2) & 074);
         str += tail;
-//            try_putchar (ENC (*p >> 2));
-//            try_putchar (ENC (((*p << 4) & 060) | ((p[1] >> 4) & 017)));
-//            try_putchar (n == 1 ? tail : ENC ((p[1] << 2) & 074));
-//            try_putchar (tail);
-//        str += '\n';
+        //            try_putchar (ENC (*p >> 2));
+        //            try_putchar (ENC (((*p << 4) & 060) | ((p[1] >> 4) & 017)));
+        //            try_putchar (n == 1 ? tail : ENC ((p[1] << 2) & 074));
+        //            try_putchar (tail);
+        //        str += '\n';
         // try_putchar ('\n');
     }
 
-    if (trans_ptr == uu_std)
-    {
+    if (trans_ptr == uu_std) {
         str += ENC ('\0');
-//        str += '\n';
-//        try_putchar (ENC ('\0'));
-//        try_putchar ('\n');
+        //        str += '\n';
+        //        try_putchar (ENC ('\0'));
+        //        try_putchar ('\n');
     }
 }
 
-bool decodebase64(cstr_t szIn, int nLen, string &strOut)
-{
-    static const char b64_tab[256] =
-    {
+bool decodebase64(cstr_t szIn, int nLen, string &strOut) {
+    static const char b64_tab[256] = {
         '\177', '\177', '\177', '\177', '\177', '\177', '\177', '\177', /*000-007*/
         '\177', '\177', '\177', '\177', '\177', '\177', '\177', '\177', /*010-017*/
         '\177', '\177', '\177', '\177', '\177', '\177', '\177', '\177', /*020-027*/
@@ -175,8 +165,9 @@ bool decodebase64(cstr_t szIn, int nLen, string &strOut)
         '\177', '\177', '\177', '\177', '\177', '\177', '\177', '\177', /*370-377*/
     };
 
-    if (nLen < 0)
+    if (nLen < 0) {
         nLen = strlen(szIn);
+    }
 
     strOut.clear();
 
@@ -189,54 +180,60 @@ bool decodebase64(cstr_t szIn, int nLen, string &strOut)
 #endif
     pEnd = p + nLen;
 
-    unsigned char        b1, b2, b3, b4;
+    unsigned char b1, b2, b3, b4;
 
-    while (p < pEnd)
-    {
-        while (p < pEnd && b64_tab[*p] == '\177')
+    while (p < pEnd) {
+        while (p < pEnd && b64_tab[*p] == '\177') {
             p++;
-        if (p > pEnd)
+        }
+        if (p > pEnd) {
             break;
+        }
         b1 = b64_tab[*p];
         p++;
 
-        while (p < pEnd && b64_tab[*p] == '\177')
+        while (p < pEnd && b64_tab[*p] == '\177') {
             p++;
-        if (p > pEnd)
+        }
+        if (p > pEnd) {
             break;
+        }
         b2 = b64_tab[*p];
         p++;
 
-        while (p < pEnd && b64_tab[*p] == '\177')
+        while (p < pEnd && b64_tab[*p] == '\177') {
             p++;
-        if (p > pEnd)
+        }
+        if (p > pEnd) {
             break;
+        }
         b3 = b64_tab[*p];
         p++;
 
-        while (p < pEnd && b64_tab[*p] == '\177')
+        while (p < pEnd && b64_tab[*p] == '\177') {
             p++;
-        if (p > pEnd)
+        }
+        if (p > pEnd) {
             break;
+        }
         b4 = b64_tab[*p];
         p++;
 
         strOut += b1 << 2 | b2 >> 4;
-        if (b3 != '\100')
-        {
+        if (b3 != '\100') {
             strOut += b2 << 4 | b3 >> 2;
-            if (b4 != '\100')
+            if (b4 != '\100') {
                 strOut += b3 << 6 | b4;
+            }
         }
     }
 
     return true;
 }
 
-#define    DEC(Char) (((Char) - ' ') & 077)
+#define    DEC(Char)        (((Char) - ' ') & 077)
 
-bool decodestduu(cstr_t szIn, int nLen, string &strOut)
-{
+bool decodestduu(cstr_t szIn, int nLen, string &strOut) {
     // while (1)
     strOut.clear();
 
@@ -244,43 +241,43 @@ bool decodestduu(cstr_t szIn, int nLen, string &strOut)
         int n;
         cstr_t p = szIn;
         cstr_t pEnd = szIn + nLen;
-        for (p = szIn; p < pEnd;)
-        {
+        for (p = szIn; p < pEnd;) {
             /* N is used to avoid writing out all the characters at the end of
             the file.  */
-            
-            if (*p == '\n')
-                p++;
-            n = DEC (*p);
-            if (n <= 0)
-                return true;
 
-            for (++p; n >= 3; p += 4, n -= 3)
-            {
+            if (*p == '\n') {
+                p++;
+            }
+            n = DEC (*p);
+            if (n <= 0) {
+                return true;
+            }
+
+            for (++p; n >= 3; p += 4, n -= 3) {
                 strOut += DEC(p[0]) << 2 | DEC (p[1]) >> 4;
                 strOut += DEC (p[1]) << 4 | DEC (p[2]) >> 2;
                 strOut += DEC (p[2]) << 6 | DEC (p[3]);
-    //            TRY_PUTCHAR (DEC (p[0]) << 2 | DEC (p[1]) >> 4);
-    //            TRY_PUTCHAR (DEC (p[1]) << 4 | DEC (p[2]) >> 2);
-    //            TRY_PUTCHAR (DEC (p[2]) << 6 | DEC (p[3]));
+                //            TRY_PUTCHAR (DEC (p[0]) << 2 | DEC (p[1]) >> 4);
+                //            TRY_PUTCHAR (DEC (p[1]) << 4 | DEC (p[2]) >> 2);
+                //            TRY_PUTCHAR (DEC (p[2]) << 6 | DEC (p[3]));
             }
-            if (n > 0)
-            {
+            if (n > 0) {
                 strOut += DEC (p[0]) << 2 | DEC (p[1]) >> 4;
                 // TRY_PUTCHAR (DEC (p[0]) << 2 | DEC (p[1]) >> 4);
-                if (n >= 2)
+                if (n >= 2) {
                     strOut += DEC (p[1]) << 4 | DEC (p[2]) >> 2;
-                    // TRY_PUTCHAR (DEC (p[1]) << 4 | DEC (p[2]) >> 2);
+                }
+                // TRY_PUTCHAR (DEC (p[1]) << 4 | DEC (p[2]) >> 2);
             }
         }
     }
-    
-//    if (fgets (buf, sizeof(buf), stdin) == nullptr
-//        || strcmp (buf, "end\n"))
-//    {
-//        error (0, 0, _("%s: No `end' line"), inname);
-//        return 1;
-//    }
-    
+
+    //    if (fgets (buf, sizeof(buf), stdin) == nullptr
+    //        || strcmp (buf, "end\n"))
+    //    {
+    //        error (0, 0, _("%s: No `end' line"), inname);
+    //        return 1;
+    //    }
+
     return true;
 }

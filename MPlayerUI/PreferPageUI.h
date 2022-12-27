@@ -8,7 +8,7 @@ class CPagePfUIRoot : public CPagePfBase
 public:
     CPagePfUIRoot();
 
-    void onInitialUpdate();
+    void onInitialUpdate() override;
 
 };
 

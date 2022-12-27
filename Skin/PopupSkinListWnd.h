@@ -1,11 +1,10 @@
-
 #pragma once
 
 #include "PopupSkinWnd.h"
 #include "SkinListCtrl.h"
 
-class CPopupSkinListWnd : public CPopupSkinWnd
-{
+
+class CPopupSkinListWnd : public CPopupSkinWnd {
 public:
     CPopupSkinListWnd();
     ~CPopupSkinListWnd();
@@ -18,8 +17,7 @@ public:
 
     virtual void onUIObjNotify(IUIObjNotify *pNotify);
 
-    class CDataSkinListCtrl : public CSkinListCtrl
-    {
+    class CDataSkinListCtrl : public CSkinListCtrl {
     public:
         virtual void invalidate() { }
 
@@ -53,11 +51,11 @@ public:
     string getItemText(int nItem, int nSubItem) const;
 
 protected:
-    CDataSkinListCtrl            m_listCtrlData;
-    int                            m_nLineHeight;
+    CDataSkinListCtrl           m_listCtrlData;
+    int                         m_nLineHeight;
 
-    CSkinListCtrl                *m_pListCtrl;
+    CSkinListCtrl               *m_pListCtrl;
 
-    int                            m_nCurSel;
+    int                         m_nCurSel;
 
 };

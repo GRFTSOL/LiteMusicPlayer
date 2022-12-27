@@ -15,12 +15,12 @@
 #define DECLAR_CPPUNIT_TEST_REG(UniName)        int CPPUnitTest##UniName();    \
     namespace NS_CPPUnitTest##UniName { const int __ntempCPPTest = CPPUnitTest##UniName(); }
 
-#define IMPLEMENT_CPPUNIT_TEST_REG(UniName)        int CPPUnitTest##UniName() { return 0; }
+#define IMPLEMENT_CPPUNIT_TEST_REG(UniName) int CPPUnitTest##UniName() { return 0; }
 
 #else    // _CPPUNIT_TEST
 
-#define DECLAR_CPPUNIT_TEST_REG(UniName)        
-#define IMPLEMENT_CPPUNIT_TEST_REG(UniName)        
+#define DECLAR_CPPUNIT_TEST_REG(UniName)
+#define IMPLEMENT_CPPUNIT_TEST_REG(UniName)
 
 #endif    // _CPPUNIT_TEST
 
@@ -36,7 +36,6 @@
 #include "CharEncoding.h"
 
 
-
 /** Fails with the specified message.
 * \ingroup Assertions
 * \param message Message reported in diagnostic.
@@ -50,9 +49,8 @@
 #ifdef _WIN32
 bool getModulePath(char szPath[], HINSTANCE hInstance);
 
-inline string getUnitTestFolder()
-{
-    char        szPath[MAX_PATH];
+inline string getUnitTestFolder() {
+    char szPath[MAX_PATH];
 
     getModulePath(szPath, nullptr);
 
@@ -62,8 +60,7 @@ inline string getUnitTestFolder()
 void createUnitResultWnd(HINSTANCE hInstance);
 #else
 
-inline string getUnitTestFolder()
-{
+inline string getUnitTestFolder() {
     // For linux like system, return sytem tmp directory
     return "/tmp/";
 }

@@ -1,19 +1,17 @@
-﻿// CharEncoding.cpp: implementation of the CCharEncoding class.
-//
-//////////////////////////////////////////////////////////////////////
+﻿
 
 #include "../stdafx.h"
 #include "../base.h"
 #include "../CharEncoding.h"
 #include <iconv.h>
 
-#define DBG_LOG1 printf
+
+#define DBG_LOG1            printf
 
 //
 // ED_XXX 的定义和 __encodingCodepage 的索引顺序是一直的。
 // 即__encodingCodepage[ED_XXX].encodingID = ED_XXX
-EncodingCodePage    __encodingCodepage[] = 
-{
+EncodingCodePage __encodingCodepage[] = {
     { ED_SYSDEF, "", "", "systemdefault", "ISO-8859-15" },
     { ED_UNICODE, "unicode", "", "Unicode", "unicode" },
     { ED_UNICODE_BIG_ENDIAN, "Unicode (Big-Endian)", "", "Unicode (Big-Endian)", "unicode" },
@@ -42,22 +40,16 @@ EncodingCodePage    __encodingCodepage[] =
 int getCharEncodingCount() { return __MaxEncodings; }
 
 
-EncodingCodePage &getSysDefaultCharEncoding()
-{
+EncodingCodePage &getSysDefaultCharEncoding() {
     return __encodingCodepage[ED_UTF8];
 }
 
-int mbcsToUtf8(const char *str, int nLen, char *strOut, int nOut, int encodingID)
-{
-    if (encodingID == ED_UTF8)
-    {
-        if (nLen == -1)
-        {
+int mbcsToUtf8(const char *str, int nLen, char *strOut, int nOut, int encodingID) {
+    if (encodingID == ED_UTF8) {
+        if (nLen == -1) {
             strcpy_safe(strOut, nOut, str);
             return strlen(strOut);
-        }
-        else
-        {
+        } else {
             strncpysz_safe(strOut, nOut, str, nLen);
             return nLen;
         }
@@ -65,28 +57,28 @@ int mbcsToUtf8(const char *str, int nLen, char *strOut, int nOut, int encodingID
 
     emptyStr(strOut);
 
-    if (encodingID > __MaxEncodings || encodingID < 0)
+    if (encodingID > __MaxEncodings || encodingID < 0) {
         encodingID = 0;
+    }
 
     assert(encodingID == __encodingCodepage[encodingID].encodingID);
 
     iconv_t code = iconv_open(SZ_UTF8, __encodingCodepage[encodingID].szIConvCode);
-    if (code == (iconv_t)-1)
+    if (code == (iconv_t)-1) {
         return 0;
+    }
 
     int outBytesLeft = nOut;
     int n = iconv(code, (char **)&str, (size_t*)&nLen, (char **)(&strOut), (size_t*)&outBytesLeft);
-    if (n == -1)
-    {
+    if (n == -1) {
         DBG_LOG1("FAILED to convert str to unicode: %s", str);
         n = 0;
-    }
-    else
-    {
+    } else {
         n = nOut - outBytesLeft;
         assert(n >= 0);
-        if (n < 0)
+        if (n < 0) {
             n = 0;
+        }
     }
 
     strOut[n] = '\0';
@@ -95,17 +87,12 @@ int mbcsToUtf8(const char *str, int nLen, char *strOut, int nOut, int encodingID
     return n;
 }
 
-int utf8ToMbcs(const char *str, int nLen, char *strOut, int nOut, int encodingID)
-{
-    if (encodingID == ED_UTF8)
-    {
-        if (nLen == -1)
-        {
+int utf8ToMbcs(const char *str, int nLen, char *strOut, int nOut, int encodingID) {
+    if (encodingID == ED_UTF8) {
+        if (nLen == -1) {
             strcpy_safe(strOut, nOut, str);
             return strlen(strOut);
-        }
-        else
-        {
+        } else {
             strncpysz_safe(strOut, nOut, str, nLen);
             return nLen;
         }
@@ -113,62 +100,28 @@ int utf8ToMbcs(const char *str, int nLen, char *strOut, int nOut, int encodingID
 
     emptyStr(strOut);
 
-    if (encodingID > __MaxEncodings || encodingID < 0)
+    if (encodingID > __MaxEncodings || encodingID < 0) {
         encodingID = 0;
+    }
 
     assert(encodingID == __encodingCodepage[encodingID].encodingID);
 
     iconv_t code = iconv_open(__encodingCodepage[encodingID].szIConvCode, SZ_UTF8);
-    if (code == (iconv_t)-1)
+    if (code == (iconv_t)-1) {
         return 0;
+    }
 
     int outBytesLeft = nOut;
     int n = iconv(code, (char **)&str, (size_t*)&nLen, (char **)(&strOut), (size_t*)&outBytesLeft);
-    if (n == -1)
-    {
+    if (n == -1) {
         DBG_LOG1("FAILED to convert str to unicode: %s", str);
         n = 0;
-    }
-    else
-    {
+    } else {
         n = nOut - outBytesLeft;
         assert(n >= 0);
-        if (n < 0)
+        if (n < 0) {
             n = 0;
-    }
-
-    strOut[n] = '\0';
-    iconv_close(code);
-
-    return n;    
-}
-
-int mbcsToUCS2(const char *str, int nLen, WCHAR *strOut, int nOut, int encodingID)
-{
-    emptyStr(strOut);
-
-    if (encodingID > __MaxEncodings || encodingID < 0)
-        encodingID = 0;
-
-    assert(encodingID == __encodingCodepage[encodingID].encodingID);
-
-    iconv_t    code = iconv_open(SZ_UNICODE, __encodingCodepage[encodingID].szIConvCode);
-    if (code == (iconv_t)-1)
-        return 0;
-
-    int outBytesLeft = nOut * sizeof(WCHAR);
-    int n = iconv(code, (char **)&str, (size_t*)&nLen, (char **)(&strOut), (size_t*)&nOut);
-    if (n == -1)
-    {
-        DBG_LOG1("FAILED to convert str to unicode: %s", str);
-        n = 0;
-    }
-    else
-    {
-        n = nOut - outBytesLeft / sizeof(WCHAR);
-        assert(n >= 0);
-        if (n < 0)
-            n = 0;
+        }
     }
 
     strOut[n] = '\0';
@@ -177,28 +130,62 @@ int mbcsToUCS2(const char *str, int nLen, WCHAR *strOut, int nOut, int encodingI
     return n;
 }
 
-int ucs2ToMbcs(const WCHAR *str, int nLen, char *strOut, int nOut, int encodingID)
-{
+int mbcsToUCS2(const char *str, int nLen, WCHAR *strOut, int nOut, int encodingID) {
     emptyStr(strOut);
-    if (encodingID > __MaxEncodings || encodingID < 0)
+
+    if (encodingID > __MaxEncodings || encodingID < 0) {
         encodingID = 0;
+    }
+
+    assert(encodingID == __encodingCodepage[encodingID].encodingID);
+
+    iconv_t code = iconv_open(SZ_UNICODE, __encodingCodepage[encodingID].szIConvCode);
+    if (code == (iconv_t)-1) {
+        return 0;
+    }
+
+    int outBytesLeft = nOut * sizeof(WCHAR);
+    int n = iconv(code, (char **)&str, (size_t*)&nLen, (char **)(&strOut), (size_t*)&nOut);
+    if (n == -1) {
+        DBG_LOG1("FAILED to convert str to unicode: %s", str);
+        n = 0;
+    } else {
+        n = nOut - outBytesLeft / sizeof(WCHAR);
+        assert(n >= 0);
+        if (n < 0) {
+            n = 0;
+        }
+    }
+
+    strOut[n] = '\0';
+    iconv_close(code);
+
+    return n;
+}
+
+int ucs2ToMbcs(const WCHAR *str, int nLen, char *strOut, int nOut, int encodingID) {
+    emptyStr(strOut);
+    if (encodingID > __MaxEncodings || encodingID < 0) {
+        encodingID = 0;
+    }
 
     assert(encodingID == __encodingCodepage[encodingID].encodingID);
 
     iconv_t code = iconv_open(__encodingCodepage[encodingID].szIConvCode, SZ_UNICODE);
-    if (code == (iconv_t)-1)
+    if (code == (iconv_t)-1) {
         return 0;
+    }
 
     int outBytesLeft = nOut;
     int n = iconv(code, (char **)&str, (size_t*)&nLen, (char **)(&strOut), (size_t*)&outBytesLeft);
-    if (n == -1)
+    if (n == -1) {
         n = 0;
-    else
+    } else {
         n = nOut - outBytesLeft;
+    }
 
     strOut[n] = '\0';
     iconv_close(code);
 
     return n;
 }
-

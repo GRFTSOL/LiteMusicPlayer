@@ -1,40 +1,29 @@
-// SkinSquare.cpp: implementation of the CSkinSquare class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "SkinTypes.h"
 #include "Skin.h"
 #include "SkinSquare.h"
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
 UIOBJECT_CLASS_NAME_IMP(CSkinSquare, "Square")
 
-CSkinSquare::CSkinSquare()
-{
+CSkinSquare::CSkinSquare() {
     m_clrBg.set(0);
 }
 
-CSkinSquare::~CSkinSquare()
-{
+CSkinSquare::~CSkinSquare() {
 
 }
 
-void CSkinSquare::draw(CRawGraph *canvas)
-{
+void CSkinSquare::draw(CRawGraph *canvas) {
     canvas->fillRect(&m_rcObj, m_clrBg);
 }
 
 
-bool CSkinSquare::setProperty(cstr_t szProperty, cstr_t szValue)
-{
-    if (CUIObject::setProperty(szProperty, szValue))
+bool CSkinSquare::setProperty(cstr_t szProperty, cstr_t szValue) {
+    if (CUIObject::setProperty(szProperty, szValue)) {
         return true;
+    }
 
-    if (isPropertyName(szProperty, "BgColor"))
-    {
+    if (isPropertyName(szProperty, "BgColor")) {
         getColorValue(m_clrBg, szValue);
     }
 
@@ -42,8 +31,7 @@ bool CSkinSquare::setProperty(cstr_t szProperty, cstr_t szValue)
 }
 
 #ifdef _SKIN_EDITOR_
-void CSkinSquare::enumProperties(CUIObjProperties &listProperties)
-{
+void CSkinSquare::enumProperties(CUIObjProperties &listProperties) {
     CUIObject::enumProperties(listProperties);
 
     listProperties.addPropColor("BgColor", m_clrBg, true);

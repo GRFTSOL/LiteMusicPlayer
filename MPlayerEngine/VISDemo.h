@@ -1,18 +1,13 @@
-// VISDemo.h: interface for the CVISDemo class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_VISDEMO_H__CF191EB8_1C87_483F_B95A_16E69074F4F5__INCLUDED_)
-#define AFX_VISDEMO_H__CF191EB8_1C87_483F_B95A_16E69074F4F5__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef MPlayerEngine_VISDemo_h
+#define MPlayerEngine_VISDemo_h
+
 
 #include "IMPlayer.h"
 
-class CVISDemo : public IVis  
-{
+
+class CVISDemo : public IVis {
 OBJ_REFERENCE_DECL
 
 public:
@@ -31,10 +26,10 @@ protected:
     bool createWnd();
 
 protected:
-    IMPlayer        *m_pPlayer;
+    IMPlayer                    *m_pPlayer;
 
-    HWND            m_hWnd;
+    HWND                        m_hWnd;
 
 };
 
-#endif // !defined(AFX_VISDEMO_H__CF191EB8_1C87_483F_B95A_16E69074F4F5__INCLUDED_)
+#endif // !defined(MPlayerEngine_VISDemo_h)

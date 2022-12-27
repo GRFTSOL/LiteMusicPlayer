@@ -3,23 +3,19 @@
 #include "Error.h"
 
 
-CFileEx::CFileEx()
-{
+CFileEx::CFileEx() {
     m_fp = nullptr;
 }
 
-CFileEx::~CFileEx()
-{
+CFileEx::~CFileEx() {
     close();
 }
 
-int CFileEx::open(cstr_t szFile, cstr_t szMode)
-{
+int CFileEx::open(cstr_t szFile, cstr_t szMode) {
     close();
 
     m_fp = fopen(szFile, szMode);
-    if (!m_fp)
-    {
+    if (!m_fp) {
         setCustomErrorDesc(stringPrintf("%s: %s", (cstr_t)OSError(), szFile).c_str());
         return ERR_CUSTOM_ERROR;
     }
@@ -27,47 +23,42 @@ int CFileEx::open(cstr_t szFile, cstr_t szMode)
     return ERR_OK;
 }
 
-void CFileEx::close()
-{
-    if (m_fp)
-    {
+void CFileEx::close() {
+    if (m_fp) {
         fclose(m_fp);
         m_fp = nullptr;
     }
 }
 
-int CFileEx::seek(int offset, int origin)
-{
-    if (fseek(m_fp, offset, origin) == 0)
+int CFileEx::seek(int offset, int origin) {
+    if (fseek(m_fp, offset, origin) == 0) {
         return ERR_OK;
+    }
     return ERR_SEEK_FILE;
 }
 
-long CFileEx::getPos()
-{
+long CFileEx::getPos() {
     return ftell(m_fp);
 }
 
-bool CFileEx::isEOF()
-{
+bool CFileEx::isEOF() {
     return feof(m_fp) != 0;
 }
 
-int CFileEx::readLine(string &line)
-{
+int CFileEx::readLine(string &line) {
     return readTill(line, '\n');
 }
 
-int CFileEx::readTill(string &buf, char chTill)
-{
+int CFileEx::readTill(string &buf, char chTill) {
     int c = fgetc(m_fp);
-    if (c == EOF)
+    if (c == EOF) {
         return ERR_EOF;
+    }
 
-    do
-    {
-        if (c == chTill)
+    do {
+        if (c == chTill) {
             break;
+        }
         buf.append(1, (char)c);
         c = fgetc(m_fp);
     }
@@ -76,133 +67,133 @@ int CFileEx::readTill(string &buf, char chTill)
     return ERR_OK;
 }
 
-int CFileEx::readCount(void * buf, size_t count)
-{
+int CFileEx::readCount(void * buf, size_t count) {
     size_t n = fread(buf, 1, count, m_fp);
-    if (n != count)
+    if (n != count) {
         return ERR_READ_FILE;
-    else
+    } else {
         return ERR_OK;
+    }
 }
 
-int CFileEx::writeCount(void * buf, size_t count)
-{
+int CFileEx::writeCount(void * buf, size_t count) {
     size_t n = fwrite(buf, 1, count, m_fp);
-    if (n != count)
+    if (n != count) {
         return ERR_WRITE_FILE;
-    else
+    } else {
         return ERR_OK;
+    }
 }
 
-int CFileEx::writeByte(uint8_t v)
-{
+int CFileEx::writeByte(uint8_t v) {
     size_t n = fwrite(&v, 1, 1, m_fp);
-    if (n != 1)
+    if (n != 1) {
         return ERR_WRITE_FILE;
-    else
+    } else {
         return ERR_OK;
+    }
 }
 
-int CFileEx::writeInt16BE(int16_t v)
-{
-    uint8_t    buf[2];
+int CFileEx::writeInt16BE(int16_t v) {
+    uint8_t buf[2];
     uint16ToBE(v, buf);
 
     size_t n = fwrite(&buf, 1, CountOf(buf), m_fp);
-    if (n != CountOf(buf))
+    if (n != CountOf(buf)) {
         return ERR_WRITE_FILE;
-    else
+    } else {
         return ERR_OK;
+    }
 }
 
-int CFileEx::writeUInt16BE(uint16_t  v)
-{
-    uint8_t    buf[2];
+int CFileEx::writeUInt16BE(uint16_t  v) {
+    uint8_t buf[2];
     uint16ToBE(v, buf);
 
     size_t n = fwrite(&buf, 1, CountOf(buf), m_fp);
-    if (n != CountOf(buf))
+    if (n != CountOf(buf)) {
         return ERR_WRITE_FILE;
-    else
+    } else {
         return ERR_OK;
+    }
 }
 
-int CFileEx::writeInt32BE(int32_t v)
-{
-    uint8_t    buf[4];
+int CFileEx::writeInt32BE(int32_t v) {
+    uint8_t buf[4];
     uint32ToBE(v, buf);
 
     size_t n = fwrite(&buf, 1, CountOf(buf), m_fp);
-    if (n != CountOf(buf))
+    if (n != CountOf(buf)) {
         return ERR_WRITE_FILE;
-    else
+    } else {
         return ERR_OK;
+    }
 }
 
-int CFileEx::writeUInt32BE(uint32_t v)
-{
-    uint8_t    buf[4];
+int CFileEx::writeUInt32BE(uint32_t v) {
+    uint8_t buf[4];
     uint32ToBE(v, buf);
 
     size_t n = fwrite(&buf, 1, CountOf(buf), m_fp);
-    if (n != CountOf(buf))
+    if (n != CountOf(buf)) {
         return ERR_WRITE_FILE;
-    else
+    } else {
         return ERR_OK;
+    }
 }
 
-int CFileEx::readByte(uint8_t &v)
-{
+int CFileEx::readByte(uint8_t &v) {
     size_t n = fread(&v, 1, 1, m_fp);
-    if (n != 1)
+    if (n != 1) {
         return ERR_READ_FILE;
-    else
+    } else {
         return ERR_OK;
+    }
 }
 
-int CFileEx::readInt16BE(int16_t &v)
-{
+int CFileEx::readInt16BE(int16_t &v) {
     uint8_t buf[2];
 
     size_t n = fread(&buf, 1, CountOf(buf), m_fp);
-    if (n != CountOf(buf))
+    if (n != CountOf(buf)) {
         return ERR_READ_FILE;
+    }
 
     v = (int)uint16FromBE(buf);
     return ERR_OK;
 }
 
-int CFileEx::readUInt16BE(uint16_t &v)
-{
+int CFileEx::readUInt16BE(uint16_t &v) {
     uint8_t buf[2];
 
     size_t n = fread(&buf, 1, CountOf(buf), m_fp);
-    if (n != CountOf(buf))
+    if (n != CountOf(buf)) {
         return ERR_READ_FILE;
+    }
 
     v = (int)uint16FromBE(buf);
     return ERR_OK;
 }
 
-int CFileEx::readInt32BE(int32_t &v)
-{
+int CFileEx::readInt32BE(int32_t &v) {
     uint8_t buf[4];
 
     size_t n = fread(&buf, 1, CountOf(buf), m_fp);
-    if (n != CountOf(buf))
+    if (n != CountOf(buf)) {
         return ERR_READ_FILE;
+    }
 
     v = (int)uint32FromBE(buf);
     return ERR_OK;
 }
 
-int CFileEx::readUInt32BE(uint32_t &v)
-{
+int CFileEx::readUInt32BE(uint32_t &v) {
     uint8_t buf[4];
 
     size_t n = fread(&buf, 1, CountOf(buf), m_fp);
-    if (n != CountOf(buf))
+    if (n != CountOf(buf)) {
         return ERR_READ_FILE;
+    }
 
     v = (int)uint32FromBE(buf);
     return ERR_OK;
@@ -215,16 +206,14 @@ int CFileEx::readUInt32BE(uint32_t &v)
 
 IMPLEMENT_CPPUNIT_TEST_REG(CFileEx)
 
-class CTestCaseCFileEx : public CppUnit::TestFixture
-{
+class CTestCaseCFileEx : public CppUnit::TestFixture {
     CPPUNIT_TEST_SUITE(CTestCaseCFileEx);
     CPPUNIT_TEST(testReadWrite);
     CPPUNIT_TEST_SUITE_END();
 
 protected:
-    void testReadWrite()
-    {
-        CFileEx    f;
+    void testReadWrite() {
+        CFileEx f;
         string file = dirStringJoin(getUnitTestFolder().c_str(), "test_FileEx.bin");
 
         // write

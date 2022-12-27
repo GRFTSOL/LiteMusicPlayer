@@ -3,36 +3,34 @@
 #include "PopupSkinListWnd.h"
 #include "SkinTextButton.h"
 
-class CSkinComboBoxEventNotify : public IUIObjNotify
-{
+
+class CSkinComboBoxEventNotify : public IUIObjNotify {
 public:
     CSkinComboBoxEventNotify(CUIObject *pObject) : IUIObjNotify(pObject) { cmd = C_SEL_CHANGED; }
-    enum Command
-    {
+    enum Command {
         C_SEL_CHANGED,
     };
 
-    Command                cmd;
+    Command                     cmd;
 
 };
 
-class CSkinComboBox : public CSkinTextButton, public IPopupSkinWndNotify
-{
+class CSkinComboBox : public CSkinTextButton, public IPopupSkinWndNotify {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinTextButton);
 public:
     CSkinComboBox();
     virtual ~CSkinComboBox();
 
-    void onCreate();
+    void onCreate() override;
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 
 protected:
-    virtual void buttonDownAction();
-    virtual void buttonUpAction();
+    virtual void buttonDownAction() override;
+    virtual void buttonUpAction() override;
 
 public:
-    virtual void popupSkinWndOnSelected();
+    virtual void popupSkinWndOnSelected() override;
     virtual void popupSkinWndOnDestroy();
 
     CPopupSkinListWnd &getListData() { return m_popupListWnd; }
@@ -57,6 +55,6 @@ public:
     bool getSelItemText(string &str);
 
 protected:
-    CPopupSkinListWnd        m_popupListWnd;
+    CPopupSkinListWnd           m_popupListWnd;
 
 };

@@ -16,7 +16,7 @@ public:
         m_strText = _TLM("about $Product$");
     }
 
-    void onCreate()
+    void onCreate() override
     {
         CSkinContainer::onCreate();
 
@@ -31,17 +31,17 @@ public:
         verUpdate.checkNewVersion(false);
     }
 
-    void onSwitchTo()
+    void onSwitchTo() override
     {
         CSkinContainer::onSwitchTo();
     }
 
-    bool onCustomCommand(int nId)
+    bool onCustomCommand(int nId) override
     {
         return false;
     }
 
-    void onEvent(const IEvent *pEvent)
+    void onEvent(const IEvent *pEvent) override
     {
         if (pEvent->eventType == ET_DOWNLOAD_END)
         {

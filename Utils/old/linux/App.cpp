@@ -2,7 +2,7 @@
     Created  :    2003年11月2日 23:24:29
     FileName :    BaseFrmWork.cpp
     Author   :    xhy
-    
+
     Purpose  :    应用程序的基本框架结构定义
 *********************************************************************/
 
@@ -10,49 +10,43 @@
 #include "../Utils.h"
 #include "../App.h"
 
+
 // 配置文件
 class CProfile    g_profile;
 
 // 日志
 class CLog        g_log;
 
-char            g_szWorkingFolder[MAX_PATH] = "";
-char            g_szAppDataDir[MAX_PATH] = "";
+char g_szWorkingFolder[MAX_PATH] = "";
+char g_szAppDataDir[MAX_PATH] = "";
 
-void setWorkingFolder(cstr_t szWorkingFolder)
-{
+void setWorkingFolder(cstr_t szWorkingFolder) {
     // assert(szWorkingFolder && !isEmptyString(szWorkingFolder));
     strcpy_safe(g_szWorkingFolder, MAX_PATH, szWorkingFolder);
     dirStringAddSep(g_szWorkingFolder);
 }
 
-void getAppResourceDir(char * szWorkingFolder)
-{
-    if (isEmptyString(g_szWorkingFolder))
-    {
+void getAppResourceDir(char * szWorkingFolder) {
+    if (isEmptyString(g_szWorkingFolder)) {
         getAppResourceDir();
     }
 
     _tcscpy(szWorkingFolder, g_szWorkingFolder);
 }
 
-cstr_t getAppResourceDir()
-{
+cstr_t getAppResourceDir() {
     return g_szWorkingFolder;
 }
 
-cstr_t getAppDataDir()
-{
-    if (isEmptyString(g_szAppDataDir))
-    {
+cstr_t getAppDataDir() {
+    if (isEmptyString(g_szAppDataDir)) {
         getAppResourceDir(g_szAppDataDir);
     }
-    
+
     return g_szAppDataDir;
 }
 
-void getAppDataDir(char *szAppDir)
-{
+void getAppDataDir(char *szAppDir) {
     strcpy_safe(szAppDir, MAX_PATH, getAppDataDir());
 }
 
@@ -60,8 +54,7 @@ void initSetDefaultCharEncoding();
 
 #ifdef _ANDROID
 
-bool initBaseFrameWork(cstr_t szWorkingFolder, cstr_t szLogTag, cstr_t szProfileName, cstr_t szDefAppName)
-{
+bool initBaseFrameWork(cstr_t szWorkingFolder, cstr_t szLogTag, cstr_t szProfileName, cstr_t szDefAppName) {
     assert(sizeof(uint8_t) == 1);
     assert(sizeof(uint16_t) == 2);
     assert(sizeof(uint32_t) == 4);
@@ -85,8 +78,7 @@ bool initBaseFrameWork(cstr_t szWorkingFolder, cstr_t szLogTag, cstr_t szProfile
 
 #else
 
-bool initBaseFrameWork(int argc, char *argv[], cstr_t szLogFile, cstr_t szProfileName, cstr_t szDefAppName)
-{
+bool initBaseFrameWork(int argc, char *argv[], cstr_t szLogFile, cstr_t szProfileName, cstr_t szDefAppName) {
     assert(sizeof(uint8_t) == 1);
     assert(sizeof(uint16_t) == 2);
     assert(sizeof(uint32_t) == 4);
@@ -102,10 +94,12 @@ bool initBaseFrameWork(int argc, char *argv[], cstr_t szLogFile, cstr_t szProfil
         _tcscpy(g_szWorkingFolder, argv[0]);
         nLen = strlen(g_szWorkingFolder);
         nLen --;
-        while (nLen >= 0 && g_szWorkingFolder[nLen] != PATH_SEP_CHAR)
+        while (nLen >= 0 && g_szWorkingFolder[nLen] != PATH_SEP_CHAR) {
             nLen --;
-        if (nLen < 0)
+        }
+        if (nLen < 0) {
             return false;
+        }
 
         g_szWorkingFolder[nLen + 1] = '\0';
     }

@@ -1,27 +1,29 @@
+#pragma once
+
 #ifndef __SENDFILETO_H__
 #define __SENDFILETO_H__
 
 #include <mapi.h>
 
-class CMailFileTo
-{
-public:
-    bool sendMail(HWND hWndParent, cstr_t szSendToName, cstr_t szSendToAddress, cstr_t strAttachmentFileName, cstr_t strSubject)
-    {
-        if (isEmptyString(strAttachmentFileName))
-            return false;
 
-//         if (!hWndParent || !::isWindow(hWndParent))
-//             return false;
+class CMailFileTo {
+public:
+    bool sendMail(HWND hWndParent, cstr_t szSendToName, cstr_t szSendToAddress, cstr_t strAttachmentFileName, cstr_t strSubject) {
+        if (isEmptyString(strAttachmentFileName)) {
+            return false;
+        }
+
+        //         if (!hWndParent || !::isWindow(hWndParent))
+        //             return false;
 
         HINSTANCE hMAPI = ::LoadLibrary("MAPI32.DLL");
-        if (!hMAPI)
+        if (!hMAPI) {
             return false;
+        }
 
         ULONG (PASCAL *sendMail)(ULONG, ULONG_PTR, MapiMessage*, FLAGS, ULONG);
         (FARPROC&)sendMail = GetProcAddress(hMAPI, "MAPISendMail");
-        if (!sendMail)
-        {
+        if (!sendMail) {
             FreeLibrary(hMAPI);
             return false;
         }
@@ -37,9 +39,9 @@ public:
         //strcpy_safe(szPath, CountOf(szPath), strAttachmentFileName);
         //strcpy_safe(szSubject, CountOf(szSubject), strSubject);
 
-        MapiRecipDesc    sendTo;
-        char            szSendToNameAnsi[MAX_PATH] = { 0 };
-        char            szSendToAddressAnsi[MAX_PATH] = { 0 };
+        MapiRecipDesc sendTo;
+        char szSendToNameAnsi[MAX_PATH] = { 0 };
+        char szSendToAddressAnsi[MAX_PATH] = { 0 };
         convertStr2(szSendToName, -1, szSendToNameAnsi, CountOf(szSendToNameAnsi));
         convertStr2(szSendToAddress, -1, szSendToAddressAnsi, CountOf(szSendToAddressAnsi));
 
@@ -67,8 +69,9 @@ public:
 
         FreeLibrary(hMAPI);
 
-        if (nError != SUCCESS_SUCCESS && nError != MAPI_USER_ABORT && nError != MAPI_E_LOGIN_FAILURE)
+        if (nError != SUCCESS_SUCCESS && nError != MAPI_USER_ABORT && nError != MAPI_E_LOGIN_FAILURE) {
             return false;
+        }
 
         return true;
     }

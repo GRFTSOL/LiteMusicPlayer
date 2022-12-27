@@ -1,15 +1,11 @@
-// SkinListCtrl.h: interface for the CSkinListView class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #pragma once
 
 #include "../Skin/SkinScrollFrameCtrlBase.h"
 
+
 class CSkinListView;
 
-class CColHeader
-{
+class CColHeader {
 public:
     CColHeader(cstr_t szTitle, int nWidth, int colType, bool bClickable = false) {
         this->strTitle = szTitle;
@@ -19,22 +15,20 @@ public:
     }
     virtual ~CColHeader() { }
 
-    enum
-    {
-        TYPE_TEXT = 1,
-        TYPE_IMAGE = 2,
-        TYPE_NEXT = 5,
+    enum {
+        TYPE_TEXT                   = 1,
+        TYPE_IMAGE                  = 2,
+        TYPE_NEXT                   = 5,
     };
 
-    string            strTitle;
-    int16_t            nWidth;
-    bool            bClickable;
-    int                colType;
+    string                      strTitle;
+    int16_t                     nWidth;
+    bool                        bClickable;
+    int                         colType;
 
 };
 
-class IListViewDataSource
-{
+class IListViewDataSource {
 public:
     IListViewDataSource() { m_pView = nullptr; }
     virtual ~IListViewDataSource() { }
@@ -53,38 +47,34 @@ public:
     virtual CRawImage *getCellImage(int row, int col) = 0;
 
 protected:
-    CSkinListView *m_pView;
+    CSkinListView               *m_pView;
 
 };
 
-class CSkinListCtrlEventNotify : public IUIObjNotify
-{
+class CSkinListCtrlEventNotify : public IUIObjNotify {
 public:
     CSkinListCtrlEventNotify(CUIObject *pObject, int nClickedRow, int nClickedCol) : IUIObjNotify(pObject)
         { cmd = C_CLICK; this->nClickOnRow = nClickedRow; this->nClickOnCol = nClickedCol; }
 
-    enum Command
-    {
-        C_CLICK,            // Left button click
-        C_CLICK_CMD,        // Left button click at a cell, and the cell will trigger special command
-        C_RBTN_CLICK,        // Right mouse button click
+    enum Command {
+        C_CLICK,                         // Left button click
+        C_CLICK_CMD, // Left button click at a cell, and the cell will trigger special command
+        C_RBTN_CLICK,                    // Right mouse button click
         C_DBL_CLICK,
         C_SEL_CHANGED,
-        C_ENTER,            // Enter key pressed
-        C_KEY_DELETE,        // delete key pressed
+        C_ENTER,                         // Enter key pressed
+        C_KEY_DELETE,                    // delete key pressed
     };
 
-    Command                cmd;
-    int                    nClickOnRow, nClickOnCol;
+    Command                     cmd;
+    int                         nClickOnRow, nClickOnCol;
 
 };
 
-class CSkinListView : public CSkinScrollFrameCtrlBase
-{
+class CSkinListView : public CSkinScrollFrameCtrlBase {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinScrollFrameCtrlBase)
 public:
-    enum ColorName
-    {
+    enum ColorName {
         CN_BG,
         CN_ALTER_BG,
         CN_TEXT,
@@ -92,11 +82,10 @@ public:
         CN_SEL_TEXT,
         CN_CUSTOMIZED_START,
 
-        CN_MAX = 255
+        CN_MAX                      = 255
     };
 
-    enum HitTestArea
-    {
+    enum HitTestArea {
         HTA_NONE,
         HTA_HEADER,
         HTA_HEADER_SPLIT,
@@ -108,13 +97,13 @@ public:
     virtual ~CSkinListView();
 
     void setDataSource(IListViewDataSource *pDataSource);
-    
+
     void notifyDataChanged();
 
     void loadColumnWidth(cstr_t szProperty);
     void saveColumnWidth(cstr_t szProperty);
 
-    virtual bool setProperty(cstr_t szProperty, cstr_t szValue);
+    virtual bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 #ifdef _SKIN_EDITOR_
     void enumProperties(CUIObjProperties &listProperties);
 #endif // _SKIN_EDITOR_
@@ -129,7 +118,7 @@ public:
 
     virtual void addColumn(cstr_t szCol, int nWidth, int colType = CColHeader::TYPE_TEXT, bool bClickable = false);
 
-    size_t getColumnCount() const { return m_vHeading.size(); }
+    uint32_t getColumnCount() const { return (uint32_t)m_vHeading.size(); }
     int getColumnWidth(int nCol) const;
     bool setColumnWidth(int nCol, int cx);
 
@@ -150,28 +139,27 @@ public:
     int getRowCount() const;
 
 protected:
-    class CPaintUpdater
-    {
+    class CPaintUpdater {
     public:
-        CPaintUpdater(CSkinListView *pHost) : m_pHost(pHost)
-        {
+        CPaintUpdater(CSkinListView *pHost) : m_pHost(pHost) {
             // m_nEndSelRow = pHost->m_nEndSelRow;
             m_nFirstVisibleRow = pHost->m_nFirstVisibleRow;
             m_bUpdate = false;
         }
 
-        ~CPaintUpdater()
-        {
-            if (m_pHost->m_pVertScrollBar)
-            {
-                if (m_pHost->m_nFirstVisibleRow != m_pHost->m_pVertScrollBar->getScrollPos())
+        ~CPaintUpdater() {
+            if (m_pHost->m_pVertScrollBar) {
+                if (m_pHost->m_nFirstVisibleRow != m_pHost->m_pVertScrollBar->getScrollPos()) {
                     m_pHost->m_pVertScrollBar->setScrollPos(m_pHost->m_nFirstVisibleRow);
+                }
             }
 
-            if (m_bUpdate)
+            if (m_bUpdate) {
                 goto RET_UPDATE;
-            if (m_nFirstVisibleRow != m_pHost->m_nFirstVisibleRow)
+            }
+            if (m_nFirstVisibleRow != m_pHost->m_nFirstVisibleRow) {
                 goto RET_UPDATE;
+            }
 
             return;
         RET_UPDATE:
@@ -181,40 +169,39 @@ protected:
         void setUpdateFlag(bool bUpdate) { m_bUpdate = bUpdate; }
 
     protected:
-        CSkinListView    *m_pHost;
-        bool            m_bUpdate;
-        int                m_nFirstVisibleRow;
+        CSkinListView               *m_pHost;
+        bool                        m_bUpdate;
+        int                         m_nFirstVisibleRow;
 
     };
     friend class CPaintUpdater;
 
-    class CSelChangedCheck
-    {
+    class CSelChangedCheck {
     public:
-        CSelChangedCheck(CSkinListView *pListCtrl) : m_pListCtrl(pListCtrl)
-        {
-            int        n = -1;
-            while ((n = m_pListCtrl->getNextSelectedItem(n)) != -1)
+        CSelChangedCheck(CSkinListView *pListCtrl) : m_pListCtrl(pListCtrl) {
+            int n = -1;
+            while ((n = m_pListCtrl->getNextSelectedItem(n)) != -1) {
                 m_vSelected.push_back(n);
+            }
         }
 
-        bool isSelectChanged()
-        {
-            int        i = 0, n = -1;
-            while ((n = m_pListCtrl->getNextSelectedItem(n)) != -1)
-            {
-                if (m_vSelected.size() == i || m_vSelected[i] != n)
+        bool isSelectChanged() {
+            int i = 0, n = -1;
+            while ((n = m_pListCtrl->getNextSelectedItem(n)) != -1) {
+                if (m_vSelected.size() == i || m_vSelected[i] != n) {
                     return true;
+                }
                 i++;
             }
-            if (i != m_vSelected.size())
+            if (i != m_vSelected.size()) {
                 return true;
+            }
             return false;
         }
 
     public:
-        CSkinListView    *m_pListCtrl;
-        vector<int>        m_vSelected;
+        CSkinListView               *m_pListCtrl;
+        vector<int>                 m_vSelected;
 
     };
     friend class CSelChangedCheck;
@@ -252,25 +239,25 @@ protected:
     virtual void drawCellImage(CRawImage &image, CRect &rcCell, CRawGraph *canvas);
 
 public:
-    void draw(CRawGraph *canvas);
+    void draw(CRawGraph *canvas) override;
 
-    void onKeyDown(uint32_t nChar, uint32_t nFlags);
+    void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
 
-    bool onLButtonUp(uint32_t nFlags, CPoint point);
-    bool onLButtonDown(uint32_t nFlags, CPoint point);
-    bool onLButtonDblClk(uint32_t nFlags, CPoint point);
-    bool onRButtonDown(uint32_t nFlags, CPoint point);
-    bool onRButtonUp(uint32_t nFlags, CPoint point);
-    bool onMouseDrag(CPoint point);
-    bool onMouseMove(CPoint point);
+    bool onLButtonUp(uint32_t nFlags, CPoint point) override;
+    bool onLButtonDown(uint32_t nFlags, CPoint point) override;
+    bool onLButtonDblClk(uint32_t nFlags, CPoint point) override;
+    bool onRButtonDown(uint32_t nFlags, CPoint point) override;
+    bool onRButtonUp(uint32_t nFlags, CPoint point) override;
+    bool onMouseDrag(CPoint point) override;
+    bool onMouseMove(CPoint point) override;
 
-    void onCreate();
-    void onSize();
+    void onCreate() override;
+    void onSize() override;
 
-    virtual void onAdjustHue(float hue, float saturation, float luminance);
+    virtual void onAdjustHue(float hue, float saturation, float luminance) override;
 
-    virtual void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar);
-    virtual void onHScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar);
+    virtual void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override;
+    virtual void onHScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override;
 
 protected:
     typedef vector<CColHeader *>    V_COLUMNS;
@@ -279,45 +266,45 @@ protected:
     friend class CPopupSkinListWnd;
     friend class CListViewDataSource;
 
-    bool                    m_bHoverMouseSel;
+    bool                        m_bHoverMouseSel;
 
-    IListViewDataSource        *m_dataSource;
-    V_COLUMNS                m_vHeading;
+    IListViewDataSource         *m_dataSource;
+    V_COLUMNS                   m_vHeading;
 
-    bool                    m_bDrawBorder;
-    bool                    m_bDrawHeader;
-    bool                    m_bAscending;
-    bool                    m_bEnableSort;
-    int                        m_nHeaderHeight;
-    CRawPen                    m_penLine;
-    CSFImage                m_imageSortedHeader;
-    CSFImage                m_imageHeader;
-    CSFImage                m_imageAscending;
-    CSFImage                m_imageDescending;
-    int                        m_nSortedCol;
+    bool                        m_bDrawBorder;
+    bool                        m_bDrawHeader;
+    bool                        m_bAscending;
+    bool                        m_bEnableSort;
+    int                         m_nHeaderHeight;
+    CRawPen                     m_penLine;
+    CSFImage                    m_imageSortedHeader;
+    CSFImage                    m_imageHeader;
+    CSFImage                    m_imageAscending;
+    CSFImage                    m_imageDescending;
+    int                         m_nSortedCol;
 
-    CSFImage                m_imageBorder;
-    int                        m_nBorderWidth;
+    CSFImage                    m_imageBorder;
+    int                         m_nBorderWidth;
 
-    CSFImgList                m_imageList;
-    int                        m_imageListIconCx;
-    int                        m_imageListRightSpace;
-    string                    m_strImageList;
+    CSFImgList                  m_imageList;
+    int                         m_imageListIconCx;
+    int                         m_imageListRightSpace;
+    string                      m_strImageList;
 
-    vector<CColor>            m_vColors;
-    CSkinFontProperty        m_font;
-    int                        m_nBegSelRow, m_nEndSelRow;
-    bool                    m_bClickBtDown;
+    vector<CColor>              m_vColors;
+    CSkinFontProperty           m_font;
+    int                         m_nBegSelRow, m_nEndSelRow;
+    bool                        m_bClickBtDown;
 
-    int                        m_nLineHeight, m_nLineHeightOrg;
-    int                        m_nXMargin;
-    int                        m_nFirstVisibleRow;
+    int                         m_nLineHeight, m_nLineHeightOrg;
+    int                         m_nXMargin;
+    int                         m_nFirstVisibleRow;
 
     // Drag to adjust the width of columns
-    bool                    m_bAdjustColWidth;
-    int                        m_nResizingCol;
-    CPoint                    m_ptStartDrag;                    // 鼠标上一次的位置
-    Cursor                    m_curResizeCol;
-    Cursor                    m_curHand;
+    bool                        m_bAdjustColWidth;
+    int                         m_nResizingCol;
+    CPoint                      m_ptStartDrag;      // 鼠标上一次的位置
+    Cursor                      m_curResizeCol;
+    Cursor                      m_curHand;
 
 };

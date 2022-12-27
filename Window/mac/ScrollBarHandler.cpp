@@ -1,59 +1,45 @@
-// ScrollBarHandler.cpp: implementation of the CScrollBarHandler class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "../WindowTypes.h"
 #include "ScrollBarHandler.h"
 
 
-CScrollBarHandler::CScrollBarHandler()
-{
+CScrollBarHandler::CScrollBarHandler() {
     m_bDisabled = false;
-    m_nOneline  = 1;
+    m_nOneline = 1;
 }
 
-CScrollBarHandler::~CScrollBarHandler()
-{
+CScrollBarHandler::~CScrollBarHandler() {
 
 }
 
-void CScrollBarHandler::init(Window *pWnd, int nBar)
-{
+void CScrollBarHandler::init(Window *pWnd, int nBar) {
     assert(pWnd);
 
     m_nScrollBar = nBar;
 }
 
-void CScrollBarHandler::setScrollInfo(int nMin, int nMax, int nPage, int nPos, int nLine, bool bRedraw)
-{
+void CScrollBarHandler::setScrollInfo(int nMin, int nMax, int nPage, int nPos, int nLine, bool bRedraw) {
 
 }
 
-int CScrollBarHandler::setScrollPos(int nPos, bool bRedraw)
-{
+int CScrollBarHandler::setScrollPos(int nPos, bool bRedraw) {
     return nPos;
 }
 
-int CScrollBarHandler::getID() const
-{
+int CScrollBarHandler::getID() const {
     return 0;
 }
 
-int CScrollBarHandler::getScrollPos() const
-{
+int CScrollBarHandler::getScrollPos() const {
     return 0;
 }
 
-int CScrollBarHandler::getMax() const
-{
+int CScrollBarHandler::getMax() const {
     return 0;
 }
 
-void CScrollBarHandler::disableScrollBar()
-{
+void CScrollBarHandler::disableScrollBar() {
 }
 
-bool CScrollBarHandler::handleScrollCode(uint32_t nSBCode, int nPos)
-{
+bool CScrollBarHandler::handleScrollCode(uint32_t nSBCode, int nPos) {
     return false;
 }

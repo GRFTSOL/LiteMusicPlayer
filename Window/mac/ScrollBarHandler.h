@@ -1,9 +1,5 @@
-// ScrollBarHandler.h: interface for the CScrollBarHandler class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_SCROLLBARHANDLER_H__5D3E5098_074F_4ECD_A670_4030CB63F97A__INCLUDED_)
-#define AFX_SCROLLBARHANDLER_H__5D3E5098_074F_4ECD_A670_4030CB63F97A__INCLUDED_
+#ifndef Window_mac_ScrollBarHandler_h
+#define Window_mac_ScrollBarHandler_h
 
 #pragma once
 
@@ -12,10 +8,9 @@
 
 class Window;
 
-#define SB_VERT        1
+#define SB_VERT             1
 
-class CScrollBarHandler : public IScrollBar  
-{
+class CScrollBarHandler : public IScrollBar {
 public:
     CScrollBarHandler();
     virtual ~CScrollBarHandler();
@@ -45,12 +40,12 @@ public:
     bool isVertBar() { return m_nScrollBar == SB_VERT; }
 
 protected:
-    int                m_nScrollBar;
-    bool            m_bDisabled;
-    int                m_nOneline;
-    
-    int                m_nPage, m_nMin;
+    int                         m_nScrollBar;
+    bool                        m_bDisabled;
+    int                         m_nOneline;
+
+    int                         m_nPage, m_nMin;
 
 };
 
-#endif // !defined(AFX_SCROLLBARHANDLER_H__5D3E5098_074F_4ECD_A670_4030CB63F97A__INCLUDED_)
+#endif // !defined(Window_mac_ScrollBarHandler_h)

@@ -18,7 +18,7 @@ public:
 
     virtual void draw(CRawGraph *canvas);
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 
     void enumProperties(CUIObjProperties &listProperties);
 

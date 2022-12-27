@@ -4,20 +4,20 @@
 
 #if defined(_LINUX_GTK2)
 #include <gtk/gtk.h>
-#define MLDebug        g_print
+#define MLDebug             g_print
 #endif
 
 // Define always inline for GCC compiler.
 #ifdef WIN32
 #define
 #else
-#define __attribute__((always_inline))
+#define __attribute__((always_inline)   )
 #endif
 
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN        // Exclude rarely-used stuff from Windows headers
 
-#define _WIN32_WINNT    0x0500
+#define _WIN32_WINNT        0x0500
 
 // Windows Header Files:
 #include <windows.h>
@@ -101,28 +101,26 @@
 using namespace std;
 
 #ifndef assert
-#define assert    assert
+#define assert              assert
 #endif
 
 #include "mltypes.h"
 #include "common.h"
 #include "wintypes.h"
 
-typedef vector<string>              VecStrings;
-typedef vector<string>              VecStrings;
-typedef list<string>                ListStrings;
-typedef set<string>                 SetStrings;
+typedef vector<string> VecStrings;
+typedef vector<string> VecStrings;
+typedef list<string> ListStrings;
+typedef set<string> SetStrings;
 
-class SetStrLessICmp
-{
+class SetStrLessICmp {
 public:
-    bool operator()(const string &str1, const string &str2) const
-    {
+    bool operator()(const string &str1, const string &str2) const {
         return strcasecmp(str1.c_str(), str2.c_str()) < 0;
     }
 };
 
-typedef set<string, SetStrLessICmp>        SetICaseStr;
+typedef set<string, SetStrLessICmp> SetICaseStr;
 
 //
 //#define ML_USES_CONVERSION        USES_CONVERSION

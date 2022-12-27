@@ -1,37 +1,33 @@
-// Semaphore.h: interface for the Semaphore class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_SEMAPHORE_H__F793948B_D179_4D98_AA9E_BB65322B4D78__INCLUDED_)
-#define AFX_SEMAPHORE_H__F793948B_D179_4D98_AA9E_BB65322B4D78__INCLUDED_
+#ifndef Utils_old_linux_Semaphore_h
+#define Utils_old_linux_Semaphore_h
 
 #pragma once
 
 #include "Mutex.h"
 
-#define SEM_LOCKED   0
-#define SEM_UNLOCKED 1
+
+#define SEM_LOCKED          0
+#define SEM_UNLOCKED        1
 
 #ifndef INFINITE
-#define INFINITE 0xFFFFFFFF
+#define INFINITE            0xFFFFFFFF
 #endif
 
 #ifndef WAIT_FOREVER
-#define WAIT_FOREVER 0xFFFFFFFF
+#define WAIT_FOREVER        0xFFFFFFFF
 #endif
 
 
-class Semaphore  
-{
+class Semaphore {
 public:
     Semaphore(int nCount = SEM_LOCKED);
     virtual ~Semaphore();
 
     bool wait(int ms = WAIT_FOREVER); // returns false if it times out
     void signal();
- 
- private:
+
+private:
 
 };
 
-#endif // !defined(AFX_SEMAPHORE_H__F793948B_D179_4D98_AA9E_BB65322B4D78__INCLUDED_)
+#endif // !defined(Utils_old_linux_Semaphore_h)

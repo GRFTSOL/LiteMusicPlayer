@@ -3,8 +3,7 @@
 
 #pragma once
 
-class CRawGraphData
-{
+class CRawGraphData {
 public:
     CRawGraphData();
     virtual ~CRawGraphData();
@@ -29,8 +28,8 @@ public:
     GdkPixbuf *getHandle() const { return m_pGdkPixBuf; }
 
 protected:
-    RawImageData    m_imageData;
-    GdkPixbuf        *m_pGdkPixBuf;
+    RawImageData                m_imageData;
+    GdkPixbuf                   *m_pGdkPixBuf;
 
 };
 

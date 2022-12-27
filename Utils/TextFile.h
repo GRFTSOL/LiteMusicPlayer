@@ -1,8 +1,7 @@
 #pragma once
 
 
-class CTextFile
-{
+class CTextFile {
 public:
     CTextFile();
     virtual ~CTextFile();
@@ -16,11 +15,11 @@ public:
     bool write(cstr_t szText, size_t nLenText = -1);
 
 protected:
-    CharEncodingType           m_encoding;
-    FILE                    *m_fp;
+    CharEncodingType            m_encoding;
+    FILE                        *m_fp;
 
-    string                  m_fileData;
-    size_t                  m_offset;
+    string                      m_fileData;
+    size_t                      m_offset;
 
     friend class CTestCaseCTextFile;
 

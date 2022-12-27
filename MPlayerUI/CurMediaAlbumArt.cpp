@@ -172,7 +172,7 @@ RawImageData *CCurMediaAlbumArt::loadAlbumArtByIndex(int nIndex)
     if (nIndex < (int)m_id3v2Pic.m_vItems.size())
     {
         ID3v2Pictures::ITEM    *pic = m_id3v2Pic.m_vItems[nIndex];
-        return loadRawImageDataFromMem(pic->m_buffPic.c_str(), pic->m_buffPic.size());
+        return loadRawImageDataFromMem(pic->m_buffPic.c_str(), (int)pic->m_buffPic.size());
     }
     else
     {
@@ -186,7 +186,7 @@ RawImageData *CCurMediaAlbumArt::loadAlbumArtByIndex(int nIndex)
 
 int CCurMediaAlbumArt::getPicCount()
 {
-    int        n = m_id3v2Pic.m_vItems.size();
+    int n = (int)m_id3v2Pic.m_vItems.size();
 
     n += m_vAlbumPicFile.size();
 

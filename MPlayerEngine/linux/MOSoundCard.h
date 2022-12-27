@@ -1,18 +1,14 @@
-﻿// MOSoundCard.h: interface for the CMOSoundCard class.
-//
-//////////////////////////////////////////////////////////////////////
+﻿
 
-#if !defined(AFX_MOSOUNDCARD_H__2A3AF0D3_981C_41D0_8BBF_A6C7752E98FF__INCLUDED_)
-#define AFX_MOSOUNDCARD_H__2A3AF0D3_981C_41D0_8BBF_A6C7752E98FF__INCLUDED_
+#ifndef MPlayerEngine_linux_MOSoundCard_h
+#define MPlayerEngine_linux_MOSoundCard_h
 
 #pragma once
 
-class CMOSoundCard : public IMediaOutput  
-{
+class CMOSoundCard : public IMediaOutput {
 OBJ_REFERENCE_DECL
 public:
-    enum FADE_MODE
-    {
+    enum FADE_MODE {
         FADE_NONE,
         FADE_IN,
         FADE_OUT,
@@ -40,28 +36,27 @@ public:
     virtual bool isOpened();
 
     // volume
-    MLRESULT setVolume(int nVolume, int nBanlance);
+    MLRESULT setVolume(int volume, int nBanlance);
 
     virtual uint32_t getPos();
 
 private:
-    Event            m_eventCanWrite;
-    uint32_t            m_dwTotolBytesOffset;        // 输入到MOSoundCard中的字节偏移总量
+    Event                       m_eventCanWrite;
+    uint32_t                    m_dwTotolBytesOffset; // 输入到MOSoundCard中的字节偏移总量
 
-    int                m_iBytesPerSample;
-    uint32_t            m_dwDataSize;
+    int                         m_iBytesPerSample;
+    uint32_t                    m_dwDataSize;
 
-    std::mutex            m_mutex;
-    int                m_nBuffered;
-    int                m_nBufferedMax;
+    std::mutex                  m_mutex;
+    int                         m_nBuffered;
+    int                         m_nBufferedMax;
 
-    FADE_MODE        m_fadeMode;
-    long            m_nFadeDoneSamples;
-    long            m_nFadeMaxSamples;
+    FADE_MODE                   m_fadeMode;
+    long                        m_nFadeDoneSamples;
+    long                        m_nFadeMaxSamples;
 
-    bool            m_bWrittingPausedData;
-    
+    bool                        m_bWrittingPausedData;
+
 };
 
-#endif // !defined(AFX_MOSOUNDCARD_H__2A3AF0D3_981C_41D0_8BBF_A6C7752E98FF__INCLUDED_)
-
+#endif // !defined(MPlayerEngine_linux_MOSoundCard_h)

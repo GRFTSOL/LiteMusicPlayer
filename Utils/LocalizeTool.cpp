@@ -1,24 +1,18 @@
-// LocalizeTool.cpp: implementation of the CLocalizeTool class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "SkinTypes.h"
 #include "Utils.h"
 #include "LocalizeTool.h"
 
 
-CLanguageTool            g_LangTool;
+CLanguageTool g_LangTool;
 
-#define SZ_LANG_DIR        "lang"
+#define SZ_LANG_DIR         "lang"
 
-string getLangPackDir()
-{
+string getLangPackDir() {
     string strLangDir = getAppResourceDir();
     strLangDir += SZ_LANG_DIR PATH_SEP_STR;
 
 #if defined (_DEBUG) && defined (_WIN32)
-    if (!isDirExist(strLangDir.c_str()))
-    {
+    if (!isDirExist(strLangDir.c_str())) {
         strLangDir = getInstallShareDir();
         strLangDir += "lang\\";
     }
@@ -28,23 +22,20 @@ string getLangPackDir()
 
 
 // remove '&'
-string removePrefixOfAcckey(cstr_t szStr)
-{
-    cstr_t        p;
+string removePrefixOfAcckey(cstr_t szStr) {
+    cstr_t p;
 
     p = strchr(szStr, '&');
-    if (!p)
+    if (!p) {
         return szStr;
+    }
 
-    string        str;
+    string str;
 
     // remove "(&A)"
-    if (p > szStr && *(p - 1) == '(' && p[1] != '\0' && p[2] == ')' && p[3] == '\0')
-    {
+    if (p > szStr && *(p - 1) == '(' && p[1] != '\0' && p[2] == ')' && p[3] == '\0') {
         str.append(szStr, (int)(p - szStr) - 1);
-    }
-    else
-    {
+    } else {
         str.append(szStr, (int)(p - szStr));
         str.append(p + 1);
     }
@@ -52,20 +43,21 @@ string removePrefixOfAcckey(cstr_t szStr)
     return str;
 }
 
-static bool findStringValue(cstr_t szBuff, cstr_t szName, string &strValue)
-{
-    cstr_t        szBeg, szEnd;
+static bool findStringValue(cstr_t szBuff, cstr_t szName, string &strValue) {
+    cstr_t szBeg, szEnd;
 
     strValue.resize(0);
 
     szBeg = strstr(szBuff, szName);
-    if (!szBeg)
+    if (!szBeg) {
         return false;
+    }
 
     szBeg += strlen(szName);
     szEnd = szBeg;
-    while (*szEnd && *szEnd != '\r' && *szEnd != '\n')
+    while (*szEnd && *szEnd != '\r' && *szEnd != '\n') {
         szEnd++;
+    }
 
     strValue.append(szBeg, szEnd);
 
@@ -76,20 +68,21 @@ static bool findStringValue(cstr_t szBuff, cstr_t szName, string &strValue)
 // getPrivateProfileString don't support UTF-8 encoding file.
 // Use this function instead.
 //
-static bool getLanguagePackInfo(cstr_t szFile, string &strLanguage, string &strLangCode, string &strLangCodeFull)
-{
-    char        buff[1024];
-    FILE        *fp;
-    CharEncodingType    encoding;
-    string    strBuff;
-    cstr_t        SZ_INFO = "[Info]";
+static bool getLanguagePackInfo(cstr_t szFile, string &strLanguage, string &strLangCode, string &strLangCodeFull) {
+    char buff[1024];
+    FILE *fp;
+    CharEncodingType encoding;
+    string strBuff;
+    cstr_t SZ_INFO = "[Info]";
 
     fp = fopen(szFile, "rb");
-    if (!fp)
+    if (!fp) {
         return false;
+    }
 
-    if (fread(buff, 1, sizeof(buff), fp) != sizeof(buff))
+    if (fread(buff, 1, sizeof(buff), fp) != sizeof(buff)) {
         goto R_FAILED;
+    }
 
     int bomSize;
     encoding = detectFileEncoding(buff, sizeof(buff), bomSize);
@@ -97,17 +90,21 @@ static bool getLanguagePackInfo(cstr_t szFile, string &strLanguage, string &strL
     strBuff.assign(buff + bomSize, CountOf(buff) - bomSize);
 
     // [Info]
-    if (strncasecmp(strBuff.c_str(), SZ_INFO, strlen(SZ_INFO)) != 0)
+    if (strncasecmp(strBuff.c_str(), SZ_INFO, strlen(SZ_INFO)) != 0) {
         goto R_FAILED;
+    }
 
-    if (!findStringValue(strBuff.c_str(), "Language=", strLanguage))
+    if (!findStringValue(strBuff.c_str(), "Language=", strLanguage)) {
         goto R_FAILED;
+    }
 
-    if (!findStringValue(strBuff.c_str(), "LanguageCode=", strLangCode))
+    if (!findStringValue(strBuff.c_str(), "LanguageCode=", strLangCode)) {
         goto R_FAILED;
+    }
 
-    if (!findStringValue(strBuff.c_str(), "LanguageCodeFull=", strLangCodeFull))
+    if (!findStringValue(strBuff.c_str(), "LanguageCodeFull=", strLangCodeFull)) {
         goto R_FAILED;
+    }
 
     fclose(fp);
     return true;
@@ -117,18 +114,15 @@ R_FAILED:
     return false;
 }
 
-bool getUserDefaultLang(string &strLang, string &strLangFull)
-{
+bool getUserDefaultLang(string &strLang, string &strLangFull) {
 #ifdef _WIN32
-    struct LangCode
-    {
-        int            nLangId;
-        const char    *szLangShort;
-        const char    *szLangFull;
+    struct LangCode {
+        int                         nLangId;
+        const char                  *szLangShort;
+        const char                  *szLangFull;
     };
 
-    static LangCode    gLangCode[] = 
-    {
+    static LangCode gLangCode[] = {
         //    { 0x0000, "", "Language Neutral" },
         //    { 0x007f, "", "The language for the invariant locale (LOCALE_INVARIANT). See MAKELCID." },
         //    { 0x0400, "", "process or User Default Language" },
@@ -275,12 +269,10 @@ bool getUserDefaultLang(string &strLang, string &strLangFull)
         { 0x0, nullptr, nullptr }
     };
 
-    LANGID    wLangId = GetUserDefaultLangID();
+    LANGID wLangId = GetUserDefaultLangID();
 
-    for (LangCode *pItem = gLangCode; pItem->szLangFull != nullptr; pItem++)
-    {
-        if (pItem->nLangId == wLangId)
-        {
+    for (LangCode *pItem = gLangCode; pItem->szLangFull != nullptr; pItem++) {
+        if (pItem->nLangId == wLangId) {
             strLang = pItem->szLangShort;
             strLangFull = pItem->szLangFull;
             return true;
@@ -291,45 +283,47 @@ bool getUserDefaultLang(string &strLang, string &strLangFull)
     return false;
 }
 
-bool CLanguageFile::init(cstr_t szProfile)
-{
+bool CLanguageFile::init(cstr_t szProfile) {
     //
     // init and load all the strings section
     //
-    string    str;
-    cstr_t        szBeg, szEnd;
-    string        strAppName, strKey, strValue;
+    string str;
+    cstr_t szBeg, szEnd;
+    string strAppName, strKey, strValue;
 
-    if (!readFileByBom(szProfile, str))
+    if (!readFileByBom(szProfile, str)) {
         return false;
+    }
 
     //
     // 查找 AppName
     szBeg = str.c_str();
-    while (*szBeg)
-    {
-        while (*szBeg == ' ' || *szBeg == '\t' || *szBeg == '\n')
+    while (*szBeg) {
+        while (*szBeg == ' ' || *szBeg == '\t' || *szBeg == '\n') {
             szBeg++;
+        }
 
-        if (*szBeg != '[')
-        {
-            while (*szBeg && *szBeg != '\n')
+        if (*szBeg != '[') {
+            while (*szBeg && *szBeg != '\n') {
                 szBeg++;
+            }
             continue;
         }
         szBeg++;
 
-        while (*szBeg == ' ' || *szBeg == '\t')
+        while (*szBeg == ' ' || *szBeg == '\t') {
             szBeg++;
+        }
 
         szEnd = szBeg;
-        while (*szEnd && *szEnd != ']' && *szEnd != '\n')
+        while (*szEnd && *szEnd != ']' && *szEnd != '\n') {
             szEnd++;
+        }
 
-        if (*szEnd != ']')
-        {
-            while (*szBeg && *szBeg != '\n')
+        if (*szEnd != ']') {
+            while (*szBeg && *szBeg != '\n') {
                 szBeg++;
+            }
             continue;
         }
 
@@ -341,30 +335,34 @@ bool CLanguageFile::init(cstr_t szProfile)
         szBeg = szEnd + 1;
 
         // only process "string" section
-        if (strcasecmp(strAppName.c_str(), "string") != 0)
+        if (strcasecmp(strAppName.c_str(), "string") != 0) {
             continue;
+        }
 
-        while (*szBeg)
-        {
+        while (*szBeg) {
             // get key and values
-            while (*szBeg == ' ' || *szBeg == '\t')
+            while (*szBeg == ' ' || *szBeg == '\t') {
                 szBeg++;
+            }
 
-            while (*szBeg == '\r' || *szBeg == '\n')
+            while (*szBeg == '\r' || *szBeg == '\n') {
                 szBeg++;
+            }
 
-            if (*szBeg == '[')
+            if (*szBeg == '[') {
                 break;
+            }
 
             szEnd = szBeg;
-            while (*szEnd && *szEnd != '=' && *szEnd != '\n')
+            while (*szEnd && *szEnd != '=' && *szEnd != '\n') {
                 szEnd++;
+            }
 
-            if (*szEnd != '=')
-            {
+            if (*szEnd != '=') {
                 szBeg = szEnd;
-                while (*szBeg && *szBeg != '\n')
+                while (*szBeg && *szBeg != '\n') {
                     szBeg++;
+                }
                 continue;
             }
 
@@ -373,13 +371,16 @@ bool CLanguageFile::init(cstr_t szProfile)
             strKey.append(szBeg, szEnd);
 
             szBeg = szEnd + 1;
-            while (*szEnd && *szEnd != '\n')
+            while (*szEnd && *szEnd != '\n') {
                 szEnd++;
+            }
 
-            while (*szEnd == '\r' || *szEnd == '\n')
+            while (*szEnd == '\r' || *szEnd == '\n') {
                 szEnd--;
-            if (*szEnd)
+            }
+            if (*szEnd) {
                 szEnd++;
+            }
             strValue.resize(0);
             strValue.append(szBeg, szEnd);
 
@@ -392,97 +393,94 @@ bool CLanguageFile::init(cstr_t szProfile)
     return true;
 }
 
-void CLanguageFile::close()
-{
+void CLanguageFile::close() {
     m_mapString.clear();
 }
 
-cstr_t CLanguageFile::getTranslation(cstr_t szString)
-{
-    MapStrings::iterator        it;
+cstr_t CLanguageFile::getTranslation(cstr_t szString) {
+    MapStrings::iterator it;
     it = m_mapString.find(szString);
-    if (it == m_mapString.end())
+    if (it == m_mapString.end()) {
         return szString;
+    }
 
-    if ((*it).second.empty())
+    if ((*it).second.empty()) {
         return szString;
+    }
 
     return (*it).second.c_str();
 }
 
 
-CLanguageTool::CLanguageTool()
-{
+CLanguageTool::CLanguageTool() {
     m_bEnglish = true;
     m_bInitialized = false;
     m_nCurStr = 0;
 }
 
-CLanguageTool::~CLanguageTool()
-{
+CLanguageTool::~CLanguageTool() {
 }
 
-bool CLanguageTool::getCurrentLanguageFile(string &strLanguageFile)
-{
+bool CLanguageTool::getCurrentLanguageFile(string &strLanguageFile) {
     strLanguageFile = getLangPackDir();
 
     string langFileName = g_profile.getString("Language", "");
-    if (langFileName.empty())
-    {
-        string        strLang, strLangFull;
+    if (langFileName.empty()) {
+        string strLang, strLangFull;
 
-        if (!getUserDefaultLang(strLang, strLangFull))
+        if (!getUserDefaultLang(strLang, strLangFull)) {
             return false;
+        }
 
-        if (strcasecmp(strLang.c_str(), "English") == 0)
+        if (strcasecmp(strLang.c_str(), "English") == 0) {
             return false;
+        }
 
-        V_TRANSFILEINFO            vTransFiles;
-        string                    strFileName, strFileNameBest;
+        V_TRANSFILEINFO vTransFiles;
+        string strFileName, strFileNameBest;
 
         listTransFiles(getLangPackDir().c_str(), vTransFiles);
 
         // search for full match
-        for (int i = 0; i < (int)vTransFiles.size(); i++)
-        {
-            TransFileInfo    &item = vTransFiles[i];
-            if (strcmp(item.strLanguageCodeFull.c_str(), strLangFull.c_str()) == 0)
-            {
+        for (int i = 0; i < (int)vTransFiles.size(); i++) {
+            TransFileInfo &item = vTransFiles[i];
+            if (strcmp(item.strLanguageCodeFull.c_str(), strLangFull.c_str()) == 0) {
                 strFileNameBest = item.strFileName;
                 break;
             }
-            if (strFileName.empty() && strcmp(item.strLanguageCode.c_str(), strLang.c_str()) == 0)
-            {
+            if (strFileName.empty() && strcmp(item.strLanguageCode.c_str(), strLang.c_str()) == 0) {
                 strFileName = item.strFileName;
             }
         }
 
-        if (strFileNameBest.size())
+        if (strFileNameBest.size()) {
             langFileName = strFileNameBest;
-        else if (strFileName.size())
+        } else if (strFileName.size()) {
             langFileName = strFileName;
+        }
 
         // save auto detected translation file
-        if (!langFileName.empty())
+        if (!langFileName.empty()) {
             g_profile.writeString("Language", langFileName.c_str());
+        }
     }
 
     strLanguageFile += langFileName;
     return (!langFileName.empty() && isFileExist(strLanguageFile.c_str()));
 }
 
-bool CLanguageTool::listTransFiles(cstr_t szDir, V_TRANSFILEINFO &vTransFiles)
-{
-    FileFind          find;
-    string            str;
-    TransFileInfo     item;
-    string            strFilter, strEngTransFileName;
-    string            strLangDir;
+bool CLanguageTool::listTransFiles(cstr_t szDir, V_TRANSFILEINFO &vTransFiles) {
+    FileFind find;
+    string str;
+    TransFileInfo item;
+    string strFilter, strEngTransFileName;
+    string strLangDir;
 
-    if (szDir && !isEmptyString(szDir))
+    if (szDir && !isEmptyString(szDir)) {
         strLangDir = szDir;
-    else
+    } else {
         strLangDir = getLangPackDir();
+    }
 
     // add english default translation
     item.strFileName = "English";
@@ -494,23 +492,22 @@ bool CLanguageTool::listTransFiles(cstr_t szDir, V_TRANSFILEINFO &vTransFiles)
     strFilter = "*.ini";
     strEngTransFileName = "English.ini";
 
-    if (!find.openDir(strLangDir.c_str(), strFilter.c_str()))
+    if (!find.openDir(strLangDir.c_str(), strFilter.c_str())) {
         return false;
+    }
 
-    while (find.findNext())
-    {
-        if (!find.isCurDir())
-        {
-            TransFileInfo    item;
+    while (find.findNext()) {
+        if (!find.isCurDir()) {
+            TransFileInfo item;
 
-            if (strcasecmp(find.getCurName(), strEngTransFileName.c_str()) == 0)
+            if (strcasecmp(find.getCurName(), strEngTransFileName.c_str()) == 0) {
                 continue;
+            }
 
             str = dirStringJoin(strLangDir.c_str(), find.getCurName());
 
-            if (getLanguagePackInfo(str.c_str(), item.strLanguage, 
-                item.strLanguageCode, item.strLanguageCodeFull))
-            {
+            if (getLanguagePackInfo(str.c_str(), item.strLanguage,
+                item.strLanguageCode, item.strLanguageCodeFull)) {
                 item.strFileName = find.getCurName();
                 vTransFiles.push_back(item);
             }
@@ -524,37 +521,32 @@ bool CLanguageTool::listTransFiles(cstr_t szDir, V_TRANSFILEINFO &vTransFiles)
 //        将字符串转换为本地语言。
 // RETURN:
 //        return translated string
-cstr_t CLanguageTool::toLocalString(cstr_t szString)
-{
-    if (!m_bInitialized)
-    {
+cstr_t CLanguageTool::toLocalString(cstr_t szString) {
+    if (!m_bInitialized) {
         // init select correct language...
         onLanguageChanged();
     }
 
     szString = replaceMacroStr(szString);
 
-    if (m_bEnglish)
+    if (m_bEnglish) {
         return szString;
+    }
 
     return m_LanguageFile.getTranslation(szString);
 }
 
-void CLanguageTool::setMacro(cstr_t szName, cstr_t szValue)
-{
+void CLanguageTool::setMacro(cstr_t szName, cstr_t szValue) {
     m_mapMacros[szName] = szValue;
 }
 
-cstr_t CLanguageTool::replaceMacroStr(cstr_t szString)
-{
-    cstr_t        szPos;
+cstr_t CLanguageTool::replaceMacroStr(cstr_t szString) {
+    cstr_t szPos;
 
-    for (map_string::iterator it = m_mapMacros.begin(); it != m_mapMacros.end(); ++it)
-    {
+    for (map_string::iterator it = m_mapMacros.begin(); it != m_mapMacros.end(); ++it) {
         szPos = strstr(szString, (*it).first.c_str());
-        while (szPos)
-        {
-            string        &str = m_vStrCached[m_nCurStr];
+        while (szPos) {
+            string &str = m_vStrCached[m_nCurStr];
             str.resize(0);
             str.append(szString, (int)(szPos - szString));
             str += (*it).second;
@@ -562,8 +554,9 @@ cstr_t CLanguageTool::replaceMacroStr(cstr_t szString)
 
             szString = str.c_str();
             m_nCurStr++;
-            if (m_nCurStr >= MAX_CACHED_STR)
+            if (m_nCurStr >= MAX_CACHED_STR) {
                 m_nCurStr = 0;
+            }
 
             szPos = strstr(szString, (*it).first.c_str());
         }
@@ -572,18 +565,15 @@ cstr_t CLanguageTool::replaceMacroStr(cstr_t szString)
     return szString;
 }
 
-void CLanguageTool::close()
-{
+void CLanguageTool::close() {
     m_LanguageFile.close();
     m_bInitialized = false;
     m_bEnglish = true;
     m_mapMacros.clear();
 }
 
-bool CLanguageTool::isEnglish()
-{
-    if (!m_bInitialized)
-    {
+bool CLanguageTool::isEnglish() {
+    if (!m_bInitialized) {
         // init select correct language...
         onLanguageChanged();
     }
@@ -591,14 +581,12 @@ bool CLanguageTool::isEnglish()
     return m_bEnglish;
 }
 
-void CLanguageTool::onLanguageChanged()
-{
+void CLanguageTool::onLanguageChanged() {
     m_bInitialized = true;
     m_bEnglish = true;
 
-    string        strLangFile;
-    if (getCurrentLanguageFile(strLangFile))
-    {
+    string strLangFile;
+    if (getCurrentLanguageFile(strLangFile)) {
         m_bEnglish = false;
         m_LanguageFile.init(strLangFile.c_str());
     }

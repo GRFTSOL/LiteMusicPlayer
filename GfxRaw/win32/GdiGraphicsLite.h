@@ -1,30 +1,22 @@
-// GdiGraphics.h: interface for the CGdiGraphicsLite class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_GDIGRAPHICS_H__459134AA_966B_474C_B99D_61232BA41BDF__INCLUDED_)
-#define AFX_GDIGRAPHICS_H__459134AA_966B_474C_B99D_61232BA41BDF__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef GfxRaw_win32_GdiGraphicsLite_h
+#define GfxRaw_win32_GdiGraphicsLite_h
+
 
 #include "FontCollection.h"
 
-class CGdiFont
-{
+
+class CGdiFont {
 public:
-    CGdiFont()
-    {
+    CGdiFont() {
         m_hFont = nullptr;
     }
-    ~CGdiFont()
-    {
+    ~CGdiFont() {
         destroy();
     }
 
-    bool create(CGraphics *canvas, LOGFONTA &logFont)
-    {
+    bool create(CGraphics *canvas, LOGFONTA &logFont) {
         destroy();
 
         m_hFont = CreateFontIndirectA(&logFont);
@@ -34,10 +26,8 @@ public:
 
     bool create(const CFontInfo &font);
 
-    void destroy()
-    {
-        if (m_hFont)
-        {
+    void destroy() {
+        if (m_hFont) {
             DeleteObject(m_hFont);
             m_hFont = nullptr;
         }
@@ -48,12 +38,11 @@ public:
     bool isValid() const { return m_hFont != nullptr; }
 
 protected:
-    HFONT            m_hFont;
+    HFONT                       m_hFont;
 
 };
 
-class CGdiGraphicsLite : public CGraphics
-{
+class CGdiGraphicsLite : public CGraphics {
 public:
     CGdiGraphicsLite();
     ~CGdiGraphicsLite();
@@ -72,20 +61,20 @@ public:
     virtual void enableResolveTextEncoding(bool bEnable);
 
 protected:
-    void selectFont(HFONT hFont)
-    {
-        HFONT        hFontOld;
+    void selectFont(HFONT hFont) {
+        HFONT hFontOld;
 
         hFontOld = (HFONT)SelectObject(m_hdc, hFont);
-        if (!m_hFontOld)
+        if (!m_hFontOld) {
             m_hFontOld = hFontOld;
+        }
     }
 
 protected:
-    CFontCollection<CGdiFont>        m_fontCollection;
-    HFONT                            m_hFontOld;
-    bool                            m_bResolveTextEncoding;
+    CFontCollection<CGdiFont>   m_fontCollection;
+    HFONT                       m_hFontOld;
+    bool                        m_bResolveTextEncoding;
 
 };
 
-#endif // !defined(AFX_GDIGRAPHICS_H__459134AA_966B_474C_B99D_61232BA41BDF__INCLUDED_)
+#endif // !defined(GfxRaw_win32_GdiGraphicsLite_h)

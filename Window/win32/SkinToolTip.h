@@ -1,14 +1,12 @@
-// ToolTipWnd.h: interface for the CToolTipWnd class.
-//
-//////////////////////////////////////////////////////////////////////
+#pragma once
 
 #ifndef _SKIN_TOOL_TOP_INC_
 #define _SKIN_TOOL_TOP_INC_
 
 #include "BaseWnd.h"
 
-class CSkinToolTip
-{
+
+class CSkinToolTip {
 public:
     CSkinToolTip();
     virtual ~CSkinToolTip();
@@ -24,9 +22,9 @@ public:
     void destroy() { ::destroyWindow(m_hWnd); m_hWnd = nullptr; }
 
 protected:
-    HWND        m_hWndParent;
-    HWND        m_hWnd;
+    HWND                        m_hWndParent;
+    HWND                        m_hWnd;
 
 };
 
-#endif // !defined(AFX_TOOLTIPWND_H__4D602F6E_4E58_4921_ACDE_3E8DBA83DBBE__INCLUDED_)
+#endif // !defined(Window_win32_SkinToolTip_h)

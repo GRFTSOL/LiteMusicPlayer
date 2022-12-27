@@ -93,7 +93,7 @@ int getCurDaysFrom2000()
     DateTime dateNow = DateTime::localTime();
     DateTime date2000(2000, 1, 1);
 
-    return (dateNow.getTime() - date2000.getTime()) / DateTime::SECOND_IN_ONE_DAY;
+    return (int)((dateNow.getTime() - date2000.getTime()) / DateTime::SECOND_IN_ONE_DAY);
 }
 
 static cstr_t SZ_IGNOR_NAMES[] = { ".720p", ".1080p", };
@@ -499,7 +499,7 @@ bool COnlineSearch::searchCacheForCur(V_LRCSEARCHRESULT *pvResult, uint32_t *pdw
 
     if (m_dbSearchResult.isOpened())
         return m_dbSearchResult.searchCache(strAssociateMediaKey.c_str(),
-        g_Player.getArtist(), g_Player.getTitle(), pvResult, pdwSearchTime);
+            g_Player.getArtist(), g_Player.getTitle(), pvResult, pdwSearchTime);
 
     return false;
 }
@@ -706,7 +706,7 @@ int COnlineSearch::batchSearch(CMLClientSession &session, MLListSearchItems &lis
         }
         else
         {
-            int nRet = g_LyricsDownloader.saveDownloadedLyrics(search.strMediaFile.c_str(), lyr.strFile.c_str(), lyr.bufLyrContent.c_str(), lyr.bufLyrContent.size());
+            int nRet = g_LyricsDownloader.saveDownloadedLyrics(search.strMediaFile.c_str(), lyr.strFile.c_str(), lyr.bufLyrContent.c_str(), (int)lyr.bufLyrContent.size());
             if (pNotify)
             {
                 pNotify->onLyricsReturned(i, lyr.bufLyrContent);

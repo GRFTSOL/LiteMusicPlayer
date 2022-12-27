@@ -1,7 +1,6 @@
 #pragma once
 
-class CEventsDispatcher : public CEventsDispatcherBase, public Window
-{
+class CEventsDispatcher : public CEventsDispatcherBase, public Window {
 public:
     int init();
     void quit();

@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "SkinScrollFrameCtrlBase.h"
@@ -11,8 +10,7 @@ class CSkinEditCtrl;
 //
 // Editor syntax (color) parser
 //
-class IEditSyntaxParser
-{
+class IEditSyntaxParser {
 public:
     virtual ~IEditSyntaxParser() { }
     virtual void init(CSkinEditCtrl *pEdit) = 0;
@@ -21,18 +19,15 @@ public:
 };
 
 
-class IEditNotification
-{
+class IEditNotification {
 public:
-    enum Status
-    {
+    enum Status {
         S_CAN_UNDO,
         S_CAN_REDO,
         S_SEL,
     };
 
-    enum SpecialKey
-    {
+    enum SpecialKey {
         SK_ENTER,
         SK_CTRL_ENTER,
         SK_SHIFT_ENTER,
@@ -47,13 +42,11 @@ public:
 
 };
 
-#define CARET_EXTRA_EXPAND        2
+#define CARET_EXTRA_EXPAND  2
 
-class CSkinCaret
-{
+class CSkinCaret {
 public:
-    CSkinCaret()
-    {
+    CSkinCaret() {
         m_bOldDrawed = false;
         m_rcCaret.setEmpty();
         m_bOn = false;
@@ -68,42 +61,39 @@ public:
 
     bool isDrawed() { return m_bOldDrawed; }
 
-    virtual void drawFlash(CRawGraph *canvas)
-    {
-        if (!m_bOn)
+    virtual void drawFlash(CRawGraph *canvas) {
+        if (!m_bOn) {
             return;
+        }
 
         canvas->fillRectXOR(&m_rcCaret, m_clrCaret);
         m_bOldDrawed = !m_bOldDrawed;
     }
 
-    virtual void draw(CRawGraph *canvas)
-    {
-        if (!m_bOn)
+    virtual void draw(CRawGraph *canvas) {
+        if (!m_bOn) {
             return;
+        }
 
-        if (m_bOldDrawed)
+        if (m_bOldDrawed) {
             canvas->fillRectXOR(&m_rcCaret, m_clrCaret);
+        }
     }
 
-    virtual void showCaret(int x, int y, int nWidth, int nHeight)
-    {
+    virtual void showCaret(int x, int y, int nWidth, int nHeight) {
         m_bOn = true;
         x += m_xOffset;
         y += m_yOffset;
         m_rcCaret.setLTRB(x, y, x + nWidth, y + nHeight + CARET_EXTRA_EXPAND);
     }
 
-    void hideCaret()
-    {
+    void hideCaret() {
         m_bOn = false;
         m_bOldDrawed = false;
     }
 
-    void setOffset(int xOffset, int yOffset)
-    {
-        if (xOffset != m_xOffset || m_yOffset != yOffset)
-        {
+    void setOffset(int xOffset, int yOffset) {
+        if (xOffset != m_xOffset || m_yOffset != yOffset) {
             m_rcCaret.offsetRect(xOffset - m_xOffset, yOffset - m_yOffset);
             m_xOffset = xOffset;
             m_yOffset = yOffset;
@@ -113,23 +103,21 @@ public:
     const CRect & getUpdateRect() { return m_rcCaret; }
 
 protected:
-    bool            m_bOn;
-    CColor            m_clrCaret;
+    bool                        m_bOn;
+    CColor                      m_clrCaret;
 
-    CRect            m_rcCaret;
+    CRect                       m_rcCaret;
 
-    bool            m_bOldDrawed;
-    int                m_xOffset, m_yOffset;
+    bool                        m_bOldDrawed;
+    int                         m_xOffset, m_yOffset;
 
 };
 
 
-class CSkinEditCtrl : public CSkinScrollFrameCtrlBase, public IUndoMgrNotify
-{
+class CSkinEditCtrl : public CSkinScrollFrameCtrlBase, public IUndoMgrNotify {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinScrollFrameCtrlBase)
 public:
-    enum ColorName
-    {
+    enum ColorName {
         CN_BG,
         CN_TEXT,
         CN_SEL_BG,
@@ -138,40 +126,36 @@ public:
         CN_EDIT_LINE_TEXT,
         CN_CUSTOMIZED_START,
 
-        CN_MAX = 255
+        CN_MAX                      = 255
     };
 
-    enum
-    {
+    enum {
         TIMER_DURATION_CARET        = 600
     };
 
 public:
-    class CAutoUpdate
-    {
+    class CAutoUpdate {
     public:
-        CAutoUpdate(CSkinEditCtrl *pTarg)
-        {
+        CAutoUpdate(CSkinEditCtrl *pTarg) {
             m_pTarget = pTarg;
             m_bUpdate = false;
             saveOrg();
         }
-        ~CAutoUpdate()
-        {
+        ~CAutoUpdate() {
             doUpdateNow();
         }
         void setUpdateFlag(bool bUpdate) { m_bUpdate = bUpdate; }
 
-        void doUpdateNow()
-        {
-            if (!m_pTarget)
+        void doUpdateNow() {
+            if (!m_pTarget) {
                 return;
+            }
 
-            if (m_pTarget->isInBatchAction())
+            if (m_pTarget->isInBatchAction()) {
                 return;
+            }
 
-            if (m_bUpdate)
-            {
+            if (m_bUpdate) {
                 m_bUpdate = false;
                 saveOrg();
                 m_pTarget->invalidate();
@@ -179,22 +163,19 @@ public:
             }
 
             if (m_nTopVisibleLineOld != m_pTarget->m_nTopVisibleLine ||
-                m_nScrollPosxOld != m_pTarget->m_nScrollPosx)
-            {
+                m_nScrollPosxOld != m_pTarget->m_nScrollPosx) {
                 saveOrg();
                 m_pTarget->invalidate();
                 return;
             }
 
-            if (m_nCaretRowOld != m_pTarget->m_nCaretRow)
-            {
+            if (m_nCaretRowOld != m_pTarget->m_nCaretRow) {
                 saveOrg();
                 m_pTarget->invalidate();
                 return;
             }
 
-            if (m_nBegSelRowOld == -1 && m_pTarget->m_nBegSelRow == -1)
-            {
+            if (m_nBegSelRowOld == -1 && m_pTarget->m_nBegSelRow == -1) {
                 saveOrg();
                 return;
             }
@@ -202,16 +183,14 @@ public:
             if (m_nBegSelRowOld != m_pTarget->m_nBegSelRow ||
                 m_nEndSelRowOld != m_pTarget->m_nEndSelRow ||
                 m_nBegSelColOld != m_pTarget->m_nBegSelCol ||
-                m_nEndSelColOld != m_pTarget->m_nEndSelCol)
-            {
+                m_nEndSelColOld != m_pTarget->m_nEndSelCol) {
                 saveOrg();
                 m_pTarget->invalidate();
                 return;
             }
         }
     protected:
-        void saveOrg()
-        {
+        void saveOrg() {
             m_nTopVisibleLineOld = m_pTarget->m_nTopVisibleLine;
             m_nScrollPosxOld = m_pTarget->m_nScrollPosx;
             m_nBegSelRowOld = m_pTarget->m_nBegSelRow;
@@ -223,34 +202,30 @@ public:
 
     protected:
         CSkinEditCtrl*m_pTarget;
-        bool        m_bUpdate;
-        int            m_nTopVisibleLineOld;
-        int            m_nScrollPosxOld;
-        int            m_nBegSelRowOld, m_nEndSelRowOld;
-        int            m_nBegSelColOld, m_nEndSelColOld;
-        int            m_nCaretRowOld;
+        bool                        m_bUpdate;
+        int                         m_nTopVisibleLineOld;
+        int                         m_nScrollPosxOld;
+        int                         m_nBegSelRowOld, m_nEndSelRowOld;
+        int                         m_nBegSelColOld, m_nEndSelColOld;
+        int                         m_nCaretRowOld;
 
     };
 
     friend class CAutoUpdate;
 
-    class CAutoBatchUndo
-    {
+    class CAutoBatchUndo {
     public:
-        CAutoBatchUndo(CSkinEditCtrl *pTarg) : m_update(pTarg)
-        {
+        CAutoBatchUndo(CSkinEditCtrl *pTarg) : m_update(pTarg) {
             m_pTarget = pTarg;
 
             m_pTarget->m_undoMgr.beginBatchAction();
         }
 
-        ~CAutoBatchUndo()
-        {
+        ~CAutoBatchUndo() {
             endBatchUndo();
         }
 
-        void endBatchUndo()
-        {
+        void endBatchUndo() {
             m_pTarget->m_undoMgr.endBatchAction();
             m_pTarget->updateScrollInfo(true);
             m_pTarget->updateScrollInfo(false);
@@ -260,17 +235,16 @@ public:
         }
 
     protected:
-        CSkinEditCtrl        *m_pTarget;
-        CAutoUpdate            m_update;
+        CSkinEditCtrl               *m_pTarget;
+        CAutoUpdate                 m_update;
 
     };
 
     friend class CAutoBatchUndo;
 
-    struct CGlyph
-    {
-        uint8_t        width;
-        uint8_t        clrIndex;    // color index in CSkinEditCtrl color table.
+    struct CGlyph {
+        uint8_t                     width;
+        uint8_t                     clrIndex;           // color index in CSkinEditCtrl color table.
         StringIterator::CharType    chGlyph;
 
         bool isEqual(char ch) { return chGlyph == ch; }
@@ -289,32 +263,26 @@ public:
         // void textOut(CRawGraph *canvas, int x, int y) { canvas->textOut(x, y, &chGlyph, 1); }
     };
 
-    enum Style
-    {
-        S_MULTILINE            = 1,            // Multiple line editor
-        S_READ_ONLY            = 1 << 0x1,        // The text can't be modified if this flag is set.
-        S_PASSWORD            = 1 << 0x2,
+    enum Style {
+        S_MULTILINE                 = 1, // Multiple line editor
+        S_READ_ONLY                 = 1 << 0x1, // The text can't be modified if this flag is set.
+        S_PASSWORD                  = 1 << 0x2,
     };
 
-    enum NewLineType
-    {
+    enum NewLineType {
         NLT_NONE,
         NLT_RN,
         NLT_N,
         NLT_R,
     };
 
-    class COneLine : public vector<CGlyph>
-    {
+    class COneLine : public vector<CGlyph> {
     public:
-        COneLine()
-        {
+        COneLine() {
             newLineType = NLT_NONE;
         }
-        int getReturnSize()
-        {
-            switch (newLineType)
-            {
+        int getReturnSize() {
+            switch (newLineType) {
             case NLT_N:
             case NLT_R:
                 return 1;
@@ -326,20 +294,18 @@ public:
             return 0;
         }
 
-        static cstr_t getReturnStr(NewLineType nlt)
-        {
-            switch (nlt)
-            {
-            case NLT_N: return "\n";
-            case NLT_R: return "\r";
-            case NLT_RN: return "\r\n";
+        static cstr_t getReturnStr(NewLineType nlt) {
+            switch (nlt) {
+                case NLT_N: return "\n";
+                case NLT_R: return "\r";
+                case NLT_RN: return "\r\n";
             default:
                 break;
             }
             return "";
         }
 
-        NewLineType        newLineType;
+        NewLineType                 newLineType;
     };
 
     typedef vector<COneLine*>    CVLines;
@@ -368,12 +334,12 @@ public:
 
     void onFontChanged();
     void setSelColor(const CColor &clrSelText, const CColor &clrSelBg)
-    { setColor(CN_SEL_TEXT, clrSelText); setColor(CN_SEL_BG, clrSelBg); }
+        { setColor(CN_SEL_TEXT, clrSelText); setColor(CN_SEL_BG, clrSelBg); }
 
     void setStyle(uint32_t nStyles) { m_nEditorStyles = nStyles; }
     uint32_t getStyle() const { return m_nEditorStyles; }
 
-    virtual void setText(cstr_t szText);
+    virtual void setText(cstr_t szText) override;
 
     int getText(string &str);
 
@@ -381,7 +347,7 @@ public:
 
     int getLength();
 
-    size_t getLineCount() const { return m_vLines.size(); }
+    uint32_t getLineCount() const { return (uint32_t)m_vLines.size(); }
 
     bool getTextOfLine(int nLine, string &strLine);
     bool setTextOfLine(int nLine, cstr_t szLine);
@@ -411,9 +377,8 @@ protected:
 
     // Alpha of background, used to implement translucent effect.
     virtual uint8_t getBgAlpha();
-    virtual CRawGraph *getMemGraphics()
-    {
-        CRawGraph        *canvas = m_pContainer->getMemGraph();
+    virtual CRawGraph *getMemGraphics() {
+        CRawGraph *canvas = m_pContainer->getMemGraph();
         canvas->setFont(m_font.getFont());
 
         return canvas;
@@ -475,56 +440,55 @@ public:
     // CUIObject messages to draw or handle user input, etc.
     //
 
-    virtual void onCreate();
+    virtual void onCreate() override;
 
-    void draw(CRawGraph *canvas);
+    void draw(CRawGraph *canvas) override;
 
     // rc is the destination rectangle to draw the edit
-    void onSize();
+    void onSize() override;
 
-    virtual void onSetFocus();
-    virtual void onKillFocus();
+    virtual void onSetFocus() override;
+    virtual void onKillFocus() override;
 
-    virtual bool onLButtonUp(uint32_t nFlags, CPoint point);
-    virtual bool onLButtonDown(uint32_t nFlags, CPoint point);
-    virtual bool onLButtonDblClk(uint32_t nFlags, CPoint point);
-    virtual bool onMouseDrag(CPoint point);
-    virtual bool onMouseMove(CPoint point);
-    virtual bool onRButtonUp(uint32_t nFlags, CPoint point);
-    virtual void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt);
-    virtual void onKeyDown(uint32_t nChar, uint32_t nFlags);
-    virtual void onChar(uint32_t nChar);
+    virtual bool onLButtonUp(uint32_t nFlags, CPoint point) override;
+    virtual bool onLButtonDown(uint32_t nFlags, CPoint point) override;
+    virtual bool onLButtonDblClk(uint32_t nFlags, CPoint point) override;
+    virtual bool onMouseDrag(CPoint point) override;
+    virtual bool onMouseMove(CPoint point) override;
+    virtual bool onRButtonUp(uint32_t nFlags, CPoint point) override;
+    virtual void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) override;
+    virtual void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
+    virtual void onChar(uint32_t nChar) override;
 
     virtual void onContexMenu(int xPos, int yPos);
-    virtual bool onCommand(int nId);
+    virtual bool onCommand(int nId) override;
 
-    virtual void onTimer(int nId);
+    virtual void onTimer(int nId) override;
 
-    virtual void onAdjustHue(float hue, float saturation, float luminance);
+    virtual void onAdjustHue(float hue, float saturation, float luminance) override;
 
-    virtual void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar);
-    virtual void onHScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar);
+    virtual void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override;
+    virtual void onHScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override;
 
-    void onNotifyParseLine(int nLine)
-    {
-        if (m_pEditSyntaxParser)
+    void onNotifyParseLine(int nLine) {
+        if (m_pEditSyntaxParser) {
             m_pEditSyntaxParser->onNotifyParseLine(nLine);
-    }
-
-    void onNotifySelChanged()
-    {
-        bool    bSelected = m_nBegSelRow != -1;
-        if (m_bPrevSelectedStatus != bSelected)
-        {
-            m_bPrevSelectedStatus = bSelected;
-            if (m_pEditNotification)
-                m_pEditNotification->onStatusChanged(IEditNotification::S_SEL, bSelected);
         }
     }
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    void onNotifySelChanged() {
+        bool bSelected = m_nBegSelRow != -1;
+        if (m_bPrevSelectedStatus != bSelected) {
+            m_bPrevSelectedStatus = bSelected;
+            if (m_pEditNotification) {
+                m_pEditNotification->onStatusChanged(IEditNotification::S_SEL, bSelected);
+            }
+        }
+    }
 
-    virtual string &getText();
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
+
+    virtual string &getText() override;
 
 #ifdef _SKIN_EDITOR_
     void enumProperties(CUIObjProperties &listProperties);
@@ -533,51 +497,51 @@ public:
     //
     // IUndoMgrNotify interface
     //
-    virtual void onStatusChanged(Status status, bool bVal);
-    virtual void onAction(Action action);
+    virtual void onStatusChanged(Status status, bool bVal) override;
+    virtual void onAction(Action action) override;
 
     friend class CAutoUpdate;
     friend class CEditInsertAction;
     friend class CEditDelAction;
 
 protected:
-    uint32_t                m_nEditorStyles;
+    uint32_t                    m_nEditorStyles;
 
-    CVLines                m_vLines;
+    CVLines                     m_vLines;
 
     // scroll bar info
-    int                    m_nTopVisibleLine;
-    int                    m_nScrollPosx;
+    int                         m_nTopVisibleLine;
+    int                         m_nScrollPosx;
 
-    int                    m_nLineSpace;
+    int                         m_nLineSpace;
 
     // Selected text
-    int                    m_nBegSelRow, m_nEndSelRow;
-    int                    m_nBegSelCol, m_nEndSelCol;
-    bool                m_bInMouseSel;        // is mouse select text?
+    int                         m_nBegSelRow, m_nEndSelRow;
+    int                         m_nBegSelCol, m_nEndSelCol;
+    bool                        m_bInMouseSel;      // is mouse select text?
 
-    int                    m_nOneCharDx;
+    int                         m_nOneCharDx;
 
     // undo
-    CUndoMgr            m_undoMgr;
+    CUndoMgr                    m_undoMgr;
 
-    IEditSyntaxParser    *m_pEditSyntaxParser;
-    IEditNotification    *m_pEditNotification;
-    bool                m_bPrevSelectedStatus;
+    IEditSyntaxParser           *m_pEditSyntaxParser;
+    IEditNotification           *m_pEditNotification;
+    bool                        m_bPrevSelectedStatus;
 
     // Caret
-    int                    m_nIDTimerCaret;
-    CSkinCaret            m_caret;
-    int                    m_nCaretX, m_nCaretY;
-    int                    m_nCaretRow, m_nCaretCol;
-    int                    m_nCaretMaxXLatest;
+    int                         m_nIDTimerCaret;
+    CSkinCaret                  m_caret;
+    int                         m_nCaretX, m_nCaretY;
+    int                         m_nCaretRow, m_nCaretCol;
+    int                         m_nCaretMaxXLatest;
 
     // Cursor
-    Cursor                m_cursor;
+    Cursor                      m_cursor;
 
     // Font and colors
-    CSkinFontProperty    m_font;
-    int                    m_xMargin, m_yMargin;
-    vector<CColor>        m_vClrTable;
+    CSkinFontProperty           m_font;
+    int                         m_xMargin, m_yMargin;
+    vector<CColor>              m_vClrTable;
 
 };

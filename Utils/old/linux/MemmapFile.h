@@ -1,11 +1,10 @@
-﻿// MemmapFile.h: interface for the CMemmapFile class.
-//
-//////////////////////////////////////////////////////////////////////
+#pragma once
 
+﻿
 #include <sys/mman.h>
 
-class CMemmapFile  
-{
+
+class CMemmapFile {
 public:
     CMemmapFile();
     virtual ~CMemmapFile();
@@ -20,14 +19,13 @@ public:
 
     bool isValid() const { return m_lpFile != nullptr; }
 
-    uint8_t *getPtr()
-    {
+    uint8_t *getPtr() {
         return uint8_t *m_lpFile;
     }
 
 protected:
-    int            m_file;
-    size_t        m_nFileSize;        // 文件大小
-    void *       m_lpFile;            // 文件映射之后的文件内容
+    int                         m_file;
+    size_t                      m_nFileSize;        // 文件大小
+    void                        *       m_lpFile;   // 文件映射之后的文件内容
 
 };

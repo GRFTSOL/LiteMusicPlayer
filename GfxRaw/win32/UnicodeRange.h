@@ -1,16 +1,12 @@
-// UnicodeRange.h: interface for the CUnicodeRange class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_UNICODERANGE_H__844E93E6_8D23_4759_A0D9_6E78F66B3F55__INCLUDED_)
-#define AFX_UNICODERANGE_H__844E93E6_8D23_4759_A0D9_6E78F66B3F55__INCLUDED_
+#ifndef GfxRaw_win32_UnicodeRange_h
+#define GfxRaw_win32_UnicodeRange_h
 
 #pragma once
 
 // The following constants define unicode subranges
-// values below kRangeNum must be continuous so that we can map to 
+// values below kRangeNum must be continuous so that we can map to
 // lang group directly.
-// all ranges we care about should be defined under 32, that allows 
+// all ranges we care about should be defined under 32, that allows
 // us to store range using bits of a PRUint32
 
 // frequently used range definitions
@@ -74,8 +70,8 @@ const uint8_t   kRangeYi                   = 63;
 const uint8_t   kRangeCombiningDiacriticalMarks = 64;
 const uint8_t   kRangeArmenian             = 65;
 
-const uint8_t   kRangeTableBase   = 128;    //values over 127 are reserved for internal use only
-const uint8_t   kRangeTertiaryTable  = 145; // leave room for 16 subtable 
+const uint8_t   kRangeTableBase             = 128;    //values over 127 are reserved for internal use only
+const uint8_t   kRangeTertiaryTable         = 145; // leave room for 16 subtable 
                                             // indices (kRangeTableBase + 1 ..
                                             // kRangeTableBase + 16)
 
@@ -86,4 +82,4 @@ extern uint32_t findCharUnicodeRange(WCHAR ch);
 extern CharEncodingType FindCharEncUnicodeRange(WCHAR ch);
 
 
-#endif // !defined(AFX_UNICODERANGE_H__844E93E6_8D23_4759_A0D9_6E78F66B3F55__INCLUDED_)
+#endif // !defined(GfxRaw_win32_UnicodeRange_h)

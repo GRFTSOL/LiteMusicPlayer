@@ -10,12 +10,12 @@ public:
     CSkinFilterCtrl();
     ~CSkinFilterCtrl();
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 #ifdef _SKIN_EDITOR_
     void enumProperties(CUIObjProperties &listProperties);
 #endif // _SKIN_EDITOR_
 
-    void draw(CRawGraph *canvas);
+    void draw(CRawGraph *canvas) override;
 
 protected:
     float m_fStartPercent;

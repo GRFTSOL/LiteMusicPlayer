@@ -60,7 +60,7 @@ public:
 
     LRESULT wndProc(uint32_t message, WPARAM wParam, LPARAM lParam);
 
-    bool setProperty(cstr_t szProperty, cstr_t szValue);
+    bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 
     void enumProperties(CUIObjProperties &listProperties);
 

@@ -30,18 +30,18 @@ public:
     CPagePfAdvanced();
     ~CPagePfAdvanced();
 
-    void onInitialUpdate();
+    void onInitialUpdate() override;
 
-    void onDestroy();
+    void onDestroy() override;
 
-    virtual void onUIObjNotify(IUIObjNotify *pNotify);
+    virtual void onUIObjNotify(IUIObjNotify *pNotify) override;
 
-    bool onCommand(int nId);
-    bool onCustomCommand(int nId);
+    bool onCommand(int nId) override;
+    bool onCustomCommand(int nId) override;
 
-    void onTimer(int nId);
+    void onTimer(int nId) override;
 
-    void onTextChanged();
+    void onTextChanged() override;
 
     void updateValues();
 

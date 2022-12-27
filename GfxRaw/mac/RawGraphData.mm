@@ -37,12 +37,12 @@ bool CRawGraphData::create(int cx, int cy, WindowHandleHolder *windowHandle, int
     }
 
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    
+
     // create the bitmap context
     m_context = CGBitmapContextCreate(m_imageData.buff, m_imageData.width, m_imageData.height, 8,
-                                                        m_imageData.absStride(), colorSpace,
-                                                        // this will give us an optimal RGBA format for the device:
-                                                        (kCGImageAlphaPremultipliedLast));
+        m_imageData.absStride(), colorSpace,
+        // this will give us an optimal RGBA format for the device:
+        (kCGImageAlphaPremultipliedLast));
     assert(m_context);
     CGColorSpaceRelease(colorSpace);
 
@@ -50,8 +50,9 @@ bool CRawGraphData::create(int cx, int cy, WindowHandleHolder *windowHandle, int
 }
 
 void CRawGraphData::destroy() {
-    if (m_context != nullptr)
+    if (m_context != nullptr) {
         CGContextRelease(m_context);
+    }
 
     m_imageData.free();
 }
@@ -61,11 +62,13 @@ void CRawGraphData::drawToWindow(int xdest, int ydest, int width, int height, in
 
     CGImageRef rawImage = CGBitmapContextCreateImage(m_context);
     CGRect rcDest = CGRectMake(xdest, ydest, width, height);
-    
-    if (xsrc + width >= m_imageData.width)
+
+    if (xsrc + width >= m_imageData.width) {
         width = m_imageData.width - xsrc;
-    if (ysrc + height >= m_imageData.height)
+    }
+    if (ysrc + height >= m_imageData.height) {
         height = m_imageData.height - ysrc;
+    }
 
     CGContextRef viewContext = createViewContext(m_windowHandle->view);
 

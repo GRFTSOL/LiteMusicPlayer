@@ -1,44 +1,43 @@
-﻿// GdiplusGraphicsLite.h: interface for the CGdiplusGraphicsLite class.
-//
-//////////////////////////////////////////////////////////////////////
+﻿
 
-#if !defined(AFX_GdiplusGraphicsLite_H__C92B58E7_E894_4696_A643_DE12B8A99529__INCLUDED_)
-#define AFX_GdiplusGraphicsLite_H__C92B58E7_E894_4696_A643_DE12B8A99529__INCLUDED_
+#ifndef GfxRaw_win32_GdiplusGraphicsLite_h
+#define GfxRaw_win32_GdiplusGraphicsLite_h
 
 #pragma once
 
 #include "FontCollection.h"
 
+
 #ifndef __int3264
-typedef uint32_t *    ULONG_PTR;
+typedef uint32_t * ULONG_PTR;
 #endif
 
 namespace Gdiplus
 {
-class GpFont;
-class GpGraphics;
-class GpSolidFill;
-class GpStringFormat;
-class GpBrush;
-class RectF;
-class Rect;
-struct GdiplusStartupOutput;
-struct GdiplusStartupInput;
-typedef Rect GpRect;
-typedef RectF GpRectF;
-typedef uint32_t ARGB;
-enum CombineMode;
-typedef float REAL;
-enum TextRenderingHint;
-enum Status;
-enum StringAlignment;
-enum StringTrimming;
+    class GpFont;
+    class GpGraphics;
+    class GpSolidFill;
+    class GpStringFormat;
+    class GpBrush;
+    class RectF;
+    class Rect;
+    struct GdiplusStartupOutput;
+    struct GdiplusStartupInput;
+    typedef Rect GpRect;
+    typedef RectF GpRectF;
+    typedef uint32_t ARGB;
+    enum CombineMode;
+    typedef float REAL;
+    enum TextRenderingHint;
+    enum Status;
+    enum StringAlignment;
+    enum StringTrimming;
 };
 using namespace Gdiplus;
 
-#define WINGDIPAPI __stdcall
+#define WINGDIPAPI          __stdcall
 
-#define GDIPCONST const
+#define GDIPCONST           const
 
 typedef Status (WINGDIPAPI *FUNGdipCreateFromHDC)(HDC hdc, GpGraphics **graphics);
 typedef Status (WINGDIPAPI *FUNGdipCreateFontFromLogfontA) ( HDC hdc, GDIPCONST LOGFONTA *logfont, GpFont **font );
@@ -61,7 +60,7 @@ typedef Status (WINGDIPAPI *FUNGdipSetStringFormatAlign) (GpStringFormat *format
 typedef Status (WINGDIPAPI *FUNGdipGetStringFormatAlign) (GDIPCONST GpStringFormat *format, StringAlignment *align);
 typedef Status (WINGDIPAPI *FUNGdipSetStringFormatLineAlign) (GpStringFormat *format, StringAlignment align);
 typedef Status (WINGDIPAPI *FUNGdipGetStringFormatLineAlign) (GDIPCONST GpStringFormat *format, StringAlignment *align);
-typedef Status (WINGDIPAPI *FUNGdipSetStringFormatTrimming) (GpStringFormat  *format, StringTrimming trimming);
+typedef Status (WINGDIPAPI *FUNGdipSetStringFormatTrimming) (GpStringFormat *format, StringTrimming trimming);
 typedef Status (WINAPI *FUNGdiplusStartup) ( OUT ULONG_PTR *token, const GdiplusStartupInput *input, OUT GdiplusStartupOutput *output);
 typedef VOID (WINAPI *FUNGdiplusShutdown) (ULONG_PTR token);
 
@@ -71,8 +70,7 @@ class CGdiplusFont;
 //
 // GDI Plus方式的画图
 //
-class CGdiplusGraphicsLite : public CGraphics
-{
+class CGdiplusGraphicsLite : public CGraphics {
 public:
     // typedef bool (*FUNTextOut)(int nXStart, int nYStart, cstr_t lpString, int cbString);
     CGdiplusGraphicsLite();
@@ -101,41 +99,41 @@ protected:
 
 public:
     // GpFont            *font;
-    GpGraphics        *griphics;
-    GpSolidFill        *brush;
-    GpStringFormat    *stringFormat;
-    bool            bInitOK;
-    HDC                m_hdcBk;
-    HPEN            m_hPenOld;
+    GpGraphics                  *griphics;
+    GpSolidFill                 *brush;
+    GpStringFormat              *stringFormat;
+    bool                        bInitOK;
+    HDC                         m_hdcBk;
+    HPEN                        m_hPenOld;
 
-    CFontCollection<CGdiplusFont>    m_fontCollection;
+    CFontCollection<CGdiplusFont>   m_fontCollection;
     bool                            m_bResolveTextEncoding;
 
-    static FUNGdipCreateFromHDC                    m_sfunGdipCreateFromHDC;
-    static FUNGdipCreateFontFromLogfontA        m_sfunGdipCreateFontFromLogfontA;
-    static FUNGdipCreateFontFromLogfontW        m_sfunGdipCreateFontFromLogfontW;
-    static FUNGdipCreateFontFromDC                m_sfunGdipCreateFontFromDC;
-    static FUNGdipCreateSolidFill                m_sfunGdipCreateSolidFill;
-    static FUNGdipStringFormatGetGenericTypographic    m_sfunGdipStringFormatGetGenericTypographic;
-    static FUNGdipDeleteStringFormat            m_sfunGdipDeleteStringFormat;
-    static FUNGdipSetStringFormatFlags            m_sfunGdipSetStringFormatFlags;
-    static FUNGdipGetStringFormatFlags            m_sfunGdipGetStringFormatFlags;
-    static FUNGdipDeleteFont                    m_sfunGdipDeleteFont;
-    static FUNGdipDeleteBrush                    m_sfunGdipDeleteBrush;
-    static FUNGdipDeleteGraphics                m_sfunGdipDeleteGraphics;
-    static FUNGdipDrawString                    m_sfunGdipDrawString;
-    static FUNGdipGetClipBoundsI                m_sfunGdipGetClipBoundsI;
-    static FUNGdipSetClipRectI                    m_sfunGdipSetClipRectI;
-    static FUNGdipSetTextRenderingHint            m_sfunGdipSetTextRenderingHint;
-    static FUNGdipMeasureString                    m_sfunGdipMeasureString;
-    static FUNGdipSetStringFormatAlign            m_sfunGdipSetStringFormatAlign;
-    static FUNGdipGetStringFormatAlign            m_sfunGdipGetStringFormatAlign;
-    static FUNGdipSetStringFormatLineAlign        m_sfunGdipSetStringFormatLineAlign;
-    static FUNGdipGetStringFormatLineAlign        m_sfunGdipGetStringFormatLineAlign;
-    static FUNGdipSetStringFormatTrimming        m_sfunGdipSetStringFormatTrimming;
-    static FUNGdiplusStartup                    m_sfunGdiplusStartup;
-    static FUNGdiplusShutdown                    m_sfunGdiplusShutdown;
+    static FUNGdipCreateFromHDC                     m_sfunGdipCreateFromHDC;
+    static FUNGdipCreateFontFromLogfontA            m_sfunGdipCreateFontFromLogfontA;
+    static FUNGdipCreateFontFromLogfontW            m_sfunGdipCreateFontFromLogfontW;
+    static FUNGdipCreateFontFromDC                  m_sfunGdipCreateFontFromDC;
+    static FUNGdipCreateSolidFill                   m_sfunGdipCreateSolidFill;
+    static FUNGdipStringFormatGetGenericTypographic m_sfunGdipStringFormatGetGenericTypographic;
+    static FUNGdipDeleteStringFormat                m_sfunGdipDeleteStringFormat;
+    static FUNGdipSetStringFormatFlags              m_sfunGdipSetStringFormatFlags;
+    static FUNGdipGetStringFormatFlags              m_sfunGdipGetStringFormatFlags;
+    static FUNGdipDeleteFont                        m_sfunGdipDeleteFont;
+    static FUNGdipDeleteBrush                       m_sfunGdipDeleteBrush;
+    static FUNGdipDeleteGraphics                    m_sfunGdipDeleteGraphics;
+    static FUNGdipDrawString                        m_sfunGdipDrawString;
+    static FUNGdipGetClipBoundsI                    m_sfunGdipGetClipBoundsI;
+    static FUNGdipSetClipRectI                      m_sfunGdipSetClipRectI;
+    static FUNGdipSetTextRenderingHint              m_sfunGdipSetTextRenderingHint;
+    static FUNGdipMeasureString                     m_sfunGdipMeasureString;
+    static FUNGdipSetStringFormatAlign              m_sfunGdipSetStringFormatAlign;
+    static FUNGdipGetStringFormatAlign              m_sfunGdipGetStringFormatAlign;
+    static FUNGdipSetStringFormatLineAlign          m_sfunGdipSetStringFormatLineAlign;
+    static FUNGdipGetStringFormatLineAlign          m_sfunGdipGetStringFormatLineAlign;
+    static FUNGdipSetStringFormatTrimming           m_sfunGdipSetStringFormatTrimming;
+    static FUNGdiplusStartup                        m_sfunGdiplusStartup;
+    static FUNGdiplusShutdown                       m_sfunGdiplusShutdown;
 
 };
 
-#endif // !defined(AFX_GdiplusGraphicsLite_H__C92B58E7_E894_4696_A643_DE12B8A99529__INCLUDED_)
+#endif // !defined(GfxRaw_win32_GdiplusGraphicsLite_h)

@@ -2,10 +2,10 @@
 
 #include "IMPlayer.h"
 
+
 void calc_freq(unsigned char *dest, unsigned char *src);
 
-class CXStr : public IString
-{
+class CXStr : public IString {
 OBJ_REFERENCE_DECL
 public:
     CXStr();
@@ -25,12 +25,11 @@ public:
     virtual void append(cstr_t str, int n);
 
 protected:
-    string        m_str;
+    string                      m_str;
 
 };
 
-class CVXStr : public IVString
-{
+class CVXStr : public IVString {
 OBJ_REFERENCE_DECL
 public:
     CVXStr();
@@ -44,12 +43,11 @@ public:
     virtual void insert(int index, cstr_t szStr);
 
 protected:
-    vector<string>        m_vstr;
+    vector<string>              m_vstr;
 
 };
 
-class CVInt : public IVInt
-{
+class CVInt : public IVInt {
     OBJ_REFERENCE_DECL
 public:
     CVInt();
@@ -63,12 +61,11 @@ public:
     virtual void insert(int index, int nData);
 
 protected:
-    vector<int>            m_vInt;
+    vector<int>                 m_vInt;
 
 };
 
-class CVector : public IVector
-{
+class CVector : public IVector {
     OBJ_REFERENCE_DECL
 public:
     CVector() { OBJ_REFERENCE_INIT }
@@ -85,6 +82,6 @@ public:
         { if (index >= 0 && index < (int)m_vData.size()) m_vData.insert(m_vData.begin() + index, p); }
 
 protected:
-    vector<void *>            m_vData;
+    vector<void                 *>            m_vData;
 
 };
