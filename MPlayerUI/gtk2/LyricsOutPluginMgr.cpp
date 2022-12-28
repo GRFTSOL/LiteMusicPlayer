@@ -1,39 +1,29 @@
-// LyricsOutPluginMgr.cpp: implementation of the CLyricsOutPluginMgr class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "../MPlayerApp.h"
 #include "../Helper.h"
 #include "LyricsOutPluginMgr.h"
 
-CLyricsOutPluginMgr        g_lyrOutPlguinMgr;
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
+CLyricsOutPluginMgr g_lyrOutPlguinMgr;
 
-CLyricsOutPluginMgr::CLyricsOutPluginMgr()
-{
+
+
+CLyricsOutPluginMgr::CLyricsOutPluginMgr() {
 
 }
 
-CLyricsOutPluginMgr::~CLyricsOutPluginMgr()
-{
+CLyricsOutPluginMgr::~CLyricsOutPluginMgr() {
 
 }
 
-int CLyricsOutPluginMgr::init()
-{
+int CLyricsOutPluginMgr::init() {
     return ERR_OK;
 }
 
-void CLyricsOutPluginMgr::quit()
-{
+void CLyricsOutPluginMgr::quit() {
 }
 
-void CLyricsOutPluginMgr::getLoadedPlugins(vector<string> &vPlugins)
-{
-/*    V_PLUGINS::iterator        it, itEnd;
+void CLyricsOutPluginMgr::getLoadedPlugins(vector<string> &vPlugins) {
+    /*    V_PLUGINS::iterator        it, itEnd;
     char        szFileName[MAX_PATH];
     string        str;
 
@@ -60,62 +50,51 @@ void CLyricsOutPluginMgr::getLoadedPlugins(vector<string> &vPlugins)
     }*/
 }
 
-void CLyricsOutPluginMgr::configurePlugin(int nPluginIdx, Window *pWndParent)
-{
+void CLyricsOutPluginMgr::configurePlugin(int nPluginIdx, Window *pWndParent) {
 }
 
-void CLyricsOutPluginMgr::aboutPlugin(int nPluginIdx, Window *pWndParent)
-{
+void CLyricsOutPluginMgr::aboutPlugin(int nPluginIdx, Window *pWndParent) {
 }
 
-void CLyricsOutPluginMgr::uninstPlugin(int nPluginIdx, Window *pWndParent)
-{
+void CLyricsOutPluginMgr::uninstPlugin(int nPluginIdx, Window *pWndParent) {
 }
 
-void CLyricsOutPluginMgr::onPlayPos(int uPos)
-{
+void CLyricsOutPluginMgr::onPlayPos(int uPos) {
 }
 
-void CLyricsOutPluginMgr::onSongChanged()
-{
+void CLyricsOutPluginMgr::onSongChanged() {
 }
 
-void CLyricsOutPluginMgr::onLyricsChanged()
-{
+void CLyricsOutPluginMgr::onLyricsChanged() {
 }
 
-int CLyricsOutPluginMgr::getLineCount()
-{
+int CLyricsOutPluginMgr::getLineCount() {
 }
 
-bool CLyricsOutPluginMgr::getLyricsOfLine(int nLine, char szLyrics[], int nBuffLen, int &nBegTime, int &nEndTime)
-{
+bool CLyricsOutPluginMgr::getLyricsOfLine(int nLine, char szLyrics[], int nBuffLen, int &nBegTime, int &nEndTime) {
     return false;
 }
 
-int CLyricsOutPluginMgr::getCurLine()
-{
+int CLyricsOutPluginMgr::getCurLine() {
     return 0;
 }
 
-int CLyricsOutPluginMgr::getPlayPos()
-{
+int CLyricsOutPluginMgr::getPlayPos() {
     return g_LyricData.getPlayElapsedTime();
 }
 
-bool CLyricsOutPluginMgr::getMediaFile(char szFile[], int nBuffLen)
-{
+bool CLyricsOutPluginMgr::getMediaFile(char szFile[], int nBuffLen) {
     emptyStr(szFile);
     strcpy_safe(szFile, nBuffLen, g_Player.getSrcMedia());
     return !emptyStr(szFile);
 }
 
 #ifdef _WIN32
-HWND CLyricsOutPluginMgr::getMainWnd()
-{
-    if (CMPlayerAppBase::getMainWnd())
+HWND CLyricsOutPluginMgr::getMainWnd() {
+    if (CMPlayerAppBase::getMainWnd()) {
         return CMPlayerAppBase::getMainWnd()->getHandle();
-    else
+    } else {
         return nullptr;
+    }
 }
 #endif

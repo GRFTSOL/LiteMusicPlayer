@@ -88,7 +88,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="ZikiPlayer UNIT_TEST Unicode Debug|Win32"
+			Name="DHPlayer UNIT_TEST Unicode Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
@@ -327,7 +327,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="ZikiPlayer UNIT_TEST Unicode Debug|Win32"
+					Name="DHPlayer UNIT_TEST Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -366,7 +366,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="ZikiPlayer UNIT_TEST Unicode Debug|Win32"
+					Name="DHPlayer UNIT_TEST Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -406,7 +406,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="ZikiPlayer UNIT_TEST Unicode Debug|Win32"
+					Name="DHPlayer UNIT_TEST Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -452,7 +452,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="ZikiPlayer UNIT_TEST Unicode Debug|Win32"
+					Name="DHPlayer UNIT_TEST Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -491,7 +491,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="ZikiPlayer UNIT_TEST Unicode Debug|Win32"
+					Name="DHPlayer UNIT_TEST Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -534,7 +534,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="ZikiPlayer UNIT_TEST Unicode Debug|Win32"
+					Name="DHPlayer UNIT_TEST Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -573,7 +573,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="ZikiPlayer UNIT_TEST Unicode Debug|Win32"
+					Name="DHPlayer UNIT_TEST Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -620,7 +620,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="ZikiPlayer UNIT_TEST Unicode Debug|Win32"
+					Name="DHPlayer UNIT_TEST Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -659,7 +659,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="ZikiPlayer UNIT_TEST Unicode Debug|Win32"
+					Name="DHPlayer UNIT_TEST Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -698,7 +698,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="ZikiPlayer UNIT_TEST Unicode Debug|Win32"
+					Name="DHPlayer UNIT_TEST Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -741,7 +741,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="ZikiPlayer UNIT_TEST Unicode Debug|Win32"
+					Name="DHPlayer UNIT_TEST Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -780,7 +780,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="ZikiPlayer UNIT_TEST Unicode Debug|Win32"
+					Name="DHPlayer UNIT_TEST Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -823,7 +823,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="ZikiPlayer UNIT_TEST Unicode Debug|Win32"
+					Name="DHPlayer UNIT_TEST Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -863,7 +863,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="ZikiPlayer UNIT_TEST Unicode Debug|Win32"
+					Name="DHPlayer UNIT_TEST Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -905,7 +905,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="ZikiPlayer UNIT_TEST Unicode Debug|Win32"
+					Name="DHPlayer UNIT_TEST Unicode Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"

@@ -1,37 +1,25 @@
-// MPVisAdapter.cpp: implementation of the CMPVisAdapter class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "MPlayerAppBase.h"
 #include "MPVisAdapter.h"
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
-CMPVisAdapter::CMPVisAdapter()
-{
+CMPVisAdapter::CMPVisAdapter() {
     OBJ_REFERENCE_INIT
 }
 
-CMPVisAdapter::~CMPVisAdapter()
-{
+CMPVisAdapter::~CMPVisAdapter() {
 
 }
 
-MLRESULT CMPVisAdapter::init(IMPlayer *pPlayer)
-{
+MLRESULT CMPVisAdapter::init(IMPlayer *pPlayer) {
     return ERR_OK;
 }
 
-MLRESULT CMPVisAdapter::quit()
-{
+MLRESULT CMPVisAdapter::quit() {
     return ERR_OK;
 }
 
-int CMPVisAdapter::render(VisParam *visParam)
-{
-    CEventVisDrawUpdate        *pEvent = new CEventVisDrawUpdate;
+int CMPVisAdapter::render(VisParam *visParam) {
+    CEventVisDrawUpdate *pEvent = new CEventVisDrawUpdate;
 
     // memcpy(&m_visParam, visParam, sizeof(m_visParam));
 

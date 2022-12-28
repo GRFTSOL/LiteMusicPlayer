@@ -1,13 +1,11 @@
 #pragma once
 
-enum MediaSourceType
-{
+enum MediaSourceType {
     MST_ITUNES,
     MST_FILES,
 };
 
-class IMediaSource
-{
+class IMediaSource {
 public:
     IMediaSource(MediaSourceType type) : m_type(type) { }
     virtual ~IMediaSource() { }
@@ -28,15 +26,15 @@ public:
     virtual void removeItem(int nIndex) = 0;
 
 protected:
-    MediaSourceType        m_type;
+    MediaSourceType             m_type;
 
 };
 
 
 #include "../pluginiTunes/iTunesCOMInterface.h"
 
-class CiTunesMediaSource : public IMediaSource
-{
+
+class CiTunesMediaSource : public IMediaSource {
 public:
     CiTunesMediaSource();
     ~CiTunesMediaSource();
@@ -53,11 +51,10 @@ public:
     virtual int removeEmbeddedLyrics(int nIndex);
 
 protected:
-    struct Item
-    {
-        string        location, artist, album, title;
-        uint32_t        duration;
-        IITFileOrCDTrack *trackFile;
+    struct Item {
+        string                      location, artist, album, title;
+        uint32_t                    duration;
+        IITFileOrCDTrack            *trackFile;
     };
     typedef vector<Item>    VecTracks;
 
@@ -67,20 +64,19 @@ protected:
     virtual bool updateMediaInfo(Item &item);
 
 protected:
-    CMPAutoPtr<IiTunes>        m_iTunesApp;
-    CMPAutoPtr<IITLibraryPlaylist> mainLibrary;
-    CMPAutoPtr<IITTrackCollection> tracks;
+    CMPAutoPtr<IiTunes>         m_iTunesApp;
+    CMPAutoPtr<IITLibraryPlaylist>  mainLibrary;
+    CMPAutoPtr<IITTrackCollection>  tracks;
 
-    VecTracks                m_vTracks;
+    VecTracks                   m_vTracks;
 
 #ifdef _DEBUG
-    uint32_t                m_threadId;
+    uint32_t                    m_threadId;
 #endif
 
 };
 
-class CFileMediaSource : public IMediaSource
-{
+class CFileMediaSource : public IMediaSource {
 public:
     CFileMediaSource() : IMediaSource(MST_FILES) { }
 
@@ -106,11 +102,10 @@ protected:
     bool isFileExist(cstr_t szFile);
 
 protected:
-    struct Item
-    {
-        string        file, artist, album, title;
-        bool        bInfoAvailable;
-        uint32_t        nMediaLength;
+    struct Item {
+        string                      file, artist, album, title;
+        bool                        bInfoAvailable;
+        uint32_t                    nMediaLength;
 
         Item(string &file) {
             this->bInfoAvailable = false;
@@ -120,6 +115,6 @@ protected:
     };
     typedef vector<Item>        VecItems;
 
-    VecItems                m_vFiles;
+    VecItems                    m_vFiles;
 
 };

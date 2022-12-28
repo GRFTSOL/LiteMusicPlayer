@@ -1,7 +1,3 @@
-// CrashHandler.cpp: implementation of the CCrashHandler class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "MPlayerApp.h"
 #include "crashRptDlg.h"
 
@@ -9,19 +5,18 @@
 
 #include "../Utils/win32/MailFileTo.h"
 
-CMiniDumperNotify    dumpNotify;
 
-bool CMiniDumperNotify::onBeginDump(HMODULE hCrashMod, char szDumpFileToSave[], int nLen)
-{
+CMiniDumperNotify dumpNotify;
+
+bool CMiniDumperNotify::onBeginDump(HMODULE hCrashMod, char szDumpFileToSave[], int nLen) {
     getAppDataDir(szDumpFileToSave);
     strcat_safe(szDumpFileToSave, nLen, SZ_APP_NAME "_crash.dmp");
 
     return true;
 }
 
-bool CMiniDumperNotify::onDumpFinished(HMODULE hCrashMod, cstr_t szDumpFileToSave)
-{
-    CCrashRptDlg    dlg;
+bool CMiniDumperNotify::onDumpFinished(HMODULE hCrashMod, cstr_t szDumpFileToSave) {
+    CCrashRptDlg dlg;
 
     dlg.m_strDumpFile = szDumpFileToSave;
 
@@ -32,17 +27,15 @@ bool CMiniDumperNotify::onDumpFinished(HMODULE hCrashMod, cstr_t szDumpFileToSav
 }
 
 
-bool CCrashRptDlg::onInitDialog()
-{
+bool CCrashRptDlg::onInitDialog() {
     CBaseDialog::onInitDialog();
 
     return true;
 }
 
-void CCrashRptDlg::onOK()
-{
-    CMailFileTo        mail;
-    string            strSubjet;
+void CCrashRptDlg::onOK() {
+    CMailFileTo mail;
+    string strSubjet;
 
     strSubjet = getAppNameLong();
     strSubjet += " Minidumps";

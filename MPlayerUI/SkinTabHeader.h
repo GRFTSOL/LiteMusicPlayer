@@ -1,7 +1,3 @@
-// SkinTabHeader.h: interface for the CSkinTabHeader class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #ifndef _SKIN_TAB_HEADER_INC_
 #define _SKIN_TAB_HEADER_INC_
 
@@ -13,28 +9,26 @@
 //
 //    TabHeader image must be in following alignment
 //           // [ 0 [ 1 [ 2 ] 3 ] 4 ]
-//        2 is active button 
+//        2 is active button
 //
-class CSkinTabHeader : public CUIObject  
-{
+class CSkinTabHeader : public CUIObject {
     UIOBJECT_CLASS_NAME_DECLARE(CUIObject)
 public:
     CSkinTabHeader();
     virtual ~CSkinTabHeader();
 
-    struct Button
-    {
-        int            nID;
-        int            nIDAssociatedObj;
-        int            nAutoUniID;
-        string        strText;
-        string        strTooltip;
-        bool        bTempToolTip;
-        string        strIDAssociatedObj;
+    struct Button {
+        int                         nID;
+        int                         nIDAssociatedObj;
+        int                         nAutoUniID;
+        string                      strText;
+        string                      strTooltip;
+        bool                        bTempToolTip;
+        string                      strIDAssociatedObj;
 
-        int            nWidth;
-        int            nImageWidth;
-        int            nImageStartPos;
+        int                         nWidth;
+        int                         nImageWidth;
+        int                         nImageStartPos;
 
         Button();
 
@@ -82,33 +76,32 @@ protected:
     void drawTabButton(CRawGraph *canvas, Button &bt, CRect &rcButton, bool bActiveTabButton);
 
 protected:
-    int                    m_nButtonFaceSize;
-    int                    m_nButtonBorderSize;
-    int                    m_nTabHeight;
+    int                         m_nButtonFaceSize;
+    int                         m_nButtonBorderSize;
+    int                         m_nTabHeight;
 
-    int                    m_nActiveButtonIncSize;
+    int                         m_nActiveButtonIncSize;
 
     //
     // Image order:  Inactive, active, active-mask
     //
-    enum  TabImagePos
-    {
+    enum  TabImagePos {
         TIP_INACTIVE,
         TIP_ACTIVE,
         TIP_ACTIVE_MASK,
     };
-    string                m_strImageFile;
-    CSFImage            m_img;
+    string                      m_strImageFile;
+    CSFImage                    m_img;
 
-    bool                m_bEnableHover;
-    bool                m_bLBtDown;
-    bool                m_bHover;
+    bool                        m_bEnableHover;
+    bool                        m_bLBtDown;
+    bool                        m_bHover;
 
-    vec_buttons            m_vButtons;
-    int                    m_nActiveButton;
-    int                    m_nHoverButton;
+    vec_buttons                 m_vButtons;
+    int                         m_nActiveButton;
+    int                         m_nHoverButton;
 
-    CSkinFontProperty    m_font;
+    CSkinFontProperty           m_font;
 
 };
 

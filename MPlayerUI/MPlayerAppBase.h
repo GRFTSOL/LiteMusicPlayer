@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "MLClientSession.h"
@@ -30,30 +29,16 @@
 
 #include "resource.h"
 
-#ifdef _MPLAYER
-#define SZ_APP_NAME            "ZikiPlayer"
-#define SZ_COMPANY_NAME        ""
-#else
-#define SZ_APP_NAME            "MiniLyrics"
-#define SZ_COMPANY_NAME        "CrintSoft"
-#endif
+#define SZ_APP_NAME         "DHPlayer"
+#define SZ_COMPANY_NAME     "CrintSoft"
 
-#define SZ_MACRO_PRODUCT_NAME                "$Product$"
-#define SZ_MACRO_COMPANY_NAME                "$Company$"
+#define SZ_MACRO_PRODUCT_NAME   "$Product$"
+#define SZ_MACRO_COMPANY_NAME   "$Company$"
 
 
-#ifdef _MPLAYER
-#define SZ_PROFILE_NAME        "ZikiPlayer.ini"
-#define SZ_MUTEX_RUNNING    "ZikiPlayerRunning"
-#define SZ_MAINWND_CLASSNAME    "ZikiPlayer"
-#ifndef SZ_MINILYRICS_SERVICE_CLASS_NAME
-#define SZ_MINILYRICS_SERVICE_CLASS_NAME    SZ_MAINWND_CLASSNAME
-#endif
-#else
-#define SZ_PROFILE_NAME        "MiniLyric.ini"
-#define SZ_MUTEX_RUNNING    "MiniLyricsRunning"
-#define SZ_MAINWND_CLASSNAME    "MiniLyrics"
-#endif
+#define SZ_PROFILE_NAME     "DHPlayer.ini"
+#define SZ_MUTEX_RUNNING    "DHPlayerRunning"
+#define SZ_MAINWND_CLASSNAME "DHPlayer"
 
 class CDownloadMgr;
 class CMLClientSession;
@@ -65,16 +50,15 @@ class CMLData;
 
 
 // lyrics data
-extern CMLData                    g_LyricData;
+extern CMLData g_LyricData;
 
 // lyrics download manager
-extern CDownloadMgr                g_LyricsDownloader;
+extern CDownloadMgr g_LyricsDownloader;
 
 // Local lyrics search
-extern CLyricsLocalSearch        g_LyricSearch;
+extern CLyricsLocalSearch g_LyricSearch;
 
-enum STR_NAME
-{
+enum STR_NAME {
     SN_HTTP_DOMAIN,
     SN_HTTP_REGISTER,
     SN_HTTP_DLSKIN,
@@ -105,8 +89,7 @@ cstr_t getStrName(STR_NAME nameId);
 
 void dispatchPlayPosEvent(int nPlayPos);
 
-class CMPlayerAppBase : public CSkinApp
-{
+class CMPlayerAppBase : public CSkinApp {
 public:
     CMPlayerAppBase();
     virtual ~CMPlayerAppBase();
@@ -165,7 +148,7 @@ protected:
     void setDefaultSettings();
 
 protected:
-    CMPHotkey                m_hotKey;
+    CMPHotkey                   m_hotKey;
 
 };
 
@@ -179,5 +162,6 @@ protected:
 
 #ifdef _MAC_OS
 #include "mac/MPlayerApp.h"
-#endif
 
+
+#endif

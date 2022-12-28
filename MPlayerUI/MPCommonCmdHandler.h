@@ -1,19 +1,14 @@
-// MPCommonCmdHandler.h: interface for the CMPCommonCmdHandler class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MPCOMMONCMDHANDLER_H__C770324D_2964_450B_AB1C_5DD1C118B0FD__INCLUDED_)
-#define AFX_MPCOMMONCMDHANDLER_H__C770324D_2964_450B_AB1C_5DD1C118B0FD__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef MPlayerUI_MPCommonCmdHandler_h
+#define MPlayerUI_MPCommonCmdHandler_h
+
 
 #include "MPEventsDispatcher.h"
 #include "LyrDisplayClrListWnd.h"
 
-class CMPCommonCmdHandler : public ISkinCmdHandler  
-{
+
+class CMPCommonCmdHandler : public ISkinCmdHandler {
 public:
     CMPCommonCmdHandler(bool bFloatingLyr = false);
     virtual ~CMPCommonCmdHandler();
@@ -35,11 +30,11 @@ protected:
     CLyricsLines &getDisplayLyrics();
 
 protected:
-    string            m_strSectName;
-    EventType        m_etDispSettings;
+    string                      m_strSectName;
+    EventType                   m_etDispSettings;
 
-    CLyrDisplayClrListWnd    m_popupHighClrListWnd;
+    CLyrDisplayClrListWnd       m_popupHighClrListWnd;
 
 };
 
-#endif // !defined(AFX_MPCOMMONCMDHANDLER_H__C770324D_2964_450B_AB1C_5DD1C118B0FD__INCLUDED_)
+#endif // !defined(MPlayerUI_MPCommonCmdHandler_h)

@@ -2,8 +2,8 @@
 
 #include "SkinScrollText.h"
 
-class CMediaInfoTextCtrl : public CSkinScrollText, public IEventHandler
-{
+
+class CMediaInfoTextCtrl : public CSkinScrollText, public IEventHandler {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinScrollText)
 public:
     CMediaInfoTextCtrl();
@@ -25,13 +25,13 @@ protected:
 
     string getMediaAttrInfo(MediaAttribute infoType);
 
-    vector<MediaAttribute>    m_vInfoType;
-    int                        m_nSwitchTime;
-    int                        m_nCurrentItem;
-    bool                    m_bShowTitle;
-    int                        m_nIDTimerUpdateTrackInfo;
+    vector<MediaAttribute>      m_vInfoType;
+    int                         m_nSwitchTime;
+    int                         m_nCurrentItem;
+    bool                        m_bShowTitle;
+    int                         m_nIDTimerUpdateTrackInfo;
 
     // If CombineWith exists, all information will be combined with it.
-    string                    m_strCombineWith;
+    string                      m_strCombineWith;
 
 };

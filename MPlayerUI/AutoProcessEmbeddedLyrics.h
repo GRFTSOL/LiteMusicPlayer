@@ -1,23 +1,20 @@
 #pragma once
 
 
-class CAutoProcessEmbeddedLyrics  
-{
+class CAutoProcessEmbeddedLyrics {
 public:
-    struct Item
-    {
-        string                m_strSongFile;
-        VecStrings            m_vLyrNames;    // SZ_SONG_ID3V2_USLT, etc.
-        bool                m_bRemove;        // true: remove, false: add.
-        uint8_t                m_nTryFailed;
-        bool                m_bDealOK;
-        int                    m_nSucceededCount;
+    struct Item {
+        string                      m_strSongFile;
+        VecStrings                  m_vLyrNames;        // SZ_SONG_ID3V2_USLT, etc.
+        bool                        m_bRemove;          // true: remove, false: add.
+        uint8_t                     m_nTryFailed;
+        bool                        m_bDealOK;
+        int                         m_nSucceededCount;
 
         // save embedded lyrics
-        string            m_strLyrics;
+        string                      m_strLyrics;
 
-        Item()
-        {
+        Item() {
             m_bDealOK = false;
             m_nTryFailed = 0;
             m_nSucceededCount = 0;
@@ -51,9 +48,9 @@ protected:
     void saveJobs();
     void loadJobs(bool bDeleteFile);
 
-    LIST_ITEMS                m_listJobs;
-    std::mutex                    m_mutex;
+    LIST_ITEMS                  m_listJobs;
+    std::mutex                  m_mutex;
 
 };
 
-extern CAutoProcessEmbeddedLyrics        g_autoProcessEmbeddedLyrics;
+extern CAutoProcessEmbeddedLyrics g_autoProcessEmbeddedLyrics;

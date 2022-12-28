@@ -2,21 +2,21 @@
 #include "../LyricsLib/HelperFun.h"
 
 
-static cstr_t        SZ_SUPPORTED_IMG_EXT[] = { ".jpg", ".gif", ".bmp", ".png" };
+static cstr_t SZ_SUPPORTED_IMG_EXT[] = { ".jpg", ".gif", ".bmp", ".png" };
 
-bool isSupportedImageFile(cstr_t szFile)
-{
-    cstr_t            szExt;
-    int                i;
+bool isSupportedImageFile(cstr_t szFile) {
+    cstr_t szExt;
+    int i;
 
     szExt = strrchr(szFile, '.');
-    if (!szExt)
+    if (!szExt) {
         return false;
+    }
 
-    for (i = 0; i < CountOf(SZ_SUPPORTED_IMG_EXT); i++)
-    {
-        if (strcasecmp(szExt, SZ_SUPPORTED_IMG_EXT[i]) == 0)
+    for (i = 0; i < CountOf(SZ_SUPPORTED_IMG_EXT); i++) {
+        if (strcasecmp(szExt, SZ_SUPPORTED_IMG_EXT[i]) == 0) {
             return true;
+        }
     }
 
     return false;
@@ -42,33 +42,35 @@ bool getImageFileWithName(cstr_t szName, VecStrings &vPicFiles)
     return false;
 }*/
 
-bool getCurrentMediaAlbumArtInSongDir(VecStrings &vPicFiles)
-{
-    string        strFile;
-    cstr_t        szAlbumName = g_Player.getAlbum(), szSongFile = g_Player.getSrcMedia();
-    VecStrings        vOtherPicFiles;
-    int            nFileCount = 0;
+bool getCurrentMediaAlbumArtInSongDir(VecStrings &vPicFiles) {
+    string strFile;
+    cstr_t szAlbumName = g_Player.getAlbum(), szSongFile = g_Player.getSrcMedia();
+    VecStrings vOtherPicFiles;
+    int nFileCount = 0;
 
-    if (!isFileExist(szSongFile))
+    if (!isFileExist(szSongFile)) {
         return false;
+    }
 
-    FileFind        find;
+    FileFind find;
 
     string strDir = fileGetPath(szSongFile);
-    if (!find.openDir(strDir.c_str()))
+    if (!find.openDir(strDir.c_str())) {
         return false;
+    }
 
-    string        file;
-    while (find.findNext())
-    {
+    string file;
+    while (find.findNext()) {
         // enum every image file
 
-        if (find.isCurDir())
+        if (find.isCurDir()) {
             continue;
+        }
 
         nFileCount++;
-        if (!isSupportedImageFile(find.getCurName()))
+        if (!isSupportedImageFile(find.getCurName())) {
             continue;
+        }
 
         strFile = strDir;
         strFile += find.getCurName();
@@ -77,8 +79,7 @@ bool getCurrentMediaAlbumArtInSongDir(VecStrings &vPicFiles)
         //
         // album.jpg
         //
-        if (strcasecmp(strFileTitle.c_str(), szAlbumName) == 0)
-        {
+        if (strcasecmp(strFileTitle.c_str(), szAlbumName) == 0) {
             vPicFiles.push_back(strFile);
             continue;
         }
@@ -86,16 +87,15 @@ bool getCurrentMediaAlbumArtInSongDir(VecStrings &vPicFiles)
         //
         // artist - album.jpg
         //
-        string        strArAl;
+        string strArAl;
         strArAl = g_Player.getArtist();
-        if (!isEmptyString(szAlbumName))
+        if (!isEmptyString(szAlbumName)) {
             strArAl = formatMediaTitle(g_Player.getArtist(), szAlbumName);
-        if (strArAl.empty())
-        {
+        }
+        if (strArAl.empty()) {
             strArAl = fileGetTitle(g_Player.getSrcMedia());
         }
-        if (strcasecmp(strFileTitle.c_str(), strArAl.c_str()) == 0)
-        {
+        if (strcasecmp(strFileTitle.c_str(), strArAl.c_str()) == 0) {
             vPicFiles.push_back(strFile);
             continue;
         }
@@ -103,8 +103,7 @@ bool getCurrentMediaAlbumArtInSongDir(VecStrings &vPicFiles)
         //
         // Folder.jpg
         //
-        if (strcasecmp(strFileTitle.c_str(), "Folder") == 0)
-        {
+        if (strcasecmp(strFileTitle.c_str(), "Folder") == 0) {
             vPicFiles.push_back(strFile);
             continue;
         }
@@ -113,27 +112,23 @@ bool getCurrentMediaAlbumArtInSongDir(VecStrings &vPicFiles)
         vOtherPicFiles.push_back(strFile);
     }
 
-    if (nFileCount < 60 && vPicFiles.size() < 1)
-    {
+    if (nFileCount < 60 && vPicFiles.size() < 1) {
         vPicFiles.insert(vPicFiles.begin(), vOtherPicFiles.begin(), vOtherPicFiles.end());
     }
 
     return true;
 }
 
-CCurMediaAlbumArt::CCurMediaAlbumArt()
-{
+CCurMediaAlbumArt::CCurMediaAlbumArt() {
     m_bLoaded = false;
 }
 
-CCurMediaAlbumArt::~CCurMediaAlbumArt()
-{
+CCurMediaAlbumArt::~CCurMediaAlbumArt() {
 }
 
-int CCurMediaAlbumArt::load()
-{
-    string        strSongFile;
-    int            nRet;
+int CCurMediaAlbumArt::load() {
+    string strSongFile;
+    int nRet;
 
     close();
 
@@ -141,55 +136,50 @@ int CCurMediaAlbumArt::load()
     strSongFile = g_Player.getSrcMedia();
 
     // load id3v2 pictures...
-    CID3v2IF        id3v2(ED_SYSDEF);
+    CID3v2IF id3v2(ED_SYSDEF);
     nRet = id3v2.open(strSongFile.c_str(), false, false);
-    if (nRet == ERR_OK)
-    {
+    if (nRet == ERR_OK) {
         id3v2.getPictures(m_id3v2Pic);
     }
 
     // load album art in song dir, with same album name.
     getCurrentMediaAlbumArtInSongDir(m_vAlbumPicFile);
 
-    if (getPicCount() > 0)
+    if (getPicCount() > 0) {
         return ERR_OK;
-    else
+    } else {
         return ERR_NOT_FOUND;
+    }
 }
 
-void CCurMediaAlbumArt::close()
-{
+void CCurMediaAlbumArt::close() {
     m_id3v2Pic.free();
     m_vAlbumPicFile.clear();
     m_bLoaded = false;
 }
 
-RawImageData *CCurMediaAlbumArt::loadAlbumArtByIndex(int nIndex)
-{
-    if (nIndex < 0)
+RawImageData *CCurMediaAlbumArt::loadAlbumArtByIndex(int nIndex) {
+    if (nIndex < 0) {
         return nullptr;
-
-    if (nIndex < (int)m_id3v2Pic.m_vItems.size())
-    {
-        ID3v2Pictures::ITEM    *pic = m_id3v2Pic.m_vItems[nIndex];
-        return loadRawImageDataFromMem(pic->m_buffPic.c_str(), (int)pic->m_buffPic.size());
     }
-    else
-    {
+
+    if (nIndex < (int)m_id3v2Pic.m_vItems.size()) {
+        ID3v2Pictures::ITEM *pic = m_id3v2Pic.m_vItems[nIndex];
+        return loadRawImageDataFromMem(pic->m_buffPic.c_str(), (int)pic->m_buffPic.size());
+    } else {
         nIndex -= (int)m_id3v2Pic.m_vItems.size();
-        if (nIndex < (int)m_vAlbumPicFile.size())
+        if (nIndex < (int)m_vAlbumPicFile.size()) {
             return loadRawImageDataFromFile(m_vAlbumPicFile[nIndex].c_str());
-        else
+        } else {
             return nullptr;
+        }
     }
 }
 
-int CCurMediaAlbumArt::getPicCount()
-{
+int CCurMediaAlbumArt::getPicCount() {
     int n = (int)m_id3v2Pic.m_vItems.size();
 
     n += m_vAlbumPicFile.size();
 
     return n;
 }
-

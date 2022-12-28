@@ -3,8 +3,8 @@
 
 #include "../MPSkinWnd.h"
 
-class CMPSkinMainWnd : public CMPSkinMainWndBase
-{
+
+class CMPSkinMainWnd : public CMPSkinMainWndBase {
 public:
     CMPSkinMainWnd();
     virtual ~CMPSkinMainWnd();

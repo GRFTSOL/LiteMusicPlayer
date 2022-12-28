@@ -1,7 +1,3 @@
-// MPSkinMainWnd.cpp: implementation of the CMPSkinMainWnd class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "MPlayerApp.h"
 #include "MPSkinMainWnd.h"
 
@@ -13,20 +9,14 @@
 #include "MPHelper.h"
 #endif
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
-CMPSkinMainWnd::CMPSkinMainWnd()
-{
+CMPSkinMainWnd::CMPSkinMainWnd() {
 }
 
-CMPSkinMainWnd::~CMPSkinMainWnd()
-{
+CMPSkinMainWnd::~CMPSkinMainWnd() {
 }
 
-void CMPSkinMainWnd::onCreate()
-{
+void CMPSkinMainWnd::onCreate() {
     CMPSkinMainWndBase::onCreate();
 
     registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_CUR_MEDIA_INFO_CHANGED);
@@ -34,37 +24,34 @@ void CMPSkinMainWnd::onCreate()
     m_mlTrayIcon.init(this);
 }
 
-void CMPSkinMainWnd::onDestroy()
-{
+void CMPSkinMainWnd::onDestroy() {
     m_mlTrayIcon.quit();
 
     CMPSkinMainWndBase::onDestroy();
 }
 
-void CMPSkinMainWnd::onEvent(const IEvent *pEvent)
-{
-    if (pEvent->eventType == ET_PLAYER_CUR_MEDIA_CHANGED 
-        || pEvent->eventType == ET_PLAYER_CUR_MEDIA_INFO_CHANGED)
-    {
+void CMPSkinMainWnd::onEvent(const IEvent *pEvent) {
+    if (pEvent->eventType == ET_PLAYER_CUR_MEDIA_CHANGED
+        || pEvent->eventType == ET_PLAYER_CUR_MEDIA_INFO_CHANGED) {
         // update main window caption
-        char        szCaption[512];
+        char szCaption[512];
 
-        if (g_Player.isMediaOpened())
+        if (g_Player.isMediaOpened()) {
             snprintf(szCaption, CountOf(szCaption), "%s - %s", g_Player.getFullTitle(), SZ_APP_NAME);
-        else
+        } else {
             strcpy_safe(szCaption, CountOf(szCaption), getAppNameLong().c_str());
+        }
 
         setTitle(szCaption);
 
         m_mlTrayIcon.updateTrayIconText(szCaption);
-    }
-    else if (pEvent->eventType == ET_UI_SETTINGS_CHANGED)
-    {
-        if (isPropertyName(pEvent->name.c_str(), "ShowIconOn"))
+    } else if (pEvent->eventType == ET_UI_SETTINGS_CHANGED) {
+        if (isPropertyName(pEvent->name.c_str(), "ShowIconOn")) {
             m_mlTrayIcon.updateShowIconPos();
-        else
+        } else {
             CMPSkinMainWndBase::onEvent(pEvent);
-    }
-    else
+        }
+    } else {
         CMPSkinMainWndBase::onEvent(pEvent);
+    }
 }

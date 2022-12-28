@@ -1,7 +1,6 @@
 #pragma once
 
-class CMPlayerApp : public CMPlayerAppBase
-{
+class CMPlayerApp : public CMPlayerAppBase {
 public:
     CMPlayerApp();
     virtual ~CMPlayerApp();

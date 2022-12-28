@@ -2,7 +2,7 @@
     Created  :    2002/01/04    21:41
     FileName :    LyricsLocalSearch.h
     Author   :    xhy
-    
+
     Purpose  :    
 *********************************************************************/
 
@@ -14,8 +14,7 @@
 //
 // search local lyrics
 //
-class CLyricsLocalSearch
-{
+class CLyricsLocalSearch {
 public:
     void init();
     void quit();
@@ -52,12 +51,10 @@ protected:
     void loadLyricsAssociation();
     void saveLyricsAssociation();
 
-    string toAssociateKeyword(cstr_t szKeyword)
-    {
+    string toAssociateKeyword(cstr_t szKeyword) {
 #ifdef _WIN32_DESKTOP
         // Use keyword without driver letter info "C:"
-        if (szKeyword[0] && szKeyword[1] == ':')
-        {
+        if (szKeyword[0] && szKeyword[1] == ':') {
             return toLower(szKeyword + 2);
         }
 #endif
@@ -71,7 +68,7 @@ public:
     virtual ~CLyricsLocalSearch();
 
 protected:
-    VecStrings    m_vLyricsFolders;
+    VecStrings                  m_vLyricsFolders;
 
     //
     // Lyrics association map:
@@ -80,16 +77,16 @@ protected:
     //
     // To support removable disk (mp3 file, lyrics are in removable disk):
     // 1) song file is in lower case
-    // 2) if song file is in same driver with lyrics file, "x:" will be removed, but 
+    // 2) if song file is in same driver with lyrics file, "x:" will be removed, but
     //    the "x:" in lyrics file should be kept.
-    // 3) if song file do not have driver info,  but lyrics file doesn't exists there, 
+    // 3) if song file do not have driver info,  but lyrics file doesn't exists there,
     //    Check whether lyrics is in the $Product$ program driver.
     // 4) "Lyrics" folder should be verified dynamically.
     //
     typedef map<string, string> SONG_LYRIC_MAP;
 
-    SONG_LYRIC_MAP            m_mapLyricsAssociate;
-    std::mutex                    m_mutex;
+    SONG_LYRIC_MAP              m_mapLyricsAssociate;
+    std::mutex                  m_mutex;
 
-    bool                    m_bSaved;
+    bool                        m_bSaved;
 };

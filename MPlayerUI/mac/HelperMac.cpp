@@ -1,46 +1,36 @@
-// Helper.cpp: implementation of the Helper class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "MPlayerApp.h"
 #include "Helper.h"
 
+
 void analyseProxySetting(cstr_t szProxySetting, char szServer[], int nMaxSize, int &nPort);
 
-void execute(Window *pWnd, cstr_t szExe, cstr_t szParam)
-{
+void execute(Window *pWnd, cstr_t szExe, cstr_t szParam) {
     // TODO: TBD
 }
 
-bool setClipboardText(Window *pWnd, cstr_t szText)
-{
+bool setClipboardText(Window *pWnd, cstr_t szText) {
     return tobool(copyTextToClipboard(szText));
 }
 
-bool SHDeleteFile(cstr_t szFile, Window *pWndParent)
-{
+bool SHDeleteFile(cstr_t szFile, Window *pWndParent) {
     return deleteFile(szFile);
 }
 
-bool SHCopyFile(cstr_t szSrcFile, cstr_t szTargFile, Window *pWndParent)
-{
+bool SHCopyFile(cstr_t szSrcFile, cstr_t szTargFile, Window *pWndParent) {
     return copyFile(szSrcFile, szTargFile, true);
 }
 
 #ifndef INVALID_FILE_ATTRIBUTES
-#define INVALID_FILE_ATTRIBUTES    0xFFFFFFFF
+#define INVALID_FILE_ATTRIBUTES 0xFFFFFFFF
 #endif
 
-bool setFileNoReadOnly(cstr_t szFile)
-{
+bool setFileNoReadOnly(cstr_t szFile) {
     return true;
 }
 
-bool loadProxySvrFromIE(bool &bUseProxy, string &strSvr, int &nPort)
-{
+bool loadProxySvrFromIE(bool &bUseProxy, string &strSvr, int &nPort) {
     return false;
 }
 
-void getNotepadEditor(string &strEditor)
-{
+void getNotepadEditor(string &strEditor) {
 }

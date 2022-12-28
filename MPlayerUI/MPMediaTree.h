@@ -1,19 +1,14 @@
-// MPMediaTree.h: interface for the CMPMediaTree class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MPMEDIATREE_H__D940D441_053A_48DB_B6FD_DF6E2C2E99A9__INCLUDED_)
-#define AFX_MPMEDIATREE_H__D940D441_053A_48DB_B6FD_DF6E2C2E99A9__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef MPlayerUI_MPMediaTree_h
+#define MPlayerUI_MPMediaTree_h
+
 
 #include "SkinTreeCtrl.h"
 #include "Player.h"
 
-enum ImageIndex
-{
+
+enum ImageIndex {
     II_MEDIA_LIB,
     II_PLAYLISTS,
     II_ARTIST,
@@ -35,36 +30,31 @@ enum ImageIndex
 };
 
 // MGNT == MediaGuideNodeType
-enum MPMediaGuideNodeType
-{
+enum MPMediaGuideNodeType {
     MGNT_MEDIA_LIB,
     MGNT_DISK_DEVICE,
     MGNT_PLAYLIST_FILE,
     MGNT_NOW_PLAYING,
 };
 
-class IMPMediaTreeNode : public ISkinTreeNode
-{
+class IMPMediaTreeNode : public ISkinTreeNode {
 public:
 
-    IMPMediaTreeNode()
-    {
+    IMPMediaTreeNode() {
     }
 
 public:
-    uint8_t                    folderType;
-    uint8_t                    nodeType;
-    CMPAutoPtr<IPlaylist>    m_playlist;
+    uint8_t                     folderType;
+    uint8_t                     nodeType;
+    CMPAutoPtr<IPlaylist>       m_playlist;
 
 };
 
 // MTN = Media Tree Node
 // Media library
-class CMPMTNMediaLibrary : public IMPMediaTreeNode
-{
+class CMPMTNMediaLibrary : public IMPMediaTreeNode {
 public:
-    enum FolderType
-    {
+    enum FolderType {
         FT_NOT_SET,
         FT_MEDIA_LIB,
         FT_NOW_PLAYING,
@@ -85,7 +75,7 @@ public:
         FT_ARTIST_ALL_MUSIC,
         FT_ARTIST_TOP_RATING,
 
-        //
+
         FT_ALL_GENRE,
         FT_GENRE,
         FT_GENRE_UNKNOWN,
@@ -109,15 +99,13 @@ public:
         FT_RECENT_ADDED,
     };
 
-    CMPMTNMediaLibrary()
-    {
+    CMPMTNMediaLibrary() {
         nodeType = MGNT_MEDIA_LIB;
         setUpdated(false);
     }
 
-    void addNewNode(cstr_t szName, int fType, int nImageIndex, bool bUpdated)
-    {
-        CMPMTNMediaLibrary        *pNewNode;
+    void addNewNode(cstr_t szName, int fType, int nImageIndex, bool bUpdated) {
+        CMPMTNMediaLibrary *pNewNode;
 
         pNewNode = new CMPMTNMediaLibrary;
         pNewNode->setUpdated(bUpdated);
@@ -133,18 +121,15 @@ public:
 };
 
 // Disk device
-class CMPMTNDiskDevice : public IMPMediaTreeNode
-{
+class CMPMTNDiskDevice : public IMPMediaTreeNode {
 public:
-    CMPMTNDiskDevice()
-    {
+    CMPMTNDiskDevice() {
         nodeType = MGNT_DISK_DEVICE;
         setUpdated(false);
     }
 
-    void addNewNode(cstr_t szName, cstr_t szDir, int nImageIndex, int nExpandedImageIndex)
-    {
-        CMPMTNDiskDevice        *pNewNode;
+    void addNewNode(cstr_t szName, cstr_t szDir, int nImageIndex, int nExpandedImageIndex) {
+        CMPMTNDiskDevice *pNewNode;
 
         pNewNode = new CMPMTNDiskDevice;
         pNewNode->m_nImageIndex = nImageIndex;
@@ -157,35 +142,31 @@ public:
 
     virtual void onUpdate();
 
-    string            m_strDir;
+    string                      m_strDir;
 
 };
 
 // play lists
-class CMPMTNPlaylists: public IMPMediaTreeNode
-{
+class CMPMTNPlaylists: public IMPMediaTreeNode {
 public:
-    CMPMTNPlaylists()
-    {
+    CMPMTNPlaylists() {
         nodeType = MGNT_PLAYLIST_FILE;
         setUpdated(false);
         folderType = FT_ALL_PLAYLISTS;
     }
 
-    enum
-    {
+    enum {
         FT_ALL_PLAYLISTS,
         FT_PLAYLIST_FILE,
     };
 
     virtual void onUpdate();
 
-    string            m_strPlaylistFile;
+    string                      m_strPlaylistFile;
 
 };
 
-class CMPMediaTree : public ISkinTree
-{
+class CMPMediaTree : public ISkinTree {
 public:
     CMPMediaTree();
     virtual ~CMPMediaTree();
@@ -200,4 +181,4 @@ public:
 
 };
 
-#endif // !defined(AFX_MPMEDIATREE_H__D940D441_053A_48DB_B6FD_DF6E2C2E99A9__INCLUDED_)
+#endif // !defined(MPlayerUI_MPMediaTree_h)

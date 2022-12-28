@@ -1,20 +1,11 @@
-// VersionUpdate.cpp: implementation of the CVersionUpdate class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "MPlayerApp.h"
 #include "DownloadMgr.h"
 #include "VersionUpdate.h"
 #include "../version.h"
 
 
-#ifdef _MPLAYER
-#define SOFTWARE_INFO        "zikiplayerinfo"
-#define VER_FILE            "zpver.xml"
-#else
-#define SOFTWARE_INFO        "minilyricsinfo"
-#define VER_FILE            "mlver.xml"
-#endif
+#define SOFTWARE_INFO       "DHPlayer"
+#define VER_FILE            "dhpver.xml"
 
 
 uint32_t parseVersionStr(cstr_t version) {
@@ -39,75 +30,74 @@ uint32_t parseVersionStr(cstr_t version) {
 //  </curversion>
 //</SOFTWARE_INFO>
 
-int CVersionInfo::fromXML(SXNode *pNodeVer)
-{
-    if (strcmp(pNodeVer->name.c_str(), SOFTWARE_INFO) != 0)
+int CVersionInfo::fromXML(SXNode *pNodeVer) {
+    if (strcmp(pNodeVer->name.c_str(), SOFTWARE_INFO) != 0) {
         return ERR_FALSE;
+    }
 
     // current version
     auto pNode = pNodeVer->getChild("curversion");
-    if (!pNode)
+    if (!pNode) {
         return ERR_FALSE;
+    }
 
     // new version
     verNew = pNode->getPropertySafe("version");
-    if (verNew.empty())
+    if (verNew.empty()) {
         return ERR_FALSE;
+    }
 
     strNewVerDate = pNode->getPropertySafe("upgradedate");
 
     // new feature
     SXNode *pFeatureNode = pNode->getChild("feature");
-    if (pFeatureNode)
+    if (pFeatureNode) {
         strFeature = pFeatureNode->strContent.c_str();
+    }
 
     return ERR_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-CVersionUpdate::CVersionUpdate()
-{
+CVersionUpdate::CVersionUpdate() {
 
 }
 
-CVersionUpdate::~CVersionUpdate()
-{
+CVersionUpdate::~CVersionUpdate() {
 
 }
 
-void CVersionUpdate::onDownloadOK(CDownloadTask *pTask)
-{
-    if (pTask->taskType != DTT_CHECK_VERSION)
+void CVersionUpdate::onDownloadOK(CDownloadTask *pTask) {
+    if (pTask->taskType != DTT_CHECK_VERSION) {
         return;
+    }
 
-    CVersionInfo    versionInfo;
-    int                nRet;
+    CVersionInfo versionInfo;
+    int nRet;
 
     nRet = getUpdateInfo(pTask, versionInfo);
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         return;
+    }
 
-    if (VERSION < parseVersionStr(versionInfo.verNew.c_str()))
-    {
-        string        strMessage = versionInfo.strFeature;
+    if (VERSION < parseVersionStr(versionInfo.verNew.c_str())) {
+        string strMessage = versionInfo.strFeature;
         strMessage += "\r\n\r\n";
         strMessage += _TLT("Do you want to visit our website for more information?");
-        if (IDYES == CMPlayerAppBase::getInstance()->messageOut(strMessage.c_str(), MB_YESNO, _TLT("new version Notice")))
-        {
+        if (IDYES == CMPlayerAppBase::getInstance()->messageOut(strMessage.c_str(), MB_YESNO, _TLT("new version Notice"))) {
             openUrl(CMPlayerAppBase::getMainWnd(), getStrName(SN_HTTP_DOMAIN));
         }
     }
 }
 
-int CVersionUpdate::getUpdateInfo(CDownloadTask *pTask, CVersionInfo &versionInfo)
-{
+int CVersionUpdate::getUpdateInfo(CDownloadTask *pTask, CVersionInfo &versionInfo) {
     assert(pTask);
 
-    char        szCheckVerTime[256];
-    CSimpleXML    xml;
-    time_t        lTime;
-    tm            *curtime;
+    char szCheckVerTime[256];
+    CSimpleXML xml;
+    time_t lTime;
+    tm *curtime;
 
     time(&lTime);
 
@@ -119,34 +109,32 @@ int CVersionUpdate::getUpdateInfo(CDownloadTask *pTask, CVersionInfo &versionInf
     g_profile.encryptWriteString("CheckVerTime", szCheckVerTime);
 
     // 分析VER_FILE
-    if (!xml.parseData(pTask->buffContent.c_str(), pTask->buffContent.size()))
-    {
+    if (!xml.parseData(pTask->buffContent.c_str(), pTask->buffContent.size())) {
         ERR_LOG1("parse xml data FAILED: %s", pTask->buffContent.c_str());
         return ERR_PARSE_XML;
     }
 
-    if (versionInfo.fromXML(xml.m_pRoot) != ERR_OK)
+    if (versionInfo.fromXML(xml.m_pRoot) != ERR_OK) {
         return ERR_PARSE_XML;
+    }
 
     return ERR_OK;
 }
 
-void CVersionUpdate::checkNewVersion(bool bAutoCheck)
-{
-    if (bAutoCheck)
-    {
+void CVersionUpdate::checkNewVersion(bool bAutoCheck) {
+    if (bAutoCheck) {
         string strCheckVerTime = g_profile.encryptGetString("CheckVerTime", "");
         DateTime dateLastCheck;
         dateLastCheck.fromString(strCheckVerTime.c_str(), (uint32_t)strCheckVerTime.size());
 
         // 如果日期相隔7天，则检查更新
         auto dateNow = DateTime::localTime();
-        if (abs((long)dateNow.getTime() - (long)dateLastCheck.getTime()) <= 7 * DateTime::SECOND_IN_ONE_DAY)
+        if (abs((long)dateNow.getTime() - (long)dateLastCheck.getTime()) <= 7 * DateTime::SECOND_IN_ONE_DAY) {
             return;
+        }
 
         g_profile.encryptWriteString("CheckVerTime", dateNow.toDateString().c_str());
     }
 
     g_LyricsDownloader.downloadVersionFile(getStrName(SN_HTTP_ML_VER), !bAutoCheck);
 }
-

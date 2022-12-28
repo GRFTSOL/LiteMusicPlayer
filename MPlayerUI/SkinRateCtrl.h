@@ -1,16 +1,10 @@
-// SkinRateCtrl.h: interface for the CSkinRateCtrl class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_SKINRATECTRL_H__09781D48_35CB_4260_829A_3FE195B67612__INCLUDED_)
-#define AFX_SKINRATECTRL_H__09781D48_35CB_4260_829A_3FE195B67612__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-class CSkinRateCtrl : public CUIObject  
-{
+#ifndef MPlayerUI_SkinRateCtrl_h
+#define MPlayerUI_SkinRateCtrl_h
+
+
+class CSkinRateCtrl : public CUIObject {
 public:
     CSkinRateCtrl();
     virtual ~CSkinRateCtrl();
@@ -34,17 +28,17 @@ public:
     bool isKindOf(cstr_t szClassName) override;
 
 protected:
-    string                m_strBmpFile;
-    CSFImage            m_img;
-    int                    m_nRateStarWidth;
+    string                      m_strBmpFile;
+    CSFImage                    m_img;
+    int                         m_nRateStarWidth;
 
-    int                    m_nRating;        // 0 ~ 5
-    int                    m_nRatingMax;
+    int                         m_nRating;          // 0 ~ 5
+    int                         m_nRatingMax;
 
-    bool                m_bLBtDown;
+    bool                        m_bLBtDown;
 
-    static cstr_t        ms_szClassName;
+    static cstr_t               ms_szClassName;
 
 };
 
-#endif // !defined(AFX_SKINRATECTRL_H__09781D48_35CB_4260_829A_3FE195B67612__INCLUDED_)
+#endif // !defined(MPlayerUI_SkinRateCtrl_h)

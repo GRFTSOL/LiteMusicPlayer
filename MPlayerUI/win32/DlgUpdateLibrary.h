@@ -1,16 +1,10 @@
-// DlgUpdateLibrary.h: interface for the CDlgUpdateLibrary class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_DLGUPDATELIBRARY_H__9CCD0FD3_64C4_44E1_A22A_3E61F66E61C0__INCLUDED_)
-#define AFX_DLGUPDATELIBRARY_H__9CCD0FD3_64C4_44E1_A22A_3E61F66E61C0__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-class CUpdateLibraryObj
-{
+#ifndef MPlayerUI_win32_DlgUpdateLibrary_h
+#define MPlayerUI_win32_DlgUpdateLibrary_h
+
+
+class CUpdateLibraryObj {
 public:
     CUpdateLibraryObj();
     ~CUpdateLibraryObj();
@@ -25,23 +19,21 @@ public:
     void setMsg2(cstr_t szMsg);
 
 protected:
-    CThread            m_thread;
-    Window        *m_pWnd;
+    CThread                     m_thread;
+    Window                      *m_pWnd;
 
 };
 
-class CAddMediaObj : public CUpdateLibraryObj
-{
+class CAddMediaObj : public CUpdateLibraryObj {
 public:
-    CAddMediaObj()
-    {
+    CAddMediaObj() {
         m_bAddFiles = false;
     }
     virtual void doUpdating();
 
-    bool                m_bAddFiles;
-    string                m_strDir;
-    vector<string>        m_vFiles;
+    bool                        m_bAddFiles;
+    string                      m_strDir;
+    vector<string>              m_vFiles;
 
 protected:
     void listMedia(cstr_t szDir);
@@ -49,8 +41,7 @@ protected:
 };
 
 
-class CDlgUpdateLibrary : public CBaseDialog  
-{
+class CDlgUpdateLibrary : public CBaseDialog {
 public:
     CDlgUpdateLibrary();
     virtual ~CDlgUpdateLibrary();
@@ -67,9 +58,9 @@ public:
 #endif
 
 protected:
-    CUpdateLibraryObj            *m_pWorkObj;
+    CUpdateLibraryObj           *m_pWorkObj;
     bool                        m_bCanQuit;
 
 };
 
-#endif // !defined(AFX_DLGUPDATELIBRARY_H__9CCD0FD3_64C4_44E1_A22A_3E61F66E61C0__INCLUDED_)
+#endif // !defined(MPlayerUI_win32_DlgUpdateLibrary_h)

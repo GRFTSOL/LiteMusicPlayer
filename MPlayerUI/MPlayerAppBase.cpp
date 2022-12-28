@@ -1,7 +1,3 @@
-// MPlayerApp.cpp: implementation of the CMPlayerAppBase class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "MPlayerAppBase.h"
 #include "MLCmd.h"
 #include "DownloadMgr.h"
@@ -33,131 +29,58 @@
 #ifdef _MAC_OS
 #include "mac/DlgSaveLyrPrompt.h"
 #include "mac/LyricsOutPluginMgr.h"
+
+
 #endif
 
-CMLData                    g_LyricData;
+CMLData g_LyricData;
 
-CDownloadMgr            g_LyricsDownloader;
+CDownloadMgr g_LyricsDownloader;
 
-CLyricsLocalSearch        g_LyricSearch;
+CLyricsLocalSearch g_LyricSearch;
 
 CharEncodingType getDefaultLyricsEncodingSettings();
 
 
-string getAppNameLong()
-{
+string getAppNameLong() {
     return string(SZ_APP_NAME) + " " + VERSION_STR;
 }
 
-int isRNLEdition()
-{
-    string strFile = getAppResourceDir();
-    strFile += "install.ini";
-    if (isFileExist(strFile.c_str()))
-    {
-        CProfile    file;
-        file.init(strFile.c_str(), "install");
-        return file.getBool("RNLEdition", false);
+cstr_t getStrName(STR_NAME nameId) {
+    switch (nameId) {
+        case SN_HTTP_SIGNUP: return "http://www.viewlyrics.com/user/signup.aspx";
+        case SN_HTTP_LOGIN: return "http://www.viewlyrics.com/user/login.aspx";
+        case SN_HTTP_RATE_LRC: return "http://viewlyrics.com/lyrics/rate.aspx?lid=";
+        default: break;
     }
 
-    return false;
+    switch (nameId) {
+        case SN_HTTP_DOMAIN: return "http://www.crintsoft.com";
+        case SN_HTTP_REGISTER: return "http://www.crintsoft.com/mlbuy.htm";
+        case SN_HTTP_DLSKIN: return "http://www.crintsoft.com/mlskin.htm";
+        case SN_HTTP_FAQ_INET: return "http://www.crintsoft.com/mlfaq-ineterror.htm";
+        case SN_HTTP_BBS: return "http://forum.viewlyrics.com";
+        case SN_HTTP_ML_VER: return "http://viewlyrics.com/mlver.xml";
+        case SN_HTTP_HELP: return "http://www.crintsoft.com/help.htm";
+        case SN_HTTP_HELP_EMBEDDED_LYR: return "http://www.crintsoft.com/mlfaq-embedlyrics.htm";
+        case SN_HTTP_HELP_UPLOAD_LYR: return "http://www.crintsoft.com/mlfaq-upload.htm";
+        case SN_HTTP_HELP_EDIT_LYR: return "http://www.crintsoft.com/mlfaq-editlrc.htm";
+        case SN_HTTP_HELP_SEARCH_LYR_SUGGESTIONS: return "http://www.crintsoft.com/mlfaq-search-lyrics-suggestions.htm";
+        case SN_HTTP_HELP_STATIC_LYR: return "http://www.crintsoft.com/help-lyrscrollaction.htm";
+        case SN_HTTP_DLPLUGIN: return "http://www.crintsoft.com/mlplugin.htm";
+        case SN_HTTP_HELP_G15_LCD: return "http://www.crintsoft.com/help-logitech-lcd.htm";
+        case SN_HTTP_FEEDBACK: return "http://www.crintsoft.com/contactus.htm";
+        case SN_EMAIL: return "mailto:support@crintsoft.com";
+        case SN_SUPPORT_MAIL: return "support@crintsoft.com";
+        case SN_WEBHOME: return "www.crintsoft.com";
+        default: assert(0); return "";
+    }
 }
 
-cstr_t getStrName(STR_NAME nameId)
-{
-    static int    _nEditionRNL = -1;
-    if (_nEditionRNL == -1)
-        _nEditionRNL = isRNLEdition();
-
-    switch (nameId)
-    {
-    case SN_HTTP_SIGNUP:    return "http://www.viewlyrics.com/user/signup.aspx";
-    case SN_HTTP_LOGIN:        return "http://www.viewlyrics.com/user/login.aspx";
-    case SN_HTTP_RATE_LRC:    return "http://viewlyrics.com/lyrics/rate.aspx?lid=";
-    default: break;
-    }
-
-#ifdef _MPLAYER
-    switch (nameId)
-    {
-    case SN_HTTP_DOMAIN:    return "http://www.zikiplayer.com";
-    case SN_HTTP_DLSKIN:    return "http://www.zikiplayer.com/skins.htm";
-    case SN_HTTP_FAQ_INET:    return "http://www.zikiplayer.com/mlfaq-ineterror.htm";
-    case SN_HTTP_BBS:        return "http://forum.zikiplayer.com";
-    case SN_HTTP_ML_VER:    return "http://www.zikiplayer.com/zpver.xml";
-    case SN_HTTP_HELP:                return "http://www.zikiplayer.com/help.htm";
-    case SN_HTTP_HELP_EMBEDDED_LYR:    return "http://www.zikiplayer.com/mlfaq-embedlyrics.htm";
-    case SN_HTTP_HELP_UPLOAD_LYR:    return "http://www.zikiplayer.com/mlfaq-upload.htm";
-    case SN_HTTP_HELP_EDIT_LYR:        return "http://www.zikiplayer.com/mlfaq-editlrc.htm";
-    case SN_HTTP_HELP_SEARCH_LYR_SUGGESTIONS:        return "http://www.zikiplayer.com/mlfaq-search-lyrics-suggestions.htm";
-    case SN_HTTP_HELP_STATIC_LYR:    return "http://www.zikiplayer.com/help-lyrscrollaction.htm";
-    case SN_HTTP_HELP_G15_LCD:    return "http://www.zikiplayer.com/help-lyrscrollaction.htm";
-
-    case SN_HTTP_DLPLUGIN:    return "http://www.zikiplayer.com/plugins.htm";
-    case SN_HTTP_FEEDBACK:    return "http://www.zikiplayer.com/contactus.htm";
-    case SN_EMAIL:            return "mailto:support@zikiplayer.com";
-    case SN_SUPPORT_MAIL:    return "support@zikiplayer.com";
-    case SN_WEBHOME:        return "www.zikiplayer.com";
-    default: assert(0);        return "";
-    }
-#else // _MPLAYER
-    if (_nEditionRNL == 1)
-    {
-        switch (nameId)
-        {
-        case SN_HTTP_DOMAIN:    return "http://www.data4me.de";
-        case SN_HTTP_REGISTER:    return "http://www.crintsoft.com/buy_rnl.htm";
-        case SN_HTTP_DLSKIN:    return "http://www.data4me.de/mlskin.htm";
-        case SN_HTTP_FAQ_INET:    return "http://www.data4me.com/mlfaq-ineterror.htm";
-        case SN_HTTP_BBS:        return "http://forum.viewlyrics.com";
-        case SN_HTTP_ML_VER:    return "http://viewlyrics.com/mlver.xml";
-        case SN_HTTP_HELP:                return "http://www.data4me.de/help.htm";
-        case SN_HTTP_HELP_EMBEDDED_LYR:    return "http://www.data4me.de/mlfaq-embedlyrics.htm";
-        case SN_HTTP_HELP_UPLOAD_LYR:    return "http://www.data4me.de/mlfaq-upload.htm";
-        case SN_HTTP_HELP_EDIT_LYR:        return "http://www.data4me.de/mlfaq-editlrc.htm";
-        case SN_HTTP_HELP_SEARCH_LYR_SUGGESTIONS:        return "http://www.data4me.de/mlfaq-search-lyrics-suggestions.htm";
-        case SN_HTTP_HELP_STATIC_LYR:    return "http://www.data4me.de/help-lyrscrollaction.htm";
-        case SN_HTTP_DLPLUGIN:    return "http://www.data4me.de/mlplugin.htm";
-        case SN_HTTP_HELP_G15_LCD:    return "http://www.data4me.de/help-logitech-lcd.htm";
-        case SN_HTTP_FEEDBACK:    return "http://www.data4me.de/contactus.htm";
-        case SN_EMAIL:            return "mailto:minilyrics@rnl.de";
-        case SN_SUPPORT_MAIL:    return "minilyrics@rnl.de";
-        case SN_WEBHOME:        return "www.data4me.de";
-        default: assert(0);        return "";
-        }
-    }
-
-    switch (nameId)
-    {
-    case SN_HTTP_DOMAIN:    return "http://www.crintsoft.com";
-    case SN_HTTP_REGISTER:    return "http://www.crintsoft.com/mlbuy.htm";
-    case SN_HTTP_DLSKIN:    return "http://www.crintsoft.com/mlskin.htm";
-    case SN_HTTP_FAQ_INET:    return "http://www.crintsoft.com/mlfaq-ineterror.htm";
-    case SN_HTTP_BBS:        return "http://forum.viewlyrics.com";
-    case SN_HTTP_ML_VER:    return "http://viewlyrics.com/mlver.xml";
-    case SN_HTTP_HELP:                return "http://www.crintsoft.com/help.htm";
-    case SN_HTTP_HELP_EMBEDDED_LYR:    return "http://www.crintsoft.com/mlfaq-embedlyrics.htm";
-    case SN_HTTP_HELP_UPLOAD_LYR:    return "http://www.crintsoft.com/mlfaq-upload.htm";
-    case SN_HTTP_HELP_EDIT_LYR:        return "http://www.crintsoft.com/mlfaq-editlrc.htm";
-    case SN_HTTP_HELP_SEARCH_LYR_SUGGESTIONS:        return "http://www.crintsoft.com/mlfaq-search-lyrics-suggestions.htm";
-    case SN_HTTP_HELP_STATIC_LYR:    return "http://www.crintsoft.com/help-lyrscrollaction.htm";
-    case SN_HTTP_DLPLUGIN:    return "http://www.crintsoft.com/mlplugin.htm";
-    case SN_HTTP_HELP_G15_LCD:    return "http://www.crintsoft.com/help-logitech-lcd.htm";
-    case SN_HTTP_FEEDBACK:    return "http://www.crintsoft.com/contactus.htm";
-    case SN_EMAIL:            return "mailto:support@crintsoft.com";
-    case SN_SUPPORT_MAIL:    return "support@crintsoft.com";
-    case SN_WEBHOME:        return "www.crintsoft.com";
-    default: assert(0);        return "";
-    }
-#endif // _MPLAYER
-}
-
-void dispatchPlayPosEvent(int nPlayPos)
-{
+void dispatchPlayPosEvent(int nPlayPos) {
     static int nPlayPosLast = 0;
     nPlayPos %= 500;
-    if (nPlayPos != nPlayPosLast)
-    {
+    if (nPlayPos != nPlayPosLast) {
         nPlayPosLast = nPlayPos;
         CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_PLAYER_POS_UPDATE);
     }
@@ -168,33 +91,29 @@ void dispatchPlayPosEvent(int nPlayPos)
 
 bool g_bAutoMinimized = false;
 
-CMPlayerAppBase::CMPlayerAppBase()
-{
+CMPlayerAppBase::CMPlayerAppBase() {
 }
 
-CMPlayerAppBase::~CMPlayerAppBase()
-{
+CMPlayerAppBase::~CMPlayerAppBase() {
 
 }
 
-CMPSkinFactory *CMPlayerAppBase::getMPSkinFactory()
-{
+CMPSkinFactory *CMPlayerAppBase::getMPSkinFactory() {
     assert(m_pInstance);
     return (CMPSkinFactory *)m_pInstance->getSkinFactory();
 }
 
-CEventsDispatcherBase *CMPlayerAppBase::getEventsDispatcher()
-{
+CEventsDispatcherBase *CMPlayerAppBase::getEventsDispatcher() {
     assert(m_pInstance);
     return m_pInstance->getEventPatcher();
 }
 
-bool CMPlayerAppBase::init()
-{
+bool CMPlayerAppBase::init() {
     setDefaultSettings();
 
-    if (!CSkinApp::init())
+    if (!CSkinApp::init()) {
         return false;
+    }
 
     CLyricsKeywordFilter::init();
 
@@ -218,12 +137,10 @@ bool CMPlayerAppBase::init()
 
     // create main skin window.
     int nRet = loadDefaultSkin(SZ_DEFSKIN);
-    if (nRet != ERR_OK)
-    {
+    if (nRet != ERR_OK) {
         g_profile.writeString(m_pSkinFactory->getSkinFileName(), "DefaultSkinWnd", "");
         nRet = changeSkinByUserCmd(SZ_DEFSKIN);
-        if (nRet != ERR_OK)
-        {
+        if (nRet != ERR_OK) {
             messageOut("Failed to open skin, please perform full uninstallation to solve this issue.");
         }
     }
@@ -233,19 +150,21 @@ bool CMPlayerAppBase::init()
     m_hotKey.setEventWnd(getMainWnd());
 
     // Restore iconic status
-//    if (g_profile.getBool("Minimized", false))
-//    {
-//        if (getMainWnd()->isToolWindow())
-//            getMainWnd()->showWindow(SW_HIDE);
-//        getMainWnd()->showWindow(SW_SHOWMINNOACTIVE);
-//    }
+    //    if (g_profile.getBool("Minimized", false))
+    //    {
+    //        if (getMainWnd()->isToolWindow())
+    //            getMainWnd()->showWindow(SW_HIDE);
+    //        getMainWnd()->showWindow(SW_SHOWMINNOACTIVE);
+    //    }
 
-    if (g_profile.getBool(SZ_SECT_UI, "ClickThrough", false))
+    if (g_profile.getBool(SZ_SECT_UI, "ClickThrough", false)) {
         getMPSkinFactory()->setClickThrough(true);
+    }
 
 #ifdef _MINILYRICS_WIN32
-    if (g_profile.getBool("FloatingLyr", false))
+    if (g_profile.getBool("FloatingLyr", false)) {
         g_wndFloatingLyr.create();
+    }
 #endif
 
     g_lyrOutPlguinMgr.init();
@@ -255,17 +174,15 @@ bool CMPlayerAppBase::init()
     getInstance()->setRunningFlag();
 
     // Checker for new version
-    if (g_profile.getBool(SZ_SECT_UI, "CheckNewVer", true))
-    {
-        CVersionUpdate        VerUp;
+    if (g_profile.getBool(SZ_SECT_UI, "CheckNewVer", true)) {
+        CVersionUpdate VerUp;
         VerUp.checkNewVersion();
     }
 
     return true;
 }
 
-void CMPlayerAppBase::quit()
-{
+void CMPlayerAppBase::quit() {
     g_LyricSearch.quit();
     g_LyricsDownloader.quit();
 
@@ -292,35 +209,25 @@ void CMPlayerAppBase::quit()
 #endif
 }
 
-void CMPlayerAppBase::onEvent(const IEvent *pEvent)
-{
-    if (pEvent->eventType == ET_PLAYER_CUR_MEDIA_CHANGED)
-    {
+void CMPlayerAppBase::onEvent(const IEvent *pEvent) {
+    if (pEvent->eventType == ET_PLAYER_CUR_MEDIA_CHANGED) {
         onMediaChanged(true);
-    }
-    else if (pEvent->eventType == ET_LYRICS_RESEARCH)
-    {
+    } else if (pEvent->eventType == ET_LYRICS_RESEARCH) {
         onMediaChanged(false);
-    }
-    else if (pEvent->eventType == ET_LYRICS_SEARCH_END)
-    {
+    } else if (pEvent->eventType == ET_LYRICS_SEARCH_END) {
         onOnlineSearchEnd();
-    }
-    else if (pEvent->eventType == ET_DOWNLOAD_END)
-    {
-        CEventDownloadEnd        *pDlEvt = (CEventDownloadEnd *)pEvent;
-        if (pDlEvt->downloadType == CEventDownloadEnd::DT_DL_LRC_FAILED)
+    } else if (pEvent->eventType == ET_DOWNLOAD_END) {
+        CEventDownloadEnd *pDlEvt = (CEventDownloadEnd *)pEvent;
+        if (pDlEvt->downloadType == CEventDownloadEnd::DT_DL_LRC_FAILED) {
             onDownloadLyricsFailed(pDlEvt->pTask);
-        else if (pDlEvt->downloadType == CEventDownloadEnd::DT_DL_CHECK_NEW_VERSION_OK)
-        {
-            CVersionUpdate        verCheck;
+        } else if (pDlEvt->downloadType == CEventDownloadEnd::DT_DL_CHECK_NEW_VERSION_OK) {
+            CVersionUpdate verCheck;
             verCheck.onDownloadOK(pDlEvt->pTask);
         }
     }
 }
 
-void CMPlayerAppBase::postQuitMessage()
-{
+void CMPlayerAppBase::postQuitMessage() {
     onLyricsChangingSavePrompt();
 
     g_autoProcessEmbeddedLyrics.onPostQuit();
@@ -328,21 +235,19 @@ void CMPlayerAppBase::postQuitMessage()
     CSkinApp::postQuitMessage();
 }
 
-CEventsDispatcher *CMPlayerAppBase::newEventPatcher()
-{
+CEventsDispatcher *CMPlayerAppBase::newEventPatcher() {
     return new CMPEventsDispatcher();
 }
 
-CSkinFactory *CMPlayerAppBase::newSkinFactory()
-{
+CSkinFactory *CMPlayerAppBase::newSkinFactory() {
     return new CMPSkinFactory(this, g_uidDefinition);
 }
 
-void CMPlayerAppBase::onMediaChanged(bool bAutoDownloadIfNotExist)
-{
+void CMPlayerAppBase::onMediaChanged(bool bAutoDownloadIfNotExist) {
     // 判断是否要保存歌词
-    if (!onLyricsChangingSavePrompt())
+    if (!onLyricsChangingSavePrompt()) {
         return;
+    }
 
     // auto save embedded lyrics
     g_autoProcessEmbeddedLyrics.onSongChanged();
@@ -352,85 +257,81 @@ void CMPlayerAppBase::onMediaChanged(bool bAutoDownloadIfNotExist)
     //
     // 没有歌曲信息
     //
-    if (!g_Player.isMediaOpened())
-    {
+    if (!g_Player.isMediaOpened()) {
         dispatchLyricsChangedSyncEvent();
         return;
     }
 
-    bool    bAssociateNone = false;
-    int        nRet;
+    bool bAssociateNone = false;
+    int nRet;
 
     string strAssociateMediaKey = g_Player.getMediaKey();
-    if (g_LyricSearch.isAssociatedWithNoneLyrics(strAssociateMediaKey.c_str()))
+    if (g_LyricSearch.isAssociatedWithNoneLyrics(strAssociateMediaKey.c_str())) {
         bAssociateNone = true;
-    else
-    {
+    } else {
         string strLyricsFile;
-        if (g_LyricSearch.getBestMatchLyrics(g_Player.getSrcMedia(), g_Player.getArtist(), g_Player.getTitle(), strLyricsFile))
-        {
+        if (g_LyricSearch.getBestMatchLyrics(g_Player.getSrcMedia(), g_Player.getArtist(), g_Player.getTitle(), strLyricsFile)) {
             nRet = openLyrics(strAssociateMediaKey.c_str(), strLyricsFile.c_str());
-            if (nRet != ERR_OK)
+            if (nRet != ERR_OK) {
                 dispatchLongErrorText(ERROR2STR_LOCAL(nRet));
+            }
         }
     }
 
-    if (g_LyricData.hasLyricsOpened())
-    {
-        if (g_bAutoMinimized)
-        {
+    if (g_LyricData.hasLyricsOpened()) {
+        if (g_bAutoMinimized) {
             CMPlayerAppBase::getMPSkinFactory()->restoreAll();
             g_bAutoMinimized = false;
         }
-    }
-    else
-    {
+    } else {
         // add Media Info:
-        VecStrings        vMediaInfo;
-        if (!isEmptyString(g_Player.getArtist()))
+        VecStrings vMediaInfo;
+        if (!isEmptyString(g_Player.getArtist())) {
             vMediaInfo.push_back(string(_TLT("Artist:")) + " " + g_Player.getArtist());
-        if (!isEmptyString(g_Player.getTitle()))
+        }
+        if (!isEmptyString(g_Player.getTitle())) {
             vMediaInfo.push_back(string(_TLT("Title:")) + " " + g_Player.getTitle());
-        if (!isEmptyString(g_Player.getAlbum()))
+        }
+        if (!isEmptyString(g_Player.getAlbum())) {
             vMediaInfo.push_back(string(_TLT("Album:")) + " " + g_Player.getAlbum());
+        }
         g_LyricData.addTextInLyrics(vMediaInfo);
 
         dispatchLyricsChangedSyncEvent();
     }
 
-    if (bAutoDownloadIfNotExist && !bAssociateNone)
+    if (bAutoDownloadIfNotExist && !bAssociateNone) {
         g_LyricsDownloader.onSongChanged();
+    }
 }
 
-void CMPlayerAppBase::onLanguageChanged()
-{
+void CMPlayerAppBase::onLanguageChanged() {
     g_LangTool.onLanguageChanged();
 
     m_pSkinFactory->onLanguageChanged();
 
-    if (g_wndFloatingLyr.isValid())
+    if (g_wndFloatingLyr.isValid()) {
         g_wndFloatingLyr.onLanguageChanged();
+    }
 }
 
-void CMPlayerAppBase::onOnlineSearchEnd()
-{
+void CMPlayerAppBase::onOnlineSearchEnd() {
     // If lyrics already associated, do not download auto.
-    if (g_LyricSearch.isAssociatedLyrics(g_Player.getMediaKey().c_str()))
+    if (g_LyricSearch.isAssociatedLyrics(g_Player.getMediaKey().c_str())) {
         return;
+    }
 
     // 在线自动搜索的通知消息，表示该歌词的结果已经搜索到了
     g_LyricsDownloader.searchInCacheResult(true);
 }
 
-CMPSkinMainWnd *CMPlayerAppBase::getMainWnd()
-{
+CMPSkinMainWnd *CMPlayerAppBase::getMainWnd() {
     assert(m_pInstance);
 
-    CSkinWnd    *pWnd = m_pInstance->getSkinFactory()->getMainWnd();
-    if (pWnd)
+    CSkinWnd *pWnd = m_pInstance->getSkinFactory()->getMainWnd();
+    if (pWnd) {
         return (CMPSkinMainWnd *)pWnd;
-    else
-    {
+    } else {
         ERR_LOG0("Main window should have been created already.");
         static CMPSkinMainWnd wnd;
         wnd.m_WndDrag.init(&wnd, nullptr);
@@ -438,72 +339,67 @@ CMPSkinMainWnd *CMPlayerAppBase::getMainWnd()
     }
 }
 
-CMPHotkey &CMPlayerAppBase::getHotkey()
-{
+CMPHotkey &CMPlayerAppBase::getHotkey() {
     assert(m_pInstance);
 
     return ((CMPlayerAppBase*)m_pInstance)->m_hotKey;
 }
 
-CMPlayerApp *CMPlayerAppBase::getInstance()
-{
-    if (m_pInstance)
+CMPlayerApp *CMPlayerAppBase::getInstance() {
+    if (m_pInstance) {
         return (CMPlayerApp *)m_pInstance;
+    }
 
-    if (!m_pInstance)
+    if (!m_pInstance) {
         m_pInstance = new CMPlayerApp();
+    }
 
     return (CMPlayerApp*)m_pInstance;
 }
 
-void CMPlayerAppBase::dispatchInfoText(cstr_t szInfo, cstr_t szInfoName)
-{
-    IEvent        *pEvent = new IEvent;
+void CMPlayerAppBase::dispatchInfoText(cstr_t szInfo, cstr_t szInfoName) {
+    IEvent *pEvent = new IEvent;
     pEvent->eventType = ET_UI_INFO_TEXT;
     pEvent->strValue = szInfo;
-    if (szInfoName)
+    if (szInfoName) {
         pEvent->name = szInfoName;
+    }
 
     getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
 }
 
-void CMPlayerAppBase::dispatchLongErrorText(cstr_t szError, int cmd)
-{
+void CMPlayerAppBase::dispatchLongErrorText(cstr_t szError, int cmd) {
     dispatchLongErrorText(szError, ("cmd://" + getSkinFactory()->getStringOfID(cmd)).c_str());
 }
 
-void CMPlayerAppBase::dispatchLongErrorText(cstr_t szError, cstr_t szCmd)
-{
-    IEvent        *pEvent = new IEvent;
+void CMPlayerAppBase::dispatchLongErrorText(cstr_t szError, cstr_t szCmd) {
+    IEvent *pEvent = new IEvent;
     pEvent->eventType = ET_UI_LONG_ERROR_TEXT;
     pEvent->strValue = szError;
-    if (szCmd != nullptr)
+    if (szCmd != nullptr) {
         pEvent->name = szCmd;
+    }
 
     getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
 }
 
-void CMPlayerAppBase::dispatchResearchLyrics()
-{
-    IEvent    *pEvent = new IEvent();
+void CMPlayerAppBase::dispatchResearchLyrics() {
+    IEvent *pEvent = new IEvent();
     pEvent->eventType = ET_LYRICS_RESEARCH;
     getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
 }
 
-void CMPlayerAppBase::dispatchLyricsChangedSyncEvent()
-{
-    IEvent        *pEvent = new IEvent();
+void CMPlayerAppBase::dispatchLyricsChangedSyncEvent() {
+    IEvent *pEvent = new IEvent();
 
     pEvent->eventType = ET_LYRICS_CHANGED;
     getEventsDispatcher()->dispatchSyncEvent(pEvent);
 }
 
-void CMPlayerAppBase::onDownloadLyricsFailed(CDownloadTask *pTask)
-{
-    if (pTask->m_errResult != ERR_OK)
+void CMPlayerAppBase::onDownloadLyricsFailed(CDownloadTask *pTask) {
+    if (pTask->m_errResult != ERR_OK) {
         showInetErrorDlg(getMainWnd(), pTask->m_errResult);
-    else if (pTask->m_nHttpRetCode != 200)
-    {
+    } else if (pTask->m_nHttpRetCode != 200) {
         auto str = stringPrintf("URL:  %s\r\nCode: %d, %s", pTask->m_strURL.c_str(),
             pTask->m_nHttpRetCode, httpErrorCodeToStr(pTask->m_nHttpRetCode));
 
@@ -511,75 +407,76 @@ void CMPlayerAppBase::onDownloadLyricsFailed(CDownloadTask *pTask)
     }
 }
 
-void CMPlayerAppBase::newLyrics()
-{
+void CMPlayerAppBase::newLyrics() {
     // 判断是否要保存歌词
-    if (!onLyricsChangingSavePrompt())
+    if (!onLyricsChangingSavePrompt()) {
         return;
+    }
 
     g_LyricData.newLyrics(g_Player.getMediaKey().c_str(), g_Player.getMediaLength());
 
     dispatchLyricsChangedSyncEvent();
 }
 
-int CMPlayerAppBase::openLyrics(cstr_t szAssociateKeyword, cstr_t szLrcSource)
-{
-    int        nRet;
+int CMPlayerAppBase::openLyrics(cstr_t szAssociateKeyword, cstr_t szLrcSource) {
+    int nRet;
 
     nRet = g_LyricData.openLyrics(szAssociateKeyword, g_Player.getMediaLength(), szLrcSource);
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         return nRet;
+    }
 
     dispatchLyricsChangedSyncEvent();
 
     return nRet;
 }
 
-// Before lyrics changing, show save Prompt dialog, 
+// Before lyrics changing, show save Prompt dialog,
 // if return true, cancel changes.
-bool CMPlayerAppBase::onLyricsChangingSavePrompt()
-{
-    int            nRet;
+bool CMPlayerAppBase::onLyricsChangingSavePrompt() {
+    int nRet;
 
     // 判断是否要保存歌词
     m_pEventDispatcher->dispatchSyncEvent(ET_LYRICS_ON_SAVE_EDIT);
 
-    if (g_LyricData.hasLyricsOpened() && g_LyricData.isModified())
-    {
-        if (g_LyricData.isOnlyAddLyrScrollActions())
+    if (g_LyricData.hasLyricsOpened() && g_LyricData.isModified()) {
+        if (g_LyricData.isOnlyAddLyrScrollActions()) {
             nRet = IDYES;
-        else
+        } else {
             nRet = saveLyrDialogBox(getMainWnd());
-        if (nRet == IDYES)
+        }
+        if (nRet == IDYES) {
             return CMPCommonCmdHandler::saveCurrentLyrics(getMainWnd(), false);
-        else if (nRet == IDCANCEL)
+        } else if (nRet == IDCANCEL) {
             return false;
+        }
     }
 
     return true;
 }
 
 
-int CMPlayerAppBase::messageOut(cstr_t lpText, uint32_t uType, cstr_t lpCaption)
-{
-    Window    *pWnd;
+int CMPlayerAppBase::messageOut(cstr_t lpText, uint32_t uType, cstr_t lpCaption) {
+    Window *pWnd;
 
     pWnd = getMainWnd();
-    if (!pWnd)
+    if (!pWnd) {
         return IDCANCEL;
+    }
 
-    if (lpCaption == nullptr)
+    if (lpCaption == nullptr) {
         lpCaption = SZ_APP_NAME;
+    }
 
     return pWnd->messageOut(lpText, uType, lpCaption);
 }
 
-int CMPlayerAppBase::changeSkinByUserCmd(cstr_t szSkin)
-{
+int CMPlayerAppBase::changeSkinByUserCmd(cstr_t szSkin) {
     // set default page, when skin changes.
 #ifdef _MINILYRICS_WIN32
-    if (CMPlayerAppBase::getInstance()->isEmbeddedMode())
+    if (CMPlayerAppBase::getInstance()->isEmbeddedMode()) {
         g_profile.writeInt("MPSkinMode", true);
+    }
 
     CMPlayerAppBase::getInstance()->endEmbeddedSkin();
 #endif
@@ -589,34 +486,25 @@ int CMPlayerAppBase::changeSkinByUserCmd(cstr_t szSkin)
     return m_pSkinFactory->changeSkin(szSkin, "", "", true);
 }
 
-void CMPlayerAppBase::getCurLyrDisplaySettingName(bool bFloatingLyr, string &strSectionName, EventType &etDispSettings)
-{
-    if (bFloatingLyr)
-    {
+void CMPlayerAppBase::getCurLyrDisplaySettingName(bool bFloatingLyr, string &strSectionName, EventType &etDispSettings) {
+    if (bFloatingLyr) {
         strSectionName = SZ_SECT_FLOATING_LYR;
         etDispSettings = ET_LYRICS_FLOATING_SETTINGS;
-    }
-    else
-    {
+    } else {
         strSectionName = SZ_SECT_LYR_DISPLAY;
         etDispSettings = ET_LYRICS_DISPLAY_SETTINGS;
     }
 }
 
-cstr_t CMPlayerAppBase::getCurLyrDisplaySettingName(bool bFloatingLyr)
-{
-    if (bFloatingLyr)
-    {
+cstr_t CMPlayerAppBase::getCurLyrDisplaySettingName(bool bFloatingLyr) {
+    if (bFloatingLyr) {
         return SZ_SECT_FLOATING_LYR;
-    }
-    else
-    {
+    } else {
         return SZ_SECT_LYR_DISPLAY;
     }
 }
 
-void CMPlayerAppBase::setDefaultSettings()
-{
+void CMPlayerAppBase::setDefaultSettings() {
     g_profile.doCache();
 
 #ifdef _WIN32

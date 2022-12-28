@@ -1,31 +1,24 @@
-// MPSkinMainWnd.cpp: implementation of the CMPSkinMainWndBase class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "MPlayerApp.h"
 #include "MPSkinMainWnd.h"
 #include "DlgAbout.h"
 #include "VersionUpdate.h"
 
+
 //////////////////////////////////////////////////////////////////////
 
-CMPSkinMainWndBase::CMPSkinMainWndBase()
-{
+CMPSkinMainWndBase::CMPSkinMainWndBase() {
 }
 
-CMPSkinMainWndBase::~CMPSkinMainWndBase()
-{
+CMPSkinMainWndBase::~CMPSkinMainWndBase() {
 }
 
-void CMPSkinMainWndBase::onCreate()
-{
+void CMPSkinMainWndBase::onCreate() {
     CMPSkinWnd::onCreate();
 
     updateCaptionText();
 }
 
-void CMPSkinMainWndBase::onDestroy()
-{
+void CMPSkinMainWndBase::onDestroy() {
     IEventHandler::unregisterHandler();
 
 #ifdef _WIN32
@@ -36,20 +29,18 @@ void CMPSkinMainWndBase::onDestroy()
     CMPSkinWnd::onDestroy();
 }
 
-void CMPSkinMainWndBase::onEvent(const IEvent *pEvent)
-{
-    if (pEvent->eventType == ET_UI_SETTINGS_CHANGED)
-    {
-        if (isPropertyName(pEvent->name.c_str(), "topmost"))
+void CMPSkinMainWndBase::onEvent(const IEvent *pEvent) {
+    if (pEvent->eventType == ET_UI_SETTINGS_CHANGED) {
+        if (isPropertyName(pEvent->name.c_str(), "topmost")) {
             CMPlayerAppBase::getMPSkinFactory()->topmostAll(isTRUE(pEvent->strValue.c_str()));
-        else
+        } else {
             CMPSkinWnd::onEvent(pEvent);
-    }
-    else
+        }
+    } else {
         CMPSkinWnd::onEvent(pEvent);
+    }
 }
 
-void CMPSkinMainWndBase::updateCaptionText()
-{
+void CMPSkinMainWndBase::updateCaptionText() {
     setCaptionText(_TL(SZ_APP_NAME));
 }

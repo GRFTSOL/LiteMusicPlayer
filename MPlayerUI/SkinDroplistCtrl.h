@@ -1,78 +1,67 @@
-// SkinDroplistCtrl.h: interface for the CSkinDroplistCtrl class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_SKINDROPLISTCTRL_H__D9E4286C_5FAD_4DC4_A1BE_E6A36626E899__INCLUDED_)
-#define AFX_SKINDROPLISTCTRL_H__D9E4286C_5FAD_4DC4_A1BE_E6A36626E899__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-class IDropListCtrlNotify
-{
+#ifndef MPlayerUI_SkinDroplistCtrl_h
+#define MPlayerUI_SkinDroplistCtrl_h
+
+
+class IDropListCtrlNotify {
 public:
     virtual void onSelChanged() = 0;
 };
 
 template<class _DataType>
-class CTree
-{
+class CTree {
 public:
-    struct Node
-    {
-        vector<Node *>        vChildren;
-        _DataType            dataNode;
+    struct Node {
+        vector<Node *>              vChildren;
+        _DataType                   dataNode;
     };
 
     typedef vector<Node *>    V_CHILDREN;
 
 public:
-    CTree()
-    {
+    CTree() {
         m_pRootNode = new Node;
         m_pCurNode = m_pRootNode;
         m_nCurNodeIndex = 0;
     }
-    ~CTree()
-    {
+    ~CTree() {
         freeNode(m_pRootNode);
     }
 
-    void clear()
-    {
+    void clear() {
         m_vPath.clear();
         m_pCurNode = m_pRootNode;
         m_nCurNodeIndex = 0;
         eraseAllChildren();
     }
 
-    void chToRoot()
-    {
+    void chToRoot() {
         m_nCurNodeIndex = 0;
         m_pCurNode = m_pRootNode;
         m_vPath.clear();
     }
 
-    bool chToParent()
-    {
+    bool chToParent() {
         assert(!m_vPath.empty());
-        if (m_vPath.empty())
+        if (m_vPath.empty()) {
             return false;
+        }
 
         m_nCurNodeIndex = m_vPath.back();
         m_vPath.pop_back();
 
-        if (!chToPath(m_vPath))
+        if (!chToPath(m_vPath)) {
             return false;
+        }
 
         return true;
     }
 
-    bool chToChild(int nIndex)
-    {
-        if (nIndex < 0 || nIndex >= (int)m_pCurNode->vChildren.size())
+    bool chToChild(int nIndex) {
+        if (nIndex < 0 || nIndex >= (int)m_pCurNode->vChildren.size()) {
             return false;
+        }
         m_pCurNode = m_pCurNode->vChildren[nIndex];
         m_nCurNodeIndex = nIndex;
         m_vPath.push_back(nIndex);
@@ -80,18 +69,14 @@ public:
         return true;
     }
 
-    _DataType &getCurNodeData()
-    {
+    _DataType &getCurNodeData() {
         return m_pCurNode->dataNode;
     }
 
-    _DataType &getParentNodeData()
-    {
-        Node        *pNode = m_pRootNode;
-        for (int i = 0; i < (int)m_vPath.size() - 1; i++)
-        {
-            if ((size_t)m_vPath[i] < pNode->vChildren.size())
-            {
+    _DataType &getParentNodeData() {
+        Node *pNode = m_pRootNode;
+        for (int i = 0; i < (int)m_vPath.size() - 1; i++) {
+            if ((size_t)m_vPath[i] < pNode->vChildren.size()) {
                 pNode = pNode->vChildren[m_vPath[i]];
             }
         }
@@ -99,64 +84,54 @@ public:
         return pNode->dataNode;
     }
 
-    int getChildrenCount()
-    {
+    int getChildrenCount() {
         return (int)m_pCurNode->vChildren.size();
     }
 
-    _DataType &getChild(int nIndex)
-    {
+    _DataType &getChild(int nIndex) {
         assert(nIndex >= 0 && nIndex < (int)m_pCurNode->vChildren.size());
 
-        if (nIndex >= 0 && nIndex < (int)m_pCurNode->vChildren.size())
+        if (nIndex >= 0 && nIndex < (int)m_pCurNode->vChildren.size()) {
             return m_pCurNode->vChildren[nIndex]->dataNode;
-        else
+        } else {
             return m_pRootNode->dataNode;
+        }
     }
 
-    void insertChild(int nIndex, _DataType data)
-    {
-        Node    *pNode = new Node;
+    void insertChild(int nIndex, _DataType data) {
+        Node *pNode = new Node;
         pNode->dataNode = data;
         m_pCurNode->vChildren.insert(m_pCurNode->vChildren.begin() + nIndex, pNode);
     }
 
-    void addChild(_DataType data)
-    {
-        Node    *pNode = new Node;
+    void addChild(_DataType data) {
+        Node *pNode = new Node;
         pNode->dataNode = data;
         m_pCurNode->vChildren.push_back(pNode);
     }
 
-    void eraseChild(int nIndex)
-    {
-        Node    *pNode;
+    void eraseChild(int nIndex) {
+        Node *pNode;
 
-        if (nIndex >= 0 && nIndex < (int)m_pCurNode->vChildren.size())
-        {
+        if (nIndex >= 0 && nIndex < (int)m_pCurNode->vChildren.size()) {
             pNode = m_pCurNode->vChildren[nIndex];
             m_pCurNode->vChildren.erase(m_pCurNode->vChildren.begin() + nIndex);
             freeNode(pNode);
         }
     }
 
-    void eraseAllChildren()
-    {
-        for (int i = 0; i < (int)m_pCurNode->vChildren.size(); i++)
-        {
+    void eraseAllChildren() {
+        for (int i = 0; i < (int)m_pCurNode->vChildren.size(); i++) {
             freeNode(m_pCurNode->vChildren[i]);
         }
         m_pCurNode->vChildren.clear();
     }
 
-    void getPath(vector<_DataType> &vPath)
-    {
-        Node        *pNode = m_pRootNode;
+    void getPath(vector<_DataType> &vPath) {
+        Node *pNode = m_pRootNode;
         vPath.clear();
-        for (int i = 0; i < (int)m_vPath.size(); i++)
-        {
-            if (m_vPath[i] < (int)pNode->vChildren.size())
-            {
+        for (int i = 0; i < (int)m_vPath.size(); i++) {
+            if (m_vPath[i] < (int)pNode->vChildren.size()) {
                 pNode = pNode->vChildren[m_vPath[i]];
                 vPath.push_back(pNode->dataNode);
             }
@@ -164,24 +139,23 @@ public:
     }
 
 protected:
-    bool chToPath(vector<int> &vPath)
-    {
-        if (vPath.empty())
-        {
+    bool chToPath(vector<int> &vPath) {
+        if (vPath.empty()) {
             m_pCurNode = nullptr;
             m_nCurNodeIndex = 0;
             return true;
         }
 
-        if (vPath[0] >= (int)m_pRootNode->vChildren.size())
+        if (vPath[0] >= (int)m_pRootNode->vChildren.size()) {
             return false;
+        }
         m_pCurNode = m_pRootNode->vChildren[vPath[0]];
         m_nCurNodeIndex = vPath[0];
 
-        for (int i = 1; i < (int)vPath.size(); i++)
-        {
-            if (vPath[i] >= (int)m_pCurNode->vChildren.size())
+        for (int i = 1; i < (int)vPath.size(); i++) {
+            if (vPath[i] >= (int)m_pCurNode->vChildren.size()) {
                 return false;
+            }
             m_pCurNode = m_pCurNode->vChildren[vPath[i]];
             m_nCurNodeIndex = vPath[i];
         }
@@ -189,10 +163,8 @@ protected:
         return true;
     }
 
-    void freeNode(Node *pNode)
-    {
-        for (int i = 0; i < (int)pNode->vChildren.size(); i++)
-        {
+    void freeNode(Node *pNode) {
+        for (int i = 0; i < (int)pNode->vChildren.size(); i++) {
             freeNode(pNode->vChildren[i]);
         }
 
@@ -200,11 +172,10 @@ protected:
     }
 
 protected:
-    // V_ITEMS                    m_root;
-    Node                    *m_pRootNode;
-    vector<int>                m_vPath;
-    int                        m_nCurNodeIndex;
-    Node                    *m_pCurNode;
+    Node                        *m_pRootNode;
+    vector<int>                 m_vPath;
+    int                         m_nCurNodeIndex;
+    Node                        *m_pCurNode;
 
 };
 /*
@@ -334,4 +305,4 @@ protected:
 
 };*/
 
-#endif // !defined(AFX_SKINDROPLISTCTRL_H__D9E4286C_5FAD_4DC4_A1BE_E6A36626E899__INCLUDED_)
+#endif // !defined(MPlayerUI_SkinDroplistCtrl_h)

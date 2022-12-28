@@ -1,18 +1,13 @@
-// MPFloatingLyrWnd.h: interface for the CMPFloatingLyrWnd class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MPFloatingLyrWnd_H__45561DD4_521E_428B_9174_527AACE5C84E__INCLUDED_)
-#define AFX_MPFloatingLyrWnd_H__45561DD4_521E_428B_9174_527AACE5C84E__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef MPlayerUI_MPFloatingLyrWnd_h
+#define MPlayerUI_MPFloatingLyrWnd_h
+
 
 #include "MPSkinWnd.h"
 
-class CMPFloatingLyrWnd : public CMPSkinWnd  
-{
+
+class CMPFloatingLyrWnd : public CMPSkinWnd {
 public:
     CMPFloatingLyrWnd();
     virtual ~CMPFloatingLyrWnd();
@@ -35,6 +30,6 @@ protected:
 
 };
 
-extern CMPFloatingLyrWnd        g_wndFloatingLyr;
+extern CMPFloatingLyrWnd g_wndFloatingLyr;
 
-#endif // !defined(AFX_MPFloatingLyrWnd_H__45561DD4_521E_428B_9174_527AACE5C84E__INCLUDED_)
+#endif // !defined(MPlayerUI_MPFloatingLyrWnd_h)

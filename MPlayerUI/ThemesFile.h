@@ -1,15 +1,10 @@
-// ThemesFile.h: interface for the CThemesFile class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_THEMESFILE_H__F2A7834E_B1FD_496B_9B2D_A3D302DF3B74__INCLUDED_)
-#define AFX_THEMESFILE_H__F2A7834E_B1FD_496B_9B2D_A3D302DF3B74__INCLUDED_
+#ifndef MPlayerUI_ThemesFile_h
+#define MPlayerUI_ThemesFile_h
 
 #pragma once
 
 
-enum ThemeItemID
-{
+enum ThemeItemID {
     TII_LYR_COLORS,
     TII_LYR_FONT,
     TII_LYR_STYLE,
@@ -17,21 +12,19 @@ enum ThemeItemID
     TII_COUNT,
 };
 
-struct ThemeItem
-{
-    ThemeItemID    nTII;
-    cstr_t        szName;
-    cstr_t        *properties;
-    int            nPropertiesCount;
-    int            nIDCtrl;
-    bool        bValid;
+struct ThemeItem {
+    ThemeItemID                 nTII;
+    cstr_t                      szName;
+    cstr_t                      *properties;
+    int                         nPropertiesCount;
+    int                         nIDCtrl;
+    bool                        bValid;
 };
 
-extern ThemeItem    g_themeItems[];
-extern const int    g_themeItemsCount;
+extern ThemeItem g_themeItems[];
+extern const int g_themeItemsCount;
 
-class CThemesXML : public CSimpleXML
-{
+class CThemesXML : public CSimpleXML {
 public:
     CThemesXML();
 
@@ -52,11 +45,9 @@ protected:
 };
 
 
-class CThemesFile
-{
+class CThemesFile {
 public:
-    CThemesFile()
-    {
+    CThemesFile() {
     }
 
 public:
@@ -72,9 +63,9 @@ public:
 protected:
 
 protected:
-    CThemesXML        m_xmlThemes;
-    CThemesXML        m_xmlThemesCustomized;
+    CThemesXML                  m_xmlThemes;
+    CThemesXML                  m_xmlThemesCustomized;
 
 };
 
-#endif // !defined(AFX_THEMESFILE_H__F2A7834E_B1FD_496B_9B2D_A3D302DF3B74__INCLUDED_)
+#endif // !defined(MPlayerUI_ThemesFile_h)

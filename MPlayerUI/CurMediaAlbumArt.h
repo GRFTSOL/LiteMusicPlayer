@@ -4,8 +4,7 @@
 #include "../ImageLib/RawImageData.h"
 
 
-class CCurMediaAlbumArt
-{
+class CCurMediaAlbumArt {
 public:
     CCurMediaAlbumArt();
     virtual ~CCurMediaAlbumArt();
@@ -21,11 +20,11 @@ public:
 
 public:
     // V_PICS                m_vPics;
-    ID3v2Pictures            m_id3v2Pic;
+    ID3v2Pictures               m_id3v2Pic;
 
     // album art of song file directory.
-    VecStrings                    m_vAlbumPicFile;
+    VecStrings                  m_vAlbumPicFile;
 
-    bool                    m_bLoaded;
+    bool                        m_bLoaded;
 
 };

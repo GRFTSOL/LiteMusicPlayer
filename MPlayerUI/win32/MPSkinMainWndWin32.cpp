@@ -1,7 +1,3 @@
-// MPSkinMainWnd.cpp: implementation of the CMPSkinMainWnd class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "MPlayerApp.h"
 #include "MPSkinMainWnd.h"
 
@@ -13,113 +9,105 @@
 #include "MPHelper.h"
 #endif
 
+
 const uint32_t g_msgTaskBarCreated = RegisterWindowMessage("TaskBarCreated");
 
 
-CMPSkinMainWnd::CMPSkinMainWnd()
-{
+CMPSkinMainWnd::CMPSkinMainWnd() {
 }
 
-CMPSkinMainWnd::~CMPSkinMainWnd()
-{
+CMPSkinMainWnd::~CMPSkinMainWnd() {
 }
 
-bool CMPSkinMainWnd::onCreate()
-{
-    if (!CMPSkinMainWndBase::onCreate())
+bool CMPSkinMainWnd::onCreate() {
+    if (!CMPSkinMainWndBase::onCreate()) {
         return false;
+    }
 
     registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_CUR_MEDIA_INFO_CHANGED);
 
     m_mlTrayIcon.init(this);
 
     m_nTimerFixWndFocus = registerTimerObject(nullptr, 1000);
-    if (GetForegroundWindow() != m_hWnd && m_bActived)
+    if (GetForegroundWindow() != m_hWnd && m_bActived) {
         onActivate(false);
+    }
 
     return true;
 }
 
-void CMPSkinMainWnd::onDestroy()
-{
+void CMPSkinMainWnd::onDestroy() {
     m_mlTrayIcon.quit();
 
     CMPSkinMainWndBase::onDestroy();
 }
 
-void CMPSkinMainWnd::onEvent(const IEvent *pEvent)
-{
-    if (pEvent->eventType == ET_PLAYER_CUR_MEDIA_CHANGED 
-        || pEvent->eventType == ET_PLAYER_CUR_MEDIA_INFO_CHANGED)
-    {
+void CMPSkinMainWnd::onEvent(const IEvent *pEvent) {
+    if (pEvent->eventType == ET_PLAYER_CUR_MEDIA_CHANGED
+        || pEvent->eventType == ET_PLAYER_CUR_MEDIA_INFO_CHANGED) {
         // update main window caption
-        char        szCaption[512];
+        char szCaption[512];
 
-        if (g_Player.isMediaOpened())
+        if (g_Player.isMediaOpened()) {
             snprintf(szCaption, CountOf(szCaption), "%s - %s", g_Player.getFullTitle(), SZ_APP_NAME);
-        else
+        } else {
             strcpy_safe(szCaption, CountOf(szCaption), getAppNameLong().c_str());
+        }
 
         setWindowText(szCaption);
 
         m_mlTrayIcon.updateTrayIconText(szCaption);
-    }
-    else if (pEvent->eventType == ET_UI_SETTINGS_CHANGED)
-    {
-        if (isPropertyName(pEvent->name.c_str(), "ShowIconOn"))
+    } else if (pEvent->eventType == ET_UI_SETTINGS_CHANGED) {
+        if (isPropertyName(pEvent->name.c_str(), "ShowIconOn")) {
             m_mlTrayIcon.updateShowIconPos();
-        else
+        } else {
             CMPSkinMainWndBase::onEvent(pEvent);
-    }
-    else
+        }
+    } else {
         CMPSkinMainWndBase::onEvent(pEvent);
+    }
 }
 
-void CMPSkinMainWnd::onCopyData(WPARAM wParam, PCOPYDATASTRUCT pCopyData)
-{
+void CMPSkinMainWnd::onCopyData(WPARAM wParam, PCOPYDATASTRUCT pCopyData) {
 #ifdef _MPLAYER
     vector<string> vCmdLine;
-    cstr_t            szCmdLine;
-    int                i;
+    cstr_t szCmdLine;
+    int i;
 
-    if (pCopyData->dwData != ML_SEND_CMD_LINE && wParam != ML_SEND_CMD_LINE)
+    if (pCopyData->dwData != ML_SEND_CMD_LINE && wParam != ML_SEND_CMD_LINE) {
         return;
+    }
 
     szCmdLine = (cstr_t)pCopyData->lpData;
     cmdLineAnalyse(szCmdLine, vCmdLine);
 
-    if (vCmdLine.empty())
+    if (vCmdLine.empty()) {
         return;
+    }
 
     // deal with option cmd line
-    for (i = 0; i < (int)vCmdLine.size(); i++)
-    {
-        string        &str = vCmdLine[i];
-        if (str[0] == '/' || str[0] == '-')
-        {
+    for (i = 0; i < (int)vCmdLine.size(); i++) {
+        string &str = vCmdLine[i];
+        if (str[0] == '/' || str[0] == '-') {
             vCmdLine.erase(vCmdLine.begin() + i);
             i--;
         }
     }
 
-    if (vCmdLine.size() == 1 && fileIsExtSame(vCmdLine[0].c_str(), ".m3u"))
-    {
+    if (vCmdLine.size() == 1 && fileIsExtSame(vCmdLine[0].c_str(), ".m3u")) {
         // open playlist
         g_Player.saveCurrentPlaylist();
 
         g_Player.m_strCurrentPlaylist = vCmdLine[0];
         g_Player.setPlaylistModified(false);
-    }
-    else
-    {
+    } else {
         getDefaultPlaylistName(g_Player.m_strCurrentPlaylist);
         g_Player.setPlaylistModified(true);
     }
 
     g_Player.clearPlaylist();
 
-    for (i = 0; i < (int)vCmdLine.size(); i++)
-    {
+    for (i = 0; i < (int)vCmdLine.size(); i++) {
         g_Player.addToPlaylist(vCmdLine[i].c_str());
     }
 
@@ -127,21 +115,18 @@ void CMPSkinMainWnd::onCopyData(WPARAM wParam, PCOPYDATASTRUCT pCopyData)
 #endif
 }
 
-void CMPSkinMainWnd::onSkinLoaded()
-{
+void CMPSkinMainWnd::onSkinLoaded() {
     CMPSkinMainWndBase::onSkinLoaded();
 }
 
-void CMPSkinMainWnd::onTimer(uint32_t nIDEvent)
-{
-    if (nIDEvent == m_nTimerFixWndFocus)
-    {
+void CMPSkinMainWnd::onTimer(uint32_t nIDEvent) {
+    if (nIDEvent == m_nTimerFixWndFocus) {
         // Under some special situation, MiniLyrics may not receive WM_ACTIVATE !activate notifications.
         unregisterTimerObject(nullptr, m_nTimerFixWndFocus);
-        if (GetForegroundWindow() != m_hWnd)
-        {
-            if (m_bActived)
+        if (GetForegroundWindow() != m_hWnd) {
+            if (m_bActived) {
                 onActivate(false);
+            }
         }
         return;
     }
@@ -149,10 +134,8 @@ void CMPSkinMainWnd::onTimer(uint32_t nIDEvent)
     return CMPSkinMainWndBase::onTimer(nIDEvent);
 }
 
-LRESULT CMPSkinMainWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam)
-{
-    switch (message)
-    {
+LRESULT CMPSkinMainWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
+    switch (message) {
     case WM_COPYDATA:
         onCopyData(wParam, (PCOPYDATASTRUCT)lParam);
         break;
@@ -165,16 +148,15 @@ LRESULT CMPSkinMainWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam)
         return 0;
 #ifndef _MPLAYER
     case WM_SYSCOMMAND:
-        if (wParam == SC_RESTORE)
-        {
-            if (isIconic())
+        if (wParam == SC_RESTORE) {
+            if (isIconic()) {
                 CMPlayerAppBase::getMPSkinFactory()->restoreAll();
+            }
         }
         break;
 #endif
     default:
-        if (message == g_msgTaskBarCreated)
-        {
+        if (message == g_msgTaskBarCreated) {
             m_mlTrayIcon.updateShowIconPos();
             m_mlTrayIcon.updatePlayerSysTrayIcon();
         }
@@ -185,33 +167,27 @@ LRESULT CMPSkinMainWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam)
 }
 
 #ifndef _MPLAYER
-bool CMPSkinMainWnd::isTopmost()
-{
-    HWND    hWndParent = getRootParentWnd();
-    if (hWndParent)
-    {
+bool CMPSkinMainWnd::isTopmost() {
+    HWND hWndParent = getRootParentWnd();
+    if (hWndParent) {
         return tobool(::isTopmostWindow(hWndParent));
     }
 
     return Window::isTopmost();
 }
 
-bool CMPSkinMainWnd::isIconic()
-{
-    HWND    hWndParent = getRootParentWnd();
-    if (hWndParent)
-    {
+bool CMPSkinMainWnd::isIconic() {
+    HWND hWndParent = getRootParentWnd();
+    if (hWndParent) {
         return tobool(::isIconic(hWndParent));
     }
 
     return Window::isIconic();
 }
 
-void CMPSkinMainWnd::setTopmost(bool bTopmost)
-{
-    HWND    hWndParent = getRootParentWnd();
-    if (hWndParent)
-    {
+void CMPSkinMainWnd::setTopmost(bool bTopmost) {
+    HWND hWndParent = getRootParentWnd();
+    if (hWndParent) {
         ::topmostWindow(hWndParent, bTopmost);
         return;
     }
@@ -219,27 +195,26 @@ void CMPSkinMainWnd::setTopmost(bool bTopmost)
     Window::setTopmost(bTopmost);
 }
 
-extern bool                g_bAutoMinimized;
+extern bool g_bAutoMinimized;
 
-void CMPSkinMainWnd::minimize()
-{
-    if (getRootParentWnd())
+void CMPSkinMainWnd::minimize() {
+    if (getRootParentWnd()) {
         return;
+    }
 
     showWindow(SW_MINIMIZE);
 
     g_bAutoMinimized = false;
 
-    if (isToolWindow())
+    if (isToolWindow()) {
         showWindow(SW_HIDE);
+    }
 }
 #endif
 
-void CMPSkinMainWnd::activateWindow()
-{
-    HWND    hWndParent = getRootParentWnd();
-    if (hWndParent)
-    {
+void CMPSkinMainWnd::activateWindow() {
+    HWND hWndParent = getRootParentWnd();
+    if (hWndParent) {
         ::activateWindow(hWndParent);
         return;
     }
@@ -247,14 +222,12 @@ void CMPSkinMainWnd::activateWindow()
     ::activateWindow(m_hWnd);
 }
 
-HWND CMPSkinMainWnd::getRootParentWnd()
-{
-    HWND        hParent;
-    HWND        hTemp;
+HWND CMPSkinMainWnd::getRootParentWnd() {
+    HWND hParent;
+    HWND hTemp;
 
     hTemp = hParent = ::getParent(m_hWnd);
-    for (int i = 1; hTemp && i <= 3; i++)
-    {
+    for (int i = 1; hTemp && i <= 3; i++) {
         hParent = hTemp;
         hTemp = ::getParent(hTemp);
     }

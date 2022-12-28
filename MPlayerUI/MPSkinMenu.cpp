@@ -1,21 +1,15 @@
-// MPSkinMenu.cpp: implementation of the CMPSkinMenu class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "MPlayerApp.h"
 #include "MPSkinMenu.h"
 #include "LyricShowAgentObj.h"
 #include "LyricShowTextEditObj.h"
 
 
-struct CommandIDEncoding
-{
-    int                                nCmdId;
-    CharEncodingType    nEncodingId;
+struct CommandIDEncoding {
+    int                         nCmdId;
+    CharEncodingType            nEncodingId;
 };
 
-CommandIDEncoding    _arrCmdIdCharset[] = 
-{
+CommandIDEncoding    _arrCmdIdCharset[] = {
     {IDC_ENC_DEFAULT, ED_SYSDEF },
     {IDC_ENC_UNICODE, ED_UNICODE },
     {IDC_ENC_UTF8, ED_UTF8 },
@@ -37,12 +31,9 @@ CommandIDEncoding    _arrCmdIdCharset[] =
     {-1, ED_SYSDEF}
 };
 
-int cmdIdToEncoding(int nCmdId)
-{
-    for (int i = 0; i < CountOf(_arrCmdIdCharset); i++)
-    {
-        if (_arrCmdIdCharset[i].nCmdId == nCmdId)
-        {
+int cmdIdToEncoding(int nCmdId) {
+    for (int i = 0; i < CountOf(_arrCmdIdCharset); i++) {
+        if (_arrCmdIdCharset[i].nCmdId == nCmdId) {
             return _arrCmdIdCharset[i].nEncodingId;
         }
     }
@@ -50,12 +41,9 @@ int cmdIdToEncoding(int nCmdId)
     return -1;
 }
 
-int encodingIdToCmd(CharEncodingType nEncodingId)
-{
-    for (int i = 0; i < CountOf(_arrCmdIdCharset); i++)
-    {
-        if (_arrCmdIdCharset[i].nEncodingId == nEncodingId)
-        {
+int encodingIdToCmd(CharEncodingType nEncodingId) {
+    for (int i = 0; i < CountOf(_arrCmdIdCharset); i++) {
+        if (_arrCmdIdCharset[i].nEncodingId == nEncodingId) {
             return _arrCmdIdCharset[i].nCmdId;
         }
     }
@@ -65,8 +53,7 @@ int encodingIdToCmd(CharEncodingType nEncodingId)
 
 //////////////////////////////////////////////////////////////////////////
 
-MenuItemCheck _menuItemsCheck[] = 
-{
+MenuItemCheck _menuItemsCheck[] = {
     { IDC_SHUFFLE, SZ_SECT_PLAYER, "shuffle", "1", },
     { IDC_SETTOPMOST, nullptr, nullptr, nullptr, },
     { IDC_ANTIAlIAS, SZ_SECT_UI, "Antialias", "1", },
@@ -76,16 +63,14 @@ MenuItemCheck _menuItemsCheck[] =
     { IDC_FLOATING_LYRICS, nullptr, nullptr, "1", },
 };
 
-MenuRadioGroupIDName    _MenuRadioLoop[] =
-{
+MenuRadioGroupIDName    _MenuRadioLoop[] = {
     { IDC_REPEAT_OFF, "off" },
     { IDC_REPEAT_ALL, "all" },
     { IDC_REPEAT_TRACK, "track" },
     { 0, nullptr },
 };
 
-MenuRadioGroupIDName    _MenuRadioLyrDisplayStyle[] = 
-{
+MenuRadioGroupIDName    _MenuRadioLyrDisplayStyle[] = {
     { IDC_LDS_MULTI_LINE, nullptr },
     { IDC_LDS_STATIC_TXT, nullptr },
     { IDC_LDS_TWO_LINE, nullptr },
@@ -94,8 +79,7 @@ MenuRadioGroupIDName    _MenuRadioLyrDisplayStyle[] =
     { 0, nullptr },
 };
 
-MenuRadioGroupIDName    _MenuRadioLyrDrawOpt[] = 
-{
+MenuRadioGroupIDName    _MenuRadioLyrDrawOpt[] = {
     { IDC_LDO_AUTO, nullptr },
     { IDC_LDO_NORMAL, nullptr },
     { IDC_LDO_FADE_IN, nullptr },
@@ -103,8 +87,7 @@ MenuRadioGroupIDName    _MenuRadioLyrDrawOpt[] =
     { 0, nullptr },
 };
 
-MenuRadioGroupIDName    _MenuRadioCharEncoding[] = 
-{
+MenuRadioGroupIDName    _MenuRadioCharEncoding[] = {
     { IDC_ENC_DEFAULT, "" },
     { IDC_ENC_ARABIC, "" },
     { IDC_ENC_BALTIC, "" },
@@ -126,8 +109,7 @@ MenuRadioGroupIDName    _MenuRadioCharEncoding[] =
     { 0, nullptr },
 };
 
-MenuRadioGroupIDName    _MenuRadioOpaque[] = 
-{
+MenuRadioGroupIDName    _MenuRadioOpaque[] = {
     { IDC_SET_OPAQUE_100, nullptr },
     { IDC_SET_OPAQUE_90, nullptr },
     { IDC_SET_OPAQUE_80, nullptr },
@@ -143,16 +125,14 @@ MenuRadioGroupIDName    _MenuRadioOpaque[] =
 
 typedef uint32_t(*FUNGetCheckMenuID)();
 
-static uint32_t getCharEncodingCheckMenuID()
-{
+static uint32_t getCharEncodingCheckMenuID() {
     CharEncodingType encoding = ED_SYSDEF;
     return encodingIdToCmd(encoding);
 }
 
-MenuRadioGroup _menuRadioGroup[] = 
-{
+MenuRadioGroup _menuRadioGroup[] = {
 #ifdef _MPLAYER
-//    { SZ_SECT_PLAYER, "repeat", _MenuRadioLoop, nullptr, 0, 0 },
+    //    { SZ_SECT_PLAYER, "repeat", _MenuRadioLoop, nullptr, 0, 0 },
 #endif
     { 0, 0, _MenuRadioLyrDrawOpt, },
     { 0, 0, _MenuRadioCharEncoding, },
@@ -160,93 +140,73 @@ MenuRadioGroup _menuRadioGroup[] =
     { 0, 0, _MenuRadioLyrDisplayStyle, },
 };
 
-void CMenuAutoCheck::initProcSubMenu(CMenu &menu)
-{
-    int    nInRadioGroupIndex = -1;
-    MenuRadioGroup    radioGroup;
+void CMenuAutoCheck::initProcSubMenu(CMenu &menu) {
+    int nInRadioGroupIndex = -1;
+    MenuRadioGroup radioGroup;
 
     int count = menu.getItemCount();
-    for (int i = 0; i < count; i++)
-    {
+    for (int i = 0; i < count; i++) {
         string strText;
         uint32_t nID;
         bool bSubMenu;
-        
-        if (!menu.getMenuItemInfo(i, strText, nID, bSubMenu, true))
-        {
-            if (nInRadioGroupIndex != -1)
+
+        if (!menu.getMenuItemInfo(i, strText, nID, bSubMenu, true)) {
+            if (nInRadioGroupIndex != -1) {
                 m_vMenuItemsRadio.push_back(radioGroup);
+            }
             break;
         }
-        
-        if (bSubMenu)
-        {
-            if (nInRadioGroupIndex != -1)
-            {
+
+        if (bSubMenu) {
+            if (nInRadioGroupIndex != -1) {
                 m_vMenuItemsRadio.push_back(radioGroup);
                 nInRadioGroupIndex = -1;
             }
             CMenu subMenu = menu.getSubmenu(i);
             initProcSubMenu(subMenu);
-        }
-        else
-        {
-            if (nID == IDC_SKIN_POS)
-            {
+        } else {
+            if (nID == IDC_SKIN_POS) {
                 m_hInsertSkinsMenu = menu;
                 m_nInsertSkinsPos = i;
                 continue;
-            }
-            else if (nID == IDC_NEW_MENU_POS)
-            {
+            } else if (nID == IDC_NEW_MENU_POS) {
                 m_hInsertNewItemMenu = menu;
                 m_nInsertNewItemPos = i;
                 continue;
             }
 
-            int        k;
-            for (k = 0; k < CountOf(_menuItemsCheck); k++)
-            {
-                if (nID == _menuItemsCheck[k].nID)
-                {
-                    if (nInRadioGroupIndex != -1)
-                    {
+            int k;
+            for (k = 0; k < CountOf(_menuItemsCheck); k++) {
+                if (nID == _menuItemsCheck[k].nID) {
+                    if (nInRadioGroupIndex != -1) {
                         m_vMenuItemsRadio.push_back(radioGroup);
                         nInRadioGroupIndex = -1;
                     }
 
-                    MenuItemCheck    item = _menuItemsCheck[k];
+                    MenuItemCheck item = _menuItemsCheck[k];
 
                     item.menu = menu;
                     m_vMenuItemsCheck.push_back(item);
                     break;
                 }
             }
-            if (k >= CountOf(_menuItemsCheck))
-            {
-                for (int k = 0; k < CountOf(_menuRadioGroup); k++)
-                {
-                    for (int n = 0; _menuRadioGroup[k].idNames[n].nID != 0; n++)
-                    {
-                        if (_menuRadioGroup[k].idNames[n].nID == nID)
-                        {
-                            if (nInRadioGroupIndex != -1 && nInRadioGroupIndex != k)
-                            {
+            if (k >= CountOf(_menuItemsCheck)) {
+                for (int k = 0; k < CountOf(_menuRadioGroup); k++) {
+                    for (int n = 0; _menuRadioGroup[k].idNames[n].nID != 0; n++) {
+                        if (_menuRadioGroup[k].idNames[n].nID == nID) {
+                            if (nInRadioGroupIndex != -1 && nInRadioGroupIndex != k) {
                                 m_vMenuItemsRadio.push_back(radioGroup);
                                 nInRadioGroupIndex = -1;
                             }
 
-                            if (nInRadioGroupIndex == -1)
-                            {
+                            if (nInRadioGroupIndex == -1) {
                                 // first group item.
                                 radioGroup = _menuRadioGroup[k];
                                 radioGroup.menu = menu;
                                 radioGroup.nRadioStartID = nID;
                                 radioGroup.nRadioEndID = nID;
                                 nInRadioGroupIndex = k;
-                            }
-                            else
-                            {
+                            } else {
                                 // next group item.
                                 radioGroup.nRadioEndID = nID;
                             }
@@ -260,24 +220,24 @@ void CMenuAutoCheck::initProcSubMenu(CMenu &menu)
     }
 }
 
-void CMenuAutoCheck::updateMenuCheckStatus()
-{
+void CMenuAutoCheck::updateMenuCheckStatus() {
     {
         //
         // update check item status.
         //
-        LIST_MENU_ITEMS_CHECK::iterator    it, itEnd;
+        LIST_MENU_ITEMS_CHECK::iterator it, itEnd;
         itEnd = m_vMenuItemsCheck.end();
-        for (it = m_vMenuItemsCheck.begin(); it != itEnd; ++it)
-        {
-            MenuItemCheck    &item = *it;
-            if (!item.menu.isValid())
+        for (it = m_vMenuItemsCheck.begin(); it != itEnd; ++it) {
+            MenuItemCheck &item = *it;
+            if (!item.menu.isValid()) {
                 continue;
-            bool        bCheck;
-            if (item.szSection == nullptr || item.szName == nullptr)
+            }
+            bool bCheck;
+            if (item.szSection == nullptr || item.szName == nullptr) {
                 bCheck = getChecked(item.nID);
-            else
+            } else {
                 bCheck = strcasecmp(item.szCheckValue, g_profile.getString(item.szSection, item.szName, "")) == 0;
+            }
             item.menu.checkItem(item.nID, bCheck);
         }
     }
@@ -286,27 +246,23 @@ void CMenuAutoCheck::updateMenuCheckStatus()
         //
         // update radio item status.
         //
-        string                strValue;
-        LIST_MENU_ITEMS_RADIO::iterator    it, itEnd;
+        string strValue;
+        LIST_MENU_ITEMS_RADIO::iterator it, itEnd;
         itEnd = m_vMenuItemsRadio.end();
-        for (it = m_vMenuItemsRadio.begin(); it != itEnd; ++it)
-        {
-            MenuRadioGroup    &item = *it;
-            if (!item.menu.isValid())
+        for (it = m_vMenuItemsRadio.begin(); it != itEnd; ++it) {
+            MenuRadioGroup &item = *it;
+            if (!item.menu.isValid()) {
                 continue;
-            
-            if (item.nRadioStartID == IDC_ENC_DEFAULT)
-            {
+            }
+
+            if (item.nRadioStartID == IDC_ENC_DEFAULT) {
                 // user function
-                uint32_t        nID;
+                uint32_t nID;
                 nID = getCharEncodingCheckMenuID();
                 item.menu.checkRadioItem(item.nRadioStartID, item.nRadioEndID, nID);
-            }
-            else
-            {
-                uint32_t        nIDChecked;
-                if (getRadioChecked(item.idNames, nIDChecked))
-                {
+            } else {
+                uint32_t nIDChecked;
+                if (getRadioChecked(item.idNames, nIDChecked)) {
                     item.menu.checkRadioItem(item.nRadioStartID, item.nRadioEndID, nIDChecked);
                 }
             }
@@ -314,63 +270,55 @@ void CMenuAutoCheck::updateMenuCheckStatus()
     }
 }
 
-void CMenuAutoCheck::addUICheckStatusIf(IUICheckStatus *pIfUICheckStatus)
-{
+void CMenuAutoCheck::addUICheckStatusIf(IUICheckStatus *pIfUICheckStatus) {
     m_listUICheckStatusIf.push_back(pIfUICheckStatus);
 }
 
-bool CMenuAutoCheck::getChecked(uint32_t nID)
-{
-    LIST_UI_CHECK_STATUS::iterator    it, itEnd;
+bool CMenuAutoCheck::getChecked(uint32_t nID) {
+    LIST_UI_CHECK_STATUS::iterator it, itEnd;
 
     itEnd = m_listUICheckStatusIf.end();
-    for (it = m_listUICheckStatusIf.begin(); it != itEnd; ++it)
-    {
-        IUICheckStatus        *p = *it;
-        bool        bChecked;
-        if (p->getChecked(nID, bChecked))
+    for (it = m_listUICheckStatusIf.begin(); it != itEnd; ++it) {
+        IUICheckStatus *p = *it;
+        bool bChecked;
+        if (p->getChecked(nID, bChecked)) {
             return bChecked;
+        }
     }
     return false;
 }
 
-bool CMenuAutoCheck::getRadioChecked(MenuRadioGroupIDName *idNames, uint32_t &nIDChecked)
-{
-    LIST_UI_CHECK_STATUS::iterator    it, itEnd;
+bool CMenuAutoCheck::getRadioChecked(MenuRadioGroupIDName *idNames, uint32_t &nIDChecked) {
+    LIST_UI_CHECK_STATUS::iterator it, itEnd;
 
-    vector<uint32_t>    vIDs;
+    vector<uint32_t> vIDs;
 
-    while (idNames->nID != 0)
-    {
+    while (idNames->nID != 0) {
         vIDs.push_back(idNames->nID);
         idNames++;
     }
 
     itEnd = m_listUICheckStatusIf.end();
-    for (it = m_listUICheckStatusIf.begin(); it != itEnd; ++it)
-    {
-        IUICheckStatus        *p = *it;
-        if (p->getRadioChecked(vIDs, nIDChecked))
+    for (it = m_listUICheckStatusIf.begin(); it != itEnd; ++it) {
+        IUICheckStatus *p = *it;
+        if (p->getRadioChecked(vIDs, nIDChecked)) {
             return true;
+        }
     }
     return false;
 }
 
 //////////////////////////////////////////////////////////////////////
 
-CMPSkinMenu::CMPSkinMenu()
-{
+CMPSkinMenu::CMPSkinMenu() {
 }
 
-CMPSkinMenu::~CMPSkinMenu()
-{
+CMPSkinMenu::~CMPSkinMenu() {
 }
 
-void CMPSkinMenu::onLoadMenu()
-{
+void CMPSkinMenu::onLoadMenu() {
     m_autoCheckMenu.initProcSubMenu(*this);
-    if (m_autoCheckMenu.m_nInsertNewItemPos != -1)
-    {
+    if (m_autoCheckMenu.m_nInsertNewItemPos != -1) {
         setOrgAppendPos(m_autoCheckMenu.m_nInsertNewItemPos);
         m_autoCheckMenu.m_hInsertNewItemMenu.removeItem(m_autoCheckMenu.m_nInsertNewItemPos);
     }
@@ -380,37 +328,31 @@ void CMPSkinMenu::onLoadMenu()
 #endif
 }
 
-void CMPSkinMenu::trackPopupMenu(int x, int y, Window *pWnd, CRect *prcNotOverlap)
-{
+void CMPSkinMenu::trackPopupMenu(int x, int y, Window *pWnd, CRect *prcNotOverlap) {
     updateMenuStatus();
 
     CSkinMenu::trackPopupMenu(x, y, pWnd, prcNotOverlap);
 }
 
-void CMPSkinMenu::trackPopupSubMenu(int x, int y, int nSubMenu, Window *pWnd, CRect *prcNotOverlap)
-{
+void CMPSkinMenu::trackPopupSubMenu(int x, int y, int nSubMenu, Window *pWnd, CRect *prcNotOverlap) {
     updateMenuStatus();
 
     CSkinMenu::trackPopupSubMenu(x, y, nSubMenu, pWnd, prcNotOverlap);
 }
 
-void CMPSkinMenu::updateMenuStatus()
-{
+void CMPSkinMenu::updateMenuStatus() {
     m_autoCheckMenu.updateMenuCheckStatus();
-    
-    if (m_autoCheckMenu.m_hInsertSkinsMenu.isValid())
-    {
+
+    if (m_autoCheckMenu.m_hInsertSkinsMenu.isValid()) {
         insertSkinMenu(m_autoCheckMenu.m_hInsertSkinsMenu,
-                       m_autoCheckMenu.m_nInsertSkinsPos);
+            m_autoCheckMenu.m_nInsertSkinsPos);
     }
 }
 
-bool CMPSkinMenu::getShortcutKey(int nMenuID, string &strShortcut)
-{
-    int            nCmdID;
+bool CMPSkinMenu::getShortcutKey(int nMenuID, string &strShortcut) {
+    int nCmdID;
     nCmdID = CMPlayerApp::getMPSkinFactory()->getUIDByMenuID(nMenuID);
-    if (nCmdID != UID_INVALID)
-    {
+    if (nCmdID != UID_INVALID) {
         CMPlayerAppBase::getHotkey().getHotkeyText(nCmdID, strShortcut);
         return true;
     }
@@ -419,84 +361,78 @@ bool CMPSkinMenu::getShortcutKey(int nMenuID, string &strShortcut)
 }
 
 static int        __vSkinMenuId[] = {IDC_SKIN_0, IDC_SKIN_1, IDC_SKIN_2, IDC_SKIN_3, IDC_SKIN_4, IDC_SKIN_5,
-                IDC_SKIN_6, IDC_SKIN_7, IDC_SKIN_8, IDC_SKIN_9, IDC_SKIN_10, IDC_SKIN_11, IDC_SKIN_12, 
-                IDC_SKIN_13, IDC_SKIN_14, IDC_SKIN_15, IDC_SKIN_16, IDC_SKIN_17, IDC_SKIN_18, IDC_SKIN_19,
-                IDC_SKIN_20 };
-#define __SkinMenuCount CountOf(__vSkinMenuId)
+    IDC_SKIN_6, IDC_SKIN_7, IDC_SKIN_8, IDC_SKIN_9, IDC_SKIN_10, IDC_SKIN_11, IDC_SKIN_12,
+    IDC_SKIN_13, IDC_SKIN_14, IDC_SKIN_15, IDC_SKIN_16, IDC_SKIN_17, IDC_SKIN_18, IDC_SKIN_19,
+    IDC_SKIN_20 };
+    #define __SkinMenuCount CountOf(__vSkinMenuId)
 
-void CMPSkinMenu::insertSkinMenu(CMenu &menuSkin, int nPosStart)
-{
+    void CMPSkinMenu::insertSkinMenu(CMenu &menuSkin, int nPosStart) {
     // 取得上次加载的Skin
     string strDefaultSkin = CSkinApp::getInstance()->getDefaultSkin();
 
     // 取得原来的SKIN子菜单，并且删除之
     {
-        for (int i = 0; i < 32; i++)
-        {
-            if (!menuSkin.hasItem(0))
+        for (int i = 0; i < 32; i++) {
+            if (!menuSkin.hasItem(0)) {
                 break;
+            }
             menuSkin.removeItem(0);
         }
     }
 
     // 查找所有的Skin，并且添加到菜单中
-    vector<string>    vSkins;
-    if (CMPlayerAppBase::getMPSkinFactory()->enumAllSkins(vSkins))
-    {
-        for (int i = 0; i < (int)vSkins.size() && i < __SkinMenuCount; i++)
-        {
+    vector<string> vSkins;
+    if (CMPlayerAppBase::getMPSkinFactory()->enumAllSkins(vSkins)) {
+        for (int i = 0; i < (int)vSkins.size() && i < __SkinMenuCount; i++) {
             menuSkin.appendItem(__vSkinMenuId[i], vSkins[i].c_str());
-            if (strcasecmp(strDefaultSkin.c_str(), vSkins[i].c_str()) == 0)
+            if (strcasecmp(strDefaultSkin.c_str(), vSkins[i].c_str()) == 0) {
                 menuSkin.checkItem(__vSkinMenuId[i], true);
+            }
         }
     }
 }
 
-bool onCommandSkin(int nCmdId)
-{
-    int            i;
+bool onCommandSkin(int nCmdId) {
+    int i;
 
-    for (i = 0; i < __SkinMenuCount; i++)
-    {
-        if (nCmdId == __vSkinMenuId[i])
-        {
+    for (i = 0; i < __SkinMenuCount; i++) {
+        if (nCmdId == __vSkinMenuId[i]) {
             break;
         }
     }
-    if (i == __SkinMenuCount)
+    if (i == __SkinMenuCount) {
         return false;
+    }
 
     // 取得上次加载的Skin
     string strDefaultSkin = CSkinApp::getInstance()->getDefaultSkin();
 
-    vector<string>    vSkins;
-    string            strSkin;
-    if (CMPlayerAppBase::getMPSkinFactory()->enumAllSkins(vSkins))
-    {
-        if (i >= (int)vSkins.size())
+    vector<string> vSkins;
+    string strSkin;
+    if (CMPlayerAppBase::getMPSkinFactory()->enumAllSkins(vSkins)) {
+        if (i >= (int)vSkins.size()) {
             return false;
+        }
     }
 
     strSkin = vSkins[i];
-    if (strcmp(strSkin.c_str(), strDefaultSkin.c_str()) == 0)
+    if (strcmp(strSkin.c_str(), strDefaultSkin.c_str()) == 0) {
         return true;
+    }
 
     CMPlayerAppBase::getInstance()->changeSkinByUserCmd(strSkin.c_str());
 
     return true;
 }
 
-void CLyrEditorMenu::trackPopupSubMenu(int x, int y, int nSubMenu, Window *pWnd, CRect *prcNotOverlap)
-{
-    if (nSubMenu == 2)
-    {
-        bool        bEnable;
-        CSkinWnd    *pSkinWnd = (CSkinWnd *)pWnd;
-        CMenu        menu = getSubmenu(nSubMenu);
+void CLyrEditorMenu::trackPopupSubMenu(int x, int y, int nSubMenu, Window *pWnd, CRect *prcNotOverlap) {
+    if (nSubMenu == 2) {
+        bool bEnable;
+        CSkinWnd *pSkinWnd = (CSkinWnd *)pWnd;
+        CMenu menu = getSubmenu(nSubMenu);
 
         CLyricShowTextEditObj *pEditor = (CLyricShowTextEditObj*)pSkinWnd->getUIObjectByClassName(CLyricShowTextEditObj::className());
-        if (pEditor)
-        {
+        if (pEditor) {
             bEnable = pEditor->isSelected();
             menu.enableItem(IDC_EDIT_CUT, bEnable);
             menu.enableItem(IDC_EDIT_COPY, bEnable);

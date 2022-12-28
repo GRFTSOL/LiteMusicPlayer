@@ -1,7 +1,3 @@
-// MLTrayIcon.cpp: implementation of the CMLTrayIcon class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "MPlayerApp.h"
 #include "MLTrayIcon.h"
 #include "MLCmd.h"

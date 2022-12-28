@@ -1,21 +1,15 @@
-// MPMediaLibCmdHandler.h: interface for the CMPMediaLibCmdHandler class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MPMEDIALIBCMDHANDLER_H__1A67AACB_A410_4FA7_B631_4107B96C2050__INCLUDED_)
-#define AFX_MPMEDIALIBCMDHANDLER_H__1A67AACB_A410_4FA7_B631_4107B96C2050__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef MPlayerUI_MPMediaLibCmdHandler_h
+#define MPlayerUI_MPMediaLibCmdHandler_h
+
 
 #include "SkinDroplistCtrl.h"
 
-class CMediaLibTreeProvider
-{
+
+class CMediaLibTreeProvider {
 public:
-    enum FolderType
-    {
+    enum FolderType {
         FT_MEDIA_LIB,
         FT_NOW_PLAYING,
         FT_ALL_MUSIC,
@@ -43,8 +37,7 @@ public:
         FT_RECENT_ADDED,
     };
 
-    enum ImageIndex
-    {
+    enum ImageIndex {
         II_MEDIA_LIB,
         II_PLAYLISTS,
         II_ARTIST,
@@ -54,21 +47,20 @@ public:
         II_NOW_PLAYING,
     };
 
-    struct Item
-    {
-        string        name;
-        uint8_t        nImageIndex;
-        bool        bUptodate;
-        FolderType    folderType;
-        CMPAutoPtr<IPlaylist>    playlist;
-        cstr_t getValue() const
-        {
+    struct Item {
+        string                      name;
+        uint8_t                     nImageIndex;
+        bool                        bUptodate;
+        FolderType                  folderType;
+        CMPAutoPtr<IPlaylist>       playlist;
+        cstr_t getValue() const {
             if (folderType == FT_ARTIST_UNKNOWN
                 || folderType == FT_ARTIST_ALBUM_UNKNOWN
-                || folderType == FT_ALBUM_UNKNOWN)
+                || folderType == FT_ALBUM_UNKNOWN) {
                 return "";
-            else
+            } else {
                 return name.c_str();
+            }
         }
     };
     typedef vector<Item>        V_ITEMS;
@@ -106,13 +98,12 @@ protected:
     void addPlaylistToTree(IPlaylist *playlist);
 
 protected:
-    CMPAutoPtr<IMediaLibrary>        m_mediaLib;
-    CTree<Item>                        m_tree;
+    CMPAutoPtr<IMediaLibrary>   m_mediaLib;
+    CTree<Item>                 m_tree;
 
 };
 
-class CMPMediaLibCmdHandler : public ISkinCmdHandler  
-{
+class CMPMediaLibCmdHandler : public ISkinCmdHandler {
 public:
     CMPMediaLibCmdHandler();
     virtual ~CMPMediaLibCmdHandler();
@@ -134,17 +125,16 @@ protected:
     void backHistoryPath();
 
 protected:
-    struct HistroyItem
-    {
-        CMediaLibTreeProvider::V_ITEMS        path;
-        int                                    nSelChild;
+    struct HistroyItem {
+        CMediaLibTreeProvider::V_ITEMS  path;
+        int                             nSelChild;
     };
 
-    CMediaLibTreeProvider        m_mediaLibTree;
-    CMediaLibTreeProvider::V_ITEMS        m_vPathLatest;
-    list<HistroyItem>            m_historyPath;
+    CMediaLibTreeProvider       m_mediaLibTree;
+    CMediaLibTreeProvider::V_ITEMS  m_vPathLatest;
+    list<HistroyItem>               m_historyPath;
 
 
 };
 
-#endif // !defined(AFX_MPMEDIALIBCMDHANDLER_H__1A67AACB_A410_4FA7_B631_4107B96C2050__INCLUDED_)
+#endif // !defined(MPlayerUI_MPMediaLibCmdHandler_h)

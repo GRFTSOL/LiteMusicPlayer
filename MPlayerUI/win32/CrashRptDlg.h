@@ -1,9 +1,5 @@
-// CrashHandler.h: interface for the CCrashHandler class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_CRASHRPTDLG_H__3D49A3C7_76FE_4AE9_96B6_56E9219DC44C__INCLUDED_)
-#define AFX_CRASHRPTDLG_H__3D49A3C7_76FE_4AE9_96B6_56E9219DC44C__INCLUDED_
+#ifndef MPlayerUI_win32_CrashRptDlg_h
+#define MPlayerUI_win32_CrashRptDlg_h
 
 #pragma once
 
@@ -11,22 +7,21 @@
 
 #include "../Utils/win32/MiniDump.h"
 
-class CMiniDumperNotify : public IMiniDumperNotify
-{
+
+class CMiniDumperNotify : public IMiniDumperNotify {
 public:
     virtual bool onBeginDump(HMODULE hCrashMod, char szDumpFileToSave[], int nLen);
     virtual bool onDumpFinished(HMODULE hCrashMod, cstr_t szDumpFileToSave);
 
 };
 
-extern CMiniDumperNotify    dumpNotify;
+extern CMiniDumperNotify dumpNotify;
 
 inline void initMiniDumper() { CMiniDumper::init(&dumpNotify); }
 
 //////////////////////////////////////////////////////////////////////
 // CCrashRptDlg
-class CCrashRptDlg : public CBaseDialog
-{
+class CCrashRptDlg : public CBaseDialog {
 public:
     bool onInitDialog();
     void onOK();
@@ -35,7 +30,7 @@ public:
 public:
     void updateListBoxHorzExtent(cstr_t szStrInsert);
 
-    string        m_strDumpFile;
+    string                      m_strDumpFile;
 
 };
 
@@ -45,4 +40,4 @@ inline void initMiniDumper() { }
 
 #endif // _WIN32_DESKTOP
 
-#endif // !defined(AFX_CRASHRPTDLG_H__3D49A3C7_76FE_4AE9_96B6_56E9219DC44C__INCLUDED_)
+#endif // !defined(MPlayerUI_win32_CrashRptDlg_h)

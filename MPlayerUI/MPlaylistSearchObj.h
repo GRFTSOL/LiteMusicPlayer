@@ -1,9 +1,10 @@
+#pragma once
+
 #if !defined(_MPLAYLISTSEARCHOBJ_H_)
 #define _MPLAYLISTSEARCHOBJ_H_
 
 
-class CMPlaylistSearchObj : public CSkinDataObj, public IEditNotification, public IUIObjNotifyHandler
-{
+class CMPlaylistSearchObj : public CSkinDataObj, public IEditNotification, public IUIObjNotifyHandler {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinDataObj)
 public:
     CMPlaylistSearchObj();
@@ -38,32 +39,30 @@ protected:
     void useResultAsNowPlaying();
 
 protected:
-    enum
-    {
-        TD_BEGIN_SEARCH        = 1000,
+    enum {
+        TD_BEGIN_SEARCH             = 1000,
     };
 
-    enum PLAYLIST_NAME
-    {
+    enum PLAYLIST_NAME {
         PN_NOWPLAYING,
         PN_ALL_MEDIALIB,
         PN_CUSTOMIZED,
     };
 
-    string            m_strIDEditor;
-    string            m_strIDPlaylist;
-    string            m_strIDPlaylistList;
+    string                      m_strIDEditor;
+    string                      m_strIDPlaylist;
+    string                      m_strIDPlaylistList;
 
-    CSkinEditCtrl    *m_pCtrlEdit;
-    CSkinListCtrlEx    *m_pCtrlPlaylist;
-    CSkinListCtrl    *m_pCtrlPlaylistList;
+    CSkinEditCtrl               *m_pCtrlEdit;
+    CSkinListCtrlEx             *m_pCtrlPlaylist;
+    CSkinListCtrl               *m_pCtrlPlaylistList;
 
-    CMPAutoPtr<IPlaylist>    m_Playlist;
-    CMPAutoPtr<IPlaylist>    m_PlaylistResults;
+    CMPAutoPtr<IPlaylist>       m_Playlist;
+    CMPAutoPtr<IPlaylist>       m_PlaylistResults;
 
-    int                m_nIDBeginSearchTimer;
+    int                         m_nIDBeginSearchTimer;
 
-    VecStrings            m_vRecentPL;
+    VecStrings                  m_vRecentPL;
 
 };
 

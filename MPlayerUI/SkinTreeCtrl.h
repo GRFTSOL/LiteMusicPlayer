@@ -1,20 +1,13 @@
-// SkinTreeCtrl.h: interface for the CSkinTreeCtrl class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_SKINTREECTRL_H__03A1FDA7_659B_415F_949B_A3F1549926F3__INCLUDED_)
-#define AFX_SKINTREECTRL_H__03A1FDA7_659B_415F_949B_A3F1549926F3__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-class CSkinTreeCtrlEventNotify : public IUIObjNotify
-{
+#ifndef MPlayerUI_SkinTreeCtrl_h
+#define MPlayerUI_SkinTreeCtrl_h
+
+
+class CSkinTreeCtrlEventNotify : public IUIObjNotify {
 public:
     CSkinTreeCtrlEventNotify (CUIObject *pObject) : IUIObjNotify(pObject) { cmd = C_CLICK; }
-    enum Command
-    {
+    enum Command {
         C_CLICK,
         C_DBL_CLICK,
         C_SEL_CHANGED,
@@ -22,52 +15,46 @@ public:
         C_KEY_DELETE,
     };
 
-    Command                cmd;
+    Command                     cmd;
 
 };
 
 class ISkinTreeNode;
 
-typedef vector<ISkinTreeNode*>        V_SkinTreeNode;
-typedef vector<int>                    SkinTreePath_t;
-typedef vector<string>                SkinTreeStrPath_t;
+typedef vector<ISkinTreeNode*> V_SkinTreeNode;
+typedef vector<int> SkinTreePath_t;
+typedef vector<string> SkinTreeStrPath_t;
 
-#define SKIN_TREE_INVALID_IMG_INDEX        0xFF
+#define SKIN_TREE_INVALID_IMG_INDEX 0xFF
 
-class ISkinTreeNode
-{
+class ISkinTreeNode {
 public:
-    enum
-    {
-        STNF_EXPANDED        = 1,
-        STNF_UPDATED        = 1 << 1,
-        STNF_SELECTED        = 1 << 2,
+    enum {
+        STNF_EXPANDED               = 1,
+        STNF_UPDATED                = 1 << 1,
+        STNF_SELECTED               = 1 << 2,
     };
 
-    ISkinTreeNode()
-    {
+    ISkinTreeNode() {
         m_nImageIndex = 0;
         m_nExpandedImageIndex = SKIN_TREE_INVALID_IMG_INDEX;
         m_nFlags = STNF_UPDATED;
-//         m_bExpanded = false;
-//         m_bUpdated = true;
-//         m_bSelected = false;
+        //         m_bExpanded = false;
+        //         m_bUpdated = true;
+        //         m_bSelected = false;
         m_pParent = nullptr;
         m_pPrev = nullptr;
         m_pNext = nullptr;
         m_pFirstChild = nullptr;
         m_pLastChild = nullptr;
     }
-    virtual ~ISkinTreeNode()
-    {
+    virtual ~ISkinTreeNode() {
         free();
     }
 
-    virtual void free()
-    {
-        ISkinTreeNode        *p, *pNext = nullptr;
-        for (p = m_pFirstChild; p != nullptr; p = pNext)
-        {
+    virtual void free() {
+        ISkinTreeNode *p, *pNext = nullptr;
+        for (p = m_pFirstChild; p != nullptr; p = pNext) {
             pNext = p->m_pNext;
             delete p;
         }
@@ -113,19 +100,18 @@ public:
     virtual void onUpdate() { }
 
 public:
-    string                    m_strName;
-    uint8_t                    m_nImageIndex;
-    uint8_t                    m_nExpandedImageIndex;
+    string                      m_strName;
+    uint8_t                     m_nImageIndex;
+    uint8_t                     m_nExpandedImageIndex;
     uint16_t                    m_nFlags;
-//     bool                    m_bExpanded;
-//     bool                    m_bSelected;
-//     bool                    m_bUpdated;
-    ISkinTreeNode            *m_pParent, *m_pPrev, *m_pNext, *m_pFirstChild, *m_pLastChild;
+    //     bool                    m_bExpanded;
+    //     bool                    m_bSelected;
+    //     bool                    m_bUpdated;
+    ISkinTreeNode               *m_pParent, *m_pPrev, *m_pNext, *m_pFirstChild, *m_pLastChild;
 
 };
 
-class ISkinTree
-{
+class ISkinTree {
 public:
     ISkinTree();
     virtual ~ISkinTree();
@@ -155,18 +141,16 @@ public:
     static ISkinTreeNode *centerOrderNextExpandedOnly(ISkinTreeNode *pNode);
 
 protected:
-    ISkinTreeNode            m_root;    // Root Node isn't Visible
-    SkinTreePath_t            m_pathSel;
-    SkinTreePath_t            m_pathFirstVisible;
+    ISkinTreeNode               m_root;             // Root Node isn't Visible
+    SkinTreePath_t              m_pathSel;
+    SkinTreePath_t              m_pathFirstVisible;
 
 };
 
-class CSkinTreeCtrl : public CUIObject, public IScrollNotify
-{
+class CSkinTreeCtrl : public CUIObject, public IScrollNotify {
     UIOBJECT_CLASS_NAME_DECLARE(CUIObject)
 public:
-    enum TreeArea
-    {
+    enum TreeArea {
         TA_BLANK,
         TA_LINE,
         TA_EXPAND,
@@ -217,21 +201,21 @@ protected:
     void makeSureSelNodeVisible();
 
 protected:
-    ISkinTree                *m_pTreeData;
+    ISkinTree                   *m_pTreeData;
 
-    IScrollBar                *m_pScrollBar;
-    CUIObject                *m_pObjScrollBar;
+    IScrollBar                  *m_pScrollBar;
+    CUIObject                   *m_pObjScrollBar;
 
-    CSFImgList                m_imageList;
-    string                    m_strImageList;
+    CSFImgList                  m_imageList;
+    string                      m_strImageList;
 
-    CColor                    m_clrBk, m_clrSelRowBk;
-    CColor                    m_clrSelText;
-    CSkinFontProperty        m_font;
-    int                        m_nLineHeight;
-    int                        m_nXMargin;
-    int                        m_nLineIndent;
+    CColor                      m_clrBk, m_clrSelRowBk;
+    CColor                      m_clrSelText;
+    CSkinFontProperty           m_font;
+    int                         m_nLineHeight;
+    int                         m_nXMargin;
+    int                         m_nLineIndent;
 
 };
 
-#endif // !defined(AFX_SKINTREECTRL_H__03A1FDA7_659B_415F_949B_A3F1549926F3__INCLUDED_)
+#endif // !defined(MPlayerUI_SkinTreeCtrl_h)

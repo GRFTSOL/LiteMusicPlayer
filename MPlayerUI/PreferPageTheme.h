@@ -2,8 +2,8 @@
 
 #include "PreferencePageBase.h"
 
-class CPagePfThemeRoot : public CPagePfBase
-{
+
+class CPagePfThemeRoot : public CPagePfBase {
     UIOBJECT_CLASS_NAME_DECLARE(CPagePfBase)
 public:
     CPagePfThemeRoot();

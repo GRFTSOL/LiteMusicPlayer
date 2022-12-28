@@ -5,28 +5,25 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-class CPagePfInternet : public CPagePfBase
-{
+class CPagePfInternet : public CPagePfBase {
     UIOBJECT_CLASS_NAME_DECLARE(CPagePfBase)
 public:
-    CPagePfInternet() : CPagePfBase(PAGE_INET, "CMD_SYSTEM_INTERNET")
-    {
+    CPagePfInternet() : CPagePfBase(PAGE_INET, "CMD_SYSTEM_INTERNET") {
         m_bInitailed = false;
     }
 
-    void onInitialUpdate() override
-    {
+    void onInitialUpdate() override {
         CPagePfBase::onInitialUpdate();
 
         addOptBool(ET_NULL, SZ_SECT_UI, "CheckNewVer", true, "CID_C_CHECK_NEW_VERSION");
-        
+
         initCheckButtons();
         //
         // HTTP 代理设置
         //
         string proxyServer;
-        int        nProxyPort;
-        bool    bUseProxy;
+        int nProxyPort;
+        bool bUseProxy;
 
         bUseProxy = CMLProfile::inetGetProxy(proxyServer, nProxyPort);
         checkButton("CID_USE_PROXY", tobool(bUseProxy));
@@ -38,70 +35,67 @@ public:
         // Proxy user name and password
         setUIObjectText("CID_USER", g_profile.getString("ProxyUser", ""));
         string strPwd = g_profile.encryptGetString("ProxyPassEnc", "");
-        if (strPwd.empty())
+        if (strPwd.empty()) {
             strPwd = g_profile.getString("ProxyPass", "");
+        }
         setUIObjectProperty("CID_PASS", "Style", "PASSWORD");
         setUIObjectText("CID_PASS", strPwd.c_str());
 
         m_bInitailed = true;
     }
 
-    void onDestroy() override
-    {
+    void onDestroy() override {
         saveProxyServerUserPwd();
 
         CPagePfBase::onDestroy();
     }
 
-    bool onCustomCommand(int nId) override
-    {
-        if (nId == getIDByName("CID_LOAD_IE_PROXY"))
-        {
-            bool        bUseProxy;
-            string        strSvr;
-            int            nPort;
-            if (loadProxySvrFromIE(bUseProxy, strSvr, nPort))
-            {
-                int        nHttpProxyType;
+    bool onCustomCommand(int nId) override {
+        if (nId == getIDByName("CID_LOAD_IE_PROXY")) {
+            bool bUseProxy;
+            string strSvr;
+            int nPort;
+            if (loadProxySvrFromIE(bUseProxy, strSvr, nPort)) {
+                int nHttpProxyType;
 
                 checkButton("CID_USE_PROXY", tobool(bUseProxy));
-                if (bUseProxy)
+                if (bUseProxy) {
                     nHttpProxyType = HTTP_PROXY_OURS;
-                else
+                } else {
                     nHttpProxyType = HTTP_PROXY_NONE;
+                }
 
                 g_profile.writeInt("ProxyType", nHttpProxyType);
 
                 setUIObjectText("CID_HTTP_PROXY", strSvr.c_str());
                 setUIObjectText("CID_HTTP_PORT", stringPrintf("%d", nPort).c_str());
             }
-        }
-        else if (nId == getIDByName("CID_USE_PROXY"))
-        {
-            int        nHttpProxyType;
+        } else if (nId == getIDByName("CID_USE_PROXY")) {
+            int nHttpProxyType;
 
-            if (isButtonChecked(nId))
+            if (isButtonChecked(nId)) {
                 nHttpProxyType = HTTP_PROXY_OURS;
-            else
+            } else {
                 nHttpProxyType = HTTP_PROXY_NONE;
+            }
             g_profile.writeInt("ProxyType", nHttpProxyType);
-        }
-        else
+        } else {
             return CPagePfBase::onCustomCommand(nId);
+        }
 
         return true;
     }
 
 protected:
-    void saveProxyServerUserPwd()
-    {
-        if (!m_bInitailed)
+    void saveProxyServerUserPwd() {
+        if (!m_bInitailed) {
             return;
+        }
 
-        g_profile.writeString("ProxyServer", 
+        g_profile.writeString("ProxyServer",
             getUIObjectText("CID_HTTP_PROXY").c_str());
 
-        g_profile.writeString("ProxyPort", 
+        g_profile.writeString("ProxyPort",
             getUIObjectText("CID_HTTP_PORT").c_str());
 
         string strUser = getUIObjectText("CID_USER");
@@ -111,15 +105,14 @@ protected:
         g_profile.encryptWriteString("ProxyPassEnc", strPwd.c_str());
         g_profile.writeString("ProxyPass", "");
 
-        if (strUser.size())
-        {
+        if (strUser.size()) {
             string userPwd = stringPrintf("%s:%s", strUser.c_str(), strPwd.c_str());
             string b64UserPwd = base64Encode((uint8_t *)userPwd.c_str(), userPwd.size());
             g_profile.writeString("Base64ProxyUserPass", b64UserPwd.c_str());
         }
     }
 
-    bool        m_bInitailed;
+    bool                        m_bInitailed;
 
 };
 
@@ -127,17 +120,14 @@ UIOBJECT_CLASS_NAME_IMP(CPagePfInternet, "Container.Inet")
 
 //////////////////////////////////////////////////////////////////////////
 
-class CPagePfStartup: public CPagePfBase
-{
+class CPagePfStartup: public CPagePfBase {
     UIOBJECT_CLASS_NAME_DECLARE(CPagePfBase)
 public:
-    CPagePfStartup() : CPagePfBase(PAGE_STARTUP, "CMD_SYSTEM_STARTUP")
-    {
+    CPagePfStartup() : CPagePfBase(PAGE_STARTUP, "CMD_SYSTEM_STARTUP") {
         m_bInitailed = false;
     }
 
-    void onInitialUpdate() override
-    {
+    void onInitialUpdate() override {
         CPagePfBase::onInitialUpdate();
 
         m_bInitailed = true;
@@ -147,18 +137,16 @@ public:
         initCheckButtons();
     }
 
-    bool onCustomCommand(int nId) override
-    {
+    bool onCustomCommand(int nId) override {
         return CPagePfBase::onCustomCommand(nId);
     }
 
-    void onDestroy() override
-    {
+    void onDestroy() override {
         CPagePfBase::onDestroy();
     }
 
 protected:
-    bool        m_bInitailed;
+    bool                        m_bInitailed;
 
 };
 
@@ -168,21 +156,17 @@ UIOBJECT_CLASS_NAME_IMP(CPagePfStartup, "Container.Startup")
 
 UIOBJECT_CLASS_NAME_IMP(CPagePfSystemRoot, "PreferPage.SystemRoot")
 
-CPagePfSystemRoot::CPagePfSystemRoot() : CPagePfBase(PAGE_UNKNOWN, "CMD_ROOT_SYSTEM")
-{
+CPagePfSystemRoot::CPagePfSystemRoot() : CPagePfBase(PAGE_UNKNOWN, "CMD_ROOT_SYSTEM") {
 }
 
-void CPagePfSystemRoot::onInitialUpdate()
-{
+void CPagePfSystemRoot::onInitialUpdate() {
     CPagePfBase::onInitialUpdate();
 
     checkToolbarDefaultPage("CID_TOOLBAR_SYSTEM");
 }
 
-void registerPfSystemPages(CSkinFactory *pSkinFactory)
-{
+void registerPfSystemPages(CSkinFactory *pSkinFactory) {
     AddUIObjNewer2(pSkinFactory, CPagePfInternet);
     AddUIObjNewer2(pSkinFactory, CPagePfStartup);
     AddUIObjNewer2(pSkinFactory, CPagePfSystemRoot);
 }
-

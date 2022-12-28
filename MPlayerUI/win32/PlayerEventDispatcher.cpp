@@ -1,5 +1,4 @@
-
 #pragma once
 
 
-CPlayerEventDispatcher        g_playerEventDispatcher;
+CPlayerEventDispatcher g_playerEventDispatcher;

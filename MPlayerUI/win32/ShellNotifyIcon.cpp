@@ -1,26 +1,16 @@
-// ShellNotifyIcon.cpp: implementation of the CShellNotifyIcon class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "ShellNotifyIcon.h"
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
-CShellNotifyIcon::CShellNotifyIcon()
-{
+CShellNotifyIcon::CShellNotifyIcon() {
 
 }
 
-CShellNotifyIcon::~CShellNotifyIcon()
-{
+CShellNotifyIcon::~CShellNotifyIcon() {
 
 }
 
-bool CShellNotifyIcon::addIcon(Window *pWnd, uint32_t nID, cstr_t szTip, HICON hIcon, uint32_t nCallbackMessage)
-{
-    NOTIFYICONDATA        nif;
+bool CShellNotifyIcon::addIcon(Window *pWnd, uint32_t nID, cstr_t szTip, HICON hIcon, uint32_t nCallbackMessage) {
+    NOTIFYICONDATA nif;
 
     nif.cbSize = sizeof(nif);
     nif.hWnd = pWnd->getHandle();
@@ -33,9 +23,8 @@ bool CShellNotifyIcon::addIcon(Window *pWnd, uint32_t nID, cstr_t szTip, HICON h
     return tobool(::Shell_NotifyIcon(NIM_ADD, &nif));
 }
 
-bool CShellNotifyIcon::delIcon(Window *pWnd, uint32_t nID)
-{
-    NOTIFYICONDATA        nif;
+bool CShellNotifyIcon::delIcon(Window *pWnd, uint32_t nID) {
+    NOTIFYICONDATA nif;
 
     nif.cbSize = sizeof(nif);
     nif.uID = nID;
@@ -45,21 +34,23 @@ bool CShellNotifyIcon::delIcon(Window *pWnd, uint32_t nID)
     return tobool(::Shell_NotifyIcon(NIM_DELETE, &nif));
 }
 
-bool CShellNotifyIcon::modifyIcon(Window *pWnd, uint32_t nID, cstr_t szTip, HICON hIcon)
-{
-    NOTIFYICONDATA        nif;
+bool CShellNotifyIcon::modifyIcon(Window *pWnd, uint32_t nID, cstr_t szTip, HICON hIcon) {
+    NOTIFYICONDATA nif;
 
     nif.cbSize = sizeof(nif);
     nif.hWnd = pWnd->getHandle();
-    if (szTip)
+    if (szTip) {
         strcpy_safe(nif.szTip, CountOf(nif.szTip), szTip);
+    }
     nif.uID = nID;
     nif.hIcon = hIcon;
     nif.uFlags = 0;
-    if (szTip)
+    if (szTip) {
         nif.uFlags |= NIF_TIP;
-    if (hIcon)
+    }
+    if (hIcon) {
         nif.uFlags |= NIF_ICON;
+    }
 
     return tobool(::Shell_NotifyIcon(NIM_MODIFY, &nif));
 }

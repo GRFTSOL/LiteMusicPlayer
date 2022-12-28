@@ -1,15 +1,10 @@
-// MLCmd.h: interface for the MLCmd class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #pragma once
 
 //
 // Command ID of UIObject in SkinWnd:
 //
-enum ML_CUSTOM_COMMAND
-{
-    CMD_TOPMOST = CMD_BASE_END,
+enum ML_CUSTOM_COMMAND {
+    CMD_TOPMOST                 = CMD_BASE_END,
     CMD_CLICK_THROUGH,
     CMD_RATE_LYR,
 
@@ -19,8 +14,8 @@ enum ML_CUSTOM_COMMAND
     CMD_STOP,
     CMD_BACKWARD,
     CMD_FORWARD,
-    CMD_J_PREV_LINE,            // Jump to previous line of lyrics
-    CMD_J_NEXT_LINE,            // Jump to next line of lyrics
+    CMD_J_PREV_LINE,                 // Jump to previous line of lyrics
+    CMD_J_NEXT_LINE,                 // Jump to next line of lyrics
 
     // Lyrics display options
     CMD_FONT_SIZE_INC,
@@ -45,7 +40,7 @@ enum ML_CUSTOM_COMMAND
     CMD_DEL_TAG,
     CMD_INSERTTAG_DOWN,
     CMD_FORWARD_REMAIN_LINES,        // Forward the remaining lyrics 0.2s
-    CMD_BACKWARD_REMAIN_LINES,        // Backward the remaining lyrics 0.2s
+    CMD_BACKWARD_REMAIN_LINES,       // Backward the remaining lyrics 0.2s
     CMD_FORWARD_CUR_LINE,
     CMD_BACKWARD_CUR_LINE,
     CMD_AUTO_FILL_LYR_INFO,
@@ -125,7 +120,7 @@ enum ML_CUSTOM_COMMAND
     CMD_PL_LIST,
 
     // pocket pc cmd
-    CMD_TOGGLE_SCREEEN,        // turn screen on/off
+    CMD_TOGGLE_SCREEEN,              // turn screen on/off
 
     // Media Guide View
     CMD_MG_TREE_GUIDE,
@@ -139,7 +134,7 @@ enum ML_CUSTOM_COMMAND
     ID_AD_TXT_LINK,
     ID_AD_IMG_LINK,
 
-    ID_ALBUMART,        // album art control
+    ID_ALBUMART,                     // album art control
 
     // other cmd
     CMD_TOGGLE_MP,

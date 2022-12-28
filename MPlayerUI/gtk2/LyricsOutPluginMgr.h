@@ -1,25 +1,18 @@
-// LyricsOutPluginMgr.h: interface for the CLyricsOutPluginMgr class.
-//
-//////////////////////////////////////////////////////////////////////
+#pragma once
 
-#if !defined(AFX_LYRICSOUTPLUGINMGR_H__BF14D1D9_B19E_4E8D_9606_08A1B168E815__INCLUDED_)
-#define AFX_LYRICSOUTPLUGINMGR_H__BF14D1D9_B19E_4E8D_9606_08A1B168E815__INCLUDED_
+#ifndef MPlayerUI_gtk2_LyricsOutPluginMgr_h
+#define MPlayerUI_gtk2_LyricsOutPluginMgr_h
 
 #include "../LyricsOutPlugin.h"
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
 
-class CLyricsOutPluginMgr : public IMLyrOutHost
-{
+class CLyricsOutPluginMgr : public IMLyrOutHost {
 public:
-    struct Plugins
-    {
-        string        strPluginFile;
-        ILyricsOut    *plyricsOut;
-        bool        bInitOK;
-        unsigned int uNotifyFlag;
+    struct Plugins {
+        string                      strPluginFile;
+        ILyricsOut                  *plyricsOut;
+        bool                        bInitOK;
+        unsigned int                uNotifyFlag;
     };
 
     CLyricsOutPluginMgr();
@@ -50,17 +43,17 @@ public:
 
 protected:
     typedef vector<Plugins>        V_PLUGINS;
-    V_PLUGINS                m_vPlugins;
-    bool                    m_bActive;
+    V_PLUGINS                   m_vPlugins;
+    bool                        m_bActive;
     uint32_t                    m_dwNotifyFlag;
 
-    int                        m_nCurLine;
-    bool                    m_bHalfOfCurLine;
-    int                        m_nCLBegTime, m_nCLHalftime, m_nCLendtime;    // CL = cur line
-    int                        m_nNLBegTime, m_nNLEndtime;
+    int                         m_nCurLine;
+    bool                        m_bHalfOfCurLine;
+    int                         m_nCLBegTime, m_nCLHalftime, m_nCLendtime; // CL = cur line
+    int                         m_nNLBegTime, m_nNLEndtime;
 
 };
 
-extern CLyricsOutPluginMgr        g_lyrOutPlguinMgr;
+extern CLyricsOutPluginMgr g_lyrOutPlguinMgr;
 
-#endif // !defined(AFX_LYRICSOUTPLUGINMGR_H__BF14D1D9_B19E_4E8D_9606_08A1B168E815__INCLUDED_)
+#endif // !defined(MPlayerUI_gtk2_LyricsOutPluginMgr_h)

@@ -1,6 +1,4 @@
-﻿// MPlayerApp.cpp: implementation of the CMPlayerApp class.
-//
-//////////////////////////////////////////////////////////////////////
+﻿
 
 #include "MPlayerAppBase.h"
 #include "DownloadMgr.h"
@@ -10,13 +8,6 @@
 #include "MPFloatingLyrWnd.h"
 #include "LyricShowObj.h"
 #include "../../GfxLite/win32/GdiplusGraphicsLite.h"
-
-#include "../base/win32/ProcessEnum.h"
-#ifndef _MPLAYER
-#include "../MiniLyrics/win32/MLPlayerMgr.h"
-#include "../MiniLyrics/win32/PlayerPluginInstaller.h"
-#include "../MiniLyrics/win32/DlgSetupPlayerPlugins.h"
-#endif
 
 #include "CrashRptDlg.h"
 
@@ -32,30 +23,29 @@
 #include "Stackwalker.h"
 #endif
 
-bool terminateAnotherInstance()
-{
-    CProcessEnum    processEnum;
-    uint32_t            vProcessID[1024];
-    uint32_t            nSizeReturned;
 
-    if (!processEnum.enum(vProcessID, sizeof(vProcessID), &nSizeReturned))
+bool terminateAnotherInstance() {
+    CProcessEnum processEnum;
+    uint32_t vProcessID[1024];
+    uint32_t nSizeReturned;
+
+    if (!processEnum.enum(vProcessID, sizeof(vProcessID), &nSizeReturned)) {
         return false;
+    }
 
-    char    szSelfName[MAX_PATH] = "";
+    char szSelfName[MAX_PATH] = "";
     GetModuleFileName(nullptr, szSelfName, CountOf(szSelfName));
     uint32_t dwCurrentPID = GetCurrentProcessId();
 
     nSizeReturned /= sizeof(uint32_t);
-    for (int i = 0; i < nSizeReturned; i++)
-    {
-        if (vProcessID[i] == dwCurrentPID)
+    for (int i = 0; i < nSizeReturned; i++) {
+        if (vProcessID[i] == dwCurrentPID) {
             continue;
+        }
         string strFile = processEnum.getProcessFileName(vProcessID[i]);
-        if (strcmp(strFile.c_str(), szSelfName) == 0)
-        {
+        if (strcmp(strFile.c_str(), szSelfName) == 0) {
             HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, false, vProcessID[i]);
-            if (hProcess != nullptr)
-            {
+            if (hProcess != nullptr) {
                 ERR_LOG0("Terminate another running instance.");
                 TerminateProcess(hProcess, 0);
                 CloseHandle(hProcess);
@@ -70,7 +60,7 @@ bool terminateAnotherInstance()
     cstr_t        szToMoveFiles[] = { "MiniLyric.ini", "MLLyrics.S2L", "FontColorCustom.the",
         "dbSearchCache.db", "dbLyrUpload.db" };
     string        strMLIniOld, strMLIniNew;
-    
+
     for (int i = 0; i < CountOf(szToMoveFiles); i++)
     {
         strMLIniOld = getAppResourceDir();
@@ -83,10 +73,9 @@ bool terminateAnotherInstance()
 */
 
 int WINAPI _tWinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     char *    lpCmdLine,
-                     int       nCmdShow)
-{
+    HINSTANCE hPrevInstance,
+    char *    lpCmdLine,
+    int       nCmdShow) {
     setAppInstance(hInstance);
 
     initMiniDumper();
@@ -96,31 +85,28 @@ int WINAPI _tWinMain(HINSTANCE hInstance,
     // Only allow one copy of MiniLyrics.exe running, iPod Lyrics Downloader and MiniLyrics can't be running at same time.
 
     CMPlayerApp *pApp = CMPlayerAppBase::getInstance();
-    if (pApp->isAnotherInstanceRunning())
-    {
-        HWND        hWndMsg = findWindow(MSG_WND_CLASS_NAME, nullptr);
-        if (hWndMsg)
-        {
+    if (pApp->isAnotherInstanceRunning()) {
+        HWND hWndMsg = findWindow(MSG_WND_CLASS_NAME, nullptr);
+        if (hWndMsg) {
             sendActivateMainWnd(hWndMsg);
 
-            if (!isEmptyString(lpCmdLine))
-            {
+            if (!isEmptyString(lpCmdLine)) {
                 DBG_LOG0("Another Instance is running, send command line to it.");
                 sendCommandLine(hWndMsg, lpCmdLine);
             }
             return 0;
-        }
-        else
+        } else {
             terminateAnotherInstance();
+        }
     }
 
-    if (!CMPlayerAppBase::getInstance()->init())
+    if (!CMPlayerAppBase::getInstance()->init()) {
         return 1;
+    }
 
     // Main message loop:
     MSG msg;
-    while (GetMessage(&msg, nullptr, 0, 0)) 
-    {
+    while (GetMessage(&msg, nullptr, 0, 0)) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
@@ -131,20 +117,17 @@ int WINAPI _tWinMain(HINSTANCE hInstance,
 }
 
 
-CMPlayerApp::CMPlayerApp()
-{
+CMPlayerApp::CMPlayerApp() {
     m_hMutexRuning = nullptr;
 #ifndef _MPLAYER
     m_bReloadEmbeddedTheme = false;
 #endif
 }
 
-CMPlayerApp::~CMPlayerApp()
-{
+CMPlayerApp::~CMPlayerApp() {
 }
 
-bool CMPlayerApp::isAnotherInstanceRunning()
-{
+bool CMPlayerApp::isAnotherInstanceRunning() {
     assert(!m_hMutexRuning);
     HANDLE hMutexRuning = CreateMutex(nullptr, true, SZ_MUTEX_RUNNING);
     int nLastErr = getLastError();
@@ -154,13 +137,11 @@ bool CMPlayerApp::isAnotherInstanceRunning()
     return nLastErr == ERROR_ALREADY_EXISTS;
 }
 
-bool CMPlayerApp::setRunningFlag()
-{
+bool CMPlayerApp::setRunningFlag() {
     // Is Product already running?
     assert(!m_hMutexRuning);
     m_hMutexRuning = CreateMutex(nullptr, true, SZ_MUTEX_RUNNING);
-    if (getLastError() == ERROR_ALREADY_EXISTS )
-    {
+    if (getLastError() == ERROR_ALREADY_EXISTS ) {
         CloseHandle(m_hMutexRuning);
         m_hMutexRuning = nullptr;
         return false;
@@ -169,33 +150,28 @@ bool CMPlayerApp::setRunningFlag()
     return true;
 }
 
-cstr_t getAppIniFile()
-{
+cstr_t getAppIniFile() {
     //
     // init Base frame, save log and settings in app dir
     return SZ_PROFILE_NAME;
 }
 
-bool CMPlayerApp::init()
-{
+bool CMPlayerApp::init() {
     cstr_t lpCmdLine = GetCommandLine();
 
-    if (isAnotherInstanceRunning())
-    {
+    if (isAnotherInstanceRunning()) {
         HWND hWndMsg = findWindow(MSG_WND_CLASS_NAME, nullptr);
-        if (hWndMsg)
-        {
+        if (hWndMsg) {
             sendActivateMainWnd(hWndMsg);
 
-            if (!isEmptyString(lpCmdLine))
-            {
+            if (!isEmptyString(lpCmdLine)) {
                 DBG_LOG0("Another Instance is running, send command line to it.");
                 sendCommandLine(hWndMsg, lpCmdLine);
             }
             return false;
-        }
-        else
+        } else {
             terminateAnotherInstance();
+        }
     }
 
 #if defined(_DEBUG) && defined(_MEM_LEAK_CHECK)
@@ -204,12 +180,12 @@ bool CMPlayerApp::init()
 
     g_log.setSrcRootDir(__FILE__, 2);
 
-    char        szWorkingFolder[MAX_PATH] = {0};
+    char szWorkingFolder[MAX_PATH] = {0};
     getModulePath(szWorkingFolder, getAppInstance());
     setWorkingFolder(szWorkingFolder);
 
     initBaseFrameWork(getAppInstance(), "log.txt", getAppIniFile(), SZ_SECT_UI);
-    setFileNoReadOnly(g_profile.getFile());    
+    setFileNoReadOnly(g_profile.getFile());
 
     g_LangTool.setMacro(SZ_MACRO_PRODUCT_NAME, SZ_APP_NAME);
     g_LangTool.setMacro(SZ_MACRO_COMPANY_NAME, SZ_COMPANY_NAME);
@@ -217,14 +193,15 @@ bool CMPlayerApp::init()
     LOG1(LOG_LVL_INFO, "start %s.", getAppNameLong().c_str());
 
     // init Winsock, Ole, Common Controls, gdiplus
-    WSADATA        WsaData;
-    if (WSAStartup(0x0101, &WsaData) != 0)
+    WSADATA WsaData;
+    if (WSAStartup(0x0101, &WsaData) != 0) {
         ERR_LOG1("WSAStartup FAILED: %s", OSError().Description());
+    }
 
-     INITCOMMONCONTROLSEX    initData;
-     initData.dwSize = sizeof(initData);
-     initData.dwICC = ICC_LISTVIEW_CLASSES | ICC_TAB_CLASSES;
-     InitCommonControlsEx(&initData);
+    INITCOMMONCONTROLSEX initData;
+    initData.dwSize = sizeof(initData);
+    initData.dwICC = ICC_LISTVIEW_CLASSES | ICC_TAB_CLASSES;
+    InitCommonControlsEx(&initData);
 
     // init gdiplus
     OleInitialize(nullptr);
@@ -234,10 +211,10 @@ bool CMPlayerApp::init()
     return CMPlayerAppBase::init();
 }
 
-void CMPlayerApp::quit()
-{
-    if (!m_hMutexRuning)
+void CMPlayerApp::quit() {
+    if (!m_hMutexRuning) {
         return;
+    }
 
     //
     // 先设置此标志表示退出，其他地方会用到根据此标志判断

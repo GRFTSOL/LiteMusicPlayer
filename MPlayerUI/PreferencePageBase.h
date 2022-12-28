@@ -1,10 +1,9 @@
 #pragma once
 
-#define SZ_EX_POOL_PF_FLOATING_LYR        "FloatingLyr"
-#define SZ_EX_POOL_PF_DEFAULT_PAGE        "DefaultPage"
+#define SZ_EX_POOL_PF_FLOATING_LYR  "FloatingLyr"
+#define SZ_EX_POOL_PF_DEFAULT_PAGE  "DefaultPage"
 
-enum PreferPageID
-{
+enum PreferPageID {
     PAGE_UNKNOWN,
 
     // User interface
@@ -29,59 +28,50 @@ enum PreferPageID
     PAGE_ADVANCED,
 };
 
-class CPagePfBase : public CSkinContainer, public IUIObjNotifyHandler
-{
+class CPagePfBase : public CSkinContainer, public IUIObjNotifyHandler {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinContainer)
 public:
-    struct OptBase
-    {
-        EventType    eventType;
-        string        strSection;
-        string        strSettingName;
-        string        strDefaultValue;
-        int            nDefaultValue;
+    struct OptBase {
+        EventType                   eventType;
+        string                      strSection;
+        string                      strSettingName;
+        string                      strDefaultValue;
+        int                         nDefaultValue;
 
-        void set(EventType evtType, cstr_t szSection, cstr_t szSettingName, cstr_t szDefValue)
-        {
+        void set(EventType evtType, cstr_t szSection, cstr_t szSettingName, cstr_t szDefValue) {
             eventType = evtType;
             strSection = szSection;
             strSettingName = szSettingName;
             strDefaultValue = szDefValue;
         }
 
-        void set(EventType evtType, cstr_t szSection, cstr_t szSettingName, int nDefValue)
-        {
+        void set(EventType evtType, cstr_t szSection, cstr_t szSettingName, int nDefValue) {
             eventType = evtType;
             strSection = szSection;
             strSettingName = szSettingName;
             nDefaultValue = nDefValue;
         }
     };
-    struct OptBool : public OptBase
-    {
-        int            nCtrl;
+    struct OptBool : public OptBase {
+        int                         nCtrl;
     };
     typedef    list<OptBool>            VOptBool;
 
-    struct OptComboStr: public OptBase
-    {
-        int                nIDWidgetCombo;
-        vector<string> vValues;
+    struct OptComboStr: public OptBase {
+        int                         nIDWidgetCombo;
+        vector<string>              vValues;
 
-        void addItemValue(cstr_t szValue)
-        {
+        void addItemValue(cstr_t szValue) {
             vValues.push_back(szValue);
         }
     };
     typedef    list<OptComboStr>        VOptComboStr;
 
-    struct OptRadioInt : public OptBase
-    {
-        vector<int>    vCtrls;
-        vector<int>    vValues;
+    struct OptRadioInt : public OptBase {
+        vector<int>                 vCtrls;
+        vector<int>                 vValues;
 
-        void addCtrlValue(int nCtrl, int value)
-        {
+        void addCtrlValue(int nCtrl, int value) {
             vCtrls.push_back(nCtrl);
             vValues.push_back(value);
         }
@@ -116,13 +106,13 @@ protected:
     bool onSwitchToPageCmd(int nId);
 
 protected:
-    VOptBool            m_vOptBool;
-    VOptComboStr        m_vOptComboStr;
-    VOptRadioInt        m_vOptRadioInt;
-    string                m_strPageId;
-    PreferPageID        m_pfPageId;
-    int                    m_nAssociateTabButtonId;
+    VOptBool                    m_vOptBool;
+    VOptComboStr                m_vOptComboStr;
+    VOptRadioInt                m_vOptRadioInt;
+    string                      m_strPageId;
+    PreferPageID                m_pfPageId;
+    int                         m_nAssociateTabButtonId;
 
-    int                    m_nDefaultPageAssociateTabButtonId;
+    int                         m_nDefaultPageAssociateTabButtonId;
 
 };

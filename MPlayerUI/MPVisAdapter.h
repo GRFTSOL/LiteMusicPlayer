@@ -1,16 +1,10 @@
-// MPVisAdapter.h: interface for the CMPVisAdapter class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MPVISADAPTER_H__2B6D8B6F_84B1_415E_9026_69C1D96B48CF__INCLUDED_)
-#define AFX_MPVISADAPTER_H__2B6D8B6F_84B1_415E_9026_69C1D96B48CF__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-class CMPVisAdapter : public IVis
-{
+#ifndef MPlayerUI_MPVisAdapter_h
+#define MPlayerUI_MPVisAdapter_h
+
+
+class CMPVisAdapter : public IVis {
     OBJ_REFERENCE_DECL
 public:
     CMPVisAdapter();
@@ -26,4 +20,4 @@ protected:
 
 };
 
-#endif // !defined(AFX_MPVISADAPTER_H__2B6D8B6F_84B1_415E_9026_69C1D96B48CF__INCLUDED_)
+#endif // !defined(MPlayerUI_MPVisAdapter_h)

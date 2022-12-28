@@ -1,16 +1,10 @@
-// DlgChooseFont.h: interface for the CDlgChooseFont class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_DLGCHOOSEFONT_H__53DFBF2E_6C3A_4BC6_B059_FEB4814E504A__INCLUDED_)
-#define AFX_DLGCHOOSEFONT_H__53DFBF2E_6C3A_4BC6_B059_FEB4814E504A__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-class CDlgChooseFont
-{
+#ifndef MPlayerUI_gtk2_DlgChooseFont_h
+#define MPlayerUI_gtk2_DlgChooseFont_h
+
+
+class CDlgChooseFont {
 public:
     CDlgChooseFont();
     virtual ~CDlgChooseFont();
@@ -26,12 +20,12 @@ public:
     int getItalic();
 
 public:
-    string            m_strFontFaceName;
-    int                m_nFontSize, m_weight;
-    int                m_nItalic;
+    string                      m_strFontFaceName;
+    int                         m_nFontSize, m_weight;
+    int                         m_nItalic;
 
-    GtkWidget        *m_window;
+    GtkWidget                   *m_window;
 
 };
 
-#endif // !defined(AFX_DLGCHOOSEFONT_H__53DFBF2E_6C3A_4BC6_B059_FEB4814E504A__INCLUDED_)
+#endif // !defined(MPlayerUI_gtk2_DlgChooseFont_h)

@@ -1,15 +1,11 @@
-// MLCmd.cpp: implementation of the MLCmd class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "MPlayerApp.h"
 #include "MLCmd.h"
 
-#define DEFINE_CMD_ID(uid, idc)        { #uid, uid, idc, nullptr },
-#define DEFINE_CMD_ID2(uid, idc, tooltip)        { #uid, uid, idc, tooltip },
 
-UIObjectIDDefinition g_uidDefinition[] = 
-{
+#define DEFINE_CMD_ID(uid, idc) { #uid, uid, idc, nullptr },
+#define DEFINE_CMD_ID2(uid, idc, tooltip)   { #uid, uid, idc, tooltip },
+
+UIObjectIDDefinition g_uidDefinition[] = {
     { "ID_TOPMOST", CMD_TOPMOST, IDC_SETTOPMOST, _TLM("Toggle always on top") },
     { "ID_CLICK_THROUGH", CMD_CLICK_THROUGH, IDC_CLICK_THROUGH, _TLM("Mouse click through") },
     { "ID_RATE_LYR", CMD_RATE_LYR, IDC_RATE_LYRICS, _TLM("rate these lyrics") },
@@ -166,8 +162,8 @@ UIObjectIDDefinition g_uidDefinition[] =
     DEFINE_CMD_ID2( CMD_NO_SUITTABLE_LYRICS, IDC_NOT_MATCH, _TLM("&No Suitable Lyrics for the Song File") )
     DEFINE_CMD_ID2( CMD_INSTRUMENTAL_MUSIC, IDC_INSTRUMENTAL_MUSIC, _TLM("Instrumental Music, No Lyrics") )
     DEFINE_CMD_ID2( CMD_SEARCH_LYR_SUGGESTIONS, 0, _TLM("Lyrics search Suggestions") )
-//    DEFINE_CMD_ID2( , , _TLM("") )
-//    DEFINE_CMD_ID( ,  )
+    //    DEFINE_CMD_ID2( , , _TLM("") )
+    //    DEFINE_CMD_ID( ,  )
 
     { nullptr, 0, 0, nullptr },
 };

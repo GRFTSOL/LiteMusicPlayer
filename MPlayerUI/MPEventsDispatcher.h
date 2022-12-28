@@ -1,13 +1,8 @@
-// MPEventHost.h: interface for the CMPEventHost class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MPEVENTHOST_H__AE092490_ADF2_4326_9066_B35EE136A3DD__INCLUDED_)
-#define AFX_MPEVENTHOST_H__AE092490_ADF2_4326_9066_B35EE136A3DD__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef MPlayerUI_MPEventsDispatcher_h
+#define MPlayerUI_MPEventsDispatcher_h
+
 
 #include "../MPlayerEngine/IMPlayer.h"
 #include "../Skin/Skin.h"
@@ -17,21 +12,16 @@
 class CMPVisAdapter;
 
 // section name
-#define SZ_SECT_LYR_DISPLAY            "LyrDispaly"
-#define SZ_SECT_FLOATING_LYR        "FloatingLyr"
-#define SZ_SECT_PLAYER                "Player"
-#define SZ_SECT_LYR_DL                "Download"
+#define SZ_SECT_LYR_DISPLAY "LyrDispaly"
+#define SZ_SECT_FLOATING_LYR "FloatingLyr"
+#define SZ_SECT_PLAYER      "Player"
+#define SZ_SECT_LYR_DL      "Download"
 
-#ifdef _MPLAYER
-#define SZ_SECT_UI            "ZikiPlayer"
-#else
-#define SZ_SECT_UI            "MiniLyrics"
-#endif
+#define SZ_SECT_UI          "DHPlayer"
 
-enum MLEventType
-{
-    ET_INVALID = 0,
-    ET_NULL = 0,
+enum MLEventType {
+    ET_INVALID                  = 0,
+    ET_NULL                     = 0,
 
     ET_PLAYER_STATUS_CHANGED,
     ET_PLAYER_SEEK,
@@ -63,56 +53,47 @@ enum MLEventType
     COUNT_OF_EVENT_TYPE,
 };
 
-struct CEventPlayerStatusChanged : public IEvent
-{
-    PLAYER_STATE        status;
+struct CEventPlayerStatusChanged : public IEvent {
+    PLAYER_STATE                status;
 };
 
-struct CEventPlayerSettingChanged : public IEvent
-{
-    IMPEvent::MP_SETTING_TYPE        settingType;
-    int                 value;
+struct CEventPlayerSettingChanged : public IEvent {
+    IMPEvent::MP_SETTING_TYPE   settingType;
+    int                         value;
 };
 
-struct CEventPlaylistChanged : public IEvent
-{
-    IMPEvent::MP_PLAYLIST_CHANGE_ACTION        action;
-    int                 nIndex, nIndexOld;
+struct CEventPlaylistChanged : public IEvent {
+    IMPEvent::MP_PLAYLIST_CHANGE_ACTION action;
+    int                                 nIndex, nIndexOld;
 };
 
-struct CEventPlayerEQChanged : public IEvent
-{
-    EQualizer            eqlalizer;
+struct CEventPlayerEQChanged : public IEvent {
+    EQualizer                   eqlalizer;
 };
 
-class CEventLyricsEditorCmd : public IEvent
-{
+class CEventLyricsEditorCmd : public IEvent {
 public:
-    uint32_t                cmd;
+    uint32_t                    cmd;
 };
 
-class CEventDownloadEnd : public IEvent
-{
+class CEventDownloadEnd : public IEvent {
 public:
-    enum DOWNLOAD_TYPE
-    {
+    enum DOWNLOAD_TYPE {
         DT_DL_LRC_FAILED,
         DT_DL_CHECK_NEW_VERSION_OK,
     };
 
-    DOWNLOAD_TYPE        downloadType;
+    DOWNLOAD_TYPE               downloadType;
     class CDownloadTask    *pTask;
 
 };
 
-class CEventVisDrawUpdate : public IEvent
-{
+class CEventVisDrawUpdate : public IEvent {
 public:
-    VisParam            *pVisParam;
+    VisParam                    *pVisParam;
 };
 
-class ISkinCmdHandler
-{
+class ISkinCmdHandler {
 public:
     ISkinCmdHandler() { m_pSkinWnd = nullptr; }
     virtual ~ISkinCmdHandler() { }
@@ -129,12 +110,11 @@ public:
     virtual bool getRadioChecked(vector<uint32_t> &vIDs, uint32_t &nIDChecked) { return false; }
 
 protected:
-    CSkinWnd        *m_pSkinWnd;
+    CSkinWnd                    *m_pSkinWnd;
 
 };
 
-class CMPEventsDispatcher : public CEventsDispatcher
-{
+class CMPEventsDispatcher : public CEventsDispatcher {
 public:
     CMPEventsDispatcher();
 
@@ -145,57 +125,49 @@ public:
 
 protected:
 #ifdef _MPLAYER
-    CMPVisAdapter            *m_pVisAdapter;
+    CMPVisAdapter               *m_pVisAdapter;
 #endif
 
 };
 
-class CMPlayerSettings
-{
+class CMPlayerSettings {
 public:
     // szValue: p1="v1" p2="v2"
     //    or        v1
-    static void setLyricsDisplaySettings(cstr_t szSettingName, cstr_t szValue, bool bNotify = true)
-    {
+    static void setLyricsDisplaySettings(cstr_t szSettingName, cstr_t szValue, bool bNotify = true) {
         setSettings(ET_LYRICS_DISPLAY_SETTINGS, SZ_SECT_LYR_DISPLAY, szSettingName, szValue, bNotify);
     }
 
     // szValue: p1="v1" p2="v2"
     //    or        v1
-    static void setLyricsDisplaySettings(cstr_t szSettingName, int value, bool bNotify = true)
-    {
+    static void setLyricsDisplaySettings(cstr_t szSettingName, int value, bool bNotify = true) {
         setSettings(ET_LYRICS_DISPLAY_SETTINGS, SZ_SECT_LYR_DISPLAY, szSettingName, value, bNotify);
     }
 
     //
     // Player UI
     //
-    static void getPlayerUISettings(cstr_t szSettingName, string &strValue)
-    {
+    static void getPlayerUISettings(cstr_t szSettingName, string &strValue) {
         getSettings(SZ_SECT_UI, szSettingName, strValue);
     }
 
     // szValue: p1="v1" p2="v2"
     //    or        v1
-    static void setPlayerUISettings(cstr_t szSettingName, cstr_t szValue, bool bNotify = true)
-    {
+    static void setPlayerUISettings(cstr_t szSettingName, cstr_t szValue, bool bNotify = true) {
         setSettings(ET_UI_SETTINGS_CHANGED, SZ_SECT_UI, szSettingName, szValue, bNotify);
     }
 
     // szValue: p1="v1" p2="v2"
     //    or        v1
-    static void setPlayerUISettings(cstr_t szSettingName, int value, bool bNotify = true)
-    {
+    static void setPlayerUISettings(cstr_t szSettingName, int value, bool bNotify = true) {
         setSettings(ET_UI_SETTINGS_CHANGED, SZ_SECT_UI, szSettingName, value, bNotify);
     }
 
-    static void getSettings(cstr_t szSectionName, cstr_t szSettingName, string &strValue)
-    {
+    static void getSettings(cstr_t szSectionName, cstr_t szSettingName, string &strValue) {
         strValue = g_profile.getString(szSectionName, szSettingName, "");
     }
 
-    static int getSettings(cstr_t szSectionName, cstr_t szSettingName, int nValueDef)
-    {
+    static int getSettings(cstr_t szSectionName, cstr_t szSettingName, int nValueDef) {
         return g_profile.getInt(szSectionName, szSettingName, nValueDef);
     }
 
@@ -207,4 +179,4 @@ public:
 
 };
 
-#endif // !defined(AFX_MPEVENTHOST_H__AE092490_ADF2_4326_9066_B35EE136A3DD__INCLUDED_)
+#endif // !defined(MPlayerUI_MPEventsDispatcher_h)

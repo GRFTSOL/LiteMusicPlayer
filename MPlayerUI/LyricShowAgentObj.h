@@ -1,13 +1,8 @@
-// LyricShowAgentObj.h: interface for the CLyricShowAgentObj class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_LYRICSHOWAGENTOBJ_H__6AE48563_CB64_44CF_8578_76C673DC1F4C__INCLUDED_)
-#define AFX_LYRICSHOWAGENTOBJ_H__6AE48563_CB64_44CF_8578_76C673DC1F4C__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef MPlayerUI_LyricShowAgentObj_h
+#define MPlayerUI_LyricShowAgentObj_h
+
 
 #include "LyricShowObj.h"
 #include "LyricShowMultiRowObj.h"
@@ -17,13 +12,13 @@
 #include "LyricShowVobSub.h"
 #include "../Skin/SkinLinearContainer.h"
 
-class CLyricShowAgentObj : public CSkinLinearContainer, IEventHandler  
-{
+
+class CLyricShowAgentObj : public CSkinLinearContainer, IEventHandler {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinLinearContainer)
 public:
     CLyricShowAgentObj();
     virtual ~CLyricShowAgentObj();
-    
+
     virtual void onCreate() override;
 
     // IEventHandler
@@ -44,18 +39,18 @@ protected:
     void loadToolbar();
 
 protected:
-    CUIObject        *m_pToolbar;
-    bool            m_bEnableToolbar;
+    CUIObject                   *m_pToolbar;
+    bool                        m_bEnableToolbar;
     class CMPSkinInfoTextCtrl    *m_pInfoTextCtrl;
 
-    bool            m_bFloatingLyr;
-    string            m_strLyrDisplayStylePropName;
-    string            m_strLyrDisplayStyleDefault;
-    string            m_strLyrDisplayStyleCurrent;
-    CLyricShowObj    *m_pLyricsShow;
-    vector<string>    m_vProperties;
-    bool            m_bEnableStaticTextStyle;
+    bool                        m_bFloatingLyr;
+    string                      m_strLyrDisplayStylePropName;
+    string                      m_strLyrDisplayStyleDefault;
+    string                      m_strLyrDisplayStyleCurrent;
+    CLyricShowObj               *m_pLyricsShow;
+    vector<string>              m_vProperties;
+    bool                        m_bEnableStaticTextStyle;
 
 };
 
-#endif // !defined(AFX_LYRICSHOWAGENTOBJ_H__6AE48563_CB64_44CF_8578_76C673DC1F4C__INCLUDED_)
+#endif // !defined(MPlayerUI_LyricShowAgentObj_h)

@@ -1,14 +1,9 @@
-// OnlineSearch.h: interface for the COnlineSearch class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #pragma once
 
 #include "../third-parties/sqlite/Sqlite3.hpp"
 
 
-class ILyrSearchResultCacheDB
-{
+class ILyrSearchResultCacheDB {
 public:
     virtual bool open() = 0;
 
@@ -25,8 +20,7 @@ protected:
 
 };
 
-class CLyrSearchResultCacheDB : public ILyrSearchResultCacheDB
-{
+class CLyrSearchResultCacheDB : public ILyrSearchResultCacheDB {
 public:
     CLyrSearchResultCacheDB();
     ~CLyrSearchResultCacheDB();
@@ -41,12 +35,11 @@ public:
     virtual bool updateSearchLrcInfo(cstr_t szFileAssociateKeyword, MLMsgRetSearch &retSearch);
 
 protected:
-    CSqlite3        m_db;
+    CSqlite3                    m_db;
 
 };
 
-class CLyrSearchResultCacheMemDB : public ILyrSearchResultCacheDB
-{
+class CLyrSearchResultCacheMemDB : public ILyrSearchResultCacheDB {
 public:
     virtual bool open() { return true; }
 
@@ -60,21 +53,18 @@ public:
     static void free();
 
 protected:
-    struct ITEM
-    {
-        string        strKeyword;
-        string        strXml;
+    struct ITEM {
+        string                      strKeyword;
+        string                      strXml;
     };
     typedef list<ITEM>        LIST_ITEMS;
-    static LIST_ITEMS        m_listResults;
+    static LIST_ITEMS           m_listResults;
 
 };
 
-class COnlineSearch  
-{
+class COnlineSearch {
 public:
-    class INotifyEvent
-    {
+    class INotifyEvent {
     public:
         virtual void onErrorSaveLyrics(int nIndex, cstr_t szMessage) = 0;
         virtual void onLyricsReturned(int nIndex, string &bufLyrics) = 0;
@@ -82,16 +72,14 @@ public:
 
     };
 
-    struct COnlineSearchThreadParam
-    {
-        string        strTitle;
-        string        strArtist;
-        string        strAssociateMediaKey;
-        bool        bOnlyMatched;
+    struct COnlineSearchThreadParam {
+        string                      strTitle;
+        string                      strArtist;
+        string                      strAssociateMediaKey;
+        bool                        bOnlyMatched;
 
-        COnlineSearch    *pOnlineSearch;
-        COnlineSearchThreadParam()
-        {
+        COnlineSearch               *pOnlineSearch;
+        COnlineSearchThreadParam() {
             pOnlineSearch = nullptr;
             bOnlyMatched = false;
         }
@@ -119,16 +107,15 @@ protected:
 
     static void threadSearchOnline(void *lpParam);
 
-    std::mutex            m_mutexDB;
-    bool            m_bRunning;
-    CThread            m_threadSearch;
+    std::mutex                  m_mutexDB;
+    bool                        m_bRunning;
+    CThread                     m_threadSearch;
 
-    CLyrSearchResultCacheDB        m_dbSearchResult;
-    CLyrSearchResultCacheMemDB    m_dbSearchResultMem;
-    //CLyricsInetSearch            m_lyricsInetSearch;
+    CLyrSearchResultCacheDB     m_dbSearchResult;
+    CLyrSearchResultCacheMemDB  m_dbSearchResultMem;
 
 };
 
 bool filterSpamInfo(string &artist, string &title);
 
-extern COnlineSearch        g_OnlineSearch;
+extern COnlineSearch g_OnlineSearch;

@@ -3,19 +3,18 @@
 #include "../MLProtocol/MLProtocol.h"
 
 
-struct ServerCfg
-{
-    char        szServer[32];
-    int            nPort;
+struct ServerCfg {
+    char                        szServer[32];
+    int                         nPort;
 };
 
-#define SERVER_COUNT            1
+#define SERVER_COUNT        1
 
-extern ServerCfg            g_LyrServers[SERVER_COUNT];
-extern int                    g_nCurLyrServer;
+extern ServerCfg g_LyrServers[SERVER_COUNT];
+extern int g_nCurLyrServer;
 
-extern int                    g_nPortSearchServer;
-extern int                    g_nPortDownloadServer;
+extern int g_nPortSearchServer;
+extern int g_nPortDownloadServer;
 
 /*
 ***** To prevent DDos attach: *****
@@ -24,8 +23,7 @@ extern int                    g_nPortDownloadServer;
 
 */
 
-class CMLClientSession  
-{
+class CMLClientSession {
 public:
     CMLClientSession();
     virtual ~CMLClientSession();
@@ -68,24 +66,24 @@ public:
     static int getDefaultServerPort() { return g_nPortSearchServer; }
 
 protected:
-    CClientCom        m_ClientCom;
-    CMLProtocol        m_MsgProtocol;
-    CNetFile        m_NetFile;
-    bool            m_bInitialzed;
+    CClientCom                  m_ClientCom;
+    CMLProtocol                 m_MsgProtocol;
+    CNetFile                    m_NetFile;
+    bool                        m_bInitialzed;
 
-    string            m_strLoginName;
-    string            m_strPwdMask;
-    string            m_strClient;
+    string                      m_strLoginName;
+    string                      m_strPwdMask;
+    string                      m_strClient;
 
-    bool            m_bLogined;
+    bool                        m_bLogined;
 
-    bool            m_bClosing;
+    bool                        m_bClosing;
 
     //
     // proxy
-    string            m_strBase64ProxyUserPass;
-    string            m_proxyServer;
-    int                m_nProxyPort;
-    bool            m_bEnableProxy;
+    string                      m_strBase64ProxyUserPass;
+    string                      m_proxyServer;
+    int                         m_nProxyPort;
+    bool                        m_bEnableProxy;
 
 };

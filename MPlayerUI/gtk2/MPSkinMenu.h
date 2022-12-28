@@ -1,19 +1,14 @@
-// MPSkinMenu.h: interface for the CMPSkinMenu class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MPSKINMENU_H__EEA43535_74D6_4767_9640_38376F9FEE6E__INCLUDED_)
-#define AFX_MPSKINMENU_H__EEA43535_74D6_4767_9640_38376F9FEE6E__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef MPlayerUI_gtk2_MPSkinMenu_h
+#define MPlayerUI_gtk2_MPSkinMenu_h
+
 
 
 #include "SkinMenu.h"
 
-class CMPSkinMenu : public CSkinMenu  
-{
+
+class CMPSkinMenu : public CSkinMenu {
 public:
     CMPSkinMenu();
     virtual ~CMPSkinMenu();
@@ -29,4 +24,4 @@ protected:
 
 };
 
-#endif // !defined(AFX_MPSKINMENU_H__EEA43535_74D6_4767_9640_38376F9FEE6E__INCLUDED_)
+#endif // !defined(MPlayerUI_gtk2_MPSkinMenu_h)

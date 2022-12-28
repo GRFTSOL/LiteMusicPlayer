@@ -4,10 +4,8 @@
 
 UIOBJECT_CLASS_NAME_IMP(CSkinImageListCtrl, "ImageListCtrl")
 
-CSkinImageListCtrl::CSkinImageListCtrl()
-{
+CSkinImageListCtrl::CSkinImageListCtrl() {
 }
 
-CSkinImageListCtrl::~CSkinImageListCtrl()
-{
+CSkinImageListCtrl::~CSkinImageListCtrl() {
 }

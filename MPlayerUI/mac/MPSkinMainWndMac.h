@@ -5,8 +5,8 @@
 #include "MLTrayIcon.h"
 #include "MPSkinMainWnd.h"
 
-class CMPSkinMainWnd : public CMPSkinMainWndBase
-{
+
+class CMPSkinMainWnd : public CMPSkinMainWndBase {
 public:
     CMPSkinMainWnd();
     virtual ~CMPSkinMainWnd();
@@ -22,6 +22,6 @@ public:
     CMLTrayIcon &getTrayIcon() { return m_mlTrayIcon; }
 
 protected:
-    CMLTrayIcon        m_mlTrayIcon;
+    CMLTrayIcon                 m_mlTrayIcon;
 
 };

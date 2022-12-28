@@ -3,8 +3,8 @@
 #include "MPMediaTree.h"
 #include "SkinDroplistCtrl.h"
 
-class CMPCmdHandlerOfMediaGuide : public ISkinCmdHandler  
-{
+
+class CMPCmdHandlerOfMediaGuide : public ISkinCmdHandler {
 public:
     CMPCmdHandlerOfMediaGuide();
     virtual ~CMPCmdHandlerOfMediaGuide();
@@ -26,15 +26,13 @@ protected:
     void backHistoryPath();
 
 protected:
-    struct HistroyItem
-    {
-        SkinTreeStrPath_t        path;
-        int                        nSelChild;
+    struct HistroyItem {
+        SkinTreeStrPath_t           path;
+        int                         nSelChild;
     };
 
     CMPMediaTree                m_mediaTree;
-    SkinTreeStrPath_t            m_vPathLatest;
-    list<HistroyItem>            m_historyPath;
+    SkinTreeStrPath_t           m_vPathLatest;
+    list<HistroyItem>           m_historyPath;
 
 };
-

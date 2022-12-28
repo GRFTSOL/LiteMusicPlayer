@@ -9,18 +9,19 @@
 
 #ifdef _LINUX_GTK2
 #include "gtk2/HotkeyCtrlEx.h"
+
+
 #endif
 
 #ifdef _MAC_OS
 
-void formatHotkeyText(string &strText, uint32_t nVirtKey, uint32_t fsModifiers)
-{
+void formatHotkeyText(string &strText, uint32_t nVirtKey, uint32_t fsModifiers) {
     strText = stringPrintf("%d", nVirtKey).c_str();
 }
 
 #endif
 
-#define DURATION_SEARCH        500
+#define DURATION_SEARCH     500
 
 #define SZ_YES            _TLT("Yes")
 #define SZ_NO            _TLT("NO")
@@ -32,9 +33,8 @@ void formatHotkeyText(string &strText, uint32_t nVirtKey, uint32_t fsModifiers)
 
 #define MENUID_START        3000
 
-string connectToLocalStr(cstr_t szStr1, cstr_t szStr2)
-{
-    string        str = _TL(szStr1);
+string connectToLocalStr(cstr_t szStr1, cstr_t szStr2) {
+    string str = _TL(szStr1);
 
     str += ": ";
     str += _TL(szStr2);
@@ -42,12 +42,10 @@ string connectToLocalStr(cstr_t szStr1, cstr_t szStr2)
     return str;
 }
 
-class CPfItemRestoreLyrChgSavePrompt : public CPreferItem
-{
+class CPfItemRestoreLyrChgSavePrompt : public CPreferItem {
 public:
     CPfItemRestoreLyrChgSavePrompt(Window *pWnd) : CPreferItem(connectToLocalStr(_TLM("UI"),
-        _TLM("Restore saving prompt setting for lyrics changed")).c_str())
-    {
+        _TLM("Restore saving prompt setting for lyrics changed")).c_str()) {
         m_pWnd = pWnd;
     }
 
@@ -71,15 +69,13 @@ public:
     virtual void reset() {
     }
 
-    Window        *m_pWnd;
+    Window                      *m_pWnd;
 
 };
 
-class CPfItemInt : public CPreferItem
-{
+class CPfItemInt : public CPreferItem {
 public:
-    CPfItemInt(cstr_t szName, EventType etNotify, cstr_t szSectName, cstr_t szValueName, int nDefault) : CPreferItem(szName)
-    {
+    CPfItemInt(cstr_t szName, EventType etNotify, cstr_t szSectName, cstr_t szValueName, int nDefault) : CPreferItem(szName) {
         eventType = etNotify;
         strSection = szSectName;
         strValueName = szValueName;
@@ -90,13 +86,11 @@ public:
         return stringPrintf("%d", getIntValue()).c_str();
     }
 
-    virtual int getIntValue()
-    {
+    virtual int getIntValue() {
         return g_profile.getInt(strSection.c_str(), strValueName.c_str(), nDefaultValue);
     }
 
-    virtual void setIntValue(int value)
-    {
+    virtual void setIntValue(int value) {
         CMPlayerSettings::setSettings(eventType, strSection.c_str(),
             strValueName.c_str(), value, eventType != ET_INVALID);
     }
@@ -117,37 +111,37 @@ public:
         setIntValue(nDefaultValue);
     }
 
-    EventType    eventType;
-    string        strSection;
-    string        strValueName;
-    int            nDefaultValue;
+    EventType                   eventType;
+    string                      strSection;
+    string                      strValueName;
+    int                         nDefaultValue;
 
 };
 
 
-class CPfItemBool : public CPfItemInt
-{
+class CPfItemBool : public CPfItemInt {
 public:
-    CPfItemBool(cstr_t szName, EventType etNotify, cstr_t szSectName, cstr_t szValueName, bool bDefault) 
-        : CPfItemInt(szName, etNotify, szSectName, szValueName, bDefault)
-    {
+    CPfItemBool(cstr_t szName, EventType etNotify, cstr_t szSectName, cstr_t szValueName, bool bDefault)
+    : CPfItemInt(szName, etNotify, szSectName, szValueName, bDefault) {
     }
 
     virtual string getValue() {
-        if (getIntValue())
+        if (getIntValue()) {
             return SZ_YES;
-        else
+        } else {
             return SZ_NO;
+        }
     }
 
     virtual void getOptions(VecStrings &vString, int &nRadio) {
         vString.push_back(SZ_YES);
         vString.push_back(SZ_NO);
 
-        if (getIntValue())
+        if (getIntValue()) {
             nRadio = 0;
-        else
+        } else {
             nRadio = 1;
+        }
     }
 
     virtual void setOption(int nIndex) {
@@ -156,30 +150,25 @@ public:
 
 };
 
-class CPfItemBoolEnableAutoDlLyr : public CPfItemBool
-{
+class CPfItemBoolEnableAutoDlLyr : public CPfItemBool {
 public:
-    CPfItemBoolEnableAutoDlLyr() 
-        : CPfItemBool(connectToLocalStr(_TLM("Lyrics Download"), 
+    CPfItemBoolEnableAutoDlLyr()
+    : CPfItemBool(connectToLocalStr(_TLM("Lyrics Download"),
         _TLM("Auto download lyrics")).c_str(), ET_NULL, SZ_SECT_LYR_DL,
-            "EnableAuoDownload", true)
-    {
+        "EnableAuoDownload", true) {
     }
 
-    virtual void setIntValue(int value)
-    {
+    virtual void setIntValue(int value) {
         g_LyricsDownloader.m_bAutoDownload = tobool(value);
         CPfItemBool::setIntValue(value);
     }
 
 };
 
-class CPfItemTitleFilter : public CPreferItem
-{
+class CPfItemTitleFilter : public CPreferItem {
 public:
     CPfItemTitleFilter(Window *pWnd) : CPreferItem(connectToLocalStr(_TLM("Lyrics Download"),
-        _TLM("filter radio station names in media artist and title")).c_str())
-    {
+        _TLM("filter radio station names in media artist and title")).c_str()) {
         m_pWnd = pWnd;
     }
 
@@ -193,10 +182,11 @@ public:
 
     virtual void setOption(int nIndex) {
         string strFilterFile = g_Player.getTitleFilterFile();
-        if (!isFileExist(strFilterFile.c_str()))
+        if (!isFileExist(strFilterFile.c_str())) {
             writeFile(strFilterFile.c_str(), "; Enter the Radio station name filters below, one name per line.\r\n; Please save this file, and restart MiniLyrics.\r\n");
+        }
 
-        string        strEditor;
+        string strEditor;
         getNotepadEditor(strEditor);
         execute(m_pWnd,
             strEditor.c_str(),
@@ -210,24 +200,21 @@ public:
     virtual void reset() {
     }
 
-    Window        *m_pWnd;
+    Window                      *m_pWnd;
 
 };
 
-class CPfItemLyrSearchFolder : public CPreferItem
-{
+class CPfItemLyrSearchFolder : public CPreferItem {
 public:
     CPfItemLyrSearchFolder(Window *pWndParent)
-        : CPreferItem(connectToLocalStr(_TLM("Lyrics"), _TLM("Lyrics search folder")).c_str())
-    {
+    : CPreferItem(connectToLocalStr(_TLM("Lyrics"), _TLM("Lyrics search folder")).c_str()) {
         m_pWndParent = pWndParent;
     }
 
     virtual string getValue() {
-        string        strValue;
+        string strValue;
 
-        for (int i = 0; i < g_LyricSearch.getSearchFolerCount(); i++)
-        {
+        for (int i = 0; i < g_LyricSearch.getSearchFolerCount(); i++) {
             strValue += g_LyricSearch.getFolder(i);
             strValue += "; ";
         }
@@ -238,45 +225,39 @@ public:
     virtual void getOptions(VecStrings &vString, int &nRadio) {
         vString.push_back(_TLT("add &Folder..."));
 
-        if (g_LyricSearch.getSearchFolerCount() > 0)
+        if (g_LyricSearch.getSearchFolerCount() > 0) {
             vString.push_back("");
+        }
 
-        for (int i = 0; i < g_LyricSearch.getSearchFolerCount(); i++)
-        {
+        for (int i = 0; i < g_LyricSearch.getSearchFolerCount(); i++) {
             vString.push_back(string(_TLT("remove folder:")) + " " + g_LyricSearch.getFolder(i));
         }
     }
 
     virtual void setOption(int nIndex) {
-        if (nIndex == 0)
-        {
+        if (nIndex == 0) {
             // add new folder:
-            CFolderDialog        dlg;
+            CFolderDialog dlg;
 
             // 取得上次选择过的文件夹的位置
             string path = g_profile.getString("LastSelectFolder", "");
             dlg.setInitFolder(path.c_str());
 
-            if (dlg.doBrowse(m_pWndParent))
-            {
+            if (dlg.doBrowse(m_pWndParent)) {
                 // 保存上次选择过的文件夹的位置
                 path = dlg.getFolder();
                 g_profile.writeString("LastSelectFolder", path.c_str());
 
-                if (g_LyricSearch.setFolder(path.c_str()))
-                {
+                if (g_LyricSearch.setFolder(path.c_str())) {
                     // update lyric
                     CMPlayerAppBase::getInstance()->dispatchResearchLyrics();
                     g_LyricSearch.saveLyricFolderCfg();
                 }
             }
-        }
-        else
-        {
+        } else {
             // remove search folder
             nIndex--;
-            if (nIndex >= g_LyricSearch.getSearchFolerCount())
-            {
+            if (nIndex >= g_LyricSearch.getSearchFolerCount()) {
                 assert(0);
                 return;
             }
@@ -292,34 +273,32 @@ public:
     }
 
     virtual void reset() {
-        for (int i = 0; i < g_LyricSearch.getSearchFolerCount(); i++)
+        for (int i = 0; i < g_LyricSearch.getSearchFolerCount(); i++) {
             g_LyricSearch.removeFolder(0);
+        }
         g_LyricSearch.saveLyricFolderCfg();
     }
 
-    Window    *m_pWndParent;
+    Window                      *m_pWndParent;
 
 };
 
-CharEncodingType getDefaultLyricsEncodingSettings()
-{
+CharEncodingType getDefaultLyricsEncodingSettings() {
     string defEncoding = g_profile.getString("LyrDefEncoding", "");
     CharEncodingType encodingId = getCharEncodingID(defEncoding.c_str());
     return encodingId;
 }
 
-void setDefaultLyricsEncodingSettings(CharEncodingType encoding)
-{
+void setDefaultLyricsEncodingSettings(CharEncodingType encoding) {
     setDefaultLyricsEncoding(encoding);
 
     g_profile.writeString("LyrDefEncoding", getCharEncodingByID(encoding).szEncoding);
 }
 
-class CPfItemLyrDefaultEncoding : public CPreferItem
-{
+class CPfItemLyrDefaultEncoding : public CPreferItem {
 public:
     CPfItemLyrDefaultEncoding()
-        : CPreferItem(connectToLocalStr(_TLM("Lyrics"), _TLM("Default encoding of lyrics")).c_str()) {
+    : CPreferItem(connectToLocalStr(_TLM("Lyrics"), _TLM("Default encoding of lyrics")).c_str()) {
     }
 
     virtual string getValue() {
@@ -349,17 +328,15 @@ public:
 
 };
 
-class CPfItemLyrExternalEditor : public CPreferItem
-{
+class CPfItemLyrExternalEditor : public CPreferItem {
 public:
     CPfItemLyrExternalEditor(Window *pWndParent)
-        : CPreferItem(connectToLocalStr(_TLM("Lyrics"), _TLM("External Lyrics Editor")).c_str())
-    {
+    : CPreferItem(connectToLocalStr(_TLM("Lyrics"), _TLM("External Lyrics Editor")).c_str()) {
         m_pWndParent = pWndParent;
     }
 
     virtual string getValue() {
-        string        strEditor;
+        string strEditor;
         getNotepadEditor(strEditor);
         return CMLProfile::getDir(SZ_SECT_UI, "LyricsEditor", strEditor.c_str()).c_str();
     }
@@ -370,7 +347,7 @@ public:
 
     virtual void setOption(int nIndex) {
         assert(nIndex == 0);
-        string        strEditor;
+        string strEditor;
 
         getNotepadEditor(strEditor);
 
@@ -381,52 +358,50 @@ public:
 #ifdef _MAC_OS
         szExt = "Executable file(*.app)\0*.app\0\0";
 #endif
-        CFileOpenDlg    dlg(_TLT("Browse external lyrics editor program"), strEditor.c_str(), szExt, 1);
+        CFileOpenDlg dlg(_TLT("Browse external lyrics editor program"), strEditor.c_str(), szExt, 1);
 
-        if (dlg.doModal(m_pWndParent) == IDOK)
-        {
+        if (dlg.doModal(m_pWndParent) == IDOK) {
             CMLProfile::writeDir(SZ_SECT_UI, "LyricsEditor", dlg.getOpenFile());
         }
     }
 
     virtual bool isDefault() {
-        string        strEditor;
+        string strEditor;
         getNotepadEditor(strEditor);
         return strcmp(strEditor.c_str(), getValue().c_str()) == 0;
     }
 
     virtual void reset() {
-        string        strEditor;
+        string strEditor;
 
         getNotepadEditor(strEditor);
         CMLProfile::writeDir(SZ_SECT_UI, "LyricsEditor", strEditor.c_str());
     }
 
-    Window    *m_pWndParent;
+    Window                      *m_pWndParent;
 
 };
 
 
 
 #ifdef _WIN32_DESKTOP
-class CPfItemWndOpacity : public CPfItemInt
-{
+class CPfItemWndOpacity : public CPfItemInt {
 public:
     CPfItemWndOpacity() : CPfItemInt(connectToLocalStr(_TLM("UI"), _TLM("Window opaque percent (10 - 100)")).c_str(),
         ET_NULL, SZ_SECT_UI, "WindowOpaquePercent", 100) { }
 
     int getIntValue() {
-        int        nOpaque = CPfItemInt::getIntValue();
-        if (nOpaque < 10)
+        int nOpaque = CPfItemInt::getIntValue();
+        if (nOpaque < 10) {
             nOpaque = 10;
-        else if (nOpaque > 100)
+        } else if (nOpaque > 100) {
             nOpaque = 100;
+        }
         return nOpaque / 10 * 10;
     }
 
     virtual void getOptions(VecStrings &vString, int &nRadio) {
-        for (int i = 10; i <= 100; i += 10)
-        {
+        for (int i = 10; i <= 100; i += 10) {
             vString.push_back(itos(i));
         }
 
@@ -437,23 +412,20 @@ public:
         setIntValue((nIndex + 1) * 10);
     }
 
-    virtual void setIntValue(int value)
-    {
+    virtual void setIntValue(int value) {
         CPfItemInt::setIntValue(value);
         CMPlayerAppBase::getMPSkinFactory()->allUpdateTransparent();
     }
 
 };
 
-class CPfItemTrayIconPlayerCtrl : public CPfItemBool
-{
+class CPfItemTrayIconPlayerCtrl : public CPfItemBool {
 public:
-    CPfItemTrayIconPlayerCtrl(cstr_t szName, int nPlayerCtrlIndex) 
-        : CPfItemBool((string(_TLT("System tray icon player control")) + ": " + _TL(szName)).c_str(),
+    CPfItemTrayIconPlayerCtrl(cstr_t szName, int nPlayerCtrlIndex)
+    : CPfItemBool((string(_TLT("System tray icon player control")) + ": " + _TL(szName)).c_str(),
         ET_NULL, SZ_SECT_UI,
-        "", false)
-    {
-        char    szKey[128];
+        "", false) {
+        char szKey[128];
 
         wsprintf(szKey, "TrayIcon%d", nPlayerCtrlIndex);
         strValueName = szKey;
@@ -461,8 +433,7 @@ public:
         this->nPlayerCtrlIndex = nPlayerCtrlIndex;
     }
 
-    virtual void setIntValue(int value)
-    {
+    virtual void setIntValue(int value) {
         g_profile.writeInt(strValueName.c_str(), value);
 
         g_SysTrayIconCmd[nPlayerCtrlIndex].bEnable = tobool(value);
@@ -470,31 +441,31 @@ public:
         CMPlayerAppBase::getMainWnd()->updatePlayerSysTrayIcon();
     }
 
-    int            nPlayerCtrlIndex;
+    int                         nPlayerCtrlIndex;
 
 };
 
-cstr_t        g_szSysTrayOpt[] = { _TLM("&Taskbar only"), _TLM("S&ystem tray only"), _TLM("T&askbar and system tray"), "&None" };
+cstr_t g_szSysTrayOpt[] = { _TLM("&Taskbar only"), _TLM("S&ystem tray only"), _TLM("T&askbar and system tray"), "&None" };
 
-class CPfItemSystemTrayIcon : public CPfItemInt
-{
+class CPfItemSystemTrayIcon : public CPfItemInt {
 public:
-    CPfItemSystemTrayIcon() 
-        : CPfItemInt(_TLM("show $Product$ in System tray and taskbar"), 
-        ET_UI_SETTINGS_CHANGED, SZ_SECT_UI, "ShowIconOn", SHOW_ICON_ON_TASKBAR)
-    {
+    CPfItemSystemTrayIcon()
+    : CPfItemInt(_TLM("show $Product$ in System tray and taskbar"),
+        ET_UI_SETTINGS_CHANGED, SZ_SECT_UI, "ShowIconOn", SHOW_ICON_ON_TASKBAR) {
     }
 
     virtual string getValue() {
-        int    n = getIntValue();
-        if (n < 0 || n >= CountOf(g_szSysTrayOpt))
+        int n = getIntValue();
+        if (n < 0 || n >= CountOf(g_szSysTrayOpt)) {
             n = SHOW_ICON_ON_TASKBAR;
+        }
         return removePrefixOfAcckey(_TL(g_szSysTrayOpt[n]));
     }
 
     virtual void getOptions(VecStrings &vString, int &nRadio) {
-        for (int i = 0; i < CountOf(g_szSysTrayOpt); i++)
+        for (int i = 0; i < CountOf(g_szSysTrayOpt); i++) {
             vString.push_back(_TL(g_szSysTrayOpt[i]));
+        }
 
         nRadio = getIntValue();
     }
@@ -507,15 +478,13 @@ public:
 
 #endif // #ifdef _WIN32_DESKTOP
 
-class CPfItemLyrLineSpacing : public CPfItemInt
-{
+class CPfItemLyrLineSpacing : public CPfItemInt {
 public:
     CPfItemLyrLineSpacing() : CPfItemInt(connectToLocalStr(_TLM("Lyrics Display"), _TLM("Lyrics line spacing")).c_str(),
         ET_LYRICS_DISPLAY_SETTINGS, SZ_SECT_LYR_DISPLAY, "LineSpacing", 2) { }
 
     virtual void getOptions(VecStrings &vString, int &nRadio) {
-        for (int i = 0; i <= 10; i++)
-        {
+        for (int i = 0; i <= 10; i++) {
             vString.push_back(itos(i));
         }
 
@@ -528,26 +497,25 @@ public:
 
 };
 
-class CPfItemLyrDelayTime : public CPfItemInt
-{
+class CPfItemLyrDelayTime : public CPfItemInt {
 public:
-    CPfItemLyrDelayTime() : CPfItemInt(connectToLocalStr(_TLM("Lyrics Display"), 
-            _TLM("Global lyrics displaying delay time (seconds)")).c_str(),
+    CPfItemLyrDelayTime() : CPfItemInt(connectToLocalStr(_TLM("Lyrics Display"),
+        _TLM("Global lyrics displaying delay time (seconds)")).c_str(),
         ET_NULL, SZ_SECT_LYR_DISPLAY, "LyrDelayTime", 0) { }
 
     virtual void getOptions(VecStrings &vString, int &nRadio) {
-        int            nMax = 20;
-        float        fDelayTime = -5.0;
-        for (int i = 0; i <= nMax; i++)
-        {
+        int nMax = 20;
+        float fDelayTime = -5.0;
+        for (int i = 0; i <= nMax; i++) {
             vString.push_back(stringPrintf("%.1f", fDelayTime + i * 0.5));
         }
 
         nRadio = getIntValue() / 500 + nMax / 2;
-        if (nRadio >= nMax)
+        if (nRadio >= nMax) {
             nRadio = nMax;
-        else if (nRadio < 0)
+        } else if (nRadio < 0) {
             nRadio = 0;
+        }
     }
 
     virtual void setOption(int nIndex) {
@@ -555,8 +523,7 @@ public:
         setIntValue(nGlobalOffsetTime);
     }
 
-    virtual void setIntValue(int value)
-    {
+    virtual void setIntValue(int value) {
         g_LyricData.m_nGlobalOffsetTime = value;
         CMPlayerSettings::setSettings(eventType, strSection.c_str(),
             strValueName.c_str(), value, eventType != ET_INVALID);
@@ -565,17 +532,14 @@ public:
 };
 
 #ifdef _WIN32
-class CDlgShortcutKey : public CBaseDialog
-{
+class CDlgShortcutKey : public CBaseDialog {
 public:
-    CDlgShortcutKey(cstr_t szCaption) : CBaseDialog(IDD_SET_HOTKEY)
-    {
+    CDlgShortcutKey(cstr_t szCaption) : CBaseDialog(IDD_SET_HOTKEY) {
         m_strCaption = szCaption;
         m_nVirtualKey = 0;
         m_fsModifiers = 0;
     }
-    bool onInitDialog()
-    {
+    bool onInitDialog() {
         CBaseDialog::onInitDialog();
 
         m_hotkey.init(this, IDC_HOTKEY);
@@ -584,61 +548,54 @@ public:
         return true;
     }
 
-    void onOK()
-    {
+    void onOK() {
         m_hotkey.getHotkey(m_nVirtualKey, m_fsModifiers);
 
         CBaseDialog::onOK();
     }
 
-    uint32_t                m_nVirtualKey, m_fsModifiers;
+    uint32_t                    m_nVirtualKey, m_fsModifiers;
 
 protected:
-    CHotkeyCtrlEx        m_hotkey;
-    string                m_strCaption;
+    CHotkeyCtrlEx               m_hotkey;
+    string                      m_strCaption;
 
 };
 
 #else // #ifdef _WIN32
 
-class CDlgShortcutKey
-{
+class CDlgShortcutKey {
 public:
-    CDlgShortcutKey(cstr_t szCaption)
-    {
+    CDlgShortcutKey(cstr_t szCaption) {
         m_strCaption = szCaption;
         m_nVirtualKey = 0;
         m_fsModifiers = 0;
     }
-    
-    int doModal(Window *pWndParent)
-    {
+
+    int doModal(Window *pWndParent) {
         return IDCANCEL;
     }
-    
-    uint32_t                m_nVirtualKey, m_fsModifiers;
-    
+
+    uint32_t                    m_nVirtualKey, m_fsModifiers;
+
 protected:
-    string                m_strCaption;
-    
+    string                      m_strCaption;
+
 };
 #endif // #ifdef _WIN32
 
 
-static string getCmdIDDescription(int nCmd)
-{
+static string getCmdIDDescription(int nCmd) {
     string strTooltip;
     CMPlayerAppBase::getMPSkinFactory()->getTooltip(nCmd, strTooltip);
-    if (strTooltip.empty())
+    if (strTooltip.empty()) {
         return "";
+    }
 
-    MPHotKeySection        *pSect = g_vHotkeySections;
-    for (; pSect->szName != nullptr; pSect++)
-    {
-        for (int k = 0; pSect->vHotkeys[k] != 0; k++)
-        {
-            if (pSect->vHotkeys[k] == nCmd)
-            {
+    MPHotKeySection *pSect = g_vHotkeySections;
+    for (; pSect->szName != nullptr; pSect++) {
+        for (int k = 0; pSect->vHotkeys[k] != 0; k++) {
+            if (pSect->vHotkeys[k] == nCmd) {
                 return string(_TL(pSect->szName)) + ": " + _TL(strTooltip.c_str());
             }
         }
@@ -647,51 +604,45 @@ static string getCmdIDDescription(int nCmd)
     return strTooltip;
 }
 
-class CPfItemBoolEnableGlobalHotkey : public CPfItemBool
-{
+class CPfItemBoolEnableGlobalHotkey : public CPfItemBool {
 public:
     CPfItemBoolEnableGlobalHotkey()
-        : CPfItemBool(removePrefixOfAcckey(connectToLocalStr(_TLM("Shortcut"), _TLM("&enable Global Hotkeys")).c_str()).c_str(),
-            ET_NULL, SZ_APP_NAME, "enableGlobalHotkey", false)
-    {
+    : CPfItemBool(removePrefixOfAcckey(connectToLocalStr(_TLM("Shortcut"), _TLM("&enable Global Hotkeys")).c_str()).c_str(),
+        ET_NULL, SZ_APP_NAME, "enableGlobalHotkey", false) {
     }
 
-    virtual void setIntValue(int value)
-    {
+    virtual void setIntValue(int value) {
         CMPlayerAppBase::getHotkey().enableGlobalHotkey(tobool(value));
         CPfItemBool::setIntValue(value);
     }
 
 };
 
-class CPfItemShortcut : public CPreferItem
-{
+class CPfItemShortcut : public CPreferItem {
 public:
     struct Hotkey {
-        bool        bGlobal;
-        string        strHotkey;
+        bool                        bGlobal;
+        string                      strHotkey;
     };
     typedef vector<Hotkey>    VecHotkeys;
 
     CPfItemShortcut(CPagePfAdvanced *pWndParent, cstr_t szName, int nCmd)
-        : CPreferItem(szName)
-    {
+    : CPreferItem(szName) {
         m_nCmd = nCmd;
         m_pWndParent = pWndParent;
     }
 
     virtual string getValue() {
-        string        strValue;
-        VecHotkeys    vHotkeys;
+        string strValue;
+        VecHotkeys vHotkeys;
 
         enumAll(vHotkeys);
 
-        for (size_t i = 0; i < vHotkeys.size(); i++)
-        {
-            if (!strValue.empty())
+        for (size_t i = 0; i < vHotkeys.size(); i++) {
+            if (!strValue.empty()) {
                 strValue.append("; ");
-            if (vHotkeys[i].bGlobal)
-            {
+            }
+            if (vHotkeys[i].bGlobal) {
                 strValue += _TLT("Global:");
                 strValue += " ";
             }
@@ -701,20 +652,18 @@ public:
         return strValue;
     }
 
-    void enumAll(VecHotkeys &vHotkeys)
-    {
-        int            nIndex = -1;
-        CMPHotkey::CmdAccKey    *pCmdKey;
-        while (1)
-        {
+    void enumAll(VecHotkeys &vHotkeys) {
+        int nIndex = -1;
+        CMPHotkey::CmdAccKey *pCmdKey;
+        while (1) {
             nIndex = CMPlayerAppBase::getHotkey().getByCmd(m_nCmd, nIndex);
-            if (nIndex == -1)
+            if (nIndex == -1) {
                 break;
+            }
 
             pCmdKey = CMPlayerAppBase::getHotkey().get(nIndex);
-            if (pCmdKey)
-            {
-                Hotkey        hotkey;
+            if (pCmdKey) {
+                Hotkey hotkey;
                 formatHotkeyText(hotkey.strHotkey, pCmdKey->button, pCmdKey->fsModifiers);
                 hotkey.bGlobal = pCmdKey->bGlobal;
                 vHotkeys.push_back(hotkey);
@@ -726,15 +675,15 @@ public:
         vString.push_back(_TLT("add Shortcut Key..."));
         vString.push_back(_TLT("add Global Hotkey..."));
 
-        VecHotkeys        vHotkeys;
+        VecHotkeys vHotkeys;
 
         enumAll(vHotkeys);
 
-        if (vHotkeys.size())
+        if (vHotkeys.size()) {
             vString.push_back("");
+        }
 
-        for (size_t i = 0; i < vHotkeys.size(); i++)
-        {
+        for (size_t i = 0; i < vHotkeys.size(); i++) {
             vString.push_back(
                 string(_TL(vHotkeys[i].bGlobal ? "remove Global Hotkey:" : "remove Shortcut Key:"))
                 + " " + vHotkeys[i].strHotkey);
@@ -742,57 +691,56 @@ public:
     }
 
     virtual void setOption(int nIndex) {
-        if (nIndex == 0 || nIndex == 1)
-        {
+        if (nIndex == 0 || nIndex == 1) {
             // add new shortcut key:
-            CDlgShortcutKey        dlg(m_strName.c_str());
-            bool                bGloal = (nIndex == 1);
+            CDlgShortcutKey dlg(m_strName.c_str());
+            bool bGloal = (nIndex == 1);
 
-            if (dlg.doModal(m_pWndParent->getSkinWnd()) == IDOK)
-            {
+            if (dlg.doModal(m_pWndParent->getSkinWnd()) == IDOK) {
                 // Is this hotkey already being used?
-                int            nUsedCmdIndex;
+                int nUsedCmdIndex;
                 nUsedCmdIndex = CMPlayerAppBase::getHotkey().getByKey(dlg.m_nVirtualKey, dlg.m_fsModifiers);
-                if (nUsedCmdIndex != -1)
-                {
-                    string        strCmd;
-                    string        strMsg;
+                if (nUsedCmdIndex != -1) {
+                    string strCmd;
+                    string strMsg;
 
                     // Same one is self?
-                    if (CMPlayerAppBase::getHotkey().get(nUsedCmdIndex)->cmd == m_nCmd)
+                    if (CMPlayerAppBase::getHotkey().get(nUsedCmdIndex)->cmd == m_nCmd) {
                         return;
+                    }
 
                     strCmd = getCmdIDDescription(CMPlayerAppBase::getHotkey().get(nUsedCmdIndex)->cmd);
 
                     strMsg = stringPrintf(_TLT("This hotkey is currently used by action: %s."), _TL(strCmd.c_str())).c_str();
                     strMsg += "\r\n";
                     strMsg += _TLT("Do you want to replace it?");
-                    if (m_pWndParent->getSkinWnd()->messageOut(strMsg.c_str(), MB_ICONINFORMATION | MB_YESNO) != IDYES)
+                    if (m_pWndParent->getSkinWnd()->messageOut(strMsg.c_str(), MB_ICONINFORMATION | MB_YESNO) != IDYES) {
                         return;
+                    }
 
                     CMPlayerAppBase::getHotkey().remove(nUsedCmdIndex);
 
                     m_pWndParent->updateValues();
                 }
 
-                if (bGloal)
+                if (bGloal) {
                     CMPlayerAppBase::getHotkey().enableGlobalHotkey(true);
+                }
 
                 CMPlayerAppBase::getHotkey().add(m_nCmd, bGloal, dlg.m_nVirtualKey, dlg.m_fsModifiers);
             }
-        }
-        else
-        {
+        } else {
             // remove shortcut key
-            int            nShortcutIndex = -1;
-            for (int i = 2; i <= nIndex; i++)
-            {
+            int nShortcutIndex = -1;
+            for (int i = 2; i <= nIndex; i++) {
                 nShortcutIndex = CMPlayerAppBase::getHotkey().getByCmd(m_nCmd, nShortcutIndex);
-                if (nShortcutIndex == -1)
+                if (nShortcutIndex == -1) {
                     break;
+                }
 
-                if (i == nIndex)
+                if (i == nIndex) {
                     CMPlayerAppBase::getHotkey().remove(nShortcutIndex);
+                }
             }
         }
     }
@@ -805,8 +753,8 @@ public:
         return CMPlayerAppBase::getHotkey().restoreDefaultKey(m_nCmd);
     }
 
-    CPagePfAdvanced        *m_pWndParent;
-    int                    m_nCmd;
+    CPagePfAdvanced             *m_pWndParent;
+    int                         m_nCmd;
 
 };
 
@@ -814,8 +762,7 @@ public:
 
 UIOBJECT_CLASS_NAME_IMP(CPagePfAdvanced, "PreferPage.Advanced")
 
-CPagePfAdvanced::CPagePfAdvanced() : CPagePfBase(PAGE_ADVANCED, "CMD_ROOT_ADVANCED")
-{
+CPagePfAdvanced::CPagePfAdvanced() : CPagePfBase(PAGE_ADVANCED, "CMD_ROOT_ADVANCED") {
     m_nMenuIdEnd = m_nMenuIdStart = 0;
     m_bIgnoreSettingListNotify = false;
     CID_LIST_SETTINGS = 0;
@@ -823,17 +770,14 @@ CPagePfAdvanced::CPagePfAdvanced() : CPagePfBase(PAGE_ADVANCED, "CMD_ROOT_ADVANC
     m_nTimerIdSearch = 0;
 }
 
-CPagePfAdvanced::~CPagePfAdvanced()
-{
-    for (size_t i = 0; i < m_vPreferItems.size(); i++)
-    {
+CPagePfAdvanced::~CPagePfAdvanced() {
+    for (size_t i = 0; i < m_vPreferItems.size(); i++) {
         delete m_vPreferItems[i];
     }
     m_vPreferItems.clear();
 }
 
-void CPagePfAdvanced::onInitialUpdate()
-{
+void CPagePfAdvanced::onInitialUpdate() {
     CPagePfBase::onInitialUpdate();
 
     GET_ID_BY_NAME(CID_LIST_SETTINGS);
@@ -841,8 +785,9 @@ void CPagePfAdvanced::onInitialUpdate()
 
     m_pListItems = (CSkinListCtrl *)getUIObjectById(CID_LIST_SETTINGS, CSkinListCtrl::className());
     assert(m_pListItems);
-    if (!m_pListItems)
+    if (!m_pListItems) {
         return;
+    }
 
     m_pSkin->registerUIObjNotifyHandler(CID_LIST_SETTINGS, this);
 
@@ -858,7 +803,7 @@ void CPagePfAdvanced::onInitialUpdate()
     m_vPreferItems.push_back(new CPfItemRestoreLyrChgSavePrompt(m_pSkin));
     // m_vPreferItems.push_back(new CPfItemBool("Hide the link of rating lyrics", ET_NULL, SZ_SECT_UI, "HideRateLink", true));
     m_vPreferItems.push_back(new CPfItemBool(connectToLocalStr(_TLM("Lyrics Display"), _TLM("Allow to adjust the vertical position of lyrics")).c_str(),
-        ET_LYRICS_DISPLAY_SETTINGS, SZ_SECT_LYR_DISPLAY, 
+        ET_LYRICS_DISPLAY_SETTINGS, SZ_SECT_LYR_DISPLAY,
         "enableAdjustVertAlign", false));
     m_vPreferItems.push_back(new CPfItemLyrLineSpacing());
     m_vPreferItems.push_back(new CPfItemLyrDelayTime());
@@ -881,8 +826,7 @@ void CPagePfAdvanced::onInitialUpdate()
     //
     // Tray Icon controls
     //
-    for (int i = 0; i < MAX_PLAYER_TRAY_ICON_CMD; i++)
-    {
+    for (int i = 0; i < MAX_PLAYER_TRAY_ICON_CMD; i++) {
         m_vPreferItems.push_back(new CPfItemTrayIconPlayerCtrl(g_SysTrayIconCmd[i].szCmd, i));
     }
     m_vPreferItems.push_back(new CPfItemSystemTrayIcon());
@@ -892,15 +836,14 @@ void CPagePfAdvanced::onInitialUpdate()
     //
     // Shortcut keys
     //
-    MPHotKeySection        *pSect = g_vHotkeySections;
-    for (; pSect->szName != nullptr; pSect++)
-    {
-        for (int k = 0; pSect->vHotkeys[k] != 0; k++)
-        {
+    MPHotKeySection *pSect = g_vHotkeySections;
+    for (; pSect->szName != nullptr; pSect++) {
+        for (int k = 0; pSect->vHotkeys[k] != 0; k++) {
             string strTooltip;
             CMPlayerAppBase::getMPSkinFactory()->getTooltip(pSect->vHotkeys[k], strTooltip);
-            if (strTooltip.empty())
+            if (strTooltip.empty()) {
                 continue;
+            }
 
             m_vPreferItems.push_back(new CPfItemShortcut(
                 this,
@@ -913,34 +856,30 @@ void CPagePfAdvanced::onInitialUpdate()
 
     listAllItems();
 
-    CSkinEditCtrl    *pEdit = (CSkinEditCtrl *)getUIObjectById(CID_E_ADV_SEARCH, CSkinEditCtrl::className());
+    CSkinEditCtrl *pEdit = (CSkinEditCtrl *)getUIObjectById(CID_E_ADV_SEARCH, CSkinEditCtrl::className());
     assert(pEdit);
-    if (pEdit)
+    if (pEdit) {
         pEdit->setEditNotification(this);
+    }
 }
 
-void CPagePfAdvanced::onDestroy()
-{
+void CPagePfAdvanced::onDestroy() {
     m_pSkin->unregisterUIObjNotifyHandler(this);
 
     CPagePfBase::onDestroy();
 }
 
-void CPagePfAdvanced::onUIObjNotify(IUIObjNotify *pNotify)
-{
-    if (pNotify->nID == CID_LIST_SETTINGS && pNotify->isKindOf(CSkinListCtrl::className()))
-    {
-        if (m_bIgnoreSettingListNotify)
+void CPagePfAdvanced::onUIObjNotify(IUIObjNotify *pNotify) {
+    if (pNotify->nID == CID_LIST_SETTINGS && pNotify->isKindOf(CSkinListCtrl::className())) {
+        if (m_bIgnoreSettingListNotify) {
             return;
-
-        CSkinListCtrlEventNotify    *pListCtrlNotify = (CSkinListCtrlEventNotify*)pNotify;
-        if (pListCtrlNotify->cmd == CSkinListCtrlEventNotify::C_SEL_CHANGED)
-        {
-            enableUIObject(getIDByName("CID_CUSTOMIZE"), m_pListItems->getNextSelectedItem() != -1);
         }
-        else if (pListCtrlNotify->cmd == CSkinListCtrlEventNotify::C_DBL_CLICK
-            || pListCtrlNotify->cmd == CSkinListCtrlEventNotify::C_RBTN_CLICK)
-        {
+
+        CSkinListCtrlEventNotify *pListCtrlNotify = (CSkinListCtrlEventNotify*)pNotify;
+        if (pListCtrlNotify->cmd == CSkinListCtrlEventNotify::C_SEL_CHANGED) {
+            enableUIObject(getIDByName("CID_CUSTOMIZE"), m_pListItems->getNextSelectedItem() != -1);
+        } else if (pListCtrlNotify->cmd == CSkinListCtrlEventNotify::C_DBL_CLICK
+            || pListCtrlNotify->cmd == CSkinListCtrlEventNotify::C_RBTN_CLICK) {
             CPoint pt = getCursorPos();
             showCustomizeMenu(pt.x, pt.y);
         }
@@ -948,34 +887,34 @@ void CPagePfAdvanced::onUIObjNotify(IUIObjNotify *pNotify)
 }
 
 // Edit control notification
-void CPagePfAdvanced::onTextChanged()
-{
-    if (m_nTimerIdSearch != 0)
+void CPagePfAdvanced::onTextChanged() {
+    if (m_nTimerIdSearch != 0) {
         m_pSkin->unregisterTimerObject(this, m_nTimerIdSearch);
+    }
     m_nTimerIdSearch = m_pSkin->registerTimerObject(this, DURATION_SEARCH);
 }
 
-void CPagePfAdvanced::onTimer(int nId)
-{
-    if (nId != m_nTimerIdSearch)
+void CPagePfAdvanced::onTimer(int nId) {
+    if (nId != m_nTimerIdSearch) {
         return;
+    }
 
     m_pSkin->unregisterTimerObject(this, m_nTimerIdSearch);
     m_nTimerIdSearch = 0;
 
-    string        strKey;
+    string strKey;
 
     strKey = getUIObjectText(CID_E_ADV_SEARCH);
-    if (strcasecmp(strKey.c_str(), m_strLastSearch.c_str()) == 0)
+    if (strcasecmp(strKey.c_str(), m_strLastSearch.c_str()) == 0) {
         return;
+    }
 
     m_strLastSearch = strKey;
 
-    VecStrings        vKeyWords;
+    VecStrings vKeyWords;
     strSplit(strKey.c_str(), ' ', vKeyWords);
     trimStr(vKeyWords, ' ');
-    if (vKeyWords.empty() || (vKeyWords.size() == 1 && vKeyWords[0].empty()))
-    {
+    if (vKeyWords.empty() || (vKeyWords.size() == 1 && vKeyWords[0].empty())) {
         listAllItems();
         return;
     }
@@ -984,22 +923,18 @@ void CPagePfAdvanced::onTimer(int nId)
     m_vFilteredItems.clear();
 
     // List results.
-    for (int i = 0; i < (int)m_vPreferItems.size(); i++)
-    {
-        CPreferItem    *item = m_vPreferItems[i];
-        bool        bMatch = true;
+    for (int i = 0; i < (int)m_vPreferItems.size(); i++) {
+        CPreferItem *item = m_vPreferItems[i];
+        bool bMatch = true;
 
-        for (int k = 0; k < (int)vKeyWords.size(); k++)
-        {
-            if (!stristr(_TL(item->m_strName.c_str()), vKeyWords[k].c_str()))
-            {
+        for (int k = 0; k < (int)vKeyWords.size(); k++) {
+            if (!stristr(_TL(item->m_strName.c_str()), vKeyWords[k].c_str())) {
                 bMatch = false;
                 break;
             }
         }
 
-        if (bMatch)
-        {
+        if (bMatch) {
             m_vFilteredItems.push_back(item);
             int n = m_pListItems->insertItem(i, _TL(item->m_strName.c_str()), item->isDefault() ? IMG_UNMODIFIED : IMG_MODIFIED, 0, false);
             m_pListItems->setItemText(n, 1, item->getValue().c_str(), false);
@@ -1009,55 +944,47 @@ void CPagePfAdvanced::onTimer(int nId)
     m_pListItems->invalidate();
 }
 
-bool CPagePfAdvanced::onCustomCommand(int nId)
-{
-    if (nId == getIDByName("CID_CUSTOMIZE"))
-    {
-        CRect        rc;
+bool CPagePfAdvanced::onCustomCommand(int nId) {
+    if (nId == getIDByName("CID_CUSTOMIZE")) {
+        CRect rc;
 
         getUIObjectRect(nId, rc);
         m_pSkin->clientToScreen(rc);
 
         showCustomizeMenu(rc.left, rc.top);
-    }
-    else
+    } else {
         return CPagePfBase::onCustomCommand(nId);
+    }
 
     return true;
 }
 
-bool CPagePfAdvanced::onCommand(int nId)
-{
-    if ((int)nId >= m_nMenuIdStart && (int)nId <= m_nMenuIdEnd)
-    {
-        if (nId == m_nMenuIdEnd)
-        {
+bool CPagePfAdvanced::onCommand(int nId) {
+    if ((int)nId >= m_nMenuIdStart && (int)nId <= m_nMenuIdEnd) {
+        if (nId == m_nMenuIdEnd) {
             // reset selected settings
-            int            nSel = -1;
-            while (1)
-            {
+            int nSel = -1;
+            while (1) {
                 nSel = m_pListItems->getNextSelectedItem(nSel);
-                if (nSel >= 0 && nSel < (int)m_vFilteredItems.size())
-                {
-                    CPreferItem    *item = m_vFilteredItems[nSel];
+                if (nSel >= 0 && nSel < (int)m_vFilteredItems.size()) {
+                    CPreferItem *item = m_vFilteredItems[nSel];
                     item->reset();
                     m_pListItems->setItemText(nSel, 1, item->getValue().c_str(), false);
                     m_pListItems->setItemImageIndex(nSel, item->isDefault() ? IMG_UNMODIFIED : IMG_MODIFIED, false);
-                }
-                else
+                } else {
                     break;
+                }
             }
-        }
-        else
-        {
+        } else {
             // set option.
-            CPreferItem    *item = getCurItem();
-            if (!item)
+            CPreferItem *item = getCurItem();
+            if (!item) {
                 return true;
+            }
 
             item->setOption(nId - m_nMenuIdStart);
 
-            int        nSel = m_pListItems->getNextSelectedItem();
+            int nSel = m_pListItems->getNextSelectedItem();
             m_pListItems->setItemText(nSel, 1, item->getValue().c_str(), false);
 
             m_pListItems->setItemImageIndex(nSel, item->isDefault() ? IMG_UNMODIFIED : IMG_MODIFIED, false);
@@ -1071,11 +998,9 @@ bool CPagePfAdvanced::onCommand(int nId)
     return false;
 }
 
-void CPagePfAdvanced::updateValues()
-{
-    for (int i = 0; i < (int)m_vFilteredItems.size(); i++)
-    {
-        CPreferItem    *item = m_vFilteredItems[i];
+void CPagePfAdvanced::updateValues() {
+    for (int i = 0; i < (int)m_vFilteredItems.size(); i++) {
+        CPreferItem *item = m_vFilteredItems[i];
         m_pListItems->setItemText(i, 1, item->getValue().c_str(), false);
         m_pListItems->setItemImageIndex(i, item->isDefault() ? IMG_UNMODIFIED : IMG_MODIFIED, false);
     }
@@ -1083,87 +1008,85 @@ void CPagePfAdvanced::updateValues()
     m_pListItems->invalidate();
 }
 
-CPreferItem *CPagePfAdvanced::getCurItem()
-{
-    int            nSel = 0;
+CPreferItem *CPagePfAdvanced::getCurItem() {
+    int nSel = 0;
 
     nSel = m_pListItems->getNextSelectedItem();
-    if (nSel < 0 || nSel >= (int)m_vFilteredItems.size())
+    if (nSel < 0 || nSel >= (int)m_vFilteredItems.size()) {
         return nullptr;
+    }
 
     return m_vFilteredItems[nSel];
 }
 
-void CPagePfAdvanced::showCustomizeMenu(int x, int y)
-{
-    CMenu        menu;
-    VecStrings        options;
-    int            nRadio = -1;
-    bool        bEnabeReset = false;
+void CPagePfAdvanced::showCustomizeMenu(int x, int y) {
+    CMenu menu;
+    VecStrings options;
+    int nRadio = -1;
+    bool bEnabeReset = false;
 
-    if (m_pListItems->getSelectedCount() == 0)
+    if (m_pListItems->getSelectedCount() == 0) {
         return;
+    }
 
     m_nMenuIdStart = MENUID_START;
     m_nMenuIdEnd = MENUID_START;
 
     menu.createPopupMenu();
 
-    if (m_pListItems->getSelectedCount() == 1)
-    {
-        CPreferItem    *item = getCurItem();
-        if (!item)
+    if (m_pListItems->getSelectedCount() == 1) {
+        CPreferItem *item = getCurItem();
+        if (!item) {
             return;
+        }
 
         item->getOptions(options, nRadio);
-        for (size_t i = 0; i < options.size(); i++)
-        {
-            if (options[i].empty())
+        for (size_t i = 0; i < options.size(); i++) {
+            if (options[i].empty()) {
                 menu.appendSeperator();
-            else
+            } else {
                 menu.appendItem(m_nMenuIdEnd++, options[i].c_str());
+            }
         }
         menu.appendSeperator();
-        if (!item->isDefault())
+        if (!item->isDefault()) {
             bEnabeReset = true;
-    }
-    else
-    {
-        int            nSel = -1;
+        }
+    } else {
+        int nSel = -1;
 
-        while (1)
-        {
+        while (1) {
             nSel = m_pListItems->getNextSelectedItem(nSel);
-            if (nSel >= 0 && nSel < (int)m_vFilteredItems.size())
-            {
-                CPreferItem    *item = m_vFilteredItems[nSel];
-                if (!item->isDefault())
+            if (nSel >= 0 && nSel < (int)m_vFilteredItems.size()) {
+                CPreferItem *item = m_vFilteredItems[nSel];
+                if (!item->isDefault()) {
                     bEnabeReset = true;
-            }
-            else
+                }
+            } else {
                 break;
+            }
         }
     }
 
     menu.appendItem(m_nMenuIdEnd, SZ_RESET);
-    if (!bEnabeReset)
+    if (!bEnabeReset) {
         menu.enableItem(m_nMenuIdEnd, bEnabeReset);
+    }
 
-    if (nRadio != -1)
+    if (nRadio != -1) {
         menu.checkRadioItem(m_nMenuIdStart + nRadio, m_nMenuIdStart, m_nMenuIdEnd - 1);
+    }
 
     menu.trackPopupMenu(x, y, m_pSkin);
 }
 
-void CPagePfAdvanced::listAllItems()
-{
+void CPagePfAdvanced::listAllItems() {
     m_pListItems->deleteAllItems();
 
     m_vFilteredItems = m_vPreferItems;
 
-    for (int i = 0; i < (int)m_vPreferItems.size(); i++)
-    {
-        CPreferItem    *item = m_vPreferItems[i];
+    for (int i = 0; i < (int)m_vPreferItems.size(); i++) {
+        CPreferItem *item = m_vPreferItems[i];
         int n = m_pListItems->insertItem(i, _TL(item->m_strName.c_str()), item->isDefault() ? IMG_UNMODIFIED : IMG_MODIFIED, 0, false);
         m_pListItems->setItemText(n, 1, item->getValue().c_str(), false);
     }

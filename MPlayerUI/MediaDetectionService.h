@@ -1,7 +1,6 @@
 #pragma once
 
-class CMediaDetectionService
-{
+class CMediaDetectionService {
 public:
     CMediaDetectionService(void);
     virtual ~CMediaDetectionService(void);
@@ -11,4 +10,4 @@ public:
 
 };
 
-extern CMediaDetectionService        g_mediaDetectionService;
+extern CMediaDetectionService g_mediaDetectionService;

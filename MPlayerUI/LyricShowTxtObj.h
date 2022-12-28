@@ -1,25 +1,24 @@
+#pragma once
+
 /********************************************************************
     Created  :    2002/01/04    21:40
     FileName :    LyricShowTxtObj.h
     Author   :    xhy
-    
+
     Purpose  :    
 *********************************************************************/
 
-#if !defined(AFX_LYRICSHOWTXTOBJ_H__18145744_7DB0_11D5_9E04_02608CAD9330__INCLUDED_)
-#define AFX_LYRICSHOWTXTOBJ_H__18145744_7DB0_11D5_9E04_02608CAD9330__INCLUDED_
+#ifndef MPlayerUI_LyricShowTxtObj_h
+#define MPlayerUI_LyricShowTxtObj_h
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
 
 #include "LyricShowMultiRowObj.h"
 #include "LyricShowTxtContainer.h"
 
+
 #define SZ_TXT_LYR_CONTAINER CLyricShowTxtContainer::className()
 
-class CLyricShowTxtObj : public CLyricShowMultiRowObj, IScrollNotify
-{
+class CLyricShowTxtObj : public CLyricShowMultiRowObj, IScrollNotify {
     UIOBJECT_CLASS_NAME_DECLARE(CLyricShowMultiRowObj)
 public:
     CLyricShowTxtObj();
@@ -42,11 +41,11 @@ public:
     void onPlayTimeChangedUpdate() override;
 
     bool isRecordScrollingActionsEnabled()
-        const { return m_bRecordScrollingActionsEnabled; };
+    const { return m_bRecordScrollingActionsEnabled; };
     void enableRecordScrollingActions(bool bEnable);
 
     bool isReplayScrollingActionsEnabled()
-        const { return m_bReplayScrollingActionsEnabled && !m_bReplayDisabledTemp; };
+    const { return m_bReplayScrollingActionsEnabled && !m_bReplayDisabledTemp;  };
     void enableReplayScrollingActions(bool bEnable);
 
 protected:
@@ -63,24 +62,24 @@ protected:
     void startScrollAnimation(int nCurLineNew);
 
 protected:
-    IScrollBar                *m_pScrollBar;
-    CUIObject                *m_pObjScrollBar;
+    IScrollBar                  *m_pScrollBar;
+    CUIObject                   *m_pObjScrollBar;
 
-    int                        m_nCurLine;
+    int                         m_nCurLine;
 
-    bool                    m_bInScrollingToNewLine;
-    int                        m_nCurLineNew;
-    int                        m_yCurLineLatest, m_nCurLineLatest;
-    int                        m_yOffsetScroll;
-    int64_t                    m_timeBeginScroll;
+    bool                        m_bInScrollingToNewLine;
+    int                         m_nCurLineNew;
+    int                         m_yCurLineLatest, m_nCurLineLatest;
+    int                         m_yOffsetScroll;
+    int64_t                     m_timeBeginScroll;
 
-    bool                    m_bInVerticalScrollingMode;
+    bool                        m_bInVerticalScrollingMode;
 
-    bool                    m_bRecordScrollingActionsEnabled;
-    bool                    m_bReplayScrollingActionsEnabled;
+    bool                        m_bRecordScrollingActionsEnabled;
+    bool                        m_bReplayScrollingActionsEnabled;
 
-    bool                    m_bReplayDisabledTemp;
+    bool                        m_bReplayDisabledTemp;
 
 };
 
-#endif // !defined(AFX_LYRICSHOWTXTOBJ_H__18145744_7DB0_11D5_9E04_02608CAD9330__INCLUDED_)
+#endif // !defined(MPlayerUI_LyricShowTxtObj_h)

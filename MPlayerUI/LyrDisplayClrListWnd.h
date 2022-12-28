@@ -3,11 +3,10 @@
 
 #include "LyricShowObj.h"
 
-class CLyrDisplayClrListWnd : public IPopupSkinWndNotify
-{
+
+class CLyrDisplayClrListWnd : public IPopupSkinWndNotify {
 public:
-    struct FontClrOpt
-    {
+    struct FontClrOpt {
         FontClrOpt(COLORREF clr) {
             this->obm = OBM_COLOR;
             this->clr[0] = clr;
@@ -23,9 +22,9 @@ public:
             strPatternFile = szFile;
         }
 
-        OverlayBlendingMode        obm;                // Overlay blending mode
-        COLORREF                clr[3];
-        string                    strPatternFile;
+        OverlayBlendingMode         obm;                // Overlay blending mode
+        COLORREF                    clr[3];
+        string                      strPatternFile;
     };
     typedef vector<FontClrOpt>    VecFontClr;
 
@@ -38,8 +37,8 @@ public:
 
 protected:
     enum {
-        HEIGHT_COLOR = 40,
-        WIDTH_COLOR = 100
+        HEIGHT_COLOR                = 40,
+        WIDTH_COLOR                 = 100
     };
 
     void selectCurrentSetting();
@@ -59,16 +58,16 @@ protected:
     void addImage(RawImageData *image);
 
 protected:
-    bool                m_bInitialized;
-    CSkinWnd            *m_pWnd;
-    IPopupSkinWndNotify    *m_pNotify;
-    CPopupSkinListWnd    m_popupListWnd;
-    int                    m_nWidthMax;
+    bool                        m_bInitialized;
+    CSkinWnd                    *m_pWnd;
+    IPopupSkinWndNotify         *m_pNotify;
+    CPopupSkinListWnd           m_popupListWnd;
+    int                         m_nWidthMax;
 
-    VecFontClr            m_vFontClr;
+    VecFontClr                  m_vFontClr;
 
-    EventType            m_et;
-    string                m_strSectName;
-    bool                m_bHilight;
+    EventType                   m_et;
+    string                      m_strSectName;
+    bool                        m_bHilight;
 
 };

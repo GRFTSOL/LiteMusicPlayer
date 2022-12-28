@@ -1,6 +1,4 @@
-﻿// MPlayerApp.cpp: implementation of the CMPlayerApp class.
-//
-//////////////////////////////////////////////////////////////////////
+﻿
 
 #include "../MPlayerApp.h"
 #include "MPMsgWnd.h"
@@ -11,11 +9,12 @@
 #include "MPFloatingLyrWnd.h"
 #include "MPlayerAppGtk2.h"
 
+
 #ifdef _MPLAYER
-int main(int argc, char *argv[])
-{
-    if (!CMPlayerAppBase::getInstance()->init(argc, argv))
+int main(int argc, char *argv[]) {
+    if (!CMPlayerAppBase::getInstance()->init(argc, argv)) {
         return 0;
+    }
 
     gtk_main();
 
@@ -26,19 +25,16 @@ int main(int argc, char *argv[])
 #endif // #ifdef _MPLAYER
 
 
-CMPlayerApp::CMPlayerApp()
-{
+CMPlayerApp::CMPlayerApp() {
 }
 
-CMPlayerApp::~CMPlayerApp()
-{
+CMPlayerApp::~CMPlayerApp() {
 }
 
-bool CMPlayerApp::init(int argc, char *argv[])
-{
+bool CMPlayerApp::init(int argc, char *argv[]) {
 
-    char        szWorkingFolder[MAX_PATH];
-    string        strMLIniFile, strMLLogFile;
+    char szWorkingFolder[MAX_PATH];
+    string strMLIniFile, strMLLogFile;
 
     //
     // init Base frame, save log and settings in app dir
@@ -46,8 +42,9 @@ bool CMPlayerApp::init(int argc, char *argv[])
     strMLIniFile += SZ_PROFILE_NAME;
     setFileNoReadOnly(strMLIniFile.c_str());
 
-    if (!isFileExist(strMLIniFile.c_str()))
+    if (!isFileExist(strMLIniFile.c_str())) {
         g_bEngEdition = true;
+    }
 
     g_log.setSrcRootDir(__FILE__, 2);
 
@@ -58,8 +55,7 @@ bool CMPlayerApp::init(int argc, char *argv[])
     MLWidgetInit(argc, argv);
 
     int nRet = CResourceMgr::load("resource.xml");
-    if (nRet != ERR_OK)
-    {
+    if (nRet != ERR_OK) {
         ERR_LOG1("load resouce Error: %s", (cstr_t)Error2Str(nRet));
         return false;
     }
@@ -76,16 +72,17 @@ bool CMPlayerApp::init(int argc, char *argv[])
         // 检查版本
         //
 #ifdef _DEBUG
-        CProfile    file;
-        string        strEng;
+        CProfile file;
+        string strEng;
         file.init("install.ini", "INSTALL");
         strEng = file.getString("Edition", "");
-        if (strcmp(strEng.c_str(), "english") == 0)
+        if (strcmp(strEng.c_str(), "english") == 0) {
             g_bEngEdition = true;
-        else if (strcmp(strEng.c_str(), "chinese") == 0)
+        } else if (strcmp(strEng.c_str(), "chinese") == 0) {
             g_bEngEdition = false;
-        else 
-#endif
+        } else {
+            #endif
+        }
         {
             // 根据 location 来设置中英文版本差别
         }
@@ -94,8 +91,7 @@ bool CMPlayerApp::init(int argc, char *argv[])
     return CMPlayerAppBase::init();
 }
 
-void CMPlayerApp::quit()
-{
+void CMPlayerApp::quit() {
     CMPlayerAppBase::quit();
 
 

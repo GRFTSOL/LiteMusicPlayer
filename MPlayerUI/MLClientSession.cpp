@@ -1,73 +1,66 @@
-// MLClientSession.cpp: implementation of the CMLClientSession class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "MPlayerApp.h"
 #include "MLClientSession.h"
 #include "../LyricsLib/MLEncrypt.h"
 
 
-#define CUR_ACCOUNT_ID        4
+#define CUR_ACCOUNT_ID      4
 #define CUR_ACCOUNT_NAME    "Mlv1clt4.0"
 #define CUR_MSG_TYPE        MT_HTTP_POST
 
-ServerCfg        g_LyrServers[SERVER_COUNT] = 
-{
+ServerCfg        g_LyrServers[SERVER_COUNT] = {
     { "", 80 },
 };
 
-int                    g_nCurLyrServer = 0;
-int                    g_nPortSearchServer = 80;
-int                    g_nPortDownloadServer = 80;
+int g_nCurLyrServer = 0;
+int g_nPortSearchServer = 80;
+int g_nPortDownloadServer = 80;
 
-void loadServerInfo()
-{
-    string        strEng;
+void loadServerInfo() {
+    string strEng;
 
-    if (isEmptyString(g_LyrServers[0].szServer))
-    {
-        int            nEngIndex = 0;
+    if (isEmptyString(g_LyrServers[0].szServer)) {
+        int nEngIndex = 0;
         g_LyrServers[nEngIndex].nPort = 80;
-        strcpy_safe(g_LyrServers[nEngIndex].szServer, 
+        strcpy_safe(g_LyrServers[nEngIndex].szServer,
             CountOf(g_LyrServers[nEngIndex].szServer), "search.crintsoft.com");
 
 #ifdef _DEBUG
         //
         // load server config from install.ini
         //
-        CProfile    file;
-        string        str;
+        CProfile file;
+        string str;
         file.init("install.ini", "INSTALL");
 
         str = file.getString("server1", "");
-        if (!str.empty())
+        if (!str.empty()) {
             strcpy_safe(g_LyrServers[0].szServer, CountOf(g_LyrServers[0].szServer), str.c_str());
+        }
         str = file.getString("server1port", "");
-        if (!str.empty())
+        if (!str.empty()) {
             g_LyrServers[0].nPort = atoi(str.c_str());
+        }
 #endif
     }
 }
 
 //////////////////////////////////////////////////////////////////////
 
-CMLClientSession::CMLClientSession()
-{
+CMLClientSession::CMLClientSession() {
     m_bLogined = false;
     m_bEnableProxy = false;
     m_nProxyPort = 80;
     m_bInitialzed = false;
 }
 
-CMLClientSession::~CMLClientSession()
-{
+CMLClientSession::~CMLClientSession() {
 
 }
 
-void CMLClientSession::init(cstr_t szAppName)
-{
-    if (m_bInitialzed)
+void CMLClientSession::init(cstr_t szAppName) {
+    if (m_bInitialzed) {
         return;
+    }
     m_bInitialzed = true;
 
     m_strClient = szAppName;
@@ -85,14 +78,14 @@ void CMLClientSession::init(cstr_t szAppName)
 
 }
 
-int CMLClientSession::connect()
-{
+int CMLClientSession::connect() {
     int nRet;
 
     m_bClosing = false;
 
-    if (m_ClientCom.isValid())
+    if (m_ClientCom.isValid()) {
         m_ClientCom.close();
+    }
 
     int nProxyPort;
     string proxyServer;
@@ -100,90 +93,89 @@ int CMLClientSession::connect()
     string strProxyPwd = CMLProfile::inetGetBase64ProxyUserPass();
     setProxy(bUserProxy, proxyServer.c_str(), nProxyPort, strProxyPwd.c_str());
 
-    if (m_bEnableProxy)
+    if (m_bEnableProxy) {
         nRet = m_ClientCom.connect(m_proxyServer.c_str(), m_nProxyPort);
-    else
-    {
+    } else {
         // Try to connect to server: Latest port, 80, 8000 ~ 8080
         nRet = m_ClientCom.connect(getDefaultServer(), g_nPortSearchServer);
-        if (nRet != ERR_OK && !m_bClosing)
-        {
+        if (nRet != ERR_OK && !m_bClosing) {
             // 80
-            if (g_nPortSearchServer != 80)
+            if (g_nPortSearchServer != 80) {
                 nRet = m_ClientCom.connect(getDefaultServer(), 80);
-            if (nRet == ERR_OK)
+            }
+            if (nRet == ERR_OK) {
                 g_nPortSearchServer = 80;
-            else
-            {
+            } else {
                 // 8000 ~ 8080
-                if (g_nPortSearchServer < SERVER_PORT_BEGIN)
+                if (g_nPortSearchServer < SERVER_PORT_BEGIN) {
                     g_nPortSearchServer = SERVER_PORT_BEGIN - 1;
-                for (int i = SERVER_PORT_BEGIN; !m_bClosing && i <= SERVER_PORT_END; i++)
-                {
+                }
+                for (int i = SERVER_PORT_BEGIN; !m_bClosing && i <= SERVER_PORT_END; i++) {
                     g_nPortSearchServer++;
-                    if (g_nPortSearchServer > SERVER_PORT_END)
+                    if (g_nPortSearchServer > SERVER_PORT_END) {
                         g_nPortSearchServer = SERVER_PORT_BEGIN;
+                    }
                     nRet = m_ClientCom.connect(getDefaultServer(), g_nPortSearchServer);
-                    if (nRet == ERR_OK || nRet == ERR_NET_HOST_NOT_FOUND)
+                    if (nRet == ERR_OK || nRet == ERR_NET_HOST_NOT_FOUND) {
                         break;
+                    }
                 }
             }
         }
     }
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         return nRet;
+    }
 
     m_NetFile.attach(m_ClientCom.getSocket());
     m_NetFile.setTimeOut(20 * 1000);
 
-/*    nRet = m_MsgProtocol.init(&m_NetFile);
+    /*    nRet = m_MsgProtocol.init(&m_NetFile);
     if (nRet != ERR_OK)
         return nRet;*/
 
     return ERR_OK;
 }
 
-void CMLClientSession::setUploader(cstr_t szUser, cstr_t szPwd, bool bSavePwd)
-{
+void CMLClientSession::setUploader(cstr_t szUser, cstr_t szPwd, bool bSavePwd) {
     if (strcmp(szPwd, m_strPwdMask.c_str()) != 0
-        || strcmp(szUser, m_strLoginName.c_str()) != 0)
-    {
+        || strcmp(szUser, m_strLoginName.c_str()) != 0) {
         m_strPwdMask = md5ToString16(szPwd);;
         m_strLoginName = szUser;
     }
 
     cstr_t szPwdSaved = g_profile.getString("LoginPwdMask", "");
     cstr_t szPwdToSave;
-    if (bSavePwd)
+    if (bSavePwd) {
         szPwdToSave = m_strPwdMask.c_str();
-    else
+    } else {
         szPwdToSave = "";
+    }
 
-    if (strcmp(szPwdToSave, szPwdSaved) != 0)
+    if (strcmp(szPwdToSave, szPwdSaved) != 0) {
         g_profile.writeString("LoginPwdMask", szPwdToSave);
+    }
 
-    if (strcmp(szPwdToSave, g_profile.getString("LoginName", "")) != 0)
+    if (strcmp(szPwdToSave, g_profile.getString("LoginName", "")) != 0) {
         g_profile.writeString("LoginName", szUser);
+    }
 }
 
-void CMLClientSession::setProxy(bool bEnableProxy, cstr_t szProxyServer, int nPort, cstr_t szBase64ProxyUserPass)
-{
-    if (bEnableProxy && !isEmptyString(szProxyServer))
-    {
+void CMLClientSession::setProxy(bool bEnableProxy, cstr_t szProxyServer, int nPort, cstr_t szBase64ProxyUserPass) {
+    if (bEnableProxy && !isEmptyString(szProxyServer)) {
         m_proxyServer = szProxyServer;
         m_nProxyPort = nPort;
         m_bEnableProxy = true;
-    }
-    else
+    } else {
         m_bEnableProxy = false;
+    }
 
     m_MsgProtocol.setProxy(bEnableProxy, szProxyServer, nPort, szBase64ProxyUserPass);
 }
 
-int CMLClientSession::login(string &strMsgRet)
-{
-    MLMsgCmdLogin    cmdLogin;
-    int                nRet;
+int CMLClientSession::login(string &strMsgRet) {
+    MLMsgCmdLogin cmdLogin;
+    int nRet;
 
     assert(m_strLoginName.size() && m_strPwdMask.size());
     cmdLogin.name = m_strLoginName;
@@ -192,14 +184,16 @@ int CMLClientSession::login(string &strMsgRet)
 
     m_bLogined = false;
     nRet = sendXmlCommand(cmdLogin);
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         return nRet;
+    }
 
-    MLMsgRetLogin        retLogin;
+    MLMsgRetLogin retLogin;
     nRet = processCommonRetMsg(&retLogin, MC_LOGIN);
 
-    if (nRet == ERR_OK)
+    if (nRet == ERR_OK) {
         m_bLogined = true;
+    }
 
     strMsgRet = retLogin.strMessage;
 
@@ -208,11 +202,10 @@ int CMLClientSession::login(string &strMsgRet)
 
 // 返回值：
 //    ERR_NOT_FOUND
-//  
-int CMLClientSession::search(bool bOnlyMatched, cstr_t szArtist, cstr_t szTitle, int nRequestPage, MLMsgRetSearch &retSearch)
-{
-    int            nRet;
-    MLMsgCmdSearch    cmdSearch;
+//
+int CMLClientSession::search(bool bOnlyMatched, cstr_t szArtist, cstr_t szTitle, int nRequestPage, MLMsgRetSearch &retSearch) {
+    int nRet;
+    MLMsgCmdSearch cmdSearch;
 
     retSearch.strMessage = "";
     cmdSearch.strTitle = szTitle;
@@ -222,21 +215,22 @@ int CMLClientSession::search(bool bOnlyMatched, cstr_t szArtist, cstr_t szTitle,
     prepareClientInfo(cmdSearch);
 
     nRet = sendXmlCommand(cmdSearch);
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         return nRet;
+    }
 
     nRet = processCommonRetMsg(&retSearch, MC_SEARCH);
 
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         return nRet;
+    }
 
     return ERR_OK;
 }
 
-int CMLClientSession::batchSearch(MLListSearchItems &listToSearch, MLMsgRetBatchSearch &retSearch)
-{
-    int            nRet;
-    MLMsgCmdBatchSearch    cmdSearch;
+int CMLClientSession::batchSearch(MLListSearchItems &listToSearch, MLMsgRetBatchSearch &retSearch) {
+    int nRet;
+    MLMsgCmdBatchSearch cmdSearch;
 
     retSearch.strMessage = "";
 
@@ -245,17 +239,17 @@ int CMLClientSession::batchSearch(MLListSearchItems &listToSearch, MLMsgRetBatch
     prepareClientInfo(cmdSearch);
 
     nRet = sendXmlCommand(cmdSearch);
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         return nRet;
+    }
 
     nRet = processCommonRetMsg(&retSearch, MC_BATCH_SEARCH);
 
     return nRet;
 }
 
-int CMLClientSession::upload(const string &lyricsContent, string &strLyricsId, string &strMsg)
-{
-    MLMsgCmdUpload    cmdUpload;
+int CMLClientSession::upload(const string &lyricsContent, string &strLyricsId, string &strMsg) {
+    MLMsgCmdUpload cmdUpload;
 
     assert(m_strLoginName.size() && m_strPwdMask.size());
     cmdUpload.strLoginName = m_strLoginName;
@@ -263,14 +257,16 @@ int CMLClientSession::upload(const string &lyricsContent, string &strLyricsId, s
     cmdUpload.strFileContent = lyricsContent;
 
     int nRet = sendXmlCommand(cmdUpload);
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         return nRet;
+    }
 
-    MLMsgRetUpload    retUpload;
+    MLMsgRetUpload retUpload;
 
     nRet = processCommonRetMsg(&retUpload, MC_UPLOAD);
-    if (nRet == ERR_BAD_USERPWD)
+    if (nRet == ERR_BAD_USERPWD) {
         m_bLogined = false;
+    }
 
     strLyricsId = retUpload.strLyricsId;
     strMsg = retUpload.strMessage;
@@ -278,55 +274,54 @@ int CMLClientSession::upload(const string &lyricsContent, string &strLyricsId, s
     return nRet;
 }
 
-void CMLClientSession::prepareClientInfo(CXMLMsgCmd &cmd)
-{
+void CMLClientSession::prepareClientInfo(CXMLMsgCmd &cmd) {
     cmd.strClient = m_strClient;
     cmd.nProductId = PRODUCT_ID_MINILYRICS;
 }
 
-int CMLClientSession::sendXmlCommand(CXMLMsgCmd &cmd)
-{
+int CMLClientSession::sendXmlCommand(CXMLMsgCmd &cmd) {
     // CXMLWriter        xmlStream;
-    CMLBinXMLWriter        xmlStream;
+    CMLBinXMLWriter xmlStream;
 
     int nRet = cmd.toXML(xmlStream);
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         return nRet;
+    }
 
     return m_MsgProtocol.writeXMLMsg(CUR_MSG_TYPE, &xmlStream.getBuffer());
 }
 
-int CMLClientSession::processCommonRetMsg(MLRetMsg *pretMsg, MLMsgCmd cmdOrgSend)
-{
+int CMLClientSession::processCommonRetMsg(MLRetMsg *pretMsg, MLMsgCmd cmdOrgSend) {
     assert(pretMsg);
-    MLMsgType        msgType;
-    string        buffMsg;
-    int                nRet;
+    MLMsgType msgType;
+    string buffMsg;
+    int nRet;
     buffMsg.reserve(2048);
     nRet = m_MsgProtocol.readMsg(msgType, &buffMsg);
-    if (nRet != ERR_OK)
-    {
+    if (nRet != ERR_OK) {
         DBG_LOG0("READ MSG FAILED!");
         return nRet;
     }
 
-    CSimpleXML        xml;
+    CSimpleXML xml;
     nRet = m_MsgProtocol.parseXMLMsg(&buffMsg, xml);
-    if (nRet != ERR_OK)
-    {
+    if (nRet != ERR_OK) {
         return nRet;
     }
 
-    if (strcmp(xml.m_pRoot->name.c_str(), MZ_RETURN) != 0)
+    if (strcmp(xml.m_pRoot->name.c_str(), MZ_RETURN) != 0) {
         return ERR_CMD_NOT_MATCH;
+    }
 
     nRet = pretMsg->fromXML(xml.m_pRoot);
-    if (nRet != ERR_OK)
+    if (nRet != ERR_OK) {
         return nRet;
+    }
 
-    MLMsgCmd        cmdOrg = mLMsgStr2Cmd(pretMsg->strOrgCmd.c_str());
-    if (cmdOrg != cmdOrgSend)
+    MLMsgCmd cmdOrg = mLMsgStr2Cmd(pretMsg->strOrgCmd.c_str());
+    if (cmdOrg != cmdOrgSend) {
         return ERR_CMD_NOT_MATCH;
+    }
 
     return pretMsg->result;
 }

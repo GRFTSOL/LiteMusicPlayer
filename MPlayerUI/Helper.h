@@ -1,13 +1,8 @@
-// Helper.h: interface for the Helper class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_HELPER_H__12EAEFEA_BAAC_49DE_8ABD_28FF06B85835__INCLUDED_)
-#define AFX_HELPER_H__12EAEFEA_BAAC_49DE_8ABD_28FF06B85835__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef MPlayerUI_Helper_h
+#define MPlayerUI_Helper_h
+
 
 #include "../Window/WindowLib.h"
 
@@ -32,4 +27,4 @@ void profileGetColorValue(COLORREF &clr, cstr_t szSectName, cstr_t szKeyName);
 
 void profileGetColorValue(CColor &clr, cstr_t szSectName, cstr_t szKeyName);
 
-#endif // !defined(AFX_HELPER_H__12EAEFEA_BAAC_49DE_8ABD_28FF06B85835__INCLUDED_)
+#endif // !defined(MPlayerUI_Helper_h)

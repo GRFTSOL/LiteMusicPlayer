@@ -1,8 +1,9 @@
+#pragma once
+
 #ifndef _LYRICSOUTPLUGIN_H_
 #define _LYRICSOUTPLUGIN_H_
 
-interface IMLyrOutHost
-{
+interface IMLyrOutHost {
     virtual int getLineCount() = 0;
     virtual bool getLyricsOfLine(int nLine, char szLyrics[], int nBuffLen, int &nBegTime, int &nEndTime) = 0;
     virtual int getCurLine() = 0;
@@ -13,15 +14,13 @@ interface IMLyrOutHost
 #endif
 };
 
-#define ML_LYR_OUT_VERSION        2
+#define ML_LYR_OUT_VERSION  2
 
-interface ILyricsOut
-{
-    enum
-    {
-        NOTIF_CUR_LINE        = 1,            // onCurLineChanged
-        NOTIF_HALF_CUR_LINE    = 1 << 1,        // OnNextLine
-        NOTIF_PLAY_POS        = 1 << 2,        // onPlayPos
+interface ILyricsOut {
+    enum {
+        NOTIF_CUR_LINE              = 1, // onCurLineChanged
+        NOTIF_HALF_CUR_LINE         = 1 << 1, // OnNextLine
+        NOTIF_PLAY_POS              = 1 << 2, // onPlayPos
     };
 
 #ifdef _WIN32

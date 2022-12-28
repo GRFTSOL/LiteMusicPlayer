@@ -5,8 +5,8 @@
 
 #include "PreferencePageBase.h"
 
-class CPagePfLyricsRoot : public CPagePfBase
-{
+
+class CPagePfLyricsRoot : public CPagePfBase {
     UIOBJECT_CLASS_NAME_DECLARE(CPagePfBase)
 public:
     CPagePfLyricsRoot();

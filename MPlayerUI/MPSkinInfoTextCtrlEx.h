@@ -1,10 +1,9 @@
-
 #pragma once
 
 #include "LyricShowObj.h"
 
-class CMPSkinInfoTextCtrlEx : public CLyricShowObj
-{
+
+class CMPSkinInfoTextCtrlEx : public CLyricShowObj {
     UIOBJECT_CLASS_NAME_DECLARE(CLyricShowObj)
 public:
     CMPSkinInfoTextCtrlEx();
@@ -30,8 +29,7 @@ protected:
     void wrapInfoText();
 
 protected:
-    CLyricsLines        m_vText;
-    CLyricsLines        m_vUnWrapedText;
+    CLyricsLines                m_vText;
+    CLyricsLines                m_vUnWrapedText;
 
 };
-

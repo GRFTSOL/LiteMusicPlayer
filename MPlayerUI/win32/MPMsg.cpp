@@ -1,71 +1,68 @@
-// MPMsg.cpp: implementation of the MPMsg class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "MPMsg.h"
 
 
-void cmdLineAnalyse(cstr_t szCmdLine, vector<string> &vCmdLine)
-{
-    cstr_t        szBeg, szEnd;
-    char        chSign;
-    string        str;
+void cmdLineAnalyse(cstr_t szCmdLine, vector<string> &vCmdLine) {
+    cstr_t szBeg, szEnd;
+    char chSign;
+    string str;
 
     szBeg = szCmdLine;
 
-    while (*szBeg)
-    {
-        if (*szBeg == '"')
-        {
+    while (*szBeg) {
+        if (*szBeg == '"') {
             chSign = '"';
             szBeg++;
-        }
-        else
+        } else {
             chSign = ' ';
+        }
 
         szEnd = szBeg;
-        while (*szEnd != '\0' && *szEnd != chSign)
+        while (*szEnd != '\0' && *szEnd != chSign) {
             szEnd++;
+        }
 
         str = "";
         str.append(szBeg, szEnd);
-        if (!str.empty())
+        if (!str.empty()) {
             vCmdLine.push_back(str);
+        }
 
-        if (*szEnd == '"')
+        if (*szEnd == '"') {
             szEnd++;
-        while (*szEnd == ' ')
+        }
+        while (*szEnd == ' ') {
             szEnd++;
+        }
 
         szBeg = szEnd;
     }
 }
 
-cstr_t cmdLineNext(cstr_t szCmdLine)
-{
-    char            chSign;
+cstr_t cmdLineNext(cstr_t szCmdLine) {
+    char chSign;
 
-    if (*szCmdLine == '"')
-    {
+    if (*szCmdLine == '"') {
         chSign = '"';
         szCmdLine++;
-    }
-    else
+    } else {
         chSign = ' ';
+    }
 
-    while (*szCmdLine != '\0' && *szCmdLine != chSign)
+    while (*szCmdLine != '\0' && *szCmdLine != chSign) {
         szCmdLine++;
-    if (*szCmdLine == '"')
+    }
+    if (*szCmdLine == '"') {
         szCmdLine++;
-    while (*szCmdLine == ' ')
+    }
+    while (*szCmdLine == ' ') {
         szCmdLine++;
+    }
 
     return szCmdLine;
 }
 
-void sendCommandLine(HWND hWnd, cstr_t szCmdLine)
-{
-    COPYDATASTRUCT    copyData;
+void sendCommandLine(HWND hWnd, cstr_t szCmdLine) {
+    COPYDATASTRUCT copyData;
 
     copyData.dwData = ML_SEND_CMD_LINE;
     copyData.lpData = (void *)szCmdLine;
@@ -74,9 +71,8 @@ void sendCommandLine(HWND hWnd, cstr_t szCmdLine)
     sendMessage(hWnd, WM_COPYDATA, ML_SEND_CMD_LINE, (LPARAM)&copyData);
 }
 
-void sendActivateMainWnd(HWND hWnd)
-{
-    COPYDATASTRUCT    copyData;
+void sendActivateMainWnd(HWND hWnd) {
+    COPYDATASTRUCT copyData;
 
     copyData.dwData = ML_ACTIVATE;
     copyData.lpData = "";

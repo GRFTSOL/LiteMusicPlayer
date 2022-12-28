@@ -1,20 +1,15 @@
-// MPSkinWnd.h: interface for the CMPSkinWnd class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MPSKINWND_H__C466015C_6B75_4118_98E2_AEDA64F864DA__INCLUDED_)
-#define AFX_MPSKINWND_H__C466015C_6B75_4118_98E2_AEDA64F864DA__INCLUDED_
+#ifndef MPlayerUI_MPSkinWnd_h
+#define MPlayerUI_MPSkinWnd_h
 
 #pragma once
 
 class ISkinCmdHandler;
 
 
-typedef map<CUIObject *, IEventHandler *>        MAP_EVENT_HANDLER;
+typedef map<CUIObject *, IEventHandler *> MAP_EVENT_HANDLER;
 
 
-class CMPSkinWnd : public CSkinWnd, public IEventHandler
-{
+class CMPSkinWnd : public CSkinWnd, public IEventHandler {
 public:
     CMPSkinWnd();
     virtual ~CMPSkinWnd();
@@ -79,20 +74,20 @@ protected:
 protected:
     typedef list<ISkinCmdHandler *>    LIST_SKINCMDHANDLER;
 
-    string                    m_strCmdHandler;
-    LIST_SKINCMDHANDLER        m_listSkinCmdHandler;
+    string                      m_strCmdHandler;
+    LIST_SKINCMDHANDLER         m_listSkinCmdHandler;
 
-    MAP_EVENT_HANDLER        m_mapEventHandlers;
+    MAP_EVENT_HANDLER           m_mapEventHandlers;
 
 };
 
-inline uint8_t opaquePercentToAlpha(int nOpaquePercent)
-{
-    if (nOpaquePercent < 10)
+inline uint8_t opaquePercentToAlpha(int nOpaquePercent) {
+    if (nOpaquePercent < 10) {
         nOpaquePercent = 10;
-    else if (nOpaquePercent > 100)
+    } else if (nOpaquePercent > 100) {
         nOpaquePercent = 100;
+    }
     return (uint8_t)(nOpaquePercent * 255 / 100);
 }
 
-#endif // !defined(AFX_MPSKINWND_H__C466015C_6B75_4118_98E2_AEDA64F864DA__INCLUDED_)
+#endif // !defined(MPlayerUI_MPSkinWnd_h)

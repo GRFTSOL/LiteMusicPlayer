@@ -1,28 +1,21 @@
-// MPSkinVis.h: interface for the CMPSkinVis class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_SKINVIS_H__A9BE151E_BD76_49B7_AD07_37D7C798122B__INCLUDED_)
-#define AFX_SKINVIS_H__A9BE151E_BD76_49B7_AD07_37D7C798122B__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef MPlayerUI_MPSkinVis_h
+#define MPlayerUI_MPSkinVis_h
+
 
 #include "../MPlayerEngine/IMPlayer.h"
 
+
 #ifdef SKIN_EDITOR
-class IEventHandler
-{
+class IEventHandler {
 };
 #endif
 
-class CMPSkinVis : public CUIObject, public IEventHandler
-{
+class CMPSkinVis : public CUIObject, public IEventHandler {
     UIOBJECT_CLASS_NAME_DECLARE(CUIObject)
 public:
-    enum VisMode
-    {
+    enum VisMode {
         VM_OSILLOSCOPE,
         VM_SPECTRUM,
     };
@@ -51,27 +44,26 @@ protected:
     virtual void drawSpectrum(CRawGraph *canvas, VisParam *visParam);
 
 protected:
-    VisMode                m_visMode;
-    CColor                m_clrFg;
-    CRawPen                m_pen;
+    VisMode                     m_visMode;
+    CColor                      m_clrFg;
+    CRawPen                     m_pen;
 
-    string                m_strBgFile, m_strSpectrumColFile;;
-    CSFImage            m_imgBg, m_imgSpectrumCol;
-    int                    m_nSpectrumUnitHeight;
-    int                    m_nSpectrumColSpace;
-    int                    m_nLeftMargin, m_nRightMargin, m_nTopMargin, m_nBottomMargin;
+    string                      m_strBgFile, m_strSpectrumColFile;;
+    CSFImage                    m_imgBg, m_imgSpectrumCol;
+    int                         m_nSpectrumUnitHeight;
+    int                         m_nSpectrumColSpace;
+    int                         m_nLeftMargin, m_nRightMargin, m_nTopMargin, m_nBottomMargin;
 
-    VisParam            *m_visParamCur;
+    VisParam                    *m_visParamCur;
 
     // vector<int>            m_vSpectrumDropDownMax, m_vSpectrumMax;
-    struct SpetrumCol
-    {
-        short        nMax;
-        short        nDropMax;
-        float        nDropSpeed;
+    struct SpetrumCol {
+        short                       nMax;
+        short                       nDropMax;
+        float                       nDropSpeed;
     };
-    vector<SpetrumCol>    m_vSpectrumDrop;
+    vector<SpetrumCol>          m_vSpectrumDrop;
 
 };
 
-#endif // !defined(AFX_SKINVIS_H__A9BE151E_BD76_49B7_AD07_37D7C798122B__INCLUDED_)
+#endif // !defined(MPlayerUI_MPSkinVis_h)

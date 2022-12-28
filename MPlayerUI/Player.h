@@ -5,13 +5,12 @@
 #include "CurMediaAlbumArt.h"
 
 
-#define LRC_TITLE_MAX_LEN        128
+#define LRC_TITLE_MAX_LEN   128
 
 class CMPlayerEventHandler;
 class CMPluginManager;
 
-class CPlayer
-{
+class CPlayer {
 public:
     CPlayer();
     virtual ~CPlayer();
@@ -132,29 +131,29 @@ public:
     bool setFieldValue(char szField[], int lenField, cstr_t szValue);
 
 protected:
-    char                    m_szSrcMedia[MAX_PATH];
-    char                    m_szArtist[LRC_TITLE_MAX_LEN], m_szTitle[LRC_TITLE_MAX_LEN];
-    char                    m_szAlbum[LRC_TITLE_MAX_LEN], m_szFullTitle[LRC_TITLE_MAX_LEN * 2];
+    char                        m_szSrcMedia[MAX_PATH];
+    char                        m_szArtist[LRC_TITLE_MAX_LEN], m_szTitle[LRC_TITLE_MAX_LEN];
+    char                        m_szAlbum[LRC_TITLE_MAX_LEN], m_szFullTitle[LRC_TITLE_MAX_LEN * 2];
     uint32_t                    m_nMediaLength;
 
-    bool                    m_bUseSeekTimeAsPlayingTime;
+    bool                        m_bUseSeekTimeAsPlayingTime;
 
-    VecStrings                m_vTitleFilters;
+    VecStrings                  m_vTitleFilters;
 
 protected:
     friend class CMPSkinMainWnd;
-    PLAYER_STATE            m_playerState;
+    PLAYER_STATE                m_playerState;
 
 protected:
-    // For ZikiPlayer
-    CMPAutoPtr<CMPluginManager>    m_pPluginMgr;
-    string                    m_strCurrentPlaylist;
-    bool                    m_bPlModified;
-    int                        m_ratingFilterMin;
+    // For DHPlayer
+    CMPAutoPtr<CMPluginManager> m_pPluginMgr;
+    string                      m_strCurrentPlaylist;
+    bool                        m_bPlModified;
+    int                         m_ratingFilterMin;
 
-    IMPlayer                *m_spPlayer;
-    CMPlayerEventHandler    *m_pEventHandler;
+    IMPlayer                    *m_spPlayer;
+    CMPlayerEventHandler        *m_pEventHandler;
 
 };
 
-extern CPlayer            g_Player;
+extern CPlayer g_Player;

@@ -1,30 +1,22 @@
-// MPHotkey.h: interface for the CMPHotkey class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MPHOTKEY_H__3439EBF6_7B08_4BD1_8C77_F36037282BF0__INCLUDED_)
-#define AFX_MPHOTKEY_H__3439EBF6_7B08_4BD1_8C77_F36037282BF0__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef MPlayerUI_gtk2_MPHotkey_h
+#define MPlayerUI_gtk2_MPHotkey_h
 
 
-struct MPHotKeySection
-{
-    cstr_t szName;
-    int        *vHotkeys;
+
+struct MPHotKeySection {
+    cstr_t                      szName;
+    int                         *vHotkeys;
 };
 
-extern MPHotKeySection    g_vHotkeySections[];
+extern MPHotKeySection g_vHotkeySections[];
 
-class CMPHotkey  
-{
+class CMPHotkey {
 public:
-    struct CmdAccKey
-    {
-        int                        cmd;
-        bool                    bGlobal;
+    struct CmdAccKey {
+        int                         cmd;
+        bool                        bGlobal;
         uint16_t                    button;
         uint16_t                    fsModifiers;
         uint16_t                    idHotKey;
@@ -74,9 +66,9 @@ protected:
     void unregisterAllHotKeys();
 
 protected:
-    bool            m_bEnabled;
-    V_ACCKEY        m_vAccKey;
+    bool                        m_bEnabled;
+    V_ACCKEY                    m_vAccKey;
 
 };
 
-#endif // !defined(AFX_MPHOTKEY_H__3439EBF6_7B08_4BD1_8C77_F36037282BF0__INCLUDED_)
+#endif // !defined(MPlayerUI_gtk2_MPHotkey_h)

@@ -1,7 +1,6 @@
 #pragma once
 
-class CMPlaylistCtrl : public CSkinListCtrl, public IEventHandler
-{
+class CMPlaylistCtrl : public CSkinListCtrl, public IEventHandler {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinListCtrl)
 public:
     CMPlaylistCtrl();
@@ -19,10 +18,9 @@ public:
 
     void setNowPlaying();
 
-    enum
-    {
-        IMAGE_NONE            = 0,
-        IMAGE_NOW_PLAYING    = 5,
+    enum {
+        IMAGE_NONE                  = 0,
+        IMAGE_NOW_PLAYING           = 5,
     };
 
 protected:
@@ -33,6 +31,6 @@ protected:
 
     int getItemImageIndex(int nItem) override;
 
-    int            m_nNowPlaying;
+    int                         m_nNowPlaying;
 
 };

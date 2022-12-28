@@ -1,7 +1,6 @@
 #pragma once
 
-class CWidgetGradientCtrl : public CWidgetCtrlBase
-{
+class CWidgetGradientCtrl : public CWidgetCtrlBase {
 public:
     enum    { COUNT = 3 };
 
@@ -12,7 +11,7 @@ public:
     void getColor(CColor clr[COUNT]);
 
 protected:
-    CRawPen            m_pen;
-    CColor            m_vColors[COUNT];
+    CRawPen                     m_pen;
+    CColor                      m_vColors[COUNT];
 
 };

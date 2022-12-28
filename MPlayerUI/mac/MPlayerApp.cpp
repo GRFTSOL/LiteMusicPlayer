@@ -1,7 +1,3 @@
-// MPlayerApp.cpp: implementation of the CMPlayerApp class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "MPlayerAppBase.h"
 #include "DownloadMgr.h"
 #include "VersionUpdate.h"
@@ -11,30 +7,25 @@
 #include "LyricShowObj.h"
 
 
-CMPlayerApp::CMPlayerApp()
-{
+CMPlayerApp::CMPlayerApp() {
     m_bRunning = false;
 }
 
-CMPlayerApp::~CMPlayerApp()
-{
+CMPlayerApp::~CMPlayerApp() {
 }
 
-bool CMPlayerApp::isAnotherInstanceRunning()
-{
+bool CMPlayerApp::isAnotherInstanceRunning() {
     return false;
 }
 
-bool CMPlayerApp::setRunningFlag()
-{
+bool CMPlayerApp::setRunningFlag() {
     // Is Product already running?
     m_bRunning = true;
 
     return true;
 }
 
-bool CMPlayerApp::init()
-{
+bool CMPlayerApp::init() {
     g_log.setSrcRootDir(__FILE__, 2);
 
     g_LangTool.setMacro(SZ_MACRO_PRODUCT_NAME, SZ_APP_NAME);
@@ -43,11 +34,11 @@ bool CMPlayerApp::init()
     return CMPlayerAppBase::init();
 }
 
-void CMPlayerApp::quit()
-{
-    if (!m_bRunning)
+void CMPlayerApp::quit() {
+    if (!m_bRunning) {
         return;
-    
+    }
+
     m_bRunning = false;
 
     CMPlayerAppBase::quit();

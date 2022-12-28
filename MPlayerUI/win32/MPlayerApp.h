@@ -2,8 +2,8 @@
 
 #include "../MPlayerAppBase.h"
 
-class CMPlayerApp : public CMPlayerAppBase
-{
+
+class CMPlayerApp : public CMPlayerAppBase {
 public:
     CMPlayerApp();
     virtual ~CMPlayerApp();
@@ -17,6 +17,6 @@ public:
     bool isRunning() { return m_hMutexRuning != nullptr; }
 
 protected:
-    HANDLE                    m_hMutexRuning;
+    HANDLE                      m_hMutexRuning;
 
 };

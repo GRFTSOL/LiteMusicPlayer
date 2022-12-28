@@ -1,7 +1,3 @@
-// MPSkinFactory.cpp: implementation of the CMPSkinFactory class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "MPlayerApp.h"
 #include "MPSkinFactory.h"
 #include "MPSkinWnd.h"
@@ -46,20 +42,17 @@
 
 
 CMPSkinFactory::CMPSkinFactory(CSkinApp *pApp, UIObjectIDDefinition uidDefinition[])
-    : CSkinFactory(pApp, uidDefinition)
-{
+: CSkinFactory(pApp, uidDefinition) {
     m_bClickThrough = false;
 
     setMenuIDByUID(CMD_QUIT, IDC_EXIT);
 }
 
-CMPSkinFactory::~CMPSkinFactory()
-{
+CMPSkinFactory::~CMPSkinFactory() {
 
 }
 
-int CMPSkinFactory::init()
-{
+int CMPSkinFactory::init() {
     AddUIObjNewer(CLyricShowMultiRowObj);
     AddUIObjNewer(CLyricShowTxtObj);
     AddUIObjNewer(CLyricShowTwoRowObj);
@@ -95,45 +88,41 @@ int CMPSkinFactory::init()
     return CSkinFactory::init();
 }
 
-CSkinWnd *CMPSkinFactory::newSkinWnd(cstr_t szSkinWndName, bool bMainWnd)
-{
-    if (bMainWnd)
+CSkinWnd *CMPSkinFactory::newSkinWnd(cstr_t szSkinWndName, bool bMainWnd) {
+    if (bMainWnd) {
         return new CMPSkinMainWnd;
-    else
+    } else {
         return new CMPSkinWnd;
+    }
 }
 
 CSkinMenu *CMPSkinFactory::newSkinMenu(CSkinWnd *pWnd, const rapidjson::Value &items) {
-    CMPSkinMenu    *menu = new CMPSkinMenu();
+    CMPSkinMenu *menu = new CMPSkinMenu();
     menu->addUICheckStatusIf(pWnd);
     menu->loadMenu(items);
     return menu;
 }
 
-void CMPSkinFactory::topmostAll(bool bTopmost)
-{
+void CMPSkinFactory::topmostAll(bool bTopmost) {
     auto itEnd = m_listSkinWnds.end();
 
-    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it)
-    {
-        CSkinWnd    *pWnd = *it;
+    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
+        CSkinWnd *pWnd = *it;
         pWnd->setTopmost(bTopmost);
     }
 }
 
-void CMPSkinFactory::minizeAll(bool bSilently)
-{
+void CMPSkinFactory::minizeAll(bool bSilently) {
     auto itEnd = m_listSkinWnds.end();
 
-    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it)
-    {
-        CSkinWnd    *pWnd = *it;
+    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
+        CSkinWnd *pWnd = *it;
 #ifdef _WIN32
-        if (::getParent(pWnd->getHandle()) != nullptr)
+        if (::getParent(pWnd->getHandle()) != nullptr) {
             continue;
+        }
 #endif
-        if (pWnd->isToolWindow())
-        {
+        if (pWnd->isToolWindow()) {
             pWnd->minimizeNoActivate();
             pWnd->hide();
         } else if (bSilently) {
@@ -144,32 +133,31 @@ void CMPSkinFactory::minizeAll(bool bSilently)
     }
 }
 
-void CMPSkinFactory::restoreAll()
-{
+void CMPSkinFactory::restoreAll() {
     auto itEnd = m_listSkinWnds.end();
 
-    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it)
-    {
-        CSkinWnd    *pWnd = *it;
+    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
+        CSkinWnd *pWnd = *it;
 
-        if (pWnd->isIconic())
+        if (pWnd->isIconic()) {
             pWnd->showNoActivate();
+        }
 
-        if (pWnd->isToolWindow())
+        if (pWnd->isToolWindow()) {
             pWnd->show();
+        }
     }
 }
 
-int CMPSkinFactory::getIDByNameEx(cstr_t szId, string &strToolTip)
-{
-    int        nID = CSkinFactory::getIDByNameEx(szId, strToolTip);
-    if (nID == UID_INVALID)
+int CMPSkinFactory::getIDByNameEx(cstr_t szId, string &strToolTip) {
+    int nID = CSkinFactory::getIDByNameEx(szId, strToolTip);
+    if (nID == UID_INVALID) {
         return nID;
+    }
 
-    string        strHotkey;
+    string strHotkey;
 
-    if (CMPlayerAppBase::getHotkey().getHotkeyText(nID, strHotkey))
-    {
+    if (CMPlayerAppBase::getHotkey().getHotkeyText(nID, strHotkey)) {
         strToolTip = _TL(strToolTip.c_str());
         strToolTip += " (";
         strToolTip += strHotkey;
@@ -179,16 +167,13 @@ int CMPSkinFactory::getIDByNameEx(cstr_t szId, string &strToolTip)
     return nID;
 }
 
-void CMPSkinFactory::getTooltip(int nId, string &strToolTip)
-{
+void CMPSkinFactory::getTooltip(int nId, string &strToolTip) {
     CSkinFactory::getTooltip(nId, strToolTip);
 
-    if (strToolTip.size())
-    {
-        string        strHotkey;
+    if (strToolTip.size()) {
+        string strHotkey;
 
-        if (CMPlayerAppBase::getHotkey().getHotkeyText(nId, strHotkey))
-        {
+        if (CMPlayerAppBase::getHotkey().getHotkeyText(nId, strHotkey)) {
             strToolTip = _TL(strToolTip.c_str());
             strToolTip += " (";
             strToolTip += strHotkey;
@@ -197,8 +182,7 @@ void CMPSkinFactory::getTooltip(int nId, string &strToolTip)
     }
 }
 
-void CMPSkinFactory::adjustHue(float hue, float saturation, float luminance)
-{
+void CMPSkinFactory::adjustHue(float hue, float saturation, float luminance) {
     CSkinFactory::adjustHue(hue, saturation, luminance);
 
     g_wndFloatingLyr.onAdjustHue(hue, saturation, luminance);
@@ -206,106 +190,99 @@ void CMPSkinFactory::adjustHue(float hue, float saturation, float luminance)
 }
 
 #ifndef _MPLAYER
-void CMPSkinFactory::beforeTrackMoveWith(Window *pWndChain[], int nCount, Window *pWndToTrack)
-{
+void CMPSkinFactory::beforeTrackMoveWith(Window *pWndChain[], int nCount, Window *pWndToTrack) {
     auto itEnd = m_listSkinWnds.end();
 
-    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it)
-    {
-        CSkinWnd    *pWnd = *it;
+    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
+        CSkinWnd *pWnd = *it;
         pWnd->m_WndDrag.beforeTrackMoveWith(pWndChain, nCount, pWndToTrack);
     }
 }
 
-void CMPSkinFactory::trackMoveWith(Window *pWnd, int x, int y)
-{
+void CMPSkinFactory::trackMoveWith(Window *pWnd, int x, int y) {
     auto itEnd = m_listSkinWnds.end();
 
-    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it)
-    {
-        CSkinWnd    *pWnd = *it;
+    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
+        CSkinWnd *pWnd = *it;
         pWnd->m_WndDrag.trackMoveWith(pWnd, x, y);
     }
 }
 
-void CMPSkinFactory::addWndCloseto(Window *pWnd, cstr_t szWndName, cstr_t szClass)
-{
+void CMPSkinFactory::addWndCloseto(Window *pWnd, cstr_t szWndName, cstr_t szClass) {
     m_WndCloseToPlayers.addWndCloseto(pWnd, szClass, szWndName);
 }
 
 // ISkinWndDragHost
-void CMPSkinFactory::getWndDragAutoCloseTo(vector<Window *> &vWnd)
-{
+void CMPSkinFactory::getWndDragAutoCloseTo(vector<Window *> &vWnd) {
     CSkinFactory::getWndDragAutoCloseTo(vWnd);
 
-    V_WNDCLOSETO::iterator    it, itEnd;
+    V_WNDCLOSETO::iterator it, itEnd;
     itEnd = m_WndCloseToPlayers.m_vWndCloseTo.end();
-    for (it = m_WndCloseToPlayers.m_vWndCloseTo.begin(); it != itEnd; ++it)
-    {
-        Window        *pWnd;
-        WndDrag::WndCloseTo        &item = *it;
+    for (it = m_WndCloseToPlayers.m_vWndCloseTo.begin(); it != itEnd; ++it) {
+        Window *pWnd;
+        WndDrag::WndCloseTo &item = *it;
 
-        if (item.pWnd)
+        if (item.pWnd) {
             pWnd = item.pWnd;
-        else
-        {
-            const char    *szClass = item.strClass.c_str();
-            if (isEmptyString(szClass))
+        } else {
+            const char *szClass = item.strClass.c_str();
+            if (isEmptyString(szClass)) {
                 szClass = nullptr;
-            const char    *szWnd = item.strWndName.c_str();
-            if (isEmptyString(szWnd))
+            }
+            const char *szWnd = item.strWndName.c_str();
+            if (isEmptyString(szWnd)) {
                 szWnd = nullptr;
+            }
             pWnd = findWindow(szClass, szWnd);
         }
 
-        if (pWnd)
+        if (pWnd) {
             vWnd.push_back(pWnd);
+        }
     }
 }
 #endif
 
-void CMPSkinFactory::allUpdateTransparent()
-{
-    int        nOpaque = g_profile.getInt(SZ_SECT_UI, "WindowOpaquePercent", 100);
-    uint8_t    byAlpha = opaquePercentToAlpha(nOpaque);
+void CMPSkinFactory::allUpdateTransparent() {
+    int nOpaque = g_profile.getInt(SZ_SECT_UI, "WindowOpaquePercent", 100);
+    uint8_t byAlpha = opaquePercentToAlpha(nOpaque);
 
 #ifdef _WIN32_DESKTOP
-    if (!isLayeredWndSupported())
+    if (!isLayeredWndSupported()) {
         return;
+    }
 
 #ifndef _MPLAYER
-    if (g_wndFloatingLyr.isValid())
+    if (g_wndFloatingLyr.isValid()) {
         g_wndFloatingLyr.setTransparent(byAlpha, false);
+    }
 
-    if (::getParent(CMPlayerAppBase::getMainWnd()->getHandle()))
+    if (::getParent(CMPlayerAppBase::getMainWnd()->getHandle())) {
         return;
+    }
 #endif
 #endif // #ifdef _WIN32_DESKTOP
 
     auto itEnd = m_listSkinWnds.end();
-    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it)
-    {
-        CSkinWnd    *pWnd = *it;
+    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
+        CSkinWnd *pWnd = *it;
         pWnd->setTransparent(byAlpha, m_bClickThrough);
     }
 }
 
-void CMPSkinFactory::setClickThrough(bool bClickThrough)
-{
+void CMPSkinFactory::setClickThrough(bool bClickThrough) {
     m_bClickThrough = bClickThrough;
 
     // save ClickThrough options
     g_profile.writeInt(SZ_SECT_UI, "ClickThrough", m_bClickThrough);
 
 #ifdef _WIN32_DESKTOP
-    if (m_bClickThrough)
-    {
+    if (m_bClickThrough) {
         // show MiniLyrics system tray icon.
-        int            nShowPos;
+        int nShowPos;
 
         nShowPos = g_profile.getInt(SZ_SECT_UI, "ShowIconOn", SHOW_ICON_ON_TASKBAR);
-        if (nShowPos == SHOW_ICON_ON_NONE || nShowPos == SHOW_ICON_ON_TASKBAR)
-        {
+        if (nShowPos == SHOW_ICON_ON_NONE || nShowPos == SHOW_ICON_ON_TASKBAR) {
             g_profile.writeInt(SZ_SECT_UI, "ShowIconOn", SHOW_ICON_ON_TASKBAR);
             CMPlayerAppBase::getMainWnd()->getTrayIcon().updateShowIconPos();
         }

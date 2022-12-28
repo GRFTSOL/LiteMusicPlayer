@@ -1,17 +1,13 @@
-// ErrorResolveDlg.cpp: implementation of the CErrorResolveDlg class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "MPlayerApp.h"
 #include "ErrorResolveDlg.h"
 #include "Helper.h"
 #include "PreferenceDlg.h"
 
-void showInetErrorDlg(Window *pWnd, int nError)
-{
-    string        strError;
-    string        strResolve;
-    char        szErrorId[256];
+
+void showInetErrorDlg(Window *pWnd, int nError) {
+    string strError;
+    string strResolve;
+    char szErrorId[256];
 
     snprintf(szErrorId, CountOf(szErrorId), "%s %d,  ", _TLT("Error Code:"), nError);
     strError = szErrorId;

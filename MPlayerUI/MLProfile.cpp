@@ -2,14 +2,15 @@
     Created  :    2002/01/04    21:30
     FileName :    MLProfile.cpp
     Author   :    xhy
-    
+
     Purpose  :    
 *********************************************************************/
 
 #include "../Skin/Skin.h"
 #include "MLProfile.h"
 
-#define CHAR_WORKING_FOLDER            '-'
+
+#define CHAR_WORKING_FOLDER '-'
 
 void analyseProxySetting(cstr_t szProxySetting, char szServer[], int nMaxSize, int &nPort);
 
@@ -43,23 +44,19 @@ void analyseProxySetting(cstr_t szProxySetting, char szServer[], int nMaxSize, i
 //    }
 
 
-CMLProfile::CMLProfile()
-{
+CMLProfile::CMLProfile() {
 }
 
-CMLProfile::~CMLProfile()
-{
+CMLProfile::~CMLProfile() {
 
 }
 
-bool CMLProfile::inetIsUseProxy()
-{
+bool CMLProfile::inetIsUseProxy() {
     return (g_profile.getInt("ProxyType", HTTP_PROXY_NONE) != HTTP_PROXY_NONE);
 }
 
-bool CMLProfile::inetGetProxy(string &serverOut, int &nPort)
-{
-    int        nHttpProxyType;
+bool CMLProfile::inetGetProxy(string &serverOut, int &nPort) {
+    int nHttpProxyType;
 
     nPort = __HTTP_PORT;
 
@@ -69,8 +66,9 @@ bool CMLProfile::inetGetProxy(string &serverOut, int &nPort)
         // 我们自己的代理设置
         // 代理服务器地址
         nPort = g_profile.getInt("ProxyPort", __HTTP_PORT);
-        if (nPort <= 0)
+        if (nPort <= 0) {
             nPort = __HTTP_PORT;
+        }
         serverOut = g_profile.getString("ProxyServer", "");
 
         return !serverOut.empty();
@@ -79,36 +77,32 @@ bool CMLProfile::inetGetProxy(string &serverOut, int &nPort)
     return false;
 }
 
-cstr_t CMLProfile::inetGetBase64ProxyUserPass()
-{
+cstr_t CMLProfile::inetGetBase64ProxyUserPass() {
     // return "";
     return g_profile.getString("Base64ProxyUserPass", "");
 }
 
 
-bool CMLProfile::writeDir(cstr_t szSectName, cstr_t szKeyName, cstr_t szDir)
-{
-    if (szDir[0] == getAppResourceDir()[0] && szDir[1] == ':')
-    {
+bool CMLProfile::writeDir(cstr_t szSectName, cstr_t szKeyName, cstr_t szDir) {
+    if (szDir[0] == getAppResourceDir()[0] && szDir[1] == ':') {
         // Lyrics folder is the same drive of Current working folder
-        string        str = szDir;
+        string str = szDir;
         str[0] = CHAR_WORKING_FOLDER;
         return g_profile.writeString(szSectName, szKeyName, str.c_str());
-    }
-    else
+    } else {
         return g_profile.writeString(szSectName, szKeyName, szDir);
+    }
 }
 
 
-string CMLProfile::getDir(cstr_t szSectName, cstr_t szKeyName, cstr_t szDefDir)
-{
-    string        strDir;
+string CMLProfile::getDir(cstr_t szSectName, cstr_t szKeyName, cstr_t szDefDir) {
+    string strDir;
 
     strDir = g_profile.getString(szSectName, szKeyName, szDefDir);
 
-    if (strDir.size() >= 2 && strDir[0] == CHAR_WORKING_FOLDER && strDir[1] == ':')
+    if (strDir.size() >= 2 && strDir[0] == CHAR_WORKING_FOLDER && strDir[1] == ':') {
         strDir[0] = getAppResourceDir()[0];
+    }
 
     return strDir;
 }
-

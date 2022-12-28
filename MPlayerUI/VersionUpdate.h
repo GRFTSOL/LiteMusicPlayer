@@ -1,23 +1,20 @@
-
 #pragma once
 
 
 uint32_t parseVersionStr(cstr_t version);
 
-class CVersionInfo
-{
+class CVersionInfo {
 public:
     int fromXML(SXNode *pNodeVer);
 
 public:
-    string              verNew;
-    string              strNewVerDate;            // 新版发布日期
-    string              strFeature;               // 新版特性
+    string                      verNew;
+    string                      strNewVerDate;      // 新版发布日期
+    string                      strFeature;         // 新版特性
 
 };
 
-class CVersionUpdate  
-{
+class CVersionUpdate {
 public:
     CVersionUpdate();
     virtual ~CVersionUpdate();

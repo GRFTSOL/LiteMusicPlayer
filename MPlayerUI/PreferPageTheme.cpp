@@ -8,17 +8,14 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-class CPagePfLyricsBgPic : public CPagePfBase
-{
+class CPagePfLyricsBgPic : public CPagePfBase {
     UIOBJECT_CLASS_NAME_DECLARE(CPagePfBase)
 public:
-    CPagePfLyricsBgPic() : CPagePfBase(PAGE_LYR_BG, "CMD_THEME_LYR_BG_PIC")
-    {
+    CPagePfLyricsBgPic() : CPagePfBase(PAGE_LYR_BG, "CMD_THEME_LYR_BG_PIC") {
         m_bIntialized = false;
     }
 
-    void onInitialUpdate() override
-    {
+    void onInitialUpdate() override {
         CPagePfBase::onInitialUpdate();
 
         m_bIntialized = true;
@@ -29,32 +26,30 @@ public:
 
         addOptBool(ET_LYRICS_DISPLAY_SETTINGS, SZ_SECT_LYR_DISPLAY, "DarkenLyrBg", true, "CID_C_DARKEN_LYR_BG");
 
-        setUIObjectText("CID_E_DELAY_TIME", 
+        setUIObjectText("CID_E_DELAY_TIME",
             g_profile.getString(SZ_SECT_LYR_DISPLAY, "SlideDelayTime", "10"));
 
         initCheckButtons();
 
-        setUIObjectText("CID_E_PIC_FOLDER", 
+        setUIObjectText("CID_E_PIC_FOLDER",
             CMLProfile::getDir(SZ_SECT_LYR_DISPLAY, "BgPicFolder", "").c_str());
 
     }
 
-    void onDestroy() override
-    {
-        if (m_bIntialized)
-        {
-            int        nDelayTime;
+    void onDestroy() override {
+        if (m_bIntialized) {
+            int nDelayTime;
             string strDelayTime = getUIObjectText("CID_E_DELAY_TIME");
             nDelayTime = atoi(strDelayTime.c_str());
-            if (nDelayTime > 0)
-            {
-                if (nDelayTime < 10)
+            if (nDelayTime > 0) {
+                if (nDelayTime < 10) {
                     nDelayTime = 10;
-                if (nDelayTime > 10000)
+                }
+                if (nDelayTime > 10000) {
                     nDelayTime = 10000;
+                }
 
-                if (nDelayTime != g_profile.getInt(SZ_SECT_LYR_DISPLAY, "SlideDelayTime", 10))
-                {
+                if (nDelayTime != g_profile.getInt(SZ_SECT_LYR_DISPLAY, "SlideDelayTime", 10)) {
                     CMPlayerSettings::setLyricsDisplaySettings("SlideDelayTime", nDelayTime);
                 }
             }
@@ -63,28 +58,24 @@ public:
         CPagePfBase::onDestroy();
     }
 
-    bool onCustomCommand(int nId) override
-    {
-        if (nId == getIDByName("CID_BR_PIC_FOLDER"))
-        {
+    bool onCustomCommand(int nId) override {
+        if (nId == getIDByName("CID_BR_PIC_FOLDER")) {
             onCommandSetBkImg();
 
-            setUIObjectText("CID_E_PIC_FOLDER", 
+            setUIObjectText("CID_E_PIC_FOLDER",
                 CMLProfile::getDir(SZ_SECT_LYR_DISPLAY, "BgPicFolder", "").c_str());
-        }
-        else
+        } else {
             return CPagePfBase::onCustomCommand(nId);
+        }
 
         return true;
     }
 
-    void onCommandSetBkImg()
-    {
-        CFolderDialog    dlg;
+    void onCommandSetBkImg() {
+        CFolderDialog dlg;
 
         dlg.setInitFolder(CMLProfile::getDir(SZ_SECT_LYR_DISPLAY, "BgPicFolder", "").c_str());
-        if (dlg.doBrowse(m_pSkin))
-        {
+        if (dlg.doBrowse(m_pSkin)) {
             CMPlayerSettings::setSettings(ET_LYRICS_DISPLAY_SETTINGS, SZ_SECT_LYR_DISPLAY, "UseBgImage", SZ_TRUE);
             CMPlayerSettings::setSettings(ET_LYRICS_DISPLAY_SETTINGS, SZ_SECT_LYR_DISPLAY, "BgPicFolder", dlg.getFolder());
             CMLProfile::writeDir(SZ_SECT_LYR_DISPLAY, "BgPicFolder", dlg.getFolder());
@@ -92,7 +83,7 @@ public:
     }
 
 protected:
-    bool        m_bIntialized;
+    bool                        m_bIntialized;
 
 };
 
@@ -100,38 +91,34 @@ UIOBJECT_CLASS_NAME_IMP(CPagePfLyricsBgPic, "PreferPage.LyrBgPic")
 
 //////////////////////////////////////////////////////////////////////////
 
-class CPagePfDisplayStyle : public CPagePfBase, public IPopupSkinWndNotify
-{
+class CPagePfDisplayStyle : public CPagePfBase, public IPopupSkinWndNotify {
     UIOBJECT_CLASS_NAME_DECLARE(CPagePfBase)
 protected:
-    enum COLOR_SET_TYPE
-    {
+    enum COLOR_SET_TYPE {
         CS_OUTLINED_HIGH_BORDER,
         CS_OUTLINED_LOW_BORDER,
         CS_BG,
         CS_SIZE,
     };
 
-    struct ColorOption
-    {
+    struct ColorOption {
         ColorOption() {
             pButton = nullptr;
             nButtonID = 0;
             clrDefault = 0;
         }
 
-        CSkinImageButton    *pButton;
-        CColor        clr;
-        COLORREF    clrDefault;
-        int            nButtonID;
-        string        strProfileKey;
+        CSkinImageButton            *pButton;
+        CColor                      clr;
+        COLORREF                    clrDefault;
+        int                         nButtonID;
+        string                      strProfileKey;
     };
 
-    ColorOption        m_ColorSet[CS_SIZE];
+    ColorOption                 m_ColorSet[CS_SIZE];
 
 public:
-    virtual void popupSkinWndOnSelected() override
-    {
+    virtual void popupSkinWndOnSelected() override {
         createLOBXlightBmp(true);
         createLOBXlightBmp(false);
         invalidateUIObject(CID_DS_CLR_HIGH);
@@ -139,8 +126,7 @@ public:
     }
 
 public:
-    CPagePfDisplayStyle() : CPagePfBase(PAGE_LYR_DISPLAY, "CMD_THEME_LYR_DISPLAY")
-    {
+    CPagePfDisplayStyle() : CPagePfBase(PAGE_LYR_DISPLAY, "CMD_THEME_LYR_DISPLAY") {
         CID_DS_MODE = 0;
         CID_DS_STYLE = 0;
         CID_DS_FADEOUT = 0;
@@ -152,14 +138,14 @@ public:
         m_eventType = ET_LYRICS_DISPLAY_SETTINGS;
     }
 
-    void onInitialUpdate() override
-    {
+    void onInitialUpdate() override {
         CPagePfBase::onInitialUpdate();
 
-        if (getExPoolBool("FloatingLyrMode", false))
+        if (getExPoolBool("FloatingLyrMode", false)) {
             m_eventType = ET_LYRICS_FLOATING_SETTINGS;
-        else
+        } else {
             m_eventType = ET_LYRICS_DISPLAY_SETTINGS;
+        }
 
         GET_ID_BY_NAME(CID_DS_MODE);
         GET_ID_BY_NAME(CID_DS_STYLE);
@@ -171,15 +157,15 @@ public:
         GET_ID_BY_NAME(CID_DS_CLR_LOW);
 
         m_pcbMode = (CSkinComboBox *)getUIObjectById(CID_DS_MODE, CSkinComboBox::className());
-        if (m_pcbMode)
-        {
+        if (m_pcbMode) {
             m_pcbMode->addString(_TLT("Normal lyrics mode settings"));
             m_pcbMode->addString(_TLT("Floating lyrics mode settings"));
 
-            if (m_eventType == ET_LYRICS_FLOATING_SETTINGS)
+            if (m_eventType == ET_LYRICS_FLOATING_SETTINGS) {
                 m_pcbMode->setCurSel(1);
-            else
+            } else {
                 m_pcbMode->setCurSel(0);
+            }
 
             m_pSkin->registerUIObjNotifyHandler(CID_DS_MODE, this);
         }
@@ -187,55 +173,47 @@ public:
         setSettingType(m_eventType == ET_LYRICS_FLOATING_SETTINGS ? ST_FLOATING_LYR : ST_NORMAL_LYR);
     }
 
-    void onUIObjNotify(IUIObjNotify *pNotify) override
-    {
+    void onUIObjNotify(IUIObjNotify *pNotify) override {
         CPagePfBase::onUIObjNotify(pNotify);
 
-        if (pNotify->isKindOf(CSkinComboBox::className()))
-        {
-            if (pNotify->nID == CID_DS_MODE)
-            {
+        if (pNotify->isKindOf(CSkinComboBox::className())) {
+            if (pNotify->nID == CID_DS_MODE) {
                 assert(m_pcbMode);
-                if (m_pcbMode)
-                {
+                if (m_pcbMode) {
                     setSettingType(m_pcbMode->getCurSel() == 0 ? ST_NORMAL_LYR : ST_FLOATING_LYR);
                 }
             }
         }
     }
 
-    bool onCustomCommand(int nId) override
-    {
-        if (nId == CID_DS_LOAD_LATIN_FONT || nId == CID_DS_LOAD_OTHER_FONT)
-        {
-            int        nSize, nWeight;
-            uint8_t    byItalic;
-            string    strFaceNameLatin9, strFaceNameOthers;
-            int        nRet;
-            bool    bLatin9 = (nId == CID_DS_LOAD_LATIN_FONT);
+    bool onCustomCommand(int nId) override {
+        if (nId == CID_DS_LOAD_LATIN_FONT || nId == CID_DS_LOAD_OTHER_FONT) {
+            int nSize, nWeight;
+            uint8_t byItalic;
+            string strFaceNameLatin9, strFaceNameOthers;
+            int nRet;
+            bool bLatin9 = (nId == CID_DS_LOAD_LATIN_FONT);
 
             // get default settings in profile
-            profileGetLyricsFont(m_strSectName.c_str(), nSize, nWeight, 
+            profileGetLyricsFont(m_strSectName.c_str(), nSize, nWeight,
                 byItalic, strFaceNameLatin9, strFaceNameOthers);
 
-            CDlgChooseFont        chooser;
+            CDlgChooseFont chooser;
 
-            nRet = chooser.doModal(m_pSkin, bLatin9 ? strFaceNameLatin9.c_str() : strFaceNameOthers.c_str(), 
+            nRet = chooser.doModal(m_pSkin, bLatin9 ? strFaceNameLatin9.c_str() : strFaceNameOthers.c_str(),
                 nSize, nWeight, byItalic != 0);
-            if (nRet == IDOK)
-            {
+            if (nRet == IDOK) {
                 nSize = chooser.getSize();
-                if (nSize < 0)
+                if (nSize < 0) {
                     nSize = -nSize;
+                }
 
                 // now save to profile
-                profileWriteLyricsFont(m_eventType, m_strSectName.c_str(), nSize, chooser.getWeight(), 
+                profileWriteLyricsFont(m_eventType, m_strSectName.c_str(), nSize, chooser.getWeight(),
                     chooser.getItalic(), bLatin9 ? chooser.getFaceName() : nullptr, bLatin9 ? nullptr : chooser.getFaceName());
             }
-        }
-        else if (nId == CID_DS_CLR_HIGH || nId == CID_DS_CLR_LOW)
-        {
-            CRect    rc;
+        } else if (nId == CID_DS_CLR_HIGH || nId == CID_DS_CLR_LOW) {
+            CRect rc;
             getUIObjectRect(nId, rc);
 
             m_pSkin->clientToScreen(rc);
@@ -243,18 +221,13 @@ public:
             // popup list window
             m_popupHighClrListWnd.create(m_pSkin, rc,
                 nId == CID_DS_CLR_HIGH, m_eventType == ET_LYRICS_FLOATING_SETTINGS, this);
-        }
-        else
-        {
+        } else {
             //
             // lyrics display Color settings
             //
-            for (int i = 0; i < CountOf(m_ColorSet); i++)
-            {
-                if (nId == m_ColorSet[i].nButtonID)
-                {
-                    if (m_ColorSet[i].pButton)
-                    {
+            for (int i = 0; i < CountOf(m_ColorSet); i++) {
+                if (nId == m_ColorSet[i].nButtonID) {
+                    if (m_ColorSet[i].pButton) {
                         m_ColorSet[i].clr = m_ColorSet[i].pButton->getColor();
 
                         string strColor = colorToStr(m_ColorSet[i].clr);
@@ -271,14 +244,12 @@ public:
     }
 
 protected:
-    enum SettingType
-    {
-        ST_NORMAL_LYR        = 0,
-        ST_FLOATING_LYR        = 1,
+    enum SettingType {
+        ST_NORMAL_LYR               = 0,
+        ST_FLOATING_LYR             = 1,
     };
 
-    void setSettingType(SettingType settingType)
-    {
+    void setSettingType(SettingType settingType) {
         clearOptions();
 
         CMPlayerApp::getInstance()->getCurLyrDisplaySettingName(settingType == ST_FLOATING_LYR, m_strSectName, m_eventType);
@@ -293,8 +264,7 @@ protected:
             m_ColorSet[CS_OUTLINED_LOW_BORDER].clrDefault = RGB(0, 0, 255);
             m_ColorSet[CS_BG].clrDefault = RGB(79, 88, 110);
 
-            if (m_eventType == ET_LYRICS_FLOATING_SETTINGS)
-            {
+            if (m_eventType == ET_LYRICS_FLOATING_SETTINGS) {
                 m_ColorSet[CS_OUTLINED_HIGH_BORDER].clrDefault = RGB(0, 0, 255);
                 m_ColorSet[CS_OUTLINED_LOW_BORDER].clrDefault = RGB(128, 128, 255);
             }
@@ -303,14 +273,12 @@ protected:
             m_ColorSet[CS_OUTLINED_LOW_BORDER].nButtonID = getIDByName("CID_DS_CLR_LOW_BORDER");
             m_ColorSet[CS_BG].nButtonID = getIDByName("CID_DS_CLR_BG");
 
-            for (int i = 0; i < CountOf(m_ColorSet); i++)
-            {
+            for (int i = 0; i < CountOf(m_ColorSet); i++) {
                 m_ColorSet[i].pButton = (CSkinImageButton*)getUIObjectById(m_ColorSet[i].nButtonID, CSkinImageButton::className());
-                if (m_ColorSet[i].pButton)
-                {
+                if (m_ColorSet[i].pButton) {
                     m_ColorSet[i].clr.set(m_ColorSet[i].clrDefault);
 
-                    profileGetColorValue(m_ColorSet[i].clr, 
+                    profileGetColorValue(m_ColorSet[i].clr,
                         m_strSectName.c_str(), m_ColorSet[i].strProfileKey.c_str());
 
                     m_ColorSet[i].pButton->setColor(m_ColorSet[i].clr, true);
@@ -318,77 +286,71 @@ protected:
             }
         }
 
-        CSkinComboBox        *m_pcbStyle;
+        CSkinComboBox *m_pcbStyle;
         m_pcbStyle = (CSkinComboBox *)getUIObjectById(CID_DS_STYLE, CSkinComboBox::className());
-        if (m_pcbStyle)
-        {
+        if (m_pcbStyle) {
             //
             // add lyrics display style options
             //
             cstr_t        vszItemName[] = { _TLM("Vertical scrolling"), _TLM("Double lines"), _TLM("Single line"),
                 _TLM("Static text"), _TLM("Movie subtitle") };
 
-            cstr_t        vszItemValues[] = { CLyricShowMultiRowObj::className(), CLyricShowTwoRowObj::className(), 
+                cstr_t        vszItemValues[] = { CLyricShowMultiRowObj::className(), CLyricShowTwoRowObj::className(),
                 CLyricShowSingleRowObj::className(),
                 SZ_TXT_LYR_CONTAINER, CLyricShowVobSub::className() };
 
-            OptComboStr        opt;
-            opt.nIDWidgetCombo = CID_DS_STYLE;
-            opt.set(ET_UI_SETTINGS_CHANGED,
-                m_strSectName.c_str(), 
+                OptComboStr        opt;
+                opt.nIDWidgetCombo = CID_DS_STYLE;
+                opt.set(ET_UI_SETTINGS_CHANGED,
+                m_strSectName.c_str(),
                 "LyrDisplayStyle",
                 CLyricShowMultiRowObj::className());
 
-            m_pcbStyle->resetContent();
-            assert(CountOf(vszItemName) == CountOf(vszItemValues));
-            for (int i = 0; i < CountOf(vszItemValues); i++)
-            {
+                m_pcbStyle->resetContent();
+                assert(CountOf(vszItemName) == CountOf(vszItemValues));
+                for (int i = 0; i < CountOf(vszItemValues); i++) {
                 m_pcbStyle->insertString(i, _TL(vszItemName[i]));
                 opt.addItemValue(vszItemValues[i]);
             }
             addOptComboStr(opt);
         }
 
-        CSkinComboBox        *m_pcbAlign;
+        CSkinComboBox *m_pcbAlign;
         m_pcbAlign = (CSkinComboBox *)getUIObjectById(CID_DS_ALIGN, CSkinComboBox::className());
-        if (m_pcbAlign)
-        {
+        if (m_pcbAlign) {
             //
             // lyrics align
             //
-            cstr_t        vszItemName[] = { _TLM("Left"), _TLM("Center"), _TLM("Right") };
-            cstr_t        vszItemValues[] = { "left", "center", "right" };
+            cstr_t vszItemName[] = { _TLM("Left"), _TLM("Center"), _TLM("Right") };
+            cstr_t vszItemValues[] = { "left", "center", "right" };
 
-            OptComboStr        opt;
+            OptComboStr opt;
             opt.nIDWidgetCombo = CID_DS_ALIGN;
             opt.set(m_eventType, m_strSectName.c_str(), "LyrAlign", "center");
 
             assert(CountOf(vszItemName) == CountOf(vszItemValues));
             m_pcbAlign->resetContent();
-            for (int i = 0; i < CountOf(vszItemValues); i++)
-            {
+            for (int i = 0; i < CountOf(vszItemValues); i++) {
                 m_pcbAlign->insertString(i, _TL(vszItemName[i]));
                 opt.addItemValue(vszItemValues[i]);
             }
             addOptComboStr(opt);
         }
 
-        CSkinComboBox        *m_pcbFadeOut;
+        CSkinComboBox *m_pcbFadeOut;
         m_pcbFadeOut = (CSkinComboBox *)getUIObjectById(CID_DS_FADEOUT, CSkinComboBox::className());
-        if (m_pcbFadeOut)
-        {
+        if (m_pcbFadeOut) {
             // lyrics Fade out options
             cstr_t        vszItemName[] = { _TLM("Automatic"), _TLM("Normal"), _TLM("Fade in lyrics"),
                 _TLM("Fade out background") };
 
-            OptComboStr        opt;
-            opt.nIDWidgetCombo = CID_DS_FADEOUT;
-            opt.set(m_eventType, m_strSectName.c_str(), "LyrDrawOpt", "fadein");
+                OptComboStr        opt;
+                opt.nIDWidgetCombo = CID_DS_FADEOUT;
+                opt.set(m_eventType, m_strSectName.c_str(), "LyrDrawOpt", "fadein");
 
-            assert(CountOf(vszItemName) == DO_MAX);
-            m_pcbFadeOut->resetContent();
-            for (int i = 0; i < CountOf(vszItemName); i++)
-            {
+                assert(CountOf(vszItemName) == DO_MAX);
+                m_pcbFadeOut->resetContent();
+                for (int i = 0; i < CountOf(vszItemName); i++) {
                 m_pcbFadeOut->insertString(i, _TL(vszItemName[i]));
                 opt.addItemValue(g_idsLyrDisplayOpt[i].szId);
             }
@@ -408,35 +370,32 @@ protected:
         m_pSkin->invalidateRect();
     }
 
-    void createLOBXlightBmp(bool bHilight)
-    {
-        CRect                    rc;
-        CLyricShowObj::TextOverlayBlending        tob;
+    void createLOBXlightBmp(bool bHilight) {
+        CRect rc;
+        CLyricShowObj::TextOverlayBlending tob;
 
-        if (!getUIObjectRect(getIDByName("CID_DS_CLR_HIGH"), rc))
+        if (!getUIObjectRect(getIDByName("CID_DS_CLR_HIGH"), rc)) {
             return;
+        }
 
         loadLyrOverlayBlendingSettings(m_strSectName.c_str(), tob, rc.height(), bHilight);
 
-        if (tob.obm == OBM_COLOR)
-        {
+        if (tob.obm == OBM_COLOR) {
             RawImageData *image = new RawImageData;
             image->create(rc.width(), rc.height(), 24);
-            rawImageSet(image, tob.clr[CLyricShowObj::TCI_FILL].r(), 
-                tob.clr[CLyricShowObj::TCI_FILL].g(), 
+            rawImageSet(image, tob.clr[CLyricShowObj::TCI_FILL].r(),
+                tob.clr[CLyricShowObj::TCI_FILL].g(),
                 tob.clr[CLyricShowObj::TCI_FILL].b(),
                 tob.clr[CLyricShowObj::TCI_FILL].getAlpha());
             tob.imgPattern.attach(image);
         }
 
-        if (tob.imgPattern.isValid())
-        {
-            CSkinImageButton    *pButton;
+        if (tob.imgPattern.isValid()) {
+            CSkinImageButton *pButton;
             pButton = (CSkinImageButton*)getUIObjectById(
                 bHilight ? CID_DS_CLR_HIGH : CID_DS_CLR_LOW, CSkinImageButton::className());
 
-            if (pButton)
-            {
+            if (pButton) {
                 pButton->setContentImage(tob.imgPattern.getHandle());
                 tob.imgPattern.detach();
             }
@@ -444,16 +403,16 @@ protected:
     }
 
 protected:
-    EventType            m_eventType;
-    string                m_strSectName;
+    EventType                   m_eventType;
+    string                      m_strSectName;
 
-    int                    CID_DS_MODE, CID_DS_STYLE, CID_DS_FADEOUT, CID_DS_ALIGN;
-    int                    CID_DS_LOAD_LATIN_FONT, CID_DS_LOAD_OTHER_FONT, CID_DS_CLR_HIGH, CID_DS_CLR_LOW;
+    int                         CID_DS_MODE, CID_DS_STYLE, CID_DS_FADEOUT, CID_DS_ALIGN;
+    int                         CID_DS_LOAD_LATIN_FONT, CID_DS_LOAD_OTHER_FONT, CID_DS_CLR_HIGH, CID_DS_CLR_LOW;
 
-    CSkinComboBox        *m_pcbMode;
+    CSkinComboBox               *m_pcbMode;
 
-    CLyrDisplayClrListWnd    m_popupHighClrListWnd;
-    CLyrDisplayClrListWnd    m_popupLowClrListWnd;
+    CLyrDisplayClrListWnd       m_popupHighClrListWnd;
+    CLyrDisplayClrListWnd       m_popupLowClrListWnd;
 
 };
 
@@ -461,33 +420,28 @@ UIOBJECT_CLASS_NAME_IMP(CPagePfDisplayStyle, "PreferPage.LyrDisplayStyle")
 
 //////////////////////////////////////////////////////////////////////////
 
-class CPagePfTheme : public CPagePfBase
-{
+class CPagePfTheme : public CPagePfBase {
     UIOBJECT_CLASS_NAME_DECLARE(CPagePfBase)
 public:
-    CPagePfTheme() : CPagePfBase(PAGE_THEMES, "CMD_THEME_THEME")
-    {
+    CPagePfTheme() : CPagePfBase(PAGE_THEMES, "CMD_THEME_THEME") {
         m_nThemeListID = 0;
     }
 
-    virtual void onUIObjNotify(IUIObjNotify *pNotify) override
-    {
-        if (pNotify->nID == m_nThemeListID && pNotify->isKindOf(CSkinListCtrl::className()))
-        {
-            CSkinListCtrlEventNotify    *pListCtrlNotify = (CSkinListCtrlEventNotify*)pNotify;
-            if (pListCtrlNotify->cmd == CSkinListCtrlEventNotify::C_SEL_CHANGED)
-            {
-                string    strTheme;
+    virtual void onUIObjNotify(IUIObjNotify *pNotify) override {
+        if (pNotify->nID == m_nThemeListID && pNotify->isKindOf(CSkinListCtrl::className())) {
+            CSkinListCtrlEventNotify *pListCtrlNotify = (CSkinListCtrlEventNotify*)pNotify;
+            if (pListCtrlNotify->cmd == CSkinListCtrlEventNotify::C_SEL_CHANGED) {
+                string strTheme;
                 int nSel = m_pThemeList->getNextSelectedItem();
-                if (nSel != -1)
+                if (nSel != -1) {
                     m_pThemeList->getItemText(nSel, 0, strTheme);
+                }
                 setUIObjectText("CID_E_THEMENAME", strTheme.c_str(), true);
             }
         }
     }
 
-    void onInitialUpdate() override
-    {
+    void onInitialUpdate() override {
         CPagePfBase::onInitialUpdate();
 
         m_nThemeListID = getIDByName("CID_THME_LIST");
@@ -496,54 +450,46 @@ public:
         m_pThemeList = (CSkinListCtrl *)getUIObjectById(m_nThemeListID, CSkinListCtrl::className());
         assert(m_pThemeList);
 
-        if (m_pThemeList)
+        if (m_pThemeList) {
             m_pThemeList->addColumn("Theme", 300);
+        }
 
         updateThemesList();
     }
 
-    void onDestroy() override
-    {
+    void onDestroy() override {
         m_pSkin->unregisterUIObjNotifyHandler(this);
 
         CPagePfBase::onDestroy();
     }
 
-    bool onCustomCommand(int nId) override
-    {
-        if (nId == getIDByName("CID_LOAD_THEME"))
-        {
+    bool onCustomCommand(int nId) override {
+        if (nId == getIDByName("CID_LOAD_THEME")) {
             loadTheme();
-        }
-        else if (nId == getIDByName("CID_SAVE_THEME"))
-        {
+        } else if (nId == getIDByName("CID_SAVE_THEME")) {
             saveTheme();
-        }
-        else if (nId == getIDByName("CID_DELETE_THEME"))
-        {
+        } else if (nId == getIDByName("CID_DELETE_THEME")) {
             deleteTheme();
-        }
-        else
+        } else {
             return CPagePfBase::onCustomCommand(nId);
+        }
 
         return true;
     }
 
 protected:
-    void loadTheme()
-    {
+    void loadTheme() {
         // load theme
-        int                nSel;
+        int nSel;
 
         nSel = m_pThemeList->getNextSelectedItem(-1);
-        if (nSel == -1)
-        {
+        if (nSel == -1) {
             m_pSkin->messageOut(_TLT("Please select the theme from list."));
             return;
         }
 
-        CThemesFile        file;
-        string            strSelTheme;
+        CThemesFile file;
+        string strSelTheme;
 
         m_pThemeList->getItemText(nSel, 0, strSelTheme);
         file.open();
@@ -552,14 +498,12 @@ protected:
         file.setCurTheme(strSelTheme.c_str());
     }
 
-    void saveTheme()
-    {
+    void saveTheme() {
         // save theme
-        CThemesFile        file;
+        CThemesFile file;
 
         string strThemeName = getUIObjectText("CID_E_THEMENAME");
-        if (strThemeName.empty())
-        {
+        if (strThemeName.empty()) {
             m_pSkin->messageOut(_TLT("Please enter the theme name."));
             return;
         }
@@ -573,19 +517,17 @@ protected:
         updateThemesList();
     }
 
-    void deleteTheme()
-    {
-        int                nSel;
+    void deleteTheme() {
+        int nSel;
 
         nSel = m_pThemeList->getNextSelectedItem(-1);
-        if (nSel == -1)
-        {
+        if (nSel == -1) {
             m_pSkin->messageOut(_TLT("Please select the theme from list."));
             return;
         }
 
-        CThemesFile        file;
-        string            strSelTheme;
+        CThemesFile file;
+        string strSelTheme;
 
         m_pThemeList->getItemText(nSel, 0, strSelTheme);
         file.open();
@@ -597,15 +539,15 @@ protected:
         setUIObjectText("CID_E_THEMENAME", "", true);
     }
 
-    void updateThemesList()
-    {
-        if (!m_pThemeList)
+    void updateThemesList() {
+        if (!m_pThemeList) {
             return;
+        }
 
-        CThemesFile        file;
-        VecStrings            vThemes;
-        string            strCurTheme;
-        int                nSel =  -1;
+        CThemesFile file;
+        VecStrings vThemes;
+        string strCurTheme;
+        int nSel = -1;
 
         file.open();
         file.enumAllThemes(vThemes);
@@ -614,20 +556,21 @@ protected:
 
         strCurTheme = g_profile.getString("CurTheme", "");
 
-        for (int i = 0; i < (int)vThemes.size(); i++)
-        {
+        for (int i = 0; i < (int)vThemes.size(); i++) {
             m_pThemeList->insertItem(i, vThemes[i].c_str());
-            if (nSel == -1 && strcmp(strCurTheme.c_str(), vThemes[i].c_str()))
+            if (nSel == -1 && strcmp(strCurTheme.c_str(), vThemes[i].c_str())) {
                 nSel = i;
+            }
         }
 
-        if (nSel != -1)
+        if (nSel != -1) {
             m_pThemeList->setItemSelectionState(nSel, true);
+        }
     }
 
 protected:
-    CSkinListCtrl        *m_pThemeList;
-    int                    m_nThemeListID;
+    CSkinListCtrl               *m_pThemeList;
+    int                         m_nThemeListID;
 
 };
 
@@ -637,19 +580,16 @@ UIOBJECT_CLASS_NAME_IMP(CPagePfTheme, "PreferPage.Theme")
 
 UIOBJECT_CLASS_NAME_IMP(CPagePfThemeRoot, "PreferPage.ThemeRoot")
 
-CPagePfThemeRoot::CPagePfThemeRoot() : CPagePfBase(PAGE_UNKNOWN, "CMD_ROOT_THEME")
-{
+CPagePfThemeRoot::CPagePfThemeRoot() : CPagePfBase(PAGE_UNKNOWN, "CMD_ROOT_THEME") {
 }
 
-void CPagePfThemeRoot::onInitialUpdate()
-{
+void CPagePfThemeRoot::onInitialUpdate() {
     CPagePfBase::onInitialUpdate();
 
     checkToolbarDefaultPage("CID_TOOLBAR_THEME");
 }
 
-void registerPfThemePages(CSkinFactory *pSkinFactory)
-{
+void registerPfThemePages(CSkinFactory *pSkinFactory) {
     AddUIObjNewer2(pSkinFactory, CPagePfThemeRoot);
     AddUIObjNewer2(pSkinFactory, CPagePfTheme);
     AddUIObjNewer2(pSkinFactory, CPagePfDisplayStyle);

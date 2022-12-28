@@ -5,8 +5,8 @@
 
 #include "PreferencePageBase.h"
 
-class CPreferItem
-{
+
+class CPreferItem {
 public:
     CPreferItem(cstr_t szName) : m_strName(szName) { }
     virtual ~CPreferItem() { }
@@ -16,15 +16,14 @@ public:
     virtual bool isDefault() = 0;
     virtual void reset() = 0;
 
-    string            m_strName;
+    string                      m_strName;
 
 };
 
-typedef vector<CPreferItem *>        VecPreferItems;
+typedef vector<CPreferItem *> VecPreferItems;
 
 
-class CPagePfAdvanced : public CPagePfBase, public IEditNotification
-{
+class CPagePfAdvanced : public CPagePfBase, public IEditNotification {
     UIOBJECT_CLASS_NAME_DECLARE(CPagePfBase)
 public:
     CPagePfAdvanced();
@@ -47,7 +46,7 @@ public:
 
 protected:
     enum {
-        IMG_UNMODIFIED = 0,
+        IMG_UNMODIFIED              = 0,
         IMG_MODIFIED,
     };
 
@@ -57,15 +56,15 @@ protected:
     void listAllItems();
 
 protected:
-    VecPreferItems                m_vPreferItems;
-    VecPreferItems                m_vFilteredItems;
-    int                            m_nMenuIdStart, m_nMenuIdEnd;
-    CSkinListCtrl                *m_pListItems;
-    string                        m_strLastSearch;
+    VecPreferItems              m_vPreferItems;
+    VecPreferItems              m_vFilteredItems;
+    int                         m_nMenuIdStart, m_nMenuIdEnd;
+    CSkinListCtrl               *m_pListItems;
+    string                      m_strLastSearch;
 
-    int                            CID_LIST_SETTINGS, CID_E_ADV_SEARCH;
+    int                         CID_LIST_SETTINGS, CID_E_ADV_SEARCH;
     bool                        m_bIgnoreSettingListNotify;
-    int                            m_nTimerIdSearch;
+    int                         m_nTimerIdSearch;
 
 };
 

@@ -3,8 +3,7 @@
 
 #pragma once
 
-class CSkinFilterCtrl : public CUIObject
-{
+class CSkinFilterCtrl : public CUIObject {
     UIOBJECT_CLASS_NAME_DECLARE(CUIObject)
 public:
     CSkinFilterCtrl();
@@ -18,7 +17,7 @@ public:
     void draw(CRawGraph *canvas) override;
 
 protected:
-    float m_fStartPercent;
+    float                       m_fStartPercent;
 
 };
 

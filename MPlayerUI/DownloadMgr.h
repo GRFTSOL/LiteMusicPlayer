@@ -2,50 +2,46 @@
     Created  :    2002/02/21    2:09
     FileName :    DownloadMgr.h
     Author   :    xhy
-    
+
     Purpose  :    下载任务的关理类
 *********************************************************************/
 
-#if !defined(AFX_DOWNLOADMGR_H__4C8DE765_266C_11D6_B47A_00E04C008BA3__INCLUDED_)
-#define AFX_DOWNLOADMGR_H__4C8DE765_266C_11D6_B47A_00E04C008BA3__INCLUDED_
+#ifndef MPlayerUI_DownloadMgr_h
+#define MPlayerUI_DownloadMgr_h
 
 #pragma once
 
 #include "MLProfile.h"
 
 
-enum DownloadTaskType
-{
+enum DownloadTaskType {
     DTT_LYRICS,
     DTT_CHECK_VERSION,
     DTT_CHECK_VERSION_NOUI,
     DTT_CHECK_AD,
 };
 
-class CDownloadTask
-{
+class CDownloadTask {
 public:
-    CDownloadTask(DownloadTaskType type, cstr_t szUrl)
-    {
+    CDownloadTask(DownloadTaskType type, cstr_t szUrl) {
         taskType = type;
         m_strURL = szUrl;
         m_errResult = ERR_OK;
         m_nHttpRetCode = 0;
     }
 
-    DownloadTaskType    taskType;
-    string                m_strURL;
-    string                strMediaKey;
-    string                m_strLyrFileName;
-    string            buffContent;
+    DownloadTaskType            taskType;
+    string                      m_strURL;
+    string                      strMediaKey;
+    string                      m_strLyrFileName;
+    string                      buffContent;
 
-    MLRESULT            m_errResult;
-    int                    m_nHttpRetCode;
+    MLRESULT                    m_errResult;
+    int                         m_nHttpRetCode;
 
 };
 
-class CDownloadMgr
-{
+class CDownloadMgr {
 public:
     CDownloadMgr();
     virtual ~CDownloadMgr();
@@ -95,16 +91,16 @@ protected:
     bool isQuiting() { return m_eventShutDown.acquire(0); }
 
 protected:
-    CThread                    m_threadDownload;
-    std::mutex                    m_mutexAccess;
-    LIST_TASK                m_listTasks, m_listRunningTasks;
-    Event                    m_eventShutDown;
-    string                    m_strDefSavePath;
+    CThread                     m_threadDownload;
+    std::mutex                  m_mutexAccess;
+    LIST_TASK                   m_listTasks, m_listRunningTasks;
+    Event                       m_eventShutDown;
+    string                      m_strDefSavePath;
 
 public:
-    bool                    m_bAutoDownload;
+    bool                        m_bAutoDownload;
 
 };
 
 
-#endif // !defined(AFX_DOWNLOADMGR_H__4C8DE765_266C_11D6_B47A_00E04C008BA3__INCLUDED_)
+#endif // !defined(MPlayerUI_DownloadMgr_h)

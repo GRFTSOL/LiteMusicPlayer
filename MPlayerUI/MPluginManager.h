@@ -2,18 +2,17 @@
 
 #include "../MPlayerEngine/IMPlayer.h"
 
-struct DecoderInfo
-{
-    VecStrings        vExt, vExtDesc;        // Supported file extension and descriptions.
-    string        desc;
-    string        strFileName;
-    int            nIFIndex;            // index in zikiPlayerQueryPluginIF
+
+struct DecoderInfo {
+    VecStrings                  vExt, vExtDesc;     // Supported file extension and descriptions.
+    string                      desc;
+    string                      strFileName;
+    int                         nIFIndex;           // index in zikiPlayerQueryPluginIF
 };
 
-typedef list<DecoderInfo>    ListDecodersInfo;
+typedef list<DecoderInfo> ListDecodersInfo;
 
-class CMPluginManager : public IMPluginManager
-{
+class CMPluginManager : public IMPluginManager {
     OBJ_REFERENCE_DECL
 public:
     CMPluginManager(void);
@@ -39,6 +38,6 @@ public:
 
 protected:
     // all decoders that MPlayer loaded.
-    ListDecodersInfo        m_listDecoders;
+    ListDecodersInfo            m_listDecoders;
 
 };

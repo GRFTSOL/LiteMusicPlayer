@@ -4,12 +4,13 @@
 #include "../pluginiTunes/iTunesCOMInterface_i.c"
 #include "AutoProcessEmbeddedLyrics.h"
 
-bool IMediaSource::getBestMatchLyrics(int nIndex, string &lyrSrcPath)
-{
-    uint32_t    nMediaLength;
+
+bool IMediaSource::getBestMatchLyrics(int nIndex, string &lyrSrcPath) {
+    uint32_t nMediaLength;
     string artist, album, title, location;
-    if (!getMediaInfo(nIndex, artist, album, title, location, nMediaLength))
+    if (!getMediaInfo(nIndex, artist, album, title, location, nMediaLength)) {
         return false;
+    }
 
     return g_LyricSearch.getBestMatchLyrics(location.c_str(), artist.c_str(), title.c_str(), lyrSrcPath);
 }
@@ -17,22 +18,17 @@ bool IMediaSource::getBestMatchLyrics(int nIndex, string &lyrSrcPath)
 
 //////////////////////////////////////////////////////////////////////////
 
-CiTunesMediaSource::CiTunesMediaSource() : IMediaSource(MST_ITUNES)
-{
+CiTunesMediaSource::CiTunesMediaSource() : IMediaSource(MST_ITUNES) {
 }
 
-CiTunesMediaSource::~CiTunesMediaSource()
-{
+CiTunesMediaSource::~CiTunesMediaSource() {
 
 }
 
-bool CiTunesMediaSource::updateLibrary(string &err)
-{
-    if (m_iTunesApp == nullptr)
-    {
+bool CiTunesMediaSource::updateLibrary(string &err) {
+    if (m_iTunesApp == nullptr) {
         HRESULT hr = ::CoCreateInstance(CLSID_iTunesApp, nullptr, CLSCTX_LOCAL_SERVER, IID_IiTunes, (PVOID *)&m_iTunesApp);
-        if (FAILED(hr) || m_iTunesApp == nullptr)
-        {
+        if (FAILED(hr) || m_iTunesApp == nullptr) {
             ERR_LOG1("Failed to create iTunesApp Instance: %X", hr);
             err = _TLT("Maybe you haven't installed iTunes.");
             return false;
@@ -44,38 +40,44 @@ bool CiTunesMediaSource::updateLibrary(string &err)
 
     CMPAutoPtr<IITLibraryPlaylist> mainLibrary;
     HRESULT hr = m_iTunesApp->get_LibraryPlaylist(&mainLibrary);
-    if (FAILED(hr) || mainLibrary == nullptr)
+    if (FAILED(hr) || mainLibrary == nullptr) {
         return false;
+    }
 
     CMPAutoPtr<IITTrackCollection> tracks;
     hr = mainLibrary->get_Tracks(&tracks);
-    if (FAILED(hr) || tracks == nullptr)
+    if (FAILED(hr) || tracks == nullptr) {
         return false;
+    }
 
     long countTracks = 0;
     hr = tracks->get_Count(&countTracks);
-    if (FAILED(hr))
+    if (FAILED(hr)) {
         return false;
+    }
 
-    for (int i = 0; i < countTracks; i++)
-    {
+    for (int i = 0; i < countTracks; i++) {
         CMPAutoPtr<IITTrack> track;
         HRESULT hr = tracks->get_Item(i, &track);
-        if (FAILED(hr) || track == nullptr)
+        if (FAILED(hr) || track == nullptr) {
             continue;
+        }
 
         ITTrackKind kind;
         hr = track->get_Kind(&kind);
-        if (FAILED(hr))
+        if (FAILED(hr)) {
             continue;
+        }
 
-        if (kind != ITTrackKindFile)
+        if (kind != ITTrackKindFile) {
             continue;
+        }
 
         IITFileOrCDTrack *trackFile = nullptr;
         hr = track->queryInterface(IID_IITFileOrCDTrack, (void **)&trackFile);
-        if (FAILED(hr) || trackFile == nullptr)
+        if (FAILED(hr) || trackFile == nullptr) {
             continue;
+        }
 
         Item item;
         item.trackFile = trackFile;
@@ -86,15 +88,12 @@ bool CiTunesMediaSource::updateLibrary(string &err)
     return true;
 }
 
-int CiTunesMediaSource::getItemCount()
-{
+int CiTunesMediaSource::getItemCount() {
     return (int)m_vTracks.size();
 }
 
-bool CiTunesMediaSource::getLocation(int nIndex, string &location)
-{
-    if (nIndex < 0 || nIndex >= (int)m_vTracks.size())
-    {
+bool CiTunesMediaSource::getLocation(int nIndex, string &location) {
+    if (nIndex < 0 || nIndex >= (int)m_vTracks.size()) {
         assert(0);
         return false;
     }
@@ -105,10 +104,8 @@ bool CiTunesMediaSource::getLocation(int nIndex, string &location)
     return true;
 }
 
-bool CiTunesMediaSource::getMediaInfo(int nIndex, string &artist, string &album, string &title, string &location, uint32_t &nMediaLength)
-{
-    if (nIndex < 0 || nIndex >= (int)m_vTracks.size())
-    {
+bool CiTunesMediaSource::getMediaInfo(int nIndex, string &artist, string &album, string &title, string &location, uint32_t &nMediaLength) {
+    if (nIndex < 0 || nIndex >= (int)m_vTracks.size()) {
         assert(0);
         return false;
     }
@@ -123,26 +120,29 @@ bool CiTunesMediaSource::getMediaInfo(int nIndex, string &artist, string &album,
     return true;
 }
 
-bool CiTunesMediaSource::updateMediaInfo(Item &item)
-{
+bool CiTunesMediaSource::updateMediaInfo(Item &item) {
     IITFileOrCDTrack *trackFile = item.trackFile;
 
     bstr_s bstrLocation, bstrArtist, bstrAlbum, bstrTitle;
     HRESULT hr = trackFile->get_Location(&bstrLocation);
-    if (FAILED(hr) || bstrLocation == nullptr)
+    if (FAILED(hr) || bstrLocation == nullptr) {
         return false;
+    }
 
     hr = trackFile->get_Artist(&bstrArtist);
-    if (SUCCEEDED(hr) && !isEmptyString(bstrArtist.c_str()))
+    if (SUCCEEDED(hr) && !isEmptyString(bstrArtist.c_str())) {
         item.artist = bstrArtist.c_str();
+    }
 
     hr = trackFile->get_Album(&bstrAlbum);
-    if (SUCCEEDED(hr) && !isEmptyString(bstrAlbum.c_str()))
+    if (SUCCEEDED(hr) && !isEmptyString(bstrAlbum.c_str())) {
         item.album = bstrAlbum.c_str();
+    }
 
     hr = trackFile->get_Name(&bstrTitle);
-    if (SUCCEEDED(hr) && !isEmptyString(bstrTitle.c_str()))
+    if (SUCCEEDED(hr) && !isEmptyString(bstrTitle.c_str())) {
         item.title = bstrTitle.c_str();
+    }
 
     item.location = bstrLocation.c_str();
 
@@ -153,10 +153,8 @@ bool CiTunesMediaSource::updateMediaInfo(Item &item)
     return true;
 }
 
-bool CiTunesMediaSource::getEmbeddedLyrics(int nIndex, string &lyrics)
-{
-    if (nIndex < 0 || nIndex >= (int)m_vTracks.size())
-    {
+bool CiTunesMediaSource::getEmbeddedLyrics(int nIndex, string &lyrics) {
+    if (nIndex < 0 || nIndex >= (int)m_vTracks.size()) {
         assert(0);
         return false;
     }
@@ -167,18 +165,17 @@ bool CiTunesMediaSource::getEmbeddedLyrics(int nIndex, string &lyrics)
 
     bstr_s bstrLyrics;
     HRESULT hr = trackFile->get_Lyrics(&bstrLyrics);
-    if (FAILED(hr) || isEmptyString(bstrLyrics.c_str()))
+    if (FAILED(hr) || isEmptyString(bstrLyrics.c_str())) {
         return false;
+    }
 
     lyrics = bstrLyrics.c_str();
 
     return true;
 }
 
-int CiTunesMediaSource::setEmbeddedLyrics(int nIndex, string &lyrics)
-{
-    if (nIndex < 0 || nIndex >= (int)m_vTracks.size())
-    {
+int CiTunesMediaSource::setEmbeddedLyrics(int nIndex, string &lyrics) {
+    if (nIndex < 0 || nIndex >= (int)m_vTracks.size()) {
         assert(0);
         return ERR_FALSE;
     }
@@ -187,10 +184,9 @@ int CiTunesMediaSource::setEmbeddedLyrics(int nIndex, string &lyrics)
 
     IITFileOrCDTrack *trackFile = m_vTracks[nIndex].trackFile;
 
-    bstr_s    bstrLyrics(lyrics.c_str());
+    bstr_s bstrLyrics(lyrics.c_str());
     HRESULT hr = trackFile->put_Lyrics(bstrLyrics.c_str());
-    if (FAILED(hr))
-    {
+    if (FAILED(hr)) {
         setCustomErrorDesc(OSError(hr).Description());
         return ERR_CUSTOM_ERROR;
     }
@@ -198,10 +194,8 @@ int CiTunesMediaSource::setEmbeddedLyrics(int nIndex, string &lyrics)
     return ERR_OK;
 }
 
-int CiTunesMediaSource::removeEmbeddedLyrics(int nIndex)
-{
-    if (nIndex < 0 || nIndex >= (int)m_vTracks.size())
-    {
+int CiTunesMediaSource::removeEmbeddedLyrics(int nIndex) {
+    if (nIndex < 0 || nIndex >= (int)m_vTracks.size()) {
         assert(0);
         return ERR_FALSE;
     }
@@ -212,24 +206,24 @@ int CiTunesMediaSource::removeEmbeddedLyrics(int nIndex)
 
     bstr_s bstrLocation;
     HRESULT hr = trackFile->get_Location(&bstrLocation);
-    if (FAILED(hr))
+    if (FAILED(hr)) {
         return false;
+    }
 
     bstr_s bstrLyrics;
     hr = trackFile->get_Lyrics(&bstrLyrics);
-    if (FAILED(hr))
-    {
+    if (FAILED(hr)) {
         ERR_LOG1("Failed to get lyrics: %s", OSError(hr).Description());
         return ERR_NOT_FOUND;
     }
 
-    if (isEmptyString(bstrLyrics.c_str()))
+    if (isEmptyString(bstrLyrics.c_str())) {
         return ERR_NOT_FOUND;
+    }
 
-    bstr_s    bstrLyricsEmpty(L"");
+    bstr_s bstrLyricsEmpty(L"");
     hr = trackFile->put_Lyrics(bstrLyricsEmpty.c_str());
-    if (FAILED(hr))
-    {
+    if (FAILED(hr)) {
         setCustomErrorDesc(OSError(hr).Description());
         return ERR_CUSTOM_ERROR;
     }
@@ -237,10 +231,8 @@ int CiTunesMediaSource::removeEmbeddedLyrics(int nIndex)
     return ERR_OK;
 }
 
-void CiTunesMediaSource::removeItem(int nIndex)
-{
-    if (nIndex < 0 || nIndex >= (int)m_vTracks.size())
-    {
+void CiTunesMediaSource::removeItem(int nIndex) {
+    if (nIndex < 0 || nIndex >= (int)m_vTracks.size()) {
         assert(0);
         return;
     }
@@ -251,32 +243,26 @@ void CiTunesMediaSource::removeItem(int nIndex)
 
 //////////////////////////////////////////////////////////////////////////
 
-void CFileMediaSource::addFolder(cstr_t szFolder, bool bIncludeSubFolder)
-{
-    FileFind        find;
-    string            strDir;
-    string            strFile;
+void CFileMediaSource::addFolder(cstr_t szFolder, bool bIncludeSubFolder) {
+    FileFind find;
+    string strDir;
+    string strFile;
 
-    if (!find.openDir(szFolder))
+    if (!find.openDir(szFolder)) {
         return;
+    }
 
     strDir = szFolder;
     dirStringAddSep(strDir);
 
-    while (find.findNext())
-    {
-        if (find.isCurDir() && bIncludeSubFolder)
-        {
+    while (find.findNext()) {
+        if (find.isCurDir() && bIncludeSubFolder) {
             strFile = strDir + find.getCurName();
             addFolder(strFile.c_str(), bIncludeSubFolder);
-        }
-        else
-        {
-            if (MediaTags::isMediaTypeSupported(find.getCurName()))
-            {
+        } else {
+            if (MediaTags::isMediaTypeSupported(find.getCurName())) {
                 strFile = strDir + find.getCurName();
-                if (!isFileExist(strFile.c_str()))
-                {
+                if (!isFileExist(strFile.c_str())) {
                     m_vFiles.push_back(Item(strFile));
                 }
             }
@@ -284,60 +270,51 @@ void CFileMediaSource::addFolder(cstr_t szFolder, bool bIncludeSubFolder)
     }
 }
 
-void CFileMediaSource::addFiles(const VecStrings &vFiles)
-{
-    for (uint32_t i = 0; i < vFiles.size(); i++)
-    {
-        if (!isFileExist(vFiles[i].c_str()))
-        {
-            string    str = vFiles[i];
+void CFileMediaSource::addFiles(const VecStrings &vFiles) {
+    for (uint32_t i = 0; i < vFiles.size(); i++) {
+        if (!isFileExist(vFiles[i].c_str())) {
+            string str = vFiles[i];
             m_vFiles.push_back(Item(str));
         }
     }
 }
 
-void CFileMediaSource::addFile(cstr_t szFile)
-{
-    if (!isFileExist(szFile))
-    {
+void CFileMediaSource::addFile(cstr_t szFile) {
+    if (!isFileExist(szFile)) {
         string str = szFile;
         m_vFiles.push_back(Item(str));
     }
 }
 
-void CFileMediaSource::close()
-{
+void CFileMediaSource::close() {
     m_vFiles.clear();
 }
 
-int CFileMediaSource::getItemCount()
-{
+int CFileMediaSource::getItemCount() {
     return (int)m_vFiles.size();
 }
 
-bool CFileMediaSource::getLocation(int nIndex, string &location)
-{
-    if (nIndex < 0 || nIndex >= (int)m_vFiles.size())
+bool CFileMediaSource::getLocation(int nIndex, string &location) {
+    if (nIndex < 0 || nIndex >= (int)m_vFiles.size()) {
         return false;
+    }
 
     location = m_vFiles[nIndex].file;
 
     return true;
 }
 
-bool CFileMediaSource::getMediaInfo(int nIndex, string &artist, string &album, string &title, string &location, uint32_t &nMediaLength)
-{
-    if (nIndex < 0 || nIndex >= (int)m_vFiles.size())
+bool CFileMediaSource::getMediaInfo(int nIndex, string &artist, string &album, string &title, string &location, uint32_t &nMediaLength) {
+    if (nIndex < 0 || nIndex >= (int)m_vFiles.size()) {
         return false;
+    }
 
     Item &item = m_vFiles[nIndex];
 
-    if (!item.bInfoAvailable)
-    {
+    if (!item.bInfoAvailable) {
         int nRet = MediaTags::getTagFast(item.file.c_str(), &item.artist, &item.title, &item.album,
             nullptr, nullptr, nullptr, &item.nMediaLength);
-        if (nRet != ERR_OK || item.title.empty())
-        {
+        if (nRet != ERR_OK || item.title.empty()) {
             // Analyse file name
             analyseLyricsFileNameEx(item.artist, item.title, item.file.c_str());
         }
@@ -354,56 +331,54 @@ bool CFileMediaSource::getMediaInfo(int nIndex, string &artist, string &album, s
     return true;
 }
 
-void tryToRecoverDmagedM4aFiles(cstr_t szFile)
-{
+void tryToRecoverDmagedM4aFiles(cstr_t szFile) {
     // Bug fixes for adding ID3v2 tag to m4a files. This bug was fixed after: 7.6.43.
-    if (!fileIsExtSame(szFile, ".m4a"))
+    if (!fileIsExtSame(szFile, ".m4a")) {
         return;
+    }
 
-    CID3v2IF        id3v2(ED_SYSDEF);
+    CID3v2IF id3v2(ED_SYSDEF);
 
     int nRet = id3v2.open(szFile, true, false);
-    if (nRet == ERR_OK)
-    {
+    if (nRet == ERR_OK) {
         nRet = id3v2.removeTagAndClose();
         LOG2(LOG_LVL_INFO, "remove ID3v2 Tag from damaged M4A file: %s, Result: %d", szFile, nRet);
     }
 }
 
-bool CFileMediaSource::getEmbeddedLyrics(int nIndex, string &lyrics)
-{
+bool CFileMediaSource::getEmbeddedLyrics(int nIndex, string &lyrics) {
     lyrics.clear();
 
-    if (nIndex < 0 || nIndex >= (int)m_vFiles.size())
+    if (nIndex < 0 || nIndex >= (int)m_vFiles.size()) {
         return false;
+    }
 
     Item &item = m_vFiles[nIndex];
 
-    if (!isFileExist(item.file.c_str()))
+    if (!isFileExist(item.file.c_str())) {
         return false;
+    }
 
-    if (MediaTags::isID3v2TagSupported(item.file.c_str()))
-    {
+    if (MediaTags::isID3v2TagSupported(item.file.c_str())) {
         // ID3v2 lyrics
-        CID3v2IF        id3v2(ED_SYSDEF);
-        int                nRet;
+        CID3v2IF id3v2(ED_SYSDEF);
+        int nRet;
 
         nRet = id3v2.open(item.file.c_str(), false, false);
-        if (nRet == ERR_OK)
-        {
+        if (nRet == ERR_OK) {
             ID3v2UnsynchLyrics unsyncLyrics;
             nRet = id3v2.getUnsyncLyrics(unsyncLyrics);
-            if (nRet == ERR_OK)
+            if (nRet == ERR_OK) {
                 lyrics = unsyncLyrics.m_strLyrics;
+            }
             id3v2.close();
         }
-    }
-    else if (MediaTags::isM4aTagSupported(item.file.c_str()))
-    {
-        CM4aTag    tag;
+    } else if (MediaTags::isM4aTagSupported(item.file.c_str())) {
+        CM4aTag tag;
         int nRet = tag.open(item.file.c_str(), false);
-        if (nRet != ERR_OK)
+        if (nRet != ERR_OK) {
             return false;
+        }
 
         nRet = tag.getLyrics(lyrics);
     }
@@ -412,80 +387,77 @@ bool CFileMediaSource::getEmbeddedLyrics(int nIndex, string &lyrics)
 }
 
 // save lyrics as id3v2 unsync lyrics.
-int CFileMediaSource::setEmbeddedLyrics(int nIndex, string &lyrics)
-{
-    if (nIndex < 0 || nIndex >= (int)m_vFiles.size())
+int CFileMediaSource::setEmbeddedLyrics(int nIndex, string &lyrics) {
+    if (nIndex < 0 || nIndex >= (int)m_vFiles.size()) {
         return ERR_FALSE;
+    }
 
     Item &item = m_vFiles[nIndex];
 
 
-    if (!MediaTags::isEmbeddedLyricsSupported(item.file.c_str()))
+    if (!MediaTags::isEmbeddedLyricsSupported(item.file.c_str())) {
         return ERR_NOT_SUPPORT;
+    }
 
     tryToRecoverDmagedM4aFiles(item.file.c_str());
 
     VecStrings vLyrNames;
     string bufLyrics = insertWithFileBom(lyrics);
-    if (MediaTags::isID3v2TagSupported(item.file.c_str()))
+    if (MediaTags::isID3v2TagSupported(item.file.c_str())) {
         vLyrNames.push_back(SZ_SONG_ID3V2_USLT);
-    else if (MediaTags::isM4aTagSupported(item.file.c_str()))
+    } else if (MediaTags::isM4aTagSupported(item.file.c_str())) {
         vLyrNames.push_back(SZ_SONG_M4A_LYRICS);
-    else
+    } else {
         return ERR_NOT_SUPPORT;
+    }
 
     return g_autoProcessEmbeddedLyrics.saveEmbeddedLyrics(item.file.c_str(), nullptr, &bufLyrics, vLyrNames);
 }
 
-int CFileMediaSource::removeEmbeddedLyrics(int nIndex)
-{
-    if (nIndex < 0 || nIndex >= (int)m_vFiles.size())
+int CFileMediaSource::removeEmbeddedLyrics(int nIndex) {
+    if (nIndex < 0 || nIndex >= (int)m_vFiles.size()) {
         return ERR_FALSE;
+    }
     Item &item = m_vFiles[nIndex];
 
     int nRemovedCount = 0;
     VecStrings vLyrNames;
     // vLyrNames.push_back(SZ_SONG_ID3V2_SYLT);
-    if (MediaTags::isID3v2TagSupported(item.file.c_str()))
+    if (MediaTags::isID3v2TagSupported(item.file.c_str())) {
         vLyrNames.push_back(SZ_SONG_ID3V2_USLT);
-    else if (MediaTags::isM4aTagSupported(item.file.c_str()))
-    {
+    } else if (MediaTags::isM4aTagSupported(item.file.c_str())) {
         tryToRecoverDmagedM4aFiles(item.file.c_str());
 
         vLyrNames.push_back(SZ_SONG_M4A_LYRICS);
-    }
-    else
+    } else {
         return ERR_NOT_SUPPORT;
+    }
 
     return MediaTags::removeEmbeddedLyrics(item.file.c_str(), vLyrNames, &nRemovedCount);
 }
 
-void CFileMediaSource::removeItem(int nIndex)
-{
-    if (nIndex < 0 || nIndex >= (int)m_vFiles.size())
+void CFileMediaSource::removeItem(int nIndex) {
+    if (nIndex < 0 || nIndex >= (int)m_vFiles.size()) {
         return;
+    }
 
     m_vFiles.erase(m_vFiles.begin() + nIndex);
 }
 
-void CFileMediaSource::expandMediaFiles(VecStrings &vFiles)
-{
-    for (int i = 0; i < (int)vFiles.size(); ++i)
-    {
+void CFileMediaSource::expandMediaFiles(VecStrings &vFiles) {
+    for (int i = 0; i < (int)vFiles.size(); ++i) {
         if (MediaTags::isMediaTypeSupported(vFiles[i].c_str())
-            && !isFileExist(vFiles[i].c_str()))
-        {
+            && !isFileExist(vFiles[i].c_str())) {
             m_vFiles.push_back(Item(vFiles[i]));
         }
     }
 }
 
-bool CFileMediaSource::isFileExist(cstr_t szFile)
-{
-    for (int i = 0; i < (int)m_vFiles.size(); i++)
-    {
-        if (strcmp(szFile, m_vFiles[i].file.c_str()) == 0)
+bool CFileMediaSource::isFileExist(cstr_t szFile) {
+    for (int i = 0; i < (int)m_vFiles.size(); i++) {
+        if (strcmp(szFile, m_vFiles[i].file.c_str()) == 0) {
             return true;
+        }
     }
 
     return false;

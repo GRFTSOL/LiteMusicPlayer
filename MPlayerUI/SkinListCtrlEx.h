@@ -1,7 +1,3 @@
-// SkinListCtrl.h: interface for the CSkinListCtrl class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #if !defined(__SKINLISTCTRLEX__H__)
 #define __SKINLISTCTRLEX__H__
 
@@ -11,35 +7,29 @@
 class CSkinListCtrlEx;
 
 
-class CSkinListCtrlEx : public CSkinListCtrl
-{
+class CSkinListCtrlEx : public CSkinListCtrl {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinListCtrl)
 public:
-    enum
-    {
-        TYPE_TEXT_EX    = CColHeader::TYPE_NEXT + 1
+    enum {
+        TYPE_TEXT_EX                = CColHeader::TYPE_NEXT + 1
     };
 
-    class ItemStringEx : public CSkinListCtrl::ItemString
-    {
+    class ItemStringEx : public CSkinListCtrl::ItemString {
     public:
-        struct TextColor
-        {
+        struct TextColor {
             TextColor(uint8_t _nCountOfText, uint8_t _nClrIndex) : nCountOfText(_nCountOfText), nClrIndex(_nClrIndex) { }
-            uint8_t        nCountOfText;
-            uint8_t        nClrIndex;
+            uint8_t                     nCountOfText;
+            uint8_t                     nClrIndex;
         };
-        class VecTextColor : public vector<TextColor>
-        {
+        class VecTextColor : public vector<TextColor> {
         public:
-            void add(uint8_t _nCountOfText, uint8_t _nClrIndex)
-            {
+            void add(uint8_t _nCountOfText, uint8_t _nClrIndex) {
                 push_back(TextColor(_nCountOfText, _nClrIndex));
             }
 
         };
 
-        VecTextColor        vTextColor;
+        VecTextColor                vTextColor;
 
     };
 

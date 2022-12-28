@@ -1,8 +1,6 @@
-
 #pragma once
 
-class CDlgSaveEmbeddedLyrics : public CBaseDialog  
-{
+class CDlgSaveEmbeddedLyrics : public CBaseDialog {
 public:
     CDlgSaveEmbeddedLyrics();
     virtual ~CDlgSaveEmbeddedLyrics();
@@ -14,7 +12,7 @@ public:
     virtual void onOK();
 
     enum {
-        COL_DESC = 0,
+        COL_DESC                    = 0,
         COL_NAME,
     };
 
@@ -24,11 +22,11 @@ protected:
     int doSaveAction(VecStrings &vLyrNames, Window *pWnd);
 
 protected:
-    string                m_strMediaUrl;
-    string            m_bufLyrics;
+    string                      m_strMediaUrl;
+    string                      m_bufLyrics;
 
-    CWidgetListCtrl        m_ctrlListLyrics;
-    uint32_t                m_nDefaultEmbededLST;
-    bool                m_bHasEmbeddedLyrAlready;
+    CWidgetListCtrl             m_ctrlListLyrics;
+    uint32_t                    m_nDefaultEmbededLST;
+    bool                        m_bHasEmbeddedLyrAlready;
 
 };

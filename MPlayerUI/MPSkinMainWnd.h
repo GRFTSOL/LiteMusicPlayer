@@ -1,18 +1,12 @@
-// MPSkinMainWnd.h: interface for the CMPSkinMainWndBase class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MPSKINMAINWND_H__5D734F0B_51A3_4A5C_BC56_E5064B5410B2__INCLUDED_)
-#define AFX_MPSKINMAINWND_H__5D734F0B_51A3_4A5C_BC56_E5064B5410B2__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef MPlayerUI_MPSkinMainWnd_h
+#define MPlayerUI_MPSkinMainWnd_h
+
 
 #include "MPSkinWnd.h"
 
-class CMPSkinMainWndBase : public CMPSkinWnd
-{
+class CMPSkinMainWndBase : public CMPSkinWnd {
 public:
     CMPSkinMainWndBase();
     virtual ~CMPSkinMainWndBase();
@@ -38,6 +32,8 @@ protected:
 
 #ifdef _MAC_OS
 #include "mac/MPSkinMainWndMac.h"
+
+
 #endif
 
-#endif // !defined(AFX_MPSKINMAINWND_H__5D734F0B_51A3_4A5C_BC56_E5064B5410B2__INCLUDED_)
+#endif // !defined(MPlayerUI_MPSkinMainWnd_h)

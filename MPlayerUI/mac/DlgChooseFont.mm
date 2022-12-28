@@ -11,14 +11,14 @@
 #import "../../Window/mac/WindowHandleHolder.h"
 #include "MPlayerApp.h"
 #include "DlgChooseFont.h"
+
+
 #import <AppKit/AppKit.h>
 
-CDlgChooseFont::CDlgChooseFont()
-{
+CDlgChooseFont::CDlgChooseFont() {
 }
 
-CDlgChooseFont::~CDlgChooseFont()
-{
+CDlgChooseFont::~CDlgChooseFont() {
 
 }
 
@@ -31,21 +31,22 @@ CDlgChooseFont::~CDlgChooseFont()
 
 @end
 
-int CDlgChooseFont::doModal(Window *pWndParent, cstr_t szFontFaceName, int nFontSize, int nWeight, int nItalic)
-{
+int CDlgChooseFont::doModal(Window *pWndParent, cstr_t szFontFaceName, int nFontSize, int nWeight, int nItalic) {
     m_strFontFaceName = szFontFaceName;
     m_nFontSize = nFontSize;
     m_weight = nWeight;
     m_nItalic = nItalic;
-    
+
     NSFont *oldFont = [NSFont fontWithName:[NSString stringWithUTF8String:szFontFaceName]
-                                       size:nFontSize];
-    if (oldFont == nil)
+        size:nFontSize];
+    if (oldFont == nil) {
         oldFont = [NSFont systemFontOfSize:nFontSize];
-    
+    }
+
     NSFontPanel *panel = [NSFontPanel sharedFontPanel];
-    if (pWndParent != nullptr)
+    if (pWndParent != nullptr) {
         [panel setParentWindow:(NSWindow*)pWndParent->getHandleHolder()->window];
+    }
     // [panel setWorksWhenModal:YES];
     FontChooserDelegate *delegate = [FontChooserDelegate alloc];
     [panel setDelegate:delegate];
@@ -53,33 +54,30 @@ int CDlgChooseFont::doModal(Window *pWndParent, cstr_t szFontFaceName, int nFont
 
     auto nRet = [NSApp runModalForWindow:panel];
     [delegate release];
-    if (nRet != IDOK)
+    if (nRet != IDOK) {
         return (int)nRet;
+    }
     //[panel makeKeyAndOrderFront:nil];
-    
+
     NSFont *newFont = [panel panelConvertFont:oldFont];
     m_strFontFaceName = [[newFont fontName] UTF8String];
     m_nFontSize = [newFont pointSize];
-    
+
     return IDOK;
 }
 
-cstr_t CDlgChooseFont::getFaceName()
-{
+cstr_t CDlgChooseFont::getFaceName() {
     return m_strFontFaceName.c_str();
 }
 
-int CDlgChooseFont::getSize()
-{
+int CDlgChooseFont::getSize() {
     return m_nFontSize;
 }
 
-int CDlgChooseFont::getWeight()
-{
+int CDlgChooseFont::getWeight() {
     return m_weight;
 }
 
-int CDlgChooseFont::getItalic()
-{
+int CDlgChooseFont::getItalic() {
     return m_nItalic;
 }

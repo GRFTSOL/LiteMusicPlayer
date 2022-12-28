@@ -1,7 +1,6 @@
 #pragma once
 
-class CDlgChooseFont
-{
+class CDlgChooseFont {
 public:
     CDlgChooseFont();
     virtual ~CDlgChooseFont();
@@ -17,8 +16,8 @@ public:
     int getItalic();
 
 public:
-    string            m_strFontFaceName;
-    int                m_nFontSize, m_weight;
-    int                m_nItalic;
+    string                      m_strFontFaceName;
+    int                         m_nFontSize, m_weight;
+    int                         m_nItalic;
 
 };

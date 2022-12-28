@@ -1,23 +1,17 @@
-// MPSkinFactory.h: interface for the CMPSkinFactory class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MPSKINFACTORY_H__0C65D114_F3BF_47A3_A647_37E9AB35B4ED__INCLUDED_)
-#define AFX_MPSKINFACTORY_H__0C65D114_F3BF_47A3_A647_37E9AB35B4ED__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#ifndef MPlayerUI_MPSkinFactory_h
+#define MPlayerUI_MPSkinFactory_h
+
 
 #include "../Skin/SkinFactory.h"
 
 
-#define SZ_DEFSKIN        "DHPlayer"
+#define SZ_DEFSKIN          "DHPlayer"
 
 class CSkinMenu;
 
-class CMPSkinFactory : public CSkinFactory  
-{
+class CMPSkinFactory : public CSkinFactory {
 public:
     CMPSkinFactory(CSkinApp *pApp, UIObjectIDDefinition uidDefinition[]);
     virtual ~CMPSkinFactory();
@@ -50,14 +44,14 @@ public:
 
     typedef vector<WndDrag::WndCloseTo>        V_WNDCLOSETO;
 
-    WndDrag            m_WndCloseToPlayers;
+    WndDrag                     m_WndCloseToPlayers;
 #endif
     void allUpdateTransparent();
     void setClickThrough(bool bClickThrough);
     bool getClickThrough() const { return m_bClickThrough; }
 
 protected:
-    bool                m_bClickThrough;
+    bool                        m_bClickThrough;
 
 protected:
     virtual CSkinMenu *newSkinMenu(CSkinWnd *pWnd, const rapidjson::Value &items) override;
@@ -66,4 +60,4 @@ protected:
 
 };
 
-#endif // !defined(AFX_MPSKINFACTORY_H__0C65D114_F3BF_47A3_A647_37E9AB35B4ED__INCLUDED_)
+#endif // !defined(MPlayerUI_MPSkinFactory_h)
