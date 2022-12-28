@@ -721,767 +721,732 @@ string formtLrcTimeTag(int time, bool isLongTimeFmt) {
     }
 }
 
-//////////////////////////////////////////////////////////////////////////
-// CPPUnit test
+#if UNIT_TEST
 
-#ifdef _CPPUNIT_TEST
+#include "utils/unittest.h"
 
-IMPLEMENT_CPPUNIT_TEST_REG(LrcTag)
-
-class CTestCaseLrcTag : public CppUnit::TestFixture {
-    CPPUNIT_TEST_SUITE(CTestCaseLrcTag);
-    CPPUNIT_TEST(testCLrcCompressor);
-    CPPUNIT_TEST(testParseLrcTimeTag);
-    CPPUNIT_TEST(testParseLrcPropTag);
-    CPPUNIT_TEST(testParseTxtPropTag);
-    CPPUNIT_TEST(testReadLine);
-    CPPUNIT_TEST(testSearchLrcPropTag);
-    CPPUNIT_TEST(testSearchTxtPropTag);
-    CPPUNIT_TEST(testGetLRCTagValue);
-    CPPUNIT_TEST(testGetLyricsTextEncoding);
-    CPPUNIT_TEST(testCLyrTagNameValueMap);
-    CPPUNIT_TEST(testCLrcTag_ReadFromText_Lrc);
-    CPPUNIT_TEST(testCLrcTag_WriteToText_Lrc);
-    CPPUNIT_TEST(testCLrcTag_WriteToFile_Lrc);
-    CPPUNIT_TEST(testCLrcTag_ReadFromText_Txt);
-    CPPUNIT_TEST(testCLrcTag_WriteToText_Txt);
-    CPPUNIT_TEST_SUITE_END();
-
-protected:
-
-public:
-    void setUp() {
-    }
-    void tearDown() {
-    }
-
-protected:
-    void testCLrcCompressor() {
+TEST(lrcTag, CLrcCompressor) {
 #ifndef _MAC_OS
 
-        cstr_t        szLyrics[] = {
-            "[aa:tag]\n [00:01]  line1   \n [00:02][00:03]  line2\n[00:04]line1",
-            "[aa:tag]\r\n[00:01][00:04]line1\r\n[00:02][00:03]line2",
+    cstr_t        szLyrics[] = {
+        "[aa:tag]\n [00:01]  line1   \n [00:02][00:03]  line2\n[00:04]line1",
+        "[aa:tag]\r\n[00:01][00:04]line1\r\n[00:02][00:03]line2",
 
-            "a[aa:tag]\n[00:01]line1\nc\n[00:02]line2\n[00:03]line1\n[00:04]line2",
-            "[00:01][00:03]line1\r\n[00:02][00:04]line2",
+        "a[aa:tag]\n[00:01]line1\nc\n[00:02]line2\n[00:03]line1\n[00:04]line2",
+        "[00:01][00:03]line1\r\n[00:02][00:04]line2",
 
-            "[aa:tag]\n[00:01]line1\n[00:02][00:03]line2\n[00:04]line3",
-            "[aa:tag]\r\n[00:01]line1\r\n[00:02][00:03]line2\r\n[00:04]line3",
-        };
+        "[aa:tag]\n[00:01]line1\n[00:02][00:03]line2\n[00:04]line3",
+        "[aa:tag]\r\n[00:01]line1\r\n[00:02][00:03]line2\r\n[00:04]line3",
+    };
 
-        for (int i = 0; i < CountOf(szLyrics[i]); i++) {
-            CLrcCompressor<char> compressor;
+    for (int i = 0; i < CountOf(szLyrics[i]); i++) {
+        CLrcCompressor<char> compressor;
 
-            compressor.parse(szLyrics[i]);
+        compressor.parse(szLyrics[i]);
 
-            string str;
-            if (compressor.isLrcFormat()) {
-                compressor.save(str, true);
-            }
-
-            if (i % 2 == 0) {
-                CPPUNIT_ASSERT(strcmp(str.c_str(), szLyrics[i + 1]) == 0);
-            } else {
-                CPPUNIT_ASSERT(strcmp(str.c_str(), szLyrics[i]) == 0);
-            }
+        string str;
+        if (compressor.isLrcFormat()) {
+            compressor.save(str, true);
         }
 
-        for (int i = 0; i < CountOf(szLyrics[i]); i += 2) {
-            string buf;
-            string bufCmp;
-            string strAnsi;
-
-            stringToAnsi(szLyrics[i + 1], -1, strAnsi);
-
-            buf = strAnsi.c_str();
-
-            //
-            // test Utf8
-            //
-            buf.clear();
-            buf.append(SZ_FE_UTF8);
-            buf.append(szLyrics[i]);
-            CPPUNIT_ASSERT(compressLyrics(buf));
-
-            bufCmp.clear();
-            bufCmp.append(SZ_FE_UTF8);
-            bufCmp.append(szLyrics[i + 1]);
-
-            CPPUNIT_ASSERT(buf.size() == bufCmp.size());
-            CPPUNIT_ASSERT(memcmp(buf.c_str(), bufCmp.c_str(), buf.size()) == 0);
-
-            CPPUNIT_ASSERT(buf.size() == strAnsi.size());
-            CPPUNIT_ASSERT(memcmp(buf.c_str(), strAnsi.c_str(), strAnsi.size()) == 0);
-
-            //
-            // test Ucs2
-            //
-            wstring_t strUcs2;
-            utf8ToUCS2(szLyrics[i], -1, strUcs2);
-            buf.clear();
-            buf.append(SZ_FE_UCS2);
-            buf.append((char *)strUcs2.c_str(), strUcs2.size() * sizeof(WCHAR));
-            CPPUNIT_ASSERT(compressLyrics(buf));
-
-            utf8ToUCS2(szLyrics[i + 1], -1, strUcs2);
-            bufCmp.clear();
-            bufCmp.append(SZ_FE_UCS2);
-            bufCmp.append((char *)strUcs2.c_str(), strUcs2.size() * sizeof(WCHAR));
-
-            CPPUNIT_ASSERT(buf.size() == bufCmp.size());
-            CPPUNIT_ASSERT(memcmp(buf.c_str(), bufCmp.c_str(), buf.size()) == 0);
-
-            CPPUNIT_ASSERT(buf.size() == strAnsi.size());
-            CPPUNIT_ASSERT(memcmp(buf.c_str(), strAnsi.c_str(), strAnsi.size()) == 0);
-
-            //
-            // test Ucs2 Big endian
-            //
-            utf8ToUCS2(szLyrics[i], -1, strUcs2);
-            buf.clear();
-            buf.append(SZ_FE_UCS2_BE);
-            buf.append((char *)strUcs2.c_str(), strUcs2.size() * sizeof(WCHAR));
-            uCS2LEToBE((WCHAR *)buf.data() + 1, strUcs2.size());
-            CPPUNIT_ASSERT(compressLyrics(buf));
-
-            utf8ToUCS2(szLyrics[i + 1], -1, strUcs2);
-            bufCmp.clear();
-            bufCmp.append(SZ_FE_UCS2_BE);
-            bufCmp.append((char *)strUcs2.c_str(), strUcs2.size() * sizeof(WCHAR));
-            uCS2LEToBE((WCHAR *)bufCmp.data() + 1, strUcs2.size());
-
-            CPPUNIT_ASSERT(buf.size() == bufCmp.size());
-            CPPUNIT_ASSERT(memcmp(buf.c_str(), bufCmp.c_str(), buf.size()) == 0);
-
-            CPPUNIT_ASSERT(buf.size() == strAnsi.size());
-            CPPUNIT_ASSERT(memcmp(buf.c_str(), strAnsi.c_str(), strAnsi.size()) == 0);
+        if (i % 2 == 0) {
+            ASSERT_TRUE(strcmp(str.c_str(), szLyrics[i + 1]) == 0);
+        } else {
+            ASSERT_TRUE(strcmp(str.c_str(), szLyrics[i]) == 0);
         }
+    }
+
+    for (int i = 0; i < CountOf(szLyrics[i]); i += 2) {
+        string buf;
+        string bufCmp;
+        string strAnsi;
+
+        stringToAnsi(szLyrics[i + 1], -1, strAnsi);
+
+        buf = strAnsi.c_str();
+
+        //
+        // test Utf8
+        //
+        buf.clear();
+        buf.append(SZ_FE_UTF8);
+        buf.append(szLyrics[i]);
+        ASSERT_TRUE(compressLyrics(buf));
+
+        bufCmp.clear();
+        bufCmp.append(SZ_FE_UTF8);
+        bufCmp.append(szLyrics[i + 1]);
+
+        ASSERT_TRUE(buf.size() == bufCmp.size());
+        ASSERT_TRUE(memcmp(buf.c_str(), bufCmp.c_str(), buf.size()) == 0);
+
+        ASSERT_TRUE(buf.size() == strAnsi.size());
+        ASSERT_TRUE(memcmp(buf.c_str(), strAnsi.c_str(), strAnsi.size()) == 0);
+
+        //
+        // test Ucs2
+        //
+        wstring_t strUcs2;
+        utf8ToUCS2(szLyrics[i], -1, strUcs2);
+        buf.clear();
+        buf.append(SZ_FE_UCS2);
+        buf.append((char *)strUcs2.c_str(), strUcs2.size() * sizeof(WCHAR));
+        ASSERT_TRUE(compressLyrics(buf));
+
+        utf8ToUCS2(szLyrics[i + 1], -1, strUcs2);
+        bufCmp.clear();
+        bufCmp.append(SZ_FE_UCS2);
+        bufCmp.append((char *)strUcs2.c_str(), strUcs2.size() * sizeof(WCHAR));
+
+        ASSERT_TRUE(buf.size() == bufCmp.size());
+        ASSERT_TRUE(memcmp(buf.c_str(), bufCmp.c_str(), buf.size()) == 0);
+
+        ASSERT_TRUE(buf.size() == strAnsi.size());
+        ASSERT_TRUE(memcmp(buf.c_str(), strAnsi.c_str(), strAnsi.size()) == 0);
+
+        //
+        // test Ucs2 Big endian
+        //
+        utf8ToUCS2(szLyrics[i], -1, strUcs2);
+        buf.clear();
+        buf.append(SZ_FE_UCS2_BE);
+        buf.append((char *)strUcs2.c_str(), strUcs2.size() * sizeof(WCHAR));
+        uCS2LEToBE((WCHAR *)buf.data() + 1, strUcs2.size());
+        ASSERT_TRUE(compressLyrics(buf));
+
+        utf8ToUCS2(szLyrics[i + 1], -1, strUcs2);
+        bufCmp.clear();
+        bufCmp.append(SZ_FE_UCS2_BE);
+        bufCmp.append((char *)strUcs2.c_str(), strUcs2.size() * sizeof(WCHAR));
+        uCS2LEToBE((WCHAR *)bufCmp.data() + 1, strUcs2.size());
+
+        ASSERT_TRUE(buf.size() == bufCmp.size());
+        ASSERT_TRUE(memcmp(buf.c_str(), bufCmp.c_str(), buf.size()) == 0);
+
+        ASSERT_TRUE(buf.size() == strAnsi.size());
+        ASSERT_TRUE(memcmp(buf.c_str(), strAnsi.c_str(), strAnsi.size()) == 0);
+    }
 #endif // #ifndef _MAC_OS
-    }
+}
 
-    void testParseLrcTimeTag() {
-        // These are succeeded case.
-        cstr_t vTestTag[] = { "[1:30.001]", "[ 10 : 03 . 01 ] abc", "[01:30.1][abc" };
-        int vTime[] = { (1 * 60 + 30 ) * 1000 + 1, (10 * 60 + 3 ) * 1000 + 1 * 10, (1 * 60 + 30 ) * 1000 + 1 * 100 };
-        cstr_t vNextPosStr[] = { "", " abc", "[abc" };
+TEST(lrcTag, ParseLrcTimeTag) {
+    // These are succeeded case.
+    cstr_t vTestTag[] = { "[1:30.001]", "[ 10 : 03 . 01 ] abc", "[01:30.1][abc" };
+    int vTime[] = { (1 * 60 + 30 ) * 1000 + 1, (10 * 60 + 3 ) * 1000 + 1 * 10, (1 * 60 + 30 ) * 1000 + 1 * 100 };
+    cstr_t vNextPosStr[] = { "", " abc", "[abc" };
 
-        int nNextPos, nTime;
-        for (int i = 0; i < CountOf(vTestTag); i++) {
-            bool bRet = parseLrcTimeTag(vTestTag[i], nNextPos, nTime);
-            if (!bRet) {
-                CPPUNIT_FAIL_T(stringPrintf("parseLrcTimeTag: failed, case: %d, %s", i, vTestTag[i]).c_str());
-            }
-
-            if (strncmp(vTestTag[i] + nNextPos, vNextPosStr[i], strlen(vNextPosStr[i])) != 0) {
-                CPPUNIT_FAIL_T(stringPrintf("parseLrcTimeTag: Wrong nextPos: %d, case: %d, %s", nNextPos, i, vTestTag[i]).c_str());
-            }
-
-            if (nTime != vTime[i]) {
-                CPPUNIT_FAIL_T(stringPrintf("parseLrcTimeTag: Wrong Time: %d, case: %d, %s", nNextPos, i, vTestTag[i]).c_str());
-            }
+    int nNextPos, nTime;
+    for (int i = 0; i < CountOf(vTestTag); i++) {
+        bool bRet = parseLrcTimeTag(vTestTag[i], nNextPos, nTime);
+        if (!bRet) {
+            FAIL() << (stringPrintf("parseLrcTimeTag: failed, case: %d, %s", i, vTestTag[i]).c_str());
         }
 
-        // Failed case
-        cstr_t vTestTagFailed[] = { "[1:30.001 abc", "[ 10a : 03 . 01 ]", "[01:30.1x]" };
-        for (int i = 0; i < CountOf(vTestTagFailed); i++) {
-            bool bRet = parseLrcTimeTag(vTestTagFailed[i], nNextPos, nTime);
-            if (bRet) {
-                CPPUNIT_FAIL_T(stringPrintf("parseLrcTimeTag(Failure test): failed, case: %d, %s", i, vTestTagFailed[i]).c_str());
-            }
+        if (strncmp(vTestTag[i] + nNextPos, vNextPosStr[i], strlen(vNextPosStr[i])) != 0) {
+            FAIL() << (stringPrintf("parseLrcTimeTag: Wrong nextPos: %d, case: %d, %s", nNextPos, i, vTestTag[i]).c_str());
+        }
+
+        if (nTime != vTime[i]) {
+            FAIL() << (stringPrintf("parseLrcTimeTag: Wrong Time: %d, case: %d, %s", nNextPos, i, vTestTag[i]).c_str());
         }
     }
 
-    void testParseLrcPropTag() {
-        // These are succeeded case.
-        cstr_t vTestTag[] = { "[ar:value", "[ar:value]", "[ar:]", "[ ar:  value]aaaa", "[ ar:v[xxx]alue]" };
-        cstr_t vValue[] = { "value", "value", "", "  value", "v[xxx]alue" };
+    // Failed case
+    cstr_t vTestTagFailed[] = { "[1:30.001 abc", "[ 10a : 03 . 01 ]", "[01:30.1x]" };
+    for (int i = 0; i < CountOf(vTestTagFailed); i++) {
+        bool bRet = parseLrcTimeTag(vTestTagFailed[i], nNextPos, nTime);
+        if (bRet) {
+            FAIL() << (stringPrintf("parseLrcTimeTag(Failure test): failed, case: %d, %s", i, vTestTagFailed[i]).c_str());
+        }
+    }
+}
 
-        string strPropName = SZ_LRC_AR;
-        int nValBegPos, nValEndPos;
-        for (int i = 0; i < CountOf(vTestTag); i++) {
-            bool bRet = parseLrcPropTag(vTestTag[i], strlen(vTestTag[i]), strPropName, nValBegPos, nValEndPos);
-            if (!bRet) {
-                CPPUNIT_FAIL_T(stringPrintf("parseLrcPropTag: failed, case: %d, %s", i, vTestTag[i]).c_str());
-            }
+TEST(lrcTag, ParseLrcPropTag) {
+    // These are succeeded case.
+    cstr_t vTestTag[] = { "[ar:value", "[ar:value]", "[ar:]", "[ ar:  value]aaaa", "[ ar:v[xxx]alue]" };
+    cstr_t vValue[] = { "value", "value", "", "  value", "v[xxx]alue" };
 
-            if (strncmp(vValue[i], vTestTag[i] + nValBegPos, int(nValEndPos - nValBegPos)) != 0
-                || strlen(vValue[i]) != int(nValEndPos - nValBegPos)) {
-                CPPUNIT_FAIL_T(stringPrintf("parseLrcPropTag: Wrong Pos: %d, %d, case: %d, %s", nValBegPos, nValEndPos, i, vTestTag[i]).c_str());
-            }
+    string strPropName = SZ_LRC_AR;
+    int nValBegPos, nValEndPos;
+    for (int i = 0; i < CountOf(vTestTag); i++) {
+        bool bRet = parseLrcPropTag(vTestTag[i], strlen(vTestTag[i]), strPropName, nValBegPos, nValEndPos);
+        if (!bRet) {
+            FAIL() << (stringPrintf("parseLrcPropTag: failed, case: %d, %s", i, vTestTag[i]).c_str());
         }
 
-        // Failed case
-        cstr_t vTestTagFailed[] = { "[a r:value]aaaa", "[a:rxxx]", "[ar :rxxx]" };
-        for (int i = 0; i < CountOf(vTestTagFailed); i++) {
-            bool bRet = parseLrcPropTag(vTestTagFailed[i], strlen(vTestTagFailed[i]), strPropName, nValBegPos, nValEndPos);
-            if (bRet) {
-                CPPUNIT_FAIL_T(stringPrintf("parseLrcPropTag(Failure test): failed, case: %d, %s", i, vTestTagFailed[i]).c_str());
-            }
+        if (strncmp(vValue[i], vTestTag[i] + nValBegPos, int(nValEndPos - nValBegPos)) != 0
+            || strlen(vValue[i]) != int(nValEndPos - nValBegPos)) {
+            FAIL() << (stringPrintf("parseLrcPropTag: Wrong Pos: %d, %d, case: %d, %s", nValBegPos, nValEndPos, i, vTestTag[i]).c_str());
         }
     }
 
-    void testParseTxtPropTag() {
-        // These are succeeded case.
-        cstr_t vTestTag[] = { "Artist: value", "artist:value", "Artist:" };
-        cstr_t vValue[] = { " value", "value", "" };
+    // Failed case
+    cstr_t vTestTagFailed[] = { "[a r:value]aaaa", "[a:rxxx]", "[ar :rxxx]" };
+    for (int i = 0; i < CountOf(vTestTagFailed); i++) {
+        bool bRet = parseLrcPropTag(vTestTagFailed[i], strlen(vTestTagFailed[i]), strPropName, nValBegPos, nValEndPos);
+        if (bRet) {
+            FAIL() << (stringPrintf("parseLrcPropTag(Failure test): failed, case: %d, %s", i, vTestTagFailed[i]).c_str());
+        }
+    }
+}
 
-        string strPropName = SZ_TXT_AR;
-        int nValBegPos, nValEndPos;
-        for (int i = 0; i < CountOf(vTestTag); i++) {
-            bool bRet = parseTxtPropTag(vTestTag[i], strlen(vTestTag[i]), strPropName, nValBegPos, nValEndPos);
-            if (!bRet) {
-                CPPUNIT_FAIL_T(stringPrintf("parseTxtPropTag: failed, case: %d, %s", i, vTestTag[i]).c_str());
-            }
+TEST(lrcTag, ParseTxtPropTag) {
+    // These are succeeded case.
+    cstr_t vTestTag[] = { "Artist: value", "artist:value", "Artist:" };
+    cstr_t vValue[] = { " value", "value", "" };
 
-            if (strncmp(vValue[i], vTestTag[i] + nValBegPos, int(nValEndPos - nValBegPos)) != 0) {
-                CPPUNIT_FAIL_T(stringPrintf("parseTxtPropTag: Wrong Pos: %d, %d, case: %d, %s", nValBegPos, nValEndPos, i, vTestTag[i]).c_str());
-            }
+    string strPropName = SZ_TXT_AR;
+    int nValBegPos, nValEndPos;
+    for (int i = 0; i < CountOf(vTestTag); i++) {
+        bool bRet = parseTxtPropTag(vTestTag[i], strlen(vTestTag[i]), strPropName, nValBegPos, nValEndPos);
+        if (!bRet) {
+            FAIL() << (stringPrintf("parseTxtPropTag: failed, case: %d, %s", i, vTestTag[i]).c_str());
         }
 
-        // Failed case
-        cstr_t vTestTagFailed[] = { "Artist :value", "Artist", "A rtist:" };
-        for (int i = 0; i < CountOf(vTestTagFailed); i++) {
-            bool bRet = parseTxtPropTag(vTestTagFailed[i], strlen(vTestTagFailed[i]), strPropName, nValBegPos, nValEndPos);
-            if (bRet) {
-                CPPUNIT_FAIL_T(stringPrintf("parseTxtPropTag(Failure test): failed, case: %d, %s", i, vTestTagFailed[i]).c_str());
-            }
+        if (strncmp(vValue[i], vTestTag[i] + nValBegPos, int(nValEndPos - nValBegPos)) != 0) {
+            FAIL() << (stringPrintf("parseTxtPropTag: Wrong Pos: %d, %d, case: %d, %s", nValBegPos, nValEndPos, i, vTestTag[i]).c_str());
         }
     }
 
-    void testReadLine() {
+    // Failed case
+    cstr_t vTestTagFailed[] = { "Artist :value", "Artist", "A rtist:" };
+    for (int i = 0; i < CountOf(vTestTagFailed); i++) {
+        bool bRet = parseTxtPropTag(vTestTagFailed[i], strlen(vTestTagFailed[i]), strPropName, nValBegPos, nValEndPos);
+        if (bRet) {
+            FAIL() << (stringPrintf("parseTxtPropTag(Failure test): failed, case: %d, %s", i, vTestTagFailed[i]).c_str());
+        }
+    }
+}
+
+TEST(lrcTag, ReadLine) {
 #define SZ_TEXT_TEST        "L1\r\nL2 \n L3 \nL4\nL5\n\n"
 
-        cstr_t vValue[] = { "L1", "L2 ", " L3 ", "L4", "L5", "" };
-        cstr_t szLine = SZ_TEXT_TEST;
+    cstr_t vValue[] = { "L1", "L2 ", " L3 ", "L4", "L5", "" };
+    cstr_t szLine = SZ_TEXT_TEST;
 
-        string strLine;
-        int i = 0;
-        while ((szLine = readLine(szLine, strLine)) != nullptr) {
-            if (strcmp(strLine.c_str(), vValue[i]) != 0) {
-                CPPUNIT_FAIL_T(stringPrintf("readLine: failed, case: %d, %s, value: %s", i, szLine, strLine.c_str()).c_str());
-            }
-            i++;
+    string strLine;
+    int i = 0;
+    while ((szLine = readLine(szLine, strLine)) != nullptr) {
+        if (strcmp(strLine.c_str(), vValue[i]) != 0) {
+            FAIL() << (stringPrintf("readLine: failed, case: %d, %s, value: %s", i, szLine, strLine.c_str()).c_str());
         }
-        if (i != CountOf(vValue)) {
-            CPPUNIT_FAIL_T(stringPrintf("readLine: Readed line Count NOT match: %d, %d", i, CountOf(vValue)).c_str());
+        i++;
+    }
+    if (i != CountOf(vValue)) {
+        FAIL() << (stringPrintf("readLine: Readed line Count NOT match: %d, %d", i, CountOf(vValue)).c_str());
+    }
+
+    // test for nextLine
+    szLine = SZ_TEXT_TEST;
+    i = 0;
+    while (szLine && *szLine) {
+        if (strncmp(szLine, vValue[i], strlen(vValue[i])) != 0) {
+            FAIL() << (stringPrintf("nextLine: failed, case: %d, %s, value: %s", i, szLine, vValue[i]).c_str());
+        }
+        szLine = nextLine(szLine);
+        i++;
+    }
+
+    if (i != CountOf(vValue)) {
+        FAIL() << (stringPrintf("nextLine: Readed line Count NOT match: %d, %d", i, CountOf(vValue)).c_str());
+    }
+}
+
+TEST(lrcTag, SearchLrcPropTag) {
+    // These are succeeded cases.
+    cstr_t vTestTag[] = { "[ ti:value]\n[ar:val2]\n[ti:title]", "   [TI:val ue]", "[xx]\n  [Ti:value]\n[ar:val]" };
+    cstr_t vValue[] = { "value", "val ue", "value" };
+
+    string strPropName = SZ_LRC_TI;
+    int nValBegPos, nValEndPos;
+    for (int i = 0; i < CountOf(vTestTag); i++) {
+        bool bRet = searchLrcPropTag(vTestTag[i], strPropName, nValBegPos, nValEndPos);
+        if (!bRet) {
+            FAIL() << (stringPrintf("searchLrcPropTag: failed, case: %d, %s", i, vTestTag[i]).c_str());
         }
 
-        // test for nextLine
-        szLine = SZ_TEXT_TEST;
-        i = 0;
-        while (szLine && *szLine) {
-            if (strncmp(szLine, vValue[i], strlen(vValue[i])) != 0) {
-                CPPUNIT_FAIL_T(stringPrintf("nextLine: failed, case: %d, %s, value: %s", i, szLine, vValue[i]).c_str());
-            }
-            szLine = nextLine(szLine);
-            i++;
-        }
-
-        if (i != CountOf(vValue)) {
-            CPPUNIT_FAIL_T(stringPrintf("nextLine: Readed line Count NOT match: %d, %d", i, CountOf(vValue)).c_str());
+        if (strncmp(vValue[i], vTestTag[i] + nValBegPos, int(nValEndPos - nValBegPos)) != 0) {
+            FAIL() << (stringPrintf("searchLrcPropTag: Wrong Pos: %d, %d, case: %d, %s", nValBegPos, nValEndPos, i, vTestTag[i]).c_str());
         }
     }
 
-    void testSearchLrcPropTag() {
-        // These are succeeded cases.
-        cstr_t vTestTag[] = { "[ ti:value]\n[ar:val2]\n[ti:title]", "   [TI:val ue]", "[xx]\n  [Ti:value]\n[ar:val]" };
-        cstr_t vValue[] = { "value", "val ue", "value" };
+    // Failed case
+    cstr_t vTestTagFailed[] = { "[t i:value]\n[ar:val2]", "  [ti val ue]" };
+    for (int i = 0; i < CountOf(vTestTagFailed); i++) {
+        bool bRet = searchLrcPropTag(vTestTagFailed[i], strPropName, nValBegPos, nValEndPos);
+        if (bRet) {
+            FAIL() << (stringPrintf("parseTxtPropTag(Failure test): failed, case: %d, %s", i, vTestTagFailed[i]).c_str());
+        }
+    }
+}
 
-        string strPropName = SZ_LRC_TI;
-        int nValBegPos, nValEndPos;
-        for (int i = 0; i < CountOf(vTestTag); i++) {
-            bool bRet = searchLrcPropTag(vTestTag[i], strPropName, nValBegPos, nValEndPos);
-            if (!bRet) {
-                CPPUNIT_FAIL_T(stringPrintf("searchLrcPropTag: failed, case: %d, %s", i, vTestTag[i]).c_str());
-            }
+TEST(lrcTag, SearchTxtPropTag) {
+    // These are succeeded cases. encoding: iso-8859-15\r\nArtist: Alexandra Burke\r\nTitle: Candyman
+    cstr_t vTestTag[] = { "Title:value\nArtist:val2\nTitle:title", "   title:val ue", "[xx]\n  Title:value\nArtist:val" };
+    cstr_t vValue[] = { "value", "val ue", "value" };
 
-            if (strncmp(vValue[i], vTestTag[i] + nValBegPos, int(nValEndPos - nValBegPos)) != 0) {
-                CPPUNIT_FAIL_T(stringPrintf("searchLrcPropTag: Wrong Pos: %d, %d, case: %d, %s", nValBegPos, nValEndPos, i, vTestTag[i]).c_str());
-            }
+    string strPropName = SZ_TXT_TI;
+    int nValBegPos, nValEndPos;
+    for (int i = 0; i < CountOf(vTestTag); i++) {
+        bool bRet = searchTxtPropTag(vTestTag[i], strPropName, nValBegPos, nValEndPos);
+        if (!bRet) {
+            FAIL() << (stringPrintf("searchTxtPropTag: failed, case: %d, %s", i, vTestTag[i]).c_str());
         }
 
-        // Failed case
-        cstr_t vTestTagFailed[] = { "[t i:value]\n[ar:val2]", "  [ti val ue]" };
-        for (int i = 0; i < CountOf(vTestTagFailed); i++) {
-            bool bRet = searchLrcPropTag(vTestTagFailed[i], strPropName, nValBegPos, nValEndPos);
-            if (bRet) {
-                CPPUNIT_FAIL_T(stringPrintf("parseTxtPropTag(Failure test): failed, case: %d, %s", i, vTestTagFailed[i]).c_str());
-            }
+        if (strncmp(vValue[i], vTestTag[i] + nValBegPos, int(nValEndPos - nValBegPos)) != 0) {
+            FAIL() << (stringPrintf("searchTxtPropTag: Wrong Pos: %d, %d, case: %d, %s", nValBegPos, nValEndPos, i, vTestTag[i]).c_str());
         }
     }
 
-    void testSearchTxtPropTag() {
-        // These are succeeded cases. encoding: iso-8859-15\r\nArtist: Alexandra Burke\r\nTitle: Candyman
-        cstr_t vTestTag[] = { "Title:value\nArtist:val2\nTitle:title", "   title:val ue", "[xx]\n  Title:value\nArtist:val" };
-        cstr_t vValue[] = { "value", "val ue", "value" };
+    // Failed case
+    cstr_t vTestTagFailed[] = { "Ti tle:value\nAr:val2", "Title val ue" };
+    for (int i = 0; i < CountOf(vTestTagFailed); i++) {
+        bool bRet = searchTxtPropTag(vTestTagFailed[i], strPropName, nValBegPos, nValEndPos);
+        if (bRet) {
+            FAIL() << (stringPrintf("searchTxtPropTag(Failure test): failed, case: %d, %s", i, vTestTagFailed[i]).c_str());
+        }
+    }
+}
 
-        string strPropName = SZ_TXT_TI;
-        int nValBegPos, nValEndPos;
-        for (int i = 0; i < CountOf(vTestTag); i++) {
-            bool bRet = searchTxtPropTag(vTestTag[i], strPropName, nValBegPos, nValEndPos);
-            if (!bRet) {
-                CPPUNIT_FAIL_T(stringPrintf("searchTxtPropTag: failed, case: %d, %s", i, vTestTag[i]).c_str());
-            }
+TEST(lrcTag, GetLRCTagValue) {
+    // These are succeeded cases.
+    cstr_t vTestTag[] = { "[ ti:value]\n[ar:val2]\n[ti:title]", "   [ti:val ue]\n[ti:title]", "[xx]\n  [ti:value]\n[ar:val]" };
+    cstr_t vValue[] = { "value", "val ue", "value" };
 
-            if (strncmp(vValue[i], vTestTag[i] + nValBegPos, int(nValEndPos - nValBegPos)) != 0) {
-                CPPUNIT_FAIL_T(stringPrintf("searchTxtPropTag: Wrong Pos: %d, %d, case: %d, %s", nValBegPos, nValEndPos, i, vTestTag[i]).c_str());
-            }
+    string strValue;
+    for (int i = 0; i < CountOf(vTestTag); i++) {
+        bool bRet = getLRCTagValue(vTestTag[i], SZ_LRC_TI, strValue, ED_SYSDEF);
+        if (!bRet) {
+            FAIL() << (stringPrintf("getLRCTagValue: failed, case: %d, %s", i, vTestTag[i]).c_str());
         }
 
-        // Failed case
-        cstr_t vTestTagFailed[] = { "Ti tle:value\nAr:val2", "Title val ue" };
-        for (int i = 0; i < CountOf(vTestTagFailed); i++) {
-            bool bRet = searchTxtPropTag(vTestTagFailed[i], strPropName, nValBegPos, nValEndPos);
-            if (bRet) {
-                CPPUNIT_FAIL_T(stringPrintf("searchTxtPropTag(Failure test): failed, case: %d, %s", i, vTestTagFailed[i]).c_str());
-            }
+        if (strcmp(vValue[i], strValue.c_str()) != 0) {
+            FAIL() << (stringPrintf("getLRCTagValue: Wrong Value: %s, case: %d, %s", strValue.c_str(), i, vTestTag[i]).c_str());
         }
     }
 
-    void testGetLRCTagValue() {
-        // These are succeeded cases.
-        cstr_t vTestTag[] = { "[ ti:value]\n[ar:val2]\n[ti:title]", "   [ti:val ue]\n[ti:title]", "[xx]\n  [ti:value]\n[ar:val]" };
-        cstr_t vValue[] = { "value", "val ue", "value" };
-
-        string strValue;
-        for (int i = 0; i < CountOf(vTestTag); i++) {
-            bool bRet = getLRCTagValue(vTestTag[i], SZ_LRC_TI, strValue, ED_SYSDEF);
-            if (!bRet) {
-                CPPUNIT_FAIL_T(stringPrintf("getLRCTagValue: failed, case: %d, %s", i, vTestTag[i]).c_str());
-            }
-
-            if (strcmp(vValue[i], strValue.c_str()) != 0) {
-                CPPUNIT_FAIL_T(stringPrintf("getLRCTagValue: Wrong Value: %s, case: %d, %s", strValue.c_str(), i, vTestTag[i]).c_str());
-            }
+    // Failed case
+    cstr_t vTestTagFailed[] = {"[t i:value]\n[ar:val2]", "  [ti val ue]" };
+    for (int i = 0; i < CountOf(vTestTagFailed); i++) {
+        bool bRet = getLRCTagValue(vTestTagFailed[i], SZ_LRC_TI, strValue, ED_SYSDEF);
+        if (bRet) {
+            FAIL() << (stringPrintf("getLRCTagValue(Failure test): failed, case: %d, %s", i, vTestTagFailed[i]).c_str());
         }
+    }
+}
 
-        // Failed case
-        cstr_t vTestTagFailed[] = {"[t i:value]\n[ar:val2]", "  [ti val ue]" };
-        for (int i = 0; i < CountOf(vTestTagFailed); i++) {
-            bool bRet = getLRCTagValue(vTestTagFailed[i], SZ_LRC_TI, strValue, ED_SYSDEF);
-            if (bRet) {
-                CPPUNIT_FAIL_T(stringPrintf("getLRCTagValue(Failure test): failed, case: %d, %s", i, vTestTagFailed[i]).c_str());
+TEST(lrcTag, GetLyricsTextEncoding) {
+    // These are succeeded cases.
+    {
+        // ANSI file testing...
+        cstr_t        vTestTag[] = { "[ encoding:gb2312]\n[ar:val2]\n[ti:title]", "   [encoding:big5]", "[xx]\n  [encoding:utf-8]\n[ar:val]\n[ti:title]",
+            " encoding:gb2312\nArtist:val2\n[", "   encoding:big5", "[xx]\n  encoding:utf-8\n",
+            SZ_FE_UCS2 "abc", SZ_FE_UCS2_BE "abc", SZ_FE_UTF8 "abc", ""
+            };
+            CharEncodingType    vEncoding[] = { ED_GB2312, ED_BIG5, ED_UTF8,
+            ED_GB2312, ED_BIG5, ED_UTF8,
+            ED_UNICODE, ED_UNICODE_BIG_ENDIAN, ED_UTF8, ED_SYSDEF
+            };
+
+            string        strValue;
+            for (int i = 0; i < CountOf(vTestTag); i++) {
+            uint8_t *p = uint8_t *vTestTag[i];
+            size_t nLen = strlen(vTestTag[i]);
+            CharEncodingType encoding = getLyricsTextEncoding(p, nLen);
+            if (encoding != vEncoding[i]) {
+                FAIL() << (stringPrintf("getLyricsTextEncoding(ANSI): failed, case: %d, %s", i, vTestTag[i]).c_str());
             }
         }
     }
+}
 
-    void testGetLyricsTextEncoding() {
-        // These are succeeded cases.
-        {
-            // ANSI file testing...
-            cstr_t        vTestTag[] = { "[ encoding:gb2312]\n[ar:val2]\n[ti:title]", "   [encoding:big5]", "[xx]\n  [encoding:utf-8]\n[ar:val]\n[ti:title]",
-                " encoding:gb2312\nArtist:val2\n[", "   encoding:big5", "[xx]\n  encoding:utf-8\n",
-                SZ_FE_UCS2 "abc", SZ_FE_UCS2_BE "abc", SZ_FE_UTF8 "abc", ""
-                };
-                CharEncodingType    vEncoding[] = { ED_GB2312, ED_BIG5, ED_UTF8,
-                ED_GB2312, ED_BIG5, ED_UTF8,
-                ED_UNICODE, ED_UNICODE_BIG_ENDIAN, ED_UTF8, ED_SYSDEF
-                };
+TEST(lrcTag, CLyrTagNameValueMap) {
+    LyricsProperties prop;
 
-                string        strValue;
-                for (int i = 0; i < CountOf(vTestTag); i++) {
-                uint8_t *p = uint8_t *vTestTag[i];
-                size_t nLen = strlen(vTestTag[i]);
-                CharEncodingType encoding = getLyricsTextEncoding(p, nLen);
-                if (encoding != vEncoding[i]) {
-                    CPPUNIT_FAIL_T(stringPrintf("getLyricsTextEncoding(ANSI): failed, case: %d, %s", i, vTestTag[i]).c_str());
-                }
+    prop.m_strArtist = "Artist";
+    prop.m_strTitle = "Title";
+    prop.m_strAlbum = "Album";
+    prop.m_strBy = "By";
+    prop.m_strId = "Id";
+    // prop.setEncoding(ED_GB2312);
+    prop.setOffsetTime(1000);
+
+    prop.m_strMediaLength = "01:32";
+    ASSERT_TRUE(prop.getMediaLengthInt() == 60 + 32);
+
+    prop.m_strMediaLength = "2:11:32";
+    ASSERT_TRUE(prop.getMediaLengthInt() == (2 * 60 + 11) * 60 + 32);
+
+    string strEncoding = prop.getEncoding(), strOffset = prop.getOffsetTimeStr();
+    CLyrTagNameValueMap nameValueMap(prop);
+
+    CLyrTagNameValueMap::Item        vNames[] = {
+        { SZ_LRC_AR,        SZ_TXT_AR,        LTT_ARTIST,        &(prop.m_strArtist) },
+        { SZ_LRC_TI,        SZ_TXT_TI,        LTT_TITLE,        &(prop.m_strTitle) },
+        { SZ_LRC_AL,        SZ_TXT_AL,        LTT_ALBUM,        &(prop.m_strAlbum) },
+        { SZ_LRC_BY,        "",                LTT_BY,            &(prop.m_strBy) },
+        { SZ_LRC_ENCODING,    SZ_TXT_ENCODING,LTT_ENCODING,    &strEncoding },
+        { SZ_LRC_OFFSET,    SZ_TXT_OFFSET,    LTT_OFFSET,        &strOffset },
+        { SZ_LRC_LENGTH,    SZ_TXT_LENGTH,    LTT_MEDIA_LENGTH,&(prop.m_strMediaLength) },
+        { SZ_LRC_ID,        SZ_TXT_ID,        LTT_ID,            &(prop.m_strId) },
+    };
+
+    assert(nameValueMap.getTagType(4) == LTT_ENCODING);
+    nameValueMap.setValue(4, "big5", -1);
+    strEncoding = "big5";
+
+    for (int k = 0; k < nameValueMap.getCount(); k++) {
+        LyrTagType tagType = nameValueMap.getTagType(k);
+        bool bFound = false;
+        for (int i = 0; i < CountOf(vNames); i++) {
+            if (tagType != vNames[i].tagType) {
+                continue;
             }
+
+            // make sure
+            if (strcmp(vNames[i].strLrcName.c_str(), nameValueMap.getLrcName(k).c_str()) != 0) {
+                FAIL() << (stringPrintf("CLyrTagNameValueMap: case: %d, %d", k, i).c_str());
+            }
+
+            if (strcmp(vNames[i].strTxtName.c_str(), nameValueMap.getTxtName(k).c_str()) != 0) {
+                FAIL() << (stringPrintf("CLyrTagNameValueMap: case: %d, %d", k, i).c_str());
+            }
+
+            if (strcmp(vNames[i].pstrValue->c_str(), nameValueMap.getValue(k).c_str()) != 0) {
+                FAIL() << (stringPrintf("CLyrTagNameValueMap: case: %d, %d", k, i).c_str());
+            }
+
+            string strLrcTag = nameValueMap.getLrcTagString(i, false);
+            auto strLrcTag2 = stringPrintf("[%s %s]", vNames[i].strLrcName.c_str(), vNames[i].pstrValue->c_str());
+            if (strcmp(strLrcTag.c_str(), strLrcTag2.c_str()) != 0) {
+                FAIL() << (stringPrintf("CLyrTagNameValueMap: case: %d, %d", k, i).c_str());
+            }
+
+            string strTxtTag = nameValueMap.getTxtTagString(i, false);
+            auto strTxtTag2 = stringPrintf("%s %s", vNames[i].strTxtName.c_str(), vNames[i].pstrValue->c_str());
+            if (strcmp(strTxtTag.c_str(), strTxtTag2.c_str()) != 0) {
+                FAIL() << (stringPrintf("CLyrTagNameValueMap: case: %d, %d", k, i).c_str());
+            }
+
+            bFound = true;
+            break;
+        }
+        if (!bFound) {
+            // NOT FOUND.
+            FAIL() << ("CLyrTagNameValueMap: Not found");
         }
     }
 
-    void testCLyrTagNameValueMap() {
-        LyricsProperties prop;
+    nameValueMap.remove(0);
+    nameValueMap.remove(nameValueMap.getCount() - 1);
+}
 
-        prop.m_strArtist = "Artist";
-        prop.m_strTitle = "Title";
-        prop.m_strAlbum = "Album";
-        prop.m_strBy = "By";
-        prop.m_strId = "Id";
-        // prop.setEncoding(ED_GB2312);
-        prop.setOffsetTime(1000);
+TEST(lrcTag, CLrcTag_ReadFromText_Lrc) {
+    // test cases for CLrcTag.
 
-        prop.m_strMediaLength = "01:32";
-        CPPUNIT_ASSERT(prop.getMediaLengthInt() == 60 + 32);
-
-        prop.m_strMediaLength = "2:11:32";
-        CPPUNIT_ASSERT(prop.getMediaLengthInt() == (2 * 60 + 11) * 60 + 32);
-
-        string strEncoding = prop.getEncoding(), strOffset = prop.getOffsetTimeStr();
-        CLyrTagNameValueMap nameValueMap(prop);
-
-        CLyrTagNameValueMap::Item        vNames[] = {
-            { SZ_LRC_AR,        SZ_TXT_AR,        LTT_ARTIST,        &(prop.m_strArtist) },
-            { SZ_LRC_TI,        SZ_TXT_TI,        LTT_TITLE,        &(prop.m_strTitle) },
-            { SZ_LRC_AL,        SZ_TXT_AL,        LTT_ALBUM,        &(prop.m_strAlbum) },
-            { SZ_LRC_BY,        "",                LTT_BY,            &(prop.m_strBy) },
-            { SZ_LRC_ENCODING,    SZ_TXT_ENCODING,LTT_ENCODING,    &strEncoding },
-            { SZ_LRC_OFFSET,    SZ_TXT_OFFSET,    LTT_OFFSET,        &strOffset },
-            { SZ_LRC_LENGTH,    SZ_TXT_LENGTH,    LTT_MEDIA_LENGTH,&(prop.m_strMediaLength) },
-            { SZ_LRC_ID,        SZ_TXT_ID,        LTT_ID,            &(prop.m_strId) },
-        };
-
-        assert(nameValueMap.getTagType(4) == LTT_ENCODING);
-        nameValueMap.setValue(4, "big5", -1);
-        strEncoding = "big5";
-
-        for (int k = 0; k < nameValueMap.getCount(); k++) {
-            LyrTagType tagType = nameValueMap.getTagType(k);
-            bool bFound = false;
-            for (int i = 0; i < CountOf(vNames); i++) {
-                if (tagType != vNames[i].tagType) {
-                    continue;
-                }
-
-                // make sure
-                if (strcmp(vNames[i].strLrcName.c_str(), nameValueMap.getLrcName(k).c_str()) != 0) {
-                    CPPUNIT_FAIL_T(stringPrintf("CLyrTagNameValueMap: case: %d, %d", k, i).c_str());
-                }
-
-                if (strcmp(vNames[i].strTxtName.c_str(), nameValueMap.getTxtName(k).c_str()) != 0) {
-                    CPPUNIT_FAIL_T(stringPrintf("CLyrTagNameValueMap: case: %d, %d", k, i).c_str());
-                }
-
-                if (strcmp(vNames[i].pstrValue->c_str(), nameValueMap.getValue(k).c_str()) != 0) {
-                    CPPUNIT_FAIL_T(stringPrintf("CLyrTagNameValueMap: case: %d, %d", k, i).c_str());
-                }
-
-                string strLrcTag = nameValueMap.getLrcTagString(i, false);
-                auto strLrcTag2 = stringPrintf("[%s %s]", vNames[i].strLrcName.c_str(), vNames[i].pstrValue->c_str());
-                if (strcmp(strLrcTag.c_str(), strLrcTag2.c_str()) != 0) {
-                    CPPUNIT_FAIL_T(stringPrintf("CLyrTagNameValueMap: case: %d, %d", k, i).c_str());
-                }
-
-                string strTxtTag = nameValueMap.getTxtTagString(i, false);
-                auto strTxtTag2 = stringPrintf("%s %s", vNames[i].strTxtName.c_str(), vNames[i].pstrValue->c_str());
-                if (strcmp(strTxtTag.c_str(), strTxtTag2.c_str()) != 0) {
-                    CPPUNIT_FAIL_T(stringPrintf("CLyrTagNameValueMap: case: %d, %d", k, i).c_str());
-                }
-
-                bFound = true;
-                break;
-            }
-            if (!bFound) {
-                // NOT FOUND.
-                CPPUNIT_FAIL_T("CLyrTagNameValueMap: Not found");
-            }
-        }
-
-        nameValueMap.remove(0);
-        nameValueMap.remove(nameValueMap.getCount() - 1);
-    }
-
-    void testCLrcTag_ReadFromText_Lrc() {
-        // test cases for CLrcTag.
-
-        // Construct lyrics
+    // Construct lyrics
 #undef SZ_LYRICS
 #define SZ_LYRICS           "[ti:title]\r\n\r\n[00:01.20]\r\n[encoding:gb2312]sxx\r\n[ar:artist]"
 
-        cstr_t valArtist = "artist";
-        cstr_t valTitle = "title";
-        string wStr;
-        mbcsToUCS2(SZ_LYRICS, -1, wStr);
+    cstr_t valArtist = "artist";
+    cstr_t valTitle = "title";
+    string wStr;
+    mbcsToUCS2(SZ_LYRICS, -1, wStr);
 
-        string wLyrics;
-        wLyrics.append((const WCHAR *)SZ_FE_UCS2, 1);
-        wLyrics.append(wStr.c_str(), wStr.size());
+    string wLyrics;
+    wLyrics.append((const WCHAR *)SZ_FE_UCS2, 1);
+    wLyrics.append(wStr.c_str(), wStr.size());
 
-        string wLyricsBe;
-        wLyricsBe.append(wLyrics.c_str(), wLyrics.size());
-        uCS2LEToBE(wLyricsBe.data(), wLyricsBe.size());
+    string wLyricsBe;
+    wLyricsBe.append(wLyrics.c_str(), wLyrics.size());
+    uCS2LEToBE(wLyricsBe.data(), wLyricsBe.size());
 
-        string utf8Lyrics;
-        utf8Lyrics.append(SZ_FE_UTF8);
-        utf8Lyrics.append(SZ_LYRICS);
+    string utf8Lyrics;
+    utf8Lyrics.append(SZ_FE_UTF8);
+    utf8Lyrics.append(SZ_LYRICS);
 
-        uint8_t *vLyrics[] = { uint8_t *SZ_LYRICS, uint8_t *wLyrics.c_str(), uint8_t *wLyricsBe.c_str(), uint8_t *utf8Lyrics.c_str(), };
-        int vLen[] = { sizeof(SZ_LYRICS), wLyrics.size() * sizeof(WCHAR), wLyricsBe.size() * sizeof(WCHAR), utf8Lyrics.size(), };
-        CharEncodingType vEncoding[] = { ED_GB2312, ED_UNICODE, ED_UNICODE_BIG_ENDIAN, ED_UTF8, };
+    uint8_t *vLyrics[] = { uint8_t *SZ_LYRICS, uint8_t *wLyrics.c_str(), uint8_t *wLyricsBe.c_str(), uint8_t *utf8Lyrics.c_str(), };
+    int vLen[] = { sizeof(SZ_LYRICS), wLyrics.size() * sizeof(WCHAR), wLyricsBe.size() * sizeof(WCHAR), utf8Lyrics.size(), };
+    CharEncodingType vEncoding[] = { ED_GB2312, ED_UNICODE, ED_UNICODE_BIG_ENDIAN, ED_UTF8, };
 
-        for (int i = 0; i < CountOf(vLyrics); i++) {
-            CLrcTag tag(LTT_ALL);
-            CPPUNIT_ASSERT(tag.readFromText(vLyrics[i], vLen[i]));
-            {
-                CPPUNIT_ASSERT(strcmp(tag.m_strArtist.c_str(), valArtist) == 0);
-                CPPUNIT_ASSERT(strcmp(tag.m_strTitle.c_str(), valTitle) == 0);
-                CPPUNIT_ASSERT(tag.getEncodingIndex() == vEncoding[i]);
-                CPPUNIT_ASSERT(tag.m_lyrContentType == LCT_LRC);
-            }
+    for (int i = 0; i < CountOf(vLyrics); i++) {
+        CLrcTag tag(LTT_ALL);
+        ASSERT_TRUE(tag.readFromText(vLyrics[i], vLen[i]));
+        {
+            ASSERT_TRUE(strcmp(tag.m_strArtist.c_str(), valArtist) == 0);
+            ASSERT_TRUE(strcmp(tag.m_strTitle.c_str(), valTitle) == 0);
+            ASSERT_TRUE(tag.getEncodingIndex() == vEncoding[i]);
+            ASSERT_TRUE(tag.m_lyrContentType == LCT_LRC);
         }
-
     }
 
-    void testCLrcTag_WriteToText_Lrc() {
-        // test cases for CLrcTag.
+}
 
-        // Construct lyrics
+TEST(lrcTag, CLrcTag_WriteToText_Lrc) {
+    // test cases for CLrcTag.
+
+    // Construct lyrics
 #undef SZ_LYRICS
 #define SZ_LYRICS           "[ti: title]\r\n\r\n[00:01.20]\r\n[encoding: gb2312]sxx\r\n[ar: artist]"
 
-        string wStr;
-        mbcsToUCS2(SZ_LYRICS, -1, wStr);
+    string wStr;
+    mbcsToUCS2(SZ_LYRICS, -1, wStr);
 
-        string ansiLyrics;
-        ansiLyrics.append(SZ_LYRICS);
+    string ansiLyrics;
+    ansiLyrics.append(SZ_LYRICS);
 
-        string wLyrics;
-        wLyrics.append(wStr.c_str(), wStr.size());
+    string wLyrics;
+    wLyrics.append(wStr.c_str(), wStr.size());
 
-        LyricsProperties orgProp, newProp;
+    LyricsProperties orgProp, newProp;
 
-        orgProp.m_strArtist = "artist";
-        orgProp.m_strTitle = "title";
-        orgProp.setEncoding(ED_GB2312);
+    orgProp.m_strArtist = "artist";
+    orgProp.m_strTitle = "title";
+    orgProp.setEncoding(ED_GB2312);
 
-        newProp.m_strArtist = "newAr";
-        newProp.m_strTitle = "newTi";
-        newProp.m_strId = "newID";
-        newProp.m_strMediaLength = "newMeidaLen";
-        newProp.setEncoding(ED_BIG5);
+    newProp.m_strArtist = "newAr";
+    newProp.m_strTitle = "newTi";
+    newProp.m_strId = "newID";
+    newProp.m_strMediaLength = "newMeidaLen";
+    newProp.setEncoding(ED_BIG5);
 
-        //
-        // test on ANSI lyrics
-        //
-        {
-            // write new
-            CLrcTag tag(orgProp, newProp);
-            tag.writeToText(ansiLyrics, true);
+    //
+    // test on ANSI lyrics
+    //
+    {
+        // write new
+        CLrcTag tag(orgProp, newProp);
+        tag.writeToText(ansiLyrics, true);
 
-            // read new
-            CLrcTag tagReader;
-            CPPUNIT_ASSERT(tagReader.readFromText(uint8_t *ansiLyrics.c_str(), ansiLyrics.size()));
+        // read new
+        CLrcTag tagReader;
+        ASSERT_TRUE(tagReader.readFromText(uint8_t *ansiLyrics.c_str(), ansiLyrics.size()));
 
-            // Is same?
-            CLrcTag tagCmp(tagReader, newProp);
-            CPPUNIT_ASSERT(tagReader.m_strArtist == newProp.m_strArtist);
-            CPPUNIT_ASSERT(tagReader.m_strTitle == newProp.m_strTitle);
-            CPPUNIT_ASSERT(!tagCmp.isTagChanged());
+        // Is same?
+        CLrcTag tagCmp(tagReader, newProp);
+        ASSERT_TRUE(tagReader.m_strArtist == newProp.m_strArtist);
+        ASSERT_TRUE(tagReader.m_strTitle == newProp.m_strTitle);
+        ASSERT_TRUE(!tagCmp.isTagChanged());
 
-            // write old,
-            CLrcTag tag2(newProp, orgProp);
-            tag2.writeToText(ansiLyrics, true);
+        // write old,
+        CLrcTag tag2(newProp, orgProp);
+        tag2.writeToText(ansiLyrics, true);
 
-            // Is same with original?
-            CPPUNIT_ASSERT(strcmp(SZ_LYRICS, ansiLyrics.c_str()) == 0);
-        }
-
-        //
-        // test on UCS2 lyrics
-        //
-        {
-            // write new
-            CLrcTag tag(orgProp, newProp);
-            tag.writeToText(wLyrics, true);
-
-            // read new
-            CLrcTag tagReader;
-            CPPUNIT_ASSERT(tagReader.readFromText(wLyrics.c_str(), wLyrics.size()));
-
-            // Is same?
-            CPPUNIT_ASSERT(tagReader.m_strArtist == newProp.m_strArtist);
-            CPPUNIT_ASSERT(tagReader.m_strTitle == newProp.m_strTitle);
-
-            // write old,
-            CLrcTag tag2(newProp, orgProp);
-            tag2.writeToText(wLyrics, true);
-
-            // Is same with org?
-            CPPUNIT_ASSERT(wcscmp(wStr.c_str(), wLyrics.c_str()) == 0);
-        }
+        // Is same with original?
+        ASSERT_TRUE(strcmp(SZ_LYRICS, ansiLyrics.c_str()) == 0);
     }
 
-    void testCLrcTag_WriteToFile_Lrc() {
-        // test cases for CLrcTag.
+    //
+    // test on UCS2 lyrics
+    //
+    {
+        // write new
+        CLrcTag tag(orgProp, newProp);
+        tag.writeToText(wLyrics, true);
 
-        // Construct lyrics
+        // read new
+        CLrcTag tagReader;
+        ASSERT_TRUE(tagReader.readFromText(wLyrics.c_str(), wLyrics.size()));
+
+        // Is same?
+        ASSERT_TRUE(tagReader.m_strArtist == newProp.m_strArtist);
+        ASSERT_TRUE(tagReader.m_strTitle == newProp.m_strTitle);
+
+        // write old,
+        CLrcTag tag2(newProp, orgProp);
+        tag2.writeToText(wLyrics, true);
+
+        // Is same with org?
+        ASSERT_TRUE(wcscmp(wStr.c_str(), wLyrics.c_str()) == 0);
+    }
+}
+
+TEST(lrcTag, CLrcTag_WriteToFile_Lrc) {
+    // test cases for CLrcTag.
+
+    // Construct lyrics
 #undef SZ_LYRICS
 #define SZ_LYRICS           "[ti: title]\r\n\r\n[00:01.20]\r\n[encoding: gb2312]sxx\r\n[ar: artist]"
 
-        string wStr;
-        mbcsToUCS2(SZ_LYRICS, -1, wStr);
+    string wStr;
+    mbcsToUCS2(SZ_LYRICS, -1, wStr);
 
-        string ansiLyrics;
-        ansiLyrics.append(SZ_LYRICS);
+    string ansiLyrics;
+    ansiLyrics.append(SZ_LYRICS);
 
-        string wLyrics;
-        wLyrics.append((const WCHAR *)SZ_FE_UCS2, 1);
-        wLyrics.append(wStr.c_str(), wStr.size());
+    string wLyrics;
+    wLyrics.append((const WCHAR *)SZ_FE_UCS2, 1);
+    wLyrics.append(wStr.c_str(), wStr.size());
 
-        string wLyricsBe;
-        wLyricsBe.append(wLyrics.c_str(), wLyrics.size());
-        uCS2LEToBE(wLyricsBe.data(), wLyricsBe.size());
+    string wLyricsBe;
+    wLyricsBe.append(wLyrics.c_str(), wLyrics.size());
+    uCS2LEToBE(wLyricsBe.data(), wLyricsBe.size());
 
-        string utf8Lyrics;
-        utf8Lyrics.append(SZ_FE_UTF8);
-        utf8Lyrics.append(SZ_LYRICS);
+    string utf8Lyrics;
+    utf8Lyrics.append(SZ_FE_UTF8);
+    utf8Lyrics.append(SZ_LYRICS);
 
-        LyricsProperties orgProp, newProp;
+    LyricsProperties orgProp, newProp;
 
-        orgProp.m_strArtist = "artist";
-        orgProp.m_strTitle = "title";
+    orgProp.m_strArtist = "artist";
+    orgProp.m_strTitle = "title";
 
-        newProp.m_strArtist = "newAr";
-        newProp.m_strTitle = "newTi";
+    newProp.m_strArtist = "newAr";
+    newProp.m_strTitle = "newTi";
 
-        uint8_t *vLyrics[] = { uint8_t *SZ_LYRICS, uint8_t *wLyrics.c_str(), uint8_t *wLyricsBe.c_str(), uint8_t *utf8Lyrics.c_str(), };
-        int vLen[] = { sizeof(SZ_LYRICS), wLyrics.size() * sizeof(WCHAR), wLyricsBe.size() * sizeof(WCHAR), utf8Lyrics.size(), };
+    uint8_t *vLyrics[] = { uint8_t *SZ_LYRICS, uint8_t *wLyrics.c_str(), uint8_t *wLyricsBe.c_str(), uint8_t *utf8Lyrics.c_str(), };
+    int vLen[] = { sizeof(SZ_LYRICS), wLyrics.size() * sizeof(WCHAR), wLyricsBe.size() * sizeof(WCHAR), utf8Lyrics.size(), };
 
-        string strFile = getAppDataDir();
-        strFile += "unit_test.lrc";
-        for (int i = 0; i < CountOf(vLen); i++) {
-            CPPUNIT_ASSERT(writeFile(strFile.c_str(), vLyrics[i], vLen[i]));
+    string strFile = getAppDataDir();
+    strFile += "unit_test.lrc";
+    for (int i = 0; i < CountOf(vLen); i++) {
+        ASSERT_TRUE(writeFile(strFile.c_str(), vLyrics[i], vLen[i]));
 
-            CLrcTag tag(orgProp, newProp);
-            CPPUNIT_ASSERT(tag.writeToFile(strFile.c_str(), true) == ERR_OK);
+        CLrcTag tag(orgProp, newProp);
+        ASSERT_TRUE(tag.writeToFile(strFile.c_str(), true) == ERR_OK);
 
-            CLrcTag tagReader;
-            CPPUNIT_ASSERT(tagReader.readFromFile(strFile.c_str()) == ERR_OK);
+        CLrcTag tagReader;
+        ASSERT_TRUE(tagReader.readFromFile(strFile.c_str()) == ERR_OK);
 
-            CPPUNIT_ASSERT(tagReader.m_strArtist == newProp.m_strArtist);
-            CPPUNIT_ASSERT(tagReader.m_strTitle == newProp.m_strTitle);
+        ASSERT_TRUE(tagReader.m_strArtist == newProp.m_strArtist);
+        ASSERT_TRUE(tagReader.m_strTitle == newProp.m_strTitle);
 
-            CLrcTag tag2(newProp, orgProp);
-            CPPUNIT_ASSERT(tag2.writeToFile(strFile.c_str(), true) == ERR_OK);
+        CLrcTag tag2(newProp, orgProp);
+        ASSERT_TRUE(tag2.writeToFile(strFile.c_str(), true) == ERR_OK);
 
-            string newContent;
-            CPPUNIT_ASSERT(readFile(strFile.c_str(), newContent));
-            CPPUNIT_ASSERT(memcmp(newContent.c_str(), vLyrics[i], vLen[i]) == 0);
-            CPPUNIT_ASSERT(newContent.size() == vLen[i]);
-        }
-
-        deleteFile(strFile.c_str());
+        string newContent;
+        ASSERT_TRUE(readFile(strFile.c_str(), newContent));
+        ASSERT_TRUE(memcmp(newContent.c_str(), vLyrics[i], vLen[i]) == 0);
+        ASSERT_TRUE(newContent.size() == vLen[i]);
     }
 
+    deleteFile(strFile.c_str());
+}
 
-    void testCLrcTag_ReadFromText_Txt() {
-        // test cases for CLrcTag.
 
-        // Construct lyrics
+TEST(lrcTag, CLrcTag_ReadFromText_Txt) {
+    // test cases for CLrcTag.
+
+    // Construct lyrics
 #undef SZ_LYRICS
 #define SZ_LYRICS           "Title:title\r\n\r\nabc\r\nEncoding:gb2312\r\nArtist:artist"
 
-        cstr_t valArtist = "artist";
-        cstr_t valTitle = "title";
-        string wStr;
-        mbcsToUCS2(SZ_LYRICS, -1, wStr);
+    cstr_t valArtist = "artist";
+    cstr_t valTitle = "title";
+    string wStr;
+    mbcsToUCS2(SZ_LYRICS, -1, wStr);
 
-        string wLyrics;
-        wLyrics.append((const WCHAR *)SZ_FE_UCS2, 1);
-        wLyrics.append(wStr.c_str(), wStr.size());
+    string wLyrics;
+    wLyrics.append((const WCHAR *)SZ_FE_UCS2, 1);
+    wLyrics.append(wStr.c_str(), wStr.size());
 
-        string wLyricsBe;
-        wLyricsBe.append(wLyrics.c_str(), wLyrics.size());
-        uCS2LEToBE(wLyricsBe.data(), wLyricsBe.size());
+    string wLyricsBe;
+    wLyricsBe.append(wLyrics.c_str(), wLyrics.size());
+    uCS2LEToBE(wLyricsBe.data(), wLyricsBe.size());
 
-        string utf8Lyrics;
-        utf8Lyrics.append(SZ_FE_UTF8);
-        utf8Lyrics.append(SZ_LYRICS);
+    string utf8Lyrics;
+    utf8Lyrics.append(SZ_FE_UTF8);
+    utf8Lyrics.append(SZ_LYRICS);
 
-        uint8_t *vLyrics[] = { uint8_t *SZ_LYRICS, uint8_t *wLyrics.c_str(), uint8_t *wLyricsBe.c_str(), uint8_t *utf8Lyrics.c_str(), };
-        int vLen[] = { sizeof(SZ_LYRICS), wLyrics.size() * sizeof(WCHAR), wLyricsBe.size() * sizeof(WCHAR), utf8Lyrics.size(), };
-        CharEncodingType vEncoding[] = { ED_GB2312, ED_UNICODE, ED_UNICODE_BIG_ENDIAN, ED_UTF8, };
+    uint8_t *vLyrics[] = { uint8_t *SZ_LYRICS, uint8_t *wLyrics.c_str(), uint8_t *wLyricsBe.c_str(), uint8_t *utf8Lyrics.c_str(), };
+    int vLen[] = { sizeof(SZ_LYRICS), wLyrics.size() * sizeof(WCHAR), wLyricsBe.size() * sizeof(WCHAR), utf8Lyrics.size(), };
+    CharEncodingType vEncoding[] = { ED_GB2312, ED_UNICODE, ED_UNICODE_BIG_ENDIAN, ED_UTF8, };
 
-        for (int i = 0; i < CountOf(vLyrics); i++) {
-            CLrcTag tag(LTT_ALL);
-            CPPUNIT_ASSERT(tag.readFromText(vLyrics[i], vLen[i]));
-            {
-                CPPUNIT_ASSERT(strcmp(tag.m_strArtist.c_str(), valArtist) == 0);
-                CPPUNIT_ASSERT(strcmp(tag.m_strTitle.c_str(), valTitle) == 0);
-                CPPUNIT_ASSERT(tag.getEncodingIndex() == vEncoding[i]);
-                CPPUNIT_ASSERT(tag.m_lyrContentType == LCT_TXT);
-            }
+    for (int i = 0; i < CountOf(vLyrics); i++) {
+        CLrcTag tag(LTT_ALL);
+        ASSERT_TRUE(tag.readFromText(vLyrics[i], vLen[i]));
+        {
+            ASSERT_TRUE(strcmp(tag.m_strArtist.c_str(), valArtist) == 0);
+            ASSERT_TRUE(strcmp(tag.m_strTitle.c_str(), valTitle) == 0);
+            ASSERT_TRUE(tag.getEncodingIndex() == vEncoding[i]);
+            ASSERT_TRUE(tag.m_lyrContentType == LCT_TXT);
         }
-
     }
 
-    void testCLrcTag_WriteToText_Txt() {
-        // test cases for CLrcTag.
+}
 
-        // Construct lyrics
+TEST(lrcTag, CLrcTag_WriteToText_Txt) {
+    // test cases for CLrcTag.
+
+    // Construct lyrics
 #undef SZ_LYRICS
 #define SZ_LYRICS           "Title: title\r\n\r\nabc\r\nEncoding: gb2312\r\nArtist: artist"
 
-        string wStr;
-        mbcsToUCS2(SZ_LYRICS, -1, wStr);
+    string wStr;
+    mbcsToUCS2(SZ_LYRICS, -1, wStr);
 
-        string ansiLyrics;
-        ansiLyrics.append(SZ_LYRICS);
+    string ansiLyrics;
+    ansiLyrics.append(SZ_LYRICS);
 
-        string wLyrics;
-        wLyrics.append(wStr.c_str(), wStr.size());
+    string wLyrics;
+    wLyrics.append(wStr.c_str(), wStr.size());
 
-        LyricsProperties orgProp, newProp;
+    LyricsProperties orgProp, newProp;
 
 
-        orgProp.m_strArtist = "artist";
-        orgProp.m_strTitle = "title";
-        orgProp.setEncoding(ED_GB2312);
+    orgProp.m_strArtist = "artist";
+    orgProp.m_strTitle = "title";
+    orgProp.setEncoding(ED_GB2312);
 
-        newProp.m_strArtist = "newAr";
-        newProp.m_strTitle = "newTi";
-        newProp.m_strId = "newID";
-        newProp.m_strMediaLength = "newMeidaLen";
-        newProp.setEncoding(ED_BIG5);
+    newProp.m_strArtist = "newAr";
+    newProp.m_strTitle = "newTi";
+    newProp.m_strId = "newID";
+    newProp.m_strMediaLength = "newMeidaLen";
+    newProp.setEncoding(ED_BIG5);
 
-        //
-        // test on ANSI lyrics
-        //
-        {
-            // write new
-            CLrcTag tag(orgProp, newProp);
-            tag.writeToText(ansiLyrics, false);
+    //
+    // test on ANSI lyrics
+    //
+    {
+        // write new
+        CLrcTag tag(orgProp, newProp);
+        tag.writeToText(ansiLyrics, false);
 
-            // read new
-            CLrcTag tagReader;
-            CPPUNIT_ASSERT(tagReader.readFromText(ansiLyrics.c_str(), ansiLyrics.size()));
+        // read new
+        CLrcTag tagReader;
+        ASSERT_TRUE(tagReader.readFromText(ansiLyrics.c_str(), ansiLyrics.size()));
 
-            // Is same?
-            CLrcTag tagCmp(tagReader, newProp);
-            CPPUNIT_ASSERT(tagReader.m_strArtist == newProp.m_strArtist);
-            CPPUNIT_ASSERT(tagReader.m_strTitle == newProp.m_strTitle);
-            CPPUNIT_ASSERT(!tagCmp.isTagChanged());
+        // Is same?
+        CLrcTag tagCmp(tagReader, newProp);
+        ASSERT_TRUE(tagReader.m_strArtist == newProp.m_strArtist);
+        ASSERT_TRUE(tagReader.m_strTitle == newProp.m_strTitle);
+        ASSERT_TRUE(!tagCmp.isTagChanged());
 
-            // write old,
-            CLrcTag tag2(newProp, orgProp);
-            tag2.writeToText(ansiLyrics, false);
+        // write old,
+        CLrcTag tag2(newProp, orgProp);
+        tag2.writeToText(ansiLyrics, false);
 
-            // Is same with org?
-            // CLrcTag may append \r\n at the end of lyrics, don't compare it
-            CPPUNIT_ASSERT(strncmp(SZ_LYRICS, ansiLyrics.c_str(), strlen(SZ_LYRICS)) == 0);
-            CPPUNIT_ASSERT(ansiLyrics.size() <= strlen(SZ_LYRICS) + 2);
-        }
-
-        //
-        // test on UCS2 lyrics
-        //
-        {
-            // write new
-            CLrcTag tag(orgProp, newProp);
-            tag.writeToText(wLyrics, false);
-
-            // read new
-            CLrcTag tagReader;
-            CPPUNIT_ASSERT(tagReader.readFromText(wLyrics.c_str(), wLyrics.size()));
-
-            // Is same?
-            CPPUNIT_ASSERT(tagReader.m_strArtist == newProp.m_strArtist);
-            CPPUNIT_ASSERT(tagReader.m_strTitle == newProp.m_strTitle);
-
-            // write old,
-            CLrcTag tag2(newProp, orgProp);
-            tag2.writeToText(wLyrics, false);
-
-            // Is same with org?
-            // CLrcTag may append \r\n at the end of lyrics, don't compare it
-            CPPUNIT_ASSERT(wcsncmp(wStr.c_str(), wLyrics.c_str(), wStr.size()) == 0);
-            CPPUNIT_ASSERT(wLyrics.size() <= wStr.size() + 2);
-        }
+        // Is same with org?
+        // CLrcTag may append \r\n at the end of lyrics, don't compare it
+        ASSERT_TRUE(strncmp(SZ_LYRICS, ansiLyrics.c_str(), strlen(SZ_LYRICS)) == 0);
+        ASSERT_TRUE(ansiLyrics.size() <= strlen(SZ_LYRICS) + 2);
     }
 
-};
+    //
+    // test on UCS2 lyrics
+    //
+    {
+        // write new
+        CLrcTag tag(orgProp, newProp);
+        tag.writeToText(wLyrics, false);
 
-CPPUNIT_TEST_SUITE_REGISTRATION(CTestCaseLrcTag);
+        // read new
+        CLrcTag tagReader;
+        ASSERT_TRUE(tagReader.readFromText(wLyrics.c_str(), wLyrics.size()));
 
-#endif // _CPPUNIT_TEST
+        // Is same?
+        ASSERT_TRUE(tagReader.m_strArtist == newProp.m_strArtist);
+        ASSERT_TRUE(tagReader.m_strTitle == newProp.m_strTitle);
+
+        // write old,
+        CLrcTag tag2(newProp, orgProp);
+        tag2.writeToText(wLyrics, false);
+
+        // Is same with org?
+        // CLrcTag may append \r\n at the end of lyrics, don't compare it
+        ASSERT_TRUE(wcsncmp(wStr.c_str(), wLyrics.c_str(), wStr.size()) == 0);
+        ASSERT_TRUE(wLyrics.size() <= wStr.size() + 2);
+    }
+}
+
+#endif

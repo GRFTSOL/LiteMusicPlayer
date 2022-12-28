@@ -541,78 +541,53 @@ void CMPlaylistSearchObj::useResultAsNowPlaying()
         g_profile.writeString(stringPrintf("%s%d", SZ_RECENT_PL, i).c_str(), m_vRecentPL[i].c_str());
 }
 
-#ifdef _CPPUNIT_TEST
+#if UNIT_TEST
 
-//////////////////////////////////////////////////////////////////////////
-// CPPUnit test
+#include "utils/unittest.h"
 
-IMPLEMENT_CPPUNIT_TEST_REG(MPlaylistSearchObj)
-
-class CTestCasePlaylistSearchObj : public CppUnit::TestFixture
+void verifySplitResult(cstr_t szKeywords, cstr_t vOutput[], int nCountOutput)
 {
-    CPPUNIT_TEST_SUITE(CTestCasePlaylistSearchObj);
-    CPPUNIT_TEST(testSplitKeywords);
-    CPPUNIT_TEST_SUITE_END();
+    VecStrings    vKeywords;
 
-protected:
-
-public:
-    void setUp()
+    splitKeywords(szKeywords, vKeywords);
+    if (nCountOutput == vKeywords.size())
     {
+        for (int i = 0; i < nCountOutput; i++)
+        {
+            if (strcmp(vOutput[i], vKeywords[i].c_str()) != 0)
+                FAIL() << (stringPrintf("splitKeywords:%s Failed, %s should be %s, Round: %d", szKeywords, vKeywords[i].c_str(), vOutput[i], i).c_str());
+        }
+    } else {
+        FAIL() << (stringPrintf("splitKeywords:%s Failed, Output Count not match.", szKeywords).c_str());
     }
-    void tearDown() 
+}
+
+TEST(MLPlaylistSearchObj, SplitKeywords)
+{
     {
-    }
-
-protected:
-    void testSplitKeywords()
-    {
-        {
-            cstr_t    szKeyWords = "";
-            cstr_t    vOutput[] = { "" };
-            verifySplitResult(szKeyWords, vOutput, 0);
-        }
-
-        {
-            cstr_t    szKeyWords = "a";
-            cstr_t    vOutput[] = { "a" };
-            verifySplitResult(szKeyWords, vOutput, CountOf(vOutput));
-        }
-
-        {
-            cstr_t    szKeyWords = "abcdefg";
-            cstr_t    vOutput[] = { "abcdefg" };
-            verifySplitResult(szKeyWords, vOutput, CountOf(vOutput));
-        }
-
-        {
-            cstr_t    szKeyWords = "a, b  cc;d-!ee?ff";
-            cstr_t    vOutput[] = { "a", ",", "b", "cc", ";", "d", "-", 
-                "!", "ee", "?", "ff" };
-            verifySplitResult(szKeyWords, vOutput, CountOf(vOutput));
-        }
+        cstr_t    szKeyWords = "";
+        cstr_t    vOutput[] = { "" };
+        verifySplitResult(szKeyWords, vOutput, 0);
     }
 
-    void verifySplitResult(cstr_t szKeywords, cstr_t vOutput[], int nCountOutput)
     {
-        VecStrings    vKeywords;
-
-        splitKeywords(szKeywords, vKeywords);
-        if (nCountOutput == vKeywords.size())
-        {
-            for (int i = 0; i < nCountOutput; i++)
-            {
-                if (strcmp(vOutput[i], vKeywords[i].c_str()) != 0)
-                    CPPUNIT_FAIL_T(stringPrintf("splitKeywords:%s Failed, %s should be %s, Round: %d", szKeywords, vKeywords[i].c_str(), vOutput[i], i).c_str());
-            }
-        }
-        else
-            CPPUNIT_FAIL_T(stringPrintf("splitKeywords:%s Failed, Output Count not match.", szKeywords).c_str());
+        cstr_t    szKeyWords = "a";
+        cstr_t    vOutput[] = { "a" };
+        verifySplitResult(szKeyWords, vOutput, CountOf(vOutput));
     }
 
-};
+    {
+        cstr_t    szKeyWords = "abcdefg";
+        cstr_t    vOutput[] = { "abcdefg" };
+        verifySplitResult(szKeyWords, vOutput, CountOf(vOutput));
+    }
 
-CPPUNIT_TEST_SUITE_REGISTRATION(CTestCasePlaylistSearchObj);
+    {
+        cstr_t    szKeyWords = "a, b  cc;d-!ee?ff";
+        cstr_t    vOutput[] = { "a", ",", "b", "cc", ";", "d", "-", 
+            "!", "ee", "?", "ff" };
+        verifySplitResult(szKeyWords, vOutput, CountOf(vOutput));
+    }
+}
 
-
-#endif // _CPPUNIT_TEST
+#endif

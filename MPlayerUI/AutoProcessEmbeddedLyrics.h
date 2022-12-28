@@ -42,7 +42,7 @@ public:
 
 protected:
     friend class CDlgBatchProcessEmbeddedLyrics;
-    friend class CTestCaseCAutoProcessEmbeddedLyrics;
+    friend class AutoProcessEmbeddedLyrics_AutoProcessEmbeddedLyricsLoad_Test;
 
     int dealEmbeddedLyrics(Item &item);
     int dealSaveEmbeddedLyrics(Item &item);

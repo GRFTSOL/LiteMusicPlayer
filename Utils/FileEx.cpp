@@ -76,7 +76,7 @@ int CFileEx::readCount(void * buf, size_t count) {
     }
 }
 
-int CFileEx::writeCount(void * buf, size_t count) {
+int CFileEx::writeCount(const void * buf, size_t count) {
     size_t n = fwrite(buf, 1, count, m_fp);
     if (n != count) {
         return ERR_WRITE_FILE;
@@ -199,100 +199,90 @@ int CFileEx::readUInt32BE(uint32_t &v) {
     return ERR_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
-// CPPUnit test
+#if UNIT_TEST
 
-#ifdef _CPPUNIT_TEST
-
-IMPLEMENT_CPPUNIT_TEST_REG(CFileEx)
-
-class CTestCaseCFileEx : public CppUnit::TestFixture {
-    CPPUNIT_TEST_SUITE(CTestCaseCFileEx);
-    CPPUNIT_TEST(testReadWrite);
-    CPPUNIT_TEST_SUITE_END();
-
-protected:
-    void testReadWrite() {
-        CFileEx f;
-        string file = dirStringJoin(getUnitTestFolder().c_str(), "test_FileEx.bin");
-
-        // write
-        int n = f.open(file.c_str(), "wb");
-        CPPUNIT_ASSERT(n == ERR_OK);
-
-        size_t count = f.write("a", 1);
-        CPPUNIT_ASSERT(count == 1);
-
-        n = f.writeByte(1);
-        CPPUNIT_ASSERT(n == ERR_OK);
-
-        n = f.writeInt16BE(258);
-        CPPUNIT_ASSERT(n == ERR_OK);
-
-        n = f.writeInt16BE((uint16_t)65535);
-        CPPUNIT_ASSERT(n == ERR_OK);
-
-        n = f.writeInt32BE(3688823);
-        CPPUNIT_ASSERT(n == ERR_OK);
-
-        n = f.writeUInt32BE(0xFFFFFFFF);
-        CPPUNIT_ASSERT(n == ERR_OK);
-
-        n = f.writeCount("ab", 2);
-        CPPUNIT_ASSERT(n == ERR_OK);
-
-        const char *s = "dde\r\n";
-        n = f.write(s, strlen(s));
-
-        f.close();
+#include "utils/unittest.h"
 
 
-        // read
-        n = f.open(file.c_str(), "rb");
-        CPPUNIT_ASSERT(n == ERR_OK);
+TEST(FileEx, ReadWrite) {
+    CFileEx f;
+    string file = dirStringJoin(getUnittestTempDir().c_str(), "test_FileEx.bin");
 
-        uint8_t buf[64];
-        count = f.read(buf, 1);
-        CPPUNIT_ASSERT(count == 1);
-        CPPUNIT_ASSERT(buf[0] == 'a');
+    // write
+    int n = f.open(file.c_str(), "wb");
+    ASSERT_TRUE(n == ERR_OK);
 
-        uint8_t vb;
-        n = f.readByte(vb);
-        CPPUNIT_ASSERT(n == ERR_OK);
-        CPPUNIT_ASSERT(vb == 1);
+    size_t count = f.write("a", 1);
+    ASSERT_TRUE(count == 1);
 
-        short vs;
-        n = f.readInt16BE(vs);
-        CPPUNIT_ASSERT(n == ERR_OK);
-        CPPUNIT_ASSERT(vs == 258);
-        n = f.readInt16BE(vs);
-        CPPUNIT_ASSERT(n == ERR_OK);
-        CPPUNIT_ASSERT((uint16_t)vs == 65535);
+    n = f.writeByte(1);
+    ASSERT_TRUE(n == ERR_OK);
 
-        int vn;
-        n = f.readInt32BE(vn);
-        CPPUNIT_ASSERT(n == ERR_OK);
-        CPPUNIT_ASSERT(vn == 3688823);
+    n = f.writeInt16BE(258);
+    ASSERT_TRUE(n == ERR_OK);
 
-        uint32_t vu;
-        n = f.readUInt32BE(vu);
-        CPPUNIT_ASSERT(n == ERR_OK);
-        CPPUNIT_ASSERT(vu == 0xFFFFFFFF);
+    n = f.writeInt16BE((uint16_t)65535);
+    ASSERT_TRUE(n == ERR_OK);
 
-        n = f.readCount(buf, 2);
-        CPPUNIT_ASSERT(n == ERR_OK);
-        CPPUNIT_ASSERT(buf[0] == 'a' && buf[1] == 'b');
+    n = f.writeInt32BE(3688823);
+    ASSERT_TRUE(n == ERR_OK);
 
-        string str;
-        n = f.readLine(str);
-        CPPUNIT_ASSERT(n == ERR_OK);
-        CPPUNIT_ASSERT(str == "dde\r");
+    n = f.writeUInt32BE(0xFFFFFFFF);
+    ASSERT_TRUE(n == ERR_OK);
 
-        f.close();
-    }
+    n = f.writeCount("ab", 2);
+    ASSERT_TRUE(n == ERR_OK);
 
-};
+    const char *s = "dde\r\n";
+    n = f.write(s, strlen(s));
 
-CPPUNIT_TEST_SUITE_REGISTRATION(CTestCaseCFileEx);
+    f.close();
 
-#endif // _CPPUNIT_TEST
+
+    // read
+    n = f.open(file.c_str(), "rb");
+    ASSERT_TRUE(n == ERR_OK);
+
+    uint8_t buf[64];
+    count = f.read(buf, 1);
+    ASSERT_TRUE(count == 1);
+    ASSERT_TRUE(buf[0] == 'a');
+
+    uint8_t vb;
+    n = f.readByte(vb);
+    ASSERT_TRUE(n == ERR_OK);
+    ASSERT_TRUE(vb == 1);
+
+    short vs;
+    n = f.readInt16BE(vs);
+    ASSERT_TRUE(n == ERR_OK);
+    ASSERT_TRUE(vs == 258);
+    n = f.readInt16BE(vs);
+    ASSERT_TRUE(n == ERR_OK);
+    ASSERT_TRUE((uint16_t)vs == 65535);
+
+    int vn;
+    n = f.readInt32BE(vn);
+    ASSERT_TRUE(n == ERR_OK);
+    ASSERT_TRUE(vn == 3688823);
+
+    uint32_t vu;
+    n = f.readUInt32BE(vu);
+    ASSERT_TRUE(n == ERR_OK);
+    ASSERT_TRUE(vu == 0xFFFFFFFF);
+
+    n = f.readCount(buf, 2);
+    ASSERT_TRUE(n == ERR_OK);
+    ASSERT_TRUE(buf[0] == 'a' && buf[1] == 'b');
+
+    string str;
+    n = f.readLine(str);
+    ASSERT_TRUE(n == ERR_OK);
+    ASSERT_TRUE(str == "dde\r");
+
+    f.close();
+
+    deleteFile(file.c_str());
+}
+
+#endif

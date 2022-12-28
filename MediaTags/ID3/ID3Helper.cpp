@@ -337,7 +337,7 @@ int fileMoveEndData(FILE *m_fp, long nOffset, long nNewOffset) {
 
 /*
     test function for fileMoveEndData()
-void testFileMoveEndData()
+TEST(ID3Helper, FileMoveEndData)
 {
     // fileMoveEndData
     FILE        *fp;
@@ -359,104 +359,82 @@ void testFileMoveEndData()
 }
 */
 
-#ifdef _CPPUNIT_TEST
+#if UNIT_TEST
 
-IMPLEMENT_CPPUNIT_TEST_REG(ID3_HELPER)
+#include "utils/unittest.h"
 
-//////////////////////////////////////////////////////////////////////////
-// CPPUnit test
-
-class CTestCaseLrcTag : public CppUnit::TestFixture {
-    CPPUNIT_TEST_SUITE(CTestCaseLrcTag);
-    CPPUNIT_TEST(testCopyAnsiStr);
-    CPPUNIT_TEST(testCopyStrByEncodingAndBom);
-    CPPUNIT_TEST_SUITE_END();
-
-protected:
-
-public:
-    void setUp() {
-    }
-    void tearDown() {
-    }
-
-protected:
-    void testCopyAnsiStr() {
+TEST(ID3Helper, CopyAnsiStr) {
 #define        SZ_TEXT_TEST "abc\0def\0"
-        cstr_t text = SZ_TEXT_TEST;
-        int lenText = CountOf(SZ_TEXT_TEST);
-        int n;
+    cstr_t text = SZ_TEXT_TEST;
+    int lenText = CountOf(SZ_TEXT_TEST);
+    int n;
 
-        {
-            string str;
-            n = copyAnsiStr(str, text, lenText);
-            CPPUNIT_ASSERT(n == 4);
-            CPPUNIT_ASSERT(strcmp(str.c_str(), "abc") == 0);
+    {
+        string str;
+        n = copyAnsiStr(str, text, lenText);
+        ASSERT_TRUE(n == 4);
+        ASSERT_TRUE(strcmp(str.c_str(), "abc") == 0);
 
-            n = copyAnsiStr(str, text, 2);
-            CPPUNIT_ASSERT(n == 2);
-            CPPUNIT_ASSERT(strcmp(str.c_str(), "ab") == 0);
-        }
+        n = copyAnsiStr(str, text, 2);
+        ASSERT_TRUE(n == 2);
+        ASSERT_TRUE(strcmp(str.c_str(), "ab") == 0);
     }
+}
 
-    void testCopyStrByEncodingAndBom() {
+TEST(ID3Helper, CopyStrByEncodingAndBom) {
 #define        SZ_TEXT_TEST "abc\0def\0"
-        cstr_t text = SZ_TEXT_TEST;
-        int lenText = CountOf(SZ_TEXT_TEST);
-        int n;
-        string wStr;
-        utf8ToUCS2(text, lenText, wStr);
+    cstr_t text = SZ_TEXT_TEST;
+    int lenText = CountOf(SZ_TEXT_TEST);
+    int n;
+    string wStr;
+    utf8ToUCS2(text, lenText, wStr);
 
-        string wLyrics;
-        wLyrics.append((const WCHAR *)SZ_FE_UCS2, 1);
-        wLyrics.append(wStr.c_str(), wStr.size());
+    string wLyrics;
+    wLyrics.append((const WCHAR *)SZ_FE_UCS2, 1);
+    wLyrics.append(wStr.c_str(), wStr.size());
 
-        string wLyricsBe;
-        wLyricsBe.append(wStr.c_str(), wStr.size());
-        uCS2LEToBE(wLyricsBe.data(), wLyricsBe.size());
+    string wLyricsBe;
+    wLyricsBe.append(wStr.c_str(), wStr.size());
+    uCS2LEToBE(wLyricsBe.data(), wLyricsBe.size());
 
-        string utf8Lyrics;
-        utf8Lyrics.append(SZ_FE_UTF8);
-        utf8Lyrics.append(text, lenText);
+    string utf8Lyrics;
+    utf8Lyrics.append(SZ_FE_UTF8);
+    utf8Lyrics.append(text, lenText);
 
-        {
-            string str;
-            n = copyStrByEncodingAndBom(str, IET_ANSI, text, lenText);
-            CPPUNIT_ASSERT(n == 4);
-            CPPUNIT_ASSERT(strcmp(str.c_str(), "abc") == 0);
+    {
+        string str;
+        n = copyStrByEncodingAndBom(str, IET_ANSI, text, lenText);
+        ASSERT_TRUE(n == 4);
+        ASSERT_TRUE(strcmp(str.c_str(), "abc") == 0);
 
-            n = copyStrByEncodingAndBom(str, IET_ANSI, text, 2);
-            CPPUNIT_ASSERT(n == 2);
-            CPPUNIT_ASSERT(strcmp(str.c_str(), "ab") == 0);
+        n = copyStrByEncodingAndBom(str, IET_ANSI, text, 2);
+        ASSERT_TRUE(n == 2);
+        ASSERT_TRUE(strcmp(str.c_str(), "ab") == 0);
 
-            n = copyStrByEncodingAndBom(str, IET_UCS2LE_BOM, (cstr_t)wLyrics.c_str(), wLyrics.size() * sizeof(WCHAR));
-            CPPUNIT_ASSERT(n == (4 + 1) * sizeof(WCHAR));
-            CPPUNIT_ASSERT(strcmp(str.c_str(), "abc") == 0);
+        n = copyStrByEncodingAndBom(str, IET_UCS2LE_BOM, (cstr_t)wLyrics.c_str(), wLyrics.size() * sizeof(WCHAR));
+        ASSERT_TRUE(n == (4 + 1) * sizeof(WCHAR));
+        ASSERT_TRUE(strcmp(str.c_str(), "abc") == 0);
 
-            n = copyStrByEncodingAndBom(str, IET_UCS2LE_BOM, (cstr_t)wLyrics.c_str(), 3 * sizeof(WCHAR));
-            CPPUNIT_ASSERT(n == (2 + 1) * sizeof(WCHAR));
-            CPPUNIT_ASSERT(strcmp(str.c_str(), "ab") == 0);
+        n = copyStrByEncodingAndBom(str, IET_UCS2LE_BOM, (cstr_t)wLyrics.c_str(), 3 * sizeof(WCHAR));
+        ASSERT_TRUE(n == (2 + 1) * sizeof(WCHAR));
+        ASSERT_TRUE(strcmp(str.c_str(), "ab") == 0);
 
-            n = copyStrByEncodingAndBom(str, IET_UCS2BE_NO_BOM, (cstr_t)wLyricsBe.c_str(), wLyricsBe.size() * sizeof(WCHAR));
-            CPPUNIT_ASSERT(n == 4 * sizeof(WCHAR));
-            CPPUNIT_ASSERT(strcmp(str.c_str(), "abc") == 0);
+        n = copyStrByEncodingAndBom(str, IET_UCS2BE_NO_BOM, (cstr_t)wLyricsBe.c_str(), wLyricsBe.size() * sizeof(WCHAR));
+        ASSERT_TRUE(n == 4 * sizeof(WCHAR));
+        ASSERT_TRUE(strcmp(str.c_str(), "abc") == 0);
 
-            n = copyStrByEncodingAndBom(str, IET_UCS2BE_NO_BOM, (cstr_t)wLyricsBe.c_str(), 2 * sizeof(WCHAR));
-            CPPUNIT_ASSERT(n == 2 * sizeof(WCHAR));
-            CPPUNIT_ASSERT(strcmp(str.c_str(), "ab") == 0);
+        n = copyStrByEncodingAndBom(str, IET_UCS2BE_NO_BOM, (cstr_t)wLyricsBe.c_str(), 2 * sizeof(WCHAR));
+        ASSERT_TRUE(n == 2 * sizeof(WCHAR));
+        ASSERT_TRUE(strcmp(str.c_str(), "ab") == 0);
 
-            n = copyStrByEncodingAndBom(str, IET_ANSI, utf8Lyrics.c_str(), utf8Lyrics.size());
-            CPPUNIT_ASSERT(n == 4 + 3);
-            CPPUNIT_ASSERT(strcmp(str.c_str(), "abc") == 0);
+        n = copyStrByEncodingAndBom(str, IET_ANSI, utf8Lyrics.c_str(), utf8Lyrics.size());
+        ASSERT_TRUE(n == 4 + 3);
+        ASSERT_TRUE(strcmp(str.c_str(), "abc") == 0);
 
-            n = copyStrByEncodingAndBom(str, IET_ANSI, utf8Lyrics.c_str(), 2 + 3);
-            CPPUNIT_ASSERT(n == 2 + 3);
-            CPPUNIT_ASSERT(strcmp(str.c_str(), "ab") == 0);
-        }
+        n = copyStrByEncodingAndBom(str, IET_ANSI, utf8Lyrics.c_str(), 2 + 3);
+        ASSERT_TRUE(n == 2 + 3);
+        ASSERT_TRUE(strcmp(str.c_str(), "ab") == 0);
     }
+}
 
-};
-
-CPPUNIT_TEST_SUITE_REGISTRATION(CTestCaseLrcTag);
-
-#endif // _CPPUNIT_TEST
+#endif

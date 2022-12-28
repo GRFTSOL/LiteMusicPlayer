@@ -45,7 +45,7 @@ protected:
     virtual void onSetChildVisible(CUIObject *pChild, bool bVisible, bool bRedraw) override;
 
 protected:
-    friend class CTestCaseCSkinLinearContainer;
+    friend class SkinLinearContainer_ZoomFromWeightable_Test;
 
     bool                        m_bVertical;
     int                         m_nSeparatorThickness;

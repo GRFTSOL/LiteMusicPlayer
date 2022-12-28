@@ -291,95 +291,80 @@ void CSimpleXML::free() {
     }
 }
 
-//////////////////////////////////////////////////////////////////////////
-//
+#if UNIT_TEST
 
-#ifdef _CPPUNIT_TEST
+#include "utils/unittest.h"
 
-//////////////////////////////////////////////////////////////////////////
-// CPPUnit test
 
-class CTestCaseSimpleXML : public CppUnit::TestFixture {
-    CPPUNIT_TEST_SUITE(CTestCaseSimpleXML);
-    CPPUNIT_TEST(testSXNode);
-    CPPUNIT_TEST(testParseCDATA);
-    CPPUNIT_TEST_SUITE_END();
+TEST(SimpleXML, ParseCDATA) {
+    CSimpleXML xml;
+    cstr_t SZ_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
+    "<root><![CDATA[value]]><![CDATA[value]]></root>";
 
-protected:
-    void testParseCDATA() {
-        CSimpleXML xml;
-        cstr_t SZ_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
-        "<root><![CDATA[value]]><![CDATA[value]]></root>";
+    ASSERT_TRUE(xml.parseData(SZ_XML, strlen(SZ_XML)));
+    ASSERT_TRUE(xml.m_pRoot->name == "root");
+    ASSERT_TRUE(xml.m_pRoot->strContent == "valuevalue");
+}
 
-        CPPUNIT_ASSERT(xml.parseData(SZ_XML, strlen(SZ_XML)));
-        CPPUNIT_ASSERT(xml.m_pRoot->name == "root");
-        CPPUNIT_ASSERT(xml.m_pRoot->strContent == "valuevalue");
-    }
+TEST(SimpleXML, SXNode) {
+    SXNode node;
 
-    void testSXNode() {
-        SXNode node;
+    cstr_t SZ_NODE_NAME = "node";
+    cstr_t SZ_CONTENT_NAME = "content";
+    cstr_t SZ_PROP_NAME = "PropName_%d";
+    cstr_t SZ_VALUE_NAME = "Value_%d";
+    int i;
 
-        cstr_t SZ_NODE_NAME = "node";
-        cstr_t SZ_CONTENT_NAME = "content";
-        cstr_t SZ_PROP_NAME = "PropName_%d";
-        cstr_t SZ_VALUE_NAME = "Value_%d";
-        int i;
+    node.name = SZ_NODE_NAME;
+    node.strContent = SZ_CONTENT_NAME;
 
-        node.name = SZ_NODE_NAME;
-        node.strContent = SZ_CONTENT_NAME;
+    // add property
+    for (i = 0; i < 5; i++) {
+        char szName[64], szValue[64];
+        cstr_t p;
 
-        // add property
-        for (i = 0; i < 5; i++) {
-            char szName[64], szValue[64];
-            cstr_t p;
+        sprintf(szName, SZ_PROP_NAME, i);
+        sprintf(szValue, SZ_VALUE_NAME, i);
+        node.addProperty(szName, szValue);
 
-            sprintf(szName, SZ_PROP_NAME, i);
-            sprintf(szValue, SZ_VALUE_NAME, i);
-            node.addProperty(szName, szValue);
-
-            p = node.getProperty(szName);
-            if (!p || !(strcmp(p, szValue) == 0)) {
-                CPPUNIT_FAIL_T(stringPrintf("SXNode.getProperty(), case: %d, %s", i, szName).c_str());
-            }
-        }
-
-        // Erase property
-        for (i = 0; i < 1; i++) {
-            char szName[64], szValue[64];
-            cstr_t p;
-
-            sprintf(szName, SZ_PROP_NAME, i);
-            sprintf(szValue, SZ_VALUE_NAME, i);
-            // node.addProperty(szName, szValue);
-
-            node.eraseProperty(szName);
-            p = node.getProperty(szName);
-            if (p) {
-                CPPUNIT_FAIL_T(stringPrintf("SXNode.eraseProperty(), case: %d, %s", i, szName).c_str());
-            }
-        }
-
-        // To xml, and parse from xml
-        CXMLWriter xmlWriter;
-        CSimpleXML xml;
-
-        node.toXML(xmlWriter);
-        string &buf = xmlWriter.getBuffer();
-        CPPUNIT_ASSERT(xml.parseData(buf.c_str(), buf.size()));
-
-        //
-        // compare two xml data struct...
-        //
-        {
-            // SXNode            *pNode;
-
-            // CPPUNIT_ASSERT(strcasecmp(pNode->name.c_str(), node.name.c_str()) == 0);
+        p = node.getProperty(szName);
+        if (!p || !(strcmp(p, szValue) == 0)) {
+            FAIL() << (stringPrintf("SXNode.getProperty(), case: %d, %s", i, szName).c_str());
         }
     }
 
-};
+    // Erase property
+    for (i = 0; i < 1; i++) {
+        char szName[64], szValue[64];
+        cstr_t p;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(CTestCaseSimpleXML);
+        sprintf(szName, SZ_PROP_NAME, i);
+        sprintf(szValue, SZ_VALUE_NAME, i);
+        // node.addProperty(szName, szValue);
 
+        node.eraseProperty(szName);
+        p = node.getProperty(szName);
+        if (p) {
+            FAIL() << (stringPrintf("SXNode.eraseProperty(), case: %d, %s", i, szName).c_str());
+        }
+    }
 
-#endif // _CPPUNIT_TEST
+    // To xml, and parse from xml
+    CXMLWriter xmlWriter;
+    CSimpleXML xml;
+
+    node.toXML(xmlWriter);
+    string &buf = xmlWriter.getBuffer();
+    ASSERT_TRUE(xml.parseData(buf.c_str(), buf.size()));
+
+    //
+    // compare two xml data struct...
+    //
+    {
+        // SXNode            *pNode;
+
+        // ASSERT_TRUE(strcasecmp(pNode->name.c_str(), node.name.c_str()) == 0);
+    }
+}
+
+#endif

@@ -23,6 +23,7 @@ build
 BuildLog.htm
 *.pch
 *.idb
+*.log
 project.xcworkspace
 obj
 /third-parties

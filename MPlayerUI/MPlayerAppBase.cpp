@@ -14,6 +14,7 @@
 #include "LyricShowObj.h"
 #include "../version.h"
 #include "../LyricsLib/LyricsKeywordFilter.h"
+#include "utils/unittest.h"
 
 #ifdef _LINUX_GTK2
 #include "../Skin/gtk2/SplashScreenWnd.h"
@@ -42,17 +43,6 @@ CLyricsLocalSearch        g_LyricSearch;
 
 CharEncodingType getDefaultLyricsEncodingSettings();
 
-#ifdef _CPPUNIT_TEST
-void mLRunUnitTest()
-{
-    if (!g_profile.getBool("runUnitTest", true))
-        return;
-
-    createUnitResultWnd(getAppInstance());
-
-    ::runUnitTest();
-}
-#endif // _CPPUNIT_TEST
 
 string getAppNameLong()
 {
@@ -208,9 +198,7 @@ bool CMPlayerAppBase::init()
 
     CLyricsKeywordFilter::init();
 
-#ifdef _CPPUNIT_TEST
-    mLRunUnitTest();
-#endif // _CPPUNIT_TEST
+    runAllUnittest();
 
     g_LyricSearch.init();
 

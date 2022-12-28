@@ -830,233 +830,220 @@ void CLrcParser::lRCCheckRowTime() {
 }
 
 
-#ifdef _CPPUNIT_TEST
+#if UNIT_TEST
 
-//////////////////////////////////////////////////////////////////////////
-// CPPUnit test
+#include "utils/unittest.h"
 
 void encodeTimeStamps(int duration, string &timeStamps);
 
 cstr_t decodeTimeStamps(cstr_t szTimeStamps, int &duration);
 
-class CTestCaseLrcParser : public CppUnit::TestFixture {
-    CPPUNIT_TEST_SUITE(CTestCaseLrcParser);
-    CPPUNIT_TEST(test_EncodeTimeStamps);
-    CPPUNIT_TEST(test_CLrcParser_Lrc);
-    CPPUNIT_TEST(test_CLrcParser_Txt);
-    CPPUNIT_TEST_SUITE_END();
+TEST(LrcParser, EncodeTimeStamps) {
+    for (int nDuration = -22 * 1000; nDuration < 1000 * 30; nDuration += 100) {
+        string timeStamps;
+        int nDuration2 = 0;
 
-protected:
-    void test_EncodeTimeStamps() {
-        for (int nDuration = -22 * 1000; nDuration < 1000 * 30; nDuration += 100) {
-            string timeStamps;
-            int nDuration2 = 0;
+        encodeTimeStamps(nDuration, timeStamps);
 
-            encodeTimeStamps(nDuration, timeStamps);
-
-            cstr_t szRet = decodeTimeStamps(timeStamps.c_str(), nDuration2);
-            CPPUNIT_ASSERT(isEmptyString(szRet));
-            CPPUNIT_ASSERT(nDuration2 == nDuration);
-        }
+        cstr_t szRet = decodeTimeStamps(timeStamps.c_str(), nDuration2);
+        ASSERT_TRUE(isEmptyString(szRet));
+        ASSERT_TRUE(nDuration2 == nDuration);
     }
+}
 
-    void test_CLrcParser_Lrc() {
-        cstr_t SZ_LYRICS_TEST = "[ar:artist]\n[ti:title]\n[encoding:big5]\n[offset:-500]\n[00:01.12]L1\n[00:02.01]\nDummy Line\n[00:03:01]L3\nL4\n\n";
-        cstr_t valArtist = "artist";
-        cstr_t valTitle = "title";
-        cstr_t vLyrLines[] = { "L1", "", "L3" };
-        int vTime[] = { 1 * 1000 + 120, 2 * 1000 + 10, 3 *1000 + 10 };
+TEST(LrcParser, CLrcParser_Lrc) {
+    cstr_t SZ_LYRICS_TEST = "[ar:artist]\n[ti:title]\n[encoding:big5]\n[offset:-500]\n[00:01.12]L1\n[00:02.01]\nDummy Line\n[00:03:01]L3\nL4\n\n";
+    cstr_t valArtist = "artist";
+    cstr_t valTitle = "title";
+    cstr_t vLyrLines[] = { "L1", "", "L3" };
+    int vTime[] = { 1 * 1000 + 120, 2 * 1000 + 10, 3 *1000 + 10 };
 
-        string wStr;
-        utf8ToUCS2(SZ_LYRICS_TEST, -1, wStr);
+    string wStr;
+    utf8ToUCS2(SZ_LYRICS_TEST, -1, wStr);
 
-        string wLyrics;
-        wLyrics.append((const WCHAR *)SZ_FE_UCS2, 1);
-        wLyrics.append(wStr.c_str(), wStr.size());
+    string wLyrics;
+    wLyrics.append((const WCHAR *)SZ_FE_UCS2, 1);
+    wLyrics.append(wStr.c_str(), wStr.size());
 
-        string wLyricsBe;
-        wLyricsBe.append(wLyrics.c_str(), wLyrics.size());
-        uCS2LEToBE(wLyricsBe.data(), wLyricsBe.size());
+    string wLyricsBe;
+    wLyricsBe.append(wLyrics.c_str(), wLyrics.size());
+    uCS2LEToBE(wLyricsBe.data(), wLyricsBe.size());
 
-        string utf8Lyrics;
-        utf8Lyrics.append(SZ_FE_UTF8);
-        utf8Lyrics.append(SZ_LYRICS_TEST);
+    string utf8Lyrics;
+    utf8Lyrics.append(SZ_FE_UTF8);
+    utf8Lyrics.append(SZ_LYRICS_TEST);
 
-        uint8_t *vLyrics[] = { uint8_t *SZ_LYRICS_TEST, uint8_t *wLyrics.c_str(), uint8_t *wLyricsBe.c_str(), uint8_t *utf8Lyrics.c_str(), };
-        int vLen[] = { strlen(SZ_LYRICS_TEST), wLyrics.size() * sizeof(WCHAR), wLyricsBe.size() * sizeof(WCHAR), utf8Lyrics.size(), };
-        CharEncodingType vEncoding[] = { ED_BIG5, ED_UNICODE, ED_UNICODE_BIG_ENDIAN, ED_UTF8, };
+    uint8_t *vLyrics[] = { uint8_t *SZ_LYRICS_TEST, uint8_t *wLyrics.c_str(), uint8_t *wLyricsBe.c_str(), uint8_t *utf8Lyrics.c_str(), };
+    int vLen[] = { strlen(SZ_LYRICS_TEST), wLyrics.size() * sizeof(WCHAR), wLyricsBe.size() * sizeof(WCHAR), utf8Lyrics.size(), };
+    CharEncodingType vEncoding[] = { ED_BIG5, ED_UNICODE, ED_UNICODE_BIG_ENDIAN, ED_UTF8, };
 
 
-        for (int i = 0; i < CountOf(vLyrics); i++) {
-            CMLData data;
-            CLrcParser parser(&data, true);
+    for (int i = 0; i < CountOf(vLyrics); i++) {
+        CMLData data;
+        CLrcParser parser(&data, true);
 
-            int nRet = parser.parseString(vLyrics[i], vLen[i], false, false);
-            CPPUNIT_ASSERT(nRet == ERR_OK);
-            data.properties().m_lyrContentType = parser.getLyrContentType();
+        int nRet = parser.parseString(vLyrics[i], vLen[i], false, false);
+        ASSERT_TRUE(nRet == ERR_OK);
+        data.properties().m_lyrContentType = parser.getLyrContentType();
 
-            CPPUNIT_ASSERT(strcmp(data.properties().m_strArtist.c_str(), valArtist) == 0);
-            CPPUNIT_ASSERT(strcmp(data.properties().m_strTitle.c_str(), valTitle) == 0);
-            CPPUNIT_ASSERT(data.properties().getEncodingIndex() == vEncoding[i]);
+        ASSERT_TRUE(strcmp(data.properties().m_strArtist.c_str(), valArtist) == 0);
+        ASSERT_TRUE(strcmp(data.properties().m_strTitle.c_str(), valTitle) == 0);
+        ASSERT_TRUE(data.properties().getEncodingIndex() == vEncoding[i]);
 
-            CLyricsLines &lyrLines = data.getRawLyrics();
+        CLyricsLines &lyrLines = data.getRawLyrics();
+
+        for (int k = 0; k < lyrLines.size(); k++) {
+            LyricsLine *pLine = lyrLines[k];
+
+            ASSERT_TRUE(pLine->vFrags.size() == 1);
+            ASSERT_TRUE(k < CountOf(vLyrLines));
+            ASSERT_TRUE(strcmp(pLine->vFrags[0]->szLyric, vLyrLines[k]) == 0);
+            ASSERT_TRUE(pLine->vFrags[0]->nBegTime == vTime[k]);
+        }
+        ASSERT_TRUE(lyrLines.size() == CountOf(vLyrLines));
+
+        //
+        // Cases on CLrcParser::toString
+        //
+        string strNewLyr;
+        CLrcParser parser2(&data, true);
+        parser2.toString(strNewLyr, true, false);
+
+        CMLData data3;
+        CLrcParser parser3(&data3, true);
+        parser3.parseString(strNewLyr.c_str(), false);
+
+        {
+            // Compare toString data.
+            CLrcTag tag(data.properties(), data3.properties());
+            ASSERT_TRUE(!tag.isTagChanged()); // data and data3 should be same.
+
+            ASSERT_TRUE(strcmp(data3.properties().m_strArtist.c_str(), valArtist) == 0);
+            ASSERT_TRUE(strcmp(data3.properties().m_strTitle.c_str(), valTitle) == 0);
+            ASSERT_TRUE(data3.properties().getEncodingIndex() == vEncoding[i]);
+
+            CLyricsLines &lyrLines = data3.getRawLyrics();
 
             for (int k = 0; k < lyrLines.size(); k++) {
                 LyricsLine *pLine = lyrLines[k];
 
-                CPPUNIT_ASSERT(pLine->vFrags.size() == 1);
-                CPPUNIT_ASSERT(k < CountOf(vLyrLines));
-                CPPUNIT_ASSERT(strcmp(pLine->vFrags[0]->szLyric, vLyrLines[k]) == 0);
-                CPPUNIT_ASSERT(pLine->vFrags[0]->nBegTime == vTime[k]);
+                ASSERT_TRUE(pLine->vFrags.size() == 1);
+                ASSERT_TRUE(k < CountOf(vLyrLines));
+                ASSERT_TRUE(strcmp(pLine->vFrags[0]->szLyric, vLyrLines[k]) == 0);
+                ASSERT_TRUE(pLine->vFrags[0]->nBegTime == vTime[k]);
             }
-            CPPUNIT_ASSERT(lyrLines.size() == CountOf(vLyrLines));
-
-            //
-            // Cases on CLrcParser::toString
-            //
-            string strNewLyr;
-            CLrcParser parser2(&data, true);
-            parser2.toString(strNewLyr, true, false);
-
-            CMLData data3;
-            CLrcParser parser3(&data3, true);
-            parser3.parseString(strNewLyr.c_str(), false);
-
-            {
-                // Compare toString data.
-                CLrcTag tag(data.properties(), data3.properties());
-                CPPUNIT_ASSERT(!tag.isTagChanged()); // data and data3 should be same.
-
-                CPPUNIT_ASSERT(strcmp(data3.properties().m_strArtist.c_str(), valArtist) == 0);
-                CPPUNIT_ASSERT(strcmp(data3.properties().m_strTitle.c_str(), valTitle) == 0);
-                CPPUNIT_ASSERT(data3.properties().getEncodingIndex() == vEncoding[i]);
-
-                CLyricsLines &lyrLines = data3.getRawLyrics();
-
-                for (int k = 0; k < lyrLines.size(); k++) {
-                    LyricsLine *pLine = lyrLines[k];
-
-                    CPPUNIT_ASSERT(pLine->vFrags.size() == 1);
-                    CPPUNIT_ASSERT(k < CountOf(vLyrLines));
-                    CPPUNIT_ASSERT(strcmp(pLine->vFrags[0]->szLyric, vLyrLines[k]) == 0);
-                    CPPUNIT_ASSERT(pLine->vFrags[0]->nBegTime == vTime[k]);
-                }
-                CPPUNIT_ASSERT(lyrLines.size() == CountOf(vLyrLines));
-            }
-
-            //
-            // Case: Convert to text including timestamps
-            //
-            string strTxtLyr;
-            CLrcParser parserTxt(&data, true);
-            parserTxt.toString(strTxtLyr, true, true);
-
-            CMLData data5;
-            CLrcParser parser5(&data5, true);
-            parser5.parseString(strTxtLyr.c_str(), false);
-
-            // The new parsed data5 shall be same with previous data.
-            CPPUNIT_ASSERT(data5.properties().getOffsetTime() == data.getOffsetTime());
-
-            // Compare line by line
-            CLyricsLines &lyrLines2 = data5.getRawLyrics();
-            for (int k = 0; k < lyrLines2.size(); k++) {
-                LyricsLine *pLine = lyrLines2[k];
-
-                CPPUNIT_ASSERT(pLine->vFrags.size() == 1);
-                CPPUNIT_ASSERT(strcmp(pLine->vFrags[0]->szLyric, vLyrLines[k]) == 0);
-                // 100 = TIME UNIT (TIME_STAMP_UNIT) in timestamps.
-                CPPUNIT_ASSERT(pLine->vFrags[0]->nBegTime == (vTime[k] + 50) / 100 * 100);
-            }
-
+            ASSERT_TRUE(lyrLines.size() == CountOf(vLyrLines));
         }
+
+        //
+        // Case: Convert to text including timestamps
+        //
+        string strTxtLyr;
+        CLrcParser parserTxt(&data, true);
+        parserTxt.toString(strTxtLyr, true, true);
+
+        CMLData data5;
+        CLrcParser parser5(&data5, true);
+        parser5.parseString(strTxtLyr.c_str(), false);
+
+        // The new parsed data5 shall be same with previous data.
+        ASSERT_TRUE(data5.properties().getOffsetTime() == data.getOffsetTime());
+
+        // Compare line by line
+        CLyricsLines &lyrLines2 = data5.getRawLyrics();
+        for (int k = 0; k < lyrLines2.size(); k++) {
+            LyricsLine *pLine = lyrLines2[k];
+
+            ASSERT_TRUE(pLine->vFrags.size() == 1);
+            ASSERT_TRUE(strcmp(pLine->vFrags[0]->szLyric, vLyrLines[k]) == 0);
+            // 100 = TIME UNIT (TIME_STAMP_UNIT) in timestamps.
+            ASSERT_TRUE(pLine->vFrags[0]->nBegTime == (vTime[k] + 50) / 100 * 100);
+        }
+
     }
+}
 
-    void test_CLrcParser_Txt() {
-        cstr_t SZ_LYRICS_TEST = "Artist:artist\nTitle: title\nEncoding:big5\nL1\n\n\nL3\nL4\n\nL6";
-        cstr_t valArtist = "artist";
-        cstr_t valTitle = "title";
-        cstr_t vLyrLines[] = { "L1", "", "", "L3", "L4", "", "L6" };
+TEST(LrcParser, CLrcParser_Txt) {
+    cstr_t SZ_LYRICS_TEST = "Artist:artist\nTitle: title\nEncoding:big5\nL1\n\n\nL3\nL4\n\nL6";
+    cstr_t valArtist = "artist";
+    cstr_t valTitle = "title";
+    cstr_t vLyrLines[] = { "L1", "", "", "L3", "L4", "", "L6" };
 
-        string wStr;
-        utf8ToUCS2(SZ_LYRICS_TEST, -1, wStr);
+    string wStr;
+    utf8ToUCS2(SZ_LYRICS_TEST, -1, wStr);
 
-        string wLyrics;
-        wLyrics.append((const WCHAR *)SZ_FE_UCS2, 1);
-        wLyrics.append(wStr.c_str(), wStr.size());
+    string wLyrics;
+    wLyrics.append((const WCHAR *)SZ_FE_UCS2, 1);
+    wLyrics.append(wStr.c_str(), wStr.size());
 
-        string wLyricsBe;
-        wLyricsBe.append(wLyrics.c_str(), wLyrics.size());
-        uCS2LEToBE(wLyricsBe.data(), wLyricsBe.size());
+    string wLyricsBe;
+    wLyricsBe.append(wLyrics.c_str(), wLyrics.size());
+    uCS2LEToBE(wLyricsBe.data(), wLyricsBe.size());
 
-        string utf8Lyrics;
-        utf8Lyrics.append(SZ_FE_UTF8);
-        utf8Lyrics.append(SZ_LYRICS_TEST);
+    string utf8Lyrics;
+    utf8Lyrics.append(SZ_FE_UTF8);
+    utf8Lyrics.append(SZ_LYRICS_TEST);
 
-        uint8_t *vLyrics[] = { uint8_t *SZ_LYRICS_TEST, uint8_t *wLyrics.c_str(), uint8_t *wLyricsBe.c_str(), uint8_t *utf8Lyrics.c_str(), };
-        int vLen[] = { strlen(SZ_LYRICS_TEST), wLyrics.size() * sizeof(WCHAR), wLyricsBe.size() * sizeof(WCHAR), utf8Lyrics.size(), };
-        CharEncodingType vEncoding[] = { ED_BIG5, ED_UNICODE, ED_UNICODE_BIG_ENDIAN, ED_UTF8, };
+    uint8_t *vLyrics[] = { uint8_t *SZ_LYRICS_TEST, uint8_t *wLyrics.c_str(), uint8_t *wLyricsBe.c_str(), uint8_t *utf8Lyrics.c_str(), };
+    int vLen[] = { strlen(SZ_LYRICS_TEST), wLyrics.size() * sizeof(WCHAR), wLyricsBe.size() * sizeof(WCHAR), utf8Lyrics.size(), };
+    CharEncodingType vEncoding[] = { ED_BIG5, ED_UNICODE, ED_UNICODE_BIG_ENDIAN, ED_UTF8, };
 
 
-        for (int i = 0; i < CountOf(vLyrics); i++) {
-            CMLData data;
-            CLrcParser parser(&data, true);
+    for (int i = 0; i < CountOf(vLyrics); i++) {
+        CMLData data;
+        CLrcParser parser(&data, true);
 
-            int nRet = parser.parseString(vLyrics[i], vLen[i], false, false);
-            CPPUNIT_ASSERT(nRet == ERR_OK);
+        int nRet = parser.parseString(vLyrics[i], vLen[i], false, false);
+        ASSERT_TRUE(nRet == ERR_OK);
 
-            CPPUNIT_ASSERT(strcmp(data.properties().m_strArtist.c_str(), valArtist) == 0);
-            CPPUNIT_ASSERT(strcmp(data.properties().m_strTitle.c_str(), valTitle) == 0);
-            CPPUNIT_ASSERT(data.properties().getEncodingIndex() == vEncoding[i]);
+        ASSERT_TRUE(strcmp(data.properties().m_strArtist.c_str(), valArtist) == 0);
+        ASSERT_TRUE(strcmp(data.properties().m_strTitle.c_str(), valTitle) == 0);
+        ASSERT_TRUE(data.properties().getEncodingIndex() == vEncoding[i]);
 
-            CLyricsLines &lyrLines = data.getRawLyrics();
+        CLyricsLines &lyrLines = data.getRawLyrics();
 
-            for (int k = 0; k < lyrLines.size(); k++) {
+        for (int k = 0; k < lyrLines.size(); k++) {
+            LyricsLine *pLine = lyrLines[k];
+
+            ASSERT_TRUE(pLine->vFrags.size() == 1);
+            ASSERT_TRUE(k < CountOf(vLyrLines));
+            ASSERT_TRUE(strcmp(pLine->vFrags[0]->szLyric, vLyrLines[k]) == 0);
+        }
+        ASSERT_TRUE(lyrLines.size() == CountOf(vLyrLines));
+
+        //
+        // Cases on CLrcParser::toString
+        //
+        string strNewLyr;
+        CLrcParser parser2(&data, true);
+        parser2.toString(strNewLyr, true, true);
+
+        CMLData data3;
+        CLrcParser parser3(&data3, true);
+        parser3.parseString(strNewLyr.c_str(), false);
+
+        {
+            // Compare toString data.
+            CLrcTag tag(data.properties(), data3.properties());
+            ASSERT_TRUE(!tag.isTagChanged()); // data and data3 should be same.
+
+            ASSERT_TRUE(strcmp(data3.properties().m_strArtist.c_str(), valArtist) == 0);
+            ASSERT_TRUE(strcmp(data3.properties().m_strTitle.c_str(), valTitle) == 0);
+            ASSERT_TRUE(data3.properties().getEncodingIndex() == vEncoding[i]);
+
+            CLyricsLines &lyrLines = data3.getRawLyrics();
+
+            for (int k = 0; k < CountOf(vLyrLines); k++) {
                 LyricsLine *pLine = lyrLines[k];
 
-                CPPUNIT_ASSERT(pLine->vFrags.size() == 1);
-                CPPUNIT_ASSERT(k < CountOf(vLyrLines));
-                CPPUNIT_ASSERT(strcmp(pLine->vFrags[0]->szLyric, vLyrLines[k]) == 0);
+                ASSERT_TRUE(pLine->vFrags.size() == 1);
+                ASSERT_TRUE(k < lyrLines.size());
+                ASSERT_TRUE(strcmp(pLine->vFrags[0]->szLyric, vLyrLines[k]) == 0);
             }
-            CPPUNIT_ASSERT(lyrLines.size() == CountOf(vLyrLines));
-
-            //
-            // Cases on CLrcParser::toString
-            //
-            string strNewLyr;
-            CLrcParser parser2(&data, true);
-            parser2.toString(strNewLyr, true, true);
-
-            CMLData data3;
-            CLrcParser parser3(&data3, true);
-            parser3.parseString(strNewLyr.c_str(), false);
-
-            {
-                // Compare toString data.
-                CLrcTag tag(data.properties(), data3.properties());
-                CPPUNIT_ASSERT(!tag.isTagChanged()); // data and data3 should be same.
-
-                CPPUNIT_ASSERT(strcmp(data3.properties().m_strArtist.c_str(), valArtist) == 0);
-                CPPUNIT_ASSERT(strcmp(data3.properties().m_strTitle.c_str(), valTitle) == 0);
-                CPPUNIT_ASSERT(data3.properties().getEncodingIndex() == vEncoding[i]);
-
-                CLyricsLines &lyrLines = data3.getRawLyrics();
-
-                for (int k = 0; k < CountOf(vLyrLines); k++) {
-                    LyricsLine *pLine = lyrLines[k];
-
-                    CPPUNIT_ASSERT(pLine->vFrags.size() == 1);
-                    CPPUNIT_ASSERT(k < lyrLines.size());
-                    CPPUNIT_ASSERT(strcmp(pLine->vFrags[0]->szLyric, vLyrLines[k]) == 0);
-                }
-                // new generated lyrics may increase 1 line by adding encoding.
-                // CPPUNIT_ASSERT(lyrLines.size() == CountOf(vLyrLines));
-            }
+            // new generated lyrics may increase 1 line by adding encoding.
+            // ASSERT_TRUE(lyrLines.size() == CountOf(vLyrLines));
         }
     }
+}
 
-};
-
-CPPUNIT_TEST_SUITE_REGISTRATION(CTestCaseLrcParser);
-
-#endif // _CPPUNIT_TEST
+#endif

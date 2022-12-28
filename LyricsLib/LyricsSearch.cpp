@@ -343,53 +343,42 @@ int searchEmbeddedLyrics(cstr_t szSongFile, uint32_t &lrcSourceType) {
     return ERR_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
-// CPPUnit test
+#if UNIT_TEST
 
-#ifdef _CPPUNIT_TEST
+#include "utils/unittest.h"
 
-IMPLEMENT_CPPUNIT_TEST_REG(LyricsSearch)
+TEST(lrcSearch, CLyricsSearchParameter) {
+    string testDir = getUnittestTempDir();
+    string strMedia = dirStringJoin(testDir.c_str(), "artist - title.mp3");
+    cstr_t szArtist = "artist";
+    cstr_t szTitle = "title";
 
-class CTestCaseLyricsSearch : public CppUnit::TestFixture {
-    CPPUNIT_TEST_SUITE(CTestCaseLyricsSearch);
-    CPPUNIT_TEST(testCLyricsSearchParameter);
-    CPPUNIT_TEST(testCLyricsSearchParameter2);
-    CPPUNIT_TEST_SUITE_END();
+    cstr_t vLyrFileName[] = { "artist - title.lrc", "artist - 01 title.txt", "artist(who are you?) - 01 title.txt", "title.lrc", "artist.lrc", };
+    int vMatchValue[] = { __vArTiSame[1] + 2 + 2, __vArTiSame[0] + 1 + 1, __vArTiSame[0] + 1, __vTiSame[1] + 1 + 1, 0 };
 
-protected:
-    void testCLyricsSearchParameter() {
-        string testDir = getUnitTestFolder();
-        string strMedia = dirStringJoin(testDir.c_str(), "artist - title.mp3");
-        cstr_t szArtist = "artist";
-        cstr_t szTitle = "title";
+    CLyricsSearchParameter searchParam(strMedia.c_str(), szArtist, szTitle);
 
-        cstr_t vLyrFileName[] = { "artist - title.lrc", "artist - 01 title.txt", "artist(who are you?) - 01 title.txt", "title.lrc", "artist.lrc", };
-        int vMatchValue[] = { __vArTiSame[1] + 2 + 2, __vArTiSame[0] + 1 + 1, __vArTiSame[0] + 1, __vTiSame[1] + 1 + 1, 0 };
-
-        CLyricsSearchParameter searchParam(strMedia.c_str(), szArtist, szTitle);
-
-        for (int i = 0; i < CountOf(vLyrFileName); i++) {
-            string strLyrFile = dirStringJoin(testDir.c_str(), vLyrFileName[i]);
-            int matchValue = searchParam.calMatchValueByName(testDir.c_str(), vLyrFileName[i], GetLyricsFileType(strLyrFile.c_str()));
-            CPPUNIT_ASSERT(matchValue == vMatchValue[i]);
-        }
+    for (int i = 0; i < CountOf(vLyrFileName); i++) {
+        string strLyrFile = dirStringJoin(testDir.c_str(), vLyrFileName[i]);
+        int matchValue = searchParam.calMatchValueByName(testDir.c_str(), vLyrFileName[i], GetLyricsFileType(strLyrFile.c_str()));
+        ASSERT_TRUE(matchValue == vMatchValue[i]);
     }
+}
 
-    void testCLyricsSearchParameter2() {
-        string testDir = getUnitTestFolder();
-        string strMedia = dirStringJoin(testDir.c_str(), "just a media.mp3");
-        cstr_t szArtist = "artist";
-        cstr_t szTitle = "title";
+TEST(lrcSearch, CLyricsSearchParameter2) {
+    string testDir = getUnittestTempDir();
+    string strMedia = dirStringJoin(testDir.c_str(), "just a media.mp3");
+    cstr_t szArtist = "artist";
+    cstr_t szTitle = "title";
 
-        CLyricsSearchParameter searchParam(strMedia.c_str(), szArtist, szTitle);
+    CLyricsSearchParameter searchParam(strMedia.c_str(), szArtist, szTitle);
 
-        string strLyrFile = dirStringJoin(testDir.c_str(), "just a media.lrc");
-        int matchValue = searchParam.calMatchValueByName(testDir.c_str(), strLyrFile.c_str(), GetLyricsFileType(strLyrFile.c_str()));
-        CPPUNIT_ASSERT(matchValue == __vArTiSame[1] + 2);
-    }
+    string strLyrFile = dirStringJoin(testDir.c_str(), "just a media.lrc");
+    int matchValue = searchParam.calMatchValueByName(testDir.c_str(), strLyrFile.c_str(), GetLyricsFileType(strLyrFile.c_str()));
+    ASSERT_TRUE(matchValue == __vArTiSame[1] + 2);
 
-};
+    deleteFile(strMedia.c_str());
+    deleteFile(strLyrFile.c_str());
+}
 
-CPPUNIT_TEST_SUITE_REGISTRATION(CTestCaseLyricsSearch);
-
-#endif // _CPPUNIT_TEST
+#endif

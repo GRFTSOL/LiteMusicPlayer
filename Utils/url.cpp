@@ -137,77 +137,75 @@ bool isUnicodeStr(const void *lpData) {
     return (szBuffer[0] == 0xFF && szBuffer[1] == 0xFE);
 }
 
-//////////////////////////////////////////////////////////////////////////
-// CPPUnit test
+#if UNIT_TEST
 
-#ifdef _CPPUNIT_TEST
+#include "utils/unittest.h"
 
-IMPLEMENT_CPPUNIT_TEST_REG(StringEx)
 
-void testStringFeedUntil() {
+TEST(url, StringFeedUntil) {
     cstr_t p, begin, szUtil;
     string buf;
 
     begin = "http://domain";
     szUtil = ":";
     p = stringFeedUntil(begin, szUtil, buf);
-    CPPUNIT_ASSERT(p == begin + 5);
-    CPPUNIT_ASSERT(buf == "http");
+    ASSERT_TRUE(p == begin + 5);
+    ASSERT_TRUE(buf == "http");
 
     p = stringFeedUntil(begin, "*", buf);
-    CPPUNIT_ASSERT(p == nullptr);
+    ASSERT_TRUE(p == nullptr);
 
     p = stringFeedUntil(begin, "h", buf);
-    CPPUNIT_ASSERT(p == begin + 1);
-    CPPUNIT_ASSERT(buf == "");
+    ASSERT_TRUE(p == begin + 1);
+    ASSERT_TRUE(buf == "");
 }
 
-void testUrlParse() {
+TEST(url, UrlParse) {
     cstr_t szUrl;
 
     string scheme, domain, path;
     int port;
 
     szUrl = "scheme://domain:10/path?query_string#fragment_id";
-    CPPUNIT_ASSERT(urlParse(szUrl, scheme, domain, port, path));
-    CPPUNIT_ASSERT(scheme == "scheme");
-    CPPUNIT_ASSERT(domain == "domain");
-    CPPUNIT_ASSERT(path == "path?query_string#fragment_id");
-    CPPUNIT_ASSERT(port == 10);
+    ASSERT_TRUE(urlParse(szUrl, scheme, domain, port, path));
+    ASSERT_TRUE(scheme == "scheme");
+    ASSERT_TRUE(domain == "domain");
+    ASSERT_TRUE(path == "path?query_string#fragment_id");
+    ASSERT_TRUE(port == 10);
 
     szUrl = "scheme://domain/path?query_string#fragment_id";
-    CPPUNIT_ASSERT(urlParse(szUrl, scheme, domain, port, path));
-    CPPUNIT_ASSERT(scheme == "scheme");
-    CPPUNIT_ASSERT(domain == "domain");
-    CPPUNIT_ASSERT(path == "path?query_string#fragment_id");
-    CPPUNIT_ASSERT(port == -1);
+    ASSERT_TRUE(urlParse(szUrl, scheme, domain, port, path));
+    ASSERT_TRUE(scheme == "scheme");
+    ASSERT_TRUE(domain == "domain");
+    ASSERT_TRUE(path == "path?query_string#fragment_id");
+    ASSERT_TRUE(port == -1);
 
     szUrl = "scheme://domain";
-    CPPUNIT_ASSERT(urlParse(szUrl, scheme, domain, port, path));
-    CPPUNIT_ASSERT(scheme == "scheme");
-    CPPUNIT_ASSERT(domain == "domain");
-    CPPUNIT_ASSERT(path == "");
-    CPPUNIT_ASSERT(port == -1);
+    ASSERT_TRUE(urlParse(szUrl, scheme, domain, port, path));
+    ASSERT_TRUE(scheme == "scheme");
+    ASSERT_TRUE(domain == "domain");
+    ASSERT_TRUE(path == "");
+    ASSERT_TRUE(port == -1);
 
     szUrl = "scheme://domain:12";
-    CPPUNIT_ASSERT(urlParse(szUrl, scheme, domain, port, path));
-    CPPUNIT_ASSERT(scheme == "scheme");
-    CPPUNIT_ASSERT(domain == "domain");
-    CPPUNIT_ASSERT(path == "");
-    CPPUNIT_ASSERT(port == 12);
+    ASSERT_TRUE(urlParse(szUrl, scheme, domain, port, path));
+    ASSERT_TRUE(scheme == "scheme");
+    ASSERT_TRUE(domain == "domain");
+    ASSERT_TRUE(path == "");
+    ASSERT_TRUE(port == 12);
 }
 
-void testUriUnquote() {
+TEST(url, UriUnquote) {
     cstr_t cases[] = { "%E5%BC%A0%E6%AF%85", "artist.movie.1080p.xxx",
         "", "%2%X1", };
 
         cstr_t results[] = { "张毅", "artist.movie.1080p.xxx", "", "%2%X1", };
 
-        CPPUNIT_ASSERT(uriIsQuoted(cases[0]));
+        ASSERT_TRUE(uriIsQuoted(cases[0]));
         for (int i = 0; i < CountOf(cases); i++) {
         string r = uriUnquote(cases[i]);
-        CPPUNIT_ASSERT(strcmp(results[i], r.c_str()) == 0);
+        ASSERT_TRUE(strcmp(results[i], r.c_str()) == 0);
     }
 }
 
-#endif // _CPPUNIT_TEST
+#endif

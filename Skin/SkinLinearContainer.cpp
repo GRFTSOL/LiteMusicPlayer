@@ -315,53 +315,41 @@ void CSkinLinearContainer::onSetChildVisible(CUIObject *pChild, bool bVisible, b
     }
 }
 
-#ifdef _CPPUNIT_TEST
+#if UNIT_TEST
 
-//////////////////////////////////////////////////////////////////////////
-// CPPUnit test
+#include "utils/unittest.h"
 
-IMPLEMENT_CPPUNIT_TEST_REG(CSkinLinearContainer)
 
-class CTestCaseCSkinLinearContainer : public CppUnit::TestFixture {
-    CPPUNIT_TEST_SUITE(CTestCaseCSkinLinearContainer);
-    CPPUNIT_TEST(testZoomFromWeightable);
-    CPPUNIT_TEST_SUITE_END();
+TEST(SkinLinearContainer, ZoomFromWeightable) {
+    CSkinLinearContainer::VecItems items;
+    CSkinLinearContainer::Item item;
 
-protected:
-    void testZoomFromWeightable() {
-        CSkinLinearContainer::VecItems items;
-        CSkinLinearContainer::Item item;
+    item.set(80, 100, 0);
+    items.push_back(item);
 
-        item.set(80, 100, 0);
-        items.push_back(item);
+    item.set(50, 50, 1);
+    items.push_back(item);
 
-        item.set(50, 50, 1);
-        items.push_back(item);
+    item.set(50, 50, 0);
+    items.push_back(item);
 
-        item.set(50, 50, 0);
-        items.push_back(item);
+    // Zoom out
+    CSkinLinearContainer::zoomWeightable(items, 250);
+    ASSERT_TRUE(items[0].size == 100);
+    ASSERT_TRUE(items[1].size = 100);
+    ASSERT_TRUE(items[2].size = 50);
 
-        // Zoom out
-        CSkinLinearContainer::zoomWeightable(items, 250);
-        CPPUNIT_ASSERT(items[0].size == 100);
-        CPPUNIT_ASSERT(items[1].size = 100);
-        CPPUNIT_ASSERT(items[2].size = 50);
+    // Zoom to minimum
+    CSkinLinearContainer::zoomWeightable(items, 200);
+    ASSERT_TRUE(items[0].size == 100);
+    ASSERT_TRUE(items[1].size = 50);
+    ASSERT_TRUE(items[2].size = 50);
 
-        // Zoom to minimum
-        CSkinLinearContainer::zoomWeightable(items, 200);
-        CPPUNIT_ASSERT(items[0].size == 100);
-        CPPUNIT_ASSERT(items[1].size = 50);
-        CPPUNIT_ASSERT(items[2].size = 50);
+    // Zoom to less than minimum
+    CSkinLinearContainer::zoomWeightable(items, 100);
+    ASSERT_TRUE(items[0].size == 100);
+    ASSERT_TRUE(items[1].size = 50);
+    ASSERT_TRUE(items[2].size = 50);
+}
 
-        // Zoom to less than minimum
-        CSkinLinearContainer::zoomWeightable(items, 100);
-        CPPUNIT_ASSERT(items[0].size == 100);
-        CPPUNIT_ASSERT(items[1].size = 50);
-        CPPUNIT_ASSERT(items[2].size = 50);
-    }
-
-};
-
-CPPUNIT_TEST_SUITE_REGISTRATION(CTestCaseCSkinLinearContainer);
-
-#endif // _CPPUNIT_TEST
+#endif

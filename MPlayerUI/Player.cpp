@@ -1051,38 +1051,3 @@ bool CPlayer::setFieldValue(char szField[], int lenField, cstr_t szValue)
 
     return false;
 }
-
-//////////////////////////////////////////////////////////////////////////
-// CPPUnit test
-
-#ifdef _CPPUNIT_TEST
-
-IMPLEMENT_CPPUNIT_TEST_REG(CPlayer)
-
-class CTestCaseCPlayer : public CppUnit::TestFixture
-{
-    CPPUNIT_TEST_SUITE(CTestCaseCPlayer);
-//     CPPUNIT_TEST(TestUnquote);
-    CPPUNIT_TEST_SUITE_END();
-
-protected:
-//     void TestUnquote()
-//     {
-//         cstr_t cases[] = { "%E5%BC%A0%E6%AF%85", "artist.movie.1080p.xxx", 
-//             "", "%2%X1", };
-// 
-//         cstr_t results[] = { "张毅", "artist.movie.1080p.xxx", "", "%2%X1", };
-// 
-//         CPPUNIT_ASSERT(IsQuoted(cases[0]));
-//         for (int i = 0; i < CountOf(cases); i++)
-//         {
-//             string r = Unquote(cases[i]);
-//             CPPUNIT_ASSERT(strcmp(results[i], r.c_str()) == 0);
-//         }
-//     }
-
-};
-
-CPPUNIT_TEST_SUITE_REGISTRATION(CTestCaseCPlayer);
-
-#endif // _CPPUNIT_TEST

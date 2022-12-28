@@ -410,36 +410,23 @@ CRawBmpFont *CSkinFontProperty::getFont() {
     }
 }
 
-//////////////////////////////////////////////////////////////////////////
-// CPPUnit test
+#if UNIT_TEST
 
-#ifdef _CPPUNIT_TEST
+#include "utils/unittest.h"
 
-IMPLEMENT_CPPUNIT_TEST_REG(CSkinFontProperty)
+TEST(SkinFontProperty, FontPropertyValueFromStr) {
+    int nHeight, nWeight;
+    uint8_t byItalic;
+    string strFaceNameLatin9, strFaceNameOthers;
 
-class CTestCaseCSkinFontProperty : public CppUnit::TestFixture {
-    CPPUNIT_TEST_SUITE(CTestCaseCSkinFontProperty);
-    CPPUNIT_TEST(testFontPropertyValueFromStr);
-    CPPUNIT_TEST_SUITE_END();
+    cstr_t szValue = "Verdana, 13, thin, 1, 0, Tahoma";
 
-protected:
-    void testFontPropertyValueFromStr() {
-        int nHeight, nWeight;
-        uint8_t byItalic;
-        string strFaceNameLatin9, strFaceNameOthers;
+    ASSERT_TRUE(fontPropertyValueFromStr(szValue, nHeight, nWeight, byItalic, strFaceNameLatin9, strFaceNameOthers));
+    ASSERT_TRUE(nHeight == 13);
+    ASSERT_TRUE(nWeight == FW_THIN);
+    ASSERT_TRUE(byItalic == 1);
+    ASSERT_TRUE(strFaceNameLatin9 == "Verdana");
+    ASSERT_TRUE(strFaceNameOthers == "Tahoma");
+}
 
-        cstr_t szValue = "Verdana, 13, thin, 1, 0, Tahoma";
-
-        CPPUNIT_ASSERT(fontPropertyValueFromStr(szValue, nHeight, nWeight, byItalic, strFaceNameLatin9, strFaceNameOthers));
-        CPPUNIT_ASSERT(nHeight == 13);
-        CPPUNIT_ASSERT(nWeight == FW_THIN);
-        CPPUNIT_ASSERT(byItalic == 1);
-        CPPUNIT_ASSERT(strFaceNameLatin9 == "Verdana");
-        CPPUNIT_ASSERT(strFaceNameOthers == "Tahoma");
-    }
-
-};
-
-CPPUNIT_TEST_SUITE_REGISTRATION(CTestCaseCSkinFontProperty);
-
-#endif // _CPPUNIT_TEST
+#endif

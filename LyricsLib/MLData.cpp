@@ -1542,326 +1542,317 @@ void CMLData::copyLyricsLines(CLyricsLines &lyrLines) {
     }
 }
 
-#ifdef _CPPUNIT_TEST
+#if UNIT_TEST
 
-//////////////////////////////////////////////////////////////////////////
-// CPPUnit test
+#include "utils/unittest.h"
 
-class CTestCaseCMLData : public CppUnit::TestFixture {
-    CPPUNIT_TEST_SUITE(CTestCaseCMLData);
-#ifndef _IPHONE
-    CPPUNIT_TEST(test_CMLData_OpenLrcFile);
-    CPPUNIT_TEST(test_CMLData_OpenSaveID3v2_USLT);
-    CPPUNIT_TEST(test_CMLData_OpenSaveID3v2_SYLT);
-    CPPUNIT_TEST(test_CMLData_OpenSaveLyrics3v2);
-#endif // #ifndef _IPHONE
-    CPPUNIT_TEST_SUITE_END();
+string getTestDataFolder() {
+    string testDataFolder = fileGetPath(__FILE__);
+    dirStringAddSep(testDataFolder);
+    testDataFolder += "TestData\\";
+    return testDataFolder;
+}
 
-protected:
-    string                      m_strTestDataFolder;
+TEST(MLData, CMLData_OpenLrcFile) {
+    auto testDataFolder = getTestDataFolder();
 
-public:
-#ifndef _IPHONE
-    void setUp() {
-        m_strTestDataFolder = fileGetPath(__FILE__);
-        dirStringAddSep(m_strTestDataFolder);
-        m_strTestDataFolder += "TestData\\";
-    }
-    void tearDown() {
-        removeTempMediaFile();
-    }
+    cstr_t szSongFile = "artist - title.mp3";
+    string        vstrLyrFile[] = {
+        testDataFolder + "test(gb).lrc",
+        testDataFolder + "test(ucs2).lrc",
+        testDataFolder + "test(ucs2-be).lrc",
+        testDataFolder + "test(utf8).lrc"
+    };
+    int nRet;
+    CMLData data;
 
-protected:
-    void test_CMLData_OpenLrcFile() {
-        cstr_t szSongFile = "artist - title.mp3";
-        string        vstrLyrFile[] = {
-            m_strTestDataFolder + "test(gb).lrc",
-            m_strTestDataFolder + "test(ucs2).lrc",
-            m_strTestDataFolder + "test(ucs2-be).lrc",
-            m_strTestDataFolder + "test(utf8).lrc"
-        };
-        int nRet;
-        CMLData data;
+    for (int i = 0; i < CountOf(vstrLyrFile); i++) {
+        nRet = data.openLyrics(szSongFile, 60 * 1000, vstrLyrFile[i].c_str());
+        ASSERT_TRUE(nRet == ERR_OK);
 
-        for (int i = 0; i < CountOf(vstrLyrFile); i++) {
-            nRet = data.openLyrics(szSongFile, 60 * 1000, vstrLyrFile[i].c_str());
-            CPPUNIT_ASSERT(nRet == ERR_OK);
+        {
+            // test with CLrcTag, tag same?
+            CLrcTag tag;
 
-            {
-                // test with CLrcTag, tag same?
-                CLrcTag tag;
+            nRet = tag.readFromFile(vstrLyrFile[i].c_str());
+            ASSERT_TRUE(nRet == ERR_OK);
 
-                nRet = tag.readFromFile(vstrLyrFile[i].c_str());
-                CPPUNIT_ASSERT(nRet == ERR_OK);
+            CLrcTag tagCompare(tag, data.properties());
+            ASSERT_TRUE(!tagCompare.isTagChanged());
+        }
 
-                CLrcTag tagCompare(tag, data.properties());
-                CPPUNIT_ASSERT(!tagCompare.isTagChanged());
+        {
+            // Lyrics content ok?
+            // [00:01.00]L1
+            // [01:01.01][01:00.01]L2
+            // [02:01.10]L3
+            cstr_t vLyrLines[] = { "L1", "L2", "L2", "L3" };
+            int vTime[] = { 1*1000, 1*60*1000+10, (1*60+1)*1000+10, (2*60+1)*1000+100};
+
+            CLyricsLines &lyrLines = data.getRawLyrics();
+
+            for (int k = 0; k < lyrLines.size(); k++) {
+                LyricsLine *pLine = lyrLines[k];
+
+                ASSERT_TRUE(pLine->vFrags.size() == 1);
+                ASSERT_TRUE(k < CountOf(vLyrLines));
+                ASSERT_TRUE(strcmp(pLine->vFrags[0]->szLyric, vLyrLines[k]) == 0);
+                ASSERT_TRUE(pLine->vFrags[0]->nBegTime == vTime[k]);
             }
+            ASSERT_TRUE(lyrLines.size() == CountOf(vLyrLines));
+        }
+    }
+
+    removeTempMediaFile();
+}
+
+void prepareMediaFile() {
+    removeTempMediaFile();
+
+    auto testDataFolder = getTestDataFolder();
+    string        vstrSongFile[] = {
+        testDataFolder + "lyr-usly.mp3",
+        testDataFolder + "lyr(wmp-chs).mp3",
+        testDataFolder + "lyr-usly(chs).mp3",
+        testDataFolder + "lyrics3v2.mp3",
+        testDataFolder + "lyr-chs.m4a",
+    };
+
+    for (int i = 0; i < (int)CountOf(vstrSongFile); i++) {
+        string strFile = getAppDataDir();
+        strFile += fileGetName(vstrSongFile[i].c_str());
+        ASSERT_TRUE(copyFile(vstrSongFile[i].c_str(), strFile.c_str(), false));
+    }
+}
+
+void removeTempMediaFile() {
+    auto testDataFolder = getTestDataFolder();
+    string        vstrSongFile[] = {
+        testDataFolder + "lyr-usly.mp3",
+        testDataFolder + "lyr(wmp-chs).mp3",
+        testDataFolder + "lyr-usly(chs).mp3",
+        testDataFolder + "lyrics3v2.mp3",
+        testDataFolder + "lyr-chs.m4a",
+    };
+
+    for (int i = 0; i < (int)CountOf(vstrSongFile); i++) {
+        string strFile = getAppDataDir();
+        strFile += fileGetName(vstrSongFile[i].c_str());
+        deleteFile(strFile.c_str());
+    }
+}
+
+TEST(MLData, CMLData_OpenSaveID3v2_USLT) {
+    auto testDataFolder = getTestDataFolder();
+    int nRet;
+
+    prepareMediaFile();
+
+    string strWorkingFolder = getAppDataDir();
+
+    //
+    // test on embedded USLT lyrics.
+    //
+
+    string        vstrSongFile[] = {
+        strWorkingFolder + "lyr-usly.mp3",
+        strWorkingFolder + "lyr(wmp-chs).mp3",
+        strWorkingFolder + "lyr-usly(chs).mp3",
+        strWorkingFolder + "lyr(wmp-chs).mp3",
+        strWorkingFolder + "lyr-chs.m4a",
+    };
+    cstr_t        vLyrFile[] = {
+        "song://id3v2/uslt/eng",
+        "song://id3v2/uslt/eng",
+        "song://id3v2/uslt/eng",
+        "song://id3v2/uslt/chi",
+        SZ_SONG_M4A_LYRICS,
+    };
+    bool vWriteTested[] = { false, false, false, false, false };
+    assert(CountOf(vWriteTested) == CountOf(vLyrFile));
+    assert(CountOf(vWriteTested) == CountOf(vstrSongFile));
+
+    for (int i = 0; i < CountOf(vstrSongFile); i++) {
+        for (int kk = 0; kk < 2; kk++) {
+            // loop twice, first for reading, second for writing.
+            CMLData data;
+            nRet = data.openLyrics(vstrSongFile[i].c_str(), 60 * 1000, vLyrFile[i]);
+            ASSERT_TRUE(nRet == ERR_OK);
 
             {
-                // Lyrics content ok?
-                // [00:01.00]L1
-                // [01:01.01][01:00.01]L2
-                // [02:01.10]L3
-                cstr_t vLyrLines[] = { "L1", "L2", "L2", "L3" };
-                int vTime[] = { 1*1000, 1*60*1000+10, (1*60+1)*1000+10, (2*60+1)*1000+100};
+                //
+                // open, Lyrics content ok?
+                //
+                cstr_t vLyrLines[] = { "Line1", "Line2", "Line3" };
+                cstr_t vLyrLinesChs[] = { "第一行", "第二行", "第三行" };
 
                 CLyricsLines &lyrLines = data.getRawLyrics();
 
                 for (int k = 0; k < lyrLines.size(); k++) {
                     LyricsLine *pLine = lyrLines[k];
 
-                    CPPUNIT_ASSERT(pLine->vFrags.size() == 1);
-                    CPPUNIT_ASSERT(k < CountOf(vLyrLines));
-                    CPPUNIT_ASSERT(strcmp(pLine->vFrags[0]->szLyric, vLyrLines[k]) == 0);
-                    CPPUNIT_ASSERT(pLine->vFrags[0]->nBegTime == vTime[k]);
-                }
-                CPPUNIT_ASSERT(lyrLines.size() == CountOf(vLyrLines));
-            }
-        }
-    }
-
-    void prepareMediaFile() {
-        removeTempMediaFile();
-
-        string        vstrSongFile[] = {
-            m_strTestDataFolder + "lyr-usly.mp3",
-            m_strTestDataFolder + "lyr(wmp-chs).mp3",
-            m_strTestDataFolder + "lyr-usly(chs).mp3",
-            m_strTestDataFolder + "lyrics3v2.mp3",
-            m_strTestDataFolder + "lyr-chs.m4a",
-        };
-
-        for (int i = 0; i < (int)CountOf(vstrSongFile); i++) {
-            string strFile = getAppDataDir();
-            strFile += fileGetName(vstrSongFile[i].c_str());
-            CPPUNIT_ASSERT(copyFile(vstrSongFile[i].c_str(), strFile.c_str(), false));
-        }
-    }
-
-    void removeTempMediaFile() {
-        string        vstrSongFile[] = {
-            m_strTestDataFolder + "lyr-usly.mp3",
-            m_strTestDataFolder + "lyr(wmp-chs).mp3",
-            m_strTestDataFolder + "lyr-usly(chs).mp3",
-            m_strTestDataFolder + "lyrics3v2.mp3",
-            m_strTestDataFolder + "lyr-chs.m4a",
-        };
-
-        for (int i = 0; i < (int)CountOf(vstrSongFile); i++) {
-            string strFile = getAppDataDir();
-            strFile += fileGetName(vstrSongFile[i].c_str());
-            deleteFile(strFile.c_str());
-        }
-    }
-
-    void test_CMLData_OpenSaveID3v2_USLT() {
-        int nRet;
-
-        prepareMediaFile();
-
-        string strWorkingFolder = getAppDataDir();
-
-        //
-        // test on embedded USLT lyrics.
-        //
-
-        string        vstrSongFile[] = {
-            strWorkingFolder + "lyr-usly.mp3",
-            strWorkingFolder + "lyr(wmp-chs).mp3",
-            strWorkingFolder + "lyr-usly(chs).mp3",
-            strWorkingFolder + "lyr(wmp-chs).mp3",
-            strWorkingFolder + "lyr-chs.m4a",
-        };
-        cstr_t        vLyrFile[] = {
-            "song://id3v2/uslt/eng",
-            "song://id3v2/uslt/eng",
-            "song://id3v2/uslt/eng",
-            "song://id3v2/uslt/chi",
-            SZ_SONG_M4A_LYRICS,
-        };
-        bool vWriteTested[] = { false, false, false, false, false };
-        assert(CountOf(vWriteTested) == CountOf(vLyrFile));
-        assert(CountOf(vWriteTested) == CountOf(vstrSongFile));
-
-        for (int i = 0; i < CountOf(vstrSongFile); i++) {
-            for (int kk = 0; kk < 2; kk++) {
-                // loop twice, first for reading, second for writing.
-                CMLData data;
-                nRet = data.openLyrics(vstrSongFile[i].c_str(), 60 * 1000, vLyrFile[i]);
-                CPPUNIT_ASSERT(nRet == ERR_OK);
-
-                {
-                    //
-                    // open, Lyrics content ok?
-                    //
-                    cstr_t vLyrLines[] = { "Line1", "Line2", "Line3" };
-                    cstr_t vLyrLinesChs[] = { "第一行", "第二行", "第三行" };
-
-                    CLyricsLines &lyrLines = data.getRawLyrics();
-
-                    for (int k = 0; k < lyrLines.size(); k++) {
-                        LyricsLine *pLine = lyrLines[k];
-
-                        CPPUNIT_ASSERT(pLine->vFrags.size() == 1);
-                        CPPUNIT_ASSERT(k < CountOf(vLyrLines));
-                        if (i < 2) {
-                            CPPUNIT_ASSERT(strcmp(pLine->vFrags[0]->szLyric, vLyrLines[k]) == 0);
-                        } else {
-                            CPPUNIT_ASSERT(strcmp(pLine->vFrags[0]->szLyric, vLyrLinesChs[k]) == 0);
-                        }
+                    ASSERT_TRUE(pLine->vFrags.size() == 1);
+                    ASSERT_TRUE(k < CountOf(vLyrLines));
+                    if (i < 2) {
+                        ASSERT_TRUE(strcmp(pLine->vFrags[0]->szLyric, vLyrLines[k]) == 0);
+                    } else {
+                        ASSERT_TRUE(strcmp(pLine->vFrags[0]->szLyric, vLyrLinesChs[k]) == 0);
                     }
-                    CPPUNIT_ASSERT(lyrLines.size() == CountOf(vLyrLines));
                 }
+                ASSERT_TRUE(lyrLines.size() == CountOf(vLyrLines));
+            }
 
-                // test on save uslt
-                if (!vWriteTested[i]) {
-                    data.properties().m_strArtist = "artist";
-                    data.properties().m_strTitle = "title";
-                    CPPUNIT_ASSERT(data.save() == ERR_OK);
-                    vWriteTested[i] = true;
-                } else {
-                    CPPUNIT_ASSERT(strcmp(data.properties().m_strArtist.c_str(), "artist") == 0);
-                    CPPUNIT_ASSERT(strcmp(data.properties().m_strTitle.c_str(), "title") == 0);
-                }
+            // test on save uslt
+            if (!vWriteTested[i]) {
+                data.properties().m_strArtist = "artist";
+                data.properties().m_strTitle = "title";
+                ASSERT_TRUE(data.save() == ERR_OK);
+                vWriteTested[i] = true;
+            } else {
+                ASSERT_TRUE(strcmp(data.properties().m_strArtist.c_str(), "artist") == 0);
+                ASSERT_TRUE(strcmp(data.properties().m_strTitle.c_str(), "title") == 0);
             }
         }
     }
 
-    void test_CMLData_OpenSaveID3v2_SYLT() {
-        int nRet;
-        CMLData data;
+    removeTempMediaFile();
+}
 
-        prepareMediaFile();
+TEST(MLData, CMLData_OpenSaveID3v2_SYLT) {
+    auto testDataFolder = getTestDataFolder();
+    int nRet;
+    CMLData data;
 
-        string strWorkingFolder = getAppDataDir();
+    prepareMediaFile();
 
-        //
-        // test on embedded SYLT lyrics.
-        //
-        string        vstrSongFileSylt[] = {
-            strWorkingFolder + "lyr(wmp-chs).mp3",
-            strWorkingFolder + "lyr(wmp-chs).mp3",
-        };
-        cstr_t        vLyrFileSylt[] = {
-            "song://id3v2/sylt/eng",
-            "song://id3v2/sylt/chi",
-        };
+    string strWorkingFolder = getAppDataDir();
 
-        bool vWriteTested[] = { false, false, false, false };
+    //
+    // test on embedded SYLT lyrics.
+    //
+    string        vstrSongFileSylt[] = {
+        strWorkingFolder + "lyr(wmp-chs).mp3",
+        strWorkingFolder + "lyr(wmp-chs).mp3",
+    };
+    cstr_t        vLyrFileSylt[] = {
+        "song://id3v2/sylt/eng",
+        "song://id3v2/sylt/chi",
+    };
 
-        for (int kk = 0; kk < 2; kk++) {
-            // loop twice, first for reading, second for writing.
-            int nOffsetTime = 0;
-            if (kk == 1) {
-                nOffsetTime = 500;
-            }
+    bool vWriteTested[] = { false, false, false, false };
 
-            for (int i = 0; i < CountOf(vstrSongFileSylt); i++) {
-                nRet = data.openLyrics(vstrSongFileSylt[i].c_str(), 60 * 1000, vLyrFileSylt[i]);
-                CPPUNIT_ASSERT(nRet == ERR_OK);
+    for (int kk = 0; kk < 2; kk++) {
+        // loop twice, first for reading, second for writing.
+        int nOffsetTime = 0;
+        if (kk == 1) {
+            nOffsetTime = 500;
+        }
 
-                {
-                    // Lyrics content ok?
-                    cstr_t vLyrLines[] = { "Line1", "Line2", "Line3" };
-                    cstr_t vLyrLinesChs[] = { "第一行", "第二行", "第三行" };
-                    int vTime[] = { 1, 1*1000+9, 1*1000+18 };
+        for (int i = 0; i < CountOf(vstrSongFileSylt); i++) {
+            nRet = data.openLyrics(vstrSongFileSylt[i].c_str(), 60 * 1000, vLyrFileSylt[i]);
+            ASSERT_TRUE(nRet == ERR_OK);
 
-                    CLyricsLines &lyrLines = data.getRawLyrics();
+            {
+                // Lyrics content ok?
+                cstr_t vLyrLines[] = { "Line1", "Line2", "Line3" };
+                cstr_t vLyrLinesChs[] = { "第一行", "第二行", "第三行" };
+                int vTime[] = { 1, 1*1000+9, 1*1000+18 };
 
-                    for (int k = 0; k < lyrLines.size(); k++) {
-                        LyricsLine *pLine = lyrLines[k];
+                CLyricsLines &lyrLines = data.getRawLyrics();
 
-                        CPPUNIT_ASSERT(pLine->vFrags.size() == 1);
-                        CPPUNIT_ASSERT(k < CountOf(vLyrLines));
-                        if (i < 1) {
-                            CPPUNIT_ASSERT(strcmp(pLine->vFrags[0]->szLyric, vLyrLines[k]) == 0);
-                        } else {
-                            CPPUNIT_ASSERT(strcmp(pLine->vFrags[0]->szLyric, vLyrLinesChs[k]) == 0);
-                        }
+                for (int k = 0; k < lyrLines.size(); k++) {
+                    LyricsLine *pLine = lyrLines[k];
 
-                        CPPUNIT_ASSERT(pLine->vFrags[0]->nBegTime == vTime[k] + nOffsetTime);
+                    ASSERT_TRUE(pLine->vFrags.size() == 1);
+                    ASSERT_TRUE(k < CountOf(vLyrLines));
+                    if (i < 1) {
+                        ASSERT_TRUE(strcmp(pLine->vFrags[0]->szLyric, vLyrLines[k]) == 0);
+                    } else {
+                        ASSERT_TRUE(strcmp(pLine->vFrags[0]->szLyric, vLyrLinesChs[k]) == 0);
                     }
-                    CPPUNIT_ASSERT(lyrLines.size() == CountOf(vLyrLines));
-                }
 
-                // test on save SYLT
-                if (!vWriteTested[i]) {
-                    data.properties().m_strArtist = "artist";
-                    data.properties().m_strTitle = "title";
-                    data.properties().setOffsetTime(-500);
-                    CPPUNIT_ASSERT(data.save() == ERR_OK);
-                    vWriteTested[i] = true;
-                } else {
-                    CPPUNIT_ASSERT(strcmp(data.properties().m_strArtist.c_str(), "artist") == 0);
-                    CPPUNIT_ASSERT(strcmp(data.properties().m_strTitle.c_str(), "title") == 0);
+                    ASSERT_TRUE(pLine->vFrags[0]->nBegTime == vTime[k] + nOffsetTime);
                 }
+                ASSERT_TRUE(lyrLines.size() == CountOf(vLyrLines));
+            }
+
+            // test on save SYLT
+            if (!vWriteTested[i]) {
+                data.properties().m_strArtist = "artist";
+                data.properties().m_strTitle = "title";
+                data.properties().setOffsetTime(-500);
+                ASSERT_TRUE(data.save() == ERR_OK);
+                vWriteTested[i] = true;
+            } else {
+                ASSERT_TRUE(strcmp(data.properties().m_strArtist.c_str(), "artist") == 0);
+                ASSERT_TRUE(strcmp(data.properties().m_strTitle.c_str(), "title") == 0);
             }
         }
     }
 
-    void test_CMLData_OpenSaveLyrics3v2() {
-        int nRet;
-        CMLData data;
+    removeTempMediaFile();
+}
 
-        prepareMediaFile();
+TEST(MLData, CMLData_OpenSaveLyrics3v2) {
+    auto testDataFolder = getTestDataFolder();
+    int nRet;
+    CMLData data;
 
-        string strWorkingFolder = getAppDataDir();
+    prepareMediaFile();
 
-        string        vstrSongFileSylt[] = {
-            strWorkingFolder + "lyrics3v2.mp3",
-        };
-        cstr_t        vLyrFileSylt[] = {
-            SZ_SONG_LYRICS3V2,
-        };
-        bool vWriteTested[] = { false };
+    string strWorkingFolder = getAppDataDir();
 
-        for (int kk = 0; kk < 2; kk++) {
-            // loop twice, first for reading, second for writing.
-            int nOffsetTime = 0;
-            if (kk == 1) {
-                nOffsetTime = 500;
+    string        vstrSongFileSylt[] = {
+        strWorkingFolder + "lyrics3v2.mp3",
+    };
+    cstr_t        vLyrFileSylt[] = {
+        SZ_SONG_LYRICS3V2,
+    };
+    bool vWriteTested[] = { false };
+
+    for (int kk = 0; kk < 2; kk++) {
+        // loop twice, first for reading, second for writing.
+        int nOffsetTime = 0;
+        if (kk == 1) {
+            nOffsetTime = 500;
+        }
+
+        for (int i = 0; i < CountOf(vstrSongFileSylt); i++) {
+            nRet = data.openLyrics(vstrSongFileSylt[i].c_str(), 60 * 1000, vLyrFileSylt[i]);
+            ASSERT_TRUE(nRet == ERR_OK);
+
+            {
+                // Lyrics content ok?
+                cstr_t vLyrLines[] = { "第一行", "第二行", "第三行" };
+                int vTime[] = { 0, 1*1000+10, 1*1000+20 };
+
+                CLyricsLines &lyrLines = data.getRawLyrics();
+
+                for (int k = 0; k < lyrLines.size(); k++) {
+                    LyricsLine *pLine = lyrLines[k];
+
+                    ASSERT_TRUE(pLine->vFrags.size() == 1);
+                    ASSERT_TRUE(k < CountOf(vLyrLines));
+                    ASSERT_TRUE(strcmp(pLine->vFrags[0]->szLyric, vLyrLines[k]) == 0);
+                    ASSERT_TRUE(pLine->vFrags[0]->nBegTime == vTime[k]);
+                }
+                ASSERT_TRUE(lyrLines.size() == CountOf(vLyrLines));
             }
 
-            for (int i = 0; i < CountOf(vstrSongFileSylt); i++) {
-                nRet = data.openLyrics(vstrSongFileSylt[i].c_str(), 60 * 1000, vLyrFileSylt[i]);
-                CPPUNIT_ASSERT(nRet == ERR_OK);
-
-                {
-                    // Lyrics content ok?
-                    cstr_t vLyrLines[] = { "第一行", "第二行", "第三行" };
-                    int vTime[] = { 0, 1*1000+10, 1*1000+20 };
-
-                    CLyricsLines &lyrLines = data.getRawLyrics();
-
-                    for (int k = 0; k < lyrLines.size(); k++) {
-                        LyricsLine *pLine = lyrLines[k];
-
-                        CPPUNIT_ASSERT(pLine->vFrags.size() == 1);
-                        CPPUNIT_ASSERT(k < CountOf(vLyrLines));
-                        CPPUNIT_ASSERT(strcmp(pLine->vFrags[0]->szLyric, vLyrLines[k]) == 0);
-                        CPPUNIT_ASSERT(pLine->vFrags[0]->nBegTime == vTime[k]);
-                    }
-                    CPPUNIT_ASSERT(lyrLines.size() == CountOf(vLyrLines));
-                }
-
-                // test on saving
-                if (!vWriteTested[i]) {
-                    data.properties().m_strArtist = "artist";
-                    data.properties().m_strTitle = "title";
-                    CPPUNIT_ASSERT(data.save() == ERR_OK);
-                    vWriteTested[i] = true;
-                } else {
-                    CPPUNIT_ASSERT(strcmp(data.properties().m_strArtist.c_str(), "artist") == 0);
-                    CPPUNIT_ASSERT(strcmp(data.properties().m_strTitle.c_str(), "title") == 0);
-                }
+            // test on saving
+            if (!vWriteTested[i]) {
+                data.properties().m_strArtist = "artist";
+                data.properties().m_strTitle = "title";
+                ASSERT_TRUE(data.save() == ERR_OK);
+                vWriteTested[i] = true;
+            } else {
+                ASSERT_TRUE(strcmp(data.properties().m_strArtist.c_str(), "artist") == 0);
+                ASSERT_TRUE(strcmp(data.properties().m_strTitle.c_str(), "title") == 0);
             }
         }
     }
-#endif // #ifndef _IPHONE
 
-};
+    removeTempMediaFile();
+}
 
-CPPUNIT_TEST_SUITE_REGISTRATION(CTestCaseCMLData);
-
-#endif // _CPPUNIT_TEST
+#endif

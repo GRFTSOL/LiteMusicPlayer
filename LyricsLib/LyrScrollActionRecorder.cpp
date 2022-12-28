@@ -345,37 +345,3 @@ int CLyrScrollActionRecorder::getDistanceOfLine(CLyricsLines &lyrLines, int nLin
 int CLyrScrollActionRecorder::countLyrChar(CLyricsLines &lyrLines) {
     return getDistanceOfLine(lyrLines, (int)lyrLines.size());
 }
-
-
-#ifdef _CPPUNIT_TEST
-
-//////////////////////////////////////////////////////////////////////////
-// CPPUnit test
-
-IMPLEMENT_CPPUNIT_TEST_REG(CLyrScrollActionRecorder)
-
-class CTestCaseLyrScrollActionRecorder : public CppUnit::TestFixture {
-    CPPUNIT_TEST_SUITE(CTestCaseLyrScrollActionRecorder);
-    CPPUNIT_TEST(testAddLyrEvent);
-    CPPUNIT_TEST_SUITE_END();
-
-protected:
-
-public:
-    void setUp() {
-    }
-    void tearDown() {
-    }
-
-protected:
-    void testAddLyrEvent() {
-        // CPPUNIT_ASSERT(strcmp(szStr, "abcdef1213") == 0);
-        // CPPUNIT_FAIL_T(stringPrintf("strSplit(set) test, case(Can't find): %d, %s", i, strResult[i]).c_str());
-    }
-
-};
-
-CPPUNIT_TEST_SUITE_REGISTRATION(CTestCaseLyrScrollActionRecorder);
-
-
-#endif // _CPPUNIT_TEST

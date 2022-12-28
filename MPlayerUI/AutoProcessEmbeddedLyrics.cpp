@@ -387,77 +387,62 @@ void CAutoProcessEmbeddedLyrics::loadJobs(bool bDeleteFile)
         deleteFile(strFile.c_str());
 }
 
-//////////////////////////////////////////////////////////////////////////
-// CPPUnit test
+#if UNIT_TEST
 
-#ifdef _CPPUNIT_TEST
+#include "utils/unittest.h"
 
-IMPLEMENT_CPPUNIT_TEST_REG(CAutoProcessEmbeddedLyrics)
-
-class CTestCaseCAutoProcessEmbeddedLyrics : public CppUnit::TestFixture
+TEST(AutoProcessEmbeddedLyrics, AutoProcessEmbeddedLyricsLoad)
 {
-    CPPUNIT_TEST_SUITE(CTestCaseCAutoProcessEmbeddedLyrics);
-    CPPUNIT_TEST(test_AutoProcessEmbeddedLyricsLoad);
-    CPPUNIT_TEST_SUITE_END();
+    string    strFile = getAppDataDir();
+    strFile += SZ_JOB_FILE_NAME;
 
-protected:
+    // Only run this test when the file doesn't exist.
+    if (isFileExist(strFile.c_str()))
+        return;
 
-    void test_AutoProcessEmbeddedLyricsLoad()
+    CAutoProcessEmbeddedLyrics    embedded_lyr_process;
+    CAutoProcessEmbeddedLyrics::Item    item;
+
+    item.m_strSongFile = "C:\\abc.mp3";
+    item.m_strLyrics.append(";lksjd;gioew1230$/;%^&*");
+    item.m_vLyrNames.push_back("abc");
+    item.m_vLyrNames.push_back("de");
+    item.m_bRemove = true;
+    item.m_bDealOK = false;
+    item.m_nTryFailed = 2;
+    embedded_lyr_process.m_listJobs.push_back(item);
+
+    item.m_strSongFile = "C:\\abcd.mp3";
+    item.m_strLyrics.append(";lksjd;gssgeeggioew1230$/;%^&*");
+    item.m_vLyrNames.push_back("a");
+    item.m_vLyrNames.push_back("def");
+    item.m_bRemove = false;
+    item.m_bDealOK = false;
+    item.m_nTryFailed = 0;
+    embedded_lyr_process.m_listJobs.push_back(item);
+
+    CAutoProcessEmbeddedLyrics::LIST_ITEMS    listJobs = embedded_lyr_process.m_listJobs;
+
+    embedded_lyr_process.saveJobs();
+    embedded_lyr_process.loadJobs(true);
+
+    ASSERT_TRUE(listJobs.size() == embedded_lyr_process.m_listJobs.size());
+
+    CAutoProcessEmbeddedLyrics::LIST_ITEMS::iterator it1 = embedded_lyr_process.m_listJobs.begin();
+    for (CAutoProcessEmbeddedLyrics::LIST_ITEMS::iterator it2 = listJobs.begin(); 
+        it2 != listJobs.end(); ++it1, ++it2)
     {
-        string    strFile = getAppDataDir();
-        strFile += SZ_JOB_FILE_NAME;
+        CAutoProcessEmbeddedLyrics::Item &i1 = *it1;
+        CAutoProcessEmbeddedLyrics::Item &i2 = *it2;
 
-        // Only run this test when the file doesn't exist.
-        if (isFileExist(strFile.c_str()))
-            return;
+        ASSERT_TRUE(i1.m_strSongFile == i2.m_strSongFile);
+        ASSERT_TRUE(i1.m_vLyrNames == i2.m_vLyrNames);
+        ASSERT_TRUE(i1.m_bRemove == i2.m_bRemove);
+        ASSERT_TRUE(i1.m_nTryFailed == i2.m_nTryFailed);
 
-        CAutoProcessEmbeddedLyrics    embedded_lyr_process;
-        CAutoProcessEmbeddedLyrics::Item    item;
-
-        item.m_strSongFile = "C:\\abc.mp3";
-        item.m_strLyrics.append(";lksjd;gioew1230$/;%^&*");
-        item.m_vLyrNames.push_back("abc");
-        item.m_vLyrNames.push_back("de");
-        item.m_bRemove = true;
-        item.m_bDealOK = false;
-        item.m_nTryFailed = 2;
-        embedded_lyr_process.m_listJobs.push_back(item);
-
-        item.m_strSongFile = "C:\\abcd.mp3";
-        item.m_strLyrics.append(";lksjd;gssgeeggioew1230$/;%^&*");
-        item.m_vLyrNames.push_back("a");
-        item.m_vLyrNames.push_back("def");
-        item.m_bRemove = false;
-        item.m_bDealOK = false;
-        item.m_nTryFailed = 0;
-        embedded_lyr_process.m_listJobs.push_back(item);
-
-        CAutoProcessEmbeddedLyrics::LIST_ITEMS    listJobs = embedded_lyr_process.m_listJobs;
-
-        embedded_lyr_process.saveJobs();
-        embedded_lyr_process.loadJobs(true);
-
-        CPPUNIT_ASSERT(listJobs.size() == embedded_lyr_process.m_listJobs.size());
-
-        CAutoProcessEmbeddedLyrics::LIST_ITEMS::iterator it1 = embedded_lyr_process.m_listJobs.begin();
-        for (CAutoProcessEmbeddedLyrics::LIST_ITEMS::iterator it2 = listJobs.begin(); 
-            it2 != listJobs.end(); ++it1, ++it2)
-        {
-            CAutoProcessEmbeddedLyrics::Item &i1 = *it1;
-            CAutoProcessEmbeddedLyrics::Item &i2 = *it2;
-
-            CPPUNIT_ASSERT(i1.m_strSongFile == i2.m_strSongFile);
-            CPPUNIT_ASSERT(i1.m_vLyrNames == i2.m_vLyrNames);
-            CPPUNIT_ASSERT(i1.m_bRemove == i2.m_bRemove);
-            CPPUNIT_ASSERT(i1.m_nTryFailed == i2.m_nTryFailed);
-
-            CPPUNIT_ASSERT(i1.m_strLyrics.size() == i2.m_strLyrics.size());
-            CPPUNIT_ASSERT(memcmp(i1.m_strLyrics.c_str(), i2.m_strLyrics.c_str(), i1.m_strLyrics.size()) == 0);
-        }
+        ASSERT_TRUE(i1.m_strLyrics.size() == i2.m_strLyrics.size());
+        ASSERT_TRUE(memcmp(i1.m_strLyrics.c_str(), i2.m_strLyrics.c_str(), i1.m_strLyrics.size()) == 0);
     }
+}
 
-};
-
-CPPUNIT_TEST_SUITE_REGISTRATION(CTestCaseCAutoProcessEmbeddedLyrics);
-
-#endif // _CPPUNIT_TEST
+#endif

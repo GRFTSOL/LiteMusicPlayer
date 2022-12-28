@@ -4,10 +4,11 @@
 class CTextFile {
 public:
     CTextFile();
+    CTextFile(const void *data, size_t len);
     virtual ~CTextFile();
 
     // This will open all the file data to memory at one time.
-    int open(cstr_t szFile, bool readMode, CharEncodingType encoding);
+    int open(cstr_t szFile, bool writeMode, CharEncodingType encoding);
     void close();
 
     bool readLine(string &strText);

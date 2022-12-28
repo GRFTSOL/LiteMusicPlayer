@@ -8,20 +8,18 @@ CTextFile::CTextFile() {
     m_encoding = ED_SYSDEF;
 }
 
+CTextFile::CTextFile(const void *data, size_t len) : CTextFile() {
+    m_fileData.assign((cstr_t)data, len);
+}
+
 CTextFile::~CTextFile() {
     close();
 }
 
-int CTextFile::open(cstr_t szFile, bool readMode, CharEncodingType encoding) {
+int CTextFile::open(cstr_t szFile, bool writeMode, CharEncodingType encoding) {
     close();
 
-    cstr_t szMode = "rb";
-
-    if (!readMode) {
-        szMode = "wb";
-    }
-
-    m_fp = fopen(szFile, szMode);
+    m_fp = fopen(szFile, writeMode ? "wb" : "rb");
     if (!m_fp) {
         setCustomErrorDesc(stringPrintf("%s: %s", (cstr_t)OSError(), szFile).c_str());
         return ERR_CUSTOM_ERROR;
@@ -31,14 +29,18 @@ int CTextFile::open(cstr_t szFile, bool readMode, CharEncodingType encoding) {
     m_encoding = encoding;
     m_fileData.clear();
 
-    if (readMode) {
+    cstr_t bom = getFileEncodingBom(encoding);
+    if (writeMode) {
+        fwrite(bom, 1, strlen(bom), m_fp);
+    } else {
         string data;
         if (readFile(szFile, data)) {
+            if (strncmp(bom, data.c_str(), strlen(bom)) == 0) {
+                // 去掉 BOM
+                data.erase(data.begin(), data.begin() + strlen(bom));
+            }
             mbcsToUtf8(data.c_str(), (int)data.size(), m_fileData, m_encoding);
         }
-    } else {
-        cstr_t bom = getFileEncodingBom(encoding);
-        fwrite(bom, 1, strlen(bom), m_fp);
     }
 
     return ERR_OK;
@@ -80,7 +82,7 @@ bool CTextFile::readLine(string &strText) {
         return false;
     }
 
-    strText.append(begin);
+    strText.assign(begin, (size_t)(end - begin));
     m_offset = m_fileData.size();
 
     return true;
@@ -105,7 +107,7 @@ bool CTextFile::write(cstr_t szText, size_t nLenText) {
         u16string strUCS2;
         utf8ToUCS2(szText, (int)nLenText, strUCS2);
         if (m_encoding == ED_UNICODE) {
-            ucs2EncodingReverse((WCHAR *)strUCS2.c_str(), (int)strUCS2.size());
+            //ucs2EncodingReverse((WCHAR *)strUCS2.c_str(), (int)strUCS2.size());
         }
 
         nWritten = fwrite(strUCS2.c_str(), sizeof(WCHAR), strUCS2.size(), m_fp);
@@ -130,75 +132,63 @@ bool CTextFile::write(cstr_t szText, size_t nLenText) {
     return true;
 }
 
-//////////////////////////////////////////////////////////////////////////
-// CPPUnit test
+#if UNIT_TEST
 
-#ifdef _CPPUNIT_TEST
+#include "utils/unittest.h"
 
-IMPLEMENT_CPPUNIT_TEST_REG(CTextFile)
 
-class CTestCaseCTextFile : public CppUnit::TestFixture {
-    CPPUNIT_TEST_SUITE(CTestCaseCTextFile);
-    CPPUNIT_TEST(testReadLine);
-    CPPUNIT_TEST(testAll);
-    CPPUNIT_TEST_SUITE_END();
+TEST(TextFile, ReadLine) {
+    auto str = "l1\nl2\rl3\r\nl4";
+    CTextFile file(str, strlen(str));
 
-protected:
-    void testReadLine() {
-        CTextFile file;
+    string line;
 
-        file.m_fileData = "l1\nl2\rl3\r\nl4";
+    ASSERT_TRUE(file.readLine(line));
+    ASSERT_TRUE(line == "l1");
+
+    ASSERT_TRUE(file.readLine(line));
+    ASSERT_TRUE(line == "l2");
+
+    ASSERT_TRUE(file.readLine(line));
+    ASSERT_TRUE(line == "l3");
+
+    ASSERT_TRUE(file.readLine(line));
+    ASSERT_TRUE(line == "l4");
+}
+
+TEST(TextFile, All) {
+    CTextFile file;
+
+    string fileName = getUnittestTempDir() + "testTextFile.txt";
+
+    CharEncodingType encodings[] = { ED_UTF8, ED_UNICODE, ED_SYSDEF };
+
+    for (int i = 0; i < CountOf(encodings); i++) {
+        int nRet = file.open(fileName.c_str(), true, encodings[i]);
+        ASSERT_TRUE(nRet == ERR_OK);
+
+        ASSERT_TRUE(file.writeLine("l1"));
+        ASSERT_TRUE(file.writeLine("l2"));
+        ASSERT_TRUE(file.writeLine("l3"));
+
+        file.close();
+
+        nRet = file.open(fileName.c_str(), false, encodings[i]);
+        ASSERT_TRUE(nRet == ERR_OK);
 
         string line;
 
-        CPPUNIT_ASSERT(file.readLine(line));
-        CPPUNIT_ASSERT(line == "l1");
+        ASSERT_TRUE(file.readLine(line));
+        ASSERT_EQ(line, "l1");
 
-        CPPUNIT_ASSERT(file.readLine(line));
-        CPPUNIT_ASSERT(line == "l2");
+        ASSERT_TRUE(file.readLine(line));
+        ASSERT_TRUE(line == "l2");
 
-        CPPUNIT_ASSERT(file.readLine(line));
-        CPPUNIT_ASSERT(line == "l3");
-
-        CPPUNIT_ASSERT(file.readLine(line));
-        CPPUNIT_ASSERT(line == "l4");
+        ASSERT_TRUE(file.readLine(line));
+        ASSERT_TRUE(line == "l3");
     }
 
-    void testAll() {
-        CTextFile file;
+    deleteFile(fileName.c_str());
+}
 
-        string szFile = getUnitTestFolder() + "testTextFile.txt";
-
-        CharEncodingType encodings[] = { ED_UTF8, ED_UNICODE, ED_SYSDEF };
-
-        for (int i = 0; i < CountOf(encodings); i++) {
-            int nRet = file.open(szFile.c_str(), CTextFile::OM_WRITE, encodings[i]);
-            CPPUNIT_ASSERT(nRet == ERR_OK);
-
-            CPPUNIT_ASSERT(file.writeLine("l1"));
-            CPPUNIT_ASSERT(file.writeLine("l2"));
-            CPPUNIT_ASSERT(file.writeLine("l3"));
-
-            file.close();
-
-            nRet = file.open(szFile.c_str(), CTextFile::OM_READ, ED_SYSDEF);
-            CPPUNIT_ASSERT(nRet == ERR_OK);
-
-            string line;
-
-            CPPUNIT_ASSERT(file.readLine(line));
-            CPPUNIT_ASSERT(line == "l1");
-
-            CPPUNIT_ASSERT(file.readLine(line));
-            CPPUNIT_ASSERT(line == "l2");
-
-            CPPUNIT_ASSERT(file.readLine(line));
-            CPPUNIT_ASSERT(line == "l3");
-        }
-    }
-
-};
-
-CPPUNIT_TEST_SUITE_REGISTRATION(CTestCaseCTextFile);
-
-#endif // _CPPUNIT_TEST
+#endif

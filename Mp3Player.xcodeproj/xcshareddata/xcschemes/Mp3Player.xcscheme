@@ -36,7 +36,7 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
-      customWorkingDirectory = "/Users/henry_xiao/ProjectsPrivate/Mp3Player/build/Debug"
+      customWorkingDirectory = "/Users/henry_xiao/ProjectsPrivate/Mp3Player"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
@@ -51,6 +51,16 @@
             ReferencedContainer = "container:Mp3Player.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "--gtest_catch_exceptions=0"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--gtest_filter=TextFile.All"
+            isEnabled = "NO">
+         </CommandLineArgument>
+      </CommandLineArguments>
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "PATH=&quot;$PATH;/Users/henry_xiao/ProjectsOpenSource/skia/out/Shared&quot;"

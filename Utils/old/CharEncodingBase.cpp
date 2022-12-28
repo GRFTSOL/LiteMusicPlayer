@@ -422,321 +422,307 @@ void uCS2LEToBE(WCHAR *str, int nLen) {
     uCS2BEToLE(str, nLen);
 }
 
-//////////////////////////////////////////////////////////////////////////
-// CPPUnit test
+#if UNIT_TEST
 
-#ifdef _CPPUNIT_TEST
+#include "utils/unittest.h"
 
-IMPLEMENT_CPPUNIT_TEST_REG(CharEncodingBase)
 
-class CTestCaseCharEncodingBase : public CppUnit::TestFixture {
-    CPPUNIT_TEST_SUITE(CTestCaseCharEncodingBase);
-    CPPUNIT_TEST(testUcs2ToUtf8);
-    CPPUNIT_TEST(testAnsiToUcs2);
-    CPPUNIT_TEST_SUITE_END();
+TEST(CharEncodingBase, Ucs2ToUtf8) {
+    string out;
+    string outx;
+    char szOut[256];
 
-protected:
-    void testUcs2ToUtf8() {
-        string out;
-        string outx;
-        char szOut[256];
+    WCHAR input[255];
+    _xcscpy(input, "test String abc");
 
-        WCHAR input[255];
-        _xcscpy(input, "test String abc");
+    // test with full length: -1
+    ucs2ToUtf8(input, -1, out);
+    ucs2ToUtf8(input, -1, outx);
+    int n = ucs2ToUtf8(input, -1, szOut, CountOf(szOut));
+    ASSERT_TRUE(out.size() == n);
+    ASSERT_TRUE(outx.size() == n);
+    ASSERT_TRUE(out.size() == wcslen(input));
+    ASSERT_TRUE(out == outx.c_str());
+    ASSERT_TRUE(out == szOut);
+    ASSERT_TRUE(_xcscmp(out.c_str(), input) == 0);
 
-        // test with full length: -1
+    // test with shorter length
+    int nLen = 5;
+    ucs2ToUtf8(input, nLen, out);
+    ucs2ToUtf8(input, nLen, outx);
+    n = ucs2ToUtf8(input, nLen, szOut, CountOf(szOut));
+    ASSERT_TRUE(out.size() == n);
+    ASSERT_TRUE(outx.size() == n);
+    ASSERT_TRUE(out.size() == nLen);
+    ASSERT_TRUE(out == outx.c_str());
+    ASSERT_TRUE(out == szOut);
+    ASSERT_TRUE(_xcsncmp(out.c_str(), input, nLen) == 0);
+
+    // test with insufficient length.
+    nLen = 5;
+    n = ucs2ToUtf8(input, -1, szOut, nLen + 1);
+    ASSERT_TRUE(n == nLen);
+    ASSERT_TRUE(strlen(szOut) == nLen);
+    ASSERT_TRUE(_xcsncmp(szOut, input, nLen) == 0);
+
+#ifdef _WIN32
+    {
+        wcscpy(input, L"���Ĳ������Ĳ������Ĳ������Ĳ������Ĳ������Ĳ������Ĳ���");
         ucs2ToUtf8(input, -1, out);
-        ucs2ToUtf8(input, -1, outx);
-        int n = ucs2ToUtf8(input, -1, szOut, CountOf(szOut));
-        CPPUNIT_ASSERT(out.size() == n);
-        CPPUNIT_ASSERT(outx.size() == n);
-        CPPUNIT_ASSERT(out.size() == wcslen(input));
-        CPPUNIT_ASSERT(out == outx.c_str());
-        CPPUNIT_ASSERT(out == szOut);
-        CPPUNIT_ASSERT(_xcscmp(out.c_str(), input) == 0);
 
-        // test with shorter length
-        int nLen = 5;
-        ucs2ToUtf8(input, nLen, out);
-        ucs2ToUtf8(input, nLen, outx);
-        n = ucs2ToUtf8(input, nLen, szOut, CountOf(szOut));
-        CPPUNIT_ASSERT(out.size() == n);
-        CPPUNIT_ASSERT(outx.size() == n);
-        CPPUNIT_ASSERT(out.size() == nLen);
-        CPPUNIT_ASSERT(out == outx.c_str());
-        CPPUNIT_ASSERT(out == szOut);
-        CPPUNIT_ASSERT(_xcsncmp(out.c_str(), input, nLen) == 0);
+        // Use mbcsToUCS2 with ED_UTF8 encoding to convert.
+        wstring_t strInputNew;
+        mbcsToUCS2(out.c_str(), out.size(), strInputNew, ED_UTF8);
+        ASSERT_TRUE(strInputNew == input);
 
-        // test with insufficient length.
-        nLen = 5;
-        n = ucs2ToUtf8(input, -1, szOut, nLen + 1);
-        CPPUNIT_ASSERT(n == nLen);
-        CPPUNIT_ASSERT(strlen(szOut) == nLen);
-        CPPUNIT_ASSERT(_xcsncmp(szOut, input, nLen) == 0);
+        wcscpy(input, L"cosMo@����P���ǥåɥܩ`��P feat.�����ߥ�");
+        ucs2ToUtf8(input, -1, out);
+
+        // Use mbcsToUCS2 with ED_UTF8 encoding to convert.
+        mbcsToUCS2(out.c_str(), out.size(), strInputNew, ED_UTF8);
+        ASSERT_TRUE(strInputNew == input);
+
+        wstring_t strOutW;
+        utf8ToUCS2(out.c_str(), out.length(), strOutW);
+        ASSERT_TRUE(strOutW == strInputNew);
+    }
+#endif
+}
+
+TEST(CharEncodingBase, Ucs2ToMbcs) {
+    string out;
+    string outx;
+    char szOut[256];
+
+    WCHAR input[255];
+    _xcscpy(input, "test String abc");
+
+    // test with full length: -1
+    ucs2ToMbcs(input, -1, out);
+    ucs2ToMbcs(input, -1, outx);
+    int n = ucs2ToMbcs(input, -1, szOut, CountOf(szOut));
+    ASSERT_TRUE(out.size() == n);
+    ASSERT_TRUE(outx.size() == n);
+    ASSERT_TRUE(out.size() == wcslen(input));
+    ASSERT_TRUE(out == outx.c_str());
+    ASSERT_TRUE(out == szOut);
+    ASSERT_TRUE(_xcscmp(out.c_str(), input) == 0);
+
+    // test with shorter length
+    int nLen = 5;
+    ucs2ToMbcs(input, nLen, out);
+    ucs2ToMbcs(input, nLen, outx);
+    n = ucs2ToMbcs(input, nLen, szOut, CountOf(szOut));
+    ASSERT_TRUE(out.size() == n);
+    ASSERT_TRUE(outx.size() == n);
+    ASSERT_TRUE(out.size() == nLen);
+    ASSERT_TRUE(out == outx.c_str());
+    ASSERT_TRUE(out == szOut);
+    ASSERT_TRUE(_xcsncmp(out.c_str(), input, nLen) == 0);
+
+    // test with insufficient length.
+    nLen = 5;
+    n = ucs2ToMbcs(input, -1, szOut, nLen);
+    ASSERT_TRUE(n == nLen);
+    ASSERT_TRUE(strlen(szOut) == nLen);
+    ASSERT_TRUE(_xcsncmp(szOut, input, nLen) == 0);
 
 #ifdef _WIN32
-        {
-            wcscpy(input, L"���Ĳ������Ĳ������Ĳ������Ĳ������Ĳ������Ĳ������Ĳ���");
-            ucs2ToUtf8(input, -1, out);
-
-            // Use mbcsToUCS2 with ED_UTF8 encoding to convert.
-            wstring_t strInputNew;
-            mbcsToUCS2(out.c_str(), out.size(), strInputNew, ED_UTF8);
-            CPPUNIT_ASSERT(strInputNew == input);
-
-            wcscpy(input, L"cosMo@����P���ǥåɥܩ`��P feat.�����ߥ�");
-            ucs2ToUtf8(input, -1, out);
-
-            // Use mbcsToUCS2 with ED_UTF8 encoding to convert.
-            mbcsToUCS2(out.c_str(), out.size(), strInputNew, ED_UTF8);
-            CPPUNIT_ASSERT(strInputNew == input);
-
-            wstring_t strOutW;
-            utf8ToUCS2(out.c_str(), out.length(), strOutW);
-            CPPUNIT_ASSERT(strOutW == strInputNew);
-        }
-#endif
-    }
-
-    void testUcs2ToMbcs() {
-        string out;
-        string outx;
-        char szOut[256];
-
-        WCHAR input[255];
-        _xcscpy(input, "test String abc");
-
-        // test with full length: -1
+    {
+        wcscpy(input, L"���Ĳ������Ĳ������Ĳ������Ĳ������Ĳ������Ĳ������Ĳ���");
         ucs2ToMbcs(input, -1, out);
-        ucs2ToMbcs(input, -1, outx);
-        int n = ucs2ToMbcs(input, -1, szOut, CountOf(szOut));
-        CPPUNIT_ASSERT(out.size() == n);
-        CPPUNIT_ASSERT(outx.size() == n);
-        CPPUNIT_ASSERT(out.size() == wcslen(input));
-        CPPUNIT_ASSERT(out == outx.c_str());
-        CPPUNIT_ASSERT(out == szOut);
-        CPPUNIT_ASSERT(_xcscmp(out.c_str(), input) == 0);
+        ASSERT_TRUE(out.size() == wcslen(input));
 
-        // test with shorter length
-        int nLen = 5;
-        ucs2ToMbcs(input, nLen, out);
-        ucs2ToMbcs(input, nLen, outx);
-        n = ucs2ToMbcs(input, nLen, szOut, CountOf(szOut));
-        CPPUNIT_ASSERT(out.size() == n);
-        CPPUNIT_ASSERT(outx.size() == n);
-        CPPUNIT_ASSERT(out.size() == nLen);
-        CPPUNIT_ASSERT(out == outx.c_str());
-        CPPUNIT_ASSERT(out == szOut);
-        CPPUNIT_ASSERT(_xcsncmp(out.c_str(), input, nLen) == 0);
+        wstring_t strInputNew;
+        mbcsToUCS2(out.c_str(), out.size(), strInputNew);
+        ASSERT_TRUE(strInputNew == input);
+    }
+#endif
+}
 
-        // test with insufficient length.
-        nLen = 5;
-        n = ucs2ToMbcs(input, -1, szOut, nLen);
-        CPPUNIT_ASSERT(n == nLen);
-        CPPUNIT_ASSERT(strlen(szOut) == nLen);
-        CPPUNIT_ASSERT(_xcsncmp(szOut, input, nLen) == 0);
+TEST(CharEncodingBase, MbcsToUcs2) {
+    wstring_t out;
+    string outx;
+    WCHAR szOut[256];
+
+    cstr_t input = "test String abc";
+
+    // test with full length: -1
+    mbcsToUCS2(input, -1, out);
+    mbcsToUCS2(input, -1, outx);
+    int n = mbcsToUCS2(input, -1, szOut, CountOf(szOut));
+    ASSERT_TRUE(out.size() == n);
+    ASSERT_TRUE(outx.size() == n);
+    ASSERT_TRUE(out.size() == strlen(input));
+    ASSERT_TRUE(out == outx.c_str());
+    ASSERT_TRUE(out == szOut);
+    ASSERT_TRUE(_xcscmp(out.c_str(), input) == 0);
+
+    // test with shorter length
+    int nLen = 5;
+    mbcsToUCS2(input, nLen, out);
+    mbcsToUCS2(input, nLen, outx);
+    n = mbcsToUCS2(input, nLen, szOut, CountOf(szOut));
+    ASSERT_TRUE(out.size() == n);
+    ASSERT_TRUE(outx.size() == n);
+    ASSERT_TRUE(out.size() == nLen);
+    ASSERT_TRUE(out == outx.c_str());
+    ASSERT_TRUE(out == szOut);
+    ASSERT_TRUE(_xcsncmp(out.c_str(), input, nLen) == 0);
+
+    // test with insufficient length.
+    nLen = 5;
+    n = mbcsToUCS2(input, -1, szOut, nLen);
+    ASSERT_TRUE(n == nLen);
+    ASSERT_TRUE(wcslen(szOut) == nLen);
+    ASSERT_TRUE(_xcsncmp(szOut, input, nLen) == 0);
+}
+
+TEST(CharEncodingBase, MbcsToUtf8) {
+    string out;
+    string outx;
+    char szOut[256];
+
+    cstr_t input = "test String abc";
+
+    // test with full length: -1
+    mbcsToUtf8(input, -1, out);
+    mbcsToUtf8(input, -1, outx);
+    int n = mbcsToUtf8(input, -1, szOut, CountOf(szOut));
+    ASSERT_TRUE(out.size() == n);
+    ASSERT_TRUE(outx.size() == n);
+    ASSERT_TRUE(out.size() == strlen(input));
+    ASSERT_TRUE(out == outx.c_str());
+    ASSERT_TRUE(out == szOut);
+    ASSERT_TRUE(_xcscmp(out.c_str(), input) == 0);
+
+    // test with shorter length
+    int nLen = 5;
+    mbcsToUtf8(input, nLen, out);
+    mbcsToUtf8(input, nLen, outx);
+    n = mbcsToUtf8(input, nLen, szOut, CountOf(szOut));
+    ASSERT_TRUE(out.size() == n);
+    ASSERT_TRUE(outx.size() == n);
+    ASSERT_TRUE(out.size() == nLen);
+    ASSERT_TRUE(out == outx.c_str());
+    ASSERT_TRUE(out == szOut);
+    ASSERT_TRUE(_xcsncmp(out.c_str(), input, nLen) == 0);
+
+    // test with insufficient length.
+    nLen = 5;
+    n = mbcsToUtf8(input, -1, szOut, nLen);
+    ASSERT_TRUE(n == nLen);
+    ASSERT_TRUE(strlen(szOut) == nLen);
+    ASSERT_TRUE(_xcsncmp(szOut, input, nLen) == 0);
 
 #ifdef _WIN32
-        {
-            wcscpy(input, L"���Ĳ������Ĳ������Ĳ������Ĳ������Ĳ������Ĳ������Ĳ���");
-            ucs2ToMbcs(input, -1, out);
-            CPPUNIT_ASSERT(out.size() == wcslen(input));
-
-            wstring_t strInputNew;
-            mbcsToUCS2(out.c_str(), out.size(), strInputNew);
-            CPPUNIT_ASSERT(strInputNew == input);
-        }
-#endif
-    }
-
-    void testMbcsToUcs2() {
-        wstring_t out;
-        string outx;
-        WCHAR szOut[256];
-
-        cstr_t input = "test String abc";
-
-        // test with full length: -1
-        mbcsToUCS2(input, -1, out);
-        mbcsToUCS2(input, -1, outx);
-        int n = mbcsToUCS2(input, -1, szOut, CountOf(szOut));
-        CPPUNIT_ASSERT(out.size() == n);
-        CPPUNIT_ASSERT(outx.size() == n);
-        CPPUNIT_ASSERT(out.size() == strlen(input));
-        CPPUNIT_ASSERT(out == outx.c_str());
-        CPPUNIT_ASSERT(out == szOut);
-        CPPUNIT_ASSERT(_xcscmp(out.c_str(), input) == 0);
-
-        // test with shorter length
-        int nLen = 5;
-        mbcsToUCS2(input, nLen, out);
-        mbcsToUCS2(input, nLen, outx);
-        n = mbcsToUCS2(input, nLen, szOut, CountOf(szOut));
-        CPPUNIT_ASSERT(out.size() == n);
-        CPPUNIT_ASSERT(outx.size() == n);
-        CPPUNIT_ASSERT(out.size() == nLen);
-        CPPUNIT_ASSERT(out == outx.c_str());
-        CPPUNIT_ASSERT(out == szOut);
-        CPPUNIT_ASSERT(_xcsncmp(out.c_str(), input, nLen) == 0);
-
-        // test with insufficient length.
-        nLen = 5;
-        n = mbcsToUCS2(input, -1, szOut, nLen);
-        CPPUNIT_ASSERT(n == nLen);
-        CPPUNIT_ASSERT(wcslen(szOut) == nLen);
-        CPPUNIT_ASSERT(_xcsncmp(szOut, input, nLen) == 0);
-    }
-
-    void testMbcsToUtf8() {
-        string out;
-        string outx;
-        char szOut[256];
-
-        cstr_t input = "test String abc";
-
-        // test with full length: -1
+    {
+        input = "���Ĳ������Ĳ������Ĳ������Ĳ������Ĳ������Ĳ������Ĳ���";
         mbcsToUtf8(input, -1, out);
-        mbcsToUtf8(input, -1, outx);
-        int n = mbcsToUtf8(input, -1, szOut, CountOf(szOut));
-        CPPUNIT_ASSERT(out.size() == n);
-        CPPUNIT_ASSERT(outx.size() == n);
-        CPPUNIT_ASSERT(out.size() == strlen(input));
-        CPPUNIT_ASSERT(out == outx.c_str());
-        CPPUNIT_ASSERT(out == szOut);
-        CPPUNIT_ASSERT(_xcscmp(out.c_str(), input) == 0);
 
-        // test with shorter length
-        int nLen = 5;
-        mbcsToUtf8(input, nLen, out);
-        mbcsToUtf8(input, nLen, outx);
-        n = mbcsToUtf8(input, nLen, szOut, CountOf(szOut));
-        CPPUNIT_ASSERT(out.size() == n);
-        CPPUNIT_ASSERT(outx.size() == n);
-        CPPUNIT_ASSERT(out.size() == nLen);
-        CPPUNIT_ASSERT(out == outx.c_str());
-        CPPUNIT_ASSERT(out == szOut);
-        CPPUNIT_ASSERT(_xcsncmp(out.c_str(), input, nLen) == 0);
-
-        // test with insufficient length.
-        nLen = 5;
-        n = mbcsToUtf8(input, -1, szOut, nLen);
-        CPPUNIT_ASSERT(n == nLen);
-        CPPUNIT_ASSERT(strlen(szOut) == nLen);
-        CPPUNIT_ASSERT(_xcsncmp(szOut, input, nLen) == 0);
-
-#ifdef _WIN32
-        {
-            input = "���Ĳ������Ĳ������Ĳ������Ĳ������Ĳ������Ĳ������Ĳ���";
-            mbcsToUtf8(input, -1, out);
-
-            string strInputNew;
-            utf8ToMbcs(out.c_str(), out.size(), strInputNew);
-            CPPUNIT_ASSERT(strInputNew == input);
-        }
+        string strInputNew;
+        utf8ToMbcs(out.c_str(), out.size(), strInputNew);
+        ASSERT_TRUE(strInputNew == input);
+    }
 #endif
-    }
+}
 
-    void testUtf8ToMbcs() {
-        string out;
-        string outx;
-        char szOut[256];
+TEST(CharEncodingBase, Utf8ToMbcs) {
+    string out;
+    string outx;
+    char szOut[256];
 
-        cstr_t input = "test String abc";
+    cstr_t input = "test String abc";
 
-        // test with full length: -1
-        utf8ToMbcs(input, -1, out);
-        utf8ToMbcs(input, -1, outx);
-        int n = utf8ToMbcs(input, -1, szOut, CountOf(szOut));
-        CPPUNIT_ASSERT(out.size() == n);
-        CPPUNIT_ASSERT(outx.size() == n);
-        CPPUNIT_ASSERT(out.size() == strlen(input));
-        CPPUNIT_ASSERT(out == outx.c_str());
-        CPPUNIT_ASSERT(out == szOut);
-        CPPUNIT_ASSERT(_xcscmp(out.c_str(), input) == 0);
+    // test with full length: -1
+    utf8ToMbcs(input, -1, out);
+    utf8ToMbcs(input, -1, outx);
+    int n = utf8ToMbcs(input, -1, szOut, CountOf(szOut));
+    ASSERT_TRUE(out.size() == n);
+    ASSERT_TRUE(outx.size() == n);
+    ASSERT_TRUE(out.size() == strlen(input));
+    ASSERT_TRUE(out == outx.c_str());
+    ASSERT_TRUE(out == szOut);
+    ASSERT_TRUE(_xcscmp(out.c_str(), input) == 0);
 
-        // test with shorter length
-        int nLen = 5;
-        utf8ToMbcs(input, nLen, out);
-        utf8ToMbcs(input, nLen, outx);
-        n = utf8ToMbcs(input, nLen, szOut, CountOf(szOut));
-        CPPUNIT_ASSERT(out.size() == n);
-        CPPUNIT_ASSERT(outx.size() == n);
-        CPPUNIT_ASSERT(out.size() == nLen);
-        CPPUNIT_ASSERT(out == outx.c_str());
-        CPPUNIT_ASSERT(out == szOut);
-        CPPUNIT_ASSERT(_xcsncmp(out.c_str(), input, nLen) == 0);
+    // test with shorter length
+    int nLen = 5;
+    utf8ToMbcs(input, nLen, out);
+    utf8ToMbcs(input, nLen, outx);
+    n = utf8ToMbcs(input, nLen, szOut, CountOf(szOut));
+    ASSERT_TRUE(out.size() == n);
+    ASSERT_TRUE(outx.size() == n);
+    ASSERT_TRUE(out.size() == nLen);
+    ASSERT_TRUE(out == outx.c_str());
+    ASSERT_TRUE(out == szOut);
+    ASSERT_TRUE(_xcsncmp(out.c_str(), input, nLen) == 0);
 
-        // test with insufficient length.
-        nLen = 5;
-        n = utf8ToMbcs(input, -1, szOut, nLen);
-        CPPUNIT_ASSERT(n == nLen);
-        CPPUNIT_ASSERT(strlen(szOut) == nLen);
-        CPPUNIT_ASSERT(_xcsncmp(szOut, input, nLen) == 0);
-    }
+    // test with insufficient length.
+    nLen = 5;
+    n = utf8ToMbcs(input, -1, szOut, nLen);
+    ASSERT_TRUE(n == nLen);
+    ASSERT_TRUE(strlen(szOut) == nLen);
+    ASSERT_TRUE(_xcsncmp(szOut, input, nLen) == 0);
+}
 
-    void testUtf8ToUcs2() {
-        wstring_t out;
-        string outx;
-        WCHAR szOut[256];
+TEST(CharEncodingBase, Utf8ToUcs2) {
+    wstring_t out;
+    string outx;
+    WCHAR szOut[256];
 
-        cstr_t input = "test String abc";
+    cstr_t input = "test String abc";
 
-        // test with full length: -1
-        utf8ToUCS2(input, -1, out);
-        utf8ToUCS2(input, -1, outx);
-        int n = utf8ToUCS2(input, -1, szOut, CountOf(szOut));
-        CPPUNIT_ASSERT(out.size() == n);
-        CPPUNIT_ASSERT(outx.size() == n);
-        CPPUNIT_ASSERT(out.size() == strlen(input));
-        CPPUNIT_ASSERT(out == outx.c_str());
-        CPPUNIT_ASSERT(out == szOut);
-        CPPUNIT_ASSERT(_xcscmp(out.c_str(), input) == 0);
+    // test with full length: -1
+    utf8ToUCS2(input, -1, out);
+    utf8ToUCS2(input, -1, outx);
+    int n = utf8ToUCS2(input, -1, szOut, CountOf(szOut));
+    ASSERT_TRUE(out.size() == n);
+    ASSERT_TRUE(outx.size() == n);
+    ASSERT_TRUE(out.size() == strlen(input));
+    ASSERT_TRUE(out == outx.c_str());
+    ASSERT_TRUE(out == szOut);
+    ASSERT_TRUE(_xcscmp(out.c_str(), input) == 0);
 
-        // test with shorter length
-        int nLen = 5;
-        utf8ToUCS2(input, nLen, out);
-        utf8ToUCS2(input, nLen, outx);
-        n = utf8ToUCS2(input, nLen, szOut, CountOf(szOut));
-        CPPUNIT_ASSERT(out.size() == n);
-        CPPUNIT_ASSERT(outx.size() == n);
-        CPPUNIT_ASSERT(out.size() == nLen);
-        CPPUNIT_ASSERT(out == outx.c_str());
-        CPPUNIT_ASSERT(out == szOut);
-        CPPUNIT_ASSERT(_xcsncmp(out.c_str(), input, nLen) == 0);
+    // test with shorter length
+    int nLen = 5;
+    utf8ToUCS2(input, nLen, out);
+    utf8ToUCS2(input, nLen, outx);
+    n = utf8ToUCS2(input, nLen, szOut, CountOf(szOut));
+    ASSERT_TRUE(out.size() == n);
+    ASSERT_TRUE(outx.size() == n);
+    ASSERT_TRUE(out.size() == nLen);
+    ASSERT_TRUE(out == outx.c_str());
+    ASSERT_TRUE(out == szOut);
+    ASSERT_TRUE(_xcsncmp(out.c_str(), input, nLen) == 0);
 
-        // test with insufficient length.
-        nLen = 5;
-        n = utf8ToUCS2(input, -1, szOut, nLen);
-        CPPUNIT_ASSERT(n == nLen);
-        CPPUNIT_ASSERT(wcslen(szOut) == nLen);
-        CPPUNIT_ASSERT(_xcsncmp(szOut, input, nLen) == 0);
-    }
+    // test with insufficient length.
+    nLen = 5;
+    n = utf8ToUCS2(input, -1, szOut, nLen);
+    ASSERT_TRUE(n == nLen);
+    ASSERT_TRUE(wcslen(szOut) == nLen);
+    ASSERT_TRUE(_xcsncmp(szOut, input, nLen) == 0);
+}
 
-    void testAnsiToUcs2() {
-        const int bufLen = 256;
-        uint8_t buf[bufLen];
+TEST(CharEncodingBase, AnsiToUcs2) {
+    const int bufLen = 256;
+    uint8_t buf[bufLen];
 
-        wstring_t strUcs2;
-        ansiToUCS2((const char *)buf, bufLen, strUcs2);
-        CPPUNIT_ASSERT(strUcs2.size() == bufLen);
+    wstring_t strUcs2;
+    ansiToUCS2((const char *)buf, bufLen, strUcs2);
+    ASSERT_TRUE(strUcs2.size() == bufLen);
 
-        string strAnsi;
-        ucs2ToAnsi(strUcs2.c_str(), strUcs2.size(), strAnsi);
-        CPPUNIT_ASSERT(strAnsi.size() == bufLen);
-        CPPUNIT_ASSERT(memcmp(strAnsi.c_str(), buf, bufLen) == 0);
+    string strAnsi;
+    ucs2ToAnsi(strUcs2.c_str(), strUcs2.size(), strAnsi);
+    ASSERT_TRUE(strAnsi.size() == bufLen);
+    ASSERT_TRUE(memcmp(strAnsi.c_str(), buf, bufLen) == 0);
 
-        cstr_t strTest = "abcdefalsgeoie1123";
-        ansiToUCS2(strTest, -1, strUcs2);
-        CPPUNIT_ASSERT(strUcs2.size() == strlen(strTest));
+    cstr_t strTest = "abcdefalsgeoie1123";
+    ansiToUCS2(strTest, -1, strUcs2);
+    ASSERT_TRUE(strUcs2.size() == strlen(strTest));
 
-        ucs2ToAnsi(strUcs2.c_str(), -1, strAnsi);
-        CPPUNIT_ASSERT(strAnsi.size() == strlen(strTest));
-        CPPUNIT_ASSERT(memcmp(strAnsi.c_str(), strTest, strlen(strTest) + 1) == 0);
-    }
+    ucs2ToAnsi(strUcs2.c_str(), -1, strAnsi);
+    ASSERT_TRUE(strAnsi.size() == strlen(strTest));
+    ASSERT_TRUE(memcmp(strAnsi.c_str(), strTest, strlen(strTest) + 1) == 0);
+}
 
-};
-
-CPPUNIT_TEST_SUITE_REGISTRATION(CTestCaseCharEncodingBase);
-
-
-#endif // _CPPUNIT_TEST
+#endif

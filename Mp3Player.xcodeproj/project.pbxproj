@@ -1811,6 +1811,7 @@
 					"$(inherited)",
 					_MAC_OS,
 					SK_METAL,
+					"UNIT_TEST=1",
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -1821,6 +1822,7 @@
 				HEADER_SEARCH_PATHS = (
 					$SRCROOT,
 					$SRCROOT/TinyJs,
+					"${SRCROOT}/third-parties/googletest/include",
 				);
 				LIBRARY_SEARCH_PATHS = /Users/hongyongxiao/ProjectsOpenSource/skia/out/Shared;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
@@ -1879,6 +1881,7 @@
 				HEADER_SEARCH_PATHS = (
 					$SRCROOT,
 					$SRCROOT/TinyJs,
+					"${SRCROOT}/third-parties/googletest/include",
 				);
 				LIBRARY_SEARCH_PATHS = /Users/hongyongxiao/ProjectsOpenSource/skia/out/Shared;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;

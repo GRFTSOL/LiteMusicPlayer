@@ -946,133 +946,118 @@ MLMsgCmd CMLProtocol::getMsgCommand(CSimpleXML &xml) {
 }
 
 
-#ifdef _CPPUNIT_TEST
+#if UNIT_TEST
 
-//////////////////////////////////////////////////////////////////////////
-// CPPUnit test
-
-IMPLEMENT_CPPUNIT_TEST_REG(CMLProtocol)
+#include "utils/unittest.h"
 
 
-#define CPPUNIT_ASSERT_STR_EQUAL(str1, str2) CPPUNIT_ASSERT(strcmp(str1, str2) == 0)
+#define CPPUNIT_ASSERT_STR_EQUAL(str1, str2) ASSERT_TRUE(strcmp(str1, str2) == 0)
 
-class CTestCaseCMLProtocol : public CppUnit::TestFixture {
-    CPPUNIT_TEST_SUITE(CTestCaseCMLProtocol);
-    CPPUNIT_TEST(testParseBinXml);
-    CPPUNIT_TEST(testMLMsgCmdSearch);
-    CPPUNIT_TEST(testMLMsgCmdUploadResult);
-    CPPUNIT_TEST_SUITE_END();
+TEST(MLProtocol, ParseBinXml) {
+    MLMsgRetBatchSearch msgRet;
 
-protected:
-    void testParseBinXml() {
-        MLMsgRetBatchSearch msgRet;
+    msgRet.result = ERR_CMD_NOT_MATCH;
+    msgRet.strMessage = "Msg";
 
-        msgRet.result = ERR_CMD_NOT_MATCH;
-        msgRet.strMessage = "Msg";
+    string strFile = getAppDataDir();
+    strFile += "unittest_save.txt";
+    string bufContent = ";alskge\1,.zsm,ng\n;ea<>>\n";
+    ASSERT_TRUE(writeFile(strFile.c_str(), bufContent.c_str(), bufContent.size()));
 
-        string strFile = getAppDataDir();
-        strFile += "unittest_save.txt";
-        string bufContent = ";alskge\1,.zsm,ng\n;ea<>>\n";
-        CPPUNIT_ASSERT(writeFile(strFile.c_str(), bufContent.c_str(), bufContent.size()));
-
-        {
-            MLLyricsInfoLite lyrInfo;
-            lyrInfo.strFile = strFile;
-            lyrInfo.strSaveName = "artist - title.txt";
-            msgRet.listLyricsInfo.push_back(lyrInfo);
-        }
+    {
         MLLyricsInfoLite lyrInfo;
         lyrInfo.strFile = strFile;
-        lyrInfo.strSaveName = "artist - title2.txt";
+        lyrInfo.strSaveName = "artist - title.txt";
         msgRet.listLyricsInfo.push_back(lyrInfo);
-
-        CMLBinXMLWriter xmlStream;
-        int ret = msgRet.toXML(xmlStream);
-        CPPUNIT_ASSERT(ret == ERR_OK);
-
-        deleteFile(strFile.c_str());
-
-        CSimpleXML xml;
-        ret = xml.parseData(xmlStream.getBuffer().c_str(), xmlStream.getBuffer().size());
-        CPPUNIT_ASSERT(ret != false);
-        MLMsgRetBatchSearch msgFrom;
-        ret = msgFrom.fromXML(xml.m_pRoot);
-        CPPUNIT_ASSERT(ret == ERR_OK);
-
-        CPPUNIT_ASSERT(msgFrom.result == msgRet.result);
-        CPPUNIT_ASSERT(msgFrom.strMessage == msgRet.strMessage);
-        CPPUNIT_ASSERT(msgFrom.listLyricsInfo.size() == msgRet.listLyricsInfo.size());
-        ListLyricsInfoLite::iterator itFrom = msgFrom.listLyricsInfo.begin();
-        for (ListLyricsInfoLite::iterator it = msgRet.listLyricsInfo.begin();
-        it != msgRet.listLyricsInfo.end(); ++it, ++itFrom)
-            {
-            MLLyricsInfoLite &lyr = *it;
-            MLLyricsInfoLite &lyrFrom = *itFrom;
-
-            CPPUNIT_ASSERT(lyr.strSaveName == lyrFrom.strSaveName);
-            CPPUNIT_ASSERT(lyr.strSaveName == lyrFrom.strFile);
-            CPPUNIT_ASSERT(bufContent.size() == lyrFrom.bufLyrContent.size());
-            CPPUNIT_ASSERT(memcmp(bufContent.c_str(), lyrFrom.bufLyrContent.c_str(), lyrFrom.bufLyrContent.size()) == 0);
-        }
     }
+    MLLyricsInfoLite lyrInfo;
+    lyrInfo.strFile = strFile;
+    lyrInfo.strSaveName = "artist - title2.txt";
+    msgRet.listLyricsInfo.push_back(lyrInfo);
 
-    void testMLMsgCmdSearch() {
-        MLMsgCmdSearch msgSearch;
+    CMLBinXMLWriter xmlStream;
+    int ret = msgRet.toXML(xmlStream);
+    ASSERT_TRUE(ret == ERR_OK);
 
-        msgSearch.bOnlineVerified = false;
-        msgSearch.nProductId = PRODUCT_ID_MINILYRICS;
-        msgSearch.nRequestPage = 1;
-        msgSearch.strArtist = "ar";
-        msgSearch.strClient = "client xxx";
-        msgSearch.strDeviceID = "did";
-        msgSearch.strTitle = "title";
+    deleteFile(strFile.c_str());
 
-        CMLBinXMLWriter xmlStream;
-        int ret = msgSearch.toXML(xmlStream);
-        CPPUNIT_ASSERT(ret == ERR_OK);
+    CSimpleXML xml;
+    ret = xml.parseData(xmlStream.getBuffer().c_str(), xmlStream.getBuffer().size());
+    ASSERT_TRUE(ret != false);
+    MLMsgRetBatchSearch msgFrom;
+    ret = msgFrom.fromXML(xml.m_pRoot);
+    ASSERT_TRUE(ret == ERR_OK);
 
-        CSimpleXML xml;
-        ret = xml.parseData(xmlStream.getBuffer().c_str(), xmlStream.getBuffer().size());
-        CPPUNIT_ASSERT(ret != false);
-        MLMsgCmdSearch msgFrom;
-        ret = msgFrom.fromXML(xml.m_pRoot);
-        CPPUNIT_ASSERT(ret == ERR_OK);
+    ASSERT_TRUE(msgFrom.result == msgRet.result);
+    ASSERT_TRUE(msgFrom.strMessage == msgRet.strMessage);
+    ASSERT_TRUE(msgFrom.listLyricsInfo.size() == msgRet.listLyricsInfo.size());
+    ListLyricsInfoLite::iterator itFrom = msgFrom.listLyricsInfo.begin();
+    for (ListLyricsInfoLite::iterator it = msgRet.listLyricsInfo.begin();
+    it != msgRet.listLyricsInfo.end(); ++it, ++itFrom)
+        {
+        MLLyricsInfoLite &lyr = *it;
+        MLLyricsInfoLite &lyrFrom = *itFrom;
 
-        CPPUNIT_ASSERT(msgFrom.bOnlineVerified == msgSearch.bOnlineVerified);
-        CPPUNIT_ASSERT(msgFrom.nRequestPage == msgSearch.nRequestPage);
-        CPPUNIT_ASSERT(msgFrom.strArtist == msgSearch.strArtist);
-        CPPUNIT_ASSERT(msgFrom.strClient == msgSearch.strClient);
-        CPPUNIT_ASSERT(msgFrom.strDeviceID == msgSearch.strDeviceID);
-        CPPUNIT_ASSERT(msgFrom.strTitle == msgSearch.strTitle);
+        ASSERT_TRUE(lyr.strSaveName == lyrFrom.strSaveName);
+        ASSERT_TRUE(lyr.strSaveName == lyrFrom.strFile);
+        ASSERT_TRUE(bufContent.size() == lyrFrom.bufLyrContent.size());
+        ASSERT_TRUE(memcmp(bufContent.c_str(), lyrFrom.bufLyrContent.c_str(), lyrFrom.bufLyrContent.size()) == 0);
     }
+}
 
-    void testMLMsgCmdUploadResult() {
-        MLMsgRetUpload retUpload;
+TEST(MLProtocol, MLMsgCmdSearch) {
+    MLMsgCmdSearch msgSearch;
 
-        retUpload.bV0Protocol = false;
-        retUpload.strLyricsId = "lyrics_id";
-        retUpload.strMessage = "msg";
-        retUpload.strOrgCmd = "org";
+    msgSearch.bOnlineVerified = false;
+    msgSearch.nProductId = PRODUCT_ID_MINILYRICS;
+    msgSearch.nRequestPage = 1;
+    msgSearch.strArtist = "ar";
+    msgSearch.strClient = "client xxx";
+    msgSearch.strDeviceID = "did";
+    msgSearch.strTitle = "title";
 
-        CMLBinXMLWriter xmlStream;
-        int ret = retUpload.toXML(xmlStream);
-        CPPUNIT_ASSERT(ret == ERR_OK);
+    CMLBinXMLWriter xmlStream;
+    int ret = msgSearch.toXML(xmlStream);
+    ASSERT_TRUE(ret == ERR_OK);
 
-        CSimpleXML xml;
-        ret = xml.parseData(xmlStream.getBuffer().c_str(), xmlStream.getBuffer().size());
-        CPPUNIT_ASSERT(ret != false);
-        MLMsgRetUpload retUpload2;
-        ret = retUpload2.fromXML(xml.m_pRoot);
-        CPPUNIT_ASSERT(ret == ERR_OK);
+    CSimpleXML xml;
+    ret = xml.parseData(xmlStream.getBuffer().c_str(), xmlStream.getBuffer().size());
+    ASSERT_TRUE(ret != false);
+    MLMsgCmdSearch msgFrom;
+    ret = msgFrom.fromXML(xml.m_pRoot);
+    ASSERT_TRUE(ret == ERR_OK);
 
-        CPPUNIT_ASSERT(retUpload2.bV0Protocol == retUpload.bV0Protocol);
-        CPPUNIT_ASSERT(retUpload2.strLyricsId == retUpload.strLyricsId);
-        CPPUNIT_ASSERT(retUpload2.strMessage == retUpload.strMessage);
-        CPPUNIT_ASSERT(retUpload2.strOrgCmd == retUpload.strOrgCmd);
-    }
+    ASSERT_TRUE(msgFrom.bOnlineVerified == msgSearch.bOnlineVerified);
+    ASSERT_TRUE(msgFrom.nRequestPage == msgSearch.nRequestPage);
+    ASSERT_TRUE(msgFrom.strArtist == msgSearch.strArtist);
+    ASSERT_TRUE(msgFrom.strClient == msgSearch.strClient);
+    ASSERT_TRUE(msgFrom.strDeviceID == msgSearch.strDeviceID);
+    ASSERT_TRUE(msgFrom.strTitle == msgSearch.strTitle);
+}
 
-};
+TEST(MLProtocol, MLMsgCmdUploadResult) {
+    MLMsgRetUpload retUpload;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(CTestCaseCMLProtocol);
+    retUpload.bV0Protocol = false;
+    retUpload.strLyricsId = "lyrics_id";
+    retUpload.strMessage = "msg";
+    retUpload.strOrgCmd = "org";
 
-#endif // _CPPUNIT_TEST
+    CMLBinXMLWriter xmlStream;
+    int ret = retUpload.toXML(xmlStream);
+    ASSERT_TRUE(ret == ERR_OK);
+
+    CSimpleXML xml;
+    ret = xml.parseData(xmlStream.getBuffer().c_str(), xmlStream.getBuffer().size());
+    ASSERT_TRUE(ret != false);
+    MLMsgRetUpload retUpload2;
+    ret = retUpload2.fromXML(xml.m_pRoot);
+    ASSERT_TRUE(ret == ERR_OK);
+
+    ASSERT_TRUE(retUpload2.bV0Protocol == retUpload.bV0Protocol);
+    ASSERT_TRUE(retUpload2.strLyricsId == retUpload.strLyricsId);
+    ASSERT_TRUE(retUpload2.strMessage == retUpload.strMessage);
+    ASSERT_TRUE(retUpload2.strOrgCmd == retUpload.strOrgCmd);
+}
+
+#endif

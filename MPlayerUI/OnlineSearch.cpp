@@ -132,9 +132,9 @@ bool isTitleIgnoredStep2(cstr_t szTitle)
 
     for (int i = 0; i < CountOf(szExcludedTitle); i++)
     {
-        if (strcmp(szExcludedTitle[i], strTitleFiltered.c_str()) == 0)
+        if (strcasecmp(szExcludedTitle[i], strTitleFiltered.c_str()) == 0)
             return true;
-        if (strcmp(_TL(szExcludedTitle[i]), strTitleFiltered.c_str()) == 0)
+        if (strcasecmp(_TL(szExcludedTitle[i]), strTitleFiltered.c_str()) == 0)
             return true;
     }
 
@@ -737,76 +737,63 @@ int COnlineSearch::updateSearchLrcInfo(cstr_t szFileAssociateKeyword, MLMsgRetSe
     return ERR_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
-// CPPUnit test
+#if UNIT_TEST
 
-#ifdef _CPPUNIT_TEST
+#include "utils/unittest.h"
 
-IMPLEMENT_CPPUNIT_TEST_REG(COnlineSearch)
 
-class CTestCaseOnlineSearch : public CppUnit::TestFixture
+TEST(OnlineSearch, FilterSearchKeywords)
 {
-    CPPUNIT_TEST_SUITE(CTestCaseOnlineSearch);
-    CPPUNIT_TEST(testFilterSearchKeywords);
-    CPPUNIT_TEST(testRemoveSpamInTag);
-    CPPUNIT_TEST(testFilterSpamInfo);
-    CPPUNIT_TEST_SUITE_END();
+    cstr_t cases[] = { "artist.movie.720p.xxxx", "artist.movie.1080p.xxx", 
+        "artist.movie.mkv", "artist.movie.mp4", };
 
-protected:
-    void testFilterSearchKeywords()
+    for (int i = 0; i < CountOf(cases); i++)
     {
-        cstr_t cases[] = { "artist.movie.720p.xxxx", "artist.movie.1080p.xxx", 
-            "artist.movie.mkv", "artist.movie.mp4", };
+        ASSERT_TRUE(isTitleIgnoredStep1(cases[i]));
 
-        for (int i = 0; i < CountOf(cases); i++)
-        {
-            CPPUNIT_ASSERT(isTitleIgnoredStep1(cases[i]));
-
-            string strTitle = cases[i], strArtist = "artist";
-            CPPUNIT_ASSERT(filterSpamInfo(strArtist, strTitle) == false);
-        }
-
-        CPPUNIT_ASSERT(isTitleIgnoredStep1("artist title.mp3") == false);
+        string strTitle = cases[i], strArtist = "artist";
+        ASSERT_TRUE(filterSpamInfo(strArtist, strTitle) == false);
     }
 
-    void testRemoveSpamInTag()
+    ASSERT_TRUE(isTitleIgnoredStep1("artist title.mp3") == false);
+}
+
+TEST(OnlineSearch, RemoveSpamInTag)
+{
+    CLyricsKeywordFilter::init();
+
+    cstr_t cases[] = { "www.test.com - abc", "abc | ass.com", 
+        "http://a.com | title", "hi.come", };
+
+    cstr_t results[] = { "abc", "abc", 
+        "title", "hi.come", };
+
+    for (int i = 0; i < CountOf(cases); i++)
     {
-        cstr_t cases[] = { "www.test.com - abc", "abc | ass.com", 
-            "http://a.com | title", "hi.come", };
+        string r = removeSpamInTag(cases[i]);
+        ASSERT_TRUE(strcmp(r.c_str(), results[i]) == 0);
 
-        cstr_t results[] = { "abc", "abc", 
-            "title", "hi.come", };
-
-        for (int i = 0; i < CountOf(cases); i++)
-        {
-            string r = removeSpamInTag(cases[i]);
-            CPPUNIT_ASSERT(strcmp(r.c_str(), results[i]) == 0);
-
-            string strTitle = cases[i], strArtist = "artist";
-            CPPUNIT_ASSERT(filterSpamInfo(strArtist, strTitle));
-            CPPUNIT_ASSERT(strcmp(strTitle.c_str(), results[i]) == 0);
-            CPPUNIT_ASSERT(strcmp(strArtist.c_str(), "artist") == 0);
-        }
+        string strTitle = cases[i], strArtist = "artist";
+        ASSERT_TRUE(filterSpamInfo(strArtist, strTitle));
+        ASSERT_TRUE(strcmp(strTitle.c_str(), results[i]) == 0);
+        ASSERT_TRUE(strcmp(strArtist.c_str(), "artist") == 0);
     }
+}
 
-    void testFilterSpamInfo()
-    {
-        string strTitle = "artist must be long - title", strArtist = "artist must be long";
-        CPPUNIT_ASSERT(filterSpamInfo(strArtist, strTitle));
-        CPPUNIT_ASSERT(strcmp(strArtist.c_str(), "artist must be long") == 0);
-        CPPUNIT_ASSERT(strcmp(strTitle.c_str(), "title") == 0);
+TEST(OnlineSearch, FilterSpamInfo)
+{
+    string strTitle = "artist must be long - title", strArtist = "artist must be long";
+    ASSERT_TRUE(filterSpamInfo(strArtist, strTitle));
+    ASSERT_TRUE(strcmp(strArtist.c_str(), "artist must be long") == 0);
+    ASSERT_TRUE(strcmp(strTitle.c_str(), "title") == 0);
 
-        strTitle = "01. title";
-        CPPUNIT_ASSERT(filterSpamInfo(strArtist, strTitle));
-        CPPUNIT_ASSERT(strcmp(strArtist.c_str(), "artist must be long") == 0);
-        CPPUNIT_ASSERT(strcmp(strTitle.c_str(), "title") == 0);
+    strTitle = "01. title";
+    ASSERT_TRUE(filterSpamInfo(strArtist, strTitle));
+    ASSERT_TRUE(strcmp(strArtist.c_str(), "artist must be long") == 0);
+    ASSERT_TRUE(strcmp(strTitle.c_str(), "title") == 0);
 
-        strTitle = "track";
-        CPPUNIT_ASSERT(filterSpamInfo(strArtist, strTitle) == false);
-    }
+    strTitle = "track";
+    ASSERT_TRUE(filterSpamInfo(strArtist, strTitle) == false);
+}
 
-};
-
-CPPUNIT_TEST_SUITE_REGISTRATION(CTestCaseOnlineSearch);
-
-#endif // _CPPUNIT_TEST
+#endif

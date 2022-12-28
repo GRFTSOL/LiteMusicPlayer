@@ -20,7 +20,7 @@ public:
     int readTill(string &buf, char chTill);
 
     int readCount(void * buf, size_t count);
-    int writeCount(void * buf, size_t count);
+    int writeCount(const void * buf, size_t count);
 
     int writeByte(uint8_t v);
     int writeInt16BE(int16_t v);

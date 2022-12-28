@@ -566,98 +566,84 @@ void CMLBinXMLWriter::writeContentBlock(int indexSize) {
     }
 }
 
-//////////////////////////////////////////////////////////////////////////
-// CPPUnit test
+#if UNIT_TEST
 
-#ifdef _CPPUNIT_TEST
+#include "utils/unittest.h"
 
-IMPLEMENT_CPPUNIT_TEST_REG(CMLBinXMLParser)
 
-class CTestCaseCMLBinXMLParser : public CppUnit::TestFixture {
-    CPPUNIT_TEST_SUITE(CTestCaseCMLBinXMLParser);
-    CPPUNIT_TEST(testParseBinXml);
-    CPPUNIT_TEST(testParseBinXml2);
-    CPPUNIT_TEST(testParseBinXml3);
-    CPPUNIT_TEST_SUITE_END();
+TEST(MLBinXMLParser, ParseBinXml) {
+    CMLBinXMLWriter xmlWriter;
 
-protected:
-    void testParseBinXml() {
-        CMLBinXMLWriter xmlWriter;
+    xmlWriter.writeStartElement("Node");
+    xmlWriter.writeAttribute("attr", "value");
+    xmlWriter.writeAttribute("attr2", "value2");
+    xmlWriter.writeStartElement("Node2");
+    xmlWriter.writeEndElement();
+    xmlWriter.writeEndElement();
 
-        xmlWriter.writeStartElement("Node");
-        xmlWriter.writeAttribute("attr", "value");
-        xmlWriter.writeAttribute("attr2", "value2");
-        xmlWriter.writeStartElement("Node2");
-        xmlWriter.writeEndElement();
-        xmlWriter.writeEndElement();
+    string &buf = xmlWriter.getBuffer();
 
-        string &buf = xmlWriter.getBuffer();
+    CMLBinXMLParser parser;
+    CSimpleXML xmlData;
 
-        CMLBinXMLParser parser;
-        CSimpleXML xmlData;
+    CMLBinXMLParser::MLBinXmlParseError ret = parser.parseData(buf.c_str(), buf.size(), xmlData);
+    ASSERT_TRUE(ret == CMLBinXMLParser::E_OK);
 
-        CMLBinXMLParser::MLBinXmlParseError ret = parser.parseData(buf.c_str(), buf.size(), xmlData);
-        CPPUNIT_ASSERT(ret == CMLBinXMLParser::E_OK);
+    CMLBinXMLWriter xmlWriter2;
+    xmlData.m_pRoot->toXML(xmlWriter2);
+    string &buf2 = xmlWriter2.getBuffer();
+    ASSERT_TRUE(buf.size() == buf2.size());
+    ASSERT_TRUE(memcmp(buf.c_str(), buf2.c_str(), buf.size()) == 0);
+}
 
-        CMLBinXMLWriter xmlWriter2;
-        xmlData.m_pRoot->toXML(xmlWriter2);
-        string &buf2 = xmlWriter2.getBuffer();
-        CPPUNIT_ASSERT(buf.size() == buf2.size());
-        CPPUNIT_ASSERT(memcmp(buf.c_str(), buf2.c_str(), buf.size()) == 0);
-    }
+TEST(MLBinXMLParser, ParseBinXml2) {
+    CMLBinXMLWriter xmlWriter;
 
-    void testParseBinXml2() {
-        CMLBinXMLWriter xmlWriter;
+    xmlWriter.writeStartElement("Node");
+    xmlWriter.writeAttribute("attr", "value");
+    xmlWriter.writeAttribute("attr2", "value2");
+    xmlWriter.writeString("str");
+    xmlWriter.writeStartElement("Node2");
+    xmlWriter.writeEndElement();
+    xmlWriter.writeEndElement();
 
-        xmlWriter.writeStartElement("Node");
-        xmlWriter.writeAttribute("attr", "value");
-        xmlWriter.writeAttribute("attr2", "value2");
-        xmlWriter.writeString("str");
-        xmlWriter.writeStartElement("Node2");
-        xmlWriter.writeEndElement();
-        xmlWriter.writeEndElement();
+    string &buf = xmlWriter.getBuffer();
 
-        string &buf = xmlWriter.getBuffer();
+    CSimpleXML xmlData;
 
-        CSimpleXML xmlData;
+    ASSERT_TRUE(xmlData.parseData(buf.c_str(), buf.size()));
 
-        CPPUNIT_ASSERT(xmlData.parseData(buf.c_str(), buf.size()));
+    CMLBinXMLWriter xmlWriter2;
+    xmlData.m_pRoot->toXML(xmlWriter2);
+    string &buf2 = xmlWriter2.getBuffer();
+    ASSERT_TRUE(buf.size() == buf2.size());
+    ASSERT_TRUE(memcmp(buf.c_str(), buf2.c_str(), buf.size()) == 0);
+}
 
-        CMLBinXMLWriter xmlWriter2;
-        xmlData.m_pRoot->toXML(xmlWriter2);
-        string &buf2 = xmlWriter2.getBuffer();
-        CPPUNIT_ASSERT(buf.size() == buf2.size());
-        CPPUNIT_ASSERT(memcmp(buf.c_str(), buf2.c_str(), buf.size()) == 0);
-    }
-
-    void testParseBinXml3() {
-        CMLBinXMLWriter xmlWriter;
+TEST(MLBinXMLParser, ParseBinXml3) {
+    CMLBinXMLWriter xmlWriter;
 
 #define SZ_BIN_DATA         "\0x1\0x2"
 
-        xmlWriter.writeStartElement("Node");
-        xmlWriter.writeAttribute("attr", "value");
-        xmlWriter.writeAttribute("attr2", SZ_BIN_DATA, CountOf(SZ_BIN_DATA)); // bin data
-        xmlWriter.writeEndElement();
+    xmlWriter.writeStartElement("Node");
+    xmlWriter.writeAttribute("attr", "value");
+    xmlWriter.writeAttribute("attr2", SZ_BIN_DATA, CountOf(SZ_BIN_DATA)); // bin data
+    xmlWriter.writeEndElement();
 
-        string &buf = xmlWriter.getBuffer();
+    string &buf = xmlWriter.getBuffer();
 
-        CMLBinXMLParser parser;
-        CSimpleXML xmlData;
+    CMLBinXMLParser parser;
+    CSimpleXML xmlData;
 
-        CMLBinXMLParser::MLBinXmlParseError ret = parser.parseData(buf.c_str(), buf.size(), xmlData);
-        CPPUNIT_ASSERT(ret == CMLBinXMLParser::E_OK);
+    CMLBinXMLParser::MLBinXmlParseError ret = parser.parseData(buf.c_str(), buf.size(), xmlData);
+    ASSERT_TRUE(ret == CMLBinXMLParser::E_OK);
 
-        CPPUNIT_ASSERT(xmlData.m_pRoot->name == "Node");
-        CPPUNIT_ASSERT(strcmp(xmlData.m_pRoot->getProperty("attr"), "value") == 0);
-        string bufAttr;
-        xmlData.m_pRoot->getPropertyBinData("attr2", bufAttr);
-        CPPUNIT_ASSERT(bufAttr.size() == CountOf(SZ_BIN_DATA));
-        CPPUNIT_ASSERT(memcmp(SZ_BIN_DATA, bufAttr.c_str(), bufAttr.size()) == 0);
-    }
+    ASSERT_TRUE(xmlData.m_pRoot->name == "Node");
+    ASSERT_TRUE(strcmp(xmlData.m_pRoot->getProperty("attr"), "value") == 0);
+    string bufAttr;
+    xmlData.m_pRoot->getPropertyBinData("attr2", bufAttr);
+    ASSERT_TRUE(bufAttr.size() == CountOf(SZ_BIN_DATA));
+    ASSERT_TRUE(memcmp(SZ_BIN_DATA, bufAttr.c_str(), bufAttr.size()) == 0);
+}
 
-};
-
-CPPUNIT_TEST_SUITE_REGISTRATION(CTestCaseCMLBinXMLParser);
-
-#endif // _CPPUNIT_TEST
+#endif

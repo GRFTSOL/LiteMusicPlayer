@@ -76,39 +76,28 @@ bool getMLEncriptyData(string &strData) {
 }
 #endif
 
-//////////////////////////////////////////////////////////////////////////
-// CPPUnit test
+#if UNIT_TEST
 
-#ifdef _CPPUNIT_TEST
+#include "utils/unittest.h"
 
-IMPLEMENT_CPPUNIT_TEST_REG(HelperFun)
+TEST(HelperFun, testAnalyseLyricsFileNameEx) {
+    string artist, title;
+    cstr_t szFile;
 
-class CTestCaseStringEx : public CppUnit::TestFixture {
-    CPPUNIT_TEST_SUITE(CTestCaseStringEx);
-    CPPUNIT_TEST(testAnalyseLyricsFileNameEx);
-    CPPUNIT_TEST_SUITE_END();
+    szFile = "c:\\abc\ar - ti-a.mp3";
+    analyseLyricsFileNameEx(artist, title, szFile);
+    ASSERT_TRUE(artist == "ar");
+    ASSERT_TRUE(title == "ti-a");
 
-protected:
-    void testAnalyseLyricsFileNameEx() {
-        string artist, title;
-        cstr_t szFile;
+    szFile = "c:\\abc\ar-ti-a.mp3";
+    analyseLyricsFileNameEx(artist, title, szFile);
+    ASSERT_TRUE(artist == "ar");
+    ASSERT_TRUE(title == "ti-a");
 
-        szFile = "c:\\abc\ar - ti-a.mp3";
-        analyseLyricsFileNameEx(artist, title, szFile);
-        CPPUNIT_ASSERT(artist == "ar");
-        CPPUNIT_ASSERT(title == "ti-a");
-
-        szFile = "c:\\abc\ar-ti-a.mp3";
-        analyseLyricsFileNameEx(artist, title, szFile);
-        CPPUNIT_ASSERT(artist == "ar");
-        CPPUNIT_ASSERT(title == "ti-a");
-
-        szFile = "c:\\abc\ti.mp3";
-        analyseLyricsFileNameEx(artist, title, szFile);
-        CPPUNIT_ASSERT(artist == "");
-        CPPUNIT_ASSERT(title == "ti");
-    }
-
-};
+    szFile = "c:\\abc\ti.mp3";
+    analyseLyricsFileNameEx(artist, title, szFile);
+    ASSERT_TRUE(artist == "");
+    ASSERT_TRUE(title == "ti");
+}
 
 #endif
