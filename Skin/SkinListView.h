@@ -7,11 +7,12 @@ class CSkinListView;
 
 class CColHeader {
 public:
-    CColHeader(cstr_t szTitle, int nWidth, int colType, bool bClickable = false) {
+    CColHeader(cstr_t szTitle, int nWidth, int colType, bool bClickable = false, uint32_t drawTextAlignFlags = DT_LEFT) {
         this->strTitle = szTitle;
         this->nWidth = nWidth;
         this->bClickable = bClickable;
         this->colType = colType;
+        this->drawTextAlignFlags = drawTextAlignFlags;
     }
     virtual ~CColHeader() { }
 
@@ -25,6 +26,7 @@ public:
     int16_t                     nWidth;
     bool                        bClickable;
     int                         colType;
+    uint32_t                    drawTextAlignFlags;
 
 };
 
@@ -116,7 +118,7 @@ public:
     void setColor(int nColorName, const CColor &clr);
     CColor & getColor(int nColorName);
 
-    virtual void addColumn(cstr_t szCol, int nWidth, int colType = CColHeader::TYPE_TEXT, bool bClickable = false);
+    virtual void addColumn(cstr_t szCol, int nWidth, int colType = CColHeader::TYPE_TEXT, bool bClickable = false, int drawTextAligns = DT_LEFT);
 
     uint32_t getColumnCount() const { return (uint32_t)m_vHeading.size(); }
     int getColumnWidth(int nCol) const;
@@ -235,7 +237,6 @@ protected:
     virtual bool isClickedOn(int row, int col, CColHeader *pHeader, int x, int y);
 
     virtual void drawCell(int row, int col, CRect &rcCell, CRawGraph *canvas, CColor &clrText);
-    virtual void drawCellText(cstr_t text, CRect &rcCell, CRawGraph *canvas, CColor &clrText);
     virtual void drawCellImage(CRawImage &image, CRect &rcCell, CRawGraph *canvas);
 
 public:

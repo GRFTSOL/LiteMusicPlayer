@@ -31,6 +31,9 @@ backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
         [self setDelegate: self];
     }
 
+    mYScroll = 0;
+    mXScroll = 0;
+
     return self;
 }
 
@@ -95,19 +98,28 @@ backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
 }
 
 - (void)scrollWheel:(NSEvent *)theEvent {
-    CPoint pt = { 0, 0 };
+    CPoint pt = NSPointToCPoint([theEvent locationInWindow], [self frame].size.height);
 
-    float offsetX = [theEvent deltaX];
-    float offsetY = [theEvent deltaY];
+    const int PER_SCROOLL = 20;
 
-    if (offsetX != 0) {
-        int wheel = offsetX > 0 ? 120 : -120;
-        mBaseWnd->onMouseWheel(wheel, MK_SHIFT, pt);
+    float scrollingDeltaX = [theEvent scrollingDeltaX];
+    mXScroll += scrollingDeltaX / PER_SCROOLL;
+    if (abs(mXScroll) >= 1) {
+        mBaseWnd->onMouseWheel((int)(mXScroll), MK_SHIFT, pt);
+
+        int negative = mXScroll > 0 ? 1 : -1;
+        mXScroll = abs(mXScroll);
+        mXScroll = (mXScroll - (int)(mXScroll)) * negative;
     }
 
-    if (offsetY != 0) {
-        int wheel = offsetY > 0 ? 120 : -120;
-        mBaseWnd->onMouseWheel(wheel, 0, pt);
+    float scrollingDeltaY = [theEvent scrollingDeltaY];
+    mYScroll += scrollingDeltaY / PER_SCROOLL;
+    if (abs(mYScroll) >= 1) {
+        mBaseWnd->onMouseWheel((int)(mYScroll), 0, pt);
+
+        int negative = mYScroll > 0 ? 1 : -1;
+        mYScroll = abs(mYScroll);
+        mYScroll = (mYScroll - (int)(mYScroll)) * negative;
     }
 }
 
@@ -132,9 +144,9 @@ backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
 
     mBaseWnd->onKeyDown(code, modifierFlags);
 
-    bool bCaptionDown = isFlagSet(modifierFlags, NSAlphaShiftKeyMask);
-    modifierFlags &= ~NSAlphaShiftKeyMask;
-    if (modifierFlags != 0 && modifierFlags != NSShiftKeyMask) {
+    bool bCaptionDown = isFlagSet(modifierFlags, NSEventModifierFlagCapsLock);
+    modifierFlags &= ~NSEventModifierFlagCapsLock;
+    if (modifierFlags != 0 && modifierFlags != NSEventModifierFlagShift) {
         return;
     }
 

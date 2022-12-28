@@ -319,8 +319,7 @@ class CPfItemLyrDefaultEncoding : public CPreferItem
 {
 public:
     CPfItemLyrDefaultEncoding()
-        : CPreferItem(connectToLocalStr(_TLM("Lyrics"), _TLM("Default encoding of lyrics")).c_str())    // _TLM("Default") is the default language name.
-    {
+        : CPreferItem(connectToLocalStr(_TLM("Lyrics"), _TLM("Default encoding of lyrics")).c_str()) {
     }
 
     virtual string getValue() {

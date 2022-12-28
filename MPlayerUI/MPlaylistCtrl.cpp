@@ -78,6 +78,7 @@ UIOBJECT_CLASS_NAME_IMP(CMPlaylistCtrl, "Playlist")
 
 CMPlaylistCtrl::CMPlaylistCtrl()
 {
+    m_bHorzScrollBar = false;
     m_nNowPlaying = -1;
 }
 
@@ -89,8 +90,10 @@ void CMPlaylistCtrl::onCreate()
 {
     CSkinListCtrl::onCreate();
 
-    if (getColumnCount() == 0)
-        addColumn(_TLT("Media Files"), 230);
+    assert(getColumnCount() == 0);
+    addColumn(_TLT("Index"), 40, CColHeader::TYPE_TEXT, false, DT_CENTER);
+    addColumn(_TLT("Media Files"), 130);
+    addColumn(_TLT("Duration"), 50, CColHeader::TYPE_TEXT, false, DT_CENTER);
 
     registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_CUR_PLAYLIST_CHANGED, ET_PLAYER_CUR_MEDIA_CHANGED);
 
@@ -99,14 +102,8 @@ void CMPlaylistCtrl::onCreate()
     if (nRet != ERR_OK)
         return;
 
-    for (int i = 0; i < playlist->getCount(); i++)
-    {
-        CMPAutoPtr<IMedia>    media;
-        if (playlist->getItem(i, &media) == ERR_OK)
-        {
-            string strTitle = g_Player.formatMediaTitle(media);
-            insertItem(i, strTitle.c_str(), 0);
-        }
+    for (int i = 0; i < playlist->getCount(); i++) {
+        insertMedia(playlist, i, false);
     }
 }
 
@@ -125,7 +122,12 @@ void CMPlaylistCtrl::onEvent(const IEvent *pEvent)
         if (g_Player.getCurrentMedia(&media) == ERR_OK)
         {
             string strTitle = g_Player.formatMediaTitle(media);
-            setItemText(g_Player.getCurrentMediaIndex(), 0, strTitle.c_str());
+            setItemText(g_Player.getCurrentMediaIndex(), 1, strTitle.c_str());
+
+            auto n = (media->getDuration() + 500) / 1000; // ms
+            char buf[64];
+            sprintf(buf, "%d:%02d", n / 60, n % 60);
+            setItemText(g_Player.getCurrentMediaIndex(), 2, buf, false);
         }
 
         invalidate();
@@ -160,8 +162,9 @@ void CMPlaylistCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags)
 
 void CMPlaylistCtrl::sendNotifyEvent(CSkinListCtrlEventNotify::Command cmd, int nClickedRow, int nClickedCol)
 {
-    if (cmd == CSkinListCtrlEventNotify::C_DBL_CLICK)
+    if (cmd == CSkinListCtrlEventNotify::C_DBL_CLICK && nClickedRow != -1) {
         g_Player.playMedia(nClickedRow);
+    }
 
     CSkinListCtrl::sendNotifyEvent(cmd, nClickedRow, nClickedCol);
 }
@@ -213,6 +216,36 @@ void CMPlaylistCtrl::offsetAllSelectedItems(bool bMoveDown)
     }
 }
 
+void CMPlaylistCtrl::insertMedia(CMPAutoPtr<IPlaylist> &playlist, int index, bool redraw) {
+    CMPAutoPtr<IMedia> media;
+
+    if (playlist->getItem(index, &media) == ERR_OK) {
+        insertItem(index, itos(index + 1).c_str(), 0, 0, false);
+
+        string strTitle = g_Player.formatMediaTitle(media);
+        setItemText(index, 1, strTitle.c_str(), false);
+
+        auto n = (media->getDuration() + 500) / 1000; // ms
+        if (n > 0) {
+            char buf[64];
+            sprintf(buf, "%d:%02d", n / 60, n % 60);
+            setItemText(index, 2, buf, false);
+        }
+    }
+
+    if (redraw) {
+        invalidate();
+    }
+}
+
+void CMPlaylistCtrl::updateMediaIndex() {
+    for (int i = 0; i < (int)m_vRows.size(); i++) {
+        setItemText(i, 0, itos(i).c_str(), false);
+    }
+
+    invalidate();
+}
+
 void CMPlaylistCtrl::updatePlaylist(CEventPlaylistChanged *pEventPlaylistChanged)
 {
     long                    nCount;
@@ -227,14 +260,8 @@ void CMPlaylistCtrl::updatePlaylist(CEventPlaylistChanged *pEventPlaylistChanged
         deleteAllItems();
 
         nCount = playlist->getCount();
-        for (int i = 0;i < nCount; i++)
-        {
-            CMPAutoPtr<IMedia>    pMedia;
-            if (playlist->getItem(i, &pMedia) == ERR_OK)
-            {
-                string str = g_Player.formatMediaTitle(pMedia);
-                insertItem(i, str.c_str());
-            }
+        for (int i = 0; i < nCount; i++) {
+            insertMedia(playlist, i);
         }
 
         setNowPlaying();
@@ -243,17 +270,10 @@ void CMPlaylistCtrl::updatePlaylist(CEventPlaylistChanged *pEventPlaylistChanged
     }
     else if (pEventPlaylistChanged->action == IMPEvent::PCA_CLEAR)
         deleteAllItems();
-    else if (pEventPlaylistChanged->action == IMPEvent::PCA_INSERT)
-    {
-        CMPAutoPtr<IMedia>    pMedia;
-        if (playlist->getItem(pEventPlaylistChanged->nIndex, &pMedia) == ERR_OK)
-        {
-            string str = g_Player.formatMediaTitle(pMedia);
-            insertItem(pEventPlaylistChanged->nIndex, str.c_str(), 0, 0, true);
-        }
-    }
-    else if (pEventPlaylistChanged->action == IMPEvent::PCA_MOVE)
-    {
+    else if (pEventPlaylistChanged->action == IMPEvent::PCA_INSERT) {
+        insertMedia(playlist, pEventPlaylistChanged->nIndex, false);
+        updateMediaIndex();
+    } else if (pEventPlaylistChanged->action == IMPEvent::PCA_MOVE) {
         int nIndex = pEventPlaylistChanged->nIndex;
         int nIndexOld = pEventPlaylistChanged->nIndexOld;
         if (nIndex >= 0 && nIndex < getItemCount()
@@ -263,7 +283,7 @@ void CMPlaylistCtrl::updatePlaylist(CEventPlaylistChanged *pEventPlaylistChanged
             m_vRows[nIndex] = m_vRows[nIndexOld];
             m_vRows[nIndexOld] = temp;
         }
-        invalidate();
+        updateMediaIndex();
     }
     else if (pEventPlaylistChanged->action == IMPEvent::PCA_REMOVE)
     {
@@ -271,7 +291,7 @@ void CMPlaylistCtrl::updatePlaylist(CEventPlaylistChanged *pEventPlaylistChanged
         int            nIndex = pEventPlaylistChanged->nIndex;
         if (nIndex >= 0 && nIndex < getItemCount())
         {
-            deleteItem(pEventPlaylistChanged->nIndex, true);
+            deleteItem(pEventPlaylistChanged->nIndex, false);
         }
 
         if (nSel != -1)
@@ -285,6 +305,8 @@ void CMPlaylistCtrl::updatePlaylist(CEventPlaylistChanged *pEventPlaylistChanged
                 m_pSkin->leaveInDrawUpdate();
             }
         }
+
+        updateMediaIndex();
     }
     else
         assert(0);

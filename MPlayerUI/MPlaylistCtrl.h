@@ -26,6 +26,9 @@ public:
     };
 
 protected:
+    void insertMedia(CMPAutoPtr<IPlaylist> &playlist, int index, bool redraw = false);
+    void updateMediaIndex();
+
     void updatePlaylist(CEventPlaylistChanged *pEventPlaylistChanged = nullptr);
 
     int getItemImageIndex(int nItem) override;

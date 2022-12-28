@@ -984,8 +984,6 @@ void CPlayer::onMediaChangedOfZikiPlayer()
         if (nRet == ERR_OK)
             strcpy_safe(m_szSrcMedia, CountOf(m_szSrcMedia), str.c_str());
 
-        m_nMediaLength = media->getDuration();
-
         nRet = media->getArtist(&str);
         if (nRet == ERR_OK)
             strcpy_safe(m_szArtist, CountOf(m_szArtist), str.c_str());

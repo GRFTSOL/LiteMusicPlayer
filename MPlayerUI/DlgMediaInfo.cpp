@@ -22,7 +22,7 @@ public:
         m_bModified = false;
     }
 
-    virtual void setParent(CDlgMediaInfo *pParent) { m_pDlgMediaInfo = pParent; }
+    virtual void setParent(CDlgMediaInfo *pParent) { m_pDlgMediaInfo = pParent; m_pSkin = pParent; }
     virtual void onUpdateView(bool bRedraw = true) { }
     virtual void onSave() { }
 

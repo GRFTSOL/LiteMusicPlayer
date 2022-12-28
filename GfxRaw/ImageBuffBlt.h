@@ -83,7 +83,7 @@ void stretch_buff(pixfmtDst &pixfDest, pixfmtSrc &pixfSrc, CRect &rcDest, agg::r
         rowSrc = pixfSrc.row_ptr((int)ySrc);
         pixDest = rowDest;
         for (int x = rcDest.left; x < rcDest.right; x++) {
-            pixSrc = rowSrc + ((int)(xSrc + 0.5)) * pixfmtSrc::pix_width;
+            pixSrc = rowSrc + ((int)xSrc) * pixfmtSrc::pix_width;
             PixRGBBlender::blend(pixDest, pixSrc);
             PixAlphaBlender::blend(pixDest, pixSrc);
 
@@ -111,7 +111,7 @@ void stretch_buff_opacity(pixfmtDst &pixfDest, pixfmtSrc &pixfSrc, CRect &rcDest
         rowSrc = pixfSrc.row_ptr((int)ySrc);
         pixDest = rowDest;
         for (int x = rcDest.left; x < rcDest.right; x++) {
-            pixSrc = rowSrc + ((int)(xSrc + 0.5)) * pixfmtSrc::pix_width;
+            pixSrc = rowSrc + ((int)xSrc) * pixfmtSrc::pix_width;
             PixRGBBlender::blend(pixDest, pixSrc, nOpacitySrc);
             PixAlphaBlender::blend(pixDest, pixSrc, nOpacitySrc);
 

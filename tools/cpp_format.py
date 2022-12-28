@@ -306,7 +306,6 @@ class CppFormat():
             elif line.type == LT_ELSE:
                 if self._out_lines[-1].endswith('}'):
                     # 将 else 合并到上一行
-                    print(self._out_lines[-1])
                     assert self._out_lines[-1].strip() == '}'
                     self._out_lines.pop()
                     line.text_org = '} ' + line.text_org

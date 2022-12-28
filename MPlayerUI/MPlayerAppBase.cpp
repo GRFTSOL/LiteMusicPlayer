@@ -198,7 +198,7 @@ bool CMPlayerAppBase::init()
 
     CLyricsKeywordFilter::init();
 
-    runAllUnittest();
+    // runAllUnittest();
 
     g_LyricSearch.init();
 

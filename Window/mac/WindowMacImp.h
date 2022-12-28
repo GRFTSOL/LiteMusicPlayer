@@ -19,6 +19,7 @@ class Window;
 
     MapNSTimer mMapTimer;
     Window *mBaseWnd;
+    float mYScroll, mXScroll;
 }
 
 - (void)setTimer:(int)idTimer duration:(int)duration;

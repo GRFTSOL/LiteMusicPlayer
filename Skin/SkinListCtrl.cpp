@@ -34,8 +34,8 @@ bool CSkinListCtrl::isRowSelected(int nRow) const {
 }
 
 
-void CSkinListCtrl::addColumn(cstr_t szCol, int nWidth, int colType, bool bClickable) {
-    CSkinListView::addColumn(szCol, nWidth, colType, bClickable);
+void CSkinListCtrl::addColumn(cstr_t szCol, int nWidth, int colType, bool bClickable, int drawTextAligns) {
+    CSkinListView::addColumn(szCol, nWidth, colType, bClickable, drawTextAligns);
 
     int col = getColumnCount() - 1;
 

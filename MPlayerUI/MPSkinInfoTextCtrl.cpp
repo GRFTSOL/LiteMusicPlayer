@@ -100,8 +100,7 @@ bool CMPSkinInfoTextCtrl::onLButtonUp(uint32_t nFlags, CPoint point)
             m_pSkin->postCustomCommandMsg(nId);
         }
     }
-    else if (startsWith(m_strCmd.c_str(), "http://"))
-    {
+    else if (startsWith(m_strCmd.c_str(), "http://")) {
         openUrl(m_pSkin, m_strCmd.c_str());
     }
 

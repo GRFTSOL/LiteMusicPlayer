@@ -448,8 +448,7 @@ void CDownloadMgr::downloadThread()
         if (isQuiting())
             return;
 
-        if (strncasecmp(pTask->m_strURL.c_str(), "http://", 7) == 0)
-        {
+        if (strncasecmp(pTask->m_strURL.c_str(), "http://", 7) == 0) {
             runHttpTask(pTask);
         }
 

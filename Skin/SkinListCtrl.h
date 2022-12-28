@@ -71,7 +71,7 @@ public:
     CSkinListCtrl();
     virtual ~CSkinListCtrl();
 
-    virtual void addColumn(cstr_t szCol, int nWidth, int colType = CColHeader::TYPE_TEXT, bool bClickable = false) override;
+    virtual void addColumn(cstr_t szCol, int nWidth, int colType = CColHeader::TYPE_TEXT, bool bClickable = false, int drawTextAligns = DT_LEFT) override;
 
     virtual void addImageColumn(cstr_t szCol, int nWidth, bool bClickable = false) { addColumn(szCol, nWidth, CColHeader::TYPE_IMAGE, bClickable); }
 

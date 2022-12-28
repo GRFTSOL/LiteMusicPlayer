@@ -222,18 +222,23 @@ void CSkinListView::onSize() {
         return;
     }
 
-    int w = m_rcContent.width() - m_nXMargin * 2;
-
+    int w = m_rcContent.width();
     if (m_vHeading.size() == 1) {
         m_vHeading[0]->nWidth = w;
     } else {
-        int i;
         int n = 0;
-        for (i = 0; i < (int)m_vHeading.size(); i++) {
+        int maxIndex = 0, maxWidth = 0;
+        for (int i = 0; i < (int)m_vHeading.size(); i++) {
+            if (m_vHeading[i]->nWidth > maxWidth) {
+                maxWidth = m_vHeading[i]->nWidth;
+                maxIndex = i;
+            }
             n += m_vHeading[i]->nWidth;
         }
+
         if (n < w) {
-            m_vHeading[m_vHeading.size() - 1]->nWidth += w - n;
+            // 将剩余的空间都给宽度最大的一行.
+            m_vHeading[maxIndex]->nWidth += w - n;
         }
     }
 
@@ -320,8 +325,8 @@ CColor & CSkinListView::getColor(int nColorName) {
     return m_vColors[nColorName];
 }
 
-void CSkinListView::addColumn(cstr_t szCol, int nWidth, int colType, bool bClickable) {
-    m_vHeading.push_back(new CColHeader(szCol, nWidth, colType, bClickable));
+void CSkinListView::addColumn(cstr_t szCol, int nWidth, int colType, bool bClickable, int drawTextAligns) {
+    m_vHeading.push_back(new CColHeader(szCol, nWidth, colType, bClickable, drawTextAligns));
 
     setHorzScrollInfo(false);
 }
@@ -681,6 +686,11 @@ void CSkinListView::drawHeader(CRawGraph *canvas) {
     }
 
     for (int i = 0; i < (int)m_vHeading.size(); i++) {
+        if (i != 0) {
+            // Header 的分割线
+            canvas->line(x - 1, y, x - 1, y + m_nHeaderHeight);
+        }
+
         CColHeader *pColHeader = m_vHeading[i];
         if (pColHeader->nWidth <= 0) {
             continue;
@@ -722,9 +732,6 @@ void CSkinListView::drawHeader(CRawGraph *canvas) {
         if (x > m_rcContent.right) {
             break;
         }
-
-        // draw line
-        canvas->line(x - 1, y, x - 1, y + m_nHeaderHeight);
     }
 
     // draw background image.
@@ -756,11 +763,18 @@ bool CSkinListView::isClickedOn(int row, int col, CColHeader *pHeader, int x, in
 }
 
 void CSkinListView::drawCell(int row, int col, CRect &rcCell, CRawGraph *canvas, CColor &clrText) {
-    int colType = m_vHeading[col]->colType;
+    auto header = m_vHeading[col];
+    int colType = header->colType;
     if (colType == CColHeader::TYPE_TEXT) {
         cstr_t text = m_dataSource->getCellText(row, col);
         if (text != nullptr) {
-            drawCellText(text, rcCell, canvas, clrText);
+            if (m_font.isOutlined()) {
+                canvas->drawTextOutlined(text, -1, rcCell, clrText,
+                    m_font.getColorOutlined(), DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS | header->drawTextAlignFlags);
+            } else {
+                canvas->setTextColor(clrText);
+                canvas->drawText(text, -1, rcCell, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS | header->drawTextAlignFlags);
+            }
         }
     } else if (colType == CColHeader::TYPE_IMAGE) {
         CRawImage *image = m_dataSource->getCellImage(row, col);
@@ -769,16 +783,6 @@ void CSkinListView::drawCell(int row, int col, CRect &rcCell, CRawGraph *canvas,
         }
     } else {
         assert(0 && "Undefined column type.");
-    }
-}
-
-void CSkinListView::drawCellText(cstr_t text, CRect &rcCell, CRawGraph *canvas, CColor &clrText) {
-    if (m_font.isOutlined()) {
-        canvas->drawTextOutlined(text, -1, rcCell, clrText,
-            m_font.getColorOutlined(), DT_SINGLELINE | DT_VCENTER | DT_LEFT | DT_END_ELLIPSIS);
-    } else {
-        canvas->setTextColor(clrText);
-        canvas->drawText(text, -1, rcCell, DT_SINGLELINE | DT_VCENTER | DT_LEFT | DT_END_ELLIPSIS);
     }
 }
 
@@ -832,6 +836,10 @@ void CSkinListView::draw(CRawGraph *canvas) {
 
         clrBg2 = getColor(CN_ALTER_BG);
         clrBg2.setAlpha(alpha);
+
+        if (m_nFirstVisibleRow % 2 == 1) {
+            std::swap(clrBg1, clrBg2);
+        }
 
         CRect rcItem = m_rcContent;
         if (m_bDrawHeader) {
@@ -1044,6 +1052,10 @@ bool CSkinListView::onRButtonUp(uint32_t nFlags, CPoint point) {
 bool CSkinListView::onLButtonDblClk(uint32_t nFlags, CPoint point) {
     if (CSkinScrollFrameCtrlBase::onLButtonDblClk(nFlags, point)) {
         return true;
+    }
+
+    if (!m_rcContent.ptInRect(point)) {
+        return false;
     }
 
     CPaintUpdater updater(this);

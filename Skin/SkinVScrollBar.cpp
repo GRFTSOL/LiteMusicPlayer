@@ -29,7 +29,7 @@ CSkinSrollBarBase::CSkinSrollBarBase() {
     m_PushDownPos = PUSH_DOWN_NONE;
     m_CursorPosLatest = PUSH_DOWN_NONE;
 
-    m_nLinesPerWheel = 3;
+    m_nLinesPerWheel = 1;
 }
 
 CSkinSrollBarBase::~CSkinSrollBarBase() {
@@ -304,7 +304,7 @@ void CSkinSrollBarBase::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) 
 
         nVirtualPosOld = m_nVirtualCurPos;
 
-        m_nVirtualCurPos -= m_nVirtualLine * (nWheelDistance / WHEEL_DELTA) * m_nLinesPerWheel;
+        m_nVirtualCurPos -= m_nVirtualLine * nWheelDistance * m_nLinesPerWheel;
         if (m_nVirtualCurPos < m_nVirtualMin) {
             m_nVirtualCurPos = m_nVirtualMin;
         } else if (m_nVirtualCurPos > m_nVirtualMax) {

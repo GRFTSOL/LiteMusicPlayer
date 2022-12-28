@@ -85,7 +85,7 @@
 				<Container ID="CID_PLAYLIST" Rect=",,200,108"  ContextMenu="PlaylistMenu" LayoutParams="match_parent_height" Weight="1">
 					<Frame Image="panel-frame.png" Rect="0,0,w,h" RoundWidth="5" ThickWidth="5"
 						  XBorder="0" YBorder="0"/>
-					<NormalPlaylist Rect="5,5,w-10,h-10" DrawHeader="true" EnableBorder="false" />
+					<NormalPlaylist Rect="5,5,w-10,h-10" DrawHeader="false" EnableBorder="false" />
 				</Container>
 				<DecorativeContainer Name="Lyrics" Width="200" Height="108" MinWidth="200" MinHeight="108" LayoutParams="match_parent_height" Weight="1">
 					<LyricsShow ID="ID_LYRICS_SHOW" Rect="0,0,w,h" SetSkinBg="false"
