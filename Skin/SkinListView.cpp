@@ -6,7 +6,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-#define SZ_CUSTOMIZED_CLR   "CustomizedColor"
+#define SZ_CUSTOMIZED_CLR   "CustomizedColors"
 
 UIOBJECT_CLASS_NAME_IMP(CSkinListView, "ListView")
 
@@ -52,6 +52,9 @@ CSkinListView::CSkinListView() {
     m_nEndSelRow = -1;
 
     m_dataSource = nullptr;
+
+    m_header = nullptr;
+    m_footer = nullptr;
 }
 
 CSkinListView::~CSkinListView() {
@@ -145,12 +148,14 @@ bool CSkinListView::setProperty(cstr_t szProperty, cstr_t szValue) {
         getColorValue(getColor(CN_SEL_BG), szValue);
     } else if (strcasecmp(szProperty, "SelTextColor") == 0) {
         getColorValue(getColor(CN_SEL_TEXT), szValue);
-    } else if (*szProperty == 'C' && strncasecmp(szProperty, SZ_CUSTOMIZED_CLR, strlen(SZ_CUSTOMIZED_CLR)) == 0) {
-        CColor clr;
-        int nColorName = CN_CUSTOMIZED_START + atoi(szValue + strlen(SZ_CUSTOMIZED_CLR));
-
-        getColorValue(clr, szValue);
-        setColor(nColorName, clr);
+    } else if (isPropertyName(szProperty, SZ_CUSTOMIZED_CLR)) {
+        VecStrings arr;
+        strSplit(szValue, ',', arr);
+        int i = 0;
+        for (auto &str : arr) {
+            auto clr = getColorValue(str.c_str());
+            setColor(CN_CUSTOMIZED_START + i++, clr);
+        }
     } else if (m_font.setProperty(szProperty, szValue)) {
         return true;
     } else if (strcasecmp(szProperty, "ImageList") == 0) {
@@ -161,7 +166,7 @@ bool CSkinListView::setProperty(cstr_t szProperty, cstr_t szValue) {
     } else if (strcasecmp(szProperty, "ImageListIconCx") == 0) {
         m_imageListIconCx = atoi(szValue);
         m_imageList.setIconCx(m_imageListIconCx);
-    } else if (isPropertyName(szProperty, "drawHeader")) {
+    } else if (isPropertyName(szProperty, "EnableHeader")) {
         m_bDrawHeader = isTRUE(szValue);
     } else if (isPropertyName(szProperty, "DrawBorder")) {
         m_bDrawBorder = isTRUE(szValue);

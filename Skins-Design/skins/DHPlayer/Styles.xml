@@ -27,7 +27,7 @@
 
 		<MenuWindowFrame EnableTranslucency="true" TranslucencyAlpha="255" BgColor="#EBEBEB"
 			MinWidth="100" MinHeight="100" Width="330" Height="400" EnableClickThrough="false"
-			FontName="Verdana" FontHeight="14" TextColor="#000000" IsDialog="true" >
+			FontName="Verdana" FontHeight="14" TextColor="#000000" >
 
 			<Frame Rect="0,0,w,h" Image="frame.png" ImageRect="0,0,95,95"
 				RoundWidthTop="30" RoundWidthBottom="5" ThickWidth="4" BlendPixMode="copy" TranslucencyWithSkin="TRUE"/>

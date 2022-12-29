@@ -40,6 +40,7 @@ string colorToStr(const CColor &clr);
 
 // "#FFFFFF"
 void getColorValue(CColor &clr, cstr_t szColor);
+inline CColor getColorValue(cstr_t str) { CColor c; getColorValue(c, str); return c;}
 
 int getMenuKey(cstr_t szText);
 
@@ -78,10 +79,7 @@ public:
     virtual bool getRadioChecked(vector<uint32_t> &vIDs, uint32_t &nIDChecked) = 0;
 };
 
-class CSkinWnd :
-    public Window,
-    public ISkinWndDragHost,
-    public IUICheckStatus {
+class CSkinWnd : public Window, public ISkinWndDragHost, public IUICheckStatus {
 public:
     CSkinWnd();
     virtual ~CSkinWnd();
@@ -98,8 +96,11 @@ public:
     //
     // UIObject related functions
     //
-    CUIObject *getUIObjectByClassName(cstr_t szClassName);
-    CUIObject *getUIObjectById(int nId, cstr_t szClassName = nullptr);
+    CUIObject *getUIObjectByClassName(cstr_t className);
+    CUIObject *getUIObjectById(int nId, cstr_t className = nullptr);
+    CUIObject *getUIObjectById(cstr_t idName, cstr_t className = nullptr);
+    CUIObject *getUIObjectById(const string &idName, cstr_t className = nullptr)
+        { return getUIObjectById(idName.c_str(), className); }
     CUIObject *removeUIObjectById(int nId);
     bool removeUIObject(CUIObject *pObj, bool bFree = false);
 

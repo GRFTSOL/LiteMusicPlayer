@@ -73,16 +73,39 @@ int CSkinListCtrl::getItemText(int nItem, int nSubItem, string &strText) {
 }
 
 
-bool CSkinListCtrl::setItemText(int nItem, int nSubItem, cstr_t lpszText, bool bRedraw) {
-    assert(nItem >= 0 && nItem < (int)m_vRows.size());
-    if (nItem >= 0 && nItem < (int)m_vRows.size()) {
-        Row *row = m_vRows[nItem];
-        if (m_vHeading[nSubItem]->colType == CColHeader::TYPE_TEXT) {
-            ItemString *item = (ItemString *)row->vItems[nSubItem];
-            item->text = lpszText;
-            if (bRedraw) {
-                invalidateItem(nItem);
+bool CSkinListCtrl::setItemText(int rowIdx, int colIdx, cstr_t text, bool isRedraw) {
+    assert(rowIdx >= 0 && rowIdx < (int)m_vRows.size());
+    if (rowIdx >= 0 && rowIdx < (int)m_vRows.size()) {
+        Row *row = m_vRows[rowIdx];
+        if (m_vHeading[colIdx]->colType == CColHeader::TYPE_TEXT) {
+            ItemString *item = (ItemString *)row->vItems[colIdx];
+            item->text = text;
+            if (isRedraw) {
+                invalidateItem(rowIdx);
             }
+            return true;
+        } else if (m_vHeading[colIdx]->colType == CColHeader::TYPE_TEXT_EX) {
+            ItemStringEx *item = (ItemStringEx *)row->vItems[colIdx];
+            item->text = text;
+            item->vTextColor.clear();
+            if (isRedraw) {
+                invalidateItem(rowIdx);
+            }
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool CSkinListCtrl::setItemTextEx(int rowIdx, int colIdx, cstr_t text, const VecTextColor & vTextColor, bool isRedraw) {
+    assert(rowIdx >= 0 && rowIdx < (int)m_vRows.size());
+    if (rowIdx >= 0 && rowIdx < (int)m_vRows.size()) {
+        Row *row = m_vRows[rowIdx];
+        ItemStringEx *item = (ItemStringEx*)row->getSubItem(colIdx);
+        if (item) {
+            item->text = text;
+            item->vTextColor = vTextColor;
             return true;
         }
     }
@@ -293,6 +316,8 @@ CSkinListCtrl::Item *CSkinListCtrl::newItem(int nCol) {
         return new ItemString();
     } else if (type == CColHeader::TYPE_IMAGE) {
         return new ItemImage();
+    } else if (type == CColHeader::TYPE_TEXT_EX) {
+        return new ItemStringEx();
     } else {
         assert(0 && "Undefined column type.");
         return nullptr;
@@ -361,4 +386,49 @@ bool CSkinListCtrl::offsetAllSelectedRow(bool bDown) {
 
     invalidate();
     return true;
+}
+
+void CSkinListCtrl::drawCell(int row, int col, CRect &rcCell, CRawGraph *canvas, CColor &clrText) {
+    int colType = m_vHeading[col]->colType;
+    if (colType == CColHeader::TYPE_TEXT_EX) {
+        return drawCellTextEx((ItemStringEx*)m_vRows[row]->vItems[col], rcCell, canvas, clrText);
+    } else {
+        return CSkinListView::drawCell(row, col, rcCell, canvas, clrText);
+    }
+}
+
+void CSkinListCtrl::drawCellTextEx(ItemStringEx *item, CRect &rcItem, CRawGraph *canvas, CColor &clrText) {
+    string::size_type nPos = 0, nLen, i = 0;
+    CRect rc = rcItem;
+
+    while (nPos < item->text.size()) {
+        CColor clr;
+        if (i >= item->vTextColor.size()) {
+            nLen = item->text.size() - nPos;
+            clr = clrText;
+        } else {
+            nLen = item->vTextColor[i].nCountOfText;
+            if (nPos + nLen > item->text.size()) {
+                nLen = item->text.size() - nPos;
+            }
+            clr = getColor(item->vTextColor[i].nClrIndex);
+        }
+
+        canvas->setTextColor(clr);
+
+        if (m_font.isOutlined()) {
+            canvas->drawTextOutlined(item->text.c_str() + nPos, nLen, rc,
+                clr,
+                m_font.getColorOutlined(), DT_SINGLELINE | DT_VCENTER | DT_LEFT | DT_END_ELLIPSIS);
+        } else {
+            canvas->drawText(item->text.c_str() + nPos, nLen, rc, DT_SINGLELINE | DT_VCENTER | DT_LEFT | DT_END_ELLIPSIS);
+        }
+
+        CSize size;
+        canvas->getTextExtentPoint32(item->text.c_str() + nPos, nLen, &size);
+
+        nPos += nLen;
+        rc.left += size.cx;
+        i++;
+    }
 }

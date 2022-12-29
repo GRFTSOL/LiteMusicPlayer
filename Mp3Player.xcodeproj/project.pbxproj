@@ -103,7 +103,6 @@
 		0EB7107827773BB6006929F1 /* MPSkinVis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70FBB27773BAE006929F1 /* MPSkinVis.cpp */; };
 		0EB7107A27773BB6006929F1 /* LyrDisplayClrListWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70FC127773BAE006929F1 /* LyrDisplayClrListWnd.cpp */; };
 		0EB7107B27773BB6006929F1 /* DlgUpload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70FC227773BAF006929F1 /* DlgUpload.cpp */; };
-		0EB7107C27773BB6006929F1 /* SkinListCtrlEx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70FC427773BAF006929F1 /* SkinListCtrlEx.cpp */; };
 		0EB7107D27773BB6006929F1 /* SkinRateCtrl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70FC527773BAF006929F1 /* SkinRateCtrl.cpp */; };
 		0EB7107E27773BB6006929F1 /* LyricsLocalSearch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70FC627773BAF006929F1 /* LyricsLocalSearch.cpp */; };
 		0EB7107F27773BB6006929F1 /* PreferPageSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70FC827773BAF006929F1 /* PreferPageSystem.cpp */; };
@@ -147,7 +146,6 @@
 		0EB710A927773BB6006929F1 /* MPlayerAppBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7101927773BB2006929F1 /* MPlayerAppBase.cpp */; };
 		0EB710AA27773BB6006929F1 /* Helper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7101A27773BB2006929F1 /* Helper.cpp */; };
 		0EB710AB27773BB6006929F1 /* SkinImageListCtrl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7101C27773BB3006929F1 /* SkinImageListCtrl.cpp */; };
-		0EB710AC27773BB6006929F1 /* MPlaylistSearchObj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7101D27773BB3006929F1 /* MPlaylistSearchObj.cpp */; };
 		0EB710AD27773BB6006929F1 /* MPluginManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7101E27773BB3006929F1 /* MPluginManager.cpp */; };
 		0EB710AE27773BB6006929F1 /* LyricShowMultiRowObj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7101F27773BB3006929F1 /* LyricShowMultiRowObj.cpp */; };
 		0EB710B027773BB6006929F1 /* MPFloatingLyrWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7102327773BB3006929F1 /* MPFloatingLyrWnd.cpp */; };
@@ -539,8 +537,6 @@
 		0EB70FC027773BAE006929F1 /* ErrorResolveDlg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ErrorResolveDlg.h; path = MPlayerUI/ErrorResolveDlg.h; sourceTree = "<group>"; };
 		0EB70FC127773BAE006929F1 /* LyrDisplayClrListWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LyrDisplayClrListWnd.cpp; path = MPlayerUI/LyrDisplayClrListWnd.cpp; sourceTree = "<group>"; };
 		0EB70FC227773BAF006929F1 /* DlgUpload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgUpload.cpp; path = MPlayerUI/DlgUpload.cpp; sourceTree = "<group>"; };
-		0EB70FC327773BAF006929F1 /* SkinListCtrlEx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkinListCtrlEx.h; path = MPlayerUI/SkinListCtrlEx.h; sourceTree = "<group>"; };
-		0EB70FC427773BAF006929F1 /* SkinListCtrlEx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkinListCtrlEx.cpp; path = MPlayerUI/SkinListCtrlEx.cpp; sourceTree = "<group>"; };
 		0EB70FC527773BAF006929F1 /* SkinRateCtrl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkinRateCtrl.cpp; path = MPlayerUI/SkinRateCtrl.cpp; sourceTree = "<group>"; };
 		0EB70FC627773BAF006929F1 /* LyricsLocalSearch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LyricsLocalSearch.cpp; path = MPlayerUI/LyricsLocalSearch.cpp; sourceTree = "<group>"; };
 		0EB70FC727773BAF006929F1 /* LyricsOutPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LyricsOutPlugin.h; path = MPlayerUI/LyricsOutPlugin.h; sourceTree = "<group>"; };
@@ -621,7 +617,6 @@
 		0EB7101A27773BB2006929F1 /* Helper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Helper.cpp; path = MPlayerUI/Helper.cpp; sourceTree = "<group>"; };
 		0EB7101B27773BB2006929F1 /* MPSkinInfoTextCtrlEx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPSkinInfoTextCtrlEx.h; path = MPlayerUI/MPSkinInfoTextCtrlEx.h; sourceTree = "<group>"; };
 		0EB7101C27773BB3006929F1 /* SkinImageListCtrl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkinImageListCtrl.cpp; path = MPlayerUI/SkinImageListCtrl.cpp; sourceTree = "<group>"; };
-		0EB7101D27773BB3006929F1 /* MPlaylistSearchObj.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MPlaylistSearchObj.cpp; path = MPlayerUI/MPlaylistSearchObj.cpp; sourceTree = "<group>"; };
 		0EB7101E27773BB3006929F1 /* MPluginManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MPluginManager.cpp; path = MPlayerUI/MPluginManager.cpp; sourceTree = "<group>"; };
 		0EB7101F27773BB3006929F1 /* LyricShowMultiRowObj.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LyricShowMultiRowObj.cpp; path = MPlayerUI/LyricShowMultiRowObj.cpp; sourceTree = "<group>"; };
 		0EB7102027773BB3006929F1 /* SkinTabHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkinTabHeader.h; path = MPlayerUI/SkinTabHeader.h; sourceTree = "<group>"; };
@@ -636,7 +631,6 @@
 		0EB7102A27773BB3006929F1 /* PlayListFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlayListFile.cpp; path = MPlayerUI/PlayListFile.cpp; sourceTree = "<group>"; };
 		0EB7102B27773BB3006929F1 /* DlgAbout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgAbout.h; path = MPlayerUI/DlgAbout.h; sourceTree = "<group>"; };
 		0EB7102C27773BB3006929F1 /* MPSkinFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MPSkinFactory.cpp; path = MPlayerUI/MPSkinFactory.cpp; sourceTree = "<group>"; };
-		0EB7102D27773BB3006929F1 /* MPlaylistSearchObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPlaylistSearchObj.h; path = MPlayerUI/MPlaylistSearchObj.h; sourceTree = "<group>"; };
 		0EB7102F27773BB4006929F1 /* LyricShowTxtContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LyricShowTxtContainer.cpp; path = MPlayerUI/LyricShowTxtContainer.cpp; sourceTree = "<group>"; };
 		0EB7103027773BB4006929F1 /* MPSkinInfoTextCtrl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MPSkinInfoTextCtrl.cpp; path = MPlayerUI/MPSkinInfoTextCtrl.cpp; sourceTree = "<group>"; };
 		0EB7103127773BB4006929F1 /* DlgSearchLyrics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgSearchLyrics.cpp; path = MPlayerUI/DlgSearchLyrics.cpp; sourceTree = "<group>"; };
@@ -1124,8 +1118,6 @@
 		0EB70F842776B5FA006929F1 /* MPlayerUI */ = {
 			isa = PBXGroup;
 			children = (
-				0EB710F6277AFFA0006929F1 /* MLProfile.cpp */,
-				0EB710F5277AFF9F006929F1 /* MLProfile.h */,
 				0EB70FD427773BAF006929F1 /* AutoProcessEmbeddedLyrics.cpp */,
 				0EB70FE227773BB0006929F1 /* AutoProcessEmbeddedLyrics.h */,
 				0EB7102627773BB3006929F1 /* CurMediaAlbumArt.cpp */,
@@ -1182,6 +1174,8 @@
 				0EB7105E27773BB5006929F1 /* MLClientSession.h */,
 				0EB7101227773BB2006929F1 /* MLCmd.cpp */,
 				0EB7100927773BB1006929F1 /* MLCmd.h */,
+				0EB710F6277AFFA0006929F1 /* MLProfile.cpp */,
+				0EB710F5277AFF9F006929F1 /* MLProfile.h */,
 				0EB7100627773BB1006929F1 /* MlVersionStr.h */,
 				0EB7105527773BB4006929F1 /* MLVersionStr.in */,
 				0EB70FB827773BAE006929F1 /* MPCommonCmdHandler.cpp */,
@@ -1196,8 +1190,6 @@
 				0EB7106627773BB5006929F1 /* MPlayerAppBase.h */,
 				0EB7100227773BB1006929F1 /* MPlaylistCtrl.cpp */,
 				0EB7105627773BB4006929F1 /* MPlaylistCtrl.h */,
-				0EB7101D27773BB3006929F1 /* MPlaylistSearchObj.cpp */,
-				0EB7102D27773BB3006929F1 /* MPlaylistSearchObj.h */,
 				0EB7101E27773BB3006929F1 /* MPluginManager.cpp */,
 				0EB7105F27773BB5006929F1 /* MPluginManager.h */,
 				0EB7105B27773BB4006929F1 /* MPMediaLibCmdHandler.cpp */,
@@ -1253,8 +1245,6 @@
 				0EB7107427773BB6006929F1 /* SkinFilterCtrl.h */,
 				0EB7101C27773BB3006929F1 /* SkinImageListCtrl.cpp */,
 				0EB7106227773BB5006929F1 /* SkinImageListCtrl.h */,
-				0EB70FC427773BAF006929F1 /* SkinListCtrlEx.cpp */,
-				0EB70FC327773BAF006929F1 /* SkinListCtrlEx.h */,
 				0EB70FFD27773BB1006929F1 /* SkinPicText.cpp */,
 				0EB7107227773BB6006929F1 /* SkinPicText.h */,
 				0EB70FC527773BAF006929F1 /* SkinRateCtrl.cpp */,
@@ -1610,7 +1600,6 @@
 				0EB710AD27773BB6006929F1 /* MPluginManager.cpp in Sources */,
 				0EB7109227773BB6006929F1 /* SkinScrollText.cpp in Sources */,
 				0E56BC7B274CAB4E00032A3E /* App.mm in Sources */,
-				0EB710AC27773BB6006929F1 /* MPlaylistSearchObj.cpp in Sources */,
 				0E56BBF12745E53D00032A3E /* SkinSeekCtrl.cpp in Sources */,
 				0E56BBEB2745E53D00032A3E /* SkinMenuBar.cpp in Sources */,
 				0EB7109A27773BB6006929F1 /* MLClientSession.cpp in Sources */,
@@ -1707,7 +1696,6 @@
 				0E56BC062745E53E00032A3E /* SkinSquare.cpp in Sources */,
 				0EB7108927773BB6006929F1 /* WaitingDlg.cpp in Sources */,
 				0EB7109C27773BB6006929F1 /* MediaInfoTextCtrl.cpp in Sources */,
-				0EB7107C27773BB6006929F1 /* SkinListCtrlEx.cpp in Sources */,
 				0E56BBEE2745E53D00032A3E /* UIObject.cpp in Sources */,
 				0EB7108D27773BB6006929F1 /* SkinTabHeader.cpp in Sources */,
 			);

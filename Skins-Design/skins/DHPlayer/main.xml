@@ -71,7 +71,7 @@
 		<Container ID="CID_PLAYLIST" Rect="0,200,w,h-200"  ContextMenu="PlaylistMenu">
 			<Frame Image="panel-frame.png" Rect="0,0,w,h" RoundWidth="5" ThickWidth="5"
 				  XBorder="0" YBorder="0"/>
-			<NormalPlaylist Rect="5,5,w-10,h-10" DrawHeader="true" EnableBorder="false" />
+			<NormalPlaylist Rect="5,5,w-10,h-10" EnableHeader="true" EnableBorder="false" />
 		</Container>
 
 	</skinwnd>

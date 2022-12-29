@@ -377,12 +377,20 @@ void CSkinWnd::closeSkin() {
     m_animateDuration = 0;
 }
 
-CUIObject *CSkinWnd::getUIObjectByClassName(cstr_t szClassName) {
-    return m_rootConainter.getUIObjectByClassName(szClassName);
+CUIObject *CSkinWnd::getUIObjectByClassName(cstr_t className) {
+    return m_rootConainter.getUIObjectByClassName(className);
 }
 
-CUIObject * CSkinWnd::getUIObjectById(int nId, cstr_t szClassName) {
-    return m_rootConainter.getUIObjectById(nId, szClassName);
+CUIObject * CSkinWnd::getUIObjectById(int nId, cstr_t className) {
+    return m_rootConainter.getUIObjectById(nId, className);
+}
+
+CUIObject *CSkinWnd::getUIObjectById(cstr_t idName, cstr_t className) {
+    auto id = m_pSkinFactory->getIDByName(idName);
+    if (id != UID_INVALID) {
+        return getUIObjectById(id, className);
+    }
+    return nullptr;
 }
 
 void CSkinWnd::processMouseMove(CPoint point) {
@@ -733,13 +741,13 @@ void CSkinWnd::onCommand(uint32_t uID, uint32_t nNotifyCode) {
 }
 
 void CSkinWnd::onOK() {
-    if (m_rootConainter.onOK()) {
+    if (m_bDialogWnd && m_rootConainter.onOK()) {
         postDestroy();
     }
 }
 
 void CSkinWnd::onCancel() {
-    if (m_rootConainter.onCancel()) {
+    if (m_bDialogWnd && m_rootConainter.onCancel()) {
         postDestroy();
     }
 }

@@ -11,6 +11,19 @@ class CSkinListCtrl;
 class CSkinListCtrl : public CSkinListView, public IListViewDataSource {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinListView)
 public:
+    struct TextColor {
+        TextColor(uint8_t _nCountOfText, uint8_t _nClrIndex) : nCountOfText(_nCountOfText), nClrIndex(_nClrIndex) { }
+        uint8_t                     nCountOfText;
+        uint8_t                     nClrIndex;
+    };
+
+    class VecTextColor : public vector<TextColor> {
+    public:
+        void add(uint8_t _nCountOfText, uint8_t _nClrIndex) {
+            push_back(TextColor(_nCountOfText, _nClrIndex));
+        }
+    };
+
     class Item {
     public:
         virtual ~Item() { }
@@ -21,6 +34,12 @@ public:
         ItemString() { }
         ItemString(cstr_t str) { text = str; }
         string                      text;
+    };
+
+    class ItemStringEx : public CSkinListCtrl::ItemString {
+    public:
+        VecTextColor                vTextColor;
+
     };
 
     class ItemImage : public Item {
@@ -77,7 +96,8 @@ public:
 
     int getItemText(int nItem, int nSubItem, char * lpszText, int nLen);
     int getItemText(int nItem, int nSubItem, string &strText);
-    virtual bool setItemText(int nItem, int nSubItem, cstr_t lpszText, bool bRedraw = true);
+    virtual bool setItemText(int row, int col, cstr_t text, bool isRedraw = true);
+    bool setItemTextEx(int row, int col, cstr_t text, const VecTextColor & vTextColor, bool isRedraw = true);
 
     virtual bool setItemImage(int nItem, int nSubItem, RawImageData *image, bool bRedraw = true);
 
@@ -111,6 +131,9 @@ public:
 
 protected:
     virtual Item *newItem(int nCol);
+
+    virtual void drawCell(int row, int col, CRect &rcCell, CRawGraph *canvas, CColor &clrText) override;
+    void drawCellTextEx(ItemStringEx *item, CRect &rcItem, CRawGraph *canvas, CColor &clrText);
 
 protected:
     typedef vector<Row *>                V_ROWS;

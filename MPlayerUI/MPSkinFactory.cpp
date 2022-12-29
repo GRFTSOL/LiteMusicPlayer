@@ -9,7 +9,6 @@
 #include "LyricShowAgentObj.h"
 #include "LyricShowTextEditObj.h"
 #include "LyricShowTxtContainer.h"
-#include "SkinListCtrlEx.h"
 #include "SkinRateCtrl.h"
 #include "SkinPicText.h"
 #include "MPSkinTimeCtrl.h"
@@ -25,7 +24,6 @@
 #include "DlgAdjustHue.h"
 #include "MPlaylistCtrl.h"
 #include "MPSkinMediaNumInfoCtrl.h"
-#include "MPlaylistSearchObj.h"
 
 #ifdef _MPLAYER
 #include "SkinTreeCtrl.h"
@@ -72,9 +70,7 @@ int CMPSkinFactory::init() {
     AddUIObjNewer(CSkinTreeCtrl);
     AddUIObjNewer(CMPSkinVis);
 #endif
-    AddUIObjNewer(CSkinListCtrlEx);
     AddUIObjNewer(CMPSkinMediaNumInfoCtrl);
-    AddUIObjNewer(CMPlaylistSearchObj);
     AddUIObjNewer(CMediaInfoTextCtrl);
     AddUIObjNewer(CMediaAlbumArtCtrl);
     AddUIObjNewer(CMPlaylistCtrl);

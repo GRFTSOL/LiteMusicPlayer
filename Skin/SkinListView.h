@@ -19,6 +19,7 @@ public:
     enum {
         TYPE_TEXT                   = 1,
         TYPE_IMAGE                  = 2,
+        TYPE_TEXT_EX                = 3,
         TYPE_NEXT                   = 5,
     };
 

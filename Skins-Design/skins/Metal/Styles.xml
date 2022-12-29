@@ -28,7 +28,7 @@
 
     <MenuWindowFrame EnableTranslucency="true" TranslucencyAlpha="255" BgColor="#EBEBEB"
          MinWidth="100" MinHeight="100" Width="330" Height="400" EnableClickThrough="false"
-         FontName="Verdana" FontHeight="14" TextColor="#000000" IsDialog="true" >
+         FontName="Verdana" FontHeight="14" TextColor="#000000" >
 
 		<Frame Name="Frame" Rect="0,27,w,h-27" Image="frame.png" ImageRect="0,27,425,123"
 			RoundWidthTop="4" RoundWidthBottom="4" ThickWidth="4" BlendPixMode="copy"/>
@@ -138,6 +138,7 @@
           HeaderHeight="17" LineColor="#808080" ImageSortedHeader="s_listctrl_sorted_header.png"
           ImageHeader="s_listctrl_header.png" ImageSortFlag="s_listctrl_sort_flag.png"/>
     <NormalPlaylist Extends="Playlist" ID="ID_PLAYLIST" BgColor="#FFFFFF,#EDF3FE" SelBgColor="#3875D7" 
+          CustomizedColors="#FF7F00"
           TextColor="#000000" SelTextColor="#FFFFFF" FontName="Verdana" FontHeight="14"
           HeaderHeight="17" LineColor="#808080" ImageSortedHeader="s_listctrl_sorted_header.png"
           ImageHeader="s_listctrl_header.png" ImageSortFlag="s_listctrl_sort_flag.png"/>
