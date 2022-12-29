@@ -389,10 +389,7 @@ bool CSkinAnimationUIObj::setProperty(cstr_t szProperty, cstr_t szValue) {
         for (int i = 0; i < (int)vObjects.size(); i++) {
             if (vObjects[i].size()) {
                 m_listObjAnimation.push_back(
-                    pNewer->newObject(
-                    m_pSkin->getSkinFactory()->getIDByName(vObjects[i].c_str())
-                    )
-                    );
+                    pNewer->newObject(m_pSkin->getSkinFactory()->getIDByName(vObjects[i].c_str())));
             }
         }
 
@@ -403,10 +400,7 @@ bool CSkinAnimationUIObj::setProperty(cstr_t szProperty, cstr_t szValue) {
 }
 
 void CSkinAnimationUIObj::onAnimate(CSkinAnimation *pAnimation) {
-    for (ListObjAnimation::iterator it = m_listObjAnimation.begin();
-    it != m_listObjAnimation.end(); ++it)
-        {
-        CAnimationMotion *pMotion = *it;
+    for (CAnimationMotion *pMotion : m_listObjAnimation) {
         if (pMotion->m_id != UID_INVALID) {
             CUIObject *pObj = m_pSkin->getUIObjectById(pMotion->m_id);
             if (pObj) {

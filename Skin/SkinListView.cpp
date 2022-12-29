@@ -92,6 +92,14 @@ void CSkinListView::saveColumnWidth(cstr_t szProperty) {
 void CSkinListView::onCreate() {
     m_font.onCreate(m_pSkin);
 
+    // 自定义的 header 和 footer 在控件的前两个.
+    if (m_vUIObjs.size() > 0) {
+        m_header = m_vUIObjs[0];
+        if (m_vUIObjs.size() > 1) {
+            m_footer = m_vUIObjs[1];
+        }
+    }
+
     CSkinScrollFrameCtrlBase::onCreate();
 
     m_nLineHeight = m_font.getHeight() + 4;
@@ -242,7 +250,7 @@ void CSkinListView::onSize() {
         }
     }
 
-    if (getLinesOfPerPage() >= (int)getRowCount()) {
+    if (getLinesOfPerPage() + 1 >= (int)getRowCount()) {
         m_nFirstVisibleRow = 0;
     }
 }
@@ -260,6 +268,18 @@ void CSkinListView::onAdjustHue(float hue, float saturation, float luminance) {
 void CSkinListView::onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) {
     if (getRowCount() == 0) {
         return;
+    }
+
+    // 当垂直滚动条位置在 0 时，隐藏，否则显示.
+    if (m_header) {
+        if (nPos == 0) {
+            m_header->setVisible(true, false);
+        } else {
+            m_header->setVisible(false, false);
+
+            // 真实的 Row 由于需要减去 header，所以小了一行
+            nPos--;
+        }
     }
 
     assert(nPos >= 0 && nPos < (int)getRowCount());
@@ -409,7 +429,7 @@ void CSkinListView::makeSureRowVisible(int nRow) {
     if (nRow < m_nFirstVisibleRow) {
         m_nFirstVisibleRow = nRow;
     } else {
-        m_nFirstVisibleRow = nRow - (getLinesOfPerPage() - 1);
+        m_nFirstVisibleRow = nRow - getLinesOfPerPage();
         if (m_nFirstVisibleRow < 0) {
             m_nFirstVisibleRow = 0;
         }
@@ -446,10 +466,16 @@ void CSkinListView::getRowColAtPoint(CPoint pt, int &row, int &col, CPoint *ptAt
         *bItemClickable = false;
     }
 
-    // Col
-    pt.x -= m_rcContent.left + m_nXMargin;
+    CRect rcContent = m_rcContent;
+    if (m_header && m_pVertScrollBar && m_header->isVisible()) {
+        // 去掉 header 的位置
+        rcContent.top = m_header->m_rcObj.bottom;
+    }
 
-    if (pt.x >= 0 && pt.x <= m_rcContent.width()) {
+    // Col
+    pt.x -= rcContent.left + m_nXMargin;
+
+    if (pt.x >= 0 && pt.x <= rcContent.width()) {
         if (m_pHorzScrollBar && m_pHorzScrollBar->isEnabled()) {
             pt.x += m_pHorzScrollBar->getScrollPos();
         }
@@ -465,12 +491,12 @@ void CSkinListView::getRowColAtPoint(CPoint pt, int &row, int &col, CPoint *ptAt
     }
 
     // Row
-    pt.y -= m_rcContent.top;
+    pt.y -= rcContent.top;
     if (m_bDrawHeader) {
         pt.y -= m_nHeaderHeight;
     }
 
-    if (pt.y >= 0 && pt.y <= m_rcContent.height()) {
+    if (pt.y >= 0 && pt.y <= rcContent.height()) {
         int n = m_nFirstVisibleRow + pt.y / m_nLineHeight;
         if (ptAtItemCell) {
             ptAtItemCell->y = pt.y % m_nLineHeight;
@@ -496,6 +522,14 @@ void CSkinListView::setClickCursor() {
     setCursor(m_curHand);
 }
 
+int CSkinListView::getLinesOfPerPage() const {
+    int n = m_rcContent.height() / m_nLineHeight - 1;
+    if (n < 0) {
+        n = 1;
+    }
+    return n;
+}
+
 void CSkinListView::clearAllSelMark() {
     for (int i = 0; i < (int)getRowCount(); i++) {
         if (m_dataSource->isRowSelected(i)) {
@@ -506,13 +540,12 @@ void CSkinListView::clearAllSelMark() {
 
 int CSkinListView::getLastVisibleRow() const {
     int n;
-    n = m_nFirstVisibleRow + getLinesOfPerPage() - 1;
+    n = m_nFirstVisibleRow + getLinesOfPerPage();
     if (n > (int)getRowCount() - 1) {
         n = (int)getRowCount() - 1;
     }
     return n;
 }
-
 
 void CSkinListView::reverseSelectStatOfRow(bool bClearOldSel, int nRow) {
     assert(nRow >= -1 && nRow < (int)getRowCount());
@@ -552,52 +585,12 @@ void CSkinListView::selectRangeRow(int nBeg, int nEnd) {
     }
 }
 
-
-void CSkinListView::recalculateColWidth(CRawGraph *canvas) {
-    /*
-    int        i;
-
-    assert(m_vHeading.size() == 2);
-    if (m_vHeading.size() != 2)
-        return;
-
-    // Should recalculate column width?
-    for (i = 0; i < (int)m_vHeading.size(); i++)
-    {
-        if (m_vHeading[i].nWidth == -1)
-            break;
-    }
-    if (i == m_vHeading.size())
-        return;
-
-    CSize size;
-    int        nWidthMax = 0;
-    for (i = 0; i < (int)getRowCount(); i++)
-    {
-        int            x = rc.left;
-        LC_ROW        *row = m_vRows[i];
-        LC_ITEM        *pItem = row->getSubItem(1);
-
-        if (canvas->getTextExtentPoint32(pItem->strText.c_str(), pItem->strText.size(), &size))
-        {
-            if (nWidthMax < size.cx)
-                nWidthMax = size.cx;
-        }
-    }
-
-    m_vHeading[1].nWidth = nWidthMax;
-    m_vHeading[0].nWidth = 
-*/
-}
-
-
 void CSkinListView::setScrollInfo(bool bRedraw) {
-    int nPage = getLinesOfPerPage() - 1;
-    if (nPage < 1) {
-        nPage = 1;
-    }
     if (m_pVertScrollBar) {
-        m_pVertScrollBar->setScrollInfo(0, getRowCount(), nPage, m_nFirstVisibleRow, 1, bRedraw);
+        // 滚动条需要加上 header 和 footer 所占的位置
+        int extraCount = (m_header != nullptr) + (m_footer != nullptr);
+        m_pVertScrollBar->setScrollInfo(0, getRowCount() + extraCount,
+            getLinesOfPerPage(), m_nFirstVisibleRow, 1, bRedraw);
     }
 }
 
@@ -818,9 +811,15 @@ void CSkinListView::draw(CRawGraph *canvas) {
 
     canvas->setPen(m_penLine);
 
+    auto rcContent = m_rcContent;
+    if (m_header && m_pVertScrollBar && m_header->isVisible()) {
+        // 第一行为 header
+        rcContent.top = m_header->m_rcObj.bottom;
+    }
+
     // draw background color
     if (isUseParentBg()) {
-        m_pContainer->redrawBackground(canvas, m_rcContent);
+        m_pContainer->redrawBackground(canvas, rcContent);
     } else {
         int alpha;
         CColor clrBg1, clrBg2;
@@ -841,13 +840,13 @@ void CSkinListView::draw(CRawGraph *canvas) {
             std::swap(clrBg1, clrBg2);
         }
 
-        CRect rcItem = m_rcContent;
+        CRect rcItem = rcContent;
         if (m_bDrawHeader) {
             rcItem.top += m_nHeaderHeight;
         }
         rcItem.bottom = rcItem.top + m_nLineHeight;
         bool bFlag = true;
-        while (rcItem.top < m_rcContent.bottom) {
+        while (rcItem.top < rcContent.bottom) {
             if (bFlag) {
                 canvas->fillRect(&rcItem, clrBg1);
             } else {
@@ -859,7 +858,7 @@ void CSkinListView::draw(CRawGraph *canvas) {
         }
     }
 
-    CRect rc = m_rcContent;
+    CRect rc = rcContent;
     rc.left += m_nXMargin;
     rc.right -= m_nXMargin;
 
@@ -884,7 +883,7 @@ void CSkinListView::draw(CRawGraph *canvas) {
         }
 
         if (m_dataSource->isRowSelected(i)) {
-            CRect rc(m_rcContent.left, y, m_rcContent.left + m_rcContent.width(), y + m_nLineHeight);
+            CRect rc(rcContent.left, y, rcContent.left + rcContent.width(), y + m_nLineHeight);
             int alpha;
             CColor clr = getColor(CN_SEL_BG);
 
@@ -918,7 +917,7 @@ void CSkinListView::draw(CRawGraph *canvas) {
                     rcItem.left += nImageCx + m_imageListRightSpace;
                 }
             }
-            if (rcItem.right < m_rcContent.left) {
+            if (rcItem.right < rcContent.left) {
                 rcItem.left = rcItem.right;
                 continue;
             }
@@ -941,7 +940,7 @@ void CSkinListView::draw(CRawGraph *canvas) {
 
     // draw Border
     if (m_bDrawBorder) {
-        canvas->rectangle(m_rcContent.left, m_rcContent.top, m_rcContent.width(), m_rcContent.height());
+        canvas->rectangle(rcContent.left, rcContent.top, rcContent.width(), rcContent.height());
     }
 }
 
@@ -949,6 +948,19 @@ void CSkinListView::draw(CRawGraph *canvas) {
 bool CSkinListView::onLButtonDown(uint32_t nFlags, CPoint point) {
     if (CSkinScrollFrameCtrlBase::onLButtonDown(nFlags, point)) {
         return true;
+    }
+
+    if (m_nFocusUIObj != -1) {
+        // 在增加了 header/footer 后，他们可能会设置 focus，会导致 focus 设置不对.
+        // 引起其他一系列问题.
+
+        // 清除此 container 内其他控件的 focus.
+        auto pOldFocusObj = getFocusUIObject();
+        if (pOldFocusObj) {
+            pOldFocusObj->onKillFocus();
+            setFocusChild(nullptr);
+        }
+        setFocus();
     }
 
     int nColumnIndex;
@@ -1079,8 +1091,13 @@ bool CSkinListView::onLButtonDblClk(uint32_t nFlags, CPoint point) {
     return true;
 }
 
-
 void CSkinListView::onKeyDown(uint32_t nChar, uint32_t nFlags) {
+    if (m_nFocusUIObj >= 0 && m_nFocusUIObj < (int)m_vUIObjs.size()) {
+        CUIObject *pObj = m_vUIObjs[m_nFocusUIObj];
+        pObj->onKeyDown(nChar, nFlags);
+        return;
+    }
+
     if (getRowCount() == 0) {
         return;
     }
@@ -1188,7 +1205,7 @@ void CSkinListView::onKeyDown(uint32_t nChar, uint32_t nFlags) {
                 if (m_nEndSelRow != m_nFirstVisibleRow) {
                     m_nEndSelRow = m_nFirstVisibleRow;
                 } else {
-                    m_nEndSelRow = m_nFirstVisibleRow - (getLinesOfPerPage() - 1);
+                    m_nEndSelRow = m_nFirstVisibleRow - getLinesOfPerPage();
                     if (m_nEndSelRow == m_nFirstVisibleRow) {
                         m_nEndSelRow--;
                     }
@@ -1216,7 +1233,7 @@ void CSkinListView::onKeyDown(uint32_t nChar, uint32_t nFlags) {
                 if (m_nEndSelRow != getLastVisibleRow()) {
                     m_nEndSelRow = getLastVisibleRow();
                 } else {
-                    m_nEndSelRow = getLastVisibleRow() + getLinesOfPerPage() - 1;
+                    m_nEndSelRow = getLastVisibleRow() + getLinesOfPerPage();
                     if (m_nEndSelRow == getLastVisibleRow()) {
                         m_nEndSelRow++;
                     }
@@ -1273,7 +1290,6 @@ void CSkinListView::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         sendNotifyEvent(CSkinListCtrlEventNotify::C_SEL_CHANGED);
     }
 }
-
 
 bool CSkinListView::onLButtonUp(uint32_t nFlags, CPoint point) {
     if (m_bAdjustColWidth) {

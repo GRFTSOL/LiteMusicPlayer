@@ -913,11 +913,7 @@ void CUIObject::enumProperties(CUIObjProperties &listProperties) {
 #endif // _SKIN_EDITOR_
 
 int CUIObject::fromXML(SXNode *pXmlNode) {
-    SXNode::iterProperties it, itEnd;
-
-    itEnd = pXmlNode->listProperties.end();
-    for (it = pXmlNode->listProperties.begin(); it != itEnd; ++it) {
-        SXNode::Property &prop = *it;
+    for (SXNode::Property &prop : pXmlNode->listProperties) {
         if (!setProperty(prop.name.c_str(), prop.strValue.c_str())) {
 #ifdef _DEBUG
             if (!isPropertyName(prop.name.c_str(), SZ_PN_EXTENDS)) {
@@ -930,11 +926,7 @@ int CUIObject::fromXML(SXNode *pXmlNode) {
     }
 
     // Handle property node.
-    for (SXNode::iterator it = pXmlNode->listChildren.begin();
-    it != pXmlNode->listChildren.end(); ++it)
-        {
-        SXNode *pNode = *it;
-
+    for (SXNode *pNode: pXmlNode->listChildren) {
         // Is it a property node?
         if (isPropertyName(pNode->name.c_str(), SZ_PN_PROPERTY)) {
             cstr_t szPropName = pNode->getPropertySafe(SZ_PN_NAME);

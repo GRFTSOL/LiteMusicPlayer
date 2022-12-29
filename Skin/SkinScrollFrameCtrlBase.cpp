@@ -59,12 +59,16 @@ void CSkinScrollFrameCtrlBase::onSize() {
 }
 
 void CSkinScrollFrameCtrlBase::onKillFocus() {
+    CSkinContainer::onKillFocus();
+
     if (m_pObjFrame) {
         m_pSkin->invalidateRect();
     }
 }
 
 void CSkinScrollFrameCtrlBase::onSetFocus() {
+    CSkinContainer::onSetFocus();
+
     if (m_pObjFrame) {
         m_pSkin->invalidateRect();
     }

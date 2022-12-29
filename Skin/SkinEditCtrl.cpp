@@ -1102,7 +1102,7 @@ void CSkinEditCtrl::showCaret() {
     } else {
         m_nCaretY = (m_rcContent.height() - getFontHeight()) / 2;
     }
-    showCaret(m_nCaretX, m_nCaretY, 2, getFontHeight());
+    showCaret(m_nCaretX + 1, m_nCaretY, 2, getFontHeight());
 }
 
 void CSkinEditCtrl::makeCaretInSight() {

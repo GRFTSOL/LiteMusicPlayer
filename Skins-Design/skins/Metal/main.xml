@@ -82,16 +82,25 @@
 				RoundWidthTop="1" RoundWidthBottom="1" ThickWidth="1" BlendPixMode="copy"/>
 
 			<ResizableLinearContainer ID="CID_PLAYLIST_LYRICS" Name="Body" Rect="1,1,w-2,h-2" BgColor="#7F7F7F" SeparatorThickness="4" Orientation="Horizontal">
-				<Container ID="CID_PLAYLIST" Rect=",,200,108"  ContextMenu="PlaylistMenu" LayoutParams="match_parent_height" Weight="1">
+				<Container ID="CID_PLAYLIST" Rect=",,200,108" ContextMenu="PlaylistMenu" LayoutParams="match_parent_height" Weight="1">
 					<Frame Image="panel-frame.png" Rect="0,0,w,h" RoundWidth="5" ThickWidth="5"
 						  XBorder="0" YBorder="0"/>
-					<NormalPlaylist Rect="5,5,w-10,h-10" DrawHeader="false" EnableBorder="false" />
+					<NormalPlaylist Rect="5,5,w-10,h-10" DrawHeader="false" EnableBorder="false">
+						<Container ID="CID_SEARCH_BAR" Rect="0,0,w,30" BgColor="#EDF3FE">
+							<Image Name="Volume" Rect="10,3,22,22" Image="fl_buttons.png" ImageRect="110,0,22,22"/>
+							<NormalEdit ID="CID_E_SEARCH_MUSIC" Text="" Hint="Type to search music" Rect="42,6,w-82,"/>
+							<!-- <Button Rect="10,3,24,24" ID="ID_SEARCH" ImageMask="prev_next.png" ImageMaskRect="0,0,40,40"
+								Image="prev_next.png" ImageSize="40,40" ImagePos="0,0" ImageSelPos="0,80"
+								ImageFocusPos="0,40" /> -->
+
+						</Container>
+					</NormalPlaylist>
 				</Container>
 				<DecorativeContainer Name="Lyrics" Width="200" Height="108" MinWidth="200" MinHeight="108" LayoutParams="match_parent_height" Weight="1">
 					<LyricsShow ID="ID_LYRICS_SHOW" Rect="0,0,w,h" SetSkinBg="false"
 					  EnableToolbar="FALSE" EnableAutoResize="FALSE" />
 
-					<Container ID="CID_LYR_TOOL_BAR" Rect="w-100,10,94,30">
+					<Container ID="CID_LYR_TOOL_BAR" Rect="w-100,10,94,30" Visible="False">
 						<Property Name="BgImage" Image="lyr_ctrl_bg.png" HorzExtendPos="8,22" BlendPixMode="alpha_blend"/>
 
 						<Toolbar ID="ID_TB_LYR_SYNC" Rect="12,4,70,22" Image="fl_buttons.png" enablehover="TRUE"

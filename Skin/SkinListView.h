@@ -73,6 +73,9 @@ public:
 
 };
 
+/**
+ * CSkinListView 仅仅负责 ListView 的绘制.
+ */
 class CSkinListView : public CSkinScrollFrameCtrlBase {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinScrollFrameCtrlBase)
 public:
@@ -213,8 +216,7 @@ protected:
 
     void setClickCursor();
 
-    int getLinesOfPerPage() const { return m_rcContent.height() / m_nLineHeight; }
-
+    int getLinesOfPerPage() const;
     int getLastVisibleRow() const;
 
     void reverseSelectStatOfRow(bool bClearOldSel, int nRow);
@@ -307,5 +309,8 @@ protected:
     CPoint                      m_ptStartDrag;      // 鼠标上一次的位置
     Cursor                      m_curResizeCol;
     Cursor                      m_curHand;
+
+    // 插入到 ListView 的 header 和 footer 控件
+    CUIObject                   *m_header, *m_footer;
 
 };

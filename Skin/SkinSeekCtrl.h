@@ -88,9 +88,9 @@ protected:
     // 虚拟滚动位置
     int                         m_nVirtualMin;      // 最小的值
     int                         m_nVirtualMax;      // 最大的值
-    int                         m_nVirtualLine;
+    int                         m_nVirtualLine;     // 滚动一行的值，缺省为1
     int                         m_nVirtualPage;
-    int                         m_nVirtualCurPos;   // 滚动一行的值，缺省为1
+    int                         m_nVirtualCurPos;
 
     int                         m_nXCursorToThumbBeg; // 鼠标点下位置距拖动ThumbBox 距离: point.y - m_rcObj.top - m_nHeightEnd;
     PUSH_DOWN_POS               m_PushDownPos;      // 鼠标按下的位置

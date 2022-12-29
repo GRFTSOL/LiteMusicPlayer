@@ -462,6 +462,13 @@ void CSkinWnd::onMouseMove(CPoint point) {
         // else, should set mouse resizing cursor
         m_wndResizer.onMouseMessage(0, point);
     }
+
+    if (m_onMouseMoveListener.isFunction()) {
+        auto ctx = m_vm->defaultRuntime()->mainCtx();
+        ctx->error = JE_OK;
+        m_vm->callMember(ctx, jsValueGlobalThis, m_onMouseMoveListener,
+            ArgumentsX(makeJsValueInt32(point.x), makeJsValueInt32(point.y)));
+    }
 }
 
 void CSkinWnd::onLButtonDown(uint32_t nFlags, CPoint point) {
@@ -988,13 +995,6 @@ void CSkinWnd::onMove(int x, int y) {
         m_rcBoundBox.top = rc.top;
         m_rcBoundBox.right = (int)(rc.left + rc.width() / m_dbScale);
         m_rcBoundBox.bottom = (int)(rc.top + rc.height() / m_dbScale);
-    }
-
-    if (m_onMouseMoveListener.isFunction()) {
-        auto ctx = m_vm->defaultRuntime()->mainCtx();
-        ctx->error = JE_OK;
-        m_vm->callMember(ctx, jsValueGlobalThis, m_onMouseMoveListener,
-            ArgumentsX(makeJsValueInt32(x), makeJsValueInt32(y)));
     }
 }
 

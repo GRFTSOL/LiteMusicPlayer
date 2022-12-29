@@ -126,30 +126,35 @@ CSkinWnd *documentGetSkinWnd(VMContext *ctx, const JsValue &thiz) {
     return ((JsSkinDocument *)obj)->skinWnd();
 }
 
-void document_getElementById(VMContext *ctx, const JsValue &thiz, const Arguments &args) {
-    auto runtime = ctx->runtime;
-    auto skinWnd = documentGetSkinWnd(ctx, thiz);
-    if (skinWnd == nullptr) {
-        return;
-    }
-
+int getIdFromArg0(CSkinWnd *skinWnd, VMContext *ctx, const Arguments &args) {
     int id = UID_INVALID;
     auto idVal = args.getAt(0);
     if (idVal.type == JDT_INT32) {
         id = getJsValueInt32(idVal);
     } else {
-        auto str = runtime->toSizedString(ctx, idVal);
+        auto str = ctx->runtime->toSizedString(ctx, idVal);
         id = skinWnd->getSkinFactory()->getIDByName(str.toString().c_str());
     }
 
     if (id == UID_INVALID) {
         ctx->throwExceptionFormatJsValue(JE_TYPE_ERROR, "Invalid UIObject Id: %.*s", idVal);
+        return UID_INVALID;
+    }
+
+    return id;
+}
+
+void document_getElementById(VMContext *ctx, const JsValue &thiz, const Arguments &args) {
+    auto skinWnd = documentGetSkinWnd(ctx, thiz);
+    if (skinWnd == nullptr) {
         return;
     }
 
+    int id = getIdFromArg0(skinWnd, ctx, args);
+
     CUIObject *obj = skinWnd->getUIObjectById(id);
     if (obj == nullptr) {
-        ctx->throwExceptionFormatJsValue(JE_TYPE_ERROR, "UIObject cannot be found by Id: %.*s", idVal);
+        ctx->throwExceptionFormatJsValue(JE_TYPE_ERROR, "UIObject cannot be found by Id: %.*s", args.getAt(0));
         return;
     }
 
@@ -157,21 +162,12 @@ void document_getElementById(VMContext *ctx, const JsValue &thiz, const Argument
 }
 
 void document_getCommandID(VMContext *ctx, const JsValue &thiz, const Arguments &args) {
-    auto runtime = ctx->runtime;
     auto skinWnd = documentGetSkinWnd(ctx, thiz);
     if (skinWnd == nullptr) {
         return;
     }
 
-    int id = UID_INVALID;
-    auto idVal = args.getAt(0);
-    if (idVal.type == JDT_INT32) {
-        id = getJsValueInt32(idVal);
-    } else {
-        auto str = runtime->toSizedString(ctx, idVal);
-        id = skinWnd->getSkinFactory()->getIDByName(str.toString().c_str());
-    }
-
+    int id = getIdFromArg0(skinWnd, ctx, args);
     ctx->retValue = makeJsValueInt32(id);
 }
 
@@ -202,12 +198,42 @@ void document_moveWindow(VMContext *ctx, const JsValue &thiz, const Arguments &a
     ctx->throwException(JE_RANGE_ERROR, "Invalid window size/position.");
 }
 
+void document_startAnimation(VMContext *ctx, const JsValue &thiz, const Arguments &args) {
+    auto skinWnd = documentGetSkinWnd(ctx, thiz);
+    if (skinWnd == nullptr) {
+        return;
+    }
+
+    ctx->retValue = jsValueUndefined;
+
+    int id = getIdFromArg0(skinWnd, ctx, args);
+    if (id != UID_INVALID) {
+        skinWnd->startAnimation(id);
+    }
+}
+
+void document_stopAnimation(VMContext *ctx, const JsValue &thiz, const Arguments &args) {
+    auto skinWnd = documentGetSkinWnd(ctx, thiz);
+    if (skinWnd == nullptr) {
+        return;
+    }
+
+    ctx->retValue = jsValueUndefined;
+
+    int id = getIdFromArg0(skinWnd, ctx, args);
+    if (id != UID_INVALID) {
+        skinWnd->stopAnimation(id);
+    }
+}
+
 static JsLibProperty documentPrototypeFunctions[] = {
     { "name", nullptr, "document" },
     { "length", nullptr, nullptr, jsValueLength1Property },
     { "getElementById", document_getElementById },
     { "getCommandID", document_getCommandID },
     { "moveWindow", document_moveWindow },
+    { "startAnimation", document_startAnimation },
+    { "stopAnimation", document_stopAnimation },
 };
 
 void registerDocument(VMRuntimeCommon *rt) {

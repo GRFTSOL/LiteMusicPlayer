@@ -490,11 +490,7 @@ int CSkinContainer::fromXML(SXNode *pXmlNode) {
 
 void CSkinContainer::createChild(SXNode *pXmlNode) {
     // create child CUIObject
-    for (SXNode::iterator it = pXmlNode->listChildren.begin();
-    it != pXmlNode->listChildren.end(); ++it)
-        {
-        SXNode *pNode = *it;
-
+    for (SXNode *pNode : pXmlNode->listChildren) {
         if (isPropertyName(pNode->name.c_str(), SZ_PN_PROPERTY)) {
             // CUIObject has handled it.
             continue;
@@ -779,12 +775,16 @@ void CSkinContainer::setFocusUIObject(cstr_t szId) {
 CUIObject *CSkinContainer::getFocusUIObject() {
     if (m_nFocusUIObj >= 0 && m_nFocusUIObj < (int)m_vUIObjs.size()) {
         CUIObject *pObj = m_vUIObjs[m_nFocusUIObj];
+        if (pObj->getContainerIf()) {
+            auto child = pObj->getContainerIf()->getFocusUIObject();
+            if (child) {
+                return child;
+            }
+        }
+
         if (pObj->needMsgKey()) {
             return pObj;
-        } else if (pObj->getContainerIf()) {
-            return pObj->getContainerIf()->getFocusUIObject();
         }
-        return pObj;
     }
 
     return nullptr;
@@ -1098,9 +1098,8 @@ void CSkinContainer::switchToPage(cstr_t szPageClass, bool bWaitResultOfNextPage
 
     bool bIsNewPageAtLeft = isPageAtLeft(pToActivate, pvToHide.pContainerPage);
     if (pvToHide.pContainerPage) {
-
+        pvToHide.pContainerPage->setVisibleEx(false, bAnimation, bIsNewPageAtLeft ? AD_RIGHT: AD_LEFT);
     }
-    pvToHide.pContainerPage->setVisibleEx(false, bAnimation, bIsNewPageAtLeft ? AD_RIGHT: AD_LEFT);
     pToActivate->onSwitchTo();
     pToActivate->setVisibleEx(true, bAnimation, bIsNewPageAtLeft ? AD_LEFT : AD_RIGHT);
 }

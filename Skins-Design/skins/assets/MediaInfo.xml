@@ -9,7 +9,7 @@
   </NormalTabButton>
 
   <Container Name="Content" Rect="10,0,w-20,h" ClipChildren="true">
-    <Container ID="CID_C_MI_BASIC" Rect="0,10,w,h-10-20" Visible="false">
+    <Container ID="CID_C_MI_BASIC" Rect="0,10,w,h-10-20" Visible="true">
       <NormalText Rect="20,0,150," Text="Title:" AlignText="AT_RIGHT"/>
       <NormalEdit ID="CID_E_TITLE" Text="" Rect="210,100,200,"/>
 

@@ -1,8 +1,5 @@
 #pragma once
 
-//
-// CSkinContainerCtrl is the super class of CSkinListCtrl or CSkinEditCtrl.
-//
 class CSkinScrollFrameCtrlBase : public CSkinContainer, public IScrollNotify {
 public:
     CSkinScrollFrameCtrlBase();
@@ -30,8 +27,10 @@ protected:
 
 protected:
     bool                        m_bEnableBorder;
+
+    // If this is set, don't create dynamic scroll bar control.
     bool                        m_bHorzScrollBar, m_bVertScrollBar;
-    int                         m_nVertScrollBarId, m_nHorzScrollBarId; // If this is set, don't create dynamic scroll bar control.
+    int                         m_nVertScrollBarId, m_nHorzScrollBarId;
     IScrollBar                  *m_pVertScrollBar, *m_pHorzScrollBar;
     CUIObject                   *m_pObjVertScrollBar, *m_pObjHorzScrollBar;
     CUIObject                   *m_pObjFrame;

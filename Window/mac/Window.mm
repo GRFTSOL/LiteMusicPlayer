@@ -44,7 +44,7 @@ bool Window::createForSkin(cstr_t szClassName, cstr_t szCaption, int x, int y, i
     [w setContentView:view];
     // [w setBackgroundColor:[NSColor blueColor]];
     //    [w makeFirstResponder:view];
-    //    [w setAcceptsMouseMovedEvents:YES];
+    [w setAcceptsMouseMovedEvents:YES];
     //    [w setRestorable:NO];
 
     if (szCaption) {

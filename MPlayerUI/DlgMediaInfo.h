@@ -23,11 +23,12 @@ public:
     CDlgMediaInfo(IMedia *pMedia);
     ~CDlgMediaInfo(void);
 
-    void onSkinLoaded();
+    void onSkinLoaded() override;
 
-    void onDestroy();
+    void onDestroy() override;
+    bool onCustomCommand(int nId) override;
 
-    void onOK();
+    void onOK() override;
 
 protected:
     void clear();
@@ -65,7 +66,7 @@ protected:
     uint32_t                    m_nSupportedMediaTagType;
     CharEncodingType            m_nEncodingOfConvertAnsi;
 
-    vector<class CDlgMediaInfoPage  *>    m_vInfoPages;
-    class CDlgMediaInfoPage                *m_pOldPage;
+    vector<class CDlgMediaInfoPage *>   m_vInfoPages;
+    class CDlgMediaInfoPage             *m_pOldPage;
 
 };

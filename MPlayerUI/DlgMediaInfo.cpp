@@ -17,7 +17,9 @@ class CDlgMediaInfoPage : public CSkinContainer {
 public:
     CDlgMediaInfoPage(cstr_t szPageId, cstr_t szAssociateTabButtonId) : CSkinContainer() {
         m_strAssociateTabButtonId = szAssociateTabButtonId;
+        m_strPageId = szPageId;
         m_nAssociateTabButtonId = -1;
+        m_pageId = -1;
         m_bModified = false;
     }
 
@@ -29,6 +31,7 @@ public:
         CSkinContainer::onInitialUpdate();
 
         m_nAssociateTabButtonId = getIDByName(m_strAssociateTabButtonId.c_str());
+        m_pageId = getIDByName(m_strPageId.c_str());
         onUpdateView(false);
     }
 
@@ -47,10 +50,13 @@ public:
     int getAssociateTabButtonId() const { return m_nAssociateTabButtonId; }
 
 protected:
+    friend class CDlgMediaInfo;
+
     CDlgMediaInfo               *m_pDlgMediaInfo;
     bool                        m_bModified;
-    string                      m_strAssociateTabButtonId;
+    string                      m_strAssociateTabButtonId, m_strPageId;
     int                         m_nAssociateTabButtonId;
+    int                         m_pageId;
 
 };
 
@@ -300,6 +306,16 @@ void CDlgMediaInfo::onSkinLoaded() {
     if (pToolbar) {
         pToolbar->setCheck(m_pSkinFactory->getIDByName("CMD_MI_BASIC"), true, false);
     }
+}
+
+bool CDlgMediaInfo::onCustomCommand(int nId) {
+    for (auto page : m_vInfoPages) {
+        if (page->m_nAssociateTabButtonId == nId) {
+            
+        }
+    }
+
+    return CMPSkinWnd::CSkinWnd::onCustomCommand(nId);
 }
 
 void CDlgMediaInfo::onDestroy() {
