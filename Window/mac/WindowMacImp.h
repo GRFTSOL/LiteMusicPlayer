@@ -15,8 +15,6 @@ typedef map<int, NSTimer *> MapNSTimer;
 class Window;
 
 @interface WindowMacImp : NSWindow <NSWindowDelegate> {
-    NSPoint mInitPt;
-
     MapNSTimer mMapTimer;
     Window *mBaseWnd;
     float mYScroll, mXScroll;

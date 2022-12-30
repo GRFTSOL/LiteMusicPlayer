@@ -140,7 +140,7 @@ cstr_t CMDAVPlayer::getDescription() {
 }
 
 cstr_t CMDAVPlayer::getFileExtentions() {
-    return ".mp3|MP3 files|.mp4|MP4 files|.wma|WMA files|.mp2|MP2 files";
+    return ".mp3|MP3 files|.mp4|MP4 files|.wma|WMA files|.mp2|MP2 files|.m4a|M4A files|.flac|FLAC files|.aac|AAC files";
 }
 
 MLRESULT CMDAVPlayer::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia) {

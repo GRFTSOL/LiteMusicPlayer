@@ -12,10 +12,6 @@
 #import "ViewMacImp.h"
 
 
-inline CPoint NSPointToCPoint(const NSPoint &nsPoint, int wndHeight) {
-    return CPoint((int)nsPoint.x, wndHeight - (int)nsPoint.y);
-}
-
 @implementation WindowMacImp
 
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle
@@ -37,24 +33,6 @@ backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
     return self;
 }
 
-- (void) mouseDown:(NSEvent *)theEvent {
-    mInitPt = [theEvent locationInWindow];
-
-    uint32_t flags = (uint32_t)[theEvent modifierFlags];
-    CPoint point = NSPointToCPoint(mInitPt, [self frame].size.height);
-
-    if ([theEvent clickCount] > 1) {
-        mBaseWnd->onLButtonDblClk(flags, point);
-    } else {
-        mBaseWnd->onLButtonDown(flags, point);
-    }
-}
-
-- (void) mouseUp:(NSEvent *)theEvent {
-    mBaseWnd->onLButtonUp((uint32_t)[theEvent modifierFlags],
-        NSPointToCPoint([theEvent locationInWindow], [self frame].size.height));
-}
-
 - (void) rightMouseDown:(NSEvent *)theEvent {
     uint32_t flags = (uint32_t)[theEvent modifierFlags];
     CPoint point = NSPointToCPoint([theEvent locationInWindow], [self frame].size.height);
@@ -69,32 +47,6 @@ backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
 
 - (void) mouseMoved:(NSEvent *)theEvent {
     mBaseWnd->onMouseMove(NSPointToCPoint([theEvent locationInWindow], [self frame].size.height));
-}
-
-- (void) mouseDragged:(NSEvent *)theEvent {
-    if (mBaseWnd->isMouseCaptured()) {
-        mBaseWnd->onMouseDrag((uint32_t)[theEvent modifierFlags],
-            NSPointToCPoint([theEvent locationInWindow], [self frame].size.height));
-        return;
-    }
-
-    NSRect screenVisibleFrame = [[NSScreen mainScreen] visibleFrame];
-    NSRect windowFrame = [self frame];
-    NSPoint newOrigin = windowFrame.origin;
-
-    // Get the mouse location in window coordinates.
-    NSPoint currentLocation = [theEvent locationInWindow];
-    // Update the origin with the difference between the new mouse location and the old mouse location.
-    newOrigin.x += (currentLocation.x - mInitPt.x);
-    newOrigin.y += (currentLocation.y - mInitPt.y);
-
-    // Don't let window get dragged up under the menu bar
-    if ((newOrigin.y + windowFrame.size.height) > (screenVisibleFrame.origin.y + screenVisibleFrame.size.height)) {
-        newOrigin.y = screenVisibleFrame.origin.y + (screenVisibleFrame.size.height - windowFrame.size.height);
-    }
-
-    // Move the window to the new location
-    [self setFrameOrigin:newOrigin];
 }
 
 - (void)scrollWheel:(NSEvent *)theEvent {
@@ -128,44 +80,7 @@ backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
 }
 
 - (void) keyDown:(NSEvent *)theEvent {
-    uint32_t modifierFlags = [theEvent modifierFlags] & NSEventModifierFlagDeviceIndependentFlagsMask;
-    int code = [theEvent keyCode];
 
-    @try {
-        NSString *s = [theEvent charactersIgnoringModifiers];
-        if ([s length] > 0) {
-            if (isAlpha([s characterAtIndex:0])) {
-                code = toupper([s characterAtIndex:0]);
-            }
-        }
-    }
-    @catch (NSException *exception) {
-    }
-
-    mBaseWnd->onKeyDown(code, modifierFlags);
-
-    bool bCaptionDown = isFlagSet(modifierFlags, NSEventModifierFlagCapsLock);
-    modifierFlags &= ~NSEventModifierFlagCapsLock;
-    if (modifierFlags != 0 && modifierFlags != NSEventModifierFlagShift) {
-        return;
-    }
-
-    @try {
-        NSString *s = [theEvent charactersIgnoringModifiers];
-        for (int i = 0; i < [s length]; i++) {
-            unichar c = [s characterAtIndex:i];
-            if (bCaptionDown) {
-                if ('a' <= c && c <= 'z') {
-                    c = toupper(c);
-                } else if ('A' <= c && c <= 'Z') {
-                    c = toupper(c);
-                }
-            }
-            mBaseWnd->onChar(c);
-        }
-    }
-    @catch (NSException *exception) {
-    }
 }
 
 - (void) keyUp:(NSEvent *)theEvent {
@@ -307,13 +222,13 @@ backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
 - (void)windowDidBecomeKey:(NSNotification *)notification {
     mBaseWnd->onActivate(true);
     mBaseWnd->onSetFocus();
-    [self setStyleMask:NSResizableWindowMask];
+    [self setStyleMask:NSWindowStyleMaskResizable];
 
 }
 
 - (void)windowDidResignKey:(NSNotification *)notification {
     mBaseWnd->onKillFocus();
-    [self setStyleMask:NSBorderlessWindowMask];
+    [self setStyleMask:NSWindowStyleMaskBorderless];
     mBaseWnd->onActivate(false);
     mBaseWnd->m_bMouseCaptured = false;
 }

@@ -115,6 +115,21 @@ public:
 
     virtual void onUserMessage(int nMessageID, LPARAM param) { }
 
+    //
+    // 输入法相关的处理
+    //
+    // 在编辑框开始/结束编辑时需要调用
+    void startTextInput();
+    void endTextInput();
+
+    // 编辑控件的光标位置改变后需要调用此函数
+    void caretPositionChanged(const CPoint &point);
+
+    // 最终输入的文字
+    virtual void onInputText(cstr_t text) { }
+    // MarketText 是临时的文字，当输入其他字符时会被替代
+    virtual void onInputMarkedText(cstr_t text) { }
+
 public:
     // Translucency related APIs
     bool                        m_bTranslucencyLayered; // Is following alpha setting enabled?

@@ -242,7 +242,7 @@ void CMPlaylistCtrl::onEvent(const IEvent *pEvent) {
 
         CMPAutoPtr<IMedia> media;
         int row = g_Player.getCurrentMediaIndex();
-        if (g_Player.getCurrentMedia(&media) == ERR_OK && row <= getRowCount()) {
+        if (g_Player.getCurrentMedia(&media) == ERR_OK && row < getRowCount()) {
             string strTitle = g_Player.formatMediaTitle(media);
             setItemText(row, 1, strTitle.c_str());
 

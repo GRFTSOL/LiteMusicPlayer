@@ -234,7 +234,7 @@ TEST(FileEx, ReadWrite) {
     ASSERT_TRUE(n == ERR_OK);
 
     const char *s = "dde\r\n";
-    n = f.write(s, strlen(s));
+    n = (int)f.write(s, strlen(s));
 
     f.close();
 

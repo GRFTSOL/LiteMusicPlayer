@@ -103,7 +103,7 @@ public:
         } else {
             assert(m_pEdit->isPosValid(m_nCaretRow, m_nCaretCol));
             if (m_pEdit->isPosValid(m_nCaretRow, m_nCaretCol)) {
-                m_pEdit->insertStr(m_nCaretRow, m_nCaretCol, m_str.c_str(), m_pEdit->m_nCaretRow, m_pEdit->m_nCaretCol);
+                m_pEdit->insertStr(m_nCaretRow, m_nCaretCol, m_str.c_str());
                 if (!m_pEdit->isInBatchAction()) {
                     m_pEdit->updateScrollInfo();
                     m_pEdit->makeCaretInSight();
@@ -258,7 +258,7 @@ void CSkinEditCtrl::replaceSel(cstr_t szText) {
     selectionToText(strToDel);
     removeSelected(&nBegSelRow, &nBegSelCol);
     m_undoMgr.addAction(new CEditRepAction(this, nBegSelRow, nBegSelCol, strToDel.c_str(), szText));
-    insertStr(nBegSelRow, nBegSelCol, szText, m_nCaretRow, m_nCaretCol);
+    insertStr(nBegSelRow, nBegSelCol, szText);
 
     if (!isInBatchAction()) {
         updateScrollInfo();
@@ -550,29 +550,13 @@ void CSkinEditCtrl::onCmdPaste() {
         return;
     }
 
-    CAutoUpdate updater(this);
     string str;
 
     getClipBoardText(str);
-    if (str.size()) {
-        if (isSelected()) {
-            string strToDel;
-            int nBegSelRow, nBegSelCol;
 
-            selectionToText(strToDel);
-            removeSelected(&nBegSelRow, &nBegSelCol);
-            m_undoMgr.addAction(new CEditRepAction(this, nBegSelRow, nBegSelCol, strToDel.c_str(), str.c_str()));
-            insertStr(nBegSelRow, nBegSelCol, str.c_str(), m_nCaretRow, m_nCaretCol);
-        } else {
-            m_undoMgr.addAction(new CEditInsertAction(this, m_nCaretRow, m_nCaretCol, str.c_str()));
-            insertStr(m_nCaretRow, m_nCaretCol, str.c_str(), m_nCaretRow, m_nCaretCol);
-        }
-
-        updater.setUpdateFlag(true);
-        updateScrollInfo();
+    if (!str.empty()) {
+        insertStr(str.c_str());
     }
-
-    makeCaretInSight();
 }
 
 void CSkinEditCtrl::onCmdUndo() {
@@ -1085,6 +1069,7 @@ void CSkinEditCtrl::showCaret(int x, int y, int nWidth, int nHeight) {
 
     if (m_pSkin->getFocusUIObj() == (CUIObject *)this) {
         m_caret.showCaret(x, y, nWidth, nHeight);
+        m_pSkin->caretPositionChanged(CPoint(m_rcObj.left + x + 10, m_rcObj.top + y + 10 + nHeight));
     }
 }
 
@@ -1551,6 +1536,50 @@ void CSkinEditCtrl::removeChar(int nRow, int nCol) {
     updateWidthInfoOfLine(canvas, pLine);
 }
 
+void CSkinEditCtrl::insertStr(cstr_t text, bool isMarkedText) {
+    CAutoUpdate updater(this);
+
+    int begInsertRow = m_nCaretRow, begInsertCol = m_nCaretCol;
+
+    if (isSelected()) {
+        string strToDel;
+
+        selectionToText(strToDel);
+        removeSelected(&begInsertRow, &begInsertCol);
+
+        m_undoMgr.addAction(new CEditRepAction(this, begInsertRow, begInsertCol, strToDel.c_str(), text));
+    } else if (m_isMarkedText) {
+        m_nBegSelRow = m_begMarkedRow;
+        m_nBegSelCol = m_begMarkedCol;
+        m_nEndSelRow = m_endMarkedRow;
+        m_nEndSelCol = m_endMarkedCol;
+        m_isMarkedText = false;
+
+        removeSelected(&begInsertRow, &begInsertCol);
+    }
+
+    if (isMarkedText) {
+        m_isMarkedText = true;
+
+        m_begMarkedRow = begInsertRow;
+        m_begMarkedCol = begInsertCol;
+    } else {
+        m_undoMgr.addAction(new CEditInsertAction(this, m_nCaretRow, m_nCaretCol, text));
+    }
+
+    insertStr(begInsertRow, begInsertCol, text);
+
+    if (isMarkedText) {
+        m_endMarkedRow = m_nCaretRow;
+        m_endMarkedCol = m_nCaretCol;
+    }
+
+    updater.setUpdateFlag(true);
+    updateScrollInfo();
+
+    makeCaretInSight();
+}
+
 void CSkinEditCtrl::insertChar(int nRow, int nCol, WCHAR chInsert) {
     assert(nRow >= 0 && nRow < (int)m_vLines.size());
 
@@ -1578,7 +1607,7 @@ void CSkinEditCtrl::insertChar(int nRow, int nCol, WCHAR chInsert) {
     updateWidthInfoOfLine(canvas, pLine);
 }
 
-void CSkinEditCtrl::insertStr(int nRow, int nCol, cstr_t szText, int &nRowNext, int &nColNext) {
+void CSkinEditCtrl::insertStr(int nRow, int nCol, cstr_t szText) {
     CRawGraph *canvas;
     string strSingleLine;
 
@@ -1604,7 +1633,7 @@ void CSkinEditCtrl::insertStr(int nRow, int nCol, cstr_t szText, int &nRowNext, 
 
     NewLineType nltInsertLine = pLine->newLineType;
 
-    nRowNext = nRow;
+    m_nCaretRow = nRow;
     while (*szText) {
         CGlyph glyph;
 
@@ -1620,17 +1649,17 @@ void CSkinEditCtrl::insertStr(int nRow, int nCol, cstr_t szText, int &nRowNext, 
             } else {
                 pLine->newLineType = NLT_R;
             }
-            onNotifyParseLine(nRowNext);
+            onNotifyParseLine(m_nCaretRow);
             pLine = newOneLine();
-            nRowNext++;
-            m_vLines.insert(m_vLines.begin() + nRowNext, pLine);
+            m_nCaretRow++;
+            m_vLines.insert(m_vLines.begin() + m_nCaretRow, pLine);
         } else if (*szText == '\n') {
             updateWidthInfoOfLine(canvas, pLine);
             pLine->newLineType = NLT_N;
-            onNotifyParseLine(nRowNext);
+            onNotifyParseLine(m_nCaretRow);
             pLine = newOneLine();
-            nRowNext++;
-            m_vLines.insert(m_vLines.begin() + nRowNext, pLine);
+            m_nCaretRow++;
+            m_vLines.insert(m_vLines.begin() + m_nCaretRow, pLine);
         } else {
             glyph.width = GLYPH_WIDTH_INVALID;
             pLine->push_back(glyph);
@@ -1642,11 +1671,11 @@ void CSkinEditCtrl::insertStr(int nRow, int nCol, cstr_t szText, int &nRowNext, 
 
     pLine->newLineType = nltInsertLine;
 
-    nColNext = (int)pLine->size();
+    m_nCaretCol = (int)pLine->size();
 
     pLine->insert(pLine->end(), leftGlyphOfLine.begin(), leftGlyphOfLine.end());
 
-    onNotifyParseLine(nRowNext);
+    onNotifyParseLine(m_nCaretRow);
 
     updateWidthInfoOfLine(canvas, pLine);
 }
@@ -1729,6 +1758,8 @@ void CSkinEditCtrl::onSize() {
 }
 
 void CSkinEditCtrl::onSetFocus() {
+    m_pSkin->startTextInput();
+
     CRect rc = m_rcContent;
 
     rc.deflate(m_xMargin, m_yMargin);
@@ -1741,6 +1772,8 @@ void CSkinEditCtrl::onSetFocus() {
 }
 
 void CSkinEditCtrl::onKillFocus() {
+    m_pSkin->endTextInput();
+
     m_bInMouseSel = false;
 
     hideCaret();
@@ -2015,7 +2048,7 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
     bool bRecoverCaretMaxXLatestOrg = false;
 
     switch (nChar) {
-    case 'A':
+    case VK_A:
         {
             // select all
             if (ctrl) {
@@ -2028,7 +2061,7 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
             break;
         }
         break;
-    case 'Z':
+    case VK_Z:
         {
             // undo
             if (ctrl) {
@@ -2046,7 +2079,7 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
             }
             break;
         }
-    case 'Y':
+    case VK_Y:
         if (ctrl) {
             if (m_undoMgr.canRedo()) {
                 m_undoMgr.redo();
@@ -2054,7 +2087,7 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
             }
         }
         break;
-    case 'X':
+    case VK_X:
         {
             // cut
             if (ctrl) {
@@ -2063,16 +2096,16 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
             // just return, the OnCmdXXX will update the view.
             return;
         }
-    case VK_INSERT:
-        {
-            // paste
-            if (shift) {
-                onCmdPaste();
-            }
-            // just return, the OnCmdXXX will update the view.
-            return;
-        }
-    case 'V':
+    // case VK_INSERT:
+    //     {
+    //         // paste
+    //         if (shift) {
+    //             onCmdPaste();
+    //         }
+    //         // just return, the OnCmdXXX will update the view.
+    //         return;
+    //     }
+    case VK_V:
         {
             // paste
             if (ctrl) {
@@ -2081,7 +2114,7 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
             // just return, the OnCmdXXX will update the view.
             return;
         }
-    case 'C':
+    case VK_C:
         {
             // copy
             if (ctrl) {
@@ -2157,7 +2190,7 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
             }
             break;
         }
-    case VK_PRIOR: // page up
+    case VK_PAGE_UP: // page up
         {
             bSelKey = true;
             if (m_nCaretRow > 0 && m_pVertScrollBar&& m_pVertScrollBar->isEnabled()) {
@@ -2170,7 +2203,7 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
             }
             break;
         }
-    case VK_NEXT: // page down
+    case VK_PAGE_DOWN: // page down
         {
             bSelKey = true;
             if (m_nCaretRow < (int)m_vLines.size() && m_pVertScrollBar && m_pVertScrollBar->isEnabled()) {
@@ -2206,20 +2239,20 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
             }
             break;
         }
-    case VK_DELETE:
-        {
-            if (!isReadOnly()) {
-                if (shift) {
-                    // shift + VK_DELETE = cut
-                    onCmdCut();
-                    // just return, the OnCmdXXX will update the view.
-                    return;
-                } else {
-                    onCmdDelete();
-                }
-            }
-            break;
-        }
+    // case VK_DELETE:
+    //     {
+    //         if (!isReadOnly()) {
+    //             if (shift) {
+    //                 // shift + VK_DELETE = cut
+    //                 onCmdCut();
+    //                 // just return, the OnCmdXXX will update the view.
+    //                 return;
+    //             } else {
+    //                 onCmdDelete();
+    //             }
+    //         }
+    //         break;
+    //     }
     case VK_RETURN:
         {
             if (isSingleLine()) {
@@ -2243,10 +2276,10 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
                     selectionToText(strToDel);
                     removeSelected(&nBegSelRow, &nBegSelCol);
                     m_undoMgr.addAction(new CEditRepAction(this, nBegSelRow, nBegSelCol, strToDel.c_str(), COneLine::getReturnStr(NLT_RN)));
-                    insertStr(nBegSelRow, nBegSelCol, COneLine::getReturnStr(NLT_RN), m_nCaretRow, m_nCaretCol);
+                    insertStr(nBegSelRow, nBegSelCol, COneLine::getReturnStr(NLT_RN));
                 } else {
                     m_undoMgr.addAction(new CEditInsertAction(this, m_nCaretRow, m_nCaretCol, COneLine::getReturnStr(NLT_RN)));
-                    insertStr(m_nCaretRow, m_nCaretCol, COneLine::getReturnStr(NLT_RN), m_nCaretRow, m_nCaretCol);
+                    insertStr(m_nCaretRow, m_nCaretCol, COneLine::getReturnStr(NLT_RN));
                 }
 
                 updater.setUpdateFlag(true);
@@ -2458,6 +2491,14 @@ void CSkinEditCtrl::onHScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar
     updater.setUpdateFlag(true);
 }
 
+void CSkinEditCtrl::onInputText(cstr_t text) {
+    insertStr(text);
+}
+
+void CSkinEditCtrl::onInputMarkedText(cstr_t text) {
+    // MarkedText 是输入法输入的临时字符串，会被后期的 InputText 替换掉.
+    insertStr(text, true);
+}
 
 //
 // IUndoMgrNotify interface

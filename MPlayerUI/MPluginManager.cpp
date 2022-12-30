@@ -239,8 +239,7 @@ MLRESULT CMPluginManager::registerDecoder(IMediaDecode *pDecoder, cstr_t szModul
     decoderInfo.nIFIndex = nIFIndex;
 
     // Is this decoder registered?
-    for (ListDecodersInfo::iterator it = m_listDecoders.begin(); it != m_listDecoders.end(); ++it) {
-        DecoderInfo &info = *it;
+    for (DecoderInfo &info : m_listDecoders) {
         if (!info.strFileName.empty()
             && strcasecmp(info.strFileName.c_str(), szModuleFileName) == 0
             && info.nIFIndex == nIFIndex) {

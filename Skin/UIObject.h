@@ -275,6 +275,11 @@ public:
 
     virtual void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) { }
 
+    // 最终输入的文字
+    virtual void onInputText(cstr_t text) { }
+    // MarketText 是临时的文字，当输入其他字符时会被替代
+    virtual void onInputMarkedText(cstr_t text) { }
+
     virtual bool onCommand(int nId) { return false; }
     virtual bool onCustomCommand(int nId) { return false; }
 

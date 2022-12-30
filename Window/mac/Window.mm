@@ -29,9 +29,9 @@ bool Window::createForSkin(cstr_t szClassName, cstr_t szCaption, int x, int y, i
     NSRect frame = NSMakeRect(x, y, nWidth, nHeight);
     WindowMacImp* w = [[WindowMacImp alloc] initWithContentRect:frame
         //                                              styleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable
-        styleMask:NSResizableWindowMask
-        backing:NSBackingStoreBuffered
-        defer:NO];
+                                                      styleMask:NSWindowStyleMaskResizable
+                                                        backing:NSBackingStoreBuffered
+                                                          defer:NO];
     [w setOwnerBaseWnd:this];
 
     ViewMacImp* view = [[ViewMacImp alloc] initWithFrame:frame];
@@ -42,10 +42,10 @@ bool Window::createForSkin(cstr_t szClassName, cstr_t szCaption, int x, int y, i
     m_handleHolder->view = view;
 
     [w setContentView:view];
-    // [w setBackgroundColor:[NSColor blueColor]];
-    //    [w makeFirstResponder:view];
+    [w makeFirstResponder:view];
     [w setAcceptsMouseMovedEvents:YES];
-    //    [w setRestorable:NO];
+    // [w setBackgroundColor:[NSColor blueColor]];
+    // [w setRestorable:NO];
 
     if (szCaption) {
         [w setTitle: [NSString stringWithUTF8String:szCaption]];
@@ -506,7 +506,7 @@ int messageOut(cstr_t lpText, uint32_t uType, cstr_t lpCaption) {
     } else if (btType == MB_YESNOCANCEL) {
         if (nRet == NSAlertFirstButtonReturn) {
             return IDYES;
-        } else if (nRet == NSAlertOtherReturn) {
+        } else if (nRet == NSAlertSecondButtonReturn) {
             return IDNO;
         } else {
             return IDCANCEL;
@@ -561,7 +561,7 @@ int Window::messageOut(cstr_t lpText, uint32_t uType, cstr_t lpCaption) {
     } else if (btType == MB_YESNOCANCEL) {
         if (nRet == NSAlertFirstButtonReturn) {
             return IDYES;
-        } else if (nRet == NSAlertOtherReturn) {
+        } else if (nRet == NSAlertSecondButtonReturn) {
             return IDNO;
         } else {
             return IDCANCEL;
@@ -591,6 +591,24 @@ void Window::postUserMessage(int nMessageID, LPARAM param) {
     [m_handleHolder->window performSelectorOnMainThread:@selector(onUserMsg:)
         withObject:msg
         waitUntilDone:false];
+}
+
+void Window::startTextInput() {
+    if (m_handleHolder->view) {
+        [m_handleHolder->view startTextInput];
+    }
+}
+
+void Window::endTextInput() {
+    if (m_handleHolder->view) {
+        [m_handleHolder->view endTextInput];
+    }
+}
+
+void Window::caretPositionChanged(const CPoint &point) {
+    if (m_handleHolder->view) {
+        [m_handleHolder->view caretPositionChanged:point];
+    }
 }
 
 void Window::setTransparent(uint8_t nAlpha, bool bClickThrough) {

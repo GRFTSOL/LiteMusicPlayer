@@ -1995,6 +1995,20 @@ void CSkinWnd::onTimer(uint32_t nIDEvent) {
     }
 }
 
+void CSkinWnd::onInputText(cstr_t text) {
+    CUIObject *pObjFocus = getFocusUIObj();
+    if (pObjFocus && pObjFocus->needMsgKey()) {
+        pObjFocus->onInputText(text);
+    }
+}
+
+void CSkinWnd::onInputMarkedText(cstr_t text) {
+    CUIObject *pObjFocus = getFocusUIObj();
+    if (pObjFocus && pObjFocus->needMsgKey()) {
+        pObjFocus->onInputMarkedText(text);
+    }
+}
+
 void CSkinWnd::getCursorClientPos(CPoint &pt) {
     pt = getCursorPos();
 

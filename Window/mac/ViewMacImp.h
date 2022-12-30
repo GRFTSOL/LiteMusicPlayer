@@ -29,10 +29,28 @@ inline NSRect NSMakeRect(const CRect &rc) {
     return nsrc;
 }
 
-@interface ViewMacImp : NSView {
+inline CPoint NSPointToCPoint(const NSPoint &nsPoint, int wndHeight) {
+    return CPoint((int)nsPoint.x, wndHeight - (int)nsPoint.y);
+}
+
+@interface ViewMacImp : NSView<NSTextInputClient> {
     Window *mBaseWnd;
+
+    // 输入法输入需要的成员
+    bool mIsTextInputMode;
+    bool mIsMarkedText;
+    CPoint mCaretPosition;
+
+    NSPoint mInitPt;
 }
 
 - (void)setOwnerBaseWnd:(Window*)baseWnd;
+
+// 在编辑框开始/结束编辑时需要调用
+- (void)startTextInput;
+- (void)endTextInput;
+
+// 编辑控件的光标位置改变后需要调用此函数
+- (void)caretPositionChanged:(CPoint)point;
 
 @end

@@ -420,8 +420,10 @@ protected:
     void removeStr(int nRow, int nCol, int nSize);
     void removeChar(int nRow, int nCol);
 
+    void insertStr(cstr_t text, bool isMarkedText = false);
+
     void insertChar(int nRow, int nCol, WCHAR chInsert);
-    void insertStr(int nRow, int nCol, cstr_t szText, int &nRowNext, int &nColNext);
+    void insertStr(int nRow, int nCol, cstr_t szText);
 
     void updateScrollInfo(bool bHorz = true, bool bVert = true);
 
@@ -469,6 +471,12 @@ public:
 
     virtual void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override;
     virtual void onHScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override;
+
+    // 最终输入的文字
+    virtual void onInputText(cstr_t text) override;
+
+    // MarketText 是临时的文字，当输入其他字符时会被替代
+    virtual void onInputMarkedText(cstr_t text) override;
 
     void onNotifyParseLine(int nLine) {
         if (m_pEditSyntaxParser) {
@@ -519,6 +527,11 @@ protected:
     int                         m_nBegSelRow, m_nEndSelRow;
     int                         m_nBegSelCol, m_nEndSelCol;
     bool                        m_bInMouseSel;      // is mouse select text?
+
+    // 输入法输入的临时文字区间
+    bool                        m_isMarkedText;
+    int                         m_begMarkedRow, m_endMarkedRow;
+    int                         m_begMarkedCol, m_endMarkedCol;
 
     int                         m_nOneCharDx;
 
