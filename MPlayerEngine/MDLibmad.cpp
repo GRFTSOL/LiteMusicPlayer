@@ -252,27 +252,10 @@ MLRESULT CMDLibmad::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia 
     FILE *fp = fopen(szSource, "rb");
     if (fp) {
         bool bUpdate = false;
-        string artist, title, album, comment;
-        string track, year, genre, composer;
+        BasicMediaTags tags;
 
         CID3v1 id3v1;
-        ID3V1 tag;
-        if (id3v1.getTag(fp, &tag) == ERR_OK) {
-            title = tag.szTitle;
-            artist = tag.szArtist;
-            album = tag.szAlbum;
-            year = tag.szYear;
-            comment = tag.szComment;
-
-            if (tag.byTrack != 255) {
-                track = stringFromInt(tag.byTrack);
-            }
-
-            cstr_t szGenre = CID3v1::getGenreDescription(tag.byGenre);
-            if (szGenre) {
-                genre = szGenre;
-            }
-
+        if (id3v1.getTag(fp, tags) == ERR_OK) {
             bUpdate = true;
         }
         fclose(fp);
@@ -281,21 +264,20 @@ MLRESULT CMDLibmad::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia 
 
         nRet = id3v2.open(szSource, false, false);
         if (nRet == ERR_OK) {
-            nRet = id3v2.getTags(artist,  title,  album,  comment,
-                track,  year,  genre);
+            nRet = id3v2.getTags(tags);
             if (nRet == ERR_OK) {
                 bUpdate = true;
             }
         }
 
         if (bUpdate) {
-            pMedia->setAttribute(MA_TITLE, title.c_str());
-            pMedia->setAttribute(MA_ARTIST, artist.c_str());
-            pMedia->setAttribute(MA_ALBUM, album.c_str());
-            pMedia->setAttribute(MA_YEAR, year.c_str());
-            pMedia->setAttribute(MA_COMMENT, comment.c_str());
-            pMedia->setAttribute(MA_TRACK_NUMB, track.c_str());
-            pMedia->setAttribute(MA_GENRE, genre.c_str());
+            pMedia->setAttribute(MA_TITLE, tags.title.c_str());
+            pMedia->setAttribute(MA_ARTIST, tags.artist.c_str());
+            pMedia->setAttribute(MA_ALBUM, tags.album.c_str());
+            pMedia->setAttribute(MA_YEAR, tags.year.c_str());
+            pMedia->setAttribute(MA_COMMENT, tags.comments.c_str());
+            pMedia->setAttribute(MA_TRACK_NUMB, tags.trackNo.c_str());
+            pMedia->setAttribute(MA_GENRE, tags.genre.c_str());
         }
     }
 

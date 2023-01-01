@@ -404,7 +404,6 @@ MLRESULT CMDWmpCore::doDecode(IMedia *pMedia) {
     MLRESULT nRet;
     CXStr strMedia;
     CMPAutoPtr<IMediaInput> pInput;
-    CMPTime timePlayed;
 
     nRet = pMedia->getSourceUrl(&strMedia);
     if (nRet != ERR_OK) {
@@ -433,20 +432,6 @@ MLRESULT CMDWmpCore::doDecode(IMedia *pMedia) {
         } else {
             setVolume(m_pPlayer->m_volume, m_pPlayer->m_balance);
         }
-    }
-
-    // set the play time
-    timePlayed.getCurrentTime();
-    pMedia->setAttribute(MA_TIME_PLAYED, timePlayed.m_time);
-
-    if (pMedia->getID() == MEDIA_ID_INVALID && m_pPlayer->isAutoAddToMediaLib()) {
-        m_pPlayer->m_pMediaLib->add(pMedia);
-    }
-
-    // If media info in media library isn't up to date,
-    // update to media library.
-    if (pMedia->getID() != MEDIA_ID_INVALID && !pMedia->isInfoUpdatedToMediaLib()) {
-        m_pPlayer->m_pMediaLib->updateMediaInfo(pMedia);
     }
 
     return ERR_OK;

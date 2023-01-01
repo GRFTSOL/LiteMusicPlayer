@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Utils/Utils.h"
+#include "MediaTagTypes.hpp"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -57,6 +57,8 @@ public:
     int open(FILE *fp, bool bCreate = false);
     void close();
     int saveClose();
+
+    int getTags(BasicMediaTags &tags);
 
     int listLyrics(VecStrings &vLyrNames);
     int getLyrics(string &strLyrics);

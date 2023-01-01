@@ -348,22 +348,18 @@ void CDlgMediaInfo::onOK() {
     //
     // update media info.
     //
+    BasicMediaTags tags;
+    tags.title = m_title;
+    tags.album = m_album;
+    tags.year = m_year;
+    tags.genre = m_genre;
+    tags.trackNo = m_track;
+    tags.comments = m_comment;
 
     // update id3v1 tag
     if (m_bBasicInfoModified && (m_nSupportedMediaTagType & MTT_ID3V1)) {
         CID3v1 id3v1;
-        ID3V1 id3v1Info;
-
-        memset(&id3v1Info, 0, sizeof(id3v1Info));
-
-        converID3v1Tag(id3v1Info.szTitle, CountOf(id3v1Info.szTitle), m_title.c_str(), m_nEncodingOfConvertAnsi);
-        converID3v1Tag(id3v1Info.szArtist, CountOf(id3v1Info.szArtist), m_artist.c_str(), m_nEncodingOfConvertAnsi);
-        converID3v1Tag(id3v1Info.szAlbum, CountOf(id3v1Info.szAlbum), m_album.c_str(), m_nEncodingOfConvertAnsi);
-        converID3v1Tag(id3v1Info.szComment, CountOf(id3v1Info.szComment), m_comment.c_str(), m_nEncodingOfConvertAnsi);
-        converID3v1Tag(id3v1Info.szYear, CountOf(id3v1Info.szYear), m_year.c_str(), m_nEncodingOfConvertAnsi);
-        id3v1Info.byTrack = atoi(m_track.c_str());
-        id3v1Info.byGenre = CID3v1::getGenreIndex(m_genre.c_str());
-        nRet = id3v1.saveTag(m_strMediaFile.c_str(), &id3v1Info);
+        nRet = id3v1.saveTag(m_strMediaFile.c_str(), tags);
         if (nRet != ERR_OK) {
             messageOut(ERROR2STR_LOCAL(nRet));
             return;
@@ -381,8 +377,7 @@ void CDlgMediaInfo::onOK() {
         if (nRet == ERR_OK) {
             // ID3v2 general tags
             if (m_bBasicInfoModified || m_bDetailInfoModified) {
-                nRet = id3v2.setTags(m_artist.c_str(), m_title.c_str(), m_album.c_str(), m_comment.c_str(),
-                    m_track.c_str(), m_year.c_str(), m_genre.c_str());
+                nRet = id3v2.setTags(tags);
                 //nRet = id3v2.SetExtraTags(m_composer.c_str(), m_encoded.c_str(), m_url.c_str(), m_copyRight.c_str(),
                 //    m_origArtist.c_str(), m_publisher.c_str(), m_bpm.c_str());
                 if (nRet != ERR_OK) {
@@ -468,24 +463,10 @@ void CDlgMediaInfo::reloadMediaInfo() {
     m_nSupportedMediaTagType = getSupportedMTTByExt(m_strMediaFile.c_str());
 
     // load id3v1 tag
+    BasicMediaTags tags;
     if (m_nSupportedMediaTagType & MTT_ID3V1) {
         CID3v1 id3v1;
-        ID3V1 id3v1Info;
-        nRet = id3v1.getTag(m_strMediaFile.c_str(), &id3v1Info);
-        if (nRet == ERR_OK) {
-            mbcsToUtf8(id3v1Info.szArtist, -1, m_artist, m_nEncodingOfConvertAnsi);
-            mbcsToUtf8(id3v1Info.szTitle, -1, m_title, m_nEncodingOfConvertAnsi);
-            mbcsToUtf8(id3v1Info.szAlbum, -1, m_album, m_nEncodingOfConvertAnsi);
-            mbcsToUtf8(id3v1Info.szComment, -1, m_comment, m_nEncodingOfConvertAnsi);
-            mbcsToUtf8(id3v1Info.szYear, -1, m_year, m_nEncodingOfConvertAnsi);
-
-            m_track = stringPrintf("%d", id3v1Info.byTrack).c_str();
-            cstr_t szGenre;
-            szGenre = CID3v1::getGenreDescription(id3v1Info.byGenre);
-            if (szGenre) {
-                mbcsToUtf8(szGenre, -1, m_genre, m_nEncodingOfConvertAnsi);
-            }
-        }
+        nRet = id3v1.getTag(m_strMediaFile.c_str(), tags);
     }
 
     // load id3v2 tag
@@ -494,22 +475,8 @@ void CDlgMediaInfo::reloadMediaInfo() {
 
         nRet = id3v2.open(m_strMediaFile.c_str(), false, false);
         if (nRet == ERR_OK) {
-            string artist, title, album, comment;
-            string track, year, genre;
-
             // ID3v2 general tags
-            nRet = id3v2.getTags(artist, title, album, comment,
-                track, year, genre);//, m_composer,
-            //m_encoded, m_url, m_copyRight, m_origArtist, m_publisher, m_bpm);
-            if (nRet == ERR_OK) {
-                IfNotEmptyThenSet(artist, m_artist);
-                IfNotEmptyThenSet(title, m_title);
-                IfNotEmptyThenSet(album, m_album);
-                IfNotEmptyThenSet(comment, m_comment);
-                IfNotEmptyThenSet(track, m_track);
-                IfNotEmptyThenSet(year, m_year);
-                IfNotEmptyThenSet(genre, m_genre);
-            }
+            nRet = id3v2.getTags(tags);
 
             // Id3v2 lyrics
             ID3v2UnsynchLyrics lyrics;
@@ -522,6 +489,13 @@ void CDlgMediaInfo::reloadMediaInfo() {
             id3v2.getPictures(m_pictures);
         }
     }
+
+    m_title = tags.title;
+    m_album = tags.album;
+    m_year = tags.year;
+    m_genre = tags.genre;
+    m_track = tags.trackNo;
+    m_comment = tags.comments;
 }
 
 void showMediaInfoDialog(CSkinWnd *pParent, IMedia *pMedia) {

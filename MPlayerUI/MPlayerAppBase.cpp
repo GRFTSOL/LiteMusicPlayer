@@ -133,7 +133,7 @@ bool CMPlayerAppBase::init() {
 
     registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_LYRICS_SEARCH_END, ET_DOWNLOAD_END, ET_LYRICS_RESEARCH);
 
-    g_Player.onInit(false);
+    g_Player.onInit();
 
     // create main skin window.
     int nRet = loadDefaultSkin(SZ_DEFSKIN);

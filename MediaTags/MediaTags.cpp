@@ -119,53 +119,35 @@ bool MediaTags::isMediaTypeSupported(cstr_t szFile) {
     return false;
 }
 
-int MediaTags::getTagFast(cstr_t szFile, string *pArtist, string *pTitle, string *pAlbum,
-    string *pYear, string *pGenre, string *pTrackNo, uint32_t *pMediaLength) {
-    FILE *fp;
-    int nRet;
-    fp = fopen(szFile, "rb");
+int MediaTags::getTagFast(cstr_t szFile, BasicMediaTags &tags) {
+    FILE *fp = fopen(szFile, "rb");
     if (!fp) {
         setCustomErrorDesc(stringPrintf("%s: %s", OSError().Description(), szFile).c_str());
         return ERR_CUSTOM_ERROR;
     }
 
-    cstr_t *szSupportedExt = CID3v1::getSupportedExtArray();
-    cstr_t szExt = fileGetExt(szFile);
-
-    // .mp3
-    if (isStrInArray(szSupportedExt, szExt)) {
-        if (pMediaLength) {
-            CMP3InfoReader reader;
-            reader.attach(fp);
-            *pMediaLength = reader.getMediaLength();
-        }
+    if (isID3v2TagSupported(szFile)) {
+        CMP3InfoReader reader;
+        reader.attach(fp);
+        tags.mediaLength = reader.getMediaLength();
 
         CID3v2IF id3v2(ED_SYSDEF);
-        string temp;
-        nRet = id3v2.open(fp, false);
+        int nRet = id3v2.open(fp, false);
         if (nRet == ERR_OK) {
-            if (!pArtist) pArtist = &temp;
-            if (!pAlbum) pAlbum = &temp;
-            if (!pTitle) pTitle = &temp;
-            if (!pTrackNo) pTrackNo = &temp;
-            if (!pYear) pYear = &temp;
-            if (!pGenre) pGenre = &temp;
-
-            id3v2.getTags(*pArtist, *pTitle, *pAlbum, temp, *pTrackNo, *pYear, *pGenre);
+            id3v2.getTags(tags);
         }
 
         CID3v1 id3v1;
-        ID3V1 v1tag;
 
-        nRet = id3v1.getTag(fp, &v1tag);
-        if (nRet == ERR_OK) {
-            if (pArtist && pArtist->empty()) *pArtist = v1tag.szArtist;
-            if (pAlbum && pAlbum->empty()) *pAlbum = v1tag.szAlbum;
-            if (pTitle && pTitle->empty()) *pTitle = v1tag.szTitle;
-            if (pYear && pYear->empty()) *pYear = v1tag.szYear;
-            if (pGenre && pGenre->empty()) *pGenre = id3v1.getGenreDescription(v1tag.byGenre);
-            if (pTrackNo && pTrackNo->empty()) *pTrackNo = stringPrintf("%d", v1tag.byTrack).c_str();
+        return id3v1.getTag(fp, tags);
+    } else if (isM4aTagSupported(szFile)) {
+        CM4aTag tag;
+        int nRet = tag.open(fp, false);
+        if (nRet != ERR_OK) {
+            return nRet;
         }
+
+        return tag.getTags(tags);
     }
 
     return ERR_OK;

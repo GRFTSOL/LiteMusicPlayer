@@ -16,7 +16,7 @@ public:
     virtual ~CPlayer();
 
 public:
-    void onInit(bool bMiniLyrics);
+    void onInit();
     void onQuit();
 
     // control player
@@ -28,15 +28,11 @@ public:
     void next();
     void seekTo(uint32_t nMsPos);
 
-    // get player skin path
-    void getCurSkinPath(char * lpszBuffer, int nBufSize);
-
     PLAYER_STATE getPlayerState();
 
     uint32_t getMediaLength();
 
     uint32_t getPlayPos();
-    bool hasVideo();
 
     void setLoop(MP_LOOP_MODE loopMode);
     void setToNextLoopMode();

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MPTime.h"
+#include "IMPlayer.h"
 
 
 class CMedia : public IMedia {
@@ -30,8 +30,8 @@ public:
     virtual MLRESULT getAttribute(MediaAttribute mediaAttr, IString *strValue);
     virtual MLRESULT setAttribute(MediaAttribute mediaAttr, cstr_t szValue);
 
-    virtual MLRESULT getAttribute(MediaAttribute mediaAttr, int *pnValue);
-    virtual MLRESULT setAttribute(MediaAttribute mediaAttr, int value);
+    virtual MLRESULT getAttribute(MediaAttribute mediaAttr, int64_t *pnValue);
+    virtual MLRESULT setAttribute(MediaAttribute mediaAttr, int64_t value);
 
 protected:
     friend class CMediaLibrary;
@@ -50,8 +50,8 @@ protected:
     string                      m_strComment;
     int                         m_nLength;
     uint32_t                    m_nFileSize;
-    CMPTime                     m_nTimeAdded;
-    CMPTime                     m_nTimePlayed;
+    time_t                      m_timeAdded;
+    time_t                      m_timePlayed;
 
     uint16_t                    m_nRating;          // 0 ~ 500
     bool                        m_bIsUserRating;
@@ -60,6 +60,7 @@ protected:
     int                         m_nPlaySkipped;
 
     string                      m_strLyricsFile;
+    string                      m_musicHash;
 
     string                      m_strFormat;
     int                         m_nBitRate;

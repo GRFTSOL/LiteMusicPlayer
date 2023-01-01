@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "../../Utils/Utils.h"
+#include "../MediaTagTypes.hpp"
 
 
 enum ID3_V1Lengths {
@@ -18,16 +18,6 @@ enum ID3_V1Lengths {
     ID3_V1_LEN_GENRE            =   1
 };
 
-struct ID3V1 {
-    char                        szTitle[ID3_V1_LEN_TITLE + 1];
-    char                        szArtist[ID3_V1_LEN_ARTIST + 1];
-    char                        szAlbum[ID3_V1_LEN_ALBUM + 1];
-    char                        szYear[ID3_V1_LEN_YEAR + 1];
-    char                        szComment[ID3_V1_LEN_COMMENT + 1];
-    uint8_t                     byTrack;
-    uint8_t                     byGenre;
-};
-
 class CID3v1 {
 public:
     CID3v1();
@@ -36,24 +26,24 @@ public:
 #pragma pack(push)
 #pragma pack(1)
     struct ID3v1Data {
-        char                        szID3ID[ID3_V1_LEN_ID];
-        char                        szTitle[ID3_V1_LEN_TITLE];
-        char                        szArtist[ID3_V1_LEN_ARTIST];
-        char                        szAlbum[ID3_V1_LEN_ALBUM];
-        char                        szYear[ID3_V1_LEN_YEAR];
-        char                        szComment[ID3_V1_LEN_COMMENT];
-        uint8_t                     byTrack;
-        uint8_t                     byGenre;
+        char                        id3ID[ID3_V1_LEN_ID];
+        char                        title[ID3_V1_LEN_TITLE];
+        char                        artist[ID3_V1_LEN_ARTIST];
+        char                        album[ID3_V1_LEN_ALBUM];
+        char                        year[ID3_V1_LEN_YEAR];
+        char                        comments[ID3_V1_LEN_COMMENT];
+        uint8_t                     track;
+        uint8_t                     genre;
     };
 #pragma pack(pop)
 
     static cstr_t *getSupportedExtArray();
 
-    int getTag(cstr_t szFile, ID3V1 *id3v1);
-    int getTag(FILE *fp, ID3V1 *id3v1);
+    int getTag(cstr_t szFile, BasicMediaTags &tags);
+    int getTag(FILE *fp, BasicMediaTags &tags);
 
-    int saveTag(cstr_t szFile, ID3V1 *id3v1);
-    int saveTag(FILE *fp, ID3V1 *id3v1);
+    int saveTag(cstr_t szFile, const BasicMediaTags &tags);
+    int saveTag(FILE *fp, const BasicMediaTags &tags);
 
     static cstr_t* GetAllGenreDescription();
     static unsigned int GetGenreCount();

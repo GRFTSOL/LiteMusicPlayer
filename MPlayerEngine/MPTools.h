@@ -17,8 +17,8 @@ public:
     virtual uint32_t capacity();
     virtual void resize(uint32_t nSize);
     virtual MLRESULT reserve(uint32_t nCapacity);
-    virtual void copy(IString *pSrcStr);
-    virtual void copy(cstr_t str);
+    virtual void assign(IString *pSrcStr);
+    virtual void assign(cstr_t str);
     virtual void erase(int nOffset, int n);
     virtual void clear();
     virtual void insert(int nOffset, cstr_t str, int n);

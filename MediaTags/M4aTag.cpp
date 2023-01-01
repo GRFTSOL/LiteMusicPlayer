@@ -13,6 +13,20 @@
 #define SZ_TYPE_DATA        "data"
 
 
+M4aBox *getBox(M4aBox *parent, cstr_t szPath) {
+    VecStrings vPath;
+    strSplit(szPath, '.', vPath);
+
+    for (uint32_t i = 0; i < vPath.size(); i++) {
+        parent = parent->findBox(vPath[i].c_str());
+        if (!parent) {
+            return nullptr;
+        }
+    }
+
+    return parent;
+}
+
 bool canBoxHasChild(char szType[]) {
     cstr_t vList[] = { SZ_TYPE_MOOV, SZ_TYPE_TRACK, SZ_TYPE_UDTA, SZ_TYPE_META, SZ_TYPE_ILST, };
 
@@ -25,54 +39,105 @@ bool canBoxHasChild(char szType[]) {
     return false;
 }
 
-//////////////////////////////////////////////////////////////////////////
+// https://developer.apple.com/library/archive/documentation/QuickTime/QTFF/Metadata/Metadata.html
+
+// Data Atom Structure
+/**
+ * Type Indicator
+ *    The type indicator, as defined in Type Indicator.
+ * Locale Indicator
+ *    The locale indicator, as defined in Locale Indicator.
+ * Value
+ *    An array of bytes containing the value of the metadata.
+ */
 class CM4aBoxParser {
 public:
-    CM4aBoxParser() { }
-    virtual ~CM4aBoxParser() { }
+    CM4aBoxParser(M4aBox *box) : m_data(box->m_data) { }
 
-    virtual int parse(M4aBox *box) = 0;
-    virtual int convertTo(M4aBox *box) = 0;
+    enum DataType {
+        DT_CUSTOMIZE                = 0,
+        DT_UTF8_STRING              = 1,
+    };
 
-};
-
-class CM4aBoxTextParser : public CM4aBoxParser {
-public:
-    virtual int parse(M4aBox *box) {
-        char buf[8];
-        memset(buf, 0, 8);
-        buf[3] = 1;
-        if (memcmp(box->m_data.c_str(), buf, 8) != 0) {
-            return ERR_BAD_FILE_FORMAT;
+    DataType getDataType() {
+        if (m_data.size() < 4) {
+            return DT_CUSTOMIZE;
         }
 
-        m_strLyrics.assign(box->m_data.c_str() + 8, box->m_nSize - 8 - M4aBox::HEADER_SIZE);
-        return ERR_OK;
+        return (DataType)uint32FromBE((uint8_t *)m_data.c_str());
     }
 
-    virtual int convertTo(M4aBox *box) {
-        if (box->m_data.size() < 8) {
-            box->m_data.resize(8);
-            memset((char *)box->m_data.c_str(), 0, box->m_data.size());
-            box->m_data[3] = 1;
+    string parseAsUtf8() {
+        assert(getDataType() == DT_UTF8_STRING);
+        if (getDataType() != DT_UTF8_STRING) {
+            return "";
+        }
+
+        auto p = (cstr_t)m_data.c_str();
+        auto end = p + m_data.size();
+
+        // 4 bytes type, 4 bytes locale
+        p += 8;
+
+        string str;
+        if (p < end) {
+            str.assign(p, (size_t)(end - p));
+        }
+        return str;
+    }
+
+    vector<uint16_t> parseAsUint16Arr() {
+        assert(getDataType() == DT_CUSTOMIZE);
+        auto p = (uint8_t *)m_data.c_str();
+        auto end = p + m_data.size();
+
+        // 4 bytes type, 4 bytes locale
+        p += 8;
+
+        vector<uint16_t> a;
+
+        // 用于测试
+        // string s;
+        // for (; p < end; p += 4) {
+        //     s += itos(uint32FromBE(p)) + ",";
+        // }
+        // printf("N32: %s\n", s.c_str());
+        //
+        // s.clear(); p = (uint8_t *)m_data.c_str() + 8;
+        // for (; p < end; p += 2) {
+        //     s += itos(uint16FromBE(p)) + ",";
+        // }
+        // printf("N16: %s\n", s.c_str());
+        //
+        // s.clear(); p = (uint8_t *)m_data.c_str() + 8;
+        // for (; p < end; p ++) {
+        //     s += itos(*p) + ",";
+        // }
+        // printf("N8: %s\n", s.c_str());
+
+        for (; p < end; p += 2) {
+            a.push_back(uint16FromBE(p));
+        }
+
+        return a;
+    }
+
+    virtual int convertToText(cstr_t text) {
+        if (m_data.size() < 8) {
+            m_data.resize(8);
+            memset((char *)m_data.c_str(), 0, m_data.size());
+            m_data[3] = 1;
         } else {
-            box->m_data.resize(8);
+            m_data.resize(8);
         }
-        box->m_data.append(m_strLyrics);
+        m_data.append(text);
         return ERR_OK;
     }
 
-    string                      m_strLyrics;
+private:
+    string                      &m_data;
 
 };
-
-#ifdef _DEBUG
-void debugParseLyrics(M4aBox *box) {
-    CM4aBoxTextParser parser;
-    parser.parse(box);
-    _tprintf("Lyrics: %s\r\n", parser.m_strLyrics.c_str());
-}
-#endif // #ifdef _DEBUG
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -181,16 +246,6 @@ void M4aBox::calculateNewSize() {
         m_nSizeNew += p->m_nSizeNew;
     }
 }
-
-//////////////////////////////////////////////////////////////////////////
-
-class M4aLyricsBox : public M4aBox {
-public:
-    M4aLyricsBox();
-
-    string                      m_strLyrics;
-
-};
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -374,6 +429,72 @@ int CM4aTag::parse(M4aBox *parent, int nExtraHeaderOffset) {
     return ERR_OK;
 }
 
+void getBoxText(M4aBox *parent, string &value) {
+    if (value.empty()) {
+        auto box = parent->findBox("data");
+        if (box) {
+            CM4aBoxParser parser(box);
+            value = parser.parseAsUtf8();
+        }
+    }
+}
+
+void getBoxTrackNumber(M4aBox *parent, string &value) {
+    if (value.empty()) {
+        auto box = parent->findBox("data");
+        if (box) {
+            CM4aBoxParser parser(box);
+            if (parser.getDataType() == CM4aBoxParser::DT_CUSTOMIZE) {
+                auto arr = parser.parseAsUint16Arr();
+                if (arr.size() == 4) {
+                    value = itos(arr[1]) + "," + itos(arr[2]);
+                }
+            }
+        }
+    }
+}
+
+void getBoxGenre(M4aBox *parent, string &value) {
+    if (value.empty()) {
+        auto box = parent->findBox("data");
+        if (box) {
+            CM4aBoxParser parser(box);
+            if (parser.getDataType() == CM4aBoxParser::DT_CUSTOMIZE) {
+                auto arr = parser.parseAsUint16Arr();
+                if (arr.size() == 1) {
+                    value = CID3v1::getGenreDescription(arr[0]);
+                }
+            } else if (parser.getDataType() == CM4aBoxParser::DT_UTF8_STRING) {
+                value = parser.parseAsUtf8();
+            }
+        }
+    }
+}
+
+int CM4aTag::getTags(BasicMediaTags &tags) {
+
+    M4aBox *parent = getBox("moov.udta.meta.ilst");
+    if (!parent) {
+        return ERR_NOT_FOUND;
+    }
+
+    for (auto child : parent->m_vChildren) {
+        printf("%s\n", child->m_szType);
+
+        if (child->isType("\xA9""art")) { getBoxText(child, tags.artist); }
+        else if (child->isType("\xA9""ART")) { getBoxText(child, tags.artist); }
+        else if (child->isType("aART")) { getBoxText(child, tags.artist); }
+        else if (child->isType("\xA9""nam")) { getBoxText(child, tags.title); }
+        else if (child->isType("\xA9""alb")) { getBoxText(child, tags.album); }
+        else if (child->isType("\xA9""day")) { getBoxText(child, tags.year); }
+        else if (child->isType("\xA9""gen")) { getBoxText(child, tags.genre); }
+        else if (child->isType("gnre")) { getBoxGenre(child, tags.genre); }
+        else if (child->isType("trkn")) { getBoxTrackNumber(child, tags.trackNo); }
+    }
+
+    return ERR_OK;
+}
+
 /**
 stco = sample table chunk offset
 
@@ -469,18 +590,7 @@ int CM4aTag::read(M4aBox *parent) {
 }
 
 M4aBox *CM4aTag::getBox(cstr_t szPath) {
-    VecStrings vPath;
-    strSplit(szPath, '.', vPath);
-
-    M4aBox *parent = &m_root;
-    for (uint32_t i = 0; i < vPath.size(); i++) {
-        parent = parent->findBox(vPath[i].c_str());
-        if (!parent) {
-            return nullptr;
-        }
-    }
-
-    return parent;
+    return ::getBox(&m_root, szPath);
 }
 
 int CM4aTag::listLyrics(VecStrings &vLyrNames) {
@@ -497,13 +607,13 @@ int CM4aTag::getLyrics(string &strLyrics) {
         return ERR_NOT_FOUND;
     }
 
-    CM4aBoxTextParser parser;
-    int nRet = parser.parse(box);
-    if (nRet == ERR_OK) {
-        strLyrics = parser.m_strLyrics;
+    CM4aBoxParser parser(box);
+    if (parser.getDataType() == CM4aBoxParser::DT_UTF8_STRING) {
+        strLyrics = parser.parseAsUtf8();
+        return ERR_OK;
     }
 
-    return nRet;
+    return ERR_NOT_SUPPORT_FILE_FORMAT;
 }
 
 bool CM4aTag::hasLyrics() {
@@ -526,14 +636,13 @@ int CM4aTag::setLyrics(cstr_t szLyrics) {
         pLyrics->addChild(new M4aBox(SZ_TYPE_DATA, 0, 0));
     }
 
-    M4aBox *pData = pLyrics->findBox(SZ_TYPE_DATA);
-    if (!pData) {
+    M4aBox *box = pLyrics->findBox(SZ_TYPE_DATA);
+    if (!box) {
         return ERR_BAD_FILE_FORMAT;
     }
 
-    CM4aBoxTextParser parser;
-    parser.m_strLyrics = szLyrics;
-    parser.convertTo(pData);
+    CM4aBoxParser parser(box);
+    parser.convertToText(szLyrics);
 
     return ERR_OK;
 }

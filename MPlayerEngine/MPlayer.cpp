@@ -621,8 +621,20 @@ MLRESULT CMPlayer::play() {
             m_bAutoPlayNext = true;
             m_bCurMediaPlayed = true;
             nRet = m_pMDAgent->doDecode(m_pCurrentMedia);
-
             if (nRet == ERR_OK) {
+                // set the play time
+                m_pCurrentMedia->setAttribute(MA_TIME_PLAYED, time(nullptr));
+
+                if (m_pCurrentMedia->getID() == MEDIA_ID_INVALID && m_spPlayer->isAutoAddToMediaLib()) {
+                    m_spPlayer->m_pMediaLib->add(m_pCurrentMedia);
+                }
+
+                // If media info in media library isn't up to date,
+                // update to media library.
+                if (m_pCurrentMedia->getID() != MEDIA_ID_INVALID && !m_pCurrentMedia->isInfoUpdatedToMediaLib()) {
+                    m_spPlayer->m_pMediaLib->updateMediaInfo(m_pCurrentMedia);
+                }
+
                 m_state = PS_PLAYING;
                 notifyPlayStateChanged();
             }
@@ -892,9 +904,9 @@ uint32_t CMPlayer::getLength() {
     } else {
         IMedia *pMedia;
         if (m_currentPlaylist->getItem(m_nCurrentMedia, &pMedia) == ERR_OK) {
-            int value = 0;
+            int64_t value = 0;
             if (pMedia->getAttribute(MA_DURATION, &value) == ERR_OK) {
-                return value;
+                return (uint32_t)value;
             } else {
                 return 0;
             }
@@ -1263,9 +1275,8 @@ static bool isBasicMediaInfoSame(IMedia *pMedia1, IMedia *pMedia2) {
         }
     }
 
-    int n1, n2;
     for (i = 0; i < CountOf(vIntAttrCheck); i++) {
-        n1 = n2 = 0;
+        int64_t n1 = 0, n2 = 0;
         pMedia1->getAttribute(vIntAttrCheck[i], &n1);
         pMedia2->getAttribute(vIntAttrCheck[i], &n2);
         if (n1 != n2) {

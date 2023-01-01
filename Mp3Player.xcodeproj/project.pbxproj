@@ -188,7 +188,6 @@
 		0EB7110F277CAB54006929F1 /* Looper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7110D277CAB53006929F1 /* Looper.cpp */; };
 		0EB71113277CB16C006929F1 /* RegExTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB71111277CB16B006929F1 /* RegExTool.cpp */; };
 		0EB7111B277D8400006929F1 /* Event.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7111A277D83FF006929F1 /* Event.mm */; };
-		0EB7114D277D9AEF006929F1 /* MediaSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7114C277D9AEF006929F1 /* MediaSource.mm */; };
 		0EB71154277D9B93006929F1 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EB71153277D9B93006929F1 /* AVFoundation.framework */; };
 		0EB71157277D9C0A006929F1 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EB71156277D9C0A006929F1 /* CoreMedia.framework */; };
 		0EB7115F277DCC79006929F1 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EB7115E277DCC78006929F1 /* CoreText.framework */; };
@@ -638,7 +637,6 @@
 		0EB7103427773BB4006929F1 /* DlgUpdateLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DlgUpdateLibrary.h; sourceTree = "<group>"; };
 		0EB7103527773BB4006929F1 /* MPHotkey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPHotkey.h; sourceTree = "<group>"; };
 		0EB7103627773BB4006929F1 /* DlgBatchProcessEmbeddedLyrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DlgBatchProcessEmbeddedLyrics.h; sourceTree = "<group>"; };
-		0EB7103727773BB4006929F1 /* MediaSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSource.h; sourceTree = "<group>"; };
 		0EB7103827773BB4006929F1 /* MPlayerApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPlayerApp.h; sourceTree = "<group>"; };
 		0EB7103A27773BB4006929F1 /* MPSkinMainWndMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPSkinMainWndMac.h; sourceTree = "<group>"; };
 		0EB7103C27773BB4006929F1 /* LyricsOutPluginMgr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LyricsOutPluginMgr.h; sourceTree = "<group>"; };
@@ -714,7 +712,6 @@
 		0EB71112277CB16C006929F1 /* RegExTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExTool.h; sourceTree = "<group>"; };
 		0EB71119277D83FF006929F1 /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
 		0EB7111A277D83FF006929F1 /* Event.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Event.mm; sourceTree = "<group>"; };
-		0EB7114C277D9AEF006929F1 /* MediaSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaSource.mm; sourceTree = "<group>"; };
 		0EB71150277D9B77006929F1 /* AVKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = System/Library/Frameworks/AVKit.framework; sourceTree = SDKROOT; };
 		0EB71153277D9B93006929F1 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		0EB71156277D9C0A006929F1 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
@@ -1315,8 +1312,6 @@
 				0EB7104B27773BB4006929F1 /* HelperMac.cpp */,
 				0EB7103D27773BB4006929F1 /* LyricsOutPluginMgr.cpp */,
 				0EB7103C27773BB4006929F1 /* LyricsOutPluginMgr.h */,
-				0EB7103727773BB4006929F1 /* MediaSource.h */,
-				0EB7114C277D9AEF006929F1 /* MediaSource.mm */,
 				0EB7104127773BB4006929F1 /* MLTrayIcon.cpp */,
 				0EB7104927773BB4006929F1 /* MLTrayIcon.h */,
 				0EB7103F27773BB4006929F1 /* MPHotkey.cpp */,
@@ -1624,7 +1619,6 @@
 				0EB70F1A277223D2006929F1 /* RawImage.cpp in Sources */,
 				0EB70F17277223D2006929F1 /* RawPen.cpp in Sources */,
 				0EB710E3277A0DF9006929F1 /* Thread.cpp in Sources */,
-				0EB7114D277D9AEF006929F1 /* MediaSource.mm in Sources */,
 				0EB710C627773BB6006929F1 /* HelperMac.cpp in Sources */,
 				0EB70F5F27759DF5006929F1 /* SplashScreenWnd.cpp in Sources */,
 				0EB7109627773BB6006929F1 /* PreferenceDlg.cpp in Sources */,

@@ -49,7 +49,7 @@ CMedia::CMedia() {
     m_nRating = 0;
     m_nPlayed = 0;
     m_nPlaySkipped = 0;
-    m_nTimeAdded.getCurrentTime();
+    m_timeAdded = time(nullptr);
     /*m_nBitRate = 0;
     m_bIsVbr = false;
     m_nChannels = 2;
@@ -69,22 +69,22 @@ int CMedia::getID() {
 }
 
 MLRESULT CMedia::getSourceUrl(IString *strUrl) {
-    strUrl->copy(m_strUrl.c_str());
+    strUrl->assign(m_strUrl.c_str());
     return ERR_OK;
 }
 
 MLRESULT CMedia::getArtist(IString *strArtist) {
-    strArtist->copy(m_strArtist.c_str());
+    strArtist->assign(m_strArtist.c_str());
     return ERR_OK;
 }
 
 MLRESULT CMedia::getTitle(IString *strTitle) {
-    strTitle->copy(m_strTitle.c_str());
+    strTitle->assign(m_strTitle.c_str());
     return ERR_OK;
 }
 
 MLRESULT CMedia::getAlbum(IString *strAlbum) {
-    strAlbum->copy(m_strAlbum.c_str());
+    strAlbum->assign(m_strAlbum.c_str());
     return ERR_OK;
 }
 
@@ -112,17 +112,12 @@ void long2XStr(int value, IString *str) {
     str->resize(size);
 }
 
-void mPTime2XStr(CMPTime &date, IString *str) {
-    MPTM tm;
-
-    if (date.getMPTM(&tm)) {
-        str->reserve(200);
-        int size = snprintf(str->data(), str->capacity(), "%04d-%02d-%02d %02d:%02d:%02d",
-            tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
-            tm.tm_hour, tm.tm_min, tm.tm_sec);
-        str->resize(size);
+void time2XStr(time_t time, IString *str) {
+    if (time == 0) {
+        str->assign("-");
     } else {
-        str->copy("-");
+        DateTime date((int64_t)time);
+        str->assign(date.toDateTimeString().c_str());
     }
 }
 
@@ -130,31 +125,31 @@ MLRESULT CMedia::getAttribute(MediaAttribute mediaAttr, IString *strValue) {
     strValue->clear();
 
     switch (mediaAttr) {
-        case MA_ARTIST : strValue->copy(m_strArtist.c_str()); break;
-        case MA_ALBUM : strValue->copy(m_strAlbum.c_str()); break;
-        case MA_TITLE : strValue->copy(m_strTitle.c_str()); break;
+        case MA_ARTIST : strValue->assign(m_strArtist.c_str()); break;
+        case MA_ALBUM : strValue->assign(m_strAlbum.c_str()); break;
+        case MA_TITLE : strValue->assign(m_strTitle.c_str()); break;
         case MA_TRACK_NUMB : if (m_nTrackNumb != -1) long2XStr(m_nTrackNumb, strValue); break;
         case MA_YEAR : if (m_nYear != -1) long2XStr(m_nYear, strValue); break;
-        case MA_GENRE : strValue->copy(m_strGenre.c_str()); break;
-        case MA_COMMENT : strValue->copy(m_strComment.c_str()); break;
+        case MA_GENRE : strValue->assign(m_strGenre.c_str()); break;
+        case MA_COMMENT : strValue->assign(m_strComment.c_str()); break;
         case MA_BITRATE : long2XStr(m_nBitRate, strValue); break;
         case MA_DURATION : long2XStr(m_nLength, strValue); break;
         case MA_FILESIZE : long2XStr(m_nFileSize, strValue); break;
-        case MA_TIME_ADDED : mPTime2XStr(m_nTimeAdded, strValue); break;
-        case MA_TIME_PLAYED : mPTime2XStr(m_nTimePlayed, strValue); break;
+        case MA_TIME_ADDED : time2XStr(m_timeAdded, strValue); break;
+        case MA_TIME_PLAYED : time2XStr(m_timePlayed, strValue); break;
         case MA_RATING : long2XStr(m_nRating, strValue); break;
         case MA_IS_USER_RATING : long2XStr(m_bIsUserRating, strValue); break;
         case MA_TIMES_PLAYED: long2XStr(m_nPlayed, strValue); break;
         case MA_TIMES_PLAY_SKIPPED: long2XStr(m_nPlaySkipped, strValue); break;
-        case MA_LYRICS_FILE : strValue->copy(m_strLyricsFile.c_str()); break;
+        case MA_LYRICS_FILE : strValue->assign(m_strLyricsFile.c_str()); break;
 
         // the following info will not stored in media library
-        case MA_FORMAT : strValue->copy(m_strFormat.c_str()); break;
+        case MA_FORMAT : strValue->assign(m_strFormat.c_str()); break;
         case MA_ISVBR : long2XStr(m_bIsVbr, strValue); break;
         case MA_BPS : long2XStr(m_nBPS, strValue); break;
         case MA_CHANNELS : long2XStr(m_nChannels, strValue); break;
         case MA_SAMPLE_RATE : long2XStr(m_nSampleRate, strValue); break;
-        case MA_EXTRA_INFO : strValue->copy(m_strExtraInfo.c_str()); break;
+        case MA_EXTRA_INFO : strValue->assign(m_strExtraInfo.c_str()); break;
     default:
         return ERR_NOT_SUPPORT;
     }
@@ -173,8 +168,6 @@ MLRESULT CMedia::setAttribute(MediaAttribute mediaAttr, cstr_t szValue) {
         case MA_BITRATE : m_nBitRate = atoi(szValue); break;
         case MA_DURATION : m_nLength = atoi(szValue); break;
         case MA_FILESIZE : m_nFileSize = atoi(szValue); break;
-        //     case MA_TIME_ADDED    : m_nTimeAdded.dwTime = atoi(szValue); break;
-        //     case MA_TIME_PLAYED    : m_nTimePlayed.dwTime = atoi(szValue); break;
         case MA_RATING : m_nRating = atoi(szValue); break;
         case MA_IS_USER_RATING : m_bIsUserRating = tobool(atoi(szValue)); break;
         case MA_TIMES_PLAYED: m_nPlayed = atoi(szValue); break;
@@ -194,19 +187,19 @@ MLRESULT CMedia::setAttribute(MediaAttribute mediaAttr, cstr_t szValue) {
     return ERR_OK;
 }
 
-MLRESULT CMedia::getAttribute(MediaAttribute mediaAttr, int *pnValue) {
+MLRESULT CMedia::getAttribute(MediaAttribute mediaAttr, int64_t *pnValue) {
     switch (mediaAttr) {
         case MA_TRACK_NUMB : *pnValue = m_nTrackNumb; break;
         case MA_YEAR : *pnValue = m_nYear; break;
-        case MA_BITRATE : *pnValue = (int)m_nBitRate; break;
-        case MA_DURATION : *pnValue = (int)m_nLength; break;
-        case MA_FILESIZE : *pnValue = (int)m_nFileSize; break;
-        case MA_TIME_ADDED : *pnValue = (int)m_nTimeAdded.m_time; break;
-        case MA_TIME_PLAYED : *pnValue = (int)m_nTimePlayed.m_time; break;
+        case MA_BITRATE : *pnValue = m_nBitRate; break;
+        case MA_DURATION : *pnValue = m_nLength; break;
+        case MA_FILESIZE : *pnValue = m_nFileSize; break;
+        case MA_TIME_ADDED : *pnValue = m_timeAdded; break;
+        case MA_TIME_PLAYED : *pnValue = m_timePlayed; break;
         case MA_RATING : *pnValue = m_nRating; break;
         case MA_IS_USER_RATING : *pnValue = m_bIsUserRating; break;
-        case MA_TIMES_PLAYED : *pnValue = (int)m_nPlayed; break;
-        case MA_TIMES_PLAY_SKIPPED : *pnValue = (int)m_nPlaySkipped; break;
+        case MA_TIMES_PLAYED : *pnValue = m_nPlayed; break;
+        case MA_TIMES_PLAY_SKIPPED : *pnValue = m_nPlaySkipped; break;
 
         // the following info will not stored in media library
         case MA_ISVBR : *pnValue = m_bIsVbr; break;
@@ -218,25 +211,25 @@ MLRESULT CMedia::getAttribute(MediaAttribute mediaAttr, int *pnValue) {
     return ERR_OK;
 }
 
-MLRESULT CMedia::setAttribute(MediaAttribute mediaAttr, int value) {
+MLRESULT CMedia::setAttribute(MediaAttribute mediaAttr, int64_t value) {
     switch (mediaAttr) {
         case MA_TRACK_NUMB : m_nTrackNumb = value; break;
         case MA_YEAR : m_nYear = value; break;
-        case MA_BITRATE : m_nBitRate = value; break;
-        case MA_DURATION : m_nLength = value; break;
-        case MA_FILESIZE : m_nFileSize = value; break;
-        case MA_TIME_ADDED : m_nTimeAdded.m_time = value; break;
-        case MA_TIME_PLAYED : m_nTimePlayed.m_time = value; break;
+        case MA_BITRATE : m_nBitRate = (int)value; break;
+        case MA_DURATION : m_nLength = (int)value; break;
+        case MA_FILESIZE : m_nFileSize = (int)value; break;
+        case MA_TIME_ADDED : m_timeAdded = value; break;
+        case MA_TIME_PLAYED : m_timePlayed = value; break;
         case MA_RATING : m_nRating = value; break;
         case MA_IS_USER_RATING: m_bIsUserRating = tobool(value); break;
-        case MA_TIMES_PLAYED: m_nPlayed = value; break;
-        case MA_TIMES_PLAY_SKIPPED: m_nPlaySkipped = value; break;
+        case MA_TIMES_PLAYED: m_nPlayed = (int)value; break;
+        case MA_TIMES_PLAY_SKIPPED: m_nPlaySkipped = (int)value; break;
 
         // the following info will not stored in media library
         case MA_ISVBR : m_bIsVbr = tobool(value); break;
-        case MA_BPS : m_nBPS = value; break;
-        case MA_CHANNELS : m_nChannels = value; break;
-        case MA_SAMPLE_RATE : m_nSampleRate = value; break;
+        case MA_BPS : m_nBPS = (uint8_t)value; break;
+        case MA_CHANNELS : m_nChannels = (uint8_t)value; break;
+        case MA_SAMPLE_RATE : m_nSampleRate = (int)value; break;
     default:
         return ERR_NOT_SUPPORT;
     }

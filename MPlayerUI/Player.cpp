@@ -15,9 +15,8 @@
 
 #ifdef _MAC_OS
 #include "mac/PlayerEventDispatcher.h"
-
-
 #endif
+
 
 CPlayer g_Player;
 CPlayerEventDispatcher g_playerEventDispatcher;
@@ -121,7 +120,7 @@ CPlayer::CPlayer() {
 CPlayer::~CPlayer() {
 }
 
-void CPlayer::onInit(bool bMiniLyrics) {
+void CPlayer::onInit() {
     // open title filters
     string strFilter;
     if (readFileByBom(getTitleFilterFile().c_str(), strFilter)) {
@@ -287,14 +286,6 @@ uint32_t CPlayer::getPlayPos() {
     }
 
     return 0;
-}
-
-bool CPlayer::hasVideo() {
-    if (m_spPlayer) {
-        return false;
-    }
-
-    return false;
 }
 
 void CPlayer::setLyrDrawUpdateFast(bool bFast) {
@@ -766,7 +757,7 @@ void CPlayer::filterLowRatingMedia(IPlaylist *playlist) {
         CMPAutoPtr<IMedia> media;
 
         if (playlist->getItem(i, &media) == ERR_OK) {
-            int rating;
+            int64_t rating = 0;
             media->getAttribute(MA_RATING, &rating);
             if (rating < m_ratingFilterMin) {
                 playlist->removeItem(i);

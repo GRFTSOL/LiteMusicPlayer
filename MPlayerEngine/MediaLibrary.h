@@ -102,12 +102,15 @@ public:
 
     virtual MLRESULT add(IMedia *pMedia);
 
+    string getSettingValue(cstr_t name);
+    void setSettingValue(cstr_t name, cstr_t value);
+
 protected:
     MLRESULT doAddMedia(CMedia *pMedia);
 
     CPlaylist *newPlaylist();
 
-    int convertLib();
+    int upgradeCheck();
 
 protected:
     friend class CMLQueryPlaylist;
@@ -115,7 +118,7 @@ protected:
     CMPAutoPtr<CMPlayer>        m_player;
 
     CSqlite3                    m_db;
-    std::mutex                  m_mutexDataAccess;
+    std::recursive_mutex        m_mutexDataAccess;
 
     CSqlite3Stmt                m_sqlAdd, m_sqlAddFast, m_sqlQueryByUrl;
     int                         m_nInitResult;

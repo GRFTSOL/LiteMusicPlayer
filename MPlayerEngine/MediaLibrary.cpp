@@ -3,7 +3,8 @@
 #include "MediaLibrary.h"
 
 
-#define MEDIA_LIB_VER_CUR   1
+#define MEDIA_LIB_VER_NAME  "version"
+#define MEDIA_LIB_VER_CUR   "1"
 
 
 /*
@@ -58,35 +59,39 @@ add Media
                                  id                 title        comment      time_played
 */
 
-#define SQL_CREATE_LIB_VER        "CREATE TABLE lib_ver\
+#define SQL_CREATE_SETTINGS        "CREATE TABLE IF NOT EXISTS settings\
 (\
-  version integer Primary Key\
+    name text Primary Key,\
+    value text\
 );"
 
-#define SQL_INSERT_VER_NUMB        "insert into lib_ver values (%d) "
+#define SQL_SETTINGS_INSERT        "INSERT INTO settings VALUES (?, ?) "
+#define SQL_SETTINGS_QUERY         "SELECT value FROM settings WHERE name=?"
+#define SQL_SETTINGS_SET           "INSERT OR REPLACE INTO settings(name, value) VALUES(?, ?);"
 
 #define SQL_CREATE_MEDIALIB        "CREATE TABLE IF NOT EXISTS medialib    \
 (\
   id integer Primary Key,\
-  url text COLLATE NOCASE,\
-  file_deleted integer,\
-  info_updated integer,\
-  is_user_rating integer,\
+  url text,\
+  file_deleted integer DEFAULT 0,\
+  info_updated integer DEFAULT 0,\
+  is_user_rating integer DEFAULT 0,\
   artist text COLLATE NOCASE,\
   album text COLLATE NOCASE,\
   title text COLLATE NOCASE,\
-  track integer,\
-  year integer,\
-  genre text COLLATE NOCASE,\
-  comment text COLLATE NOCASE,\
-  length integer,\
-  filesize integer,\
+  track integer DEFAULT -1,\
+  year integer DEFAULT -1,\
+  genre text DEFAULT NULL COLLATE NOCASE,\
+  comment text DEFAULT NULL COLLATE NOCASE,\
+  length integer DEFAULT 0,\
+  filesize integer DEFAULT 0,\
   time_added integer,\
-  time_played integer,\
-  rating integer,\
-  times_played integer,\
-  times_play_skipped integer,\
-  lyrics_file text COLLATE NOCASE\
+  time_played integer DEFAULT 0,\
+  rating integer DEFAULT 300,\
+  times_played integer DEFAULT 0,\
+  times_play_skipped integer DEFAULT 0,\
+  music_hash text DEFAULT NULL,\
+  lyrics_file text DEFAULT NULL\
 );\
 \
 CREATE INDEX IF NOT EXISTS mli_url on medialib (url);\
@@ -98,20 +103,32 @@ CREATE INDEX IF NOT EXISTS mli_comment on medialib (comment);\
 CREATE INDEX IF NOT EXISTS mli_time_added on medialib (time_added);\
 CREATE INDEX IF NOT EXISTS mli_time_played on medialib (time_played);\
 CREATE INDEX IF NOT EXISTS mli_rating on medialib (rating);\
+CREATE INDEX IF NOT EXISTS mli_music_hash on medialib (music_hash);\
 CREATE INDEX IF NOT EXISTS mli_times_played on medialib (times_played);"
 
-#define SQL_MAX_MEDIALIB_ID        "select MAX(id)  from medialib"
+#define DROP_MEDIALIB_TABLE "DROP TABLE IF EXISTS medialib;\
+DROP INDEX IF EXISTS mli_url;\
+DROP INDEX IF EXISTS mli_artist;\
+DROP INDEX IF EXISTS mli_album;\
+DROP INDEX IF EXISTS mli_title;\
+DROP INDEX IF EXISTS mli_genre;\
+DROP INDEX IF EXISTS mli_comment;\
+DROP INDEX IF EXISTS mli_time_added;\
+DROP INDEX IF EXISTS mli_time_played;\
+DROP INDEX IF EXISTS mli_rating;\
+DROP INDEX IF EXISTS mli_music_hash;\
+DROP INDEX IF EXISTS mli_times_played;"
+
+#define SQL_MAX_MEDIALIB_ID   "select MAX(id)  from medialib"
 
 #define SQL_COUNT_OF_MEDIA    "select count(*)  from medialib"
 
+#define SQL_ADD_MEDIA    "INSERT INTO medialib (url, artist, album, title, track, year, genre, comment, length, filesize, time_added, music_hash, lyrics_file) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
 
-#define SQL_ADD_MEDIA    "insert into medialib values (nullptr, ?, 0, 1, 0, ?, ?,  ?, ?, ?, ?,  ?, ?, ?, ?,  -1, 300, 0, 0, ?)  ;"
-
-#define SQL_ADD_MEDIA_FAST    "insert into medialib (id, url, file_deleted, info_updated, is_user_rating, artist, title, time_added, time_played, rating, times_played, times_play_skipped) "\
-                                "values (nullptr, ?, 0, 0, 1, ?, ?,   ?,  -1, 300, 0, 0);"
+#define SQL_ADD_MEDIA_FAST    "INSERT INTO medialib (url, artist, title, time_added) "\
+                              "VALUES (?, ?, ?, ?);"
 
 #define SQL_QUERY_MEDIA_BY_URL  "select * from medialib where url=? "
-
 
 #define SQLITE3_BIND_TEXT(sqlstmt, strData)            \
     nRet = sqlstmt.bindText(n, strData.c_str(), (int)strData.size());\
@@ -137,8 +154,8 @@ max auto rating: 590
 
 */
 int getAutoRating(IMedia *pMedia) {
-    int length, rating = 300;
-    int times_play_skipped, times_played;
+    int64_t length = 0, rating = 300;
+    int64_t times_play_skipped = 0, times_played = 0;
 
     pMedia->getAttribute(MA_DURATION, &length);
     pMedia->getAttribute(MA_TIMES_PLAY_SKIPPED, &times_play_skipped);
@@ -151,7 +168,7 @@ int getAutoRating(IMedia *pMedia) {
             times_play_skipped = 0;
         }
 
-        int value = times_played - times_play_skipped * 5;
+        int64_t value = times_played - times_play_skipped * 5;
         if (value > 0) {
             rating = 400 + value;
         } else if (value < 0) {
@@ -165,7 +182,7 @@ int getAutoRating(IMedia *pMedia) {
         }
     }
 
-    return rating;
+    return (int)rating;
 }
 
 void appendQeuryStatment(MediaLibOrderBy orderBy, int nTopN, string &strSql) {
@@ -273,17 +290,15 @@ MLRESULT CMediaLibrary::getAllYear(IVInt **ppvYear) {
 
     *ppvYear = nullptr;
 
-    MutexAutolock autolock(m_mutexDataAccess);
+    RMutexAutolock autolock(m_mutexDataAccess);
     CSqlite3Stmt sqlQuery;
-    int nRet;
-    CVInt *pvInt;
 
     sqlQuery.prepare(&m_db, "select year from medialib group by year");
 
-    pvInt = new CVInt();
+    auto pvInt = new CVInt();
     pvInt->addRef();
 
-    nRet = sqlQuery.step();
+    int nRet = sqlQuery.step();
     while (nRet == ERR_SL_OK_ROW) {
         pvInt->push_back(sqlQuery.columnInt(0));
 
@@ -309,29 +324,25 @@ MLRESULT CMediaLibrary::getAlbumOfArtist(cstr_t szArtist, IVString **ppvAlbum) {
         return m_nInitResult;
     }
 
-    MutexAutolock autolock(m_mutexDataAccess);
+    RMutexAutolock autolock(m_mutexDataAccess);
 
     CSqlite3Stmt sqlQuery;
-    int nRet;
-    string strUCS2;
-    CVXStr *pvStr;
-    cstr_t text;
 
     *ppvAlbum = nullptr;
 
-    nRet = sqlQuery.prepare(&m_db, "select album from medialib where artist=? group by album");
+    int nRet = sqlQuery.prepare(&m_db, "select album from medialib where artist=? group by album");
     if (nRet != ERR_OK) {
         return nRet;
     }
 
-    pvStr = new CVXStr();
+    auto pvStr = new CVXStr();
     pvStr->addRef();
 
     sqlQuery.bindStaticText(1, szArtist);
 
     nRet = sqlQuery.step();
     while (nRet == ERR_SL_OK_ROW) {
-        text = sqlQuery.columnText(0);
+        auto text = sqlQuery.columnText(0);
         if (text) {
             pvStr->push_back(text);
         }
@@ -366,7 +377,7 @@ MLRESULT CMediaLibrary::getMediaByUrl(cstr_t szUrl, IMedia **ppMedia) {
 
     *ppMedia = nullptr;
 
-    MutexAutolock autolock(m_mutexDataAccess);
+    RMutexAutolock autolock(m_mutexDataAccess);
 
     m_sqlQueryByUrl.bindStaticText(1, szUrl);
 
@@ -401,24 +412,21 @@ MLRESULT CMediaLibrary::add(cstr_t szMediaUrl, IMedia **ppMedia) {
 
     *ppMedia = nullptr;
 
-    int nRet;
-    CMedia *pMedia;
-
-    nRet = getMediaByUrl(szMediaUrl, ppMedia);
+    int nRet = getMediaByUrl(szMediaUrl, ppMedia);
     if (nRet != ERR_NOT_FOUND) {
         return nRet;
     }
 
-    MutexAutolock autolock(m_mutexDataAccess);
+    RMutexAutolock autolock(m_mutexDataAccess);
 
-    pMedia = newMedia();
+    CMedia *pMedia = newMedia();
 
     pMedia->setSourceUrl(szMediaUrl);
 
     m_player->loadMediaTagInfo(pMedia, true);
 
-    pMedia->m_nTimePlayed.getCurrentTime();
-    pMedia->m_nTimeAdded.getCurrentTime();
+    pMedia->m_timePlayed = time(nullptr);
+    pMedia->m_timeAdded = time(nullptr);
 
     nRet = doAddMedia(pMedia);
     if (nRet == ERR_OK) {
@@ -430,42 +438,36 @@ MLRESULT CMediaLibrary::add(cstr_t szMediaUrl, IMedia **ppMedia) {
     return ERR_OK;
 }
 
-// add media to media library fast, didn't update media info.
+// add media to media library fast, won't update media info.
 MLRESULT CMediaLibrary::addFast(cstr_t szMediaUrl, cstr_t szArtist, cstr_t szTitle, IMedia **ppMedia) {
     if (!isOK()) {
         return m_nInitResult;
     }
 
-    int nRet;
-    int n = 1;
-    CMedia *pMedia = nullptr;
-
     *ppMedia = nullptr;
 
-    nRet = getMediaByUrl(szMediaUrl, ppMedia);
+    int nRet = getMediaByUrl(szMediaUrl, ppMedia);
     if (nRet != ERR_NOT_FOUND) {
         return nRet;
     }
 
-    MutexAutolock autolock(m_mutexDataAccess);
+    RMutexAutolock autolock(m_mutexDataAccess);
 
-    pMedia = newMedia();
+    CMedia *pMedia = newMedia();
 
     pMedia->setSourceUrl(szMediaUrl);
+    pMedia->m_timePlayed = time(nullptr);
+    pMedia->m_timeAdded = time(nullptr);
 
-    pMedia->m_nTimePlayed.getCurrentTime();
-    pMedia->m_nTimeAdded.getCurrentTime();
-
+    int n = 1;
     nRet = m_sqlAddFast.bindText(n++, szMediaUrl);
     if (nRet != ERR_OK) {
         goto RET_FAILED;
     }
 
     SQLITE3_BIND_TEXT(m_sqlAddFast, pMedia->m_strArtist);
-
     SQLITE3_BIND_TEXT(m_sqlAddFast, pMedia->m_strTitle);
-
-    m_sqlAddFast.bindInt(n++, (int)pMedia->m_nTimeAdded.m_time);
+    m_sqlAddFast.bindInt64(n++, pMedia->m_timeAdded);
 
     nRet = m_sqlAddFast.step();
     if (nRet != ERR_OK) {
@@ -499,11 +501,11 @@ MLRESULT CMediaLibrary::updateMediaInfo(IMedia *pMedia) {
         return ERR_ML_NOT_FOUND;
     }
 
-    MutexAutolock autolock(m_mutexDataAccess);
+    RMutexAutolock autolock(m_mutexDataAccess);
     CSqlite3Stmt sqlQuery;
     int nRet;
     int n = 1;
-    int value;
+    int64_t value;
     CXStr str;
 
     sqlQuery.prepare(&m_db, "update medialib set url=?, info_updated=1, artist=?, album=?, title=?, track=?,"\
@@ -522,10 +524,10 @@ MLRESULT CMediaLibrary::updateMediaInfo(IMedia *pMedia) {
     SQLITE3_BIND_TEXT(sqlQuery, str);
 
     pMedia->getAttribute(MA_TRACK_NUMB, &value);
-    sqlQuery.bindInt(n++, value);
+    sqlQuery.bindInt(n++, (int)value);
 
     pMedia->getAttribute(MA_YEAR, &value);
-    sqlQuery.bindInt(n++, value);
+    sqlQuery.bindInt(n++, (int)value);
 
     pMedia->getAttribute(MA_GENRE, &str);
     SQLITE3_BIND_TEXT(sqlQuery, str);
@@ -534,10 +536,10 @@ MLRESULT CMediaLibrary::updateMediaInfo(IMedia *pMedia) {
     SQLITE3_BIND_TEXT(sqlQuery, str);
 
     pMedia->getAttribute(MA_DURATION, &value);
-    sqlQuery.bindInt(n++, value);
+    sqlQuery.bindInt(n++, (int)value);
 
     pMedia->getAttribute(MA_FILESIZE, &value);
-    sqlQuery.bindInt(n++, value);
+    sqlQuery.bindInt(n++, (int)value);
 
     pMedia->getAttribute(MA_LYRICS_FILE, &str);
     SQLITE3_BIND_TEXT(sqlQuery, str);
@@ -558,14 +560,13 @@ MLRESULT CMediaLibrary::remove(IMedia **pMedia, bool bDeleteFile) {
         return m_nInitResult;
     }
 
-    MutexAutolock autolock(m_mutexDataAccess);
+    RMutexAutolock autolock(m_mutexDataAccess);
     CSqlite3Stmt sqlQuery;
-    int nRet;
 
     sqlQuery.prepare(&m_db, "delete from medialib where id=?");
 
     sqlQuery.bindInt(1, (int)(*pMedia)->getID());
-    nRet = sqlQuery.step();
+    int nRet = sqlQuery.step();
     if (nRet == ERR_OK) {
         if (bDeleteFile) {
             CXStr str;
@@ -583,11 +584,10 @@ MLRESULT CMediaLibrary::remove(IMedia **pMedia, bool bDeleteFile) {
 // If the media file was removed temporarily, set this flag on.
 MLRESULT CMediaLibrary::setDeleted(IMedia **pMedia) {
     char szSql[256];
-    int nRet;
 
     snprintf(szSql, CountOf(szSql), "update medialib set file_deleted=1 where id=%d", (int)(*pMedia)->getID());
 
-    nRet = executeSQL(szSql);
+    int nRet = executeSQL(szSql);
     if (nRet == ERR_OK) {
         (*pMedia)->release();
         *pMedia = nullptr;
@@ -597,33 +597,25 @@ MLRESULT CMediaLibrary::setDeleted(IMedia **pMedia) {
 }
 
 MLRESULT CMediaLibrary::getAll(IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN) {
-    CMLQueryPlaylist query;
-    int nRet;
-    string strSql;
-
-    strSql = "select * from medialib where file_deleted=0";
-
+    string strSql = "select * from medialib where file_deleted=0";
     appendQeuryStatment(orderBy, nTopN, strSql);
 
-    nRet = query.query(this, strSql.c_str());
+    CMLQueryPlaylist query;
+    int nRet = query.query(this, strSql.c_str());
     *ppPlaylist = query.m_pPlaylist;
 
     return nRet;
 }
 
 MLRESULT CMediaLibrary::getByArtist(cstr_t szArtist, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN) {
-    string strSql;
-
-    strSql = "select * from medialib where artist=? and file_deleted=0";
+    string strSql = "select * from medialib where artist=? and file_deleted=0";
     appendQeuryStatment(orderBy, nTopN, strSql);
 
     return queryPlaylist(strSql.c_str(), szArtist, ppPlaylist);
 }
 
 MLRESULT CMediaLibrary::getByAlbum(cstr_t szAlbum, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN) {
-    string strSql;
-
-    strSql = "select * from medialib where album=? and file_deleted=0";
+    string strSql = "select * from medialib where album=? and file_deleted=0";
     appendQeuryStatment(orderBy, nTopN, strSql);
 
     return queryPlaylist(strSql.c_str(), szAlbum, ppPlaylist);
@@ -631,19 +623,12 @@ MLRESULT CMediaLibrary::getByAlbum(cstr_t szAlbum, IPlaylist **ppPlaylist, Media
 
 MLRESULT CMediaLibrary::getByAlbum(cstr_t szArtist, cstr_t szAlbum, IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN) {
     CMLQueryPlaylist query;
-    int nRet;
-    string strArtist, strAlbum;
-    string strSql;
-
-    strArtist = szArtist;
-    strAlbum = szAlbum;
+    string strArtist = szArtist, strAlbum = szAlbum;
 
     strrep(strArtist, "'", "''");
     strrep(strAlbum, "'", "''");
 
-    // char                szQuery[512];
-    // sprintf(szQuery, "select * from medialib where artist='%s' and album='%s' and file_deleted=0", strArtist.c_str(), strAlbum.c_str());
-    strSql = "select * from medialib where artist='";
+    string strSql = "select * from medialib where artist='";
     strSql += strArtist.c_str();
     strSql += "' and album='";
     strSql += strAlbum.c_str();
@@ -651,7 +636,7 @@ MLRESULT CMediaLibrary::getByAlbum(cstr_t szArtist, cstr_t szAlbum, IPlaylist **
 
     appendQeuryStatment(orderBy, nTopN, strSql);
 
-    nRet = query.query(this, strSql.c_str());
+    int nRet = query.query(this, strSql.c_str());
     *ppPlaylist = query.m_pPlaylist;
 
     return nRet;
@@ -675,21 +660,18 @@ MLRESULT CMediaLibrary::getByYear(int nYear, IPlaylist **ppPlaylist, MediaLibOrd
         return m_nInitResult;
     }
 
-    string strSql;
-    MutexAutolock autolock(m_mutexDataAccess);
+    RMutexAutolock autolock(m_mutexDataAccess);
     CSqlite3Stmt sqlQuery;
-    int nRet;
-    CPlaylist *playlist = nullptr;
 
-    strSql = "select * from medialib where year=? and file_deleted=0";
+    string strSql = "select * from medialib where year=? and file_deleted=0";
     appendQeuryStatment(orderBy, nTopN, strSql);
 
-    nRet = sqlQuery.prepare(&m_db, strSql.c_str());
+    int nRet = sqlQuery.prepare(&m_db, strSql.c_str());
     if (nRet != ERR_OK) {
         return nRet;
     }
 
-    playlist = newPlaylist();
+    CPlaylist *playlist = newPlaylist();
 
     sqlQuery.bindInt(1, nYear);
     nRet = sqlQuery.step();
@@ -723,25 +705,21 @@ MLRESULT CMediaLibrary::getByRating(int nRating, IPlaylist **ppPlaylist, MediaLi
         return m_nInitResult;
     }
 
-    string strSql;
-    MutexAutolock autolock(m_mutexDataAccess);
+    RMutexAutolock autolock(m_mutexDataAccess);
     CSqlite3Stmt sqlQuery;
-    int nRet;
-    CPlaylist *playlist = nullptr;
-    int nRatingStart, nRatingEnd;
 
-    strSql = "select * from medialib where rating>=? and rating<? and file_deleted=0";
+    string strSql = "select * from medialib where rating>=? and rating<? and file_deleted=0";
     appendQeuryStatment(orderBy, nTopN, strSql);
 
-    nRatingStart = nRating * 100;
-    nRatingEnd = (nRating + 1) * 100 - 1;
+    int nRatingStart = nRating * 100;
+    int nRatingEnd = (nRating + 1) * 100 - 1;
 
-    nRet = sqlQuery.prepare(&m_db, strSql.c_str());
+    int nRet = sqlQuery.prepare(&m_db, strSql.c_str());
     if (nRet != ERR_OK) {
         return nRet;
     }
 
-    playlist = newPlaylist();
+    CPlaylist *playlist = newPlaylist();
 
     sqlQuery.bindInt(1, nRatingStart);
     sqlQuery.bindInt(2, nRatingEnd);
@@ -785,63 +763,48 @@ MLRESULT CMediaLibrary::getRecentPlayed(uint32_t nCount, IPlaylist **ppPlaylist)
 }
 
 MLRESULT CMediaLibrary::getTopPlayed(uint32_t nCount, IPlaylist **ppPlaylist) {
-    CMLQueryPlaylist query;
     char szQuery[256];
-    int nRet;
-
     snprintf(szQuery, CountOf(szQuery), "select * from medialib where file_deleted=0 order by times_played desc limit %d", nCount);
 
-    nRet = query.query(this, szQuery);
+    CMLQueryPlaylist query;
+    int nRet = query.query(this, szQuery);
     *ppPlaylist = query.m_pPlaylist;
 
     return nRet;
 }
 
 MLRESULT CMediaLibrary::getTopRating(uint32_t nCount, IPlaylist **ppPlaylist) {
-    CMLQueryPlaylist query;
     char szQuery[256];
-    int nRet;
-
     snprintf(szQuery, CountOf(szQuery), "select * from medialib where file_deleted=0 order by rating desc limit %d", nCount);
 
-    nRet = query.query(this, szQuery);
+    CMLQueryPlaylist query;
+    int nRet = query.query(this, szQuery);
     *ppPlaylist = query.m_pPlaylist;
 
     return nRet;
 }
 
 MLRESULT CMediaLibrary::getRecentAdded(uint32_t nCount, IPlaylist **ppPlaylist) {
-    CMLQueryPlaylist query;
     char szQuery[256];
-    int nRet;
-
     snprintf(szQuery, CountOf(szQuery), "select * from medialib where file_deleted=0 order by time_added desc limit %d", nCount);
 
-    nRet = query.query(this, szQuery);
+    CMLQueryPlaylist query;
+    int nRet = query.query(this, szQuery);
     *ppPlaylist = query.m_pPlaylist;
 
     return nRet;
 }
 
 MLRESULT CMediaLibrary::getRecentPlayed(int nDayAgoBegin, int nDayAgoEnd, IPlaylist **ppPlaylist) {
-    CMLQueryPlaylist query;
     char szQuery[256];
-    int nRet;
-    CMPTime dateBegin, dateEnd;
-    CMPTime dateCur;
-    MPTM tm;
 
-    dateCur.getCurrentTime();
-    dateCur.getMPTM(&tm);
+    auto begin = time(nullptr) - DateTime::SECOND_IN_ONE_DAY * nDayAgoBegin;
+    auto end = time(nullptr) - DateTime::SECOND_IN_ONE_DAY * nDayAgoEnd;
 
-    dateBegin.set(tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, 0, 0, 0);
-    dateEnd = dateBegin;
-    dateBegin -= CMPTimeSpan(nDayAgoBegin - 1, 0, 0, 0);
-    dateEnd -= CMPTimeSpan(nDayAgoEnd - 1, 0, 0, 0);
+    snprintf(szQuery, CountOf(szQuery), "select * from medialib where time_played between %ld and %ld and file_deleted=0 order by time_played", begin, end);
 
-    snprintf(szQuery, CountOf(szQuery), "select * from medialib where time_played between %d and %d and file_deleted=0 order by time_played", (int)dateBegin.m_time, (int)dateEnd.m_time);
-
-    nRet = query.query(this, szQuery);
+    CMLQueryPlaylist query;
+    int nRet = query.query(this, szQuery);
     *ppPlaylist = query.m_pPlaylist;
 
     return nRet;
@@ -872,16 +835,15 @@ MLRESULT CMediaLibrary::rate(IMedia *pMedia, uint32_t nRating) {
     }
 
     bool bIsUserRating = (nRating != 0);
-    char szSql[256];
-
     if (bIsUserRating) {
         nRating = nRating * 100 + 99;
     } else {
         nRating = getAutoRating(pMedia);
     }
 
-    MutexAutolock autolock(m_mutexDataAccess);
+    RMutexAutolock autolock(m_mutexDataAccess);
 
+    char szSql[256];
     snprintf(szSql, CountOf(szSql), "update medialib set is_user_rating=%d, rating=%d where id=%d",
         bIsUserRating, nRating, (int)pMedia->getID());
 
@@ -900,13 +862,12 @@ MLRESULT CMediaLibrary::updatePlayedTime(IMedia *pMedia) {
         return ERR_OK;
     }
 
-    int value;
-    char szSql[256];
-
-    MutexAutolock autolock(m_mutexDataAccess);
-
+    int64_t value;
+    RMutexAutolock autolock(m_mutexDataAccess);
     pMedia->getAttribute(MA_TIME_PLAYED, &value);
-    snprintf(szSql, CountOf(szSql), "update medialib set time_played=%d where id=%d", value, (int)pMedia->getID());
+
+    char szSql[256];
+    snprintf(szSql, CountOf(szSql), "update medialib set time_played=%lld where id=%d", value, (int)pMedia->getID());
 
     return executeSQL(szSql);
 }
@@ -921,11 +882,9 @@ MLRESULT CMediaLibrary::markPlayFinished(IMedia *pMedia) {
     }
 
     char szSql[256];
-    int nRet;
-    int nTimesPlayed;
-    int bIsUserRating;
+    int64_t nTimesPlayed = 0, bIsUserRating = 0;
 
-    MutexAutolock autolock(m_mutexDataAccess);
+    RMutexAutolock autolock(m_mutexDataAccess);
 
     pMedia->getAttribute(MA_TIMES_PLAYED, &nTimesPlayed);
     pMedia->setAttribute(MA_TIMES_PLAYED, nTimesPlayed + 1);
@@ -939,7 +898,7 @@ MLRESULT CMediaLibrary::markPlayFinished(IMedia *pMedia) {
         pMedia->setAttribute(MA_RATING, nRating / 100);
     }
 
-    nRet = executeSQL(szSql);
+    int nRet = executeSQL(szSql);
 
     updatePlayedTime(pMedia);
 
@@ -956,11 +915,9 @@ MLRESULT CMediaLibrary::markPlaySkipped(IMedia *pMedia) {
     }
 
     char szSql[256];
-    int nRet;
-    int nTimesPlaySkipped;
-    int bIsUserRating;
+    int64_t nTimesPlaySkipped = 0, bIsUserRating = 0;
 
-    MutexAutolock autolock(m_mutexDataAccess);
+    RMutexAutolock autolock(m_mutexDataAccess);
 
     pMedia->getAttribute(MA_TIMES_PLAY_SKIPPED, &nTimesPlaySkipped);
     pMedia->setAttribute(MA_TIMES_PLAY_SKIPPED, nTimesPlaySkipped + 1);
@@ -974,34 +931,23 @@ MLRESULT CMediaLibrary::markPlaySkipped(IMedia *pMedia) {
         pMedia->setAttribute(MA_RATING, nRating / 100);
     }
 
-    nRet = executeSQL(szSql);
+    int nRet = executeSQL(szSql);
 
     return nRet;
 }
 
 int CMediaLibrary::init(CMPlayer *pPlayer) {
-    string strFile = getAppDataDir();
-    strFile += "medialib.db";
+    string strFile = getAppDataDir() + "medialib.db";
 
     m_nInitResult = m_db.open(strFile.c_str());
     if (m_nInitResult != ERR_OK) {
         goto INIT_FAILED;
     }
 
-    // create version table.
-    m_nInitResult = m_db.exec(SQL_CREATE_LIB_VER);
+    // 检查 MediaLibrary 数据的版本，并且进行升级
+    m_nInitResult = upgradeCheck();
     if (m_nInitResult != ERR_OK) {
-        // Do convert old lib to current.
-        m_nInitResult = convertLib();
-    } else {
-        // new version table created, insert version numb.
-        char szSql[MAX_PATH];
-
-        snprintf(szSql, CountOf(szSql), SQL_INSERT_VER_NUMB, MEDIA_LIB_VER_CUR);
-        m_nInitResult = m_db.exec(szSql);
-        if (m_nInitResult != ERR_OK) {
-            return m_nInitResult;
-        }
+        goto INIT_FAILED;
     }
 
     // create medialib talbe
@@ -1047,12 +993,10 @@ MLRESULT CMediaLibrary::queryPlaylist(cstr_t szSQL, cstr_t szClause, IPlaylist *
         return m_nInitResult;
     }
 
-    MutexAutolock autolock(m_mutexDataAccess);
+    RMutexAutolock autolock(m_mutexDataAccess);
     CSqlite3Stmt sqlQuery;
-    int nRet;
-    CPlaylist *playlist = nullptr;
 
-    nRet = sqlQuery.prepare(&m_db, szSQL);
+    int nRet = sqlQuery.prepare(&m_db, szSQL);
     if (nRet != ERR_OK) {
         return nRet;
     }
@@ -1062,13 +1006,11 @@ MLRESULT CMediaLibrary::queryPlaylist(cstr_t szSQL, cstr_t szClause, IPlaylist *
         return nRet;
     }
 
-    playlist = newPlaylist();
+    CPlaylist *playlist = newPlaylist();
 
     nRet = sqlQuery.step();
     while (nRet == ERR_SL_OK_ROW) {
-        CMedia *media;
-
-        media = newMedia();
+        CMedia *media = newMedia();
         sqliteQueryMedia(&sqlQuery, media);
         playlist->insertItem(-1, media);
         media->release();
@@ -1098,21 +1040,17 @@ MLRESULT CMediaLibrary::queryVStr(cstr_t szSql, IVString **ppvStr) {
 
     *ppvStr = nullptr;
 
-    MutexAutolock autolock(m_mutexDataAccess);
+    RMutexAutolock autolock(m_mutexDataAccess);
     CSqlite3Stmt sqlQuery;
-    int nRet;
-    string strUCS2;
-    CVXStr *pvStr;
-    cstr_t text;
 
     sqlQuery.prepare(&m_db, szSql);
 
-    pvStr = new CVXStr();
+    auto pvStr = new CVXStr();
     pvStr->addRef();
 
-    nRet = sqlQuery.step();
+    int nRet = sqlQuery.step();
     while (nRet == ERR_SL_OK_ROW) {
-        text = (const char *)sqlQuery.columnText(0);
+        auto text = (const char *)sqlQuery.columnText(0);
         if (text) {
             pvStr->push_back(text);
         }
@@ -1165,11 +1103,12 @@ void CMediaLibrary::sqliteQueryMedia(CSqlite3Stmt *sqlStmt, CMedia *pMedia) {
     MediaGetSqlite3ColumText(pMedia->m_strComment);
     pMedia->m_nLength = sqlStmt->columnInt(n++);
     pMedia->m_nFileSize = sqlStmt->columnInt(n++);
-    pMedia->m_nTimeAdded.m_time = sqlStmt->columnInt(n++);
-    pMedia->m_nTimePlayed.m_time = sqlStmt->columnInt(n++);
+    pMedia->m_timeAdded = sqlStmt->columnInt64(n++);
+    pMedia->m_timePlayed = sqlStmt->columnInt64(n++);
     pMedia->m_nRating = sqlStmt->columnInt(n++) / 100;
     pMedia->m_nPlayed = sqlStmt->columnInt(n++);
     pMedia->m_nPlaySkipped = sqlStmt->columnInt(n++);
+    MediaGetSqlite3ColumText(pMedia->m_musicHash);
     MediaGetSqlite3ColumText(pMedia->m_strLyricsFile);
 }
 
@@ -1179,6 +1118,13 @@ void CMediaLibrary::getMediaCallback(CMedia *pMedia, int numCols, char **results
 #define FILED_GET_INT(feild)    \
     if (results[n])\
         feild = atoi(results[n]);\
+    else\
+        feild = false;\
+    n++;
+
+#define FILED_GET_INT64(feild)    \
+    if (results[n])\
+        feild = atol(results[n]);\
     else\
         feild = false;\
     n++;
@@ -1215,8 +1161,8 @@ void CMediaLibrary::getMediaCallback(CMedia *pMedia, int numCols, char **results
     FILED_GET_TEXT(pMedia->m_strComment);
     FILED_GET_INT(pMedia->m_nLength);
     FILED_GET_INT(pMedia->m_nFileSize);
-    FILED_GET_INT(pMedia->m_nTimeAdded.m_time);
-    FILED_GET_INT(pMedia->m_nTimePlayed.m_time);
+    FILED_GET_INT64(pMedia->m_timeAdded);
+    FILED_GET_INT64(pMedia->m_timePlayed);
     FILED_GET_INT(pMedia->m_nRating);
     pMedia->m_nRating /= 100;
     FILED_GET_INT(pMedia->m_nPlayed);
@@ -1240,24 +1186,56 @@ MLRESULT CMediaLibrary::add(IMedia *pMedia) {
     }
 
     CMPAutoPtr<IMedia> pMediaExist;
-    int nRet;
     CXStr str;
 
     pMedia->getSourceUrl(&str);
-    nRet = getMediaByUrl(str.c_str(), &pMediaExist);
+    int nRet = getMediaByUrl(str.c_str(), &pMediaExist);
     if (nRet != ERR_NOT_FOUND) {
         return nRet;
     }
 
-    MutexAutolock autolock(m_mutexDataAccess);
+    RMutexAutolock autolock(m_mutexDataAccess);
 
     return doAddMedia((CMedia*)pMedia);
+}
+
+string CMediaLibrary::getSettingValue(cstr_t name) {
+    CSqlite3Stmt stmtQuery;
+    auto ret = stmtQuery.prepare(&m_db, SQL_SETTINGS_QUERY);
+    assert(ret == ERR_OK);
+
+    ret = stmtQuery.bindStaticText(1, name);
+    assert(ret == ERR_OK);
+
+    ret = stmtQuery.step();
+    if (ret == ERR_SL_OK_ROW) {
+        return stmtQuery.columnText(0);
+    }
+    assert(ret == ERR_OK);
+
+    return "";
+}
+
+void CMediaLibrary::setSettingValue(cstr_t name, cstr_t value) {
+    CSqlite3Stmt stmtQuery;
+    auto ret = stmtQuery.prepare(&m_db, SQL_SETTINGS_SET);
+    assert(ret == ERR_OK);
+
+    ret = stmtQuery.bindStaticText(1, name);
+    assert(ret == ERR_OK);
+
+    ret = stmtQuery.bindStaticText(2, value);
+    assert(ret == ERR_OK);
+
+    ret = stmtQuery.step();
+    assert(ret == ERR_OK);
 }
 
 MLRESULT CMediaLibrary::doAddMedia(CMedia *pMedia) {
     int nRet;
     int n = 1;
 
+    // url, artist, album, title, track, year, genre, comment, length, filesize, time_added, music_hash, lyrics_file
     SQLITE3_BIND_TEXT(m_sqlAdd, pMedia->m_strUrl);
     SQLITE3_BIND_TEXT(m_sqlAdd, pMedia->m_strArtist);
     SQLITE3_BIND_TEXT(m_sqlAdd, pMedia->m_strAlbum);
@@ -1268,7 +1246,8 @@ MLRESULT CMediaLibrary::doAddMedia(CMedia *pMedia) {
     SQLITE3_BIND_TEXT(m_sqlAdd, pMedia->m_strComment);
     m_sqlAdd.bindInt(n++, (int)pMedia->m_nLength);
     m_sqlAdd.bindInt(n++, (int)pMedia->m_nFileSize);
-    m_sqlAdd.bindInt(n++, (int)pMedia->m_nTimeAdded.m_time);
+    m_sqlAdd.bindInt64(n++, pMedia->m_timeAdded);
+    SQLITE3_BIND_TEXT(m_sqlAdd, pMedia->m_musicHash);
     SQLITE3_BIND_TEXT(m_sqlAdd, pMedia->m_strLyricsFile);
 
     nRet = m_sqlAdd.step();
@@ -1295,6 +1274,23 @@ CPlaylist *CMediaLibrary::newPlaylist() {
     return pPlaylist;
 }
 
-int CMediaLibrary::convertLib() {
+int CMediaLibrary::upgradeCheck() {
+    // create version table.
+    auto ret = m_db.exec(SQL_CREATE_SETTINGS);
+    if (ret != ERR_OK) {
+        return ret;
+    }
+
+    string version = getSettingValue(MEDIA_LIB_VER_NAME);
+    if (version == MEDIA_LIB_VER_CUR) {
+        return ERR_OK;
+    }
+
+    // 版本不一致，需要升级
+    setSettingValue(MEDIA_LIB_VER_NAME, MEDIA_LIB_VER_CUR);
+
+    ret = m_db.exec(DROP_MEDIALIB_TABLE);
+    assert(ret == ERR_OK);
+
     return ERR_OK;
 }

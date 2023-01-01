@@ -55,12 +55,11 @@ MLRESULT CXStr::reserve(uint32_t nCapacity) {
     return ERR_OK;
 }
 
-void CXStr::copy(IString *pSrcStr) {
-    m_str.clear();
-    m_str.append(pSrcStr->c_str(), pSrcStr->size());
+void CXStr::assign(IString *src) {
+    m_str.assign(src->c_str(), src->size());
 }
 
-void CXStr::copy(cstr_t str) {
+void CXStr::assign(cstr_t str) {
     m_str = str;
 }
 

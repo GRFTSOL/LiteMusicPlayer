@@ -239,16 +239,15 @@ uint32_t    _vTextFrameIDV22[] = { ID3V2_2_ARTIST, ID3V2_2_TITLE, ID3V2_2_ALBUM,
     // TOPE : Orig. artist
     // TPUB : Publisher
     // TBPM : bpm
-    int CID3v2IF::getTags(string &artist, string &title, string &album, string &comment,
-    string &track, string &year, string &genre) {
+    int CID3v2IF::getTags(BasicMediaTags &tags) {
     int nRet;
     ID3v2Text txt;
     uint32_t *vTextFrameID;
     uint32_t nFrameID;
     CID3v2Frame *pFrame;
 
-    string        *vStr[] = { &artist, &title, &album,
-        &track, &year, &genre
+    string        *vStr[] = { &tags.artist, &tags.title, &tags.album,
+        &tags.trackNo, &tags.year, &tags.genre
         };
 
         if (isID3v2_2())
@@ -281,12 +280,12 @@ uint32_t    _vTextFrameIDV22[] = { ID3V2_2_ARTIST, ID3V2_2_TITLE, ID3V2_2_ALBUM,
         CID3v2FrameParserComment parser(m_Encoding);
         nRet = parser.parse(pFrame);
         if (nRet == ERR_OK) {
-            comment = parser.m_strText.c_str();
+            tags.comments = parser.m_strText.c_str();
         }
     }
 
     // read year
-    if (year.empty()) {
+    if (tags.year.empty()) {
         if (isID3v2_2()) {
             nFrameID = ID3V2_2_YEAR2;
         } else {
@@ -297,13 +296,14 @@ uint32_t    _vTextFrameIDV22[] = { ID3V2_2_ARTIST, ID3V2_2_TITLE, ID3V2_2_ALBUM,
             CID3v2FrameParserText txtParser(m_Encoding);
             nRet = txtParser.parse(pFrame, txt);
             if (nRet == ERR_OK) {
-                year = txt.getValue();
+                tags.year = txt.getValue();
             }
         }
     }
 
     // read genre info
-    if (!genre.empty()) {
+    if (!tags.genre.empty()) {
+        auto &genre = tags.genre;
         if (isNumeric(genre.c_str())) {
             genre = CID3v1::getGenreDescription(atoi(genre.c_str()));
         } else if (genre[0] == '(') {
@@ -327,13 +327,12 @@ uint32_t    _vTextFrameIDV22[] = { ID3V2_2_ARTIST, ID3V2_2_TITLE, ID3V2_2_ALBUM,
     return ERR_OK;
 }
 
-int CID3v2IF::setTags(cstr_t szArtist, cstr_t szTitle, cstr_t szAlbum, cstr_t szComment,
-    cstr_t szTrack, cstr_t szYear, cstr_t szGenre) {
+int CID3v2IF::setTags(const BasicMediaTags &tags) {
     uint32_t nFrameID;
 
     cstr_t    vTextFrameValues[CountOf(_vTextFrameIDV22)] = {
-        szArtist, szTitle, szAlbum,
-        szTrack, szYear, szGenre
+        tags.artist.c_str(), tags.title.c_str(), tags.album.c_str(),
+        tags.trackNo.c_str(), tags.year.c_str(), tags.genre.c_str()
     };
 
     for (int i = 0; i < CountOf(vTextFrameValues); i++) {
@@ -352,12 +351,10 @@ int CID3v2IF::setTags(cstr_t szArtist, cstr_t szTitle, cstr_t szAlbum, cstr_t sz
     }
 
     // update comment
-    if (szComment) {
-        if (isEmptyString(szComment)) {
-            removeGeneralCommentFrame();
-        } else {
-            updateGeneralCommentFrame(szComment);
-        }
+    if (isEmptyString(tags.comments.c_str())) {
+        removeGeneralCommentFrame();
+    } else {
+        updateGeneralCommentFrame(tags.comments.c_str());
     }
 
     return ERR_OK;

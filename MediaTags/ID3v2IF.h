@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ID3/ID3v2.h"
+#include "MediaTagTypes.hpp"
 
 
 class CID3v2IF : public CID3v2 {
@@ -20,11 +21,8 @@ public:
     int setUnsynchLyrics(cstr_t szName, cstr_t szDesc, cstr_t szLyrics);
     int setUserDefLyrics(cstr_t szLyrics);
 
-    virtual int getTags(string &artist, string &title, string &album, string &comment,
-        string &track, string &year, string &genre);
-
-    virtual int setTags(cstr_t szArtist, cstr_t szTitle, cstr_t szAlbum, cstr_t szComment,
-        cstr_t szTrack, cstr_t szYear, cstr_t szGenre);
+    virtual int getTags(BasicMediaTags &tags);
+    virtual int setTags(const BasicMediaTags &tags);
 
     int updateUserDefinedTextFrameByDesc(ID3v2TextUserDefined &text);
     int removeUserDefinedTextFrameByDesc(cstr_t szDesc);

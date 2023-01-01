@@ -19,13 +19,10 @@
 		5F2BD50F149623F1003E7F5C /* MILocalFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2BD4EF149623F1003E7F5C /* MILocalFile.h */; };
 		5F2BD512149623F1003E7F5C /* MPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F2BD4F2149623F1003E7F5C /* MPlayer.cpp */; };
 		5F2BD513149623F1003E7F5C /* MPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2BD4F3149623F1003E7F5C /* MPlayer.h */; };
-		5F2BD514149623F1003E7F5C /* MPTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F2BD4F4149623F1003E7F5C /* MPTime.cpp */; };
-		5F2BD515149623F1003E7F5C /* MPTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2BD4F5149623F1003E7F5C /* MPTime.h */; };
 		5F2BD516149623F1003E7F5C /* MPTools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F2BD4F6149623F1003E7F5C /* MPTools.cpp */; };
 		5F2BD517149623F1003E7F5C /* MPTools.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2BD4F7149623F1003E7F5C /* MPTools.h */; };
 		5F2BD518149623F1003E7F5C /* Playlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F2BD4F8149623F1003E7F5C /* Playlist.cpp */; };
 		5F2BD519149623F1003E7F5C /* Playlist.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2BD4F9149623F1003E7F5C /* Playlist.h */; };
-		5F2BD51A149623F1003E7F5C /* stdafx.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2BD4FA149623F1003E7F5C /* stdafx.h */; };
 		5F2BD59714963C09003E7F5C /* fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F2BD59514963C09003E7F5C /* fft.c */; };
 		5F2BD59814963C09003E7F5C /* fft.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2BD59614963C09003E7F5C /* fft.h */; };
 		5FCD5B9817A95168004FD253 /* MDAVPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCD5B9617A95168004FD253 /* MDAVPlayer.h */; };
@@ -49,13 +46,10 @@
 		5F2BD4EF149623F1003E7F5C /* MILocalFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MILocalFile.h; sourceTree = SOURCE_ROOT; };
 		5F2BD4F2149623F1003E7F5C /* MPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MPlayer.cpp; sourceTree = SOURCE_ROOT; };
 		5F2BD4F3149623F1003E7F5C /* MPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPlayer.h; sourceTree = SOURCE_ROOT; };
-		5F2BD4F4149623F1003E7F5C /* MPTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MPTime.cpp; sourceTree = SOURCE_ROOT; };
-		5F2BD4F5149623F1003E7F5C /* MPTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPTime.h; sourceTree = SOURCE_ROOT; };
 		5F2BD4F6149623F1003E7F5C /* MPTools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MPTools.cpp; sourceTree = SOURCE_ROOT; };
 		5F2BD4F7149623F1003E7F5C /* MPTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPTools.h; sourceTree = SOURCE_ROOT; };
 		5F2BD4F8149623F1003E7F5C /* Playlist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Playlist.cpp; sourceTree = SOURCE_ROOT; };
 		5F2BD4F9149623F1003E7F5C /* Playlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Playlist.h; sourceTree = SOURCE_ROOT; };
-		5F2BD4FA149623F1003E7F5C /* stdafx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdafx.h; sourceTree = SOURCE_ROOT; };
 		5F2BD59514963C09003E7F5C /* fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fft.c; sourceTree = SOURCE_ROOT; };
 		5F2BD59614963C09003E7F5C /* fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fft.h; sourceTree = SOURCE_ROOT; };
 		5FCD5B9617A95168004FD253 /* MDAVPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MDAVPlayer.h; path = mac/MDAVPlayer.h; sourceTree = SOURCE_ROOT; };
@@ -127,13 +121,10 @@
 				5F2BD4EF149623F1003E7F5C /* MILocalFile.h */,
 				5F2BD4F2149623F1003E7F5C /* MPlayer.cpp */,
 				5F2BD4F3149623F1003E7F5C /* MPlayer.h */,
-				5F2BD4F4149623F1003E7F5C /* MPTime.cpp */,
-				5F2BD4F5149623F1003E7F5C /* MPTime.h */,
 				5F2BD4F6149623F1003E7F5C /* MPTools.cpp */,
 				5F2BD4F7149623F1003E7F5C /* MPTools.h */,
 				5F2BD4F8149623F1003E7F5C /* Playlist.cpp */,
 				5F2BD4F9149623F1003E7F5C /* Playlist.h */,
-				5F2BD4FA149623F1003E7F5C /* stdafx.h */,
 			);
 			name = Source;
 			path = MPlayerLib;
@@ -161,10 +152,8 @@
 				5F2BD50D149623F1003E7F5C /* MediaLibrary.h in Headers */,
 				5F2BD50F149623F1003E7F5C /* MILocalFile.h in Headers */,
 				5F2BD513149623F1003E7F5C /* MPlayer.h in Headers */,
-				5F2BD515149623F1003E7F5C /* MPTime.h in Headers */,
 				5F2BD517149623F1003E7F5C /* MPTools.h in Headers */,
 				5F2BD519149623F1003E7F5C /* Playlist.h in Headers */,
-				5F2BD51A149623F1003E7F5C /* stdafx.h in Headers */,
 				5F2BD59814963C09003E7F5C /* fft.h in Headers */,
 				5FCD5B9817A95168004FD253 /* MDAVPlayer.h in Headers */,
 			);
@@ -226,7 +215,6 @@
 				5F2BD50C149623F1003E7F5C /* MediaLibrary.cpp in Sources */,
 				5F2BD50E149623F1003E7F5C /* MILocalFile.cpp in Sources */,
 				5F2BD512149623F1003E7F5C /* MPlayer.cpp in Sources */,
-				5F2BD514149623F1003E7F5C /* MPTime.cpp in Sources */,
 				5F2BD516149623F1003E7F5C /* MPTools.cpp in Sources */,
 				5F2BD518149623F1003E7F5C /* Playlist.cpp in Sources */,
 				5F2BD59714963C09003E7F5C /* fft.c in Sources */,

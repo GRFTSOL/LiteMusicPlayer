@@ -11,8 +11,8 @@
 
 #import "IMPlayer.h"
 #import "MDAVPlayer.h"
-#import "MPTime.h"
 #import "MPlayer.h"
+#import "../../MediaTags/MediaTags.h"
 
 
 static void *AVSPPlayerItemStatusContext = &AVSPPlayerItemStatusContext;
@@ -148,50 +148,32 @@ MLRESULT CMDAVPlayer::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedi
         return ERR_DECODER_INIT_FAILED;
     }
 
-    AVURLAsset *asset = [AVAsset assetWithURL:[NSURL fileURLWithPath:[NSString stringWithUTF8String: pInput->getSource()]]];
-
-    if (![asset isPlayable] || [asset hasProtectedContent]) {
-        return ERR_NOT_SUPPORT;
+    BasicMediaTags tags;
+    int ret = MediaTags::getTagFast(pInput->getSource(), tags);
+    if (ret != ERR_OK) {
+        return ret;
     }
 
-    CMTime duration = [asset duration];
-    if (duration.timescale > 0) {
-        pMedia->setAttribute(MA_DURATION, (int)(duration.value * 1000 / duration.timescale));
+    pMedia->setAttribute(MA_ARTIST, tags.artist.c_str());
+    pMedia->setAttribute(MA_TITLE, tags.title.c_str());
+    pMedia->setAttribute(MA_ALBUM, tags.album.c_str());
+    pMedia->setAttribute(MA_YEAR, atoi(tags.year.c_str()));
+    pMedia->setAttribute(MA_GENRE, tags.genre.c_str());
+    pMedia->setAttribute(MA_TRACK_NUMB, atoi(tags.trackNo.c_str()));
+
+    if (tags.mediaLength == 0) {
+        AVURLAsset *asset = [AVURLAsset assetWithURL:[NSURL fileURLWithPath:[NSString stringWithUTF8String: pInput->getSource()]]];
+        if (![asset isPlayable] || [asset hasProtectedContent]) {
+            return ERR_NOT_SUPPORT;
+        }
+
+        CMTime duration = [asset duration];
+        if (duration.timescale > 0) {
+            tags.mediaLength = (int)(duration.value * 1000 / duration.timescale);
+        }
     }
+    pMedia->setAttribute(MA_DURATION, tags.mediaLength);
 
-    /*
-    m_player = [[AVPlayer alloc] init];
-
-    CMPAutoPtr<IWMPMedia>    media;
-    HRESULT hr = m_collection->add((BSTR)pInput->getSource(), &media);
-    if (FAILED(hr))
-        return HResultToMLResult(hr);
-
-    double duration;
-    hr = media->get_duration(&duration);
-    if (SUCCEEDED(hr))
-        pMedia->setAttribute(MA_DURATION, (int)(duration * 1000));
-
-    bstr_s    artist, album, title;
-
-    BSTR    pbstrItemName = SysAllocString(L"Artist");
-    hr = media->getItemInfo(pbstrItemName, &artist);
-    SysFreeString(pbstrItemName);
-    if (SUCCEEDED(hr))
-        pMedia->setAttribute(MA_ARTIST, artist.c_str());
-
-    pbstrItemName = SysAllocString(L"Album");
-    hr = media->getItemInfo(pbstrItemName, &album);
-    SysFreeString(pbstrItemName);
-    if (SUCCEEDED(hr))
-        pMedia->setAttribute(MA_ALBUM, album.c_str());
-
-    pbstrItemName = SysAllocString(L"Title");
-    hr = media->getItemInfo(pbstrItemName, &title);
-    SysFreeString(pbstrItemName);
-    if (SUCCEEDED(hr))
-        pMedia->setAttribute(MA_TITLE, title.c_str());
-*/
     return ERR_OK;
 }
 
@@ -308,7 +290,6 @@ MLRESULT CMDAVPlayer::doDecode(IMedia *pMedia) {
     MLRESULT nRet;
     CXStr strMedia;
     CMPAutoPtr<IMediaInput> pInput;
-    CMPTime timePlayed;
 
     nRet = pMedia->getSourceUrl(&strMedia);
     if (nRet != ERR_OK) {
@@ -337,20 +318,6 @@ MLRESULT CMDAVPlayer::doDecode(IMedia *pMedia) {
         } else {
             setVolume(m_pPlayer->m_volume, m_pPlayer->m_balance);
         }
-    }
-
-    // set the play time
-    timePlayed.getCurrentTime();
-    pMedia->setAttribute(MA_TIME_PLAYED, (int)timePlayed.m_time);
-
-    if (pMedia->getID() == MEDIA_ID_INVALID && m_pPlayer->isAutoAddToMediaLib()) {
-        m_pPlayer->m_pMediaLib->add(pMedia);
-    }
-
-    // If media info in media library isn't up to date,
-    // update to media library.
-    if (pMedia->getID() != MEDIA_ID_INVALID && !pMedia->isInfoUpdatedToMediaLib()) {
-        m_pPlayer->m_pMediaLib->updateMediaInfo(pMedia);
     }
 
     return ERR_OK;

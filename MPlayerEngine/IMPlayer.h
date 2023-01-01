@@ -116,8 +116,8 @@ interface IString {
     virtual uint32_t capacity() = 0;
     virtual void resize(uint32_t nSize) = 0;
     virtual MLRESULT reserve(uint32_t nCapacity) = 0;
-    virtual void copy(IString *pSrcStr) = 0;
-    virtual void copy(cstr_t str) = 0;
+    virtual void assign(IString *pSrcStr) = 0;
+    virtual void assign(cstr_t str) = 0;
     virtual void erase(int nOffset, int n) = 0;
     virtual void clear() = 0;
     virtual void insert(int nOffset, cstr_t str, int n) = 0;
@@ -262,8 +262,8 @@ interface IMedia {
     virtual MLRESULT getAttribute(MediaAttribute mediaAttr, IString *strValue) = 0;
     virtual MLRESULT setAttribute(MediaAttribute mediaAttr, cstr_t szValue) = 0;
 
-    virtual MLRESULT getAttribute(MediaAttribute mediaAttr, int *pnValue) = 0;
-    virtual MLRESULT setAttribute(MediaAttribute mediaAttr, int value) = 0;
+    virtual MLRESULT getAttribute(MediaAttribute mediaAttr, int64_t *pnValue) = 0;
+    virtual MLRESULT setAttribute(MediaAttribute mediaAttr, int64_t value) = 0;
 
 };
 
