@@ -250,6 +250,7 @@ static string readStringTag(char *&p, int size) {
     char buf[256];
 
     memcpy(buf, p, size);
+    buf[size] = '\0';
     p += size;
 
     return trimTagValue(buf);

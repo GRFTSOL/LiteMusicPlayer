@@ -215,87 +215,74 @@ int CID3v2IF::setUserDefLyrics(cstr_t szLyrics) {
     return nRet;
 }
 
-uint32_t    _vTextFrameIDV22[] = { ID3V2_2_ARTIST, ID3V2_2_TITLE, ID3V2_2_ALBUM,
-    ID3V2_2_TRACK, ID3V2_2_YEAR, ID3V2_2_GENRE };
+uint32_t _vTextFrameIDV22[] = {
+    ID3V2_2_ARTIST, ID3V2_2_TITLE, ID3V2_2_ALBUM,
+    ID3V2_2_TRACK, ID3V2_2_YEAR, ID3V2_2_GENRE
+};
 
-    uint32_t    _vTextFrameIDV23[] = { ID3V2_3_ARTIST, ID3V2_3_TITLE, ID3V2_3_ALBUM,
-    ID3V2_3_TRACK, ID3V2_3_YEAR, ID3V2_3_GENRE };
+uint32_t _vTextFrameIDV23[] = {
+    ID3V2_3_ARTIST, ID3V2_3_TITLE, ID3V2_3_ALBUM,
+    ID3V2_3_TRACK, ID3V2_3_YEAR, ID3V2_3_GENRE
+};
 
-    // TCOM    : Composer
-    // TPOS :
-    // TPE1 : Artist
-    // TPE2 : Album artist
-    // TALB : Album
-    // TIT2 : Title
-    // TRCK : Track
-    // TYER : Year
-    // COMM : Comment
-    // TCON : Genre
-    // APIC : pic
-    // USLT : unsyn lyrics
-    // TENC : encoded
-    // WXXX : url
-    // TCOP : copy right
-    // TOPE : Orig. artist
-    // TPUB : Publisher
-    // TBPM : bpm
-    int CID3v2IF::getTags(BasicMediaTags &tags) {
-    int nRet;
-    ID3v2Text txt;
-    uint32_t *vTextFrameID;
-    uint32_t nFrameID;
-    CID3v2Frame *pFrame;
+// TCOM    : Composer
+// TPOS :
+// TPE1 : Artist
+// TPE2 : Album artist
+// TALB : Album
+// TIT2 : Title
+// TRCK : Track
+// TYER : Year
+// COMM : Comment
+// TCON : Genre
+// APIC : pic
+// USLT : unsyn lyrics
+// TENC : encoded
+// WXXX : url
+// TCOP : copy right
+// TOPE : Orig. artist
+// TPUB : Publisher
+// TBPM : bpm
+int CID3v2IF::getTags(BasicMediaTags &tags) {
+    string *vStr[] = {
+        &tags.artist, &tags.title, &tags.album, &tags.trackNo, &tags.year, &tags.genre
+    };
 
-    string        *vStr[] = { &tags.artist, &tags.title, &tags.album,
-        &tags.trackNo, &tags.year, &tags.genre
-        };
-
-        if (isID3v2_2())
-        vTextFrameID = _vTextFrameIDV22;
-        else
-        vTextFrameID = _vTextFrameIDV23;
+    uint32_t *vTextFrameID = isID3v2_2() ? _vTextFrameIDV22 : _vTextFrameIDV23;
 
         // read general text frames
-        for (int i = 0; i < CountOf(_vTextFrameIDV22); i++) {
-        for (FrameIterator it = frameBegin(); it != frameEnd(); ++it) {
-            CID3v2Frame *pFrame = *it;
-            if (pFrame->m_framehdr.nFrameID == vTextFrameID[i]) {
-                CID3v2FrameParserText txtParser(m_Encoding);
-                nRet = txtParser.parse(pFrame, txt);
-                if (nRet == ERR_OK) {
-                    *vStr[i] = txt.getValue();
-                }
+    for (int i = 0; i < CountOf(_vTextFrameIDV22); i++) {
+        auto frame = findFrame(vTextFrameID[i]);
+        if (frame) {
+            CID3v2FrameParserText txtParser(m_Encoding);
+            ID3v2Text txt;
+            auto ret = txtParser.parse(frame, txt);
+            if (ret == ERR_OK) {
+                *vStr[i] = txt.getValue();
             }
         }
     }
 
     // read comment
-    if (isID3v2_2()) {
-        nFrameID = ID3V2_2_COMMENT;
-    } else {
-        nFrameID = ID3V2_3_COMMENT;
-    }
-    pFrame = findFrame(nFrameID);
-    if (pFrame) {
+    uint32_t frameID = isID3v2_2() ? (uint32_t)ID3V2_2_COMMENT : (uint32_t)ID3V2_3_COMMENT;
+    auto frame = findFrame(frameID);
+    if (frame) {
         CID3v2FrameParserComment parser(m_Encoding);
-        nRet = parser.parse(pFrame);
-        if (nRet == ERR_OK) {
+        int ret = parser.parse(frame);
+        if (ret == ERR_OK) {
             tags.comments = parser.m_strText.c_str();
         }
     }
 
     // read year
     if (tags.year.empty()) {
-        if (isID3v2_2()) {
-            nFrameID = ID3V2_2_YEAR2;
-        } else {
-            nFrameID = ID3V2_3_YEAR2;
-        }
-        pFrame = findFrame(nFrameID);
-        if (pFrame) {
+        uint32_t frameID = isID3v2_2() ? (uint32_t)ID3V2_2_YEAR2 : (uint32_t)ID3V2_3_YEAR2;
+        auto frame = findFrame(frameID);
+        if (frame) {
             CID3v2FrameParserText txtParser(m_Encoding);
-            nRet = txtParser.parse(pFrame, txt);
-            if (nRet == ERR_OK) {
+            ID3v2Text txt;
+            int ret = txtParser.parse(frame, txt);
+            if (ret == ERR_OK) {
                 tags.year = txt.getValue();
             }
         }

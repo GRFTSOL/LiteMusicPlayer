@@ -135,11 +135,10 @@ int MediaTags::getTagFast(cstr_t szFile, BasicMediaTags &tags) {
         int nRet = id3v2.open(fp, false);
         if (nRet == ERR_OK) {
             id3v2.getTags(tags);
+        } else {
+            CID3v1 id3v1;
+            return id3v1.getTag(fp, tags);
         }
-
-        CID3v1 id3v1;
-
-        return id3v1.getTag(fp, tags);
     } else if (isM4aTagSupported(szFile)) {
         CM4aTag tag;
         int nRet = tag.open(fp, false);
