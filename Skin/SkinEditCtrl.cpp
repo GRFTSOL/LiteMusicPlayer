@@ -1778,6 +1778,10 @@ void CSkinEditCtrl::onKillFocus() {
 
     hideCaret();
 
+    if (m_pEditNotification) {
+        m_pEditNotification->onEditorKillFocus();
+    }
+
     invalidate();
 }
 
@@ -1972,6 +1976,11 @@ bool CSkinEditCtrl::onRButtonUp(uint32_t nFlags, CPoint point) {
 }
 
 void CSkinEditCtrl::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) {
+    if (isSingleLine() && m_pEditNotification && !isFlagSet(nMkeys, MK_SHIFT)) {
+        m_pEditNotification->onEditorMouseWheel(nWheelDistance, nMkeys, pt);
+        return;
+    }
+
     int nOffset;
 
     if (!m_pVertScrollBar || !m_pHorzScrollBar) {
@@ -2174,6 +2183,11 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         }
     case VK_UP: // up arrow
         {
+            if (isSingleLine() && m_pEditNotification) {
+                m_pEditNotification->onEditorKeyDown(nChar, nFlags);
+                return;
+            }
+
             bSelKey = true;
             if (m_nCaretRow > 0) {
                 bRecoverCaretMaxXLatestOrg = true;
@@ -2183,6 +2197,11 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         }
     case VK_DOWN: // down arrow
         {
+            if (isSingleLine() && m_pEditNotification) {
+                m_pEditNotification->onEditorKeyDown(nChar, nFlags);
+                return;
+            }
+
             bSelKey = true;
             if (m_nCaretRow < (int)m_vLines.size() - 1) {
                 bRecoverCaretMaxXLatestOrg = true;
@@ -2192,6 +2211,11 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         }
     case VK_PAGE_UP: // page up
         {
+            if (isSingleLine() && m_pEditNotification) {
+                m_pEditNotification->onEditorKeyDown(nChar, nFlags);
+                return;
+            }
+
             bSelKey = true;
             if (m_nCaretRow > 0 && m_pVertScrollBar&& m_pVertScrollBar->isEnabled()) {
                 bRecoverCaretMaxXLatestOrg = true;
@@ -2205,6 +2229,11 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         }
     case VK_PAGE_DOWN: // page down
         {
+            if (isSingleLine() && m_pEditNotification) {
+                m_pEditNotification->onEditorKeyDown(nChar, nFlags);
+                return;
+            }
+
             bSelKey = true;
             if (m_nCaretRow < (int)m_vLines.size() && m_pVertScrollBar && m_pVertScrollBar->isEnabled()) {
                 bRecoverCaretMaxXLatestOrg = true;
@@ -2258,11 +2287,11 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
             if (isSingleLine()) {
                 if (m_pEditNotification) {
                     if (ctrl) {
-                        m_pEditNotification->onSpecialKey(IEditNotification::SK_CTRL_ENTER);
+                        m_pEditNotification->onEditorKeyDown(nChar, nFlags);
                     } else if (shift) {
-                        m_pEditNotification->onSpecialKey(IEditNotification::SK_SHIFT_ENTER);
+                        m_pEditNotification->onEditorKeyDown(nChar, nFlags);
                     } else {
-                        m_pEditNotification->onSpecialKey(IEditNotification::SK_ENTER);
+                        m_pEditNotification->onEditorKeyDown(nChar, nFlags);
                     }
                 }
                 break;
@@ -2521,7 +2550,7 @@ void CSkinEditCtrl::onStatusChanged(Status status, bool bVal) {
         return;
     }
 
-    m_pEditNotification->onStatusChanged(s, bVal);
+    m_pEditNotification->onEditorTextChanged(s, bVal);
 }
 
 
@@ -2530,7 +2559,7 @@ void CSkinEditCtrl::onAction(Action action) {
         return;
     }
 
-    m_pEditNotification->onTextChanged();
+    m_pEditNotification->onEditorTextChanged();
 }
 
 IdToString __EditStyleText[] = {

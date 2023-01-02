@@ -667,7 +667,7 @@ void CSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags) {
 
     CUIObject *pObjFocus = getFocusUIObj();
     if (pObjFocus) {
-        if (pObjFocus->needMsgAllKeys()) {
+        if (pObjFocus->needMsgKey()) {
             pObjFocus->onKeyDown(nChar, nFlags);
             return;
         }

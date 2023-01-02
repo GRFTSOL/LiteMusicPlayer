@@ -167,7 +167,7 @@ public:
     }
 
     // Edit control notification
-    void onTextChanged() override {
+    void onEditorTextChanged() override {
         if (m_bAutoSearchLocal) {
             m_pSkin->unregisterTimerObject(this, TIMER_ID_RESEARCH);
             TIMER_ID_RESEARCH = m_pSkin->registerTimerObject(this, DURATION_AUTO_SEARCH);
@@ -175,8 +175,8 @@ public:
     }
 
     // Edit control notification
-    void onSpecialKey(SpecialKey key) override {
-        if (key == SK_ENTER) {
+    void onEditorKeyDown(uint32_t code, uint32_t flags) override {
+        if (code == VK_RETURN) {
             onSearch();
         }
     }

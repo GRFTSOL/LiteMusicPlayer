@@ -36,7 +36,7 @@ void CPopupSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags) {
     CUIObject *pObjFocus = getFocusUIObj();
 
     // let focus uiobject to process key message
-    if (pObjFocus && pObjFocus->needMsgAllKeys()) {
+    if (pObjFocus && pObjFocus->needMsgKey()) {
         pObjFocus->onKeyDown(nChar, nFlags);
         return;
     }

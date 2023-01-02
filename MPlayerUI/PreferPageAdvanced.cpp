@@ -887,7 +887,7 @@ void CPagePfAdvanced::onUIObjNotify(IUIObjNotify *pNotify) {
 }
 
 // Edit control notification
-void CPagePfAdvanced::onTextChanged() {
+void CPagePfAdvanced::onEditorTextChanged() {
     if (m_nTimerIdSearch != 0) {
         m_pSkin->unregisterTimerObject(this, m_nTimerIdSearch);
     }

@@ -160,14 +160,16 @@
         return;
     }
 
+    NSWindow *window = [self window];
+
     if (mBaseWnd->isMouseCaptured()) {
         mBaseWnd->onMouseDrag((uint32_t)[theEvent modifierFlags],
-            NSPointToCPoint([theEvent locationInWindow], [self frame].size.height));
+            NSPointToCPoint([theEvent locationInWindow], [window frame].size.height));
         return;
     }
 
     NSRect screenVisibleFrame = [[NSScreen mainScreen] visibleFrame];
-    NSRect windowFrame = [self frame];
+    NSRect windowFrame = [window frame];
     NSPoint newOrigin = windowFrame.origin;
 
     // Get the mouse location in window coordinates.
@@ -182,7 +184,7 @@
     }
 
     // Move the window to the new location
-    [self setFrameOrigin:newOrigin];
+    [window setFrameOrigin:newOrigin];
 }
 
 ///////////////////////////////////////////////////////////////////////////

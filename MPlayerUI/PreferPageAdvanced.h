@@ -40,7 +40,7 @@ public:
 
     void onTimer(int nId) override;
 
-    void onTextChanged() override;
+    void onEditorTextChanged() override;
 
     void updateValues();
 

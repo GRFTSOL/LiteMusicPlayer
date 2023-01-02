@@ -13,6 +13,9 @@ public:
     void onEvent(const IEvent *pEvent) override;
 
     void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
+    void onHandleKeyDown(uint32_t nChar, uint32_t nFlags) override;
+
+    void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override;
 
     void sendNotifyEvent(CSkinListCtrlEventNotify::Command cmd, int nClickedRow, int nClickedCol) override;
 
@@ -27,8 +30,10 @@ public:
     };
 
     // Keyword Search 的回调消息
-    virtual void onTextChanged() override;
-    virtual void onSpecialKey(SpecialKey key) override;
+    virtual void onEditorTextChanged() override;
+    virtual void onEditorKeyDown(uint32_t code, uint32_t flags) override;
+    virtual void onEditorMouseWheel(int wheelDistance, int mkeys, CPoint pt) override;
+    virtual void onEditorKillFocus() override;
 
 protected:
     void insertMedia(CMPAutoPtr<IPlaylist> &playlist, int index, bool redraw = false);

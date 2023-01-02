@@ -246,6 +246,7 @@ public:
     void draw(CRawGraph *canvas) override;
 
     void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
+    virtual void onHandleKeyDown(uint32_t nChar, uint32_t nFlags);
 
     bool onLButtonUp(uint32_t nFlags, CPoint point) override;
     bool onLButtonDown(uint32_t nFlags, CPoint point) override;

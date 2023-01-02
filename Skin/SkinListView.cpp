@@ -276,15 +276,9 @@ void CSkinListView::onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar
     }
 
     // 当垂直滚动条位置在 0 时，隐藏，否则显示.
-    if (m_header) {
-        if (nPos == 0) {
-            m_header->setVisible(true, false);
-        } else {
-            m_header->setVisible(false, false);
-
-            // 真实的 Row 由于需要减去 header，所以小了一行
-            nPos--;
-        }
+    if (m_header && m_header->isVisible() && nPos > 0) {
+        // 真实的 Row 由于需要减去 header，所以小了一行
+        nPos--;
     }
 
     assert(nPos >= 0 && nPos < (int)getRowCount());
@@ -1103,6 +1097,10 @@ void CSkinListView::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         return;
     }
 
+    onHandleKeyDown(nChar, nFlags);
+}
+
+void CSkinListView::onHandleKeyDown(uint32_t nChar, uint32_t nFlags) {
     if (getRowCount() == 0) {
         return;
     }

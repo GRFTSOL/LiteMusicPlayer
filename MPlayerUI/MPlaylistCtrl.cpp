@@ -256,14 +256,20 @@ void CMPlaylistCtrl::onEvent(const IEvent *pEvent) {
     }
 }
 
-void CMPlaylistCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
-    CSkinListCtrl::onKeyDown(nChar, nFlags);
+void CMPlaylistCtrl::onKeyDown(uint32_t code, uint32_t flags) {
+    CSkinListCtrl::onKeyDown(code, flags);
 
     if (m_vRows.empty() || m_nFocusUIObj != -1) {
         return;
     }
 
-    if (nChar == VK_RETURN) {
+    onHandleKeyDown(code, flags);
+}
+
+void CMPlaylistCtrl::onHandleKeyDown(uint32_t code, uint32_t flags) {
+    CSkinListCtrl::onHandleKeyDown(code, flags);
+
+    if (code == VK_RETURN) {
         if (m_searchResults) {
             useResultAsNowPlaying();
         } else {
@@ -272,14 +278,25 @@ void CMPlaylistCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
                 g_Player.playMedia(n);
             }
         }
-    } else if (nChar == VK_DELETE) {
+    } else if (code == VK_DELETE) {
         deleteSelectedItems();
-    } else if (nChar == VK_UP || nChar == VK_DOWN) {
-        bool ctrl = isModifierKeyPressed(MK_CONTROL, nFlags);
+    } else if (code == VK_UP || code == VK_DOWN) {
+        bool ctrl = isModifierKeyPressed(MK_CONTROL, flags);
         if (ctrl) {
-            offsetAllSelectedItems(nChar == VK_DOWN);
+            offsetAllSelectedItems(code == VK_DOWN);
         }
     }
+}
+
+void CMPlaylistCtrl::onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) {
+    // 当垂直滚动条位置在 0 时，显示.
+    if (m_header && !m_header->isVisible() && nPos == 0) {
+        m_header->setVisible(true, false);
+    } else if (m_header && m_header->isVisible() && nPos > 0 && !m_editorSearch->isOnFocus()) {
+        m_header->setVisible(false, false);
+    }
+
+    CSkinListCtrl::onVScroll(nSBCode, nPos, pScrollBar);
 }
 
 void CMPlaylistCtrl::sendNotifyEvent(CSkinListCtrlEventNotify::Command cmd, int nClickedRow, int nClickedCol) {
@@ -348,7 +365,7 @@ void CMPlaylistCtrl::offsetAllSelectedItems(bool bMoveDown) {
     }
 }
 
-void CMPlaylistCtrl::onTextChanged() {
+void CMPlaylistCtrl::onEditorTextChanged() {
     if (!m_editorSearch) {
         return;
     }
@@ -361,13 +378,24 @@ void CMPlaylistCtrl::onTextChanged() {
     m_timerIdBeginSearch = m_pSkin->registerTimerObject(this, 1000);
 }
 
-void CMPlaylistCtrl::onSpecialKey(SpecialKey key) {
+void CMPlaylistCtrl::onEditorKeyDown(uint32_t code, uint32_t flags) {
     if (!m_editorSearch) {
         return;
     }
 
-    if (key == IEditNotification::SK_ENTER) {
-        useResultAsNowPlaying();
+    onHandleKeyDown(code, flags);
+}
+
+void CMPlaylistCtrl::onEditorMouseWheel(int wheelDistance, int mkeys, CPoint pt) {
+    onMouseWheel(wheelDistance, mkeys, pt);
+}
+
+void CMPlaylistCtrl::onEditorKillFocus() {
+    if (m_header) {
+        if (m_pVertScrollBar && m_pVertScrollBar->getScrollPos() > 0) {
+            m_header->setVisible(false, false);
+            invalidate();
+        }
     }
 }
 

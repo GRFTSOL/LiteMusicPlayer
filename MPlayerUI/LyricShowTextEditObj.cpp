@@ -1470,7 +1470,7 @@ void CLyricShowTextEditObj::updateLyricsProperties(bool bRedraw) {
     }
 }
 
-void CLyricShowTextEditObj::onStatusChanged(IEditNotification::Status status, bool bVal) {
+void CLyricShowTextEditObj::onEditorTextChanged(IEditNotification::Status status, bool bVal) {
     CSkinToolbar *pToolBar;
 
     pToolBar = (CSkinToolbar *)m_pSkin->getUIObjectById(ID_TB_LYR_EDIT, CSkinToolbar::className());
@@ -1489,7 +1489,7 @@ void CLyricShowTextEditObj::onStatusChanged(IEditNotification::Status status, bo
     }
 }
 
-void CLyricShowTextEditObj::onTextChanged() {
+void CLyricShowTextEditObj::onEditorTextChanged() {
     if (m_nTimerIDUpdateLyrics) {
         m_pSkin->unregisterTimerObject(this, m_nTimerIDUpdateLyrics);
     }

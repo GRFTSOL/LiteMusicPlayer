@@ -27,18 +27,12 @@ public:
         S_SEL,
     };
 
-    enum SpecialKey {
-        SK_ENTER,
-        SK_CTRL_ENTER,
-        SK_SHIFT_ENTER,
-        SK_ESCAPE,
-        SK_TAB,
-    };
+    virtual void onEditorTextChanged(Status status, bool bVal) { }
+    virtual void onEditorTextChanged() { }
 
-    virtual void onStatusChanged(Status status, bool bVal) { }
-    virtual void onTextChanged() { }
-
-    virtual void onSpecialKey(SpecialKey key) { }
+    virtual void onEditorKeyDown(uint32_t code, uint32_t flags) { }
+    virtual void onEditorMouseWheel(int wheelDistance, int mkeys, CPoint pt) { }
+    virtual void onEditorKillFocus() { }
 
 };
 
@@ -489,7 +483,7 @@ public:
         if (m_bPrevSelectedStatus != bSelected) {
             m_bPrevSelectedStatus = bSelected;
             if (m_pEditNotification) {
-                m_pEditNotification->onStatusChanged(IEditNotification::S_SEL, bSelected);
+                m_pEditNotification->onEditorTextChanged(IEditNotification::S_SEL, bSelected);
             }
         }
     }

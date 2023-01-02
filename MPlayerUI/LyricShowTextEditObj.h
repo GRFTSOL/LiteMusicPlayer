@@ -97,8 +97,8 @@ public:
     void onLyricsChanged();
 
 public:
-    virtual void onStatusChanged(IEditNotification::Status status, bool bVal) override;
-    virtual void onTextChanged() override;
+    virtual void onEditorTextChanged(IEditNotification::Status status, bool bVal) override;
+    virtual void onEditorTextChanged() override;
 
     virtual void onTimer(int nId) override;
 
