@@ -535,10 +535,11 @@ void CMPlaylistCtrl::doSearch(cstr_t keyword) {
 
     deleteAllItems(false);
 
-    CMPAutoPtr<IPlaylist> curPlaylist;
-    if (g_Player.getCurrentPlaylist(&curPlaylist) != ERR_OK) {
-        return;
-    }
+    CMPAutoPtr<IMediaLibrary> mediaLib;
+    g_Player.getMediaLibrary(&mediaLib);
+
+    CMPAutoPtr<IPlaylist> playlist(mediaLib->getAll());
+    // g_Player.getCurrentPlaylist(&playlist);
 
     if (isEmptyString(keyword)) {
         updatePlaylist(true);
@@ -557,9 +558,9 @@ void CMPlaylistCtrl::doSearch(cstr_t keyword) {
     VecStrings vKeywords;
     splitKeywords(keyword, vKeywords);
 
-    for (uint32_t i = 0; i < curPlaylist->getCount(); i++) {
+    for (uint32_t i = 0; i < playlist->getCount(); i++) {
         CMPAutoPtr<IMedia> media;
-        auto ret = curPlaylist->getItem(i, &media);
+        auto ret = playlist->getItem(i, &media);
         if (ret == ERR_OK) {
             string str = CPlayer::formatMediaTitle(media);
 

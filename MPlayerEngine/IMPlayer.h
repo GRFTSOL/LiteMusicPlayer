@@ -321,7 +321,7 @@ interface IMediaLibrary {
     virtual MLRESULT add(cstr_t szMediaUrl, IMedia **ppMedia) = 0;
 
     // add media to media library fast, media info will not be reloaded from media file immediately.
-    virtual MLRESULT addFast(cstr_t szMediaUrl, cstr_t szArtist, cstr_t szTitle, IMedia **ppMedia) = 0;
+    virtual MLRESULT addFast(cstr_t szMediaUrl, IMedia **ppMedia) = 0;
 
     virtual MLRESULT updateMediaInfo(IMedia *pMedia) = 0;
 
@@ -330,6 +330,8 @@ interface IMediaLibrary {
 
     // If the media file was removed temporarily, set this flag on.
     virtual MLRESULT setDeleted(IMedia **pMedia) = 0;
+
+    virtual IPlaylist *getAll() = 0;
 
     // nTopN = -1 : query all
     virtual MLRESULT getAll(IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN) = 0;

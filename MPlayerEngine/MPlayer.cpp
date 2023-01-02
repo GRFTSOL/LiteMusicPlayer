@@ -751,7 +751,7 @@ MLRESULT CMPlayer::newMedia(IMedia **ppMedia, cstr_t szUrl) {
 
     int nRet;
 
-    nRet = m_pMediaLib->getMediaByUrl(szUrl, ppMedia);
+    nRet = m_pMediaLib->addFast(szUrl, ppMedia);
     if (nRet != ERR_OK) {
         *ppMedia = new CMedia;
         if (*ppMedia == nullptr) {

@@ -268,7 +268,7 @@ NSMenuItem *duplicateMenuItem(NSMenuItem *org) {
         [alert release];
         alert = nil;
 
-        if (answer == NSAlertAlternateReturn) {
+        if (answer == NSAlertSecondButtonReturn) {
             return NSTerminateCancel;
         }
     }

@@ -35,7 +35,7 @@ public:
     virtual MLRESULT add(cstr_t szMediaUrl, IMedia **ppMedia);
 
     // add media to media library fast, didn't update media info.
-    virtual MLRESULT addFast(cstr_t szMediaUrl, cstr_t szArtist, cstr_t szTitle, IMedia **ppMedia);
+    virtual MLRESULT addFast(cstr_t szMediaUrl, IMedia **ppMedia);
 
     virtual MLRESULT updateMediaInfo(IMedia *pMedia);
 
@@ -44,6 +44,8 @@ public:
 
     // If the media file was removed temporarily, set this flag on.
     virtual MLRESULT setDeleted(IMedia **pMedia);
+
+    virtual IPlaylist *getAll();
 
     virtual MLRESULT getAll(IPlaylist **ppPlaylist, MediaLibOrderBy orderBy, int nTopN);
 
@@ -108,6 +110,9 @@ public:
 protected:
     MLRESULT doAddMedia(CMedia *pMedia);
 
+    void updateMediaInMem(IMedia *media);
+    void removeMediaInMem(IMedia *media);
+
     CPlaylist *newPlaylist();
 
     int upgradeCheck();
@@ -115,6 +120,7 @@ protected:
 protected:
     friend class CMLQueryPlaylist;
 
+    CMPAutoPtr<IPlaylist>       m_allMedias;
     CMPAutoPtr<CMPlayer>        m_player;
 
     CSqlite3                    m_db;

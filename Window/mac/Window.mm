@@ -473,55 +473,6 @@ bool Window::moveWindowSafely(int X, int Y, int nWidth, int nHeight, bool bRepai
     return moveWindow(X, Y, nWidth, nHeight, bRepaint);
 }
 
-int messageOut(cstr_t lpText, uint32_t uType, cstr_t lpCaption) {
-    uint32_t btType = uType & 0xF;
-    NSString *defBt = nil;
-    NSString *alterBt = nil;
-    NSString *otherBt = nil;
-    if (btType == MB_OKCANCEL) {
-        defBt = [NSString stringWithUTF8String:("OK")];
-        alterBt = [NSString stringWithUTF8String:("Cancel")];
-    } else if (btType == MB_YESNOCANCEL) {
-        defBt = [NSString stringWithUTF8String:("Yes")];
-        alterBt = [NSString stringWithUTF8String:("Cancel")];
-        otherBt = [NSString stringWithUTF8String:("NO")];
-    } else if (btType == MB_YESNO) {
-        defBt = [NSString stringWithUTF8String:("Yes")];
-        alterBt = [NSString stringWithUTF8String:("NO")];
-    }
-
-    NSAlert *alert = [NSAlert alertWithMessageText:[NSString stringWithUTF8String:lpCaption]
-        defaultButton:defBt
-        alternateButton:alterBt
-        otherButton:otherBt
-        informativeTextWithFormat:@"%@", [NSString stringWithUTF8String:lpText]];
-
-    int nRet = (int)[alert runModal];
-    if (btType == MB_OKCANCEL) {
-        if (nRet == NSAlertFirstButtonReturn) {
-            return IDOK;
-        } else {
-            return IDCANCEL;
-        }
-    } else if (btType == MB_YESNOCANCEL) {
-        if (nRet == NSAlertFirstButtonReturn) {
-            return IDYES;
-        } else if (nRet == NSAlertSecondButtonReturn) {
-            return IDNO;
-        } else {
-            return IDCANCEL;
-        }
-    } else if (btType == MB_YESNO) {
-        if (nRet == NSAlertFirstButtonReturn) {
-            return IDYES;
-        } else {
-            return IDNO;
-        }
-    } else {
-        return IDOK;
-    }
-}
-
 int Window::messageOut(cstr_t lpText, uint32_t uType, cstr_t lpCaption) {
     uint32_t btType = uType & 0xF;
     NSString *defBt = nil;
@@ -532,8 +483,8 @@ int Window::messageOut(cstr_t lpText, uint32_t uType, cstr_t lpCaption) {
         alterBt = [NSString stringWithUTF8String:("Cancel")];
     } else if (btType == MB_YESNOCANCEL) {
         defBt = [NSString stringWithUTF8String:("Yes")];
-        alterBt = [NSString stringWithUTF8String:("Cancel")];
-        otherBt = [NSString stringWithUTF8String:("NO")];
+        alterBt = [NSString stringWithUTF8String:("NO")];
+        otherBt = [NSString stringWithUTF8String:("Cancel")];
     } else if (btType == MB_YESNO) {
         defBt = [NSString stringWithUTF8String:("Yes")];
         alterBt = [NSString stringWithUTF8String:("NO")];
@@ -545,11 +496,15 @@ int Window::messageOut(cstr_t lpText, uint32_t uType, cstr_t lpCaption) {
     } else {
         title = [NSString stringWithUTF8String:lpCaption];
     }
-    NSAlert *alert = [NSAlert alertWithMessageText:title
-        defaultButton:defBt
-        alternateButton:alterBt
-        otherButton:otherBt
-        informativeTextWithFormat:@"%@", [NSString stringWithUTF8String:lpText]];
+
+    NSAlert *alert = [[NSAlert alloc] init];
+    [alert setMessageText:title];
+    [alert setInformativeText:[NSString stringWithUTF8String:lpText]];
+    [alert addButtonWithTitle:defBt];
+    [alert addButtonWithTitle:alterBt];
+    if (otherBt) {
+        [alert addButtonWithTitle:otherBt];
+    }
 
     int nRet = (int)[alert runModal];
     if (btType == MB_OKCANCEL) {
