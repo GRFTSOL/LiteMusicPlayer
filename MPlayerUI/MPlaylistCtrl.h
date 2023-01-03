@@ -12,12 +12,16 @@ public:
     void onTimer(int nId) override;
     void onEvent(const IEvent *pEvent) override;
 
+    bool onCommand(int nId) override;
+
     void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
     void onHandleKeyDown(uint32_t nChar, uint32_t nFlags) override;
 
     void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override;
 
     void sendNotifyEvent(CSkinListCtrlEventNotify::Command cmd, int nClickedRow, int nClickedCol) override;
+
+    void makeSureRowVisible(int nRow) override;
 
     void deleteSelectedItems();
     void offsetAllSelectedItems(bool bMoveDown);
@@ -47,10 +51,9 @@ protected:
     void updatePlaylist(bool isRedraw);
     void doSearch(cstr_t keyword);
     void useResultAsNowPlaying();
+    void showHideEditorSearch(int row);
 
 protected:
-    int                         m_nNowPlaying;
-
     string                      m_idEditorSearch;
     CSkinEditCtrl               *m_editorSearch;
     int                         m_timerIdBeginSearch;

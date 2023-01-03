@@ -374,7 +374,8 @@
 #define IDC_NEW_LYRICS                  40197
 #define ID_OPTIONS_DISPLAYLYRICSTAG     40198
 #define IDC_EDIT_LYR_TAG                40199
-#define IDC_INSTRUMENTAL_MUSIC            40200
+#define IDC_INSTRUMENTAL_MUSIC          40200
+#define IDC_SHOW_IN_FINDER              40201
 
 // next default values for new objects
 // 

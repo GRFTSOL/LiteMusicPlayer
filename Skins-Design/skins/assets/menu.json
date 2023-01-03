@@ -829,6 +829,11 @@
   ], 
   "PlaylistMenu": [
     [
+      "Show in Fin&der", 
+      "IDC_SHOW_IN_FINDER", 
+      40201
+    ], 
+[
       "&Open File...", 
       "IDC_OPENFILE", 
       40163

@@ -16,6 +16,9 @@ typedef int LPARAM;
 
 class Cursor;
 
+void showInFinder(cstr_t filename);
+void showInFinder(const VecStrings &files);
+
 class Window : public IWindow {
 public:
     Window();

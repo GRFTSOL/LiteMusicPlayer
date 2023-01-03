@@ -86,6 +86,8 @@ public:
         CN_TEXT,
         CN_SEL_BG,
         CN_SEL_TEXT,
+        CN_NOW_PLAYING_BG,
+        CN_NOW_PLAYING_TEXT,
         CN_CUSTOMIZED_START,
 
         CN_MAX                      = 255
@@ -120,7 +122,7 @@ public:
     void setTextColor(const CColor &clrText);
 
     void setColor(int nColorName, const CColor &clr);
-    CColor & getColor(int nColorName);
+    CColor &getColor(int nColorName);
 
     virtual void addColumn(cstr_t szCol, int nWidth, int colType = CColHeader::TYPE_TEXT, bool bClickable = false, int drawTextAligns = DT_LEFT);
 
@@ -136,7 +138,7 @@ public:
     void setItemSelectionState(int nIndex, bool bSelected);
     void clearAllSelMark();
 
-    void makeSureRowVisible(int nRow);
+    virtual void makeSureRowVisible(int nRow);
 
     void increaseHeight(int value);
 
@@ -300,6 +302,8 @@ protected:
     CSkinFontProperty           m_font;
     int                         m_nBegSelRow, m_nEndSelRow;
     bool                        m_bClickBtDown;
+
+    int                         m_nowPlayingRow;
 
     int                         m_nLineHeight, m_nLineHeightOrg;
     int                         m_nXMargin;

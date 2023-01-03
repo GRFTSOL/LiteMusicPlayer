@@ -12,6 +12,23 @@
 #import "WindowHandleHolder.h"
 
 
+void showInFinder(cstr_t filename) {
+    string path = fileGetPath(filename);
+
+    [[NSWorkspace sharedWorkspace] selectFile:[NSString stringWithCString:filename encoding:NSUTF8StringEncoding]
+                     inFileViewerRootedAtPath:[NSString stringWithCString:path.c_str() encoding:NSUTF8StringEncoding]];
+}
+
+void showInFinder(const VecStrings &files) {
+    NSMutableArray *fileURLs = [NSMutableArray array];
+
+    for (auto &fn : files) {
+        [fileURLs addObject:[NSString stringWithCString:fn.c_str() encoding:NSUTF8StringEncoding]];
+    }
+
+    [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs:fileURLs];
+}
+
 Window::Window() {
     m_handleHolder = new WindowHandleHolder();
     m_handleHolder->window = nullptr;

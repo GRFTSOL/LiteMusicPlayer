@@ -68,7 +68,7 @@ public:
             F_SELECTED                  = 1,
         };
 
-        vector<Item                 *>            vItems;
+        vector<Item*>               vItems;
         uint32_t                    nItemData;
         int                         nImageIndex;
         uint32_t                    dwFlags;

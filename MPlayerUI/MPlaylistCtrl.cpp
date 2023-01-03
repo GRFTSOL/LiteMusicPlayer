@@ -173,7 +173,6 @@ UIOBJECT_CLASS_NAME_IMP(CMPlaylistCtrl, "Playlist")
 
 CMPlaylistCtrl::CMPlaylistCtrl() {
     m_bHorzScrollBar = false;
-    m_nNowPlaying = -1;
     m_editorSearch = nullptr;
 }
 
@@ -240,6 +239,10 @@ void CMPlaylistCtrl::onEvent(const IEvent *pEvent) {
     } else if (pEvent->eventType == ET_PLAYER_CUR_MEDIA_CHANGED) {
         setNowPlaying();
 
+        if (m_nowPlayingRow != -1) {
+            makeSureRowVisible(m_nowPlayingRow);
+        }
+
         CMPAutoPtr<IMedia> media;
         int row = g_Player.getCurrentMediaIndex();
         if (g_Player.getCurrentMedia(&media) == ERR_OK && row < getRowCount()) {
@@ -256,14 +259,44 @@ void CMPlaylistCtrl::onEvent(const IEvent *pEvent) {
     }
 }
 
+bool CMPlaylistCtrl::onCommand(int nId) {
+    if (nId == IDC_SHOW_IN_FINDER) {
+        CMPAutoPtr<IPlaylist> playlist;
+        if (m_searchResults) {
+            playlist = m_searchResults;
+        } else {
+            g_Player.getCurrentPlaylist(&playlist);
+        }
+
+        VecStrings files;
+        int i = -1;
+        while (true) {
+            i = getNextSelectedItem(i);
+            if (i >= 0 && i < (int)playlist->getCount()) {
+                CMPAutoPtr<IMedia> media;
+                if (playlist->getItem(i, &media) == ERR_OK) {
+                    CXStr url;
+                    media->getSourceUrl(&url);
+                    files.push_back(url.c_str());
+                }
+            } else {
+                break;
+            }
+        }
+
+        showInFinder(files);
+        return true;
+    }
+
+    return false;
+}
+
 void CMPlaylistCtrl::onKeyDown(uint32_t code, uint32_t flags) {
     CSkinListCtrl::onKeyDown(code, flags);
 
     if (m_vRows.empty() || m_nFocusUIObj != -1) {
         return;
     }
-
-    onHandleKeyDown(code, flags);
 }
 
 void CMPlaylistCtrl::onHandleKeyDown(uint32_t code, uint32_t flags) {
@@ -289,12 +322,7 @@ void CMPlaylistCtrl::onHandleKeyDown(uint32_t code, uint32_t flags) {
 }
 
 void CMPlaylistCtrl::onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) {
-    // 当垂直滚动条位置在 0 时，显示.
-    if (m_header && !m_header->isVisible() && nPos == 0) {
-        m_header->setVisible(true, false);
-    } else if (m_header && m_header->isVisible() && nPos > 0 && !m_editorSearch->isOnFocus()) {
-        m_header->setVisible(false, false);
-    }
+    showHideEditorSearch(nPos);
 
     CSkinListCtrl::onVScroll(nSBCode, nPos, pScrollBar);
 }
@@ -309,6 +337,20 @@ void CMPlaylistCtrl::sendNotifyEvent(CSkinListCtrlEventNotify::Command cmd, int 
     }
 
     CSkinListCtrl::sendNotifyEvent(cmd, nClickedRow, nClickedCol);
+}
+
+void CMPlaylistCtrl::makeSureRowVisible(int nRow) {
+    CSkinListCtrl::makeSureRowVisible(nRow);
+
+    showHideEditorSearch(m_nFirstVisibleRow);
+}
+
+void CMPlaylistCtrl::showHideEditorSearch(int row) {
+    if (m_header && !m_header->isVisible() && row == 0) {
+        m_header->setVisible(true, false);
+    } else if (m_header && m_header->isVisible() && row > 0 && !m_editorSearch->isOnFocus()) {
+        m_header->setVisible(false, false);
+    }
 }
 
 void CMPlaylistCtrl::deleteSelectedItems() {
@@ -530,28 +572,25 @@ void CMPlaylistCtrl::updatePlaylist(bool isRedraw) {
 }
 
 void CMPlaylistCtrl::setNowPlaying() {
-    // clear the old now playing item status.
-    bool bOldStatusCleared = false;
-    if (m_nNowPlaying >= 0 && m_nNowPlaying < (int)m_vRows.size()) {
-        Row *row = m_vRows[m_nNowPlaying];
-        if (row->nImageIndex == IMAGE_NOW_PLAYING) {
-            row->nImageIndex = IMAGE_NONE;
-            bOldStatusCleared = true;
-        }
-    }
+    m_nowPlayingRow = -1;
 
-    if (!bOldStatusCleared) {
-        for (int i = 0; i < (int)m_vRows.size(); i++) {
-            Row *row = m_vRows[i];
-            if (row->nImageIndex == IMAGE_NOW_PLAYING) {
-                row->nImageIndex = IMAGE_NONE;
-                break;
+    if (m_searchResults) {
+        CMPAutoPtr<IMedia> media;
+        if (g_Player.getCurrentMedia(&media) == ERR_OK) {
+            auto id = media->getID();
+            uint32_t count = m_searchResults->getCount();
+            for (uint32_t i = 0; i < count; i++) {
+                CMPAutoPtr<IMedia> m;
+                if (m_searchResults->getItem(i, &m) == ERR_OK) {
+                    if (m->getID() == id) {
+                        m_nowPlayingRow = i;
+                        break;
+                    }
+                }
             }
         }
-    }
-
-    if (m_vRows.size() > 0) {
-        setItemImageIndex(g_Player.getCurrentMediaIndex(), IMAGE_NOW_PLAYING, false);
+    } else {
+        m_nowPlayingRow = g_Player.getCurrentMediaIndex();
     }
 }
 

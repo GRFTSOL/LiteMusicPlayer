@@ -25,7 +25,10 @@ CSkinListView::CSkinListView() {
     // setBkColor(CColor(GetSysColor(COLOR_WINDOW)));
     setBkColor(CColor(RGB(192, 192, 192)));
     setSelRowBkColor(CColor(RGB(128, 128, 128)));
+    m_vColors[CN_SEL_BG].set(RGB(128, 128, 128));
+    m_vColors[CN_NOW_PLAYING_BG].set(RGB(0, 128, 0));
     m_vColors[CN_SEL_TEXT].set(RGB(255, 255, 255));
+    m_vColors[CN_NOW_PLAYING_TEXT].set(RGB(255, 255, 255));
 
     m_nLineHeightOrg = -1;
     m_nLineHeight = 16;
@@ -50,6 +53,8 @@ CSkinListView::CSkinListView() {
     m_nFirstVisibleRow = 0;
     m_nBegSelRow = -1;
     m_nEndSelRow = -1;
+
+    m_nowPlayingRow = -1;
 
     m_dataSource = nullptr;
 
@@ -148,6 +153,10 @@ bool CSkinListView::setProperty(cstr_t szProperty, cstr_t szValue) {
         getColorValue(getColor(CN_SEL_BG), szValue);
     } else if (strcasecmp(szProperty, "SelTextColor") == 0) {
         getColorValue(getColor(CN_SEL_TEXT), szValue);
+    } else if (strcasecmp(szProperty, "NowPlayingTextColor") == 0) {
+        getColorValue(getColor(CN_NOW_PLAYING_TEXT), szValue);
+    } else if (strcasecmp(szProperty, "NowPlayingBgColor") == 0) {
+        getColorValue(getColor(CN_NOW_PLAYING_BG), szValue);
     } else if (isPropertyName(szProperty, SZ_CUSTOMIZED_CLR)) {
         VecStrings arr;
         strSplit(szValue, ',', arr);
@@ -332,7 +341,7 @@ void CSkinListView::setColor(int nColorName, const CColor &clr) {
 }
 
 
-CColor & CSkinListView::getColor(int nColorName) {
+CColor &CSkinListView::getColor(int nColorName) {
     assert(m_vColors.size() >= CN_CUSTOMIZED_START);
     if (nColorName < 0 || nColorName >= (int)m_vColors.size()) {
         assert(0 && "Invalid color name ID");
@@ -523,6 +532,9 @@ void CSkinListView::setClickCursor() {
 
 int CSkinListView::getLinesOfPerPage() const {
     int n = m_rcContent.height() / m_nLineHeight - 1;
+    if (m_header && m_header->isVisible()) {
+        n--;
+    }
     if (n < 0) {
         n = 1;
     }
@@ -589,7 +601,7 @@ void CSkinListView::setScrollInfo(bool bRedraw) {
         // 滚动条需要加上 header 和 footer 所占的位置
         int extraCount = (m_header != nullptr) + (m_footer != nullptr);
         m_pVertScrollBar->setScrollInfo(0, getRowCount() + extraCount,
-            getLinesOfPerPage(), m_nFirstVisibleRow, 1, bRedraw);
+            getLinesOfPerPage() + extraCount, m_nFirstVisibleRow, 1, bRedraw);
     }
 }
 
@@ -820,19 +832,12 @@ void CSkinListView::draw(CRawGraph *canvas) {
     if (isUseParentBg()) {
         m_pContainer->redrawBackground(canvas, rcContent);
     } else {
-        int alpha;
-        CColor clrBg1, clrBg2;
+        int alpha = m_translucencyWithSkin ? m_pSkin->m_nCurTranslucencyAlpha : 255;
 
-        if (m_translucencyWithSkin) {
-            alpha = int(m_pSkin->m_nCurTranslucencyAlpha);
-        } else {
-            alpha = 255;
-        }
-
-        clrBg1 = getColor(CN_BG);
+        CColor clrBg1 = getColor(CN_BG);
         clrBg1.setAlpha(alpha);
 
-        clrBg2 = getColor(CN_ALTER_BG);
+        CColor clrBg2 = getColor(CN_ALTER_BG);
         clrBg2.setAlpha(alpha);
 
         if (m_nFirstVisibleRow % 2 == 1) {
@@ -846,11 +851,7 @@ void CSkinListView::draw(CRawGraph *canvas) {
         rcItem.bottom = rcItem.top + m_nLineHeight;
         bool bFlag = true;
         while (rcItem.top < rcContent.bottom) {
-            if (bFlag) {
-                canvas->fillRect(&rcItem, clrBg1);
-            } else {
-                canvas->fillRect(&rcItem, clrBg2);
-            }
+            canvas->fillRect(&rcItem, bFlag ? clrBg1: clrBg2);
             bFlag = !bFlag;
             rcItem.top = rcItem.bottom;
             rcItem.bottom += m_nLineHeight;
@@ -874,36 +875,30 @@ void CSkinListView::draw(CRawGraph *canvas) {
     }
 
     int y = rc.top;
-    int nClrName;
     for (int i = m_nFirstVisibleRow; i < (int)getRowCount(); i++) {
         int x = rc.left;
         if (m_pHorzScrollBar) {
             x -= m_pHorzScrollBar->getScrollPos();
         }
 
+        int nClrName = CN_TEXT;
         if (m_dataSource->isRowSelected(i)) {
             CRect rc(rcContent.left, y, rcContent.left + rcContent.width(), y + m_nLineHeight);
-            int alpha;
             CColor clr = getColor(CN_SEL_BG);
-
-            if (m_translucencyWithSkin) {
-                alpha = (int)(m_pSkin->m_nCurTranslucencyAlpha);
-            } else {
-                alpha = 255;
-            }
-
-            clr.setAlpha(alpha);
+            clr.setAlpha(m_translucencyWithSkin ? m_pSkin->m_nCurTranslucencyAlpha : 255);
 
             canvas->fillRect(&rc, clr);
             nClrName = CN_SEL_TEXT;
-        } else {
-            nClrName = CN_TEXT;
+        } else if (i == m_nowPlayingRow) {
+            CRect rc(rcContent.left, y, rcContent.left + rcContent.width(), y + m_nLineHeight);
+            CColor clr = getColor(CN_NOW_PLAYING_BG);
+            clr.setAlpha(m_translucencyWithSkin ? m_pSkin->m_nCurTranslucencyAlpha : 255);
+
+            canvas->fillRect(&rc, clr);
+            nClrName = CN_NOW_PLAYING_TEXT;
         }
 
-        CRect rcItem;
-        rcItem.left = x;
-        rcItem.top = y;
-        rcItem.bottom = y + m_nLineHeight;
+        CRect rcItem(x, y, 0, y + m_nLineHeight);
         for (int k = 0; k < (int)m_vHeading.size(); k++) {
             rcItem.right = rcItem.left + m_vHeading[k]->nWidth;
             if (k == 0 && nImageCx > 0) {
@@ -942,7 +937,6 @@ void CSkinListView::draw(CRawGraph *canvas) {
         canvas->rectangle(rcContent.left, rcContent.top, rcContent.width(), rcContent.height());
     }
 }
-
 
 bool CSkinListView::onLButtonDown(uint32_t nFlags, CPoint point) {
     if (CSkinScrollFrameCtrlBase::onLButtonDown(nFlags, point)) {
