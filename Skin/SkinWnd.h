@@ -207,6 +207,7 @@ public:
     virtual void onMouseDrag(uint32_t nFlags, CPoint point ) override;
     virtual void onMouseMove(CPoint point ) override;
     virtual void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) override;
+    virtual void onMagnify(float magnification) override;
 
     virtual void onMove(int x, int y) override;
 

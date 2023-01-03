@@ -19,6 +19,7 @@
     mBaseWnd = nil;
     mIsTextInputMode = false;
     mIsMarkedText = false;
+    mMagnification = 0;
 
     return self;
 }
@@ -129,6 +130,13 @@
     }
 }
 
+- (void) keyUp:(NSEvent *)theEvent {
+    uint32_t modifierFlags = [theEvent modifierFlags] & NSEventModifierFlagDeviceIndependentFlagsMask;
+    int code = [theEvent keyCode];
+
+    mBaseWnd->onKeyUp(code, modifierFlags);
+}
+
 - (void) mouseDown:(NSEvent *)theEvent {
     if (mIsTextInputMode && [[self inputContext] handleEvent:theEvent]) {
         return;
@@ -185,6 +193,16 @@
 
     // Move the window to the new location
     [window setFrameOrigin:newOrigin];
+}
+
+- (void)magnifyWithEvent:(NSEvent *)event {
+    CGFloat magnification = [event magnification];
+    mMagnification += magnification * 20;
+    while (abs(mMagnification) > 1) {
+        int flag = mMagnification > 0 ? 1 : -1;
+        mBaseWnd->onMagnify(flag);
+        mMagnification -= flag;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////

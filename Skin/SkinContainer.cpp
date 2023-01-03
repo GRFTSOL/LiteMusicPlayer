@@ -348,25 +348,6 @@ bool CSkinContainer::onRButtonUp(uint32_t nFlags, CPoint point) {
     return bMsgProceed;
 }
 
-void CSkinContainer::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) {
-    int nCount;
-
-    // send mouse move message to every ui objects that want to process
-    nCount = (int)m_vUIObjs.size();
-    for (int i = nCount - 1; i >= 0; i--) {
-        CUIObject *pObj;
-        pObj = m_vUIObjs[i];
-        assert(pObj);
-
-        if ((pObj->needMsgMouseWheel() || pObj->isContainer()) && pObj->isVisible()
-            && pObj->isEnable()) { // && pObj->isPtIn(point))
-            pObj->onMouseWheel(nWheelDistance, nMkeys, pt);
-            return;
-        }
-    }
-}
-
-
 bool CSkinContainer::onMenuKey(uint32_t nChar, uint32_t nFlags) {
     for (int i = (int)m_vUIObjs.size() - 1; i >= 0; i--) {
         CUIObject *pObj = m_vUIObjs[i];
@@ -610,6 +591,18 @@ CUIObject *CSkinContainer::getUIObjectById(int nId, cstr_t szClassName) {
     }
 
     return nullptr;
+}
+
+CUIObject *CSkinContainer::getUIObjectAtPosition(const CPoint &pos) {
+    for (auto obj : m_vUIObjs) {
+        if (obj->isPtIn(pos)) {
+            if (obj->isContainer()) {
+                return obj->getContainerIf()->getUIObjectAtPosition(pos);
+            }
+        }
+    }
+
+    return this;
 }
 
 CUIObject *CSkinContainer::getUIObjectById(cstr_t szId, cstr_t szClassName) {

@@ -54,10 +54,12 @@ backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
 
     const int PER_SCROOLL = 20;
 
+    uint32_t modifierFlags = [theEvent modifierFlags] & NSEventModifierFlagDeviceIndependentFlagsMask;
+
     float scrollingDeltaX = [theEvent scrollingDeltaX];
     mXScroll += scrollingDeltaX / PER_SCROOLL;
     if (abs(mXScroll) >= 1) {
-        mBaseWnd->onMouseWheel((int)(mXScroll), MK_SHIFT, pt);
+        mBaseWnd->onMouseWheel((int)(mXScroll), modifierFlags| MK_SHIFT, pt);
 
         int negative = mXScroll > 0 ? 1 : -1;
         mXScroll = abs(mXScroll);
@@ -67,7 +69,7 @@ backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
     float scrollingDeltaY = [theEvent scrollingDeltaY];
     mYScroll += scrollingDeltaY / PER_SCROOLL;
     if (abs(mYScroll) >= 1) {
-        mBaseWnd->onMouseWheel((int)(mYScroll), 0, pt);
+        mBaseWnd->onMouseWheel((int)(mYScroll), modifierFlags, pt);
 
         int negative = mYScroll > 0 ? 1 : -1;
         mYScroll = abs(mYScroll);
@@ -77,14 +79,6 @@ backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
 
 - (BOOL)canBecomeKeyWindow {
     return YES;
-}
-
-- (void) keyDown:(NSEvent *)theEvent {
-
-}
-
-- (void) keyUp:(NSEvent *)theEvent {
-
 }
 
 - (void)setTimer:(int)idTimer duration:(int)duration {

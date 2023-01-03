@@ -568,7 +568,7 @@ CLyricShowObj::CLyricShowObj() {
 
     m_bUseSkinStyle = false;
 
-    m_msgNeed = UO_MSG_WANT_MOUSEMOVE | UO_MSG_WANT_LBUTTON | UO_MSG_WANT_KEY | UO_MSG_WANT_MOUSEWHEEL;
+    m_msgNeed = UO_MSG_WANT_MOUSEMOVE | UO_MSG_WANT_LBUTTON | UO_MSG_WANT_KEY | UO_MSG_WANT_MAGNIFY;
 
     m_etDispSettings = ET_LYRICS_DISPLAY_SETTINGS;
     m_strSectName = SZ_SECT_LYR_DISPLAY;
@@ -1439,10 +1439,8 @@ bool CLyricShowObj::onLButtonDown(uint32_t nFlags, CPoint point) {
     return false;
 }
 
-void CLyricShowObj::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) {
-    if (nMkeys == MK_CONTROL) {
-        m_pSkin->postShortcutKeyCmd(nWheelDistance > 0 ? CMD_FONT_SIZE_INC : CMD_FONT_SIZE_DEC);
-    }
+void CLyricShowObj::onMagnify(float magnification) {
+    m_pSkin->postShortcutKeyCmd(magnification >= 0 ? CMD_FONT_SIZE_INC : CMD_FONT_SIZE_DEC);
 }
 
 void CLyricShowObj::onLyricsChanged() {

@@ -122,7 +122,7 @@ public:
     virtual bool onLButtonUp(uint32_t nFlags, CPoint point) override;
     virtual bool onLButtonDown(uint32_t nFlags, CPoint point) override;
     virtual bool onMouseDrag(CPoint point) override;
-    virtual void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) override;
+    virtual void onMagnify(float magnification) override;
 
     virtual void onPlayTimeChangedUpdate();
 

@@ -29,7 +29,6 @@ public:
     virtual bool onLButtonUp(uint32_t nFlags, CPoint point) override;
     virtual bool onRButtonUp(uint32_t nFlags, CPoint point) override;
     virtual bool onRButtonDown(uint32_t nFlags, CPoint point) override;
-    virtual void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) override;
 
     virtual bool onMenuKey(uint32_t nChar, uint32_t nFlags) override;
 
@@ -68,6 +67,7 @@ public:
     CUIObject *getUIObjectByClassName(cstr_t szClassName);
     CUIObject *getUIObjectById(int nId, cstr_t szClassName);
     CUIObject *getUIObjectById(cstr_t szId, cstr_t szClassName);
+    CUIObject *getUIObjectAtPosition(const CPoint &pos);
 
     bool enableUIObject(int nId, bool bEnable = true, bool bRedraw = true);
     bool enableUIObject(cstr_t szId, bool bEnable = true, bool bRedraw = true);

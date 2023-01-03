@@ -40,6 +40,7 @@ inline CPoint NSPointToCPoint(const NSPoint &nsPoint, int wndHeight) {
     bool mIsTextInputMode;
     bool mIsMarkedText;
     CPoint mCaretPosition;
+    CGFloat mMagnification;
 
     NSPoint mInitPt;
 }

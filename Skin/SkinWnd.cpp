@@ -547,8 +547,25 @@ void CSkinWnd::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) {
         return;
     }
 
-    // then let root container to process it
-    m_rootConainter.onMouseWheel(nWheelDistance, nMkeys, pt);
+    // 由当前鼠标所在的 UIObject 来处理.
+    auto obj = m_rootConainter.getUIObjectAtPosition(pt);
+    assert(obj);
+    obj->onMouseWheel(nWheelDistance, nMkeys, pt);
+}
+
+void CSkinWnd::onMagnify(float magnification) {
+    CUIObject *obj = getFocusUIObj();
+    if (obj && obj->needMsgMagnify()) {
+        obj->onMagnify(magnification);
+        return;
+    }
+
+    // 由当前鼠标所在的 UIObject 来处理.
+    CPoint pt = getCursorPos();
+    screenToClient(pt);
+    obj = m_rootConainter.getUIObjectAtPosition(pt);
+    assert(obj);
+    obj->onMagnify(magnification);
 }
 
 void CSkinWnd::onLButtonUp(uint32_t nFlags, CPoint point) {

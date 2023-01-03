@@ -311,11 +311,6 @@ void CLyricShowTxtObj::onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScroll
 }
 
 void CLyricShowTxtObj::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) {
-    if (nMkeys == MK_CONTROL) {
-        CLyricShowMultiRowObj::onMouseWheel(nWheelDistance, nMkeys, pt);
-        return;
-    }
-
     if (m_pObjScrollBar) {
         m_pObjScrollBar->onMouseWheel(nWheelDistance, nMkeys, pt);
     } else {

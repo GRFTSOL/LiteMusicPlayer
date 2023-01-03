@@ -128,6 +128,7 @@ enum {
     UO_MSG_WANT_MENU_KEY        = 1 << 7,
     UO_MSG_WANT_CUSTOM_CMD      = 1 << 8,
     UO_MSG_WANT_MENU_CMD        = 1 << 9,
+    UO_MSG_WANT_MAGNIFY         = 1 << 10,
     UO_MSG_WANT_ALL             = 0xFFFFFFFF
 };
 
@@ -272,6 +273,7 @@ public:
     virtual bool onMouseDrag(CPoint point) { return false; }
     virtual bool onMouseMove(CPoint point) { return false; }
     virtual void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) { }
+    virtual void onMagnify(float magnification) { }
 
     virtual void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) { }
 
@@ -306,8 +308,9 @@ public:
     inline bool needMsgAllKeys()    { return (m_msgNeed & UO_MSG_WANT_ALL_KEYS) != 0; }
     inline bool needMsgEnterKey()    { return (m_msgNeed & UO_MSG_WANT_ENTER_KEY) != 0; }
     inline bool needMsgMenuKey()    { return (m_msgNeed & UO_MSG_WANT_MENU_KEY) != 0; }
-    inline bool needMsgMenuCmd()    { return (m_msgNeed & UO_MSG_WANT_MENU_CMD) != 0; }
     inline bool needMsgCustomCmd()    { return (m_msgNeed & UO_MSG_WANT_CUSTOM_CMD) != 0; }
+    inline bool needMsgMenuCmd()    { return (m_msgNeed & UO_MSG_WANT_MENU_CMD) != 0; }
+    inline bool needMsgMagnify()    { return (m_msgNeed & UO_MSG_WANT_MAGNIFY) != 0; }
 
     bool isVisible();
     virtual void setVisible(bool bVisible, bool bRedraw = false);

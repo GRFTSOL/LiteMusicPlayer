@@ -52,6 +52,8 @@ public:
     virtual void onMouseDrag(uint32_t nFlags, CPoint point) { }
     virtual void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) { }
 
+    virtual void onMagnify(float magnification) { }
+
     virtual void onMove(int x, int y) { }
 
     virtual void onPaint(CRawGraph *surface, CRect *rc) { }
