@@ -482,7 +482,7 @@ void CUIObject::redrawBackground(CRawGraph *canvas, const CRect &rc) {
         // Optimize for totally transparent background
         CColor clr(RGB(0, 0, 0));
         clr.setAlpha(0);
-        canvas->fillRect(&rcNewClip, clr);
+        canvas->fillRect(rcNewClip, clr);
         return;
     }
 
@@ -499,11 +499,11 @@ void CUIObject::redrawBackground(CRawGraph *canvas, const CRect &rc) {
 
         // Fill background
         if (m_imageBgMask.isValid()) {
-            canvas->fillRect(&rcNewClip, clrBg);
+            canvas->fillRect(rcNewClip, clrBg);
         } else if (m_pSkin->getCurrentTranslucency() != 255) {
             //             CColor    clr(RGB(0, 0, 0));
             //             clr.setAlpha(0);
-            //             canvas->fillRect(&rcNewClip, clr);
+            //             canvas->fillRect(rcNewClip, clr);
         }
 
         m_bgImagePainter.blt(m_rcObj.left, m_rcObj.top, m_rcObj.width(), m_rcObj.height(), funcDraw);
@@ -511,7 +511,7 @@ void CUIObject::redrawBackground(CRawGraph *canvas, const CRect &rc) {
         //        if (m_pSkin->getCurrentTranslucency() != 255)
         //            canvas->multiplyAlpha(m_pSkin->getCurrentTranslucency(), &rcNewClip);
     } else {
-        canvas->fillRect(&rcNewClip, clrBg);
+        canvas->fillRect(rcNewClip, clrBg);
     }
 }
 
@@ -598,10 +598,10 @@ void CUIObject::setProperties(vector<string> &properties) {
 bool CUIObject::setProperty(cstr_t szProperty, CSXNodeProperty *pProperties) {
     if (isPropertyName(szProperty, "BgImage")) {
         // set background image
-        m_imageBg.loadFromSRM(m_pSkin->getSkinFactory(), pProperties->getPropertySafe(SZ_PN_IMAGE));
+        m_imageBg.loadFromSRM(m_pSkin, pProperties->getPropertySafe(SZ_PN_IMAGE));
         cstr_t szValue = pProperties->getProperty("ImageMask");
         if (szValue) {
-            m_imageBgMask.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+            m_imageBgMask.loadFromSRM(m_pSkin, szValue);
         }
 
         // Image Rect
@@ -720,10 +720,10 @@ bool CUIObject::setProperty(cstr_t szProperty, cstr_t szValue) {
         getColorValue(m_clrBg, szValue);
         m_clrBgOrg = m_clrBg;
     } else if (isPropertyName(szProperty, "BgImage.Image")) {
-        m_imageBg.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imageBg.loadFromSRM(m_pSkin, szValue);
     } else if (isPropertyName(szProperty, "ImageMask")) {
         m_strMaskImage = szValue;
-        m_imgMask.loadFromSRM(m_pSkin->getSkinFactory(), m_strMaskImage.c_str());
+        m_imgMask.loadFromSRM(m_pSkin, m_strMaskImage.c_str());
     } else if (isPropertyName(szProperty, "ImageMaskRect")) {
         if (!getRectValue(szValue, m_imgMask)) {
             ERR_LOG2("Analyse Value: %s = %s FAILED.", szProperty, szValue);
@@ -881,9 +881,8 @@ bool CUIObject::isPtIn(CPoint pt) {
     }
 
     if (m_imgMask.isValid()) {
-        const RawImageData *rawImg = m_imgMask.image();
-        RGBQUAD quad = rawImg->getPixel(pt.x, pt.y);
-        if (quad.rgbReserved == 0) { // Alpha channel == 0
+        if (m_imgMask.isPixelTransparent(pt)) {
+            // pt 所在的点是透明的.
             return false;
         }
     }

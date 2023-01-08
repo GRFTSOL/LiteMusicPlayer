@@ -10,10 +10,18 @@
 #include "ImageBuffBlt.h"
 
 
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
+bool maskBltRawImage(RawImageData *pImageDst, const CRect &rcDst, int xSrc, int ySrc,
+    RawImageData *imageSrc, RawImageData *imageMask,
+    int xMask, int yMask, BlendPixMode bpm, int nOpacitySrc);
 
-void stretch_buff_bilinear_bgra32(agg::rendering_buffer &bufDest, agg::rendering_buffer &bufSrc, CRect &rcDest, agg::rect_f &rcSrc) {
+void scale(CRawGraph *canvas, agg::rect_f &r) {
+    r.x1 = canvas->scale(r.x1);
+    r.x2 = canvas->scale(r.x2);
+    r.y1 = canvas->scale(r.y1);
+    r.y2 = canvas->scale(r.y2);
+}
+
+void stretch_buff_bilinear_bgra32(agg::rendering_buffer &bufDest, agg::rendering_buffer &bufSrc, const CRect &rcDest, const agg::rect_f &rcSrc) {
     typedef agg::pixfmt_bgra32 pixfmt;
     typedef pixfmt::color_type color_type;
     typedef agg::renderer_base<pixfmt> renderer_base;
@@ -79,7 +87,7 @@ void stretch_buff_bilinear_bgra32(agg::rendering_buffer &bufDest, agg::rendering
     }
 }
 
-void stretch_buff_bilinear_bgr24(agg::rendering_buffer &bufDest, agg::rendering_buffer &bufSrc, CRect &rcDest, agg::rect_f &rcSrc) {
+void stretch_buff_bilinear_bgr24(agg::rendering_buffer &bufDest, agg::rendering_buffer &bufSrc, const CRect &rcDest, const agg::rect_f &rcSrc) {
     typedef agg::pixfmt_bgr24 pixfmt;
     typedef pixfmt::color_type color_type;
     typedef agg::renderer_base<pixfmt> renderer_base;
@@ -145,7 +153,7 @@ void stretch_buff_bilinear_bgr24(agg::rendering_buffer &bufDest, agg::rendering_
     }
 }
 
-bool stretchBltBilinear(RawImageData *pImageDst, CRect &rcDst, RawImageData *pImageSrc, agg::rect_f &rcSrc, BlendPixMode bpm = BPM_BLEND) {
+bool stretchBltBilinear(RawImageData *pImageDst, const CRect &rcDst, RawImageData *pImageSrc, const agg::rect_f &rcSrc, BlendPixMode bpm = BPM_BLEND) {
     if (pImageDst->bitCount == pImageSrc->bitCount) {
         agg::rendering_buffer bufDest(pImageDst->buff, pImageDst->width, pImageDst->height, pImageDst->stride);
         agg::rendering_buffer bufSrc(pImageSrc->buff, pImageSrc->width, pImageSrc->height, pImageSrc->stride);
@@ -163,7 +171,7 @@ bool stretchBltBilinear(RawImageData *pImageDst, CRect &rcDst, RawImageData *pIm
     return false;
 }
 
-bool bltRawImage(RawImageData *pImageDst, CRect &rcDst, RawImageData *pImageSrc, int xSrc, int ySrc, BlendPixMode bpm, int nOpacitySrc) {
+bool bltRawImage(RawImageData *pImageDst, const CRect &rcDst, RawImageData *pImageSrc, int xSrc, int ySrc, BlendPixMode bpm, int nOpacitySrc) {
     if (nOpacitySrc == 255) {
         CBuffBitBlter blter;
 
@@ -188,7 +196,7 @@ bool bltRawImage(RawImageData *pImageDst, CRect &rcDst, RawImageData *pImageSrc,
 }
 
 
-bool stretchBlt(RawImageData *pImageSrc, RawImageData *pImageDst, CRect &rcDst, agg::rect_f &rcSrc, BlendPixMode bpm, int nOpacitySrc) {
+bool stretchBltRawImage(RawImageData *pImageSrc, RawImageData *pImageDst, const CRect &rcDst, const agg::rect_f &rcSrc, BlendPixMode bpm, int nOpacitySrc) {
     if (isFlagSet(bpm, BPM_BILINEAR)) {
         return stretchBltBilinear(pImageDst, rcDst, pImageSrc, rcSrc, bpm & ~BPM_BILINEAR);
     }
@@ -217,20 +225,26 @@ bool stretchBlt(RawImageData *pImageSrc, RawImageData *pImageDst, CRect &rcDst, 
 //////////////////////////////////////////////////////////////////////
 
 CRawImage::CRawImage(void) {
-    m_image = nullptr;
     m_x = 0;
     m_y = 0;
     m_cx = 0;
     m_cy = 0;
 }
 
-CRawImage::~CRawImage(void) {
-    destroy();
+CRawImage::CRawImage(const RawImageDataPtr &image) {
+    assert(image);
+    attach(image);
 }
 
-void CRawImage::attach(RawImageData *image) {
+CRawImage::~CRawImage(void) {
+}
+
+void CRawImage::attach(const RawImageDataPtr &image) {
+    if (m_image) {
+        detach();
+    }
+
     if (!image) {
-        destroy();
         return;
     }
     m_x = 0;
@@ -246,54 +260,20 @@ void CRawImage::detach() {
     m_image = nullptr;
 }
 
-void CRawImage::destroy() {
-    if (m_image) {
-        freeRawImage(m_image);
-        m_image = nullptr;
-    }
-}
-
 bool CRawImage::load(cstr_t szFile) {
-    destroy();
-
-    RawImageData *image = loadRawImageDataFromFile(szFile);
-
-    if (image) {
-        attach(image);
-    }
-
-    return image != nullptr;
-}
-
-void CRawImage::blt(CRawGraph *canvas, int xDest, int yDest, BlendPixMode bpm) {
-    blt(canvas, xDest, yDest, m_cx, m_cy, m_x, m_y, bpm);
-}
-
-void CRawImage::blt(CRawImage *pImage, int xDest, int yDest, BlendPixMode bpm, int nOpacitySrc) {
-    blt(pImage, xDest, yDest, m_cx, m_cy, m_x, m_y, bpm, nOpacitySrc);
+    m_image = loadRawImageDataFromFile(szFile);
+    return m_image != nullptr;
 }
 
 bool CRawImage::blt(CRawGraph *canvas, int xDest, int yDest, int widthDest, int heightDest, int xSrc, int ySrc, BlendPixMode bpm) {
-    if (!m_image) {
-        return false;
-    }
-
     CRect rcDst;
-    RawImageData *pImageDst;
-
-    canvas->getMappedClipBoundRect(rcDst);
-
-    xDest = canvas->mapX(xDest);
-    yDest = canvas->mapY(yDest);
+    canvas->getClipBoundBox(rcDst);
 
     // get the clip box to copy
-    if (xDest + widthDest < rcDst.right) {
-        rcDst.right = xDest + widthDest;
-    }
-    if (yDest + heightDest < rcDst.bottom) {
-        rcDst.bottom = yDest + heightDest;
-    }
+    rcDst.right = min(rcDst.right, xDest + widthDest);
+    rcDst.bottom = min(rcDst.bottom, yDest + heightDest);
 
+    // determine the start position of Graph, image, mask.
     if (xDest >= rcDst.left) {
         rcDst.left = xDest;
     } else {
@@ -312,43 +292,32 @@ bool CRawImage::blt(CRawGraph *canvas, int xDest, int yDest, int widthDest, int 
         rcDst.bottom = rcDst.top + m_y + m_cy - ySrc;
     }
 
-    if (rcDst.width() <= 0 || rcDst.height() <= 0) {
+    if (rcDst.empty()) {
         return true;
     }
-
-    pImageDst = canvas->getRawBuff();
 
     if (!canvas->getEnableAlphaChannel()) {
         bpm &= ~BPM_CHANNEL_ALPHA;
     }
 
-    return bltRawImage(pImageDst, rcDst, m_image, xSrc, ySrc, bpm, canvas->getOpacityPainting());
+    // 需要进行像素绘制，转换为内存坐标
+    rcDst = canvas->scale(rcDst);
+    xSrc = canvas->scale(xSrc);
+    ySrc = canvas->scale(ySrc);
+
+    return bltRawImage(canvas->getRawBuff(), rcDst,
+       getRawImageData(canvas->getScaleFactor()).get(),
+       xSrc, ySrc, bpm, canvas->getOpacityPainting());
 }
 
-void CRawImage::maskBlt(CRawGraph *canvas, int xDest, int yDest, CRawImage *pImgMask, BlendPixMode bpm) {
-    maskBlt(canvas, xDest, yDest, m_cx, m_cy, m_x, m_y, pImgMask, bpm);
-}
-
-bool CRawImage::maskBlt(CRawGraph *canvas, int xDest, int yDest, int widthDest, int heightDest, int xSrc, int ySrc, CRawImage *pImgMask, BlendPixMode bpm) {
-    if (!m_image) {
-        return false;
-    }
-
+bool CRawImage::maskBlt(CRawGraph *canvas, int xDest, int yDest, int widthDest, int heightDest, int xSrc, int ySrc, CRawImage *imgMask, BlendPixMode bpm)
+{
     CRect rcDst;
-    RawImageData *pImageDst;
-
-    canvas->getMappedClipBoundRect(rcDst);
-
-    xDest = canvas->mapX(xDest);
-    yDest = canvas->mapY(yDest);
+    canvas->getClipBoundBox(rcDst);
 
     // get the clip box to copy
-    if (xDest + widthDest < rcDst.right) {
-        rcDst.right = xDest + widthDest;
-    }
-    if (yDest + heightDest < rcDst.bottom) {
-        rcDst.bottom = yDest + heightDest;
-    }
+    rcDst.right = min(rcDst.right, xDest + widthDest);
+    rcDst.bottom = min(rcDst.bottom, yDest + heightDest);
 
     // determine the start position of Graph, image, mask.
     if (xDest >= rcDst.left) {
@@ -363,14 +332,14 @@ bool CRawImage::maskBlt(CRawGraph *canvas, int xDest, int yDest, int widthDest, 
     }
 
     // make sure the right is within the image region.
-    int nWidthMax = min(m_cx, pImgMask->width());
-    int nHeightMax = min(m_cy, pImgMask->height());
+    int widthMin = min(m_cx, imgMask->width());
+    int heightMin = min(m_cy, imgMask->height());
 
-    if (xSrc + rcDst.width() > m_x + nWidthMax) {
-        rcDst.right = rcDst.left + m_x + nWidthMax - xSrc;
+    if (xSrc + rcDst.width() > m_x + widthMin) {
+        rcDst.right = rcDst.left + m_x + widthMin - xSrc;
     }
-    if (ySrc + rcDst.height() > m_y + nHeightMax) {
-        rcDst.bottom = rcDst.top + m_y + nHeightMax - ySrc;
+    if (ySrc + rcDst.height() > m_y + heightMin) {
+        rcDst.bottom = rcDst.top + m_y + heightMin - ySrc;
     }
 
     if (rcDst.empty()) {
@@ -381,13 +350,20 @@ bool CRawImage::maskBlt(CRawGraph *canvas, int xDest, int yDest, int widthDest, 
         bpm &= ~BPM_CHANNEL_ALPHA;
     }
 
-    pImageDst = canvas->getRawBuff();
+    // 需要进行像素绘制，转换为内存坐标
+    rcDst = canvas->scale(rcDst);
+    xSrc = canvas->scale(xSrc);
+    ySrc = canvas->scale(ySrc);
 
-    return maskBlt(pImageDst, rcDst, xSrc, ySrc, pImgMask->getHandle(), xSrc, ySrc, bpm, canvas->getOpacityPainting());
+    return maskBltRawImage(canvas->getRawBuff(), rcDst, xSrc, ySrc,
+       getRawImageData(canvas->getScaleFactor()).get(),
+       imgMask->getRawImageData(canvas->getScaleFactor()).get(),
+       xSrc, ySrc, bpm, canvas->getOpacityPainting());
 }
 
-bool CRawImage::blt(CRawImage *pImage, int xDest, int yDest, int widthDest, int heightDest, int xSrc, int ySrc, BlendPixMode bpm, int nOpacitySrc) {
-    if (!m_image || !pImage->m_image) {
+bool CRawImage::blt(CRawImage *image, int xDest, int yDest, int widthDest, int heightDest, int xSrc, int ySrc, BlendPixMode bpm, int nOpacitySrc)
+{
+    if (!m_image || !image->m_image) {
         return false;
     }
 
@@ -397,11 +373,11 @@ bool CRawImage::blt(CRawImage *pImage, int xDest, int yDest, int widthDest, int 
 
     CRect rcDst(xDest, yDest, widthDest + xDest, heightDest + yDest);
 
-    if (rcDst.left < pImage->m_x) {
-        rcDst.left = pImage->m_x;
+    if (rcDst.left < image->m_x) {
+        rcDst.left = image->m_x;
     }
-    if (rcDst.top < pImage->m_y) {
-        rcDst.top = pImage->m_y;
+    if (rcDst.top < image->m_y) {
+        rcDst.top = image->m_y;
     }
 
     if (xSrc + widthDest > m_x + m_cx) {
@@ -411,35 +387,25 @@ bool CRawImage::blt(CRawImage *pImage, int xDest, int yDest, int widthDest, int 
         rcDst.bottom = rcDst.top + m_y + m_cy - ySrc;
     }
 
-    if (rcDst.width() > pImage->m_cx) {
-        rcDst.right = rcDst.left + pImage->m_cx;
+    if (rcDst.width() > image->m_cx) {
+        rcDst.right = rcDst.left + image->m_cx;
     }
-    if (rcDst.height() > pImage->m_cy) {
-        rcDst.bottom = rcDst.top + pImage->m_cy;
+    if (rcDst.height() > image->m_cy) {
+        rcDst.bottom = rcDst.top + image->m_cy;
     }
 
-    if (rcDst.top >= pImage->m_y + pImage->m_cy) {
+    if (rcDst.top >= image->m_y + image->m_cy) {
         return true;
     }
 
-    if (rcDst.left >= pImage->m_x + pImage->m_cx) {
+    if (rcDst.left >= image->m_x + image->m_cx) {
         return true;
     }
 
-    return bltRawImage(pImage->m_image, rcDst, m_image, xSrc, ySrc, bpm, nOpacitySrc);
-}
-
-void CRawImage::stretchBlt(CRawGraph *canvas, int xDest, int yDest, int widthDest, int heightDest, BlendPixMode bpm) {
-    stretchBlt(canvas, xDest, yDest, widthDest, heightDest, m_x, m_y, m_cx, m_cy, bpm);
+    return bltRawImage(image->m_image.get(), rcDst, m_image.get(), xSrc, ySrc, bpm, nOpacitySrc);
 }
 
 bool CRawImage::stretchBlt(CRawGraph *canvas, int xDest, int yDest, int widthDest, int heightDest, int xSrc, int ySrc, int widthSrc, int heightSrc, BlendPixMode bpm) {
-    if (!m_image) {
-        return false;
-    }
-
-    CRect rcDst;
-    RawImageData *pImageDst;
 
     if (xSrc >= m_image->width || ySrc >= m_image->height
         || widthDest == 0 || heightDest == 0) {
@@ -453,17 +419,13 @@ bool CRawImage::stretchBlt(CRawGraph *canvas, int xDest, int yDest, int widthDes
         heightSrc = m_y + m_cy - ySrc;
     }
 
-    float dx, dy;
+    float dx = (float)widthSrc / widthDest;
+    float dy = (float)heightSrc / heightDest;
+
+    CRect rcDst;
+    canvas->getClipBoundBox(rcDst);
+
     agg::rect_f rcSrc;
-
-    dx = (float)widthSrc / widthDest;
-    dy = (float)heightSrc / heightDest;
-
-    canvas->getMappedClipBoundRect(rcDst);
-
-    xDest = canvas->mapX(xDest);
-    yDest = canvas->mapY(yDest);
-
     if (xDest > rcDst.left) {
         rcDst.left = xDest;
         rcSrc.x1 = (float)xSrc;
@@ -493,7 +455,7 @@ bool CRawImage::stretchBlt(CRawGraph *canvas, int xDest, int yDest, int widthDes
         rcSrc.y2 = ySrc + heightSrc - dy * (yDest + heightDest - rcDst.bottom);
     }
 
-    if (rcDst.width() <= 0 || rcDst.height() <= 0) {
+    if (rcDst.empty()) {
         return true;
     }
 
@@ -501,27 +463,23 @@ bool CRawImage::stretchBlt(CRawGraph *canvas, int xDest, int yDest, int widthDes
         bpm &= ~BPM_CHANNEL_ALPHA;
     }
 
-    pImageDst = canvas->getRawBuff();
-
     assert(rcSrc.x1 >= xSrc);
     assert(rcSrc.x2 <= xSrc + widthSrc);
     assert(rcSrc.y1 >= ySrc);
     assert(rcSrc.y2 <= ySrc + heightSrc);
 
-    return ::stretchBlt(m_image, pImageDst, rcDst, rcSrc, bpm, canvas->getOpacityPainting());
+    // 需要进行像素绘制，转换为内存坐标
+    rcDst = canvas->scale(rcDst);
+    scale(canvas, rcSrc);
+
+    return stretchBltRawImage(getRawImageData(canvas->getScaleFactor()).get(),
+                        canvas->getRawBuff(), rcDst, rcSrc, bpm, canvas->getOpacityPainting());
 }
 
-void CRawImage::stretchBlt(CRawImage *pImage, int xDest, int yDest, int widthDest, int heightDest, BlendPixMode bpm, int nOpacitySrc) {
-    stretchBlt(pImage, xDest, yDest, widthDest, heightDest, m_x, m_y, m_cx, m_cy, bpm, nOpacitySrc);
-}
-
-
-bool CRawImage::stretchBlt(CRawImage *pImage, int xDest, int yDest, int widthDest, int heightDest, int xSrc, int ySrc, int widthSrc, int heightSrc, BlendPixMode bpm, int nOpacitySrc) {
-    if (!m_image || !pImage->m_image) {
+bool CRawImage::stretchBlt(CRawImage *image, int xDest, int yDest, int widthDest, int heightDest, int xSrc, int ySrc, int widthSrc, int heightSrc, BlendPixMode bpm, int nOpacitySrc) {
+    if (!m_image || !image->m_image) {
         return false;
     }
-
-    CRect rcDst;
 
     if (xSrc >= m_image->width || ySrc >= m_image->height
         || widthDest == 0 || heightDest == 0) {
@@ -535,13 +493,11 @@ bool CRawImage::stretchBlt(CRawImage *pImage, int xDest, int yDest, int widthDes
         heightSrc = m_y + m_cy - ySrc;
     }
 
-    float dx, dy;
+
+    float dx = (float)widthSrc / widthDest;
+    float dy = (float)heightSrc / heightDest;
+    CRect rcDst(image->m_x, image->m_y, image->m_x + image->m_cx, image->m_y + image->m_cy);
     agg::rect_f rcSrc;
-
-    dx = (float)widthSrc / widthDest;
-    dy = (float)heightSrc / heightDest;
-
-    rcDst.setLTRB(pImage->m_x, pImage->m_y, pImage->m_x + pImage->m_cx, pImage->m_y + pImage->m_cy);
 
     if (xDest > rcDst.left) {
         rcDst.left = xDest;
@@ -576,19 +532,20 @@ bool CRawImage::stretchBlt(CRawImage *pImage, int xDest, int yDest, int widthDes
         return true;
     }
 
-    if (rcDst.top >= pImage->m_y + pImage->m_cy) {
+    if (rcDst.top >= image->m_y + image->m_cy) {
         return true;
     }
 
-    if (rcDst.left >= pImage->m_x + pImage->m_cx) {
+    if (rcDst.left >= image->m_x + image->m_cx) {
         return true;
     }
 
-    return ::stretchBlt(m_image, pImage->m_image, rcDst, rcSrc, bpm, nOpacitySrc);
+    return ::stretchBltRawImage(m_image.get(), image->m_image.get(), rcDst, rcSrc, bpm, nOpacitySrc);
 }
 
 // Mask blt
-bool CRawImage::maskBlt(RawImageData *pImageDst, CRect &rcDst, int xSrc, int ySrc, RawImageData *pImageMask, int xMask, int yMask, BlendPixMode bpm, int nOpacitySrc) {
+bool maskBltRawImage(RawImageData *pImageDst, const CRect &rcDst, int xSrc, int ySrc, RawImageData *imageSrc, RawImageData *imageMask, int xMask, int yMask, BlendPixMode bpm, int nOpacitySrc)
+{
     if (nOpacitySrc == 255) {
         CBuffMaskBlter blter;
 
@@ -597,9 +554,9 @@ bool CRawImage::maskBlt(RawImageData *pImageDst, CRect &rcDst, int xSrc, int ySr
         blter.ySrc = ySrc;
         blter.xMask = xMask;
         blter.yMask = yMask;
-        blter.pImageMask = pImageMask;
+        blter.imageMask = imageMask;
 
-        return XBltRawImage<mask_blend_rgb, mask_blend_alpha, mask_copy_rgb, mask_copy_alpha, mask_copy_alpha_255, mask_blend_copy_none, mask_multiply_rgb, mask_multiply_alpha>(blter, pImageDst, m_image, bpm);
+        return XBltRawImage<mask_blend_rgb, mask_blend_alpha, mask_copy_rgb, mask_copy_alpha, mask_copy_alpha_255, mask_blend_copy_none, mask_multiply_rgb, mask_multiply_alpha>(blter, pImageDst, imageSrc, bpm);
     } else if (nOpacitySrc == 0) {
         return true;
     } else {
@@ -610,20 +567,162 @@ bool CRawImage::maskBlt(RawImageData *pImageDst, CRect &rcDst, int xSrc, int ySr
         blter.ySrc = ySrc;
         blter.xMask = xMask;
         blter.yMask = yMask;
-        blter.pImageMask = pImageMask;
+        blter.imageMask = imageMask;
         blter.nOpacitySrc = nOpacitySrc;
 
-        return XBltRawImage<mask_blend_rgb_opacity, mask_blend_alpha_opacity, mask_copy_rgb_opacity, mask_copy_alpha_opacity, mask_copy_alpha_255_opacity, mask_blend_copy_none_opacity, mask_multiply_rgb_opacity, mask_multiply_alpha_opacity>(blter, pImageDst, m_image, bpm);
+        return XBltRawImage<mask_blend_rgb_opacity, mask_blend_alpha_opacity, mask_copy_rgb_opacity, mask_copy_alpha_opacity, mask_copy_alpha_255_opacity, mask_blend_copy_none_opacity, mask_multiply_rgb_opacity, mask_multiply_alpha_opacity>(blter, pImageDst, imageSrc, bpm);
     }
 }
 
-bool CRawImage::getOrginalSize(int &nWidth, int &nHeight) {
-    if (!m_image) {
-        return false;
+void CRawImage::xScaleBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, int xExtendStart, int xExtendEnd, bool bTile, BlendPixMode bpm) {
+    assert(m_cx);
+    if (m_cx <= 0) {
+        return;
     }
 
-    nWidth = m_cx = m_image->width;
-    nHeight = m_cy = m_image->height;
+    int x = xDest;
+    int xSrc = m_x;
 
-    return true;
+    // start ...
+    CRawImage::blt(canvas,
+        x, yDest,
+        xExtendStart - m_x, m_cy,
+        xSrc, m_y, bpm);
+
+    x += xExtendStart - xSrc;
+
+    // Center part
+    if (bTile) {
+        xTileBlt(canvas, x, yDest,
+            nWidthDest - (m_cx - (xExtendEnd - xExtendStart)), m_cy,
+            xExtendStart, m_y,
+            xExtendEnd - xExtendStart, m_cy, bpm);
+    } else {
+        CRawImage::stretchBlt(canvas, x, yDest,
+            nWidthDest - (m_cx - (xExtendEnd - xExtendStart)), m_cy,
+            xExtendStart, m_y,
+            xExtendEnd - xExtendStart, m_cy, bpm);
+    }
+
+    x = xDest + nWidthDest - (m_x + m_cx - xExtendEnd);
+
+    // End ...
+    CRawImage::blt(canvas,
+        x, yDest,
+        m_x + m_cx - xExtendEnd, m_cy,
+        xExtendEnd, m_y, bpm);
+}
+
+void CRawImage::xTileBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, BlendPixMode bpm) {
+    assert(m_cx);
+    if (m_cx <= 0) {
+        return;
+    }
+
+    int x;
+
+    for (x = xDest; x + m_cx < xDest + nWidthDest; x += m_cx) {
+        CRawImage::blt(canvas,
+            x, yDest,
+            m_cx, m_cy,
+            m_x, m_y, bpm);
+    }
+
+    if (x < xDest + nWidthDest) {
+        CRawImage::blt(canvas,
+            x, yDest,
+            xDest + nWidthDest - x, m_cy,
+            m_x, m_y, bpm);
+    }
+}
+
+void CRawImage::xTileBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, int nImageX, int nImageY, int nImageCx, int nImageCy, BlendPixMode bpm) {
+    assert(nImageCx);
+    if (nImageCx <= 0) {
+        return;
+    }
+
+    int x;
+
+    for (x = xDest; x + nImageCx < xDest + nWidthDest; x += nImageCx) {
+        CRawImage::blt(canvas,
+            x, yDest,
+            nImageCx, nImageCy,
+            nImageX, nImageY, bpm);
+    }
+
+    if (x < xDest + nWidthDest) {
+        CRawImage::blt(canvas,
+            x, yDest,
+            xDest + nWidthDest - x, nImageCy,
+            nImageX, nImageY, bpm);
+    }
+}
+
+void CRawImage::yTileBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, BlendPixMode bpm) {
+    assert(m_cy);
+    if (m_cy <= 0) {
+        return;
+    }
+
+    int y;
+
+    for (y = yDest; y + m_cy < yDest + nHeightDest; y += m_cy) {
+        CRawImage::blt(canvas,
+            xDest, y,
+            m_cx, m_cy,
+            m_x, m_y, bpm);
+    }
+
+    if (y < yDest + nHeightDest) {
+        CRawImage::blt(canvas,
+            xDest, y,
+            m_cx, yDest + nHeightDest - y,
+            m_x, m_y, bpm);
+    }
+}
+
+void CRawImage::yTileBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, int nImageX, int nImageY, int nImageCx, int nImageCy, BlendPixMode bpm) {
+    assert(nImageCy);
+    if (nImageCy <= 0) {
+        return;
+    }
+
+    int y;
+
+    for (y = yDest; y + nImageCy < yDest + nHeightDest; y += nImageCy) {
+        CRawImage::blt(canvas,
+            xDest, y,
+            nImageCx, nImageCy,
+            nImageX, nImageY, bpm);
+    }
+
+    if (y < yDest + nHeightDest) {
+        CRawImage::blt(canvas,
+            xDest, y,
+            nImageCx, yDest + nHeightDest - y,
+            nImageX, nImageY, bpm);
+    }
+}
+
+void CRawImage::tileBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, BlendPixMode bpm) {
+    CDrawImageFun fun(canvas, this, bpm);
+
+    tileBltT(xDest, yDest, nWidthDest, nHeightDest, m_x, m_y, m_cx, m_cy, fun);
+}
+
+void CRawImage::tileMaskBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, CRawImage *imageMask, BlendPixMode bpm) {
+    CDrawImageFunMask fun(canvas, this, imageMask, bpm);
+    tileBltT(xDest, yDest, nWidthDest, nHeightDest, m_x, m_y, m_cx, m_cy, fun);
+}
+
+void CRawImage::tileBltEx(CRawGraph *canvas, int xOrg, int yOrg, int xDest, int yDest, int nWidthDest, int nHeightDest, BlendPixMode bpm) {
+    CDrawImageFun fun(canvas, this, bpm);
+
+    tileBltExT(canvas, xOrg, yOrg, xDest, yDest, nWidthDest, nHeightDest, fun);
+}
+
+bool CRawImage::isPixelTransparent(CPoint pt) const {
+    RGBQUAD pixel = m_image->getPixel(pt.x, pt.y);
+    return pixel.rgbReserved == 0;
 }

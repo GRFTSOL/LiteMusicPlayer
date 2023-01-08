@@ -11,14 +11,22 @@
 #ifndef Skin_SkinResMgr_h
 #define Skin_SkinResMgr_h
 
-class RawImageData;
+#include "../GfxRaw/RawImage.h"
 
+
+class RawImageData;
+using RawImageDataWeakPtr = std::weak_ptr<RawImageData>;
 
 class CSkinResMgr {
 public:
     struct ResourceRef {
-        RawImageData                *image;
-        int                         nCount;
+        /**
+         * 采用 Weak pointer 来管理图片资源的引用.
+         */
+        RawImageDataWeakPtr         image;
+        string                      file;
+        float                       scaleFactor;
+        int                         fileScaleFactor;
     };
 
     CSkinResMgr();
@@ -37,10 +45,7 @@ public:
     // nPos = -1, append at tail
     void addRessourceDir(cstr_t szResDir, int nPos = -1);
 
-    void freeBitmap(RawImageData *image);
-    void incBitmapReference(RawImageData *image);
-
-    RawImageData *loadBitmap(cstr_t szBmp);
+    RawImageDataPtr loadBitmap(cstr_t szBmp, float scaleFactor);
 
     void adjustHue(float hue, float saturation, float luminance);
 
@@ -50,9 +55,10 @@ public:
     void dbgOutLoadedImages();
 #endif
 protected:
+    RawImageDataPtr loadImageFile(cstr_t file, float expectedScaleFactor, int fileScaleFactor);
 
 protected:
-    map<string, ResourceRef>            m_mapBitmap;
+    map<string, ResourceRef>    m_mapBitmap;
 
     VecStrings                  m_vResSearchDirs;
 

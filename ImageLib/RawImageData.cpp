@@ -10,14 +10,11 @@
 
 #define BMPWIDTHBYTES(dwWidth, dwBitCount)  (( ( dwWidth * dwBitCount + 7 ) / 8 + 3 ) & ~3)
 
-RawImageData *convert32BppTo24BppRawImage(RawImageData *src) {
-    RawImageData *dst = new RawImageData;
-    uint8_t *rowSrc, *rowDst;
+RawImageDataPtr convert32BppTo24BppRawImage(const RawImageDataPtr &src) {
+    RawImageDataPtr dst = createRawImageData(src->width, src->height, 24);
 
-    dst->create(src->width, src->height, 24);
-
-    rowSrc = src->rowPtr(0);
-    rowDst = dst->rowPtr(0);
+    uint8_t *rowSrc = src->rowPtr(0);
+    uint8_t *rowDst = dst->rowPtr(0);
     for (int y = 0; y < src->height; y++) {
         uint8_t *pixDst, *pixSrc;
         pixDst = rowDst;
@@ -36,44 +33,40 @@ RawImageData *convert32BppTo24BppRawImage(RawImageData *src) {
     return dst;
 }
 
-RawImageData *convert16BppTo24BppRawImage(RawImageData *src) {
-    RawImageData *dst = new RawImageData;
-    uint8_t *rowSrc, *rowDst;
-
-#define CLRMAX    256                //最大颜色数
-#define    RMASK    0x1F            //0000 00  00 000   1 1111
-#define RMOVE    0                //右移 0 位
-#define RMAX    32                //最大颜色数
-#define GMASK    0x3E0            //0000 00  11 111   0 0000
-#define GMOVE    5                //
-#define GMAX    32                //最大颜色数
-#define BMASK    0x7C00            //1111 11  00 000   0 0000
-#define BMOVE    10                //
-#define BMAX    32                //最大颜色数
+RawImageDataPtr convert16BppTo24BppRawImage(const RawImageDataPtr &src) {
+#define CLRMAX      256         // 最大颜色数
+#define RMASK       0x1F        // 0000 00  00 000   1 1111
+#define RMOVE       0           // 右移 0 位
+#define RMAX        32          // 最大颜色数
+#define GMASK       0x3E0       // 0000 00  11 111   0 0000
+#define GMOVE       5           //
+#define GMAX        32          // 最大颜色数
+#define BMASK       0x7C00      // 1111 11  00 000   0 0000
+#define BMOVE       10          //
+#define BMAX        32          // 最大颜色数
 
     uint8_t clrTable[(int)RMAX];//颜色转换表
     for (int i = 0 ; i < (int)RMAX; i++) {
         clrTable[i] = (uint8_t)((float)i * CLRMAX / RMAX);
     }
-    uint16_t clrSrc;
 
-    dst->create(src->width, src->height, 24);
+    RawImageDataPtr dst = createRawImageData(src->width, src->height, 24);
 
-    rowSrc = src->rowPtr(0);
-    rowDst = dst->rowPtr(0);
+    uint8_t *rowSrc = src->rowPtr(0);
+    uint8_t *rowDst = dst->rowPtr(0);
     for (int y = 0; y < src->height; y++) {
-        uint8_t *pixDst;
-        uint16_t *pixSrc;
-        pixDst = rowDst;
-        pixSrc = (uint16_t*)rowSrc;
+        uint8_t *pixDst = rowDst;
+        uint16_t *pixSrc = (uint16_t*)rowSrc;
+
         for (int x = 0; x < src->width; x++) {
-            clrSrc = *pixSrc;
+            uint16_t clrSrc = *pixSrc;
             pixDst[PixPosition::PIX_R] = clrTable[clrSrc & RMASK];
             pixDst[PixPosition::PIX_G] = clrTable[(clrSrc & GMASK) >> GMOVE];
             pixDst[PixPosition::PIX_B] = clrTable[(clrSrc & BMASK) >> BMOVE];
             pixDst += 3;
             pixSrc++;
         }
+
         rowSrc += src->stride;
         rowDst += dst->stride;
     }
@@ -81,27 +74,23 @@ RawImageData *convert16BppTo24BppRawImage(RawImageData *src) {
     return dst;
 }
 
-RawImageData *convert8BppTo24BppRawImage(RawImageData *src) {
-    RawImageData *dst = new RawImageData;
-    uint8_t *rowSrc, *rowDst;
+RawImageDataPtr convert8BppTo24BppRawImage(const RawImageDataPtr &src) {
+    RawImageDataPtr dst = createRawImageData(src->width, src->height, 24);
 
-    dst->create(src->width, src->height, 24);
+    uint8_t *rowSrc = src->rowPtr(0);
+    uint8_t *rowDst = dst->rowPtr(0);
 
-    rowSrc = src->rowPtr(0);
-    rowDst = dst->rowPtr(0);
     for (int y = 0; y < src->height; y++) {
-        uint8_t *pixDst, *pixSrc;
-        pixDst = rowDst;
-        pixSrc = rowSrc;
+        uint8_t *pixDst = rowDst;
+        uint8_t *pixSrc = rowSrc;
+
         for (int x = 0; x < src->width; x++) {
-            *pixDst = src->pallete[*pixSrc].rgbBlue;
-            pixDst++;
-            *pixDst = src->pallete[*pixSrc].rgbGreen;
-            pixDst++;
-            *pixDst = src->pallete[*pixSrc].rgbRed;
-            pixDst++;
+            *pixDst = src->pallete[*pixSrc].rgbBlue; pixDst++;
+            *pixDst = src->pallete[*pixSrc].rgbGreen; pixDst++;
+            *pixDst = src->pallete[*pixSrc].rgbRed; pixDst++;
             pixSrc++;
         }
+
         rowSrc += src->stride;
         rowDst += dst->stride;
     }
@@ -109,18 +98,15 @@ RawImageData *convert8BppTo24BppRawImage(RawImageData *src) {
     return dst;
 }
 
-RawImageData *convert4BppTo24BppRawImage(RawImageData *src) {
-    RawImageData *dst = new RawImageData;
-    uint8_t *rowSrc, *rowDst;
+RawImageDataPtr convert4BppTo24BppRawImage(const RawImageDataPtr &src) {
+    RawImageDataPtr dst = createRawImageData(src->width, src->height, 24);
 
-    dst->create(src->width, src->height, 24);
-
-    rowSrc = src->rowPtr(0);
-    rowDst = dst->rowPtr(0);
+    uint8_t *rowSrc = src->rowPtr(0);
+    uint8_t *rowDst = dst->rowPtr(0);
     for (int y = 0; y < src->height; y++) {
-        uint8_t *pixDst, *pixSrc;
-        pixDst = rowDst;
-        pixSrc = rowSrc;
+        uint8_t *pixDst = rowDst;
+        uint8_t *pixSrc = rowSrc;
+
         for (int x = 0; x < src->width; x++) {
             uint8_t px;
             if (x % 2 == 0) {
@@ -129,13 +115,12 @@ RawImageData *convert4BppTo24BppRawImage(RawImageData *src) {
                 px = *pixSrc & 0xF;
                 pixSrc++;
             }
-            *pixDst = src->pallete[px].rgbBlue;
-            pixDst++;
-            *pixDst = src->pallete[px].rgbGreen;
-            pixDst++;
-            *pixDst = src->pallete[px].rgbRed;
-            pixDst++;
+
+            *pixDst = src->pallete[px].rgbBlue; pixDst++;
+            *pixDst = src->pallete[px].rgbGreen; pixDst++;
+            *pixDst = src->pallete[px].rgbRed; pixDst++;
         }
+
         rowSrc += src->stride;
         rowDst += dst->stride;
     }
@@ -143,42 +128,32 @@ RawImageData *convert4BppTo24BppRawImage(RawImageData *src) {
     return dst;
 }
 
-RawImageData *convertTo24BppRawImage(RawImageData *src) {
-    RawImageData *dst = nullptr;
+RawImageDataPtr convertTo24BppRawImage(const RawImageDataPtr &src) {
     switch (src->bitCount) {
     case 24:
         return src;
     case 32:
-        dst = convert32BppTo24BppRawImage(src);
-        break;
+        return convert32BppTo24BppRawImage(src);
     case 16:
-        dst = convert16BppTo24BppRawImage(src);
-        break;
+        return convert16BppTo24BppRawImage(src);
     case 8:
-        dst = convert8BppTo24BppRawImage(src);
-        break;
+        return convert8BppTo24BppRawImage(src);
     case 4:
-        dst = convert4BppTo24BppRawImage(src);
-        break;
+        return convert4BppTo24BppRawImage(src);
     }
 
-    freeRawImage(src);
-
-    return dst;
+    return src;
 }
 
-RawImageData *convert24BppTo32BppRawImage(RawImageData *src) {
-    RawImageData *dst = new RawImageData;
-    uint8_t *rowSrc, *rowDst;
+RawImageDataPtr convert24BppTo32BppRawImage(const RawImageDataPtr &src) {
+    RawImageDataPtr dst = createRawImageData(src->width, src->height, 32);
 
-    dst->create(src->width, src->height, 32);
-
-    rowSrc = src->rowPtr(0);
-    rowDst = dst->rowPtr(0);
+    uint8_t *rowSrc = src->rowPtr(0);
+    uint8_t *rowDst = dst->rowPtr(0);
     for (int y = 0; y < src->height; y++) {
-        uint8_t *pixDst, *pixSrc;
-        pixDst = rowDst;
-        pixSrc = rowSrc;
+        uint8_t *pixDst = rowDst;
+        uint8_t *pixSrc = rowSrc;
+
         for (int x = 0; x < src->width; x++) {
             pixDst[0] = pixSrc[0];
             pixDst[1] = pixSrc[1];
@@ -187,6 +162,7 @@ RawImageData *convert24BppTo32BppRawImage(RawImageData *src) {
             pixDst += 4;
             pixSrc += 3;
         }
+
         rowSrc += src->stride;
         rowDst += dst->stride;
     }
@@ -194,31 +170,20 @@ RawImageData *convert24BppTo32BppRawImage(RawImageData *src) {
     return dst;
 }
 
-RawImageData *convertTo32BppRawImage(RawImageData *src) {
-    RawImageData *dst = nullptr;
+RawImageDataPtr convertTo32BppRawImage(const RawImageDataPtr &src) {
     switch (src->bitCount) {
     case 32:
         return src;
     case 24:
-        dst = convert24BppTo32BppRawImage(src);
-        freeRawImage(src);
-        break;
+        return convert24BppTo32BppRawImage(src);
     default:
-        src = convertTo24BppRawImage(src);
-        dst = convert24BppTo32BppRawImage(src);
-        freeRawImage(src);
-        break;
+        auto tmp = convertTo24BppRawImage(src);
+        return convert24BppTo32BppRawImage(tmp);
     }
-
-    return dst;
 }
 
-RawImageData *duplicateRawImage(RawImageData *src) {
-    RawImageData *dst = new RawImageData;
-
-    if (!dst->create(src->width, src->height, src->bitCount)) {
-        return nullptr;
-    }
+RawImageDataPtr duplicateRawImage(RawImageData *src) {
+    RawImageDataPtr dst = createRawImageData(src->width, src->height, src->bitCount);
 
     dst->stride = src->stride;
 
@@ -226,41 +191,34 @@ RawImageData *duplicateRawImage(RawImageData *src) {
     return dst;
 }
 
-RawImageData *loadRawImageDataFromBmpFile(IILIO *io);
+RawImageDataPtr createRawImageData(int width, int height, int bitCount) {
+    RawImageDataPtr dst = make_shared<RawImageData>();
+    dst->create(width, height, bitCount);
 
-RawImageData *loadRawImageDataFromPngFile(IILIO *io);
+    return dst;
+}
 
-RawImageData *loadRawImageDataFromJpgFile(IILIO *io);
+RawImageDataPtr loadRawImageDataFromBmpFile(IILIO *io);
+RawImageDataPtr loadRawImageDataFromPngFile(IILIO *io);
+RawImageDataPtr loadRawImageDataFromJpgFile(IILIO *io);
+RawImageDataPtr loadRawImageDataFromGifFile(IILIO *io);
 
-RawImageData *loadRawImageDataFromGifFile(IILIO *io);
-
-RawImageData *loadRawImageDataFromFile(cstr_t szFile) {
-#ifdef _IPHONE
-    return nullptr;
-#else
-    cstr_t szExt;
-    size_t n;
+RawImageDataPtr loadRawImageDataFromFile(cstr_t file) {
     CFileILIO io;
-    RawImageData *image = nullptr;
-
-    n = strlen(szFile);
-    if (n < 4) {
+    if (!io.open(file)) {
         return nullptr;
     }
 
-    if (!io.open(szFile)) {
-        return nullptr;
-    }
-
-    szExt = szFile + n - 4;
-    if (strcasecmp(szExt, ".bmp") == 0) {
+    RawImageDataPtr image;
+    cstr_t ext = fileGetExt(file);
+    if (strcasecmp(ext, ".bmp") == 0) {
         image = loadRawImageDataFromBmpFile(&io);
-    } else if (strcasecmp(szExt, ".png") == 0) {
+    } else if (strcasecmp(ext, ".png") == 0) {
         image = loadRawImageDataFromPngFile(&io);
-    } else if (strcasecmp(szExt, ".jpg") == 0
-        || strcasecmp(szExt, "jpeg") == 0) {
+    } else if (strcasecmp(ext, ".jpg") == 0
+        || strcasecmp(ext, "jpeg") == 0) {
         image = loadRawImageDataFromJpgFile(&io);
-    } else if (strcasecmp(szExt, ".gif") == 0) {
+    } else if (strcasecmp(ext, ".gif") == 0) {
         image = loadRawImageDataFromGifFile(&io);
     } else {
         image = nullptr;
@@ -273,29 +231,29 @@ RawImageData *loadRawImageDataFromFile(cstr_t szFile) {
     }
 
     return image;
-#endif // _IPHONE
 }
 
 
-RawImageData *loadRawImageDataFromMem(const void *buf, int nSize) {
+RawImageDataPtr loadRawImageDataFromMem(const void *buf, int nSize) {
 #ifdef _IPHONE
     return nullptr;
 #else
     CBuffILIO io;
     uint8_t *tag = (uint8_t *)buf;
     uint8_t png_signature[8] = {137, 80, 78, 71, 13, 10, 26, 10};
-    RawImageData *image = nullptr;
 
     if (!io.open(buf, nSize)) {
         return nullptr;
     }
+
+    RawImageDataPtr image;
 
     if (memcmp(buf, "BM", 2) == 0) {
         image = loadRawImageDataFromBmpFile(&io);
     } else if (memcmp(buf, png_signature, 8) == 0) {
         image = loadRawImageDataFromPngFile(&io);
     } else if (tag[0] == 0xFF && tag[1] == 0xD8) {
-        return loadRawImageDataFromJpgFile(&io);
+        image = loadRawImageDataFromJpgFile(&io);
     } else if (memcmp(buf, "GIF8", 4) == 0) {
         image = loadRawImageDataFromGifFile(&io);
     } else {
@@ -311,12 +269,6 @@ RawImageData *loadRawImageDataFromMem(const void *buf, int nSize) {
     return image;
 #endif // _IPHONE
 }
-
-void freeRawImage(RawImageData * image) {
-    image->free();
-    delete image;
-}
-
 
 void rawImageBGR24Set(RawImageData *image, uint8_t r, uint8_t g, uint8_t b) {
     uint8_t *pRow, *p;
@@ -368,12 +320,14 @@ void rawImageSet(RawImageData *image, uint8_t r, uint8_t g, uint8_t b, uint8_t a
 inline unsigned char ToRGBx(float rm1, float rm2, float rh);
 
 inline unsigned char ToRGBx(float rm1, float rm2, float rh) {
-    if        (rh > 360.0f) {
+    if (rh > 360.0f) {
         rh -= 360.0f;
         if (rh > 360.0f) {
             rh -= 360.0f;
         }
-    } else if (rh <   0.0f) rh += 360.0f;
+    } else if (rh < 0.0f) {
+        rh += 360.0f;
+    }
 
     if      (rh <  60.0f) rm1 = rm1 + (rm2 - rm1) * rh / 60.0f;
     else if (rh < 180.0f) rm1 = rm2;
@@ -404,10 +358,12 @@ inline void adjustPixHue(uint8_t *pix, float hueOffset) {
 
         saturation = (luminance <= 0.5f) ? (mdiff / msum) : (mdiff / (510.0f - msum));
 
-        if (pix[2]   == maxval)         hue = 60.0f * (6.0f + bnorm - gnorm);
-        else if (pix[1]   == maxval) hue = 60.0f * (2.0f + rnorm - bnorm);
-        else                         hue = 60.0f * (4.0f + gnorm - rnorm);
-        if (hue > 360.0f) hue = hue - 360.0f;
+        if (pix[2] == maxval)      hue = 60.0f * (6.0f + bnorm - gnorm);
+        else if (pix[1] == maxval) hue = 60.0f * (2.0f + rnorm - bnorm);
+        else                       hue = 60.0f * (4.0f + gnorm - rnorm);
+        if (hue > 360.0f) {
+            hue = hue - 360.0f;
+        }
     }
 
     hue += hueOffset;
@@ -861,23 +817,15 @@ void RawImageData::attach(uint8_t *buf, int nWidth, int nHeight, int nBitCount) 
     stride = -BMPWIDTHBYTES(width, nBitCount);
 }
 
-void RawImageData::attach(RawImageData *pSrc) {
-    buff = pSrc->buff;
-    width = pSrc->width;
-    height = pSrc->height;
-    stride = pSrc->stride;
-    bitCount = pSrc->bitCount;
-    pixFormat = pSrc->pixFormat;
-    nClrUsed = pSrc->nClrUsed;
-    pallete = pSrc->pallete;
-}
-
-void RawImageData::exchange(RawImageData *pSrc) {
-    RawImageData temp;
-    temp.attach(this);
-    attach(pSrc);
-    pSrc->attach(&temp);
-    temp.detach();
+void RawImageData::exchange(RawImageData *other) {
+    std::swap(buff, other->buff);
+    std::swap(width, other->width);
+    std::swap(height, other->height);
+    std::swap(stride, other->stride);
+    std::swap(bitCount, other->bitCount);
+    std::swap(pixFormat, other->pixFormat);
+    std::swap(nClrUsed, other->nClrUsed);
+    std::swap(pallete, other->pallete);
 }
 
 void RawImageData::detach() {

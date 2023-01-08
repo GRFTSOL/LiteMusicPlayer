@@ -113,7 +113,7 @@ bool CSkinListCtrl::setItemTextEx(int rowIdx, int colIdx, cstr_t text, const Vec
     return false;
 }
 
-bool CSkinListCtrl::setItemImage(int nItem, int nSubItem, RawImageData *image, bool bRedraw) {
+bool CSkinListCtrl::setItemImage(int nItem, int nSubItem, const RawImageDataPtr &image, bool bRedraw) {
     assert(nItem >= 0 && nItem < (int)m_vRows.size());
     if (nItem >= 0 && nItem < (int)m_vRows.size()) {
         Row *row = m_vRows[nItem];

@@ -75,6 +75,9 @@ bool Window::createForSkin(cstr_t szClassName, cstr_t szCaption, int x, int y, i
     m_wndSize.cx = (int)[w frame].size.width;
     m_wndSize.cy = (int)[w frame].size.height;
 
+    m_scaleFactor = [m_handleHolder->window backingScaleFactor];
+    DBG_LOG1("ScaleFactor: %f\n", m_scaleFactor);
+
     //[w setOpaque:NO];
     // [w setAlphaValue:(float)128 / 255];
 
@@ -242,6 +245,10 @@ bool Window::getClientRect(CRect* lpRect) {
     NSRectToRect(rcRet, *lpRect);
 
     return true;
+}
+
+float Window::getScaleFactor() {
+    return m_scaleFactor;
 }
 
 void Window::setParent(Window *pWndParent) {

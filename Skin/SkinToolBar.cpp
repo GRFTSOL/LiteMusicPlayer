@@ -187,7 +187,7 @@ void CSkinToolbar::Button::toXML(CSkinToolbar *pToolbar, CXMLWriter &xml) {
 void CSkinToolbar::onCreate() {
     CUIObject::onCreate();
 
-    m_font.onCreate(m_pSkin);
+    m_font.setParent(m_pSkin);
     if (m_nImageHeight == 0) {
         m_nImageHeight = atoi(m_formHeight.getFormula());
     }
@@ -504,16 +504,13 @@ bool CSkinToolbar::setProperty(cstr_t szProperty, cstr_t szValue) {
         return true;
     } else if (isPropertyName(szProperty, "BgImage")) {
         m_strImageBgFile = szValue;
-        m_imageBg.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
-        m_imageBg.getOrginalSize(m_imageBg.m_cx, m_imageBg.m_cy);
+        m_imageBg.loadFromSRM(m_pSkin, szValue);
     } else if (isPropertyName(szProperty, "BgImageChecked")) {
         m_strImageBgCheckedFile = szValue;
-        m_imageBgChecked.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
-        m_imageBgChecked.getOrginalSize(m_imageBgChecked.m_cx, m_imageBgChecked.m_cy);
+        m_imageBgChecked.loadFromSRM(m_pSkin, szValue);
     } else if (strcasecmp(szProperty, SZ_PN_IMAGE) == 0) {
         m_strImageFile = szValue;
-        m_image.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
-        m_image.getOrginalSize(m_image.m_cx, m_image.m_cy);
+        m_image.loadFromSRM(m_pSkin, szValue);
     } else if (isPropertyName(szProperty, "ImageHeight")) {
         m_nImageHeight = atoi(szValue);
     } else if (strcasecmp(szProperty, "units_x") == 0) {

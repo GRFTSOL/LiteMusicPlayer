@@ -365,7 +365,7 @@ void CSkinWnd::closeSkin() {
     m_nHeight = 0;
     m_bRememberSizePos = true;
 
-    m_fontProperty.create("Tohama", "", 14, FW_NORMAL, false, false);
+    m_fontProperty.create(FontInfoEx("Tohama", "", 14, FW_NORMAL, false, false));
 
     m_timeLatestMouseMsg = 0;
     m_bMouseActive = false;
@@ -852,7 +852,7 @@ void CSkinWnd::onPaint(CRawGraph *canvas, CRect *rcClip) {
     ///*    CRect rc(20, 20, 50, 30);
     //    CColor clr(RGB(10, 10, 10));
     //    clr.setAlpha(50);
-    //    memCanvas->fillRect(&rc, clr);*/
+    //    memCanvas->fillRect(rc, clr);*/
     //
     //    // from buffer to screen
     //    // if (m_dbScale == 1.0)
@@ -936,17 +936,17 @@ void CSkinWnd::invalidateUIObject(CUIObject *pObj) {
 
     canvas = getGraphics();
 
-    if (m_dbScale == 1.0) {
+//    if (m_dbScale == 1.0) {
         m_pmemGraph->drawToWindow(canvas,
             pObj->m_rcObj.left, pObj->m_rcObj.top,
             pObj->m_rcObj.width(), pObj->m_rcObj.height(),
             pObj->m_rcObj.left, pObj->m_rcObj.top);
-    } else {
-        m_pmemGraph->drawToWindowStretch(canvas,
-            (int)(pObj->m_rcObj.left * m_dbScale), (int)(pObj->m_rcObj.top * m_dbScale),
-            (int)((pObj->m_rcObj.width() + 1) * m_dbScale), (int)((pObj->m_rcObj.height() + 1) * m_dbScale),
-            pObj->m_rcObj.left, pObj->m_rcObj.top, pObj->m_rcObj.width(), pObj->m_rcObj.height());
-    }
+//    } else {
+//        m_pmemGraph->drawToWindowStretch(canvas,
+//            (int)(pObj->m_rcObj.left * m_dbScale), (int)(pObj->m_rcObj.top * m_dbScale),
+//            (int)((pObj->m_rcObj.width() + 1) * m_dbScale), (int)((pObj->m_rcObj.height() + 1) * m_dbScale),
+//            pObj->m_rcObj.left, pObj->m_rcObj.top, pObj->m_rcObj.width(), pObj->m_rcObj.height());
+//    }
 
     releaseGraphics(canvas);
 #else // _WIN32
@@ -2085,7 +2085,7 @@ int CSkinWnd::fromXML(SXNode *pXmlNode) {
 
     m_rootConainter.m_rcObj = m_rcBoundBox;
 
-    m_fontProperty.create("Tohama", "", 14, FW_NORMAL, false, false);
+    m_fontProperty.create(FontInfoEx("Tohama", "", 14, FW_NORMAL, false, false));
 
     SXNode *pNodeExtends = nullptr;
     cstr_t szExtends = pXmlNode->getProperty(SZ_PN_EXTENDS);

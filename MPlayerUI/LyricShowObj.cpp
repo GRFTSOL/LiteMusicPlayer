@@ -26,15 +26,15 @@ bool isCharAlphaNumericEx(int c) {
     return isAlpha(c) || isDigit(c) || isMoreLatinLetter(c);
 }
 
-RawImageData *autoFitImageToRect(RawImageData *pImgSrc, int wDst, int hDst, int nBitCount) {
+RawImageDataPtr autoFitImageToRect(const RawImageDataPtr &pImgSrc, int wDst, int hDst, int nBitCount) {
     assert(pImgSrc);
-    CRect rc;
-    int x = 0, y = 0;
-    int wSrcToBlt, hSrcToBlt;
 
     if (!pImgSrc || pImgSrc->height == 0 || hDst == 0 || wDst == 0) {
         return nullptr;
     }
+
+    int x = 0, y = 0;
+    int wSrcToBlt, hSrcToBlt;
 
     if (float(pImgSrc->width) / pImgSrc->height >= float(wDst) / hDst) {
         wSrcToBlt = (int)(float(wDst) * pImgSrc->height / hDst + 0.5);
@@ -48,36 +48,22 @@ RawImageData *autoFitImageToRect(RawImageData *pImgSrc, int wDst, int hDst, int 
         y = (pImgSrc->height - hSrcToBlt) / 2;
     }
 
-    CRawImage imgSrc, imgDst;
-    RawImageData *pImgDst;
+    RawImageDataPtr pImgDst = createRawImageData(wDst, hDst, pImgSrc->bitCount);
 
-    pImgDst = new RawImageData;
-    if (!pImgDst->create(wDst, hDst, pImgSrc->bitCount)) {
-        return nullptr;
-    }
-
-    imgSrc.attach(pImgSrc);
-    imgDst.attach(pImgDst);
+    CRawImage imgSrc(pImgSrc);
+    CRawImage imgDst(pImgDst);
 
     imgSrc.stretchBlt(&imgDst, 0, 0, wDst, hDst, x, y, wSrcToBlt, hSrcToBlt, BPM_COPY | BPM_BILINEAR);
 
     if (pImgSrc->bitCount != nBitCount) {
-        RawImageData *pImgDstNew = new RawImageData;
-        if (pImgDstNew->create(wDst, hDst, nBitCount)) {
-            imgSrc.detach();
-            imgSrc.attach(pImgDst);
-            imgDst.detach();
-            imgDst.attach(pImgDstNew);
+        RawImageDataPtr pImgDstNew = createRawImageData(wDst, hDst, nBitCount);
+        imgSrc.attach(pImgDst);
+        imgDst.attach(pImgDstNew);
 
-            imgSrc.blt(&imgDst, 0, 0, BPM_COPY);
+        imgSrc.blt(&imgDst, 0, 0, BPM_COPY);
 
-            freeRawImage(pImgDst);
-            pImgDst = pImgDstNew;
-        }
+        pImgDst = pImgDstNew;
     }
-
-    imgSrc.detach();
-    imgDst.detach();
 
     return pImgDst;
 }
@@ -341,27 +327,13 @@ void createGradientFillImage(CRawImage &image, int nHeight, CColor clrGradient[3
     // Raw font will add the Margin, we need to add it too.
     nHeight += MARGIN_FONT * 2;
 
-    RawImageData *pImage = image.getHandle();
-    image.detach();
-    if (pImage) {
-        if (pImage->height != nHeight) {
-            freeRawImage(pImage);
-            pImage = nullptr;
-        }
-    }
-    if (!pImage) {
-        pImage = new RawImageData;
-        if (pImage && !pImage->create(nHeight * 2, nHeight, 24)) {
-            delete pImage;
-            pImage = nullptr;
-        }
+    if (!image.isValid() || image.height() != nHeight) {
+        RawImageDataPtr data = createRawImageData(nHeight * 2, nHeight, 24);
+        image.attach(data);
     }
 
-    if (pImage) {
-        CRect rc(0, 0, pImage->width, pImage->height);
-        gradientFillImageVert(pImage, rc, clrGradient, 3);
-        image.attach(pImage);
-    }
+    CRect rc(0, 0, image.width(), image.height());
+    gradientFillImageVert(image.getHandle().get(), rc, clrGradient, 3);
 }
 
 IdToString g_idsLyrDisplayOpt[] = {
@@ -416,7 +388,7 @@ cstr_t getLyrTOBSettingName(bool bHighlight, CLyricShowObj::TOBColorIndex nameIn
 
 string getPatternDir();
 
-RawImageData *loadRawImageDataPatternFile(cstr_t szFile) {
+RawImageDataPtr loadRawImageDataPatternFile(cstr_t szFile) {
     string strFile = getPatternDir();
     strFile += szFile;
     if (isFileExist(strFile.c_str())) {
@@ -429,40 +401,32 @@ RawImageData *loadRawImageDataPatternFile(cstr_t szFile) {
 void loadLyrOverlayBlendingSettings(cstr_t szSectName, CLyricShowObj::TextOverlayBlending &tob, int nGradientPatternHeight, bool bHilight) {
     assert(CountOf(_LyrShowTOBFieldNameLowlight) == CountOf(_LyrShowTOBFieldNameHilight));
 
-    cstr_t *pFieledName;
+    cstr_t *fieldName = bHilight ? _LyrShowTOBFieldNameHilight : _LyrShowTOBFieldNameLowlight;
 
-    if (bHilight) {
-        pFieledName = _LyrShowTOBFieldNameHilight;
-    } else {
-        pFieledName = _LyrShowTOBFieldNameLowlight;
-    }
-
-    profileGetColorValue(tob.clr[CLyricShowObj::TCI_BORDER], szSectName, pFieledName[CLyricShowObj::TCI_BORDER]);
-    profileGetColorValue(tob.clr[CLyricShowObj::TCI_FILL], szSectName, pFieledName[CLyricShowObj::TCI_FILL]);
+    profileGetColorValue(tob.clr[CLyricShowObj::TCI_BORDER], szSectName, fieldName[CLyricShowObj::TCI_BORDER]);
+    profileGetColorValue(tob.clr[CLyricShowObj::TCI_FILL], szSectName, fieldName[CLyricShowObj::TCI_FILL]);
 
     tob.obm = (OverlayBlendingMode)g_profile.getInt(szSectName, getLyrTOBSettingName(bHilight, CLyricShowObj::TCI_OBM), OBM_COLOR);
     if (tob.obm == OBM_PATTERN) {
-        tob.imgPattern.destroy();
-
         tob.strPatternFile = g_profile.getString(szSectName, bHilight ? "HilightPattern" : "LowlightPattern", "");
         if (!tob.strPatternFile.empty()) {
-            RawImageData *pImage = loadRawImageDataPatternFile(tob.strPatternFile.c_str());
-            if (pImage && pImage->bitCount != 24) {
-                pImage = convertTo24BppRawImage(pImage);
+            RawImageDataPtr image = loadRawImageDataPatternFile(tob.strPatternFile.c_str());
+            if (image && image->bitCount != 24) {
+                image = convertTo24BppRawImage(image);
             }
 
-            if (pImage) {
-                tob.imgPattern.attach(pImage);
+            if (image) {
+                tob.imgPattern.attach(image);
             }
         }
     } else if (tob.obm == OBM_GRADIENT_COLOR) {
-        profileGetColorValue(tob.clr[CLyricShowObj::TCI_GRADIENT1], szSectName, pFieledName[CLyricShowObj::TCI_GRADIENT1]);
-        profileGetColorValue(tob.clr[CLyricShowObj::TCI_GRADIENT2], szSectName, pFieledName[CLyricShowObj::TCI_GRADIENT2]);
-        profileGetColorValue(tob.clr[CLyricShowObj::TCI_GRADIENT3], szSectName, pFieledName[CLyricShowObj::TCI_GRADIENT3]);
+        profileGetColorValue(tob.clr[CLyricShowObj::TCI_GRADIENT1], szSectName, fieldName[CLyricShowObj::TCI_GRADIENT1]);
+        profileGetColorValue(tob.clr[CLyricShowObj::TCI_GRADIENT2], szSectName, fieldName[CLyricShowObj::TCI_GRADIENT2]);
+        profileGetColorValue(tob.clr[CLyricShowObj::TCI_GRADIENT3], szSectName, fieldName[CLyricShowObj::TCI_GRADIENT3]);
 
         createGradientFillImage(tob.imgPattern, nGradientPatternHeight, tob.clr + CLyricShowObj::TCI_GRADIENT1);
     } else {
-        tob.imgPattern.destroy();
+        tob.imgPattern.detach();
         tob.obm = OBM_COLOR;
     }
 
@@ -475,22 +439,22 @@ void createLyrOverlayBlendingPattern(CLyricShowObj::TextOverlayBlending &tob, in
     assert(nGradientPatternHeight > 0 && nGradientPatternHeight < 300);
 
     if (tob.obm == OBM_PATTERN) {
-        tob.imgPattern.destroy();
+        tob.imgPattern.detach();
 
         if (!tob.strPatternFile.empty()) {
-            RawImageData *pImage = loadRawImageDataPatternFile(tob.strPatternFile.c_str());
-            if (pImage && pImage->bitCount != 24) {
-                pImage = convertTo24BppRawImage(pImage);
+            RawImageDataPtr image = loadRawImageDataPatternFile(tob.strPatternFile.c_str());
+            if (image && image->bitCount != 24) {
+                image = convertTo24BppRawImage(image);
             }
 
-            if (pImage) {
-                tob.imgPattern.attach(pImage);
+            if (image) {
+                tob.imgPattern.attach(image);
             }
         }
     } else if (tob.obm == OBM_GRADIENT_COLOR) {
         createGradientFillImage(tob.imgPattern, nGradientPatternHeight, tob.clr + CLyricShowObj::TCI_GRADIENT1);
     } else {
-        tob.imgPattern.destroy();
+        tob.imgPattern.detach();
     }
 
     if (!tob.imgPattern.isValid()) {
@@ -498,59 +462,13 @@ void createLyrOverlayBlendingPattern(CLyricShowObj::TextOverlayBlending &tob, in
     }
 }
 
-bool profileGetLyricsFont(cstr_t szSectName, int &nSize, int &nWeight, uint8_t &byItalic, string &strFaceNameLatin9, string &strFaceNameOthers) {
-    string strFont;
-
-    strFont = g_profile.getString(szSectName, "ThemeFont", "");
-    if (strFont.size()) {
-        // Apply ThemeFont to current font setting, then remove it.
-        fontPropertyValueFromStr(strFont.c_str(), nSize, nWeight, byItalic, strFaceNameLatin9, strFaceNameOthers);
-
-        g_profile.writeString(szSectName, "ThemeFont", "");
-
-        profileWriteLyricsFont(ET_NULL, szSectName, nSize, nWeight, byItalic, strFaceNameLatin9.c_str(), strFaceNameOthers.c_str());
-    }
-
-#ifdef _WIN32
-    strFont = g_profile.getString(szSectName, "Font", "Verdana, 13, bold, 0, 0, Tahoma");
-#else
-    strFont = g_profile.getString(szSectName, "Font", ", 13, bold, 0, 0, ");
-#endif
-
-    return fontPropertyValueFromStr(strFont.c_str(), nSize, nWeight, byItalic, strFaceNameLatin9, strFaceNameOthers);
+bool profileGetLyricsFont(cstr_t szSectName, FontInfoEx &info) {
+    cstr_t defaultFont = "Verdana, 13, bold, 0, 0, Tahoma";
+    return info.parse(g_profile.getString(szSectName, "Font", defaultFont));
 }
 
-void profileWriteLyricsFont(EventType etColorTheme, cstr_t szSectName, int nSize, int nWeight, uint8_t byItalic, cstr_t szFaceNameLatin9, cstr_t szFaceNameOthers) {
-    string strFont;
-    string strLatin9, strOthers;
-
-    if (szFaceNameLatin9 == nullptr || szFaceNameOthers == nullptr || isEmptyString(szFaceNameLatin9) || isEmptyString(szFaceNameOthers)) {
-        if ((szFaceNameLatin9 == nullptr || isEmptyString(szFaceNameLatin9)) && (szFaceNameOthers == nullptr || isEmptyString(szFaceNameOthers))
-            && nSize == -1 && nWeight == -1) {
-            return;
-        }
-
-        int nSizeOld, nWeightOld;
-        uint8_t nItalicOld;
-
-        profileGetLyricsFont(szSectName, nSizeOld, nWeightOld, nItalicOld, strLatin9, strOthers);
-        if (!szFaceNameLatin9 || isEmptyString(szFaceNameLatin9)) {
-            szFaceNameLatin9 = strLatin9.c_str();
-        }
-        if (!szFaceNameOthers || isEmptyString(szFaceNameOthers)) {
-            szFaceNameOthers = strOthers.c_str();
-        }
-        if (nSize == -1) {
-            nSize = nSizeOld;
-        }
-        if (nWeight == -1) {
-            nWeight = nWeightOld;
-        }
-    }
-
-    fontPropertyValueToStr(strFont, nSize, nWeight, byItalic, szFaceNameLatin9, szFaceNameOthers);
-
-    CMPlayerSettings::setSettings(etColorTheme, szSectName, "Font", strFont.c_str());
+void profileWriteLyricsFont(EventType etColorTheme, cstr_t szSectName, const FontInfoEx &info) {
+    CMPlayerSettings::setSettings(etColorTheme, szSectName, "Font", info.toString().c_str());
 }
 
 
@@ -573,7 +491,7 @@ CLyricShowObj::CLyricShowObj() {
     m_etDispSettings = ET_LYRICS_DISPLAY_SETTINGS;
     m_strSectName = SZ_SECT_LYR_DISPLAY;
 
-    m_font.create("", "", 13, FW_NORMAL, 0, false);
+    m_font.create(FontInfoEx("", "", 13, FW_NORMAL, 0, false), 1.0);
 
     m_nFontHeight = m_font.getHeight();
 
@@ -1190,9 +1108,9 @@ void CLyricShowObj::fadeOutVertBorder(CRawGraph *canvas, int yDrawLyrStartPos, i
     rc.setLTRB(m_rcObj.left, m_rcObj.top + m_nYMargin, m_rcObj.right, m_rcObj.top + m_nYMargin + m_nFontHeight);
     if (rc.bottom > yDrawLyrStartPos) {
         if (m_pSkin->getEnableTranslucencyLayered() && m_pSkin->m_nCurTranslucencyAlpha <= 0) {
-            canvas->vertAlphaFadeOut(&rc, true);
+            canvas->vertAlphaFadeOut(rc, true);
         } else {
-            canvas->vertFadeOut(&rc, clrBg, true);
+            canvas->vertFadeOut(rc, clrBg, true);
         }
     }
 
@@ -1200,9 +1118,9 @@ void CLyricShowObj::fadeOutVertBorder(CRawGraph *canvas, int yDrawLyrStartPos, i
     rc.top = m_rcObj.bottom - m_nYMargin - m_nFontHeight;
     if (rc.top < yDrawLyrEndPos) {
         if (m_pSkin->getEnableTranslucencyLayered() && m_pSkin->m_nCurTranslucencyAlpha <= 0) {
-            canvas->vertAlphaFadeOut(&rc, false);
+            canvas->vertAlphaFadeOut(rc, false);
         } else {
-            canvas->vertFadeOut(&rc, clrBg, false);
+            canvas->vertFadeOut(rc, clrBg, false);
         }
     }
 }
@@ -1237,9 +1155,8 @@ void CLyricShowObj::updateLyricDrawBufferBackground(CRawGraph *canvas, CRect &rc
     } else if (m_bSetSkinBg) {
         assert(rc.bottom <= m_rcObj.bottom);
         m_pContainer->redrawBackground(canvas, rc);
-        // canvas->fillRect(rc.left, rc.top, rc.width(), rc.height(), &m_brBg);
     } else {
-        canvas->fillRect(&rc, m_clrBg);
+        canvas->fillRect(rc, m_clrBg);
     }
 }
 
@@ -1504,11 +1421,11 @@ void CLyricShowObj::onAdjustHue(float hue, float saturation, float luminance) {
     }
 
     if (m_tobHilight.imgPattern.isValid()) {
-        adjustImageHue(m_tobHilight.imgPattern.getHandle(), hue);
+        adjustImageHue(m_tobHilight.imgPattern.getHandle().get(), hue);
     }
 
     if (m_tobLowlight.imgPattern.isValid()) {
-        adjustImageHue(m_tobLowlight.imgPattern.getHandle(), hue);
+        adjustImageHue(m_tobLowlight.imgPattern.getHandle().get(), hue);
     }
 }
 
@@ -1740,21 +1657,20 @@ void CLyricShowObj::loadBgImageFolder() {
 }
 
 void CLyricShowObj::loadNextBgImage() {
-    RawImageData *hBmp = nullptr;
-
     if (!m_bUseAlbumArtAsBg && !m_bUseBgImg) {
         m_curAlbumArt.close();
-        m_img.destroy();
+        m_img.detach();
         return;
     }
 
+    RawImageDataPtr image;
     if (m_bUseAlbumArtAsBg && !m_curAlbumArt.isLoaded()) {
         m_curAlbumArt.load();
         m_nextPic = 0;
-        hBmp = m_curAlbumArt.loadAlbumArtByIndex(m_nextPic);
+        image = m_curAlbumArt.loadAlbumArtByIndex(m_nextPic);
     }
 
-    if (!hBmp) {
+    if (!image) {
         // is m_nextPic index correct?
         if (m_curAlbumArt.getPicCount() + m_vPicFiles.size() == 0) {
             return;
@@ -1765,15 +1681,15 @@ void CLyricShowObj::loadNextBgImage() {
         }
     }
 
-    if (!hBmp && m_curAlbumArt.getPicCount() > 0) {
+    if (!image && m_curAlbumArt.getPicCount() > 0) {
         // load album art
-        while (m_nextPic < m_curAlbumArt.getPicCount() && !hBmp) {
-            hBmp = m_curAlbumArt.loadAlbumArtByIndex(m_nextPic);
+        while (m_nextPic < m_curAlbumArt.getPicCount() && !image) {
+            image = m_curAlbumArt.loadAlbumArtByIndex(m_nextPic);
             m_nextPic++;
         }
     }
 
-    if (!hBmp && m_bUseBgImg && !m_vPicFiles.empty()) {
+    if (!image && m_bUseBgImg && !m_vPicFiles.empty()) {
         if (m_nextPic - m_curAlbumArt.getPicCount() != m_nextPicInFolder) {
             if (m_nextPicInFolder < 0 || m_nextPicInFolder >= (int)m_vPicFiles.size()) {
                 m_nextPicInFolder = 0;
@@ -1782,23 +1698,21 @@ void CLyricShowObj::loadNextBgImage() {
         }
 
         if (m_nextPicInFolder >= 0 && m_nextPicInFolder < (int)m_vPicFiles.size()) {
-            hBmp = loadRawImageDataFromFile(m_vPicFiles[m_nextPicInFolder].c_str());
+            image = loadRawImageDataFromFile(m_vPicFiles[m_nextPicInFolder].c_str());
             m_nextPic++;
             m_nextPicInFolder++;
         }
     }
 
     if (m_img.isValid()) {
-        m_img.destroy();
+        m_img.detach();
     }
 
-    if (hBmp) {
-        RawImageData *hImg = autoFitImageToRect(hBmp, m_rcObj.width(), m_rcObj.height(), hBmp->bitCount);
-        if (hImg) {
-            m_img.attach(hImg);
-            m_img.getOrginalSize(m_img.m_cx, m_img.m_cy);
+    if (image) {
+        image = autoFitImageToRect(image, m_rcObj.width(), m_rcObj.height(), image->bitCount);
+        if (image) {
+            m_img.attach(image);
         }
-        freeRawImage(hBmp);
     }
 }
 
@@ -1863,7 +1777,7 @@ bool CLyricShowObj::setProperty(cstr_t szProperty, cstr_t szValue) {
             loadNextBgImage();
             m_pSkin->registerTimerObject(this, g_profile.getInt(m_strSectName.c_str(), "SlideDelayTime", 10) * 1000);
         } else if (!m_bUseAlbumArtAsBg) {
-            m_img.destroy();
+            m_img.detach();
             m_vPicFiles.clear();
         }
     } else if (strcasecmp(szProperty, "BgPicFolder") == 0) {
@@ -1884,24 +1798,21 @@ bool CLyricShowObj::setProperty(cstr_t szProperty, cstr_t szValue) {
     } else if (strcasecmp(szProperty, "LineSpacing") == 0) {
         m_nLineSpacing = atoi(szValue);
     } else if (strcasecmp(szProperty, "Font") == 0) {
-        int nSize, nWeight;
-        uint8_t byItalic;
-        string strFaceName, strFaceNameOthers;
+        FontInfoEx info;
+        if (info.parse(szValue)) {
+            m_font.create(info, m_pSkin->getScaleFactor());
+            m_nFontHeight = m_font.getHeight();
 
-        // 创建English 歌词的字体
-        fontPropertyValueFromStr(szValue, nSize, nWeight, byItalic, strFaceName, strFaceNameOthers);
-        m_font.create(strFaceName.c_str(), strFaceNameOthers.c_str(), nSize, nWeight, tobool(byItalic));
-        m_nFontHeight = m_font.getHeight();
-
-        if (m_tobHilight.imgPattern.height() != getPatternFontHeight()) {
-            if (m_hue == 0) {
-                loadLyrOverlaySettings();
-            } else {
-                onAdjustHue(m_hue, 0, 0);
+            if (m_tobHilight.imgPattern.height() != getPatternFontHeight()) {
+                if (m_hue == 0) {
+                    loadLyrOverlaySettings();
+                } else {
+                    onAdjustHue(m_hue, 0, 0);
+                }
             }
-        }
 
-        onLyrDrawContextChanged();
+            onLyrDrawContextChanged();
+        }
     } else if (isPropertyName(szProperty, "OutlineLyrText")) {
         m_bOutlineLyrics = isTRUE(szValue);
     } else if (isPropertyName(szProperty, "Karaoke")) {
@@ -1953,13 +1864,13 @@ bool CLyricShowObj::onLyrDisplaySettings(cstr_t szProperty, cstr_t szValue) {
         loadLOBHilightSettings();
     } else if (isPropertyName(szProperty, "HilightPattern")) {
         if (m_tobHilight.obm == OBM_PATTERN) {
-            RawImageData *pImage = loadRawImageDataPatternFile(szValue);
-            if (pImage && pImage->bitCount != 24) {
-                pImage = convertTo24BppRawImage(pImage);
+            RawImageDataPtr image = loadRawImageDataPatternFile(szValue);
+            if (image && image->bitCount != 24) {
+                image = convertTo24BppRawImage(image);
             }
 
-            if (pImage) {
-                m_tobHilight.imgPattern.attach(pImage);
+            if (image) {
+                m_tobHilight.imgPattern.attach(image);
             }
         }
     }
@@ -1970,13 +1881,13 @@ bool CLyricShowObj::onLyrDisplaySettings(cstr_t szProperty, cstr_t szValue) {
         loadLOBLowlightSettings();
     } else if (isPropertyName(szProperty, "LowlightPattern")) {
         if (m_tobLowlight.obm == OBM_PATTERN) {
-            RawImageData *pImage = loadRawImageDataPatternFile(szValue);
-            if (pImage && pImage->bitCount != 24) {
-                pImage = convertTo24BppRawImage(pImage);
+            RawImageDataPtr image = loadRawImageDataPatternFile(szValue);
+            if (image && image->bitCount != 24) {
+                image = convertTo24BppRawImage(image);
             }
 
-            if (pImage) {
-                m_tobLowlight.imgPattern.attach(pImage);
+            if (image) {
+                m_tobLowlight.imgPattern.attach(image);
             }
         }
     } else if (isPropertyName(szProperty, "enableAdjustVertAlign")) {
@@ -2025,7 +1936,7 @@ bool CLyricShowObj::onLyrDisplaySettings(cstr_t szProperty, cstr_t szValue) {
 
 void CLyricShowObj::updateBgImage() {
     if (m_img.isValid()) {
-        m_img.destroy();
+        m_img.detach();
     }
 
     if (m_curAlbumArt.isLoaded()) {
@@ -2083,13 +1994,10 @@ void CLyricShowObj::loadAllSettings() {
     }
 
     {
-        int nSize, nWeight;
-        uint8_t byItalic;
-        string strFaceName, strFaceNameOthers;
+        FontInfoEx info;
 
-        profileGetLyricsFont(m_strSectName.c_str(), nSize, nWeight, byItalic, strFaceName, strFaceNameOthers);
-
-        m_font.create(strFaceName.c_str(), strFaceNameOthers.c_str(), nSize, nWeight, byItalic);
+        profileGetLyricsFont(m_strSectName.c_str(), info);
+        m_font.create(info, 1.0);
         m_nFontHeight = m_font.getHeight();
     }
 

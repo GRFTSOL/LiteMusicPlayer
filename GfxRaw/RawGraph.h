@@ -4,6 +4,8 @@
 #pragma once
 
 #include "../ImageLib/RawImageData.h"
+#include "../Window/WindowTypes.h"
+#include "RawPen.h"
 
 
 #ifdef _WIN32
@@ -41,13 +43,14 @@ enum PixPosition {
 class CRawBmpFont;
 
 //
-// CRawGraph is a 32 bit depth Graphics.
+// CRawGraph 是直接使用 CPU 操作内存修改图像数据的画布
 //
-// Its graph buffer can be accessed directly.
+// * 支持 ScaleFactor 和 ClipBox，Origin（设置画布的原点）
+//    * 只有当涉及到修改内存时，才会将操作的坐标使用 scaleFactor, origin 转换到真实坐标
 //
 class CRawGraph : public CRawGraphData {
 public:
-    CRawGraph();
+    CRawGraph(float scaleFactor);
     virtual ~CRawGraph();
 
     class CClipBoxAutoRecovery {
@@ -107,11 +110,16 @@ public:
 
     };
 
-    virtual bool create(int cx, int cy, WindowHandleHolder *windowHandle, int nBitCount = 32);
+    bool create(int cx, int cy, WindowHandleHolder *windowHandle, int nBitCount = 32) override;
 
-    virtual void line(int x1, int y1, int x2, int y2);
+    int width() const { return m_width; }
+    int height() const { return m_height; }
 
-    virtual void rectangle(int x, int y, int width, int height);
+    void drawToWindow(int xdest, int ydest, int width, int height, int xsrc, int ysrc);
+
+    virtual void line(float x1, float y1, float x2, float y2);
+
+    virtual void rectangle(float x, float y, float width, float height);
 
     virtual void setPen(CRawPen &pen);
 
@@ -120,44 +128,42 @@ public:
     virtual void resetClipBoundBox(const CRect &rc);
     virtual void clearClipBoundBox();
 
-    virtual bool textOut(int x, int y, cstr_t szText, size_t nLen);
-    virtual bool drawTextClip(cstr_t szText, size_t nLen, const CRect &rcPos, int xLeftClipOffset = 0);
+    virtual bool textOut(float x, float y, cstr_t szText, size_t nLen);
+    virtual bool drawTextClip(cstr_t szText, size_t nLen, const CRect &rcPos, float xLeftClipOffset = 0);
 
-    virtual bool textOutOutlined(int x, int y, cstr_t szText, size_t nLen, const CColor &clrText, const CColor &clrBorder);
-    virtual bool drawTextClipOutlined(cstr_t szText, size_t nLen, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, int xLeftClipOffset = 0);
+    virtual bool textOutOutlined(float x, float y, cstr_t szText, size_t nLen, const CColor &clrText, const CColor &clrBorder);
+    virtual bool drawTextClipOutlined(cstr_t szText, size_t nLen, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, float xLeftClipOffset = 0);
     virtual bool drawTextOutlined(cstr_t szText, size_t nLen, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, uint32_t uFormat = DT_SINGLELINE | DT_LEFT);
 
     virtual bool drawText(cstr_t szText, size_t nLen, const CRect &rcPos, uint32_t uFormat = DT_SINGLELINE | DT_LEFT);
 
     virtual bool getTextExtentPoint32(cstr_t szText, size_t nLen, CSize *pSize);
 
-
     virtual void setTextColor(const CColor &color) {
         m_clrText = color;
     }
 
-public:
     void setFont(CRawBmpFont *font);
 
-    void resetAlphaChannel(uint8_t byAlpha, const CRect *lpRect);
-    void multiplyAlpha(uint8_t byAlpha, const CRect *lpRect);
+    void resetAlphaChannel(uint8_t byAlpha, const CRect &rcDst);
+    void multiplyAlpha(uint8_t byAlpha, const CRect &rcDst);
 
-    void vertAlphaFadeOut(const CRect *lpRect, bool bTop);
-    void vertFadeOut(const CRect *lpRect, const CColor &clrBg, bool bTop);
+    void vertAlphaFadeOut(const CRect &rcDst, bool bTop);
+    void vertFadeOut(const CRect &rcDst, const CColor &clrBg, bool bTop);
 
-    void horzAlphaFadeOut(const CRect *lpRect, bool bLeft);
-    void horzFadeOut(const CRect *lpRect, const CColor &clrBg, bool bLeft);
+    void horzAlphaFadeOut(const CRect &rcDst, bool bLeft);
+    void horzFadeOut(const CRect &rcDst, const CColor &clrBg, bool bLeft);
 
-    void fillRectXOR(const CRect *lpRect, const CColor &clrFill);
+    void fillRectXOR(const CRect &rcDst, const CColor &clrFill);
 
-    void fillRect(const CRect *lpRect, RawImageData *pImgMask, const CRect *rcMask, const CColor &clrFill, BlendPixMode bpm = BPM_COPY);
-    void fillRect(const CRect *lpRect, const CColor &clrFill, BlendPixMode bpm = BPM_COPY);
+    void fillRect(const CRect &rcDst, CRawImage &imageMask, const CRect &rcMask, const CColor &clrFill, BlendPixMode bpm = BPM_COPY);
+    void fillRect(const CRect &rcDst, const CColor &clrFill, BlendPixMode bpm = BPM_COPY);
 
-    void fillRect(int x, int y, int nWidth, int nHeight, const CColor &clrFill, BlendPixMode bpm = BPM_COPY) {
-        CRect rc(x, y, x + nWidth, y + nHeight);
-
-        fillRect(&rc, clrFill, bpm);
+    void fillRect(float x, float y, float nWidth, float nHeight, const CColor &clrFill, BlendPixMode bpm = BPM_COPY) {
+        fillRect(CRect(x, y, x + nWidth, y + nHeight), clrFill, bpm);
     }
+
+    void bltImage(int xDest, int yDest, int widthDest, int heightDest, RawImageData *image, int xSrc, int ySrc, BlendPixMode bpm = BPM_BLEND, int nOpacitySrc = 255);
 
     int getOpacityPainting() const { return m_nOpacityPainting; }
     int setOpacityPainting(int nOpacityPainting) { int nOrg = m_nOpacityPainting; m_nOpacityPainting = nOpacityPainting; return nOrg; }
@@ -172,31 +178,35 @@ public:
     //
     // The following APIs provide logical coordinate and real coordinate convert.
     //
-
-    CPoint setOrigin(const CPoint &ptOrg);
+    CPoint resetOrigin(const CPoint &ptOrg);
     void getOrigin(CPoint &ptOrg) const { ptOrg = m_ptOrigin; }
 
-    void getMappedClipBoundRect(CRect &rc) const { rc = m_rcClip; rc.left += m_ptOrigin.x; rc.top += m_ptOrigin.y; rc.right += m_ptOrigin.x; rc.bottom += m_ptOrigin.y; }
+    template<class _float> _float mapAndScaleX(_float x) const { return (_float)((x + m_ptOrigin.x) * m_scaleFactor); }
+    template<class _float> _float mapAndScaleY(_float y) const { return (_float)((y + m_ptOrigin.y) * m_scaleFactor); }
+    void mapAndScale(CRect &r) const;
 
-    void mapPoint(CPoint &pt) const { pt.x += m_ptOrigin.x; pt.y += m_ptOrigin.y; }
-    void mapRect(CRect &rc) const { rc.left += m_ptOrigin.x; rc.top += m_ptOrigin.y; rc.right += m_ptOrigin.x; rc.bottom += m_ptOrigin.y; }
+    inline float scale(float n) const { return (int)(n * m_scaleFactor); }
+    inline CRect scale(const CRect &rc) const {
+        return CRect((int)(rc.left * m_scaleFactor), (int)(rc.top * m_scaleFactor),
+                     (int)(rc.right * m_scaleFactor), (int)(rc.bottom * m_scaleFactor));
+    }
 
-    template<class _int> void mapPoint(_int &x, _int &y) const { x += m_ptOrigin.x; y += m_ptOrigin.y; }
-    template<class _int> _int mapX(_int x) { return x + m_ptOrigin.x; }
-    template<class _int> _int mapY(_int y) { return y + m_ptOrigin.y; }
-
-    template<class _int> _int revertMapX(_int x) { return x - m_ptOrigin.x; }
-    template<class _int> _int revertMapY(_int y) { return y - m_ptOrigin.y; }
-
-protected:
-    void clipAndMapRect(const CRect *lpRect, int &x, int &y, int &xMax, int &yMax);
+    float getScaleFactor() const { return m_scaleFactor; }
 
 protected:
+    bool clipMapScaleRect(const CRect &rcDst, int &x, int &y, int &xMax, int &yMax);
+
+protected:
+    float                       m_scaleFactor;
+
     CColor                      m_clrText;
 
     CRawPen                     m_pen;
 
+    int                         m_width, m_height;
+
     CRect                       m_rcClip;
+    CRect                       m_rcClipScaleMaped;
 
     CRawBmpFont                 *m_rawBmpFont;
 

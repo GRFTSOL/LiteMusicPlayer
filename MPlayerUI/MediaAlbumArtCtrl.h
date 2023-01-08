@@ -32,7 +32,7 @@ public:
 protected:
     void updateAlbumArt();
 
-    void createAlbumArtImage(RawImageData *pImgSrc);
+    void createAlbumArtImage(RawImageDataPtr pImgSrc);
 
     void resizeAlbumArt();
 
@@ -50,7 +50,6 @@ protected:
     // album art frame mask image
     string                      m_strFrmMask;
     CSFImage                    m_frmMask;
-    CRect                       m_rcFrameMaskPos;
 
     CColor                      m_clrBg;
 

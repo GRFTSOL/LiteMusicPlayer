@@ -3,76 +3,12 @@
 #include "SkinFontProperty.h"
 
 
-// szValue format: Verdana, 13, thin, 1, 0, Tahoma
-// Latin font, height, weight(bold,normal,thin), italic, underline, Other font
-bool fontPropertyValueFromStr(cstr_t szValue, int &nHeight, int &nWeight, uint8_t &byItalic, string &strFaceNameLatin9, string &strFaceNameOthers) {
-    string strWeight;
-
-    CCommaSeparatedValues csv;
-    VecStrings vValues;
-
-    csv.split(szValue, vValues);
-    trimStr(vValues);
-    if (vValues.size() != 6) {
-        return false;
-    }
-
-    strFaceNameLatin9 = vValues[0];
-    nHeight = stringToInt(vValues[1].c_str(), -1);
-
-    strWeight = vValues[2];
-    if (strWeight.empty()) {
-        nWeight = 13;
-    } else {
-        if (strcasecmp(strWeight.c_str(), "bold") == 0) {
-            nWeight = FW_BOLD;
-        } else if (strcasecmp(strWeight.c_str(), "thin") == 0) {
-            nWeight = FW_THIN;
-        } else if (strcasecmp(strWeight.c_str(), "normal") == 0) {
-            nWeight = FW_NORMAL;
-        } else {
-            nWeight = atoi(strWeight.c_str());
-        }
-    }
-
-    byItalic = stringToInt(vValues[3].c_str(), 0);
-    // int nUnderLine = stringToInt(vValues[4].c_str(), 0);
-    strFaceNameOthers = vValues[5];
-
-    return true;
-}
-
-void fontPropertyValueToStr(string &strValue, int nHeight, int nWeight, uint8_t byItalic, cstr_t szFaceNameLatin9, cstr_t szFaceNameOthers) {
-#define            SZ_FEILD_SEP ","
-    strValue.resize(0);
-    strValue += szFaceNameLatin9;
-    strValue += SZ_FEILD_SEP;
-
-    strValue += itos(nHeight); strValue += SZ_FEILD_SEP;
-
-    strValue += itos(nWeight); strValue += SZ_FEILD_SEP;
-    /*    if (nWeight >= FW_BOLD)
-        strValue += "bold, ";
-    else if (nWeight <= FW_THIN)
-        strValue += "thin, ";
-    else
-        strValue += "normal, ";*/
-
-    strValue += itos(byItalic); strValue += SZ_FEILD_SEP;
-
-    strValue += "0, ";
-
-    strValue += szFaceNameOthers;
-}
-
-
 //////////////////////////////////////////////////////////////////////////
 
 CSkinFontProperty::CSkinFontProperty() {
     m_pRawFont = nullptr;
-    m_pSkin = nullptr;
+    m_parent = nullptr;
     m_nFlagProperties = 0;
-    m_bCustomized = true;
 
     m_bOutlineText = false;
     m_clrText.set(RGB(0, 0, 0));
@@ -91,21 +27,18 @@ CSkinFontProperty::~CSkinFontProperty() {
 }
 
 
-void CSkinFontProperty::create(cstr_t szFaceNameLatin9, cstr_t szFaceNameOthers, int nHeight, int nWeight, int nItalic, bool bUnderline) {
+void CSkinFontProperty::create(const FontInfoEx &font) {
     clear();
 
-    m_font.create(szFaceNameLatin9, szFaceNameOthers, nHeight, nWeight, nItalic, bUnderline);
+    m_font = font;
     m_nFlagProperties |= FP_FONT;
-    m_bCustomized = true;
-}
 
-
-void CSkinFontProperty::create(const CFontInfo &font) {
-    clear();
-
-    m_font.create(font);
-    m_nFlagProperties |= FP_FONT;
-    m_bCustomized = true;
+    m_pRawFont = new CRawBmpFont;
+    if (!m_pRawFont->create(m_font, 2)) {
+        assert(0);
+        delete m_pRawFont;
+        m_pRawFont = nullptr;
+    }
 }
 
 
@@ -116,57 +49,52 @@ void CSkinFontProperty::clear() {
     }
 
     m_nFlagProperties = 0;
-    m_bCustomized = true;
-    m_font.m_strNameLatin9.resize(0);
-    m_font.m_strNameOthers.resize(0);
+    m_font.clear();
 }
 
-
 bool CSkinFontProperty::setProperty(cstr_t szProperty, cstr_t szValue) {
-    if (isPropertyName(szProperty, "CustomizedFont")) {
-        m_bCustomized = isTRUE(szValue);
-    } else if (isPropertyName(szProperty, "Font")) {
+    if (isPropertyName(szProperty, "Font")) {
         // set font property in one field: Verdana, 13, thin, 1, 0, Tahoma
-        fontPropertyValueFromStr(szValue, m_font.m_nSize, m_font.m_weight, m_font.m_nItalic, m_font.m_strNameLatin9, m_font.m_strNameOthers);
+        m_font.parse(szValue);
         m_nFlagProperties |= FP_FONT;
     } else if (isPropertyName(szProperty, "FontName")) {
-        m_font.m_strNameLatin9 = szValue;
-        if (!m_font.m_strNameLatin9.empty()) {
+        m_font.nameLatin9 = szValue;
+        if (!m_font.nameLatin9.empty()) {
             m_nFlagProperties |= FP_NAME_LATIN9;
         } else {
             m_nFlagProperties &= ~FP_NAME_LATIN9;
         }
     } else if (isPropertyName(szProperty, "FontNameOthers")) {
-        m_font.m_strNameOthers = szValue;
-        if (!m_font.m_strNameOthers.empty()) {
+        m_font.nameOthers = szValue;
+        if (!m_font.nameOthers.empty()) {
             m_nFlagProperties |= FP_NAME_OTHERS;
         } else {
             m_nFlagProperties &= ~FP_NAME_OTHERS;
         }
     } else if (isPropertyName(szProperty, "FontHeight")) {
-        m_font.m_nSize = atoi(szValue);
-        if (m_font.m_nSize >= 8 && m_font.m_nSize < 255) {
+        m_font.height = atoi(szValue);
+        if (m_font.height >= 8 && m_font.height < 255) {
             m_nFlagProperties |= FP_HEIGHT;
         } else {
             m_nFlagProperties &= ~FP_HEIGHT;
         }
     } else if (isPropertyName(szProperty, "FontBold")) {
-        m_font.m_weight = isTRUE(szValue) ? FW_BOLD : FW_NORMAL;
+        m_font.weight = isTRUE(szValue) ? FW_BOLD : FW_NORMAL;
         m_nFlagProperties |= FP_WEIGHT;
     } else if (isPropertyName(szProperty, "FontWeight")) {
         if (isPropertyName(szValue, "bold") == 0) {
-            m_font.m_weight = FW_BOLD;
+            m_font.weight = FW_BOLD;
         } else if (isPropertyName(szValue, "thin") == 0) {
-            m_font.m_weight = FW_THIN;
+            m_font.weight = FW_THIN;
         } else {
-            m_font.m_weight = FW_NORMAL;
+            m_font.weight = FW_NORMAL;
         }
         m_nFlagProperties |= FP_WEIGHT;
     } else if (isPropertyName(szProperty, "FontItalic")) {
-        m_font.m_nItalic = atoi(szValue);
+        m_font.italic = atoi(szValue);
         m_nFlagProperties |= FP_ITALIC;
     } else if (isPropertyName(szProperty, "FontUnderLine")) {
-        m_font.m_nItalic = atoi(szValue);
+        m_font.isUnderline = atoi(szValue);
         m_nFlagProperties |= FP_UNDERLINE;
     } else if (isPropertyName(szProperty, "TextOutlined")) {
         m_bOutlineText = isTRUE(szValue);
@@ -193,7 +121,6 @@ bool CSkinFontProperty::setProperty(cstr_t szProperty, cstr_t szValue) {
 
 #ifdef _SKIN_EDITOR_
 void CSkinFontProperty::enumProperties(CUIObjProperties &listProperties) {
-    listProperties.addPropBoolStr("CustomizedFont", m_bCustomized, !m_bCustomized);
     listProperties.addPropFontName("FontName", m_font.getName(), isFlagSet(m_nFlagProperties, FP_NAME_LATIN9));
     listProperties.addPropFontName("FontNameOthers", m_font.getNameOthers(), isFlagSet(m_nFlagProperties, FP_NAME_OTHERS));
     listProperties.addPropInt("FontHeight", m_font.getSize(), isFlagSet(m_nFlagProperties, FP_HEIGHT));
@@ -207,8 +134,8 @@ void CSkinFontProperty::enumProperties(CUIObjProperties &listProperties) {
 cstr_t CSkinFontProperty::getName() {
     if (isPropertySet(FP_NAME_LATIN9)) {
         return m_font.getName();
-    } else if (m_pSkin) {
-        return m_pSkin->getFontProperty()->m_font.getName();
+    } else if (m_parent) {
+        return m_parent->getName();
     } else {
         return "";
     }
@@ -218,21 +145,10 @@ cstr_t CSkinFontProperty::getName() {
 cstr_t CSkinFontProperty::getNameOthers() {
     if (isPropertySet(FP_NAME_OTHERS)) {
         return m_font.getNameOthers();
-    } else if (m_pSkin) {
-        return m_pSkin->getFontProperty()->m_font.getNameOthers();
+    } else if (m_parent) {
+        return m_parent->getNameOthers();
     } else {
         return "";
-    }
-}
-
-
-int CSkinFontProperty::getSize() {
-    if (isPropertySet(FP_HEIGHT)) {
-        return m_font.getSize();
-    } else if (m_pSkin) {
-        return m_pSkin->getFontProperty()->m_font.getSize();
-    } else {
-        return 13;
     }
 }
 
@@ -240,8 +156,8 @@ int CSkinFontProperty::getSize() {
 int CSkinFontProperty::getWeight() {
     if (isPropertySet(FP_WEIGHT)) {
         return m_font.getWeight();
-    } else if (m_pSkin) {
-        return m_pSkin->getFontProperty()->m_font.getWeight();
+    } else if (m_parent) {
+        return m_parent->getWeight();
     } else {
         return FW_NORMAL;
     }
@@ -251,28 +167,29 @@ int CSkinFontProperty::getWeight() {
 bool CSkinFontProperty::isOutlined() {
     if (isPropertySet(FP_OUTLINED)) {
         return m_bOutlineText;
-    } else if (m_pSkin) {
-        return m_pSkin->getFontProperty()->isOutlined();
+    } else if (m_parent) {
+        return m_parent->isOutlined();
     } else {
         return false;
     }
 }
 
 int CSkinFontProperty::getHeight() {
-    CRawBmpFont *font = getFont();
-    if (font == nullptr) {
-        return getSize();
+    if (isPropertySet(FP_HEIGHT)) {
+        return m_font.height;
+    } else if (m_parent) {
+        return m_parent->getHeight();
+    } else {
+        return 13;
     }
-
-    return font->getHeight();
 }
 
 const CColor &CSkinFontProperty::getTextColor(bool bEnabledClr) {
     if (bEnabledClr) {
         if (isPropertySet(FP_TEXT_CLR)) {
             return m_clrText;
-        } else if (m_pSkin) {
-            return m_pSkin->getFontProperty()->getTextColor(bEnabledClr);
+        } else if (m_parent) {
+            return m_parent->getTextColor(bEnabledClr);
         } else {
             return m_clrText;
         }
@@ -280,8 +197,8 @@ const CColor &CSkinFontProperty::getTextColor(bool bEnabledClr) {
 
     if (isPropertySet(FP_DISABLED_TEXT_CLR)) {
         return m_clrTextDisbled;
-    } else if (m_pSkin) {
-        return m_pSkin->getFontProperty()->getTextColor(bEnabledClr);
+    } else if (m_parent) {
+        return m_parent->getTextColor(bEnabledClr);
     } else {
         return m_clrTextDisbled;
     }
@@ -291,45 +208,52 @@ const CColor &CSkinFontProperty::getTextColor(bool bEnabledClr) {
 const CColor &CSkinFontProperty::getColorOutlined() {
     if (isPropertySet(FP_OUTLINED_CLR)) {
         return m_clrOutlined;
-    } else if (m_pSkin) {
-        return m_pSkin->getFontProperty()->getColorOutlined();
+    } else if (m_parent) {
+        return m_parent->getColorOutlined();
     } else {
         return m_clrOutlined;
     }
 }
 
+void CSkinFontProperty::setParent(CSkinWnd *skinWnd) {
+    m_parent = skinWnd->getFontProperty();
 
-void CSkinFontProperty::onCreate(CSkinWnd *pSkin) {
-    m_pSkin = pSkin;
-
-    if (m_pSkin) {
-        m_pSkin->getSkinFactory()->getAdjustedHueResult(m_clrText);
-        m_pSkin->getSkinFactory()->getAdjustedHueResult(m_clrTextDisbled);
-        m_pSkin->getSkinFactory()->getAdjustedHueResult(m_clrOutlined);
+    if (skinWnd) {
+        skinWnd->getSkinFactory()->getAdjustedHueResult(m_clrText);
+        skinWnd->getSkinFactory()->getAdjustedHueResult(m_clrTextDisbled);
+        skinWnd->getSkinFactory()->getAdjustedHueResult(m_clrOutlined);
     }
 }
 
-
 void CSkinFontProperty::onSkinFontChanged() {
-    assert(m_pSkin);
+    assert(m_parent);
 
-    if ((m_nFlagProperties & FP_FONT) == 0 || !m_bCustomized || !m_pSkin) {
+    if ((m_nFlagProperties & FP_FONT) == 0 || !m_parent) {
         return;
     }
 
-    updateMLFontInfo();
+    assert(m_parent);
+    if (!m_parent) {
+        return;
+    }
+
+    auto &font = m_parent->getFont()->getFontInfo();
+    if (!isFlagSet(m_nFlagProperties, FP_NAME_LATIN9)) { m_font.nameLatin9 = font.nameLatin9; }
+    if (!isFlagSet(m_nFlagProperties, FP_NAME_OTHERS)) { m_font.nameOthers = font.nameOthers; }
+    if (!isFlagSet(m_nFlagProperties, FP_HEIGHT)) { m_font.height = font.height; }
+    if (!isFlagSet(m_nFlagProperties, FP_WEIGHT)) { m_font.weight = font.weight; }
+    if (!isFlagSet(m_nFlagProperties, FP_ITALIC)) { m_font.italic = font.italic; }
+    if (!isFlagSet(m_nFlagProperties, FP_UNDERLINE)) { m_font.isUnderline = font.isUnderline; }
 
     if (!m_pRawFont) {
         m_pRawFont = new CRawBmpFont;
     }
-    assert(m_pRawFont);
 
-    if (!m_pRawFont->create(m_font)) {
+    if (!m_pRawFont->create(m_font, 1)) {
         delete m_pRawFont;
         m_pRawFont = nullptr;
     }
 }
-
 
 void CSkinFontProperty::onAdjustHue(CSkinWnd *pSkinwnd, float hue, float saturation, float luminance) {
     if (isPropertySet(FP_TEXT_CLR)) {
@@ -349,84 +273,15 @@ void CSkinFontProperty::onAdjustHue(CSkinWnd *pSkinwnd, float hue, float saturat
 }
 
 
-void CSkinFontProperty::updateMLFontInfo() {
-    assert(m_pSkin);
-    if (!m_pSkin) {
-        return;
-    }
-
-    CSkinFontProperty *pFont;
-
-    pFont = m_pSkin->getFontProperty();
-
-    if (!isFlagSet(m_nFlagProperties, FP_NAME_LATIN9)) {
-        m_font.m_strNameLatin9 = pFont->m_font.m_strNameLatin9;
-    }
-
-    if (!isFlagSet(m_nFlagProperties, FP_NAME_OTHERS)) {
-        m_font.m_strNameOthers = pFont->m_font.m_strNameOthers;
-    }
-
-    if (!isFlagSet(m_nFlagProperties, FP_HEIGHT)) {
-        m_font.m_nSize = pFont->m_font.m_nSize;
-    }
-
-    if (!isFlagSet(m_nFlagProperties, FP_WEIGHT)) {
-        m_font.m_weight = pFont->m_font.m_weight;
-    }
-
-    if (!isFlagSet(m_nFlagProperties, FP_ITALIC)) {
-        m_font.m_nItalic = pFont->m_font.m_nItalic;
-    }
-
-    if (!isFlagSet(m_nFlagProperties, FP_UNDERLINE)) {
-        m_font.m_bUnderline = pFont->m_font.m_bUnderline;
-    }
-}
-
-
 CRawBmpFont *CSkinFontProperty::getFont() {
-    if (m_bCustomized && (m_nFlagProperties & FP_FONT) != 0) {
-        if (!m_pRawFont && m_pSkin) {
-            onSkinFontChanged();
-        }
-
+    if (m_nFlagProperties & FP_FONT) {
         if (!m_pRawFont) {
-            m_pRawFont = new CRawBmpFont;
-            if (!m_pRawFont) {
-                return nullptr;
-            }
-
-            m_pRawFont->create(m_font);
+            onSkinFontChanged();
         }
 
         return m_pRawFont;
     }
 
-    if (m_pSkin) {
-        return m_pSkin->getRawFont();
-    } else {
-        return nullptr;
-    }
+    assert(m_parent);
+    return m_parent->getFont();
 }
-
-#if UNIT_TEST
-
-#include "utils/unittest.h"
-
-TEST(SkinFontProperty, FontPropertyValueFromStr) {
-    int nHeight, nWeight;
-    uint8_t byItalic;
-    string strFaceNameLatin9, strFaceNameOthers;
-
-    cstr_t szValue = "Verdana, 13, thin, 1, 0, Tahoma";
-
-    ASSERT_TRUE(fontPropertyValueFromStr(szValue, nHeight, nWeight, byItalic, strFaceNameLatin9, strFaceNameOthers));
-    ASSERT_TRUE(nHeight == 13);
-    ASSERT_TRUE(nWeight == FW_THIN);
-    ASSERT_TRUE(byItalic == 1);
-    ASSERT_TRUE(strFaceNameLatin9 == "Verdana");
-    ASSERT_TRUE(strFaceNameOthers == "Tahoma");
-}
-
-#endif

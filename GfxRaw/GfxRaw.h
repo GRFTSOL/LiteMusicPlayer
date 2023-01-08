@@ -9,7 +9,7 @@
 #include "../ImageLib/RawImageData.h"
 
 #include "Color.h"
-#include "FontInfo.h"
+#include "FontInfoEx.h"
 
 #include "RawImage.h"
 #include "RawPen.h"

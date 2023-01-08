@@ -43,9 +43,8 @@ DISPLAY_OPTIONS displayOptFromStr(cstr_t szDisplayOpt);
 
 #define AUTO_CAL_X          0xFFFFFF
 
-bool profileGetLyricsFont(cstr_t szSectName, int &nHeight, int &nWeight, uint8_t &byItalic, string &strFaceNameLatin9, string &strFaceNameOthers);
-
-void profileWriteLyricsFont(EventType etColorTheme, cstr_t szSectName, int nHeight, int nWeight, uint8_t byItalic, cstr_t szFaceNameLatin9, cstr_t szFaceNameOthers);
+bool profileGetLyricsFont(cstr_t szSectName, FontInfoEx &info);
+void profileWriteLyricsFont(EventType etColorTheme, cstr_t szSectName, const FontInfoEx &info);
 
 
 #define LS_AD_DRAW_INIT            CLyricShowObj::draw(canvas)

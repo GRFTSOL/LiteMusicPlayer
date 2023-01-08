@@ -109,14 +109,14 @@ bool CSkinCaption::setProperty(cstr_t szProperty, cstr_t szValue) {
 
     if (strcasecmp(szProperty, SZ_PN_IMAGE) == 0) {
         m_strBmpBkFile = szValue;
-        m_imgBk.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imgBk.loadFromSRM(m_pSkin, szValue);
     } else if (strcasecmp(szProperty, SZ_PN_IMAGERECT) == 0) {
         if (!getRectValue(szValue, m_imgBk)) {
             goto PARSE_VALUE_FAILED;
         }
     } else if (strcasecmp(szProperty, "ImageFocus") == 0) {
         m_strBmpFocusFile = szValue;
-        m_imgFocus.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imgFocus.loadFromSRM(m_pSkin, szValue);
     } else if (strcasecmp(szProperty, "ImageFocusRect") == 0) {
         if (!getRectValue(szValue, m_imgFocus)) {
             goto PARSE_VALUE_FAILED;

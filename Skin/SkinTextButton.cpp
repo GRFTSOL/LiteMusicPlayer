@@ -68,7 +68,7 @@ void CSkinTextButton::draw(CRawGraph *canvas) {
 }
 
 void CSkinTextButton::onCreate() {
-    m_font.onCreate(m_pSkin);
+    m_font.setParent(m_pSkin);
 
     CSkinButton::onCreate();
 }
@@ -97,7 +97,7 @@ bool CSkinTextButton::setProperty(cstr_t szProperty, cstr_t szValue) {
     } else if (isPropertyName(szProperty, "ResizeToContent")) {
         m_bResizeToContent = isTRUE(szValue);
     } else if (isPropertyName(szProperty, "ImageContent")) {
-        m_imgContent.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imgContent.loadFromSRM(m_pSkin, szValue);
     } else if (isPropertyName(szProperty, "TextLeftMargin")) {
         m_nTextLeftMargin = atoi(szValue);
     } else if (isPropertyName(szProperty, "TextRightMargin")) {

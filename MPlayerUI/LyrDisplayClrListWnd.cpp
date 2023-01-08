@@ -173,9 +173,8 @@ int CLyrDisplayClrListWnd::findPattern(cstr_t szPatternFile) {
 void CLyrDisplayClrListWnd::addPureColor(COLORREF clr) {
     CColor color(clr);
 
-    RawImageData *image = new RawImageData;
-    image->create(WIDTH_COLOR, HEIGHT_COLOR, 24);
-    rawImageSet(image, color.r(),
+    RawImageDataPtr image = createRawImageData(WIDTH_COLOR, HEIGHT_COLOR, 24);
+    rawImageSet(image.get(), color.r(),
         color.g(),
         color.b(),
         255);
@@ -217,7 +216,7 @@ void CLyrDisplayClrListWnd::addPatternImages() {
     enumFilesInDir(strPatternDir.c_str(), nullptr, vFiles, true);
 
     for (int i = 0; i < (int)vFiles.size(); i++) {
-        RawImageData *image = loadRawImageDataFromFile(vFiles[i].c_str());
+        RawImageDataPtr image = loadRawImageDataFromFile(vFiles[i].c_str());
         if (image) {
             addImage(image);
             m_vFontClr.push_back(FontClrOpt(fileGetName(vFiles[i].c_str())));
@@ -225,7 +224,7 @@ void CLyrDisplayClrListWnd::addPatternImages() {
     }
 }
 
-void CLyrDisplayClrListWnd::addImage(RawImageData *image) {
+void CLyrDisplayClrListWnd::addImage(const RawImageDataPtr &image) {
     assert(image);
     if (!image) {
         return;

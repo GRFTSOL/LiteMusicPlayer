@@ -3,12 +3,6 @@
 
 class CUIObjProperties;
 
-// szValue format: Verdana, 13, thin, 1, 0, Tahoma
-// Latin font, height, weight(bold,normal,thin), italic, underline, Other font
-bool fontPropertyValueFromStr(cstr_t szValue, int &nHeight, int &nWeight, uint8_t &byItalic, string &strFaceNameLatin9, string &strFaceNameOthers);
-void fontPropertyValueToStr(string &strValue, int nHeight, int nWeight, uint8_t byItalic, cstr_t szFaceNameLatin9, cstr_t szFaceNameOthers);
-
-
 //
 // This class is used to manage font properties of skin window and skin controls.
 //
@@ -37,9 +31,7 @@ public:
     CSkinFontProperty();
     virtual ~CSkinFontProperty();
 
-    void create(cstr_t szFaceNameLatin9, cstr_t szFaceNameOthers, int nHeight, int nWeight, int nItalic, bool bUnderline);
-
-    void create(const CFontInfo &font);
+    void create(const FontInfoEx &font);
 
     void clear();
 
@@ -50,7 +42,6 @@ public:
 
     cstr_t getName();
     cstr_t getNameOthers();
-    int getSize();
     int getWeight();
     bool isOutlined();
 
@@ -59,14 +50,10 @@ public:
     const CColor &getTextColor(bool bEnabledClr = true);
     const CColor &getColorOutlined();
 
-    bool isGood() { return m_pSkin != nullptr || (m_bCustomized && isFlagSet(m_nFlagProperties, FP_FONT)); }
+    bool isGood() { return m_parent != nullptr || (isFlagSet(m_nFlagProperties, FP_FONT)); }
     CRawBmpFont *getFont();
 
-    void updateMLFontInfo();
-
-    CFontInfo & getMLFont() { return m_font; }
-
-    void onCreate(CSkinWnd *pSkin);
+    void setParent(CSkinWnd *skinWnd);
 
     void onSkinFontChanged();
 
@@ -76,11 +63,12 @@ protected:
     inline bool isPropertySet(uint32_t fontProperty) { return isFlagSet(m_nFlagProperties, fontProperty); }
 
 protected:
-    CSkinWnd                    *m_pSkin;
-    CRawBmpFont                 *m_pRawFont;
-    CFontInfo                   m_font;
+    // 继承的字体属性
+    CSkinFontProperty           *m_parent;
 
-    bool                        m_bCustomized;      // This is used for skin editor to disable customized font
+    CRawBmpFont                 *m_pRawFont;
+    FontInfoEx                  m_font;
+
     uint32_t                    m_nFlagProperties;
 
     bool                        m_bOutlineText;

@@ -176,7 +176,7 @@ bool CPopupSkinListWnd::setItemText(int nItem, int nSubItem, cstr_t lpszText) {
     }
 }
 
-bool CPopupSkinListWnd::setItemImage(int nItem, int nSubItem, RawImageData *image) {
+bool CPopupSkinListWnd::setItemImage(int nItem, int nSubItem, const RawImageDataPtr &image) {
     assert(m_pListCtrl);
     if (m_pListCtrl) {
         return m_pListCtrl->setItemImage(nItem, nSubItem, image);

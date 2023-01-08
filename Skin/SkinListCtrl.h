@@ -99,7 +99,7 @@ public:
     virtual bool setItemText(int row, int col, cstr_t text, bool isRedraw = true);
     bool setItemTextEx(int row, int col, cstr_t text, const VecTextColor & vTextColor, bool isRedraw = true);
 
-    virtual bool setItemImage(int nItem, int nSubItem, RawImageData *image, bool bRedraw = true);
+    virtual bool setItemImage(int nItem, int nSubItem, const RawImageDataPtr &image, bool bRedraw = true);
 
     virtual int insertItem(int nItem, cstr_t lpszItem, int nImageIndex = 0, uint32_t nItemData = 0, bool bRedraw = true);
     uint32_t getItemCount() const { return (uint32_t)m_vRows.size(); }

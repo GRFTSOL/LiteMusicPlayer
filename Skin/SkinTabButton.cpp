@@ -94,8 +94,6 @@ void CSkinTabButton::onCreate() {
 
     m_nBlankX = -1;
 
-    m_image.getOrginalSize(m_image.m_cx, m_image.m_cy);
-
     m_nImageHeight = m_image.m_cy / 3;
 
     // 2 * ( <MarginX> <ButtonBorder> <ButtonFace> <ButtonBorder> <SperatorLine> <ButtonBorder> <ButtonFace> <ButtonBorder> <MarginX>)

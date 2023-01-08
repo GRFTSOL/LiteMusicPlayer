@@ -8,10 +8,7 @@
 #include "GfxRaw.h"
 #include "RawBmpFont.h"
 #include "ImageBuffBlt.h"
-
-
-#define PATTERN_COLOR_RANGE     100
-#define MEM_CLEAN_DURATION      (1000 * 60 * 2)
+#include "RawGlyphSet.hpp"
 
 
 bool g_bAntialiasFontEnabled = false;
@@ -31,10 +28,10 @@ void inline readUtf8Char(const char *str, string &dst) {
         unsigned char firstChar = (unsigned char)(str[0]);
         int n;
 
-        if (firstChar < 0xc0)            n = 1;
-        else if (firstChar < 0xe0)        n = 2;
-        else if (firstChar < 0xf0)        n = 3;
-        else                            n = 1;
+        if (firstChar < 0xc0)       n = 1;
+        else if (firstChar < 0xe0)  n = 2;
+        else if (firstChar < 0xf0)  n = 3;
+        else                        n = 1;
         dst.append(str, n);
 
         // Is composed char?
@@ -55,20 +52,20 @@ class RtlStringIterator {
 public:
     typedef string        CharType;
 
-    RtlStringIterator(cstr_t szText) {
-        m_szText = szText;
+    RtlStringIterator(cstr_t text) {
+        m_text = text;
         m_nPos = 0;
         readCurChar();
     }
 
-    void operator = (cstr_t szText) {
-        m_szText = szText;
+    void operator = (cstr_t text) {
+        m_text = text;
         m_nPos = 0;
         readCurChar();
     }
 
     // Is end of string
-    bool isEOS() { return m_szText[m_nPos] == 0; }
+    bool isEOS() { return m_text[m_nPos] == 0; }
 
     CharType &curChar() {
         return m_ch;
@@ -81,7 +78,7 @@ public:
 
     int getPos() { return m_nPos; }
     void setPos(int nPos) {
-        assert((uint32_t)nPos <= strlen(m_szText));
+        assert((uint32_t)nPos <= strlen(m_text));
         m_nPos = nPos;
         readCurChar();
     }
@@ -90,16 +87,16 @@ private:
     void readCurChar() {
         m_ch.clear();
 
-        readUtf8Char(m_szText + m_nPos, m_ch);
+        readUtf8Char(m_text + m_nPos, m_ch);
         //#else
         //        int n = m_nPos;
-        //        m_ch += m_szText[n];
-        //        if (isCharComposed(m_szText[n]))
+        //        m_ch += m_text[n];
+        //        if (isCharComposed(m_text[n]))
         //        {
         //            n++;
-        //            while (isCharComposed(m_szText[n]))
+        //            while (isCharComposed(m_text[n]))
         //            {
-        //                m_ch += m_szText[n];
+        //                m_ch += m_text[n];
         //                n++;
         //            }
         //        }
@@ -107,7 +104,7 @@ private:
     }
 
 protected:
-    cstr_t                      m_szText;
+    cstr_t                      m_text;
     int                         m_nPos;
     CharType                    m_ch;
 
@@ -207,10 +204,6 @@ void copyBitmpDataFromGraphBuffer_t(Glyph *pGlyph, pixfmt &bufGraph) {
         uint8_t *pDst = pRowDst;
         uint8_t *pSrc = pRowSrc;
         for (int x = 0; x < pGlyph->widthBitmap; x++) {
-            //             pDst[G_R] = 255;
-            //             pDst[G_G] = 255;
-            //             pDst[G_B] = 255;
-            //             pDst[G_A] = 255;
 #ifdef _CLEAR_TYPE
             pDst[G_R] = pSrc[PixPosition::PIX_R];
             pDst[G_G] = pSrc[PixPosition::PIX_G];
@@ -234,30 +227,26 @@ void copyBitmpDataFromGraphBuffer(Glyph *pGlyph, agg::pixfmt_rgba32 &bufGraph) {
 }
 
 static void copyAndOutlineBuffRGBA32(uint8_t *pOut, uint8_t *pIn, int nWidth, int nHeight, int nMargin) {
-    uint8_t *pIRow, *pORow;
-    int y, c;
     int nWidthBytesOut = (nWidth + nMargin * 2) * G_PIX_SIZE;
     int nWidthBytesIn = nWidth * G_PIX_SIZE;
 
-    // copyToOutlined(pOut, pIn, nWidth, nHeight, m_marginOutlined / 2, 0);
-
     // outline
-    pIRow = pIn;
-    pORow = pOut + nMargin * nWidthBytesOut + nMargin * G_PIX_SIZE;
-    for (y = 0; y < nHeight; y++) {
+    uint8_t *pIRow = pIn;
+    uint8_t *pORow = pOut + nMargin * nWidthBytesOut + nMargin * G_PIX_SIZE;
+    for (int y = 0; y < nHeight; y++) {
         uint8_t *pI = pIRow, *pO = pORow;
 
         for (int x = 0; x < nWidth; x++) {
             for (int i = 0; i < 4; i++, pI++, pO++) {
-                c = *pI;
+                int c = *pI;
                 if (c == 0) {
                     continue;
                 }
-                if (c > *(pO))                        *(pO) = c;
-                if (c > *(pO + G_PIX_SIZE))            *(pO + G_PIX_SIZE) = c;
-                if (c > *(pO - G_PIX_SIZE))            *(pO - G_PIX_SIZE) = c;
-                if (c > *(pO + nWidthBytesOut))        *(pO + nWidthBytesOut) = c;
-                if (c > *(pO - nWidthBytesOut))        *(pO - nWidthBytesOut) = c;
+                if (c > *(pO))                  *(pO) = c;
+                if (c > *(pO + G_PIX_SIZE))     *(pO + G_PIX_SIZE) = c;
+                if (c > *(pO - G_PIX_SIZE))     *(pO - G_PIX_SIZE) = c;
+                if (c > *(pO + nWidthBytesOut)) *(pO + nWidthBytesOut) = c;
+                if (c > *(pO - nWidthBytesOut)) *(pO - nWidthBytesOut) = c;
             }
         }
         pIRow += nWidthBytesIn;
@@ -266,17 +255,15 @@ static void copyAndOutlineBuffRGBA32(uint8_t *pOut, uint8_t *pIn, int nWidth, in
 }
 
 static void eraseBuffRGBA32(uint8_t *pOut, uint8_t *pIn, int nWidth, int nHeight, int nMargin) {
-    uint8_t *pIRow, *pORow;
-    int x, y;
     int nWidthBytesOut = (nWidth + nMargin * 2) * G_PIX_SIZE;
     int nWidthBytesIn = nWidth * G_PIX_SIZE;
 
-    pIRow = pIn;
-    pORow = pOut + nMargin * nWidthBytesOut + nMargin * G_PIX_SIZE;
-    for (y = 0; y < nHeight; y++) {
+    uint8_t *pIRow = pIn;
+    uint8_t *pORow = pOut + nMargin * nWidthBytesOut + nMargin * G_PIX_SIZE;
+    for (int y = 0; y < nHeight; y++) {
         uint8_t *pI = pIRow, *pO = pORow;
 
-        for (x = 0; x < nWidth; x++) {
+        for (int x = 0; x < nWidth; x++) {
             if (pI[G_A] == 0xFF) {
                 pO[G_A] = pO[G_R] = pO[G_G] = pO[G_B] = 0;
             }
@@ -298,34 +285,6 @@ static void copyAndShadowBuffRGBA32(uint8_t *pOut, uint8_t *pIn, int nWidth, int
     agg::stack_blur_rgba32(pixf, nRangeShadow, nRangeShadow);
 
     eraseBuffRGBA32(pOut, pIn, nWidth, nHeight, nRangeShadow);
-
-    /*    uint8_t        *p, *pOutlined;
-    int            y, c;
-
-    // Shawdow
-    p = pIn;
-    pOutlined = pOut+ nMargin * nWidthOutlined;
-    for (y = 0; y < nHeight; y++)
-    {
-    for (int x = 0; x < nWidth - 1; x++)
-    {
-    c = p[x];
-    if (c == 0)
-    continue;
-    if (c > p[x + 1])
-    {
-    // x --> shadow
-    }
-
-    if (c > p[x + nWidth])
-    {
-    // y --> shadow
-
-    }
-    }
-    p += nWidth;
-    pOutlined += nWidthOutlined;
-    }*/
 }
 
 
@@ -353,329 +312,9 @@ void createOutlinedGlyph(Glyph *glyph, int marginOutlined, CRawBmpFont::ShadowMo
     }
 }
 
-class CRawGlyphSetMgr {
-public:
-    CRawGlyphSetMgr() {
-    }
-    virtual ~CRawGlyphSetMgr() {
-        m_listSet.clear();
-    }
-
-    CRawGlyphSet *getGlyphSet(const CFontInfo &font) {
-        for (LIST_SET::iterator it = m_listSet.begin(); it != m_listSet.end(); ++it) {
-            CRawGlyphSet *pSet = *it;
-            if (pSet->isSame(font)) {
-                pSet->addRef();
-                return pSet;
-            }
-        }
-
-        CRawGlyphSet *pSet = new CRawGlyphSet;
-
-        pSet->create(font);
-        pSet->addRef();
-        m_listSet.push_back(pSet);
-
-        return pSet;
-    }
-
-    void removeRawGlyphSet(CRawGlyphSet *pRawGlyphSet) {
-        for (LIST_SET::iterator it = m_listSet.begin(); it != m_listSet.end(); ++it) {
-            CRawGlyphSet *pSet = *it;
-            if (pSet == pRawGlyphSet) {
-                m_listSet.erase(it);
-                return;
-            }
-        }
-    }
-
-    void enableAntialias(bool bEnable) {
-#ifdef _WIN32
-        if (g_bAntialiasFontEnabled == bEnable) {
-            return;
-        }
-
-        g_bAntialiasFontEnabled = bEnable;
-
-        for (LIST_SET::iterator it = m_listSet.begin(); it != m_listSet.end(); ++it) {
-            CRawGlyphSet *pSet = *it;
-            pSet->clearGlyph();
-            pSet->m_rawGlyphBuilder.destroy();
-            pSet->m_rawGlyphBuilder.init(*pSet);
-        }
-#endif
-    }
-
-protected:
-    typedef list<CRawGlyphSet*>    LIST_SET;
-
-    LIST_SET                    m_listSet;
-
-};
-
-CRawGlyphSetMgr g_rawGlyphSetMgr;
-
-
-Glyph::Glyph() {
-    leftOffset = topOffset = heightBitmap = marginOutlined = 0;
-    widthBitmap = nWidth = 0;
-    bitmap = nullptr;
-    bitmapOutlined = nullptr;
-    nLastUsedTime = getTickCount();
-    freed = false;
-}
-
-Glyph::~Glyph() {
-    if (bitmapOutlined) {
-        delete[] bitmapOutlined;
-    }
-    if (bitmap) {
-        delete[] bitmap;
-    }
-}
-
-CRawGlyphSet::CRawGlyphSet() {
-    OBJ_REFERENCE_INIT
-
-    m_timeLastClean = getTickCount();
-}
-
-CRawGlyphSet::~CRawGlyphSet() {
-    clearGlyph();
-
-    g_rawGlyphSetMgr.removeRawGlyphSet(this);
-}
-
-bool CRawGlyphSet::create(const CFontInfo &font) {
-    CFontInfo::create(font);
-
-    m_rawGlyphBuilder.init(font);
-
-    return true;
-}
-
-int CRawGlyphSet::getHeight() const {
-    return m_rawGlyphBuilder.getHeight();
-}
-
-Glyph *CRawGlyphSet::getGlyph(string &ch) {
-    Glyph *glyph = nullptr;
-    auto now = getTickCount();
-
-    if (m_mapGlyph.size() > 256 && now - m_timeLastClean >= MEM_CLEAN_DURATION) {
-        // Clean unused glyph
-        m_timeLastClean = now;
-        for (auto it = m_mapGlyph.begin(); it != m_mapGlyph.end(); ++it) {
-            auto glyph = (*it).second;
-            if (now - glyph->nLastUsedTime >= MEM_CLEAN_DURATION) {
-                if (glyph->bitmap) {
-                    delete[] glyph->bitmap;
-                    glyph->bitmap = nullptr;
-                    glyph->freed = true;
-                    if (glyph->bitmapOutlined) {
-                        delete[] glyph->bitmapOutlined;
-                        glyph->bitmapOutlined = nullptr;
-                    }
-                }
-            }
-        }
-    }
-
-    auto it = m_mapGlyph.find(ch);
-    if (it == m_mapGlyph.end()) {
-        glyph = m_rawGlyphBuilder.buildGlyph(ch);
-        assert(glyph);
-        if (!glyph) {
-            return nullptr;
-        }
-        m_mapGlyph[ch] = glyph;
-    } else {
-        glyph = (*it).second;
-        if (glyph->freed && glyph->bitmap == nullptr) {
-            // It must has been freed, renew one.
-            Glyph *temp = m_rawGlyphBuilder.buildGlyph(ch);
-            assert(temp);
-            if (!temp) {
-                return nullptr;
-            }
-            glyph->bitmap = temp->bitmap;
-            glyph->freed = false;
-            temp->bitmap = nullptr;
-            delete temp;
-        }
-    }
-
-    glyph->nLastUsedTime = now;
-
-    return glyph;
-}
-
-void CRawGlyphSet::clearGlyph() {
-    for (MAP_GLYPH::iterator it = m_mapGlyph.begin(); it != m_mapGlyph.end(); ++it) {
-        Glyph *p = (*it).second;
-        delete p;
-    }
-    m_mapGlyph.clear();
-}
-
-void tileBlt(CRawImage *pImage, CRawImage *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest) {
-    if (pImage->m_cy == 0 || pImage->m_cx == 0) {
-        return;
-    }
-
-    int x, y;
-
-    //
-    // 先将Y方向的绘画了
-    // 1111 1111 1111 222
-    // 1111 1111 1111 222
-    // 3333 3333 3333 444
-    for (y = yDest; y + pImage->m_cy < yDest + nHeightDest; y += pImage->m_cy) {
-        // 1111
-        for (x = xDest; x + pImage->m_cx <= xDest + nWidthDest; x += pImage->m_cx) {
-            pImage->blt(canvas,
-                x, y,
-                pImage->m_cx, pImage->m_cy,
-                pImage->m_x, pImage->m_y);
-        }
-
-        // 2222
-        if (x < xDest + nWidthDest) {
-            pImage->blt(canvas,
-                x, y,
-                xDest + nWidthDest - x, pImage->m_cy,
-                pImage->m_x, pImage->m_y);
-        }
-    }
-
-    if (y < yDest + nHeightDest) {
-        int nLeftCy;
-
-        nLeftCy = yDest + nHeightDest - y;
-
-        // 3333
-        for (x = xDest; x + pImage->m_cx <= xDest + nWidthDest; x += pImage->m_cx) {
-            pImage->blt(canvas,
-                x, y,
-                pImage->m_cx, nLeftCy,
-                pImage->m_x, pImage->m_y);
-        }
-
-        // 444
-        if (x < xDest + nWidthDest) {
-            pImage->blt(canvas,
-                x, y,
-                xDest + nWidthDest - x, nLeftCy,
-                pImage->m_x, pImage->m_y);
-        }
-    }
-}
-//
-// void blur_text(uint8_t threshold, uint8_t decay, uint8_t max_depth, agg::rendering_buffer &iSrc, agg::rendering_buffer &iDst, uint8_t bytes)
-// {
-//
-//     long x,y,z,m;
-//     uint8_t *pSrc, *pSrc2, *pSrc3, *pDst;
-//     uint8_t step,n;
-//     int pivot;
-//
-//     if (max_depth<1) max_depth = 1;
-//
-//     long nmin,nmax,xmin,xmax,ymin,ymax;
-//     xmin = ymin = 0;
-//     xmax = iSrc.width();
-//     ymax = iSrc.height();
-//
-//     if (xmin==xmax || ymin==ymax) return;
-//
-//     nmin = xmin * bytes;
-//     nmax = xmax * bytes;
-//
-//     // double dbScaler = 100.0f/(ymax-ymin)/bytes;
-//
-//     for (n=0; n<bytes; n++){
-//         for (y=ymin+1;y<(ymax-1);y++)
-//         {
-//             pSrc  = iSrc.row_ptr(y);
-//             pSrc2 = iSrc.row_ptr(y+1);
-//             pSrc3 = iSrc.row_ptr(y-1);
-//             pDst  = iDst.row_ptr(y);
-//
-//             //scan left to right
-//             for (x=n+nmin /*,i=xmin*/; x<(nmax-1); x+=bytes /*,i++*/)
-//             {
-//                 z=x+bytes;
-//                 pivot = pSrc[z]-threshold;
-//                 //find upper corner
-//                 if (pSrc[x]<pivot && pSrc2[z]<pivot && pSrc3[x]>=pivot){
-//                     while (z<nmax && pSrc2[z]<pSrc[x+bytes] && pSrc[x+bytes]<=pSrc[z]){
-//                         z+=bytes;
-//                     }
-//                     m = z-x;
-//                     m = (decay>1) ? ((m/bytes)/decay+1) : m/bytes;
-//                     if (m>max_depth) m = max_depth;
-//                     step = (uint8_t)((pSrc[x+bytes]-pSrc[x])/(m+1));
-//                     while (m-->1){
-//                         pDst[x+m*bytes] = (uint8_t)(pDst[x]+(step*(m+1)));
-//                     }
-//                 }
-//                 //find lower corner
-//                 z=x+bytes;
-//                 if (pSrc[x]<pivot && pSrc3[z]<pivot && pSrc2[x]>=pivot){
-//                     while (z<nmax && pSrc3[z]<pSrc[x+bytes] && pSrc[x+bytes]<=pSrc[z]){
-//                         z+=bytes;
-//                     }
-//                     m = z-x;
-//                     m = (decay>1) ? ((m/bytes)/decay+1) : m/bytes;
-//                     if (m>max_depth) m = max_depth;
-//                     step = (uint8_t)((pSrc[x+bytes]-pSrc[x])/(m+1));
-//                     while (m-->1){
-//                         pDst[x+m*bytes] = (uint8_t)(pDst[x]+(step*(m+1)));
-//                     }
-//                 }
-//             }
-//             //scan right to left
-//             for (x=nmax-1-n /*,i=(xmax-1)*/; x>0; x-=bytes /*,i--*/)
-//             {
-//                 z=x-bytes;
-//                 pivot = pSrc[z]-threshold;
-//                 //find upper corner
-//                 if (pSrc[x]<pivot && pSrc2[z]<pivot && pSrc3[x]>=pivot){
-//                     while (z>n && pSrc2[z]<pSrc[x-bytes] && pSrc[x-bytes]<=pSrc[z]){
-//                         z-=bytes;
-//                     }
-//                     m = x-z;
-//                     m = (decay>1) ? ((m/bytes)/decay+1) : m/bytes;
-//                     if (m>max_depth) m = max_depth;
-//                     step = (uint8_t)((pSrc[x-bytes]-pSrc[x])/(m+1));
-//                     while (m-->1){
-//                         pDst[x-m*bytes] = (uint8_t)(pDst[x]+(step*(m+1)));
-//                     }
-//                 }
-//                 //find lower corner
-//                 z=x-bytes;
-//                 if (pSrc[x]<pivot && pSrc3[z]<pivot && pSrc2[x]>=pivot){
-//                     while (z>n && pSrc3[z]<pSrc[x-bytes] && pSrc[x-bytes]<=pSrc[z]){
-//                         z-=bytes;
-//                     }
-//                     m = x-z;
-//                     m = (decay>1) ? ((m/bytes)/decay+1) : m/bytes;
-//                     if (m>max_depth) m = max_depth;
-//                     step = (uint8_t)((pSrc[x-bytes]-pSrc[x])/(m+1));
-//                     while (m-->1){
-//                         pDst[x-m*bytes] = (uint8_t)(pDst[x]+(step*(m+1)));
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// }
-
-
 CRawBmpFont::CRawBmpFont() {
     m_prawGlyphSet = nullptr;
-
-    m_rcClip.setEmpty();
+    m_glyphHeight = 0;
 
     m_overlayMode = OM_COLOR;
     m_imgPattern1 = nullptr;
@@ -690,25 +329,27 @@ CRawBmpFont::~CRawBmpFont() {
     destroy();
 }
 
-bool CRawBmpFont::create(cstr_t szFaceNameLatin9, cstr_t szFaceNameOthers, int nHeight, int nWeight, int nItalic, bool bUnderline) {
-    CFontInfo font;
-
-    font.create(szFaceNameLatin9, szFaceNameOthers, nHeight, nWeight, nItalic, bUnderline);
-
-    return create(font);
-}
-
-bool CRawBmpFont::create(const CFontInfo &font) {
+bool CRawBmpFont::create(const FontInfoEx &font, float scaleFactor) {
     if (m_prawGlyphSet) {
-        if (m_prawGlyphSet->isSame(font)) {
+        if (m_fontInfo.isSame(font) && m_scaleFactor == scaleFactor) {
             return true;
         }
 
         m_prawGlyphSet->release();
     }
 
-    m_prawGlyphSet = g_rawGlyphSetMgr.getGlyphSet(font);
-    m_marginOutlined = getGlyphHeight() / 8 * 2;
+    m_fontInfo = font;
+    m_scaleFactor = scaleFactor;
+
+    auto scaledFont = font;
+    scaledFont.height *= scaleFactor;
+
+    m_glyphHeight = scaledFont.height + MARGIN_FONT * 2;
+
+    m_prawGlyphSet = g_rawGlyphSetMgr.getGlyphSet(scaledFont);
+    m_marginOutlined = m_glyphHeight / 8 * 2;
+    // 必须保证 m_marginOutlined 是偶数，后面进行 outline/shadown 时不会出现问题.
+    m_marginOutlined += m_marginOutlined % 2;
     if (m_marginOutlined <= 1) {
         m_marginOutlined = 2;
     }
@@ -723,24 +364,26 @@ void CRawBmpFont::destroy() {
     }
 }
 
-
-int CRawBmpFont::getHeight() const {
+void CRawBmpFont::setScaleFactor(float scaleFactor) {
+    assert(m_prawGlyphSet != nullptr);
     if (m_prawGlyphSet) {
-        return m_prawGlyphSet->getHeight();
-    } else {
-        return 0;
+        if (scaleFactor != m_scaleFactor) {
+            create(m_fontInfo, scaleFactor);
+        }
     }
 }
 
-bool CRawBmpFont::textOut(CRawGraph *canvas, int x, int y, const CColor &clrText, cstr_t szText, size_t nLen, bool bDrawAlphaChannel) {
-    return drawText(canvas, x, y, canvas->width() - x, 0, clrText, szText, nLen, bDrawAlphaChannel);
+int CRawBmpFont::getHeight() const {
+    return m_fontInfo.height;
 }
 
-inline void blend_raw_font_clr(uint8_t *dst, uint8_t src, uint8_t clr);
+bool CRawBmpFont::textOut(CRawGraph *canvas, float x, float y, const CColor &clrText, cstr_t text, size_t len, bool bDrawAlphaChannel)
+{
+    return drawTextClip(canvas, x, y, canvas->width() - x, 0, clrText, text, len, bDrawAlphaChannel);
+}
 
 inline void blend_raw_font_clr(uint8_t *dst, uint8_t src, uint8_t clr) {
     dst[0] = (uint8_t)(((clr - dst[0]) * src + (dst[0] << 8)) >> 8);
-    //    dst[0] = (uint8_t)(((clr[0] - dst[0]) * src[0] + (dst[0] << 8)) >> 8);
 }
 
 class raw_glyph_get_alpha_255 {
@@ -873,63 +516,6 @@ void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rc
             drawGlyphRGBA32Buff<raw_glyph_blend_alpha_none>(graph, xDst, yDst, xDstEnd, yDstEnd, bufGlyph, xSrc, ySrc, getGlyphAlpha, clrGlyph);
         }
     }
-
-    /*    uint8_t *pRowDst = graph.row_ptr(yDst) + xDst * 4;
-    uint8_t *pRowSrc = bufGlyph.row_ptr(ySrc) + xSrc * 4;
-
-    // Fill with color
-    if (nAlphaGlyph == 255)
-    {
-        for (y = yDst; y < yDstEnd; y++)
-        {
-            uint8_t *pDst = pRowDst;
-            uint8_t *pSrc = pRowSrc;
-            for (x = xDst; x < xDstEnd; x++)
-            {
-                if (pSrc[3] != 0)
-                {
-                    blend_raw_font_clr(pDst, pSrc, clr);
-                    blend_raw_font_clr(pDst + 1, pSrc + 1, clr + 1);
-                    blend_raw_font_clr(pDst + 2, pSrc + 2, clr + 2);
-//                    pDst[0] = (uint8_t)(((clr[0] - pDst[0]) * pSrc[0] + (pDst[0] << 8)) >> 8);
-//                    pDst[1] = (uint8_t)(((clr[1] - pDst[1]) * pSrc[1] + (pDst[1] << 8)) >> 8);
-//                    pDst[2] = (uint8_t)(((clr[2] - pDst[2]) * pSrc[2] + (pDst[2] << 8)) >> 8);
-                    _RawFontAlphaBlender::blend(pDst, pSrc);
-                }
-                pDst += 4;
-                pSrc += G_PIX_SIZE;
-            }
-            pRowDst += graph.stride();
-            pRowSrc += bufGlyph.stride();
-        }
-    }
-    else
-    {
-        for (y = yDst; y < yDstEnd; y++)
-        {
-            uint8_t *pDst = pRowDst;
-            uint8_t *pSrc = pRowSrc;
-            for (x = xDst; x < xDstEnd; x++)
-            {
-                if (pSrc[3] != 0)
-                {
-                    int        a;
-                    for (int i = 0; i < 3; i++)
-                    {
-                        a = pSrc[i] * nAlphaGlyph / 255;
-                        pDst[i] = (uint8_t)(((clr[i] - pDst[i]) * a + (pDst[i] << 8)) >> 8);
-                    }
-                    a = pSrc[G_A] * nAlphaGlyph / 255;
-                    pDst[G_A] = (uint8_t)((a + pDst[G_A]) - ((a * pDst[G_A] + 0xFF) >> 8));
-                }
-                pDst += 4;
-                pSrc += G_PIX_SIZE;
-            }
-            pRowDst += graph.stride();
-            pRowSrc += bufGlyph.stride();
-        }
-    }
-*/
 }
 
 inline void getDrawGlyphClipPos(int &xDst, int &yDst, int &xDstEnd, int &yDstEnd, int &xSrc, int &ySrc, Glyph *pGlyph, CRect &rcClip) {
@@ -960,30 +546,24 @@ inline void getDrawGlyphClipPos(int &xDst, int &yDst, int &xDstEnd, int &yDstEnd
 // graph is 32 bpp, glyph is 32 bpp
 // pattern is 24 bpp.
 void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rcClip,
-    Glyph *pGlyph, int nAlphaGlyph,
-    CRawImage *pattern) {
-    uint8_t *pPt, *pRowPt;
-    RawImageData *imgPattern;
-    int x, y;
-
-    int xDstEnd, yDstEnd, xSrc, ySrc;
-
+    Glyph *pGlyph, int nAlphaGlyph, CRawImage *pattern)
+{
     xDst -= MARGIN_FONT;
     yDst -= MARGIN_FONT;
 
+    int xDstEnd, yDstEnd, xSrc, ySrc;
     getDrawGlyphClipPos(xDst, yDst, xDstEnd, yDstEnd, xSrc, ySrc, pGlyph, rcClip);
 
-    imgPattern = pattern->getHandle();
+    RawImageDataPtr imgPattern = pattern->getHandle();
     assert(imgPattern->bitCount == 24);
 
     int xPtStart = xDst % imgPattern->width;
-    int yPtStart = 0;
-    yPtStart += ySrc + pGlyph->topOffset;
+    int yPtStart = ySrc + pGlyph->topOffset;
     if (yPtStart >= imgPattern->height) {
         yPtStart = 0;
     }
 
-    pRowPt = imgPattern->rowPtr(yPtStart);
+    uint8_t *pRowPt = imgPattern->rowPtr(yPtStart);
     pRowPt += xPtStart * 3;
 
     agg::rendering_buffer bufGlyph(pGlyph->bitmap, pGlyph->widthBitmap, pGlyph->heightBitmap, pGlyph->widthBytes());
@@ -991,12 +571,12 @@ void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rc
     uint8_t *pRowDst = graph.row_ptr(yDst) + xDst * 4;
     uint8_t *pRowSrc = bufGlyph.row_ptr(ySrc) + xSrc * 4;
 
-    for (y = yDst; y < yDstEnd; y++) {
+    for (int y = yDst; y < yDstEnd; y++) {
         uint8_t *pDst = pRowDst;
         uint8_t *pSrc = pRowSrc;
-        pPt = pRowPt;
+        uint8_t *pPt = pRowPt;
         int xPtStartNew = xPtStart;
-        for (x = xDst; x < xDstEnd; x++) {
+        for (int x = xDst; x < xDstEnd; x++) {
             if (pSrc[3] != 0) {
                 int a;
                 for (int i = 0; i < 3; i++) {
@@ -1038,49 +618,42 @@ void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rc
 // graph is 32 bpp, glyph is 32 bpp
 // pattern is 24 bpp.
 void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rcClip,
-    Glyph *pGlyph, int nAlphaGlyph,
-    CRawImage *pattern, int nAlphaPattern,
-    const CColor &clrPt, int nAlphaClrPt) {
-    uint8_t *pPt, *pRowPt;
-    RawImageData *imgPattern;
-    int x, y;
+    Glyph *pGlyph, int nAlphaGlyph, CRawImage *pattern, int nAlphaPattern,
+    const CColor &clrPt, int nAlphaClrPt)
+{
     uint8_t pclrPt[3];
 
     pclrPt[PixPosition::PIX_B] = clrPt.b();
     pclrPt[PixPosition::PIX_G] = clrPt.g();
     pclrPt[PixPosition::PIX_B] = clrPt.r();
 
-    int xDstEnd, yDstEnd, xSrc, ySrc;
-
     xDst -= MARGIN_FONT;
     yDst -= MARGIN_FONT;
 
+    int xDstEnd, yDstEnd, xSrc, ySrc;
     getDrawGlyphClipPos(xDst, yDst, xDstEnd, yDstEnd, xSrc, ySrc, pGlyph, rcClip);
 
-    imgPattern = pattern->getHandle();
+    auto imgPattern = pattern->getHandle();
     assert(imgPattern->bitCount == 24);
 
     int xPtStart = xDst % imgPattern->width;
-    int yPtStart = 0;
-    yPtStart += ySrc + pGlyph->topOffset;
+    int yPtStart = ySrc + pGlyph->topOffset;
     if (yPtStart >= imgPattern->height) {
         yPtStart = 0;
     }
-
-    pRowPt = imgPattern->rowPtr(yPtStart);
-    pRowPt += xPtStart * 3;
 
     agg::rendering_buffer bufGlyph(pGlyph->bitmap, pGlyph->widthBitmap, pGlyph->heightBitmap, pGlyph->widthBytes());
 
     uint8_t *pRowDst = graph.row_ptr(yDst) + xDst * 4;
     uint8_t *pRowSrc = bufGlyph.row_ptr(ySrc) + xSrc * 4;
+    uint8_t *pRowPt = imgPattern->rowPtr(yPtStart) + xPtStart * 3;
 
-    for (y = yDst; y < yDstEnd; y++) {
+    for (int y = yDst; y < yDstEnd; y++) {
         uint8_t *pDst = pRowDst;
         uint8_t *pSrc = pRowSrc;
-        pPt = pRowPt;
+        uint8_t *pPt = pRowPt;
         int xPtStartNew = xPtStart;
-        for (x = xDst; x < xDstEnd; x++) {
+        for (int x = xDst; x < xDstEnd; x++) {
             if (pSrc[3] != 0) {
                 int a, c;
                 for (int i = 0; i < 3; i++) {
@@ -1090,15 +663,6 @@ void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rc
                 }
                 a = pSrc[3] * nAlphaGlyph / 255;
                 pDst[3] = (uint8_t)((a + pDst[3]) - ((a * pDst[3] + 0xFF) >> 8));
-                //
-                //                 int    r, g, b;
-                //                 b = (pPt[0] * nAlphaPattern + bClrPt) / 255;
-                //                 g = (pPt[1] * nAlphaPattern + gClrPt) / 255;
-                //                 r = (pPt[2] * nAlphaPattern + rClrPt) / 255;
-                //                 pDst[0] = (uint8_t)(((b - pDst[0]) * a + (pDst[0] << 8)) >> 8);
-                //                 pDst[1] = (uint8_t)(((g - pDst[1]) * a + (pDst[1] << 8)) >> 8);
-                //                 pDst[2] = (uint8_t)(((r - pDst[2]) * a + (pDst[2] << 8)) >> 8);
-                //                 pDst[3] = (uint8_t)((a + pDst[3]) - ((a * pDst[3] + 0xFF) >> 8));
             }
             pDst += 4;
             pSrc += G_PIX_SIZE;
@@ -1125,63 +689,50 @@ void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rc
 
 // graph is 32 bpp, glyph is 32 bpp
 // pattern is 24 bpp.
-void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rcClip,
-    Glyph *pGlyph, int nAlphaGlyph,
-    CRawImage *pattern1, int nAlphaPt1,
-    CRawImage *pattern2, int nAlphaPt2) {
-    uint8_t *pPt1, *pRowPt1;
-    uint8_t *pPt2, *pRowPt2;
-    RawImageData *imgPattern1, *imgPattern2;
-    int x, y;
-
-    int xDstEnd, yDstEnd, xSrc, ySrc;
-
+void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rcClip, Glyph *pGlyph, int nAlphaGlyph,
+    CRawImage *pattern1, int nAlphaPt1, CRawImage *pattern2, int nAlphaPt2)
+{
     xDst -= MARGIN_FONT;
     yDst -= MARGIN_FONT;
 
+    int xDstEnd, yDstEnd, xSrc, ySrc;
     getDrawGlyphClipPos(xDst, yDst, xDstEnd, yDstEnd, xSrc, ySrc, pGlyph, rcClip);
 
     // pattern 1
-    imgPattern1 = pattern1->getHandle();
+    auto imgPattern1 = pattern1->getHandle();
     assert(imgPattern1->bitCount == 24);
 
     int xPt1Start = xDst % imgPattern1->width;
-    int yPt1Start = 0;
-    yPt1Start += ySrc + pGlyph->topOffset;
+    int yPt1Start = ySrc + pGlyph->topOffset;
     if (yPt1Start >= imgPattern1->height) {
         yPt1Start = 0;
     }
 
-    pRowPt1 = imgPattern1->rowPtr(yPt1Start);
-    pRowPt1 += xPt1Start * 3;
-
     // pattern 2
-    imgPattern2 = pattern2->getHandle();
+    auto imgPattern2 = pattern2->getHandle();
     assert(imgPattern2->bitCount == 24);
 
     int xPt2Start = xDst % imgPattern2->width;
-    int yPt2Start = 0;
-    yPt2Start += ySrc + pGlyph->topOffset;
+    int yPt2Start = ySrc + pGlyph->topOffset;
     if (yPt2Start >= imgPattern2->height) {
         yPt2Start = 0;
     }
-
-    pRowPt2 = imgPattern2->rowPtr(yPt2Start);
-    pRowPt2 += xPt2Start * 3;
 
     agg::rendering_buffer bufGlyph(pGlyph->bitmap, pGlyph->widthBitmap, pGlyph->heightBitmap, pGlyph->widthBytes());
 
     uint8_t *pRowDst = graph.row_ptr(yDst) + xDst * 4;
     uint8_t *pRowSrc = bufGlyph.row_ptr(ySrc) + xSrc * 4;
+    uint8_t *pRowPt1 = imgPattern1->rowPtr(yPt1Start) + xPt1Start * 3;
+    uint8_t *pRowPt2 = imgPattern2->rowPtr(yPt2Start) + xPt2Start * 3;
 
-    for (y = yDst; y < yDstEnd; y++) {
+    for (int y = yDst; y < yDstEnd; y++) {
         uint8_t *pDst = pRowDst;
         uint8_t *pSrc = pRowSrc;
-        pPt1 = pRowPt1;
-        pPt2 = pRowPt2;
+        uint8_t *pPt1 = pRowPt1;
+        uint8_t *pPt2 = pRowPt2;
         int xPt1StartNew = xPt1Start;
         int xPt2StartNew = xPt2Start;
-        for (x = xDst; x < xDstEnd; x++) {
+        for (int x = xDst; x < xDstEnd; x++) {
             if (pSrc[3] != 0) {
                 int a, c;
                 for (int i = 0; i < 3; i++) {
@@ -1191,15 +742,6 @@ void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rc
                 }
                 a = pSrc[G_A] * nAlphaGlyph / 255;
                 pDst[G_A] = (uint8_t)((a + pDst[G_A]) - ((a * pDst[G_A] + 0xFF) >> 8));
-                //                 int        a = pSrc[0] * nAlphaGlyph / 255;
-                //                 int        r, g, b;
-                //                 b = (pPt1[0] * nAlphaPt1 + pPt2[0] * nAlphaPt2) / 255;
-                //                 g = (pPt1[1] * nAlphaPt1 + pPt2[1] * nAlphaPt2) / 255;
-                //                 r = (pPt1[2] * nAlphaPt1 + pPt2[2] * nAlphaPt2) / 255;
-                //                 pDst[0] = (uint8_t)(((b - pDst[0]) * a + (pDst[0] << 8)) >> 8);
-                //                 pDst[1] = (uint8_t)(((g - pDst[1]) * a + (pDst[1] << 8)) >> 8);
-                //                 pDst[2] = (uint8_t)(((r - pDst[2]) * a + (pDst[2] << 8)) >> 8);
-                //                 pDst[3] = (uint8_t)((a + pDst[3]) - ((a * pDst[3] + 0xFF) >> 8));
             }
             pDst += 4;
             pSrc += G_PIX_SIZE;
@@ -1241,7 +783,7 @@ void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rc
     }
 }
 
-bool CRawBmpFont::drawTextEx(CRawGraph *canvas, const CRect &rcPos, const CColor &clrText, cstr_t szText, size_t nLen, uint32_t uFormat, bool bDrawAlphaChannel) {
+bool CRawBmpFont::drawTextEx(CRawGraph *canvas, const CRect &rcPos, const CColor &clrText, cstr_t text, size_t len, uint32_t uFormat, bool bDrawAlphaChannel) {
     assert(m_prawGlyphSet);
     if (!m_prawGlyphSet) {
         return false;
@@ -1252,10 +794,10 @@ bool CRawBmpFont::drawTextEx(CRawGraph *canvas, const CRect &rcPos, const CColor
         VecStrings vLines;
         CRect rc = rcPos;
 
-        splitToMultiLine(rcPos, szText, nLen, uFormat, vLines);
+        splitToMultiLine(rcPos, text, len, uFormat, vLines);
 
         if (isFlagSet(uFormat, DT_VCENTER)) {
-            int height = (int)vLines.size() * (m_prawGlyphSet->getHeight() + 2) - 2;
+            int height = (int)vLines.size() * (getHeight() + 2) - 2;
             rc.top = (rcPos.top + rcPos.bottom - height) / 2;
         }
 
@@ -1273,32 +815,29 @@ bool CRawBmpFont::drawTextEx(CRawGraph *canvas, const CRect &rcPos, const CColor
         string str;
         uFormat &= ~DT_END_ELLIPSIS;
 
-        if (shouldDrawTextEllipsis(szText, nLen, rcPos.right - rcPos.left, str)) {
+        if (shouldDrawTextEllipsis(text, len, rcPos.right - rcPos.left, str)) {
             return drawTextEx(canvas, rcPos, clrText, str.c_str(), (int)str.size(), uFormat, bDrawAlphaChannel);
         }
     } else if (isFlagSet(uFormat, DT_PREFIX_TEXT)) {
+        // 绘制文字时，绘制对应的下划线: A&bc&&d ==> Abc&d
         string str;
-        int nXPrefix, nPrefixWidth;
+        float xPrefix, prefixWidth;
 
         uFormat &= ~DT_PREFIX_TEXT;
 
-        if (shouldDrawTextPrefix(szText, nLen, str, nXPrefix, nPrefixWidth)) {
-            drawTextEx(canvas, rcPos, clrText, str.c_str(), (int)str.size(), uFormat, bDrawAlphaChannel);
+        if (shouldDrawTextPrefix(text, len, str, xPrefix, prefixWidth)) {
+            drawTextEx(canvas, rcPos, clrText, str.c_str(), str.size(), uFormat, bDrawAlphaChannel);
 
-            if (nPrefixWidth > 0) {
-                int x, y, width, xLeftClipOffset; //, height = rcPos.bottom - rcPos.top;
+            if (prefixWidth > 0) {
+                float x, y, width, xLeftClipOffset;
 
                 getDrawTextExPosition(str.c_str(), (int)str.size(), rcPos, uFormat, x, y, width, xLeftClipOffset);
-                x -= 1;
-                y -= 3;
-                x += nXPrefix;
-                y += m_prawGlyphSet->getHeight();
+                x += xPrefix - 1;
+                y += getHeight() - 3;
                 if (x > xLeftClipOffset) {
-                    CRect rc;
-                    CRawGraph::CClipBoxAutoRecovery cbr(canvas);
-                    canvas->setClipBoundBox(rcPos);
-                    rc.setLTRB(x, y + 1, x + nPrefixWidth, y + 2);
-                    canvas->fillRect(&rc, clrText, BPM_CHANNEL_RGB | BPM_OP_COPY);
+                    CRect rc(x, y + 1, x + prefixWidth, y + 2);
+                    rc.intersect(rcPos);
+                    canvas->fillRect(rc, clrText, BPM_CHANNEL_RGB | BPM_OP_COPY);
                 }
             }
 
@@ -1306,44 +845,40 @@ bool CRawBmpFont::drawTextEx(CRawGraph *canvas, const CRect &rcPos, const CColor
         }
     }
 
-    int x, y, width, xLeftClipOffset; //, height = rcPos.bottom - rcPos.top;
+    float x, y, width, xLeftClipOffset;
 
-    getDrawTextExPosition(szText, nLen, rcPos, uFormat, x, y, width, xLeftClipOffset);
+    getDrawTextExPosition(text, len, rcPos, uFormat, x, y, width, xLeftClipOffset);
 
     x -= 1;
     y -= 1;
 
-    return drawText(canvas, x, y, width, xLeftClipOffset, clrText, szText, nLen, bDrawAlphaChannel);
+    return drawTextClip(canvas, x, y, width, xLeftClipOffset, clrText, text, len, bDrawAlphaChannel);
 }
 
-bool CRawBmpFont::drawText(CRawGraph *canvas, int x, int y, int width, int xLeftClipOffset, const CColor &clrText, cstr_t szText, size_t nLen, bool bDrawAlphaChannel) {
+bool CRawBmpFont::drawTextClip(CRawGraph *canvas, float x, float y, float width, float xLeftClipOffset, const CColor &clrText, cstr_t text, size_t len, bool bDrawAlphaChannel)
+{
     uint8_t textAlpha = canvas->getOpacityPainting();
-    CRect rcClip;
-    RawImageData * pGraphRaw = canvas->getRawBuff();
+    RawImageData *pGraphRaw = canvas->getRawBuff();
     agg::rendering_buffer bufGraph(pGraphRaw->buff, pGraphRaw->width, pGraphRaw->height, pGraphRaw->stride);
 
-    canvas->getMappedClipBoundRect(rcClip);
+    CRect rcClip;
+    canvas->getClipBoundBox(rcClip);
 
-    if (x + xLeftClipOffset > rcClip.right) {
-        return true;
-    }
-    if (x + xLeftClipOffset - m_marginOutlined / 2 > rcClip.left) {
-        rcClip.left = x + xLeftClipOffset - m_marginOutlined / 2;
-    }
-
-    if (y >= rcClip.bottom) {
-        return true;
-    }
-    if (y + getGlyphHeight() <= rcClip.top) {
+    if (x + xLeftClipOffset > rcClip.right ||
+        y >= rcClip.bottom || y + m_glyphHeight <= rcClip.top) {
         return true;
     }
 
-    if (x + width + m_marginOutlined / 2 < rcClip.right) {
-        rcClip.right = x + width + m_marginOutlined / 2;
-    }
+    rcClip.left = max((float)rcClip.left, x + xLeftClipOffset - m_marginOutlined / 2);
+    rcClip.right = min((float)rcClip.right, x + width + m_marginOutlined / 2);
 
-    RtlStringIterator strIterator(szText);
-    for (; strIterator.getPos() < nLen; ++strIterator) {
+    // 开始实际的绘制，转换到内存坐标
+    canvas->mapAndScale(rcClip);
+    x = canvas->mapAndScaleX(x);
+    y = canvas->mapAndScaleX(y);
+
+    RtlStringIterator strIterator(text);
+    for (; strIterator.getPos() < len; ++strIterator) {
         Glyph *glyph = m_prawGlyphSet->getGlyph(strIterator.curChar());
         if (!glyph) {
             continue;
@@ -1374,12 +909,14 @@ bool CRawBmpFont::drawText(CRawGraph *canvas, int x, int y, int width, int xLeft
     return true;
 }
 
-bool CRawBmpFont::outlinedTextOut(CRawGraph *canvas, int x, int y, const CColor &clrText, const CColor &clrBorder, cstr_t szText, size_t nLen, bool bDrawAlphaChannel) {
-    return outlinedDrawText(canvas, x, y, canvas->width() - x, 0, clrText, clrBorder, szText, nLen, bDrawAlphaChannel);
+bool CRawBmpFont::outlinedTextOut(CRawGraph *canvas, float x, float y, const CColor &clrText, const CColor &clrBorder, cstr_t text, size_t len, bool bDrawAlphaChannel)
+{
+    return outlinedDrawTextClip(canvas, x, y, canvas->width() - x, 0, clrText, clrBorder, text, len, bDrawAlphaChannel);
 }
 
 
-bool CRawBmpFont::outlinedDrawTextEx(CRawGraph *canvas, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, cstr_t szText, size_t nLen, uint32_t uFormat, bool bDrawAlphaChannel) {
+bool CRawBmpFont::outlinedDrawTextEx(CRawGraph *canvas, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, cstr_t text, size_t len, uint32_t uFormat, bool bDrawAlphaChannel)
+{
     assert(m_prawGlyphSet);
     if (!m_prawGlyphSet) {
         return false;
@@ -1390,32 +927,27 @@ bool CRawBmpFont::outlinedDrawTextEx(CRawGraph *canvas, const CRect &rcPos, cons
 
         uFormat &= ~DT_END_ELLIPSIS;
 
-        if (shouldDrawTextEllipsis(szText, nLen, rcPos.right - rcPos.left, str)) {
+        if (shouldDrawTextEllipsis(text, len, rcPos.right - rcPos.left, str)) {
             return outlinedDrawTextEx(canvas, rcPos, clrText, clrBorder, str.c_str(), (int)str.size(), uFormat, bDrawAlphaChannel);
         }
     } else if (isFlagSet(uFormat, DT_PREFIX_TEXT)) {
         string str;
-        int nXPrefix, nPrefixWidth;
+        float xPrefix, prefixWidth;
 
         uFormat &= ~DT_PREFIX_TEXT;
 
-        if (shouldDrawTextPrefix(szText, nLen, str, nXPrefix, nPrefixWidth)) {
+        if (shouldDrawTextPrefix(text, len, str, xPrefix, prefixWidth)) {
             outlinedDrawTextEx(canvas, rcPos, clrText, clrBorder, str.c_str(), (int)str.size(), uFormat, bDrawAlphaChannel);
 
-            if (nPrefixWidth > 0) {
-                int x, y, width, xLeftClipOffset; //, height = rcPos.bottom - rcPos.top;
+            if (prefixWidth > 0) {
+                float x, y, width, xLeftClipOffset;
 
                 getDrawTextExPosition(str.c_str(), (int)str.size(), rcPos, uFormat, x, y, width, xLeftClipOffset);
-                x -= 1;
-                y -= 3;
-                x += nXPrefix;
-                y += m_prawGlyphSet->getHeight();
+                x += xPrefix - 1;
+                y += getHeight() - 3;
                 if (x > xLeftClipOffset) {
-                    CRect rc;
-                    CRawGraph::CClipBoxAutoRecovery cbr(canvas);
-                    canvas->setClipBoundBox(rcPos);
-                    rc.setLTRB(x, y + 1, x + nPrefixWidth, y + 2);
-                    canvas->fillRect(&rc, clrText, BPM_CHANNEL_RGB | BPM_OP_COPY);
+                    CRect rc(x, y + 1, x + prefixWidth, y + 2);
+                    canvas->fillRect(rc, clrText, BPM_CHANNEL_RGB | BPM_OP_COPY);
                 }
             }
 
@@ -1424,45 +956,50 @@ bool CRawBmpFont::outlinedDrawTextEx(CRawGraph *canvas, const CRect &rcPos, cons
     }
 
 
-    int x, y, width, xLeftClipOffset; //, height = rcPos.bottom - rcPos.top;
+    float x, y, width, xLeftClipOffset;
 
-    getDrawTextExPosition(szText, nLen, rcPos, uFormat, x, y, width, xLeftClipOffset);
+    getDrawTextExPosition(text, len, rcPos, uFormat, x, y, width, xLeftClipOffset);
 
     x -= 1;
     y -= 1;
 
-    return outlinedDrawText(canvas, x, y, width, xLeftClipOffset, clrText, clrBorder, szText, nLen, bDrawAlphaChannel);
+    return outlinedDrawTextClip(canvas, x, y, width, xLeftClipOffset, clrText, clrBorder, text, len, bDrawAlphaChannel);
 }
 
-bool CRawBmpFont::outlinedDrawText(CRawGraph *canvas, int x, int y, int width, int xLeftClipOffset, const CColor &clrText, const CColor &clrBorder, cstr_t szText, size_t nLen, bool bDrawAlphaChannel) {
+bool CRawBmpFont::getTextExtentPoint32(cstr_t text, size_t len, CSize *size) {
+    if (!m_prawGlyphSet) {
+        return false;
+    }
+    size->cx = getTextWidth(text, len);
+    size->cy = getHeight();
+    return true;
+}
+
+bool CRawBmpFont::outlinedDrawTextClip(CRawGraph *canvas, float x, float y, float width, float xLeftClipOffset, const CColor &clrText, const CColor &clrBorder, cstr_t text, size_t len, bool bDrawAlphaChannel)
+{
     uint8_t textAlpha = canvas->getOpacityPainting();
-    CRect rcClip;
 
     RawImageData *pGraphRaw = canvas->getRawBuff();
     agg::rendering_buffer bufGraph(pGraphRaw->buff, pGraphRaw->width, pGraphRaw->height, pGraphRaw->stride);
 
-    canvas->getMappedClipBoundRect(rcClip);
+    CRect rcClip;
+    canvas->getClipBoundBox(rcClip);
 
-    if (x + xLeftClipOffset > rcClip.right) {
-        return true;
-    }
-    if (x + xLeftClipOffset - m_marginOutlined / 2 > rcClip.left) {
-        rcClip.left = x + xLeftClipOffset - m_marginOutlined / 2;
-    }
-
-    if (y >= rcClip.bottom) {
-        return true;
-    }
-    if (y + getGlyphHeight() + m_marginOutlined / 2 <= rcClip.top) {
+    if (x + xLeftClipOffset > rcClip.right ||
+        y >= rcClip.bottom  || y + m_glyphHeight + m_marginOutlined / 2 <= rcClip.top) {
         return true;
     }
 
-    if (x + width + m_marginOutlined / 2 < rcClip.right) {
-        rcClip.right = x + width + m_marginOutlined / 2;
-    }
+    rcClip.left = max((float)rcClip.left, x + xLeftClipOffset - m_marginOutlined / 2);
+    rcClip.right = min((float)rcClip.right, x + width + m_marginOutlined / 2);
 
-    RtlStringIterator strIterator(szText);
-    for (; strIterator.getPos() < nLen; ++strIterator) {
+    // 开始实际的绘制，转换到内存坐标
+    canvas->mapAndScale(rcClip);
+    x = canvas->mapAndScaleX(x);
+    y = canvas->mapAndScaleX(y);
+
+    RtlStringIterator strIterator(text);
+    for (; strIterator.getPos() < len; ++strIterator) {
         Glyph *glyph = m_prawGlyphSet->getGlyph(strIterator.curChar());
         if (!glyph) {
             continue;
@@ -1558,16 +1095,66 @@ bool isWordSplitChar(cstr_t szChar) {
     return false;
 }
 
-void CRawBmpFont::splitToMultiLine(const CRect &rcPos, cstr_t szText, size_t nLen, uint32_t uFormat, VecStrings &vLines) {
+/**
+ * 根据 @uFormat 的标志，获取 @text 绘制的位置，返回值在: @x, @y, @width, @xLeftClipOffset 中.
+ *
+ * - 所有的坐标都是逻辑坐标值.
+ *
+ * @xLeftClipOffset 是被剪裁的文字的起始值.
+ */
+void CRawBmpFont::getDrawTextExPosition(cstr_t text, size_t len, const CRect &rcPos,
+        uint32_t uFormat, float &x, float &y, float &width, float &xLeftClipOffset)
+{
+    if (!m_prawGlyphSet) {
+        return;
+    }
+
+    xLeftClipOffset = 0;
+
+    if (isFlagSet(uFormat, DT_CENTER)) {
+        // Align at center
+        int nWidthText = getTextWidth(text, len);
+
+        x = (rcPos.right + rcPos.left - nWidthText) / 2;
+    } else if (isFlagSet(uFormat, DT_RIGHT)) {
+        // Align at right
+        int nWidthText = getTextWidth(text, len);
+
+        x = rcPos.right - nWidthText;
+    } else {
+        x = rcPos.left;
+    }
+
+    if (isFlagSet(uFormat, DT_VCENTER)) {
+        // Align at vertical center
+        y = (rcPos.top + rcPos.bottom - getHeight()) / 2;
+    } else if (isFlagSet(uFormat, DT_BOTTOM)) {
+        // Align at bottom
+        y = rcPos.bottom - getHeight();
+    } else {
+        y = rcPos.top;
+    }
+
+    if (x < rcPos.left) {
+        xLeftClipOffset = rcPos.left - x;
+    }
+    width = rcPos.right - x;
+}
+
+/**
+ * 将 @text 分割为多行进行绘制
+ *
+ * - 坐标值为逻辑坐标.
+ */
+void CRawBmpFont::splitToMultiLine(const CRect &rcPos, cstr_t text, size_t len, uint32_t uFormat, VecStrings &vLines) {
     int w = 0;
-    Glyph *glyph;
     int nWidthMax = rcPos.right - rcPos.left;
 
-    RtlStringIterator strIterator(szText);
+    RtlStringIterator strIterator(text);
     string str;
     int nBegin = 0, nLastWordSplitPos = 0;
-    for (; strIterator.getPos() < nLen; ++strIterator) {
-        glyph = m_prawGlyphSet->getGlyph(strIterator.curChar());
+    for (; strIterator.getPos() < len; ++strIterator) {
+        Glyph *glyph = m_prawGlyphSet->getGlyph(strIterator.curChar());
         if (!glyph) {
             continue;
         }
@@ -1579,7 +1166,7 @@ void CRawBmpFont::splitToMultiLine(const CRect &rcPos, cstr_t szText, size_t nLe
         if (glyph->ch[0] == '\r' || glyph->ch[0] == '\n') {
             w = nWidthMax + 1;
         }
-        w += glyph->nWidth;
+        w += glyph->nWidth / m_scaleFactor;
         if (w > nWidthMax) {
             int nEnd = strIterator.getPos();
             if (nBegin < nLastWordSplitPos) {
@@ -1588,11 +1175,10 @@ void CRawBmpFont::splitToMultiLine(const CRect &rcPos, cstr_t szText, size_t nLe
                 nEnd++;
             }
 
-            str.clear();
-            str.append(szText + nBegin, szText + nEnd);
+            str.assign(text + nBegin, text + nEnd);
             vLines.push_back(str);
 
-            while (szText[nEnd] == ' ' || szText[nEnd] == '\r' || szText[nEnd] == '\n') {
+            while (text[nEnd] == ' ' || text[nEnd] == '\r' || text[nEnd] == '\n') {
                 nEnd++;
             }
 
@@ -1602,52 +1188,55 @@ void CRawBmpFont::splitToMultiLine(const CRect &rcPos, cstr_t szText, size_t nLe
         }
     }
 
-    if (nBegin < nLen) {
+    if (nBegin < len) {
         str.clear();
-        str.append(szText + nBegin);
+        str.append(text + nBegin);
         vLines.push_back(str);
     }
 }
 
-bool CRawBmpFont::shouldDrawTextEllipsis(cstr_t szText, size_t nLen, int nWidthMax, string &strEllipsis) {
+/**
+ * 如果绘制的文本 @text 长度超过 nWidthMax，则需要将 text 截断，增加 '...'
+ *
+ * - 坐标值为逻辑坐标.
+ */
+bool CRawBmpFont::shouldDrawTextEllipsis(cstr_t text, size_t len, float nWidthMax, string &strEllipsis) {
     int w = 0;
-    Glyph *glyph;
 
-    RtlStringIterator strIterator(szText);
-    for (; strIterator.getPos() < nLen; ++strIterator) {
-        glyph = m_prawGlyphSet->getGlyph(strIterator.curChar());
+    RtlStringIterator strIterator(text);
+    for (; strIterator.getPos() < len; ++strIterator) {
+        Glyph *glyph = m_prawGlyphSet->getGlyph(strIterator.curChar());
         if (!glyph) {
             continue;
         }
 
-        w += glyph->nWidth;
+        w += glyph->nWidth / m_scaleFactor;
         if (w > nWidthMax) {
             break;
         }
     }
 
-    if (strIterator.getPos() >= nLen) {
+    if (strIterator.getPos() >= len) {
         return false;
     }
 
-    int wMax;
-    nLen = strIterator.getPos();
+    len = strIterator.getPos();
 
     static string dotStr = ".";
-    glyph = m_prawGlyphSet->getGlyph(dotStr);
+    Glyph *glyph = m_prawGlyphSet->getGlyph(dotStr);
     if (!glyph) {
         return false;
     }
-    wMax = nWidthMax - glyph->nWidth * 3;
+    int wMax = nWidthMax - glyph->nWidth * 3;
 
     w = 0;
-    for (strIterator.setPos(0); strIterator.getPos() < nLen; ++strIterator) {
-        glyph = m_prawGlyphSet->getGlyph(strIterator.curChar());
+    for (strIterator.setPos(0); strIterator.getPos() < len; ++strIterator) {
+        Glyph *glyph = m_prawGlyphSet->getGlyph(strIterator.curChar());
         if (!glyph) {
             continue;
         }
 
-        w += glyph->nWidth;
+        w += glyph->nWidth / m_scaleFactor;
         if (w > wMax) {
             break;
         }
@@ -1659,52 +1248,48 @@ bool CRawBmpFont::shouldDrawTextEllipsis(cstr_t szText, size_t nLen, int nWidthM
     return true;
 }
 
-
-bool CRawBmpFont::shouldDrawTextPrefix(cstr_t szText, size_t nLen, string &strPrfix, int &nXPrefix, int &nWidthPrefix) {
-    Glyph *glyph;
-
-    nXPrefix = 0;
+/**
+ * 在 windows 下的菜点项，使用 '&File' 的方式，需要将 '&F' 显示为带下划线的 'F'.
+ * shouldDrawTextPrefix 用于判断是否有这样的转换，并且返回需要增加下划线的位置和长度.
+ */
+bool CRawBmpFont::shouldDrawTextPrefix(cstr_t text, size_t len, string &strPrfix, float &xPrefix, float &nWidthPrefix) {
+    xPrefix = 0;
     nWidthPrefix = 0;
 
-    RtlStringIterator strIterator(szText);
-    for (; strIterator.getPos() < nLen; ++strIterator) {
-        glyph = m_prawGlyphSet->getGlyph(strIterator.curChar());
+    RtlStringIterator strIterator(text);
+    for (; strIterator.getPos() < len; ++strIterator) {
+        Glyph *glyph = m_prawGlyphSet->getGlyph(strIterator.curChar());
         if (!glyph) {
             continue;
         }
 
         if (glyph->ch[0] == '&') {
-            break;
+            // 找到了需要转换为 '_' 的位置
+            strPrfix.assign(text, len);
+            strPrfix.erase(strIterator.getPos(), 1);
+            ++strIterator;
+            if (strIterator.getPos() < len) {
+                glyph = m_prawGlyphSet->getGlyph(strIterator.curChar());
+                if (glyph) {
+                    nWidthPrefix = glyph->nWidth / m_scaleFactor;
+                    xPrefix /= m_scaleFactor;
+                }
+            }
+            return true;
         }
 
-        nXPrefix += glyph->nWidth;
-    }
-    if (strIterator.getPos() >= nLen) {
-        return false;
+        xPrefix += glyph->nWidth;
     }
 
-    strPrfix = szText;
-    strPrfix.erase(strIterator.getPos(), 1);
-
-    if (strIterator.getPos() < (int)strPrfix.size()) {
-        RtlStringIterator strIteratorNew(strPrfix.c_str());
-        strIteratorNew.setPos(strIterator.getPos());
-
-        glyph = m_prawGlyphSet->getGlyph(strIteratorNew.curChar());
-        if (glyph) {
-            nWidthPrefix = glyph->nWidth;
-        }
-    }
-
-    return true;
+    return false;
 }
 
 
-int CRawBmpFont::getTextWidth(cstr_t szText, size_t nLen) {
-    int w = 0;
+float CRawBmpFont::getTextWidth(cstr_t text, size_t len) {
+    float w = 0;
 
-    RtlStringIterator strIterator(szText);
-    for (; strIterator.getPos() < nLen; ++strIterator) {
+    RtlStringIterator strIterator(text);
+    for (; strIterator.getPos() < len; ++strIterator) {
         Glyph *glyph = m_prawGlyphSet->getGlyph(strIterator.curChar());
         if (!glyph) {
             continue;
@@ -1713,5 +1298,5 @@ int CRawBmpFont::getTextWidth(cstr_t szText, size_t nLen) {
         w += glyph->nWidth;
     }
 
-    return w;
+    return w / m_scaleFactor;
 }

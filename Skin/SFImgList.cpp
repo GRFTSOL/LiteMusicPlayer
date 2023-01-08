@@ -17,10 +17,10 @@ CSFImgList::CSFImgList() {
 CSFImgList::~CSFImgList() {
 }
 
-bool CSFImgList::load(CSkinFactory *pSkinFactory, cstr_t szImage, int nCx) {
-    destroy();
+bool CSFImgList::load(CSkinWnd *skinWnd, cstr_t szImage, int nCx) {
+    detach();
 
-    if (!CSFImage::loadFromSRM(pSkinFactory, szImage)) {
+    if (!CSFImage::loadFromSRM(skinWnd, szImage)) {
         return false;
     }
 

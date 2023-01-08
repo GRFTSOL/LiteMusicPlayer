@@ -417,9 +417,8 @@ void CSkinContainer::onAdjustHue(float hue, float saturation, float luminance) {
 
 
 void CSkinContainer::onSkinFontChanged() {
-    for (int i = 0; i < (int)m_vUIObjs.size(); i++) {
-        CUIObject *pObj = m_vUIObjs[i];
-        pObj->onSkinFontChanged();
+    for (auto obj : m_vUIObjs) {
+        obj->onSkinFontChanged();
     }
 }
 

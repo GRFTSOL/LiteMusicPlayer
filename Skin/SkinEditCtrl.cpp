@@ -682,7 +682,7 @@ void CSkinEditCtrl::onCreate() {
     m_nCaretX = m_xMargin;
     m_nCaretY = m_yMargin;
 
-    m_font.onCreate(m_pSkin);
+    m_font.setParent(m_pSkin);
 }
 
 void CSkinEditCtrl::fillSelectedLineBg(CRawGraph *canvas, int x, int y, COneLine *pLine, int nBegSelCol, int nEndSelCol) {
@@ -704,7 +704,7 @@ void CSkinEditCtrl::fillSelectedLineBg(CRawGraph *canvas, int x, int y, COneLine
         rc.right += glyph.width;
     }
 
-    fillGraph(canvas, &rc, CN_SEL_BG);
+    fillGraph(canvas, rc, CN_SEL_BG);
 }
 
 void CSkinEditCtrl::draw(CRawGraph *canvas) {
@@ -712,7 +712,7 @@ void CSkinEditCtrl::draw(CRawGraph *canvas) {
 
     canvas->setFont(m_font.getFont());
 
-    fillGraph(canvas, &m_rcContent, CN_BG);
+    fillGraph(canvas, m_rcContent, CN_BG);
 
     CRect rc = m_rcContent;
     rc.deflate(m_xMargin, m_yMargin);
@@ -894,7 +894,7 @@ void CSkinEditCtrl::updateRectToScreen(const CRect *rc) {
     m_pContainer->updateMemGraphicsToScreen(rc, this);
 }
 
-void CSkinEditCtrl::fillGraph(CRawGraph *canvas, const CRect *rc, int nColorName) {
+void CSkinEditCtrl::fillGraph(CRawGraph *canvas, const CRect &rc, int nColorName) {
     int alpha = getBgAlpha();
     CColor clr = getColor(nColorName);
     clr.setAlpha(alpha);
@@ -1011,12 +1011,11 @@ bool CSkinEditCtrl::doSetText(cstr_t szText) {
     //
     // update line width
     //
-    CRawGraph *canvas = nullptr;
-
-    canvas = getMemGraphics();
-
-    for (int i = 0; i < (int)m_vLines.size(); i++) {
-        updateWidthInfoOfLine(canvas, m_vLines[i]);
+    if (m_bCreated) {
+        CRawGraph *canvas = getMemGraphics();
+        for (int i = 0; i < (int)m_vLines.size(); i++) {
+            updateWidthInfoOfLine(canvas, m_vLines[i]);
+        }
     }
 
     return true;

@@ -301,7 +301,7 @@ bool CSkinNStatusButton::setProperty(cstr_t szProperty, cstr_t szValue) {
 
         if (strcasecmp(szPropertyNew, SZ_PN_IMAGE) == 0) {
             btimg->strBkFile = szValue;
-            btimg->imgBk.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+            btimg->imgBk.loadFromSRM(m_pSkin, szValue);
             if (!btimg->imgBk.isValid()) {
                 DBG_LOG1("load image file: %s, FAILED", szValue);
             }
@@ -311,18 +311,18 @@ bool CSkinNStatusButton::setProperty(cstr_t szProperty, cstr_t szValue) {
         } else if (isPropertyName(szPropertyNew, SZ_PN_IMAGE_POS)) {
             scan2IntX(szValue, btimg->imgBk.m_x, btimg->imgBk.m_y);
         } else if (isPropertyName(szPropertyNew, "ImageSelPos")) {
-            btimg->imgSel.loadFromSRM(m_pSkin->getSkinFactory(), btimg->strBkFile.c_str());
+            btimg->imgSel.loadFromSRM(m_pSkin, btimg->strBkFile.c_str());
             btimg->imgSel.m_cx = btimg->imgBk.m_cx;
             btimg->imgSel.m_cy = btimg->imgBk.m_cy;
             scan2IntX(szValue, btimg->imgSel.m_x, btimg->imgSel.m_y);
         } else if (isPropertyName(szPropertyNew, "ImageFocusPos")) {
-            btimg->imgHover.loadFromSRM(m_pSkin->getSkinFactory(), btimg->strBkFile.c_str());
+            btimg->imgHover.loadFromSRM(m_pSkin, btimg->strBkFile.c_str());
             btimg->imgHover.m_cx = btimg->imgBk.m_cx;
             btimg->imgHover.m_cy = btimg->imgBk.m_cy;
             scan2IntX(szValue, btimg->imgHover.m_x, btimg->imgHover.m_y);
             m_bEnableHover = true;
         } else if (isPropertyName(szPropertyNew, "ImageDisabledPos")) {
-            btimg->imgDisabled.loadFromSRM(m_pSkin->getSkinFactory(), btimg->strBkFile.c_str());
+            btimg->imgDisabled.loadFromSRM(m_pSkin, btimg->strBkFile.c_str());
             btimg->imgDisabled.m_cx = btimg->imgBk.m_cx;
             btimg->imgDisabled.m_cy = btimg->imgBk.m_cy;
             scan2IntX(szValue, btimg->imgDisabled.m_x, btimg->imgDisabled.m_y);
@@ -337,14 +337,14 @@ bool CSkinNStatusButton::setProperty(cstr_t szProperty, cstr_t szValue) {
             }
         } else if (strcasecmp(szPropertyNew, "ImageSel") == 0) {
             btimg->strSelFile = szValue;
-            btimg->imgSel.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+            btimg->imgSel.loadFromSRM(m_pSkin, szValue);
         } else if (strcasecmp(szPropertyNew, "ImageSelRect") == 0) {
             if (!getRectValue(szValue, btimg->imgSel)) {
                 goto PARSE_VALUE_FAILED;
             }
         } else if (strcasecmp(szPropertyNew, "ImageFocus") == 0) {
             btimg->strHoverFile = szValue;
-            btimg->imgHover.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+            btimg->imgHover.loadFromSRM(m_pSkin, szValue);
             if (n == m_nCurStatus) {
                 m_bEnableHover = true;
             }
@@ -354,7 +354,7 @@ bool CSkinNStatusButton::setProperty(cstr_t szProperty, cstr_t szValue) {
             }
         } else if (strcasecmp(szPropertyNew, "ImageDisabled") == 0) {
             btimg->strDisabledFile = szValue;
-            btimg->imgDisabled.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+            btimg->imgDisabled.loadFromSRM(m_pSkin, szValue);
         } else if (strcasecmp(szPropertyNew, "ImageDisabledRect") == 0) {
             if (!getRectValue(szValue, btimg->imgDisabled)) {
                 goto PARSE_VALUE_FAILED;

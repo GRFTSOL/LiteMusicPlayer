@@ -8,7 +8,7 @@ public:
     CSFImgList();
     virtual ~CSFImgList();
 
-    bool load(CSkinFactory *pSkinFactory, cstr_t szImage, int nCx);
+    bool load(CSkinWnd *skinWnd, cstr_t szImage, int nCx);
 
     bool draw(CRawGraph *canvas, int nIndex, int x, int y, int width = 0, int height = 0, BlendPixMode bpm = BPM_BLEND);
 

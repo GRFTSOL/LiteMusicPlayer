@@ -59,7 +59,7 @@
     </Toolbar>
     <LinearContainer Name="PanelFrame" ID="CCMD_MAINFRAME" Left="16" Top="16" Width="w-16-20" Height="108" Orientation="Horizontal">
       <Container Name="AlbumArt" ID="CCMD_ALBUMART" Width="108+10" Height="108" MinWidth="108+10" MinHeight="108" FixedHeight="TRUE" FixedWidth="TRUE" >
-        <AlbumArt Name="AlbumArt" Left="0" Top="0" Width="108" Height="108" ID="ID_ALBUMART" Image="AlbumArt.png" FrameMask="albumart-mask.png" FrameMaskRectPos="4,4,100,100"/>
+        <AlbumArt Name="AlbumArt" Left="0" Top="0" Width="108" Height="108" ID="ID_ALBUMART" Image="AlbumArt.png" FrameMask="albumart-mask.png"/>
       </Container>
       <Container Name="MediaInfo" ID="CCMD_MEDIAINFO" Width="200" Height="108" MinWidth="108" MinHeight="108" FixedHeight="TRUE" Weight="1">
         <MediaInfoText Name="Title" Left="0" Top="8" Width="w" Height="18" FontName="Tahoma" FontHeight="16" FontBold="TRUE" TextOutlined="TRUE" TextOutlinedColor="#000000" TextColor="#FFFFFF" LeftMargin="0" Text="" MediaInfoType="Title" ShowTitle="false"/>

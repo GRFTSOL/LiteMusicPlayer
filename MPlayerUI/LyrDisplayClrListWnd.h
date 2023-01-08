@@ -55,7 +55,7 @@ protected:
 
     void addPatternImages();
 
-    void addImage(RawImageData *image);
+    void addImage(const RawImageDataPtr &image);
 
 protected:
     bool                        m_bInitialized;

@@ -39,8 +39,8 @@ struct BITMAPINFO {
 
 #endif
 
-RawImageData *loadRawImageDataFromBmpFile(IILIO *io) {
-    RawImageData *pImage = nullptr;
+RawImageDataPtr loadRawImageDataFromBmpFile(IILIO *io) {
+    RawImageDataPtr pImage;
     BITMAPFILEHEADER bfh;
     BITMAPINFOHEADER bih;
     uint32_t dwDataSize;
@@ -80,7 +80,7 @@ RawImageData *loadRawImageDataFromBmpFile(IILIO *io) {
     }
 
     // create raw image
-    pImage = new RawImageData;
+    pImage = make_shared<RawImageData>();
     assert(pImage);
     if (!pImage->create(bih.biWidth, bih.biHeight, bih.biBitCount)) {
         goto FAILED;
@@ -100,14 +100,6 @@ RawImageData *loadRawImageDataFromBmpFile(IILIO *io) {
 
     return pImage;
 FAILED:
-    if (pImage) {
-        if (pImage->buff) {
-            pImage->free();
-        }
-
-        delete pImage;
-    }
-
     return nullptr;
 }
 

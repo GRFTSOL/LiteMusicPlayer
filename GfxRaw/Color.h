@@ -16,9 +16,7 @@
 
 class CColor {
 public:
-    CColor(COLORREF clr) {
-        m_clr = clr;
-        m_alpha = 0xFF;
+    CColor(COLORREF clr, uint8_t alpha = 0xFF) : m_clr(clr), m_alpha(alpha) {
     }
 
     CColor() {

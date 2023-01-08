@@ -81,7 +81,7 @@
 		0EB70F3A2775980F006929F1 /* libImageLibMac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EB70F2F277377DD006929F1 /* libImageLibMac.a */; };
 		0EB70F4B27759DC5006929F1 /* RawGlyphBuilder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70F4427759DC5006929F1 /* RawGlyphBuilder.mm */; };
 		0EB70F4C27759DC5006929F1 /* RawGraphData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70F4627759DC5006929F1 /* RawGraphData.mm */; };
-		0EB70F4E27759DC5006929F1 /* MLFont.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70F4A27759DC5006929F1 /* MLFont.mm */; };
+		0EB70F4E27759DC5006929F1 /* GfxFont.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70F4A27759DC5006929F1 /* GfxFont.mm */; };
 		0EB70F5827759DE2006929F1 /* SkinEditCtrl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70F5227759DE1006929F1 /* SkinEditCtrl.cpp */; };
 		0EB70F5927759DE2006929F1 /* PopupSkinWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70F5527759DE1006929F1 /* PopupSkinWnd.cpp */; };
 		0EB70F5A27759DE2006929F1 /* PopupSkinListWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70F5627759DE2006929F1 /* PopupSkinListWnd.cpp */; };
@@ -193,6 +193,8 @@
 		0EB7115F277DCC79006929F1 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EB7115E277DCC78006929F1 /* CoreText.framework */; };
 		0EB71162277DCCE6006929F1 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EB71161277DCCE6006929F1 /* AppKit.framework */; };
 		0EB71165277DEE4D006929F1 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EB71164277DEE4A006929F1 /* CoreData.framework */; };
+		C052876F2964FE50009BD885 /* FontInfoEx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C052876E2964FE50009BD885 /* FontInfoEx.cpp */; };
+		C05287722965A90E009BD885 /* RawGlyphSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05287702965A90E009BD885 /* RawGlyphSet.cpp */; };
 		C05D73DF2951594000294F50 /* libTinyJsLib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C05D73DE2951592E00294F50 /* libTinyJsLib.dylib */; };
 		C05D73E32951B82100294F50 /* Profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D73E12951B82100294F50 /* Profile.cpp */; };
 		C05D73EE2952B72A00294F50 /* SkinJsAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D73EC2952B72A00294F50 /* SkinJsAPI.cpp */; };
@@ -477,7 +479,7 @@
 		0E56BD44274E58A900032A3E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		0E56BD45274E58AA00032A3E /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		0EB70F08277223D1006929F1 /* RawPen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RawPen.cpp; path = GfxRaw/RawPen.cpp; sourceTree = "<group>"; };
-		0EB70F0A277223D1006929F1 /* FontInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontInfo.h; path = GfxRaw/FontInfo.h; sourceTree = "<group>"; };
+		0EB70F0A277223D1006929F1 /* FontInfoEx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontInfoEx.h; path = GfxRaw/FontInfoEx.h; sourceTree = "<group>"; };
 		0EB70F0B277223D1006929F1 /* RawGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RawGraph.cpp; path = GfxRaw/RawGraph.cpp; sourceTree = "<group>"; };
 		0EB70F0C277223D1006929F1 /* ImageBuffBlt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageBuffBlt.h; path = GfxRaw/ImageBuffBlt.h; sourceTree = "<group>"; };
 		0EB70F0D277223D1006929F1 /* GfxRaw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GfxRaw.h; path = GfxRaw/GfxRaw.h; sourceTree = "<group>"; };
@@ -492,12 +494,12 @@
 		0EB70F282773396C006929F1 /* MPAutoPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MPAutoPtr.h; sourceTree = "<group>"; };
 		0EB70F2A277377DD006929F1 /* ImageLibMac.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ImageLibMac.xcodeproj; path = ImageLib/ImageLibMac.xcodeproj; sourceTree = "<group>"; };
 		0EB70F332774AE0B006929F1 /* WindowHandleHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowHandleHolder.h; sourceTree = "<group>"; };
-		0EB70F4127759DC5006929F1 /* MLFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MLFont.h; path = GfxRaw/mac/MLFont.h; sourceTree = "<group>"; };
+		0EB70F4127759DC5006929F1 /* GfxFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GfxFont.h; path = GfxRaw/mac/GfxFont.h; sourceTree = "<group>"; };
 		0EB70F4327759DC5006929F1 /* RawGlyphBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RawGlyphBuilder.h; path = GfxRaw/mac/RawGlyphBuilder.h; sourceTree = "<group>"; };
 		0EB70F4427759DC5006929F1 /* RawGlyphBuilder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RawGlyphBuilder.mm; path = GfxRaw/mac/RawGlyphBuilder.mm; sourceTree = "<group>"; };
 		0EB70F4527759DC5006929F1 /* RawGraphData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RawGraphData.h; path = GfxRaw/mac/RawGraphData.h; sourceTree = "<group>"; };
 		0EB70F4627759DC5006929F1 /* RawGraphData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RawGraphData.mm; path = GfxRaw/mac/RawGraphData.mm; sourceTree = "<group>"; };
-		0EB70F4A27759DC5006929F1 /* MLFont.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MLFont.mm; path = GfxRaw/mac/MLFont.mm; sourceTree = "<group>"; };
+		0EB70F4A27759DC5006929F1 /* GfxFont.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GfxFont.mm; path = GfxRaw/mac/GfxFont.mm; sourceTree = "<group>"; };
 		0EB70F5027759DE1006929F1 /* PopupSkinWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopupSkinWnd.h; sourceTree = "<group>"; };
 		0EB70F5127759DE1006929F1 /* SkinComboBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkinComboBox.h; sourceTree = "<group>"; };
 		0EB70F5227759DE1006929F1 /* SkinEditCtrl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkinEditCtrl.cpp; sourceTree = "<group>"; };
@@ -718,6 +720,9 @@
 		0EB7115E277DCC78006929F1 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		0EB71161277DCCE6006929F1 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		0EB71164277DEE4A006929F1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		C052876E2964FE50009BD885 /* FontInfoEx.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FontInfoEx.cpp; path = GfxRaw/FontInfoEx.cpp; sourceTree = "<group>"; };
+		C05287702965A90E009BD885 /* RawGlyphSet.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RawGlyphSet.cpp; path = GfxRaw/RawGlyphSet.cpp; sourceTree = "<group>"; };
+		C05287712965A90E009BD885 /* RawGlyphSet.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = RawGlyphSet.hpp; path = GfxRaw/RawGlyphSet.hpp; sourceTree = "<group>"; };
 		C05D73D52951592D00294F50 /* TinyJS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TinyJS.xcodeproj; path = TinyJS/TinyJS.xcodeproj; sourceTree = "<group>"; };
 		C05D73E12951B82100294F50 /* Profile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Profile.cpp; sourceTree = "<group>"; };
 		C05D73EC2952B72A00294F50 /* SkinJsAPI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SkinJsAPI.cpp; sourceTree = "<group>"; };
@@ -1065,14 +1070,17 @@
 		0EB70F07277223B0006929F1 /* GfxRaw */ = {
 			isa = PBXGroup;
 			children = (
-				0EB70F4027759DB7006929F1 /* mac */,
-				0EB70F1E2772E617006929F1 /* GfxRawTypes.h */,
 				0EB70F16277223D2006929F1 /* Color.h */,
-				0EB70F0A277223D1006929F1 /* FontInfo.h */,
+				C052876E2964FE50009BD885 /* FontInfoEx.cpp */,
+				0EB70F0A277223D1006929F1 /* FontInfoEx.h */,
 				0EB70F0D277223D1006929F1 /* GfxRaw.h */,
+				0EB70F1E2772E617006929F1 /* GfxRawTypes.h */,
 				0EB70F0C277223D1006929F1 /* ImageBuffBlt.h */,
+				0EB70F4027759DB7006929F1 /* mac */,
 				0EB70F15277223D2006929F1 /* RawBmpFont.cpp */,
 				0EB70F10277223D2006929F1 /* RawBmpFont.h */,
+				C05287702965A90E009BD885 /* RawGlyphSet.cpp */,
+				C05287712965A90E009BD885 /* RawGlyphSet.hpp */,
 				0EB70F0B277223D1006929F1 /* RawGraph.cpp */,
 				0EB70F0F277223D2006929F1 /* RawGraph.h */,
 				0EB70F11277223D2006929F1 /* RawImage.cpp */,
@@ -1094,8 +1102,8 @@
 		0EB70F4027759DB7006929F1 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				0EB70F4127759DC5006929F1 /* MLFont.h */,
-				0EB70F4A27759DC5006929F1 /* MLFont.mm */,
+				0EB70F4127759DC5006929F1 /* GfxFont.h */,
+				0EB70F4A27759DC5006929F1 /* GfxFont.mm */,
 				0EB70F4327759DC5006929F1 /* RawGlyphBuilder.h */,
 				0EB70F4427759DC5006929F1 /* RawGlyphBuilder.mm */,
 				0EB70F4527759DC5006929F1 /* RawGraphData.h */,
@@ -1563,7 +1571,7 @@
 				0EB710B027773BB6006929F1 /* MPFloatingLyrWnd.cpp in Sources */,
 				0E56BBF52745E53D00032A3E /* SkinListCtrl.cpp in Sources */,
 				0E56BC6B274B3B8400032A3E /* WndResizer.cpp in Sources */,
-				0EB70F4E27759DC5006929F1 /* MLFont.mm in Sources */,
+				0EB70F4E27759DC5006929F1 /* GfxFont.mm in Sources */,
 				0EB710BA27773BB6006929F1 /* SkinFilterCtrl.cpp in Sources */,
 				0EB7108227773BB6006929F1 /* MediaAlbumArtCtrl.cpp in Sources */,
 				0EB7109D27773BB6006929F1 /* VersionUpdate.cpp in Sources */,
@@ -1672,11 +1680,13 @@
 				0E56BC042745E53E00032A3E /* SkinScaleImage.cpp in Sources */,
 				0EB710B327773BB6006929F1 /* CurMediaAlbumArt.cpp in Sources */,
 				0EB7109027773BB6006929F1 /* DlgAbout.cpp in Sources */,
+				C05287722965A90E009BD885 /* RawGlyphSet.cpp in Sources */,
 				0EB710CA27773BB6006929F1 /* LyricShowTwoRowObj.cpp in Sources */,
 				0EB7107D27773BB6006929F1 /* SkinRateCtrl.cpp in Sources */,
 				C05D74002954775A00294F50 /* JsUIObject.cpp in Sources */,
 				0E56BC092745E53E00032A3E /* SkinImage.cpp in Sources */,
 				0EB710BD27773BB6006929F1 /* LyricsOutPluginMgr.cpp in Sources */,
+				C052876F2964FE50009BD885 /* FontInfoEx.cpp in Sources */,
 				0E56BC2C2747F84600032A3E /* Log.cpp in Sources */,
 				C05D740729553EBB00294F50 /* JsResizableLinearContainer.cpp in Sources */,
 				0E56BBE42745E53D00032A3E /* SkinDataObj.cpp in Sources */,

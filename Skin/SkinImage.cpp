@@ -84,7 +84,7 @@ bool CSkinNStatusImage::setProperty(cstr_t szProperty, cstr_t szValue) {
 
         if (strcasecmp(szPropertyNew, SZ_PN_IMAGE) == 0) {
             si->strImgFile = szValue;
-            si->img.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+            si->img.loadFromSRM(m_pSkin, szValue);
         } else if (strcasecmp(szPropertyNew, SZ_PN_IMAGERECT) == 0) {
             if (!getRectValue(szValue, si->img)) {
                 ERR_LOG2("Analyse Value: %s = %s FAILED.", szProperty, szValue);

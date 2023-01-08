@@ -7,7 +7,9 @@
 #include "ImageIterator.h"
 
 
-class GIF_RAW_IMAGE_DATA;
+class GifRawImageData;
+
+using GifRawImageDataPtr = shared_ptr<GifRawImageData>;
 
 typedef short int code_int;
 
@@ -110,8 +112,6 @@ protected:
     void encodeExtension(IILIO *io);
     void encodeBody(IILIO *io, bool bLocalColorMap = false);
     void encodeComment(IILIO *io);
-    bool encodeRGB(IILIO *io);
-    // void gifMix(CxImage & imgsrc2, long lxOffset, long lyOffset);
 
     struct_gifgce               gifgce;
 
@@ -201,8 +201,7 @@ protected:
     void rle_output_flush(struct_RLE* rle);
 
 public:
-    void setImgData(GIF_RAW_IMAGE_DATA *imgData) { m_imgData = imgData; }
-    GIF_RAW_IMAGE_DATA          *m_imgData;
+    GifRawImageDataPtr          m_imgData;
 
 };
 

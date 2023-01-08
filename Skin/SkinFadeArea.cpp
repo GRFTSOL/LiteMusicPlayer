@@ -26,5 +26,5 @@ void CSkinFadeArea::draw(CRawGraph *canvas) {
         return;
     }
 
-    canvas->multiplyAlpha((uint8_t)m_pSkin->m_nCurTranslucencyAlpha, &m_rcObj);
+    canvas->multiplyAlpha((uint8_t)m_pSkin->m_nCurTranslucencyAlpha, m_rcObj);
 }

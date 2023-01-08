@@ -98,7 +98,7 @@ void CSkinListView::saveColumnWidth(cstr_t szProperty) {
 }
 
 void CSkinListView::onCreate() {
-    m_font.onCreate(m_pSkin);
+    m_font.setParent(m_pSkin);
 
     // 自定义的 header 和 footer 在控件的前两个.
     if (m_vUIObjs.size() > 0) {
@@ -169,9 +169,7 @@ bool CSkinListView::setProperty(cstr_t szProperty, cstr_t szValue) {
         return true;
     } else if (strcasecmp(szProperty, "ImageList") == 0) {
         m_strImageList = szValue;
-        m_imageList.destroy();
-        m_imageList.load(m_pSkin->getSkinFactory(), szValue,
-            m_imageListIconCx);
+        m_imageList.load(m_pSkin, szValue, m_imageListIconCx);
     } else if (strcasecmp(szProperty, "ImageListIconCx") == 0) {
         m_imageListIconCx = atoi(szValue);
         m_imageList.setIconCx(m_imageListIconCx);
@@ -195,17 +193,17 @@ bool CSkinListView::setProperty(cstr_t szProperty, cstr_t szValue) {
         getColorValue(clrPen, szValue);
         m_penLine.createSolidPen(1, clrPen);
     } else if (isPropertyName(szProperty, "ImageSortedHeader")) {
-        m_imageSortedHeader.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imageSortedHeader.loadFromSRM(m_pSkin, szValue);
     } else if (isPropertyName(szProperty, "ImageHeader")) {
-        m_imageHeader.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imageHeader.loadFromSRM(m_pSkin, szValue);
     } else if (isPropertyName(szProperty, "ImageSortFlag")) {
-        m_imageAscending.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
-        m_imageAscending.m_cx /= 2;
-        m_imageDescending.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
-        m_imageDescending.m_x = m_imageDescending.m_cx / 2;
-        m_imageDescending.m_cx /= 2;
+        m_imageAscending.loadFromSRM(m_pSkin, szValue);
+        m_imageAscending.setWidth(m_imageAscending.width() / 2);
+        m_imageDescending.loadFromSRM(m_pSkin, szValue);
+        m_imageDescending.setX(m_imageDescending.width() / 2);
+        m_imageDescending.setWidth(m_imageDescending.width() / 2);
     } else if (isPropertyName(szProperty, "ImageBorder")) {
-        m_imageBorder.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imageBorder.loadFromSRM(m_pSkin, szValue);
     } else if (isPropertyName(szProperty, "BorderWidth")) {
         m_nBorderWidth = atoi(szValue);
     } else if (isPropertyName(szProperty, "MouseHoverSel")) {
@@ -310,20 +308,6 @@ void CSkinListView::setBkColor(const CColor &clrBk) {
 
 void CSkinListView::setSelRowBkColor(const CColor &clrBk) {
     getColor(CN_SEL_BG) = clrBk;
-}
-
-
-void CSkinListView::setFont(const CFontInfo &font) {
-    m_font.create(font);
-    m_nLineHeight = m_font.getHeight() + 4;
-    if (m_nLineHeight < m_nLineHeightOrg) {
-        m_nLineHeight = m_nLineHeightOrg;
-    }
-}
-
-
-void CSkinListView::setTextColor(const CColor &clrText) {
-    m_font.setProperty("TextColor", colorToStr(clrText).c_str());
 }
 
 void CSkinListView::setColor(int nColorName, const CColor &clr) {
@@ -724,7 +708,7 @@ void CSkinListView::drawHeader(CRawGraph *canvas) {
 
         // sort flag
         if (pImageSortFlag && pImageSortFlag->isValid()) {
-            pImageSortFlag->blt(canvas, x + pColHeader->nWidth - 2 - pImageSortFlag->m_cx,
+            pImageSortFlag->blt(canvas, x + pColHeader->nWidth - 2 - pImageSortFlag->width(),
                 y + (m_nHeaderHeight - pImageSortFlag->height()) / 2);
         }
 
@@ -851,7 +835,7 @@ void CSkinListView::draw(CRawGraph *canvas) {
         rcItem.bottom = rcItem.top + m_nLineHeight;
         bool bFlag = true;
         while (rcItem.top < rcContent.bottom) {
-            canvas->fillRect(&rcItem, bFlag ? clrBg1: clrBg2);
+            canvas->fillRect(rcItem, bFlag ? clrBg1: clrBg2);
             bFlag = !bFlag;
             rcItem.top = rcItem.bottom;
             rcItem.bottom += m_nLineHeight;
@@ -887,14 +871,14 @@ void CSkinListView::draw(CRawGraph *canvas) {
             CColor clr = getColor(CN_SEL_BG);
             clr.setAlpha(m_translucencyWithSkin ? m_pSkin->m_nCurTranslucencyAlpha : 255);
 
-            canvas->fillRect(&rc, clr);
+            canvas->fillRect(rc, clr);
             nClrName = CN_SEL_TEXT;
         } else if (i == m_nowPlayingRow) {
             CRect rc(rcContent.left, y, rcContent.left + rcContent.width(), y + m_nLineHeight);
             CColor clr = getColor(CN_NOW_PLAYING_BG);
             clr.setAlpha(m_translucencyWithSkin ? m_pSkin->m_nCurTranslucencyAlpha : 255);
 
-            canvas->fillRect(&rc, clr);
+            canvas->fillRect(rc, clr);
             nClrName = CN_NOW_PLAYING_TEXT;
         }
 

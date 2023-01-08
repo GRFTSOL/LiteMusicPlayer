@@ -19,7 +19,7 @@ CSkinFrameCtrl::~CSkinFrameCtrl() {
 void CSkinFrameCtrl::onCreate() {
     CUIObject::onCreate();
 
-    m_font.onCreate(m_pSkin);
+    m_font.setParent(m_pSkin);
 }
 
 void CSkinFrameCtrl::onAdjustHue(float hue, float saturation, float luminance) {
@@ -125,11 +125,11 @@ bool CSkinFrameCtrl::setProperty(cstr_t szProperty, cstr_t szValue) {
     }
 
     if (isPropertyName(szProperty, SZ_PN_IMAGE)) {
-        m_image.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_image.loadFromSRM(m_pSkin, szValue);
     } else if (isPropertyName(szProperty, SZ_PN_IMAGERECT)) {
         getRectValue(szValue, m_image);
     } else if (isPropertyName(szProperty, "ImageFocus")) {
-        m_imageFocus.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imageFocus.loadFromSRM(m_pSkin, szValue);
     } else if (isPropertyName(szProperty, "ImageFocusRect")) {
         getRectValue(szValue, m_imageFocus);
     } else if (isPropertyName(szProperty, "BlendPixMode")) {

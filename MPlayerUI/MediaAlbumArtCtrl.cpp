@@ -2,45 +2,39 @@
 #include "MediaAlbumArtCtrl.h"
 
 
-RawImageData *convertTo32BppRawImage(RawImageData *src);
+RawImageDataPtr convertTo32BppRawImage(const RawImageDataPtr &src);
 
-RawImageData *createScaleImage(RawImageData *pImgSrc, int wDst, int hDst) {
-    assert(pImgSrc);
-    CRect rc;
-    int w, h;
+/**
+ * 按照 @wDst 和 @hDst 缩放和裁剪 @srcImageData 到刚好是 @wDst, @hDst 的大小
+ */
+RawImageDataPtr createScaleImage(const RawImageDataPtr &srcImageData, int wDst, int hDst) {
+    assert(srcImageData);
 
-    if (!pImgSrc || pImgSrc->height == 0 || pImgSrc->width == 0) {
+    if (!srcImageData || srcImageData->height == 0 || srcImageData->width == 0) {
         return nullptr;
     }
 
-    w = pImgSrc->width * hDst / pImgSrc->height;
-    if (w < wDst) {
-        // fill left and right
-        h = hDst;
+    RawImageDataPtr dstImageData = createRawImageData(wDst, hDst, srcImageData->bitCount);
+
+    CRawImage imgSrc(srcImageData);
+    CRawImage imgDst(dstImageData);
+
+    int xSrc = 0, ySrc = 0, wSrc = imgSrc.width(), hSrc = imgSrc.height();
+
+    float ratio = (float)wDst / hDst;
+    if ((float)imgSrc.width() / imgSrc.height() < ratio) {
+        // 原来的图片太高了，截断一部分
+        ySrc = (imgSrc.height() - imgSrc.width() / ratio) / 2;
+        hSrc -= ySrc * 2;
     } else {
-        // fill top and bottom
-        h = pImgSrc->height * wDst / pImgSrc->width;
-        w = wDst;
+        // 原来的图片太宽了，截断一部分
+        xSrc = (imgSrc.width() - imgSrc.height() * ratio) / 2;
+        wSrc -= xSrc * 2;
     }
 
-    CRawImage imgSrc;
-    CRawImage imgDst;
-    RawImageData *pImgDst;
+    imgSrc.stretchBlt(&imgDst, 0, 0, wDst, hDst, xSrc, ySrc, wSrc, hSrc, BPM_COPY | BPM_BILINEAR);
 
-    pImgDst = new RawImageData;
-    if (!pImgDst->create(w, h, pImgSrc->bitCount)) {
-        return nullptr;
-    }
-
-    imgSrc.attach(pImgSrc);
-    imgDst.attach(pImgDst);
-
-    imgSrc.stretchBlt(&imgDst, 0, 0, w, h, BPM_COPY | BPM_BILINEAR);
-
-    imgSrc.detach();
-    imgDst.detach();
-
-    return pImgDst;
+    return dstImageData;
 }
 
 
@@ -52,7 +46,6 @@ CMediaAlbumArtCtrl::CMediaAlbumArtCtrl() {
 
     m_clrBg.set(RGB(0, 0, 0));
     m_nCurAlbumArt = 0;
-    m_rcFrameMaskPos.setEmpty();
 }
 
 CMediaAlbumArtCtrl::~CMediaAlbumArtCtrl() {
@@ -98,7 +91,7 @@ void CMediaAlbumArtCtrl::onTimer(int nId) {
             m_nCurAlbumArt = 0;
         }
 
-        RawImageData *prawImg = m_mediaAlbumArt.loadAlbumArtByIndex(m_nCurAlbumArt);
+        RawImageDataPtr prawImg = m_mediaAlbumArt.loadAlbumArtByIndex(m_nCurAlbumArt);
         if (prawImg) {
             createAlbumArtImage(prawImg);
             return;
@@ -156,12 +149,10 @@ bool CMediaAlbumArtCtrl::setProperty(cstr_t szProperty, cstr_t szValue) {
 
     if (strcasecmp(szProperty, SZ_PN_IMAGE) == 0) {
         m_strImgFile = szValue;
-        m_img.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_img.loadFromSRM(m_pSkin, szValue);
     } else if (strcasecmp(szProperty, "FrameMask") == 0) {
         m_strFrmMask = szValue;
-        m_frmMask.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
-    } else if (strcasecmp(szProperty, "FrameMaskRectPos") == 0) {
-        getRectValue(szValue, m_rcFrameMaskPos);
+        m_frmMask.loadFromSRM(m_pSkin, szValue);
     } else if (strcasecmp(szProperty, "BgColor") == 0) {
         getColorValue(m_clrBg, szValue);
     } else {
@@ -182,11 +173,11 @@ void CMediaAlbumArtCtrl::enumProperties(CUIObjProperties &listProperties) {
 void CMediaAlbumArtCtrl::updateAlbumArt() {
     m_mediaAlbumArt.close();
     m_nCurAlbumArt = 0;
-    m_img.destroy();
-    m_imgOrg.destroy();
+    m_img.detach();
+    m_imgOrg.detach();
 
     if (m_mediaAlbumArt.load() == ERR_OK) {
-        RawImageData *prawImg = m_mediaAlbumArt.loadAlbumArtByIndex(m_nCurAlbumArt);
+        auto prawImg = m_mediaAlbumArt.loadAlbumArtByIndex(m_nCurAlbumArt);
         if (prawImg) {
             createAlbumArtImage(prawImg);
             return;
@@ -194,121 +185,63 @@ void CMediaAlbumArtCtrl::updateAlbumArt() {
     }
 
     if (isMaskImageUsed()) {
-        m_img.loadFromSRM(m_pSkin->getSkinFactory(), m_strImgFile.c_str());
+        m_img.loadFromSRM(m_pSkin, m_strImgFile.c_str());
     } else {
-        m_imgOrg.loadFromSRM(m_pSkin->getSkinFactory(), m_strImgFile.c_str());
+        m_imgOrg.loadFromSRM(m_pSkin, m_strImgFile.c_str());
         resizeAlbumArt();
     }
 }
 
 void clearRawImage(RawImageData *pImg, const CColor &clr);
 
-void CMediaAlbumArtCtrl::createAlbumArtImage(RawImageData *pImgSrc) {
+void CMediaAlbumArtCtrl::createAlbumArtImage(RawImageDataPtr srcImageData) {
+    assert(srcImageData);
+
     if (!isMaskImageUsed()) {
-        m_imgOrg.destroy();
-        m_imgOrg.attach(pImgSrc);
+        m_imgOrg.attach(srcImageData);
 
         resizeAlbumArt();
         return;
     }
 
-    assert(pImgSrc);
-    if (!pImgSrc) {
+    //
+    // 最后显示的 album art 带的边框是叠加混合显示的
+    // * m_img 是底图
+    // * 使用 imageMask 去掉 srcImageData 的边框
+    // * 再将去掉边框后的 srcImageData 复制到 m_img 就完成了
+    //
+
+    // 图片的大小
+    // * imageMask 是从 m_img 中抠出来的部分，所以 imageMask 相当于是在 m_img 中剧中的.
+
+    if (!m_img.loadFromSRM(m_pSkin, m_strImgFile.c_str())) {
         return;
     }
 
-    //
-    // Album art mask image is used.
-    //
-    RawImageData *pImg, *pImgSizedAlbumArt;
-    int w, h;
-    CRawImage imgSizedAlbumArt;
-    CSFImage imgAaFrame;
-
-    if (pImgSrc) {
-        pImgSrc = convertTo32BppRawImage(pImgSrc);
-    }
-    assert(pImgSrc);
-    if (!pImgSrc) {
+    srcImageData = convertTo32BppRawImage(srcImageData);
+    assert(srcImageData);
+    if (!srcImageData) {
         return;
     }
 
-    // create a scale sized image for album art
-    pImgSizedAlbumArt = createScaleImage(pImgSrc, m_rcFrameMaskPos.width(), m_rcFrameMaskPos.height());
-    imgSizedAlbumArt.attach(pImgSizedAlbumArt);
+    auto scaleFactor = m_pSkin->getScaleFactor();
 
-    // load album art frame
-    imgAaFrame.loadFromSRM(m_pSkin->getSkinFactory(), m_strImgFile.c_str());
-    if (!imgAaFrame.isValid()) {
-        freeRawImage(pImgSrc);
-        return;
-    }
-    pImg = new RawImageData;
-    if (!pImg->create(imgAaFrame.width(), imgAaFrame.height(), imgAaFrame.getHandle()->bitCount)) {
-        delete pImg;
-        freeRawImage(pImgSrc);
-        return;
-    }
+    auto imageData = m_img.getRawImageData(scaleFactor);
+    m_img.attach(imageData);
 
-    CColor clrBg;
+    // m_img, frameMask 是和 scaleFactor 无关的
+    CRawImage frameMask(m_frmMask.getRawImageData(scaleFactor));
 
-    clrBg.set(0);
-    clrBg.setAlpha(0);
-    rawImageSet(pImg, clrBg.r(), clrBg.g(), clrBg.b(), clrBg.getAlpha());
-    m_img.attach(pImg);
+    // 一般来说 mask 比 显示的要小一圈.
+    int widthMask = frameMask.width(), heightMask = frameMask.height();
+    int leftMask = (m_img.width() - widthMask) / 2, topMask = (m_img.height() - heightMask) / 2;
 
-    //
-    // Album Art --> add mask --> blt to Frame
-    //
-    w = m_rcFrameMaskPos.width();
-    h = m_rcFrameMaskPos.height();
-    if (w == pImgSizedAlbumArt->width) {
-        int hTop = pImgSizedAlbumArt->height / 2;
-        int hBottom = pImgSizedAlbumArt->height - hTop;
+    // 缩放和截断 srcImageData 到 widthMask, heightMask 的大小.
+    CRawImage imageAlbumArt(createScaleImage(srcImageData, widthMask, heightMask));
 
-        // blt top mask
-        m_frmMask.blt(&imgSizedAlbumArt, 0, 0, w, hTop, 0, 0, BPM_MULTIPLY);
+    frameMask.blt(&imageAlbumArt, 0, 0, widthMask, heightMask, 0, 0, BPM_MULTIPLY);
 
-        // blt top to frame
-        imgSizedAlbumArt.blt(&imgAaFrame, m_rcFrameMaskPos.left, m_rcFrameMaskPos.top, w, hTop, 0, 0, BPM_BLEND);
-
-        // blt top to Image
-        imgAaFrame.blt(&m_img, 0, m_img.height() / 2 - (hTop + m_rcFrameMaskPos.top), m_img.width(), hTop + m_rcFrameMaskPos.top, 0, 0, BPM_COPY);
-
-
-        // blt bottom mask
-        m_frmMask.blt(&imgSizedAlbumArt, 0, hTop, w, hBottom, 0, m_frmMask.height() - hBottom, BPM_MULTIPLY);
-
-        // blt bottom to frame
-        imgSizedAlbumArt.blt(&imgAaFrame, m_rcFrameMaskPos.left, m_rcFrameMaskPos.bottom - hBottom, w, hBottom, 0, hTop, BPM_BLEND);
-
-        // blt bottom to Image
-        imgAaFrame.blt(&m_img, 0, m_img.height() / 2, m_img.width(), hBottom + (m_img.height() - m_rcFrameMaskPos.bottom), 0, m_rcFrameMaskPos.bottom - hBottom, BPM_COPY);
-    } else {
-        int wLeft = pImgSizedAlbumArt->width / 2;
-        int wRight = pImgSizedAlbumArt->width - wLeft;
-
-        // blt left mask
-        m_frmMask.blt(&imgSizedAlbumArt, 0, 0, wLeft, h, 0, 0, BPM_MULTIPLY);
-
-        // blt left to frame
-        imgSizedAlbumArt.blt(&imgAaFrame, m_rcFrameMaskPos.left, m_rcFrameMaskPos.top, wLeft, h, 0, 0, BPM_BLEND);
-
-        // blt left to Image
-        imgAaFrame.blt(&m_img, m_img.width() / 2 - (wLeft + m_rcFrameMaskPos.left), 0, wLeft + m_rcFrameMaskPos.left, m_img.height(), 0, 0, BPM_COPY);
-
-
-        // blt right mask
-        m_frmMask.blt(&imgSizedAlbumArt, wLeft, 0, wRight, h, m_frmMask.width() - wRight, 0, BPM_MULTIPLY);
-
-        // blt right to frame
-        imgSizedAlbumArt.blt(&imgAaFrame, m_rcFrameMaskPos.right - wRight, m_rcFrameMaskPos.top, wRight, h, wLeft, 0, BPM_BLEND);
-
-        // blt right to Image
-        imgAaFrame.blt(&m_img, m_img.width() / 2, 0, wRight + (m_img.width() - m_rcFrameMaskPos.right), m_img.height(), m_rcFrameMaskPos.right - wRight, 0, BPM_COPY);
-    }
-
-    freeRawImage(pImgSrc);
+    imageAlbumArt.blt(&m_img, leftMask, topMask, widthMask, heightMask, 0, 0, BPM_BLEND);
 }
 
 void CMediaAlbumArtCtrl::resizeAlbumArt() {
@@ -319,12 +252,9 @@ void CMediaAlbumArtCtrl::resizeAlbumArt() {
         return;
     }
 
-    m_img.destroy();
-
-    RawImageData *pImgSizedAlbumArt;
-
-    pImgSizedAlbumArt = createScaleImage(m_imgOrg.getHandle(), m_rcObj.width(), m_rcObj.height());
-    if (pImgSizedAlbumArt) {
-        m_img.attach(pImgSizedAlbumArt);
+    auto scaleFactor = m_pSkin->getScaleFactor();
+    auto imageAlbumArtData = createScaleImage(m_imgOrg.getHandle(), m_rcObj.width() * scaleFactor, m_rcObj.height() * scaleFactor);
+    if (imageAlbumArtData) {
+        m_img.attach(imageAlbumArtData);
     }
 }

@@ -184,7 +184,7 @@ void CSkinImageButton::draw(CRawGraph *canvas) {
         }
     } else {
         // Fill with color
-        canvas->fillRect(&rc, m_clrContent);
+        canvas->fillRect(rc, m_clrContent);
     }
 }
 
@@ -204,7 +204,7 @@ bool CSkinImageButton::setProperty(cstr_t szProperty, cstr_t szValue) {
     return true;
 }
 
-void CSkinImageButton::setContentImage(RawImageData *image) {
+void CSkinImageButton::setContentImage(const RawImageDataPtr &image) {
     m_contentImage.attach(image);
     m_bContentImage = true;
 }

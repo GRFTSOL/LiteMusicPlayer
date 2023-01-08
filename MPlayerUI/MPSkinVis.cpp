@@ -78,7 +78,7 @@ bool CMPSkinVis::setProperty(cstr_t szProperty, cstr_t szValue) {
 
     if (strcasecmp(szProperty, SZ_PN_IMAGE) == 0) {
         m_strBgFile = szValue;
-        m_imgBg.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imgBg.loadFromSRM(m_pSkin, szValue);
     } else if (strcasecmp(szProperty, SZ_PN_IMAGERECT) == 0) {
         if (!getRectValue(szValue, m_imgBg)) {
             ERR_LOG2("Analyse Value: %s = %s FAILED.", szProperty, szValue);
@@ -86,7 +86,7 @@ bool CMPSkinVis::setProperty(cstr_t szProperty, cstr_t szValue) {
     }
     if (strcasecmp(szProperty, "SpectrumColImage") == 0) {
         m_strSpectrumColFile = szValue;
-        m_imgSpectrumCol.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imgSpectrumCol.loadFromSRM(m_pSkin, szValue);
     } else if (strcasecmp(szProperty, "SpectrumColRect") == 0) {
         if (!getRectValue(szValue, m_imgSpectrumCol)) {
             ERR_LOG2("Analyse Value: %s = %s FAILED.", szProperty, szValue);

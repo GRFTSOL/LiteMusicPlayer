@@ -8,8 +8,8 @@ class CImageIterator {
 protected:
     int                         m_xbyte, m_y;       // Counters
     int                         m_stepx, m_stepy;
-    uint8_t*        m_pRow;
-    RawImageData                *m_pimage;
+    uint8_t                     *m_pRow;
+    RawImageDataPtr             m_pimage;
 
 public:
     // Constructors
@@ -18,10 +18,9 @@ public:
         m_y = 0;
         m_stepx = 0;
         m_stepy = 0;
-        m_pimage = nullptr;
         m_pRow = nullptr;
     }
-    CImageIterator(RawImageData *img) {
+    CImageIterator(RawImageDataPtr img) {
         m_xbyte = 0;
         m_y = 0;
         m_stepx = 0;
@@ -30,7 +29,7 @@ public:
         m_pRow = m_pimage->rowPtr(0);
     }
     operator RawImageData *() {
-        return m_pimage;
+        return m_pimage.get();
     }
 
     // Iterators

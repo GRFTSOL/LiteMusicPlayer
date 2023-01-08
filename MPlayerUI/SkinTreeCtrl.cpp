@@ -721,7 +721,7 @@ void CSkinTreeCtrl::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) {
 }
 
 void CSkinTreeCtrl::onCreate() {
-    m_font.onCreate(m_pSkin);
+    m_font.setParent(m_pSkin);
 
     CUIObject::onCreate();
 
@@ -804,8 +804,7 @@ bool CSkinTreeCtrl::setProperty(cstr_t szProperty, cstr_t szValue) {
         return true;
     } else if (strcasecmp(szProperty, "ImageList") == 0) {
         m_strImageList = szValue;
-        m_imageList.destroy();
-        m_imageList.load(m_pSkin->getSkinFactory(), szValue, 16);
+        m_imageList.load(m_pSkin, szValue, 16);
     } else {
         return false;
     }
@@ -831,11 +830,6 @@ void CSkinTreeCtrl::setBkColor(const CColor &clrBk) {
 
 void CSkinTreeCtrl::setSelRowBkColor(const CColor &clrBk) {
     m_clrSelRowBk = clrBk;
-}
-
-void CSkinTreeCtrl::setFont(const CFontInfo &font) {
-    m_font.create(font);
-    m_nLineHeight = m_font.getHeight() + 2;
 }
 
 void CSkinTreeCtrl::setTextColor(const CColor &clrText) {

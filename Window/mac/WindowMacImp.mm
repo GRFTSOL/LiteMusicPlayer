@@ -33,6 +33,13 @@ backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
     return self;
 }
 
+- (void)windowDidChangeBackingProperties:(NSNotification *)notification {
+    CGFloat scaleFactor = [self backingScaleFactor];
+    DBG_LOG1("ScaleFactorChanged to: %f\n", scaleFactor);
+    mBaseWnd->m_scaleFactor = scaleFactor;
+    mBaseWnd->onScaleFactorChanged(scaleFactor);
+}
+
 - (void) rightMouseDown:(NSEvent *)theEvent {
     uint32_t flags = (uint32_t)[theEvent modifierFlags];
     CPoint point = NSPointToCPoint([theEvent locationInWindow], [self frame].size.height);

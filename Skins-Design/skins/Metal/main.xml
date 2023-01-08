@@ -29,8 +29,8 @@
 			  <button ID="ID_CLOSE" Left="4" />
 			</Toolbar>
 
-			<AlbumArt Name="AlbumArt" Rect="6,6,108,108" ID="ID_ALBUMART" Image="AlbumArt.png"
-				FrameMask="albumart-mask.png" FrameMaskRectPos="4,4,100,100"/>
+			<AlbumArt Name="AlbumArt" Rect="6,6,108,108" ID="ID_ALBUMART" Image="albumart.png"
+				FrameMask="albumart-mask.png"/>
 
 			<Container Rect="125,40,300,100" Name="PlayControl" >
 				<Button Rect="10,10,40,40" ID="ID_PREVIOUS" ImageMask="prev_next.png" ImageMaskRect="0,0,40,40"

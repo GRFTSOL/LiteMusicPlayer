@@ -70,10 +70,12 @@ public:
     bool getWindowRect(CRect* lpRect);
     bool getClientRect(CRect* lpRect);
 
+    float getScaleFactor() override;
+
     void setParent(Window *pWndParent);
     Window *getParent();
 
-    virtual void onPaint(CRawGraph *surface, CRect *rcClip);
+    virtual void onPaint(CRawGraph *surface, CRect *rcClip) override;
 
     virtual bool invalidateRect(const CRect* lpRect = nullptr, bool bErase = false);
 
@@ -147,6 +149,8 @@ public:
     //    bool updateLayeredWindowUsingMemGraph(CRawGraph *canvas);
 
     bool                        m_bMouseCaptured;
+
+    float                       m_scaleFactor;
 
     // For Mac
     // void *getHandle();

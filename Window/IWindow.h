@@ -69,8 +69,12 @@ public:
     virtual void onHScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) { }
     virtual void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) { }
 
+    virtual void onScaleFactorChanged(float scaleFactor);
+
     // Language Changed Notification message
     virtual void onLanguageChanged() { }
+
+    virtual float getScaleFactor() = 0;
 
 public:
     CRawGraph *getMemGraphics();

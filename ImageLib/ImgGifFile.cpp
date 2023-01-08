@@ -8,19 +8,17 @@
 
 void setPalette(RGBQUAD *pal, int n, uint8_t *r, uint8_t *g, uint8_t *b);
 
-class GIF_RAW_IMAGE_DATA : public RawImageData
+class GifRawImageData : public RawImageData
 {
 public:
-    GIF_RAW_IMAGE_DATA()
-    {
+    GifRawImageData() {
         m_nTransIndex = -1;
         m_nOffsetX = 0;
         m_nOffsetY = 0;
     }
 
-    void copy(GIF_RAW_IMAGE_DATA *src)
-    {
-        size_t        nBufSize = src->getBuffSize();
+    void copy(GifRawImageData *src) {
+        size_t nBufSize = src->getBuffSize();
         buff = new uint8_t[nBufSize];
         width = src->width;
         height = src->height;
@@ -216,26 +214,15 @@ public:
 
     void setOffset(int x, int y) { m_nOffsetX = x; m_nOffsetY = y; }
 
-    int            m_nCurFrame;
-    int            m_nTransIndex;
-    RGBQUAD        m_clrTrans;
+    int             m_nCurFrame;
+    int             m_nTransIndex;
+    RGBQUAD         m_clrTrans;
     uint32_t        m_dwFrameDelay;
-    int            m_nOffsetX, m_nOffsetY;
+    int             m_nOffsetX, m_nOffsetY;
 
 };
 
-typedef GIF_RAW_IMAGE_DATA* PGIF_RAW_IMAGE_DATA;
-
-void transferFrom(PGIF_RAW_IMAGE_DATA dst, PGIF_RAW_IMAGE_DATA src)
-{
-    *dst = *src;
-    src->buff = nullptr;
-    src->pallete = nullptr;
-    src->nClrUsed = 0;
-}
-
-void gifMix(PGIF_RAW_IMAGE_DATA imgSrc, PGIF_RAW_IMAGE_DATA imgTarg, int lxOffset, int lyOffset)
-{
+void gifMix(GifRawImageData *imgSrc, GifRawImageData *imgTarg, int lxOffset, int lyOffset) {
     int lWide = min((int)imgTarg->width, imgSrc->width - lxOffset);
     int lHeight = min((int)imgTarg->height, imgSrc->height - lyOffset);
 
@@ -258,14 +245,12 @@ bool fwritec(IILIO *io, unsigned char c)
     return io->write(&c, 1) == 1;
 }
 
-RawImageData *loadRawImageDataFromGifFile(IILIO *io)
+RawImageDataPtr loadRawImageDataFromGifFile(IILIO *io)
 {
     CImgGifFile        file;
 
-    file.m_imgData = new GIF_RAW_IMAGE_DATA;
-    if (!file.open(io))
-    {
-        freeRawImage(file.m_imgData);
+    file.m_imgData = make_shared<GifRawImageData>();
+    if (!file.open(io)) {
         return nullptr;
     }
 
@@ -295,7 +280,7 @@ bool CImgGifFile::open(IILIO *io)
     // 1) no global color map found
     // 2) (image.w, image.h) of the 1st image != (dscgif.scrwidth, dscgif.scrheight)
     long bTrueColor=0;
-    GIF_RAW_IMAGE_DATA* imaRGB=nullptr;
+    GifRawImageDataPtr imaRGB;
 
     // Global colour map?
     if (dscgif.pflds & 0x80)
@@ -333,8 +318,6 @@ bool CImgGifFile::open(IILIO *io)
             assert(sizeof(image) == 9);
             if (io->read(&image, sizeof(image)) != sizeof(image))
             {
-                if (imaRGB)
-                    delete imaRGB;
                 return false;
             }
             //avoid uint8_t order problems with Solaris <candan>
@@ -354,21 +337,19 @@ bool CImgGifFile::open(IILIO *io)
                 assert(3 == sizeof(struct rgb_color));
                 if (io->read(TabCol.paleta, sizeof(struct rgb_color)*TabCol.sogct) != sizeof(struct rgb_color)*TabCol.sogct)
                 {
-                    if (imaRGB)
-                        delete imaRGB;
                     return false;
                 }
                 //log << "Local colour map" << endl;
             }
 
             int bpp; //<DP> select the correct bit per pixel value
-            if        (TabCol.sogct <= 2)  bpp = 1;
+            if (TabCol.sogct <= 2)  bpp = 1;
             else if (TabCol.sogct <= 16) bpp = 4;
-            else                         bpp = 8;
+            else bpp = 8;
 
             //handle Disposal Method
-            GIF_RAW_IMAGE_DATA previmage;
-            if (iImage>0 && gifgce.dispmeth==1) previmage.copy(m_imgData);
+            GifRawImageDataPtr previmage = make_shared<GifRawImageData>();
+            if (iImage>0 && gifgce.dispmeth==1) previmage->copy(m_imgData.get());
             if (iImage==0)    first_transparent_index = m_imgData->m_nTransIndex;
 
             m_imgData->create(image.w, image.h, bpp);
@@ -430,10 +411,9 @@ bool CImgGifFile::open(IILIO *io)
                               what was there prior to rendering the graphic.
             */
             if (iImage>0 && gifgce.dispmeth==1 && bTrueColor<2){
-                gifMix(m_imgData, &previmage, -image.l, -(int)previmage.height+image.t+image.h);
-                previmage.setTransIndex(first_transparent_index);
-
-                transferFrom(m_imgData, &previmage);
+                gifMix(m_imgData.get(), previmage.get(), -image.l, -(int)previmage->height + image.t + image.h);
+                previmage->setTransIndex(first_transparent_index);
+                m_imgData = previmage;
             }
 
             // restore the correct position in the file for the next image
@@ -443,9 +423,9 @@ bool CImgGifFile::open(IILIO *io)
                 //force full image decoding
                 m_imgData->setCurFrame(nNumFrames - 1);
                 //build the RGB image
-                if (imaRGB==nullptr)
+                if (imaRGB == nullptr)
                 {
-                    imaRGB = new GIF_RAW_IMAGE_DATA();
+                    imaRGB = make_shared<GifRawImageData>();
                     imaRGB->create(dscgif.scrwidth, dscgif.scrheight, 24);
                 }
                 //copy the partial image into the full RGB image
@@ -478,9 +458,8 @@ bool CImgGifFile::open(IILIO *io)
             imaRGB->setTransColor(m_imgData->getTransColor());
             imaRGB->setTransIndex(0);
         }
-        transferFrom(m_imgData, imaRGB);
+        m_imgData = imaRGB;
     }
-    delete imaRGB;
 
     return true;
 }
@@ -775,57 +754,7 @@ void CImgGifFile::encodeComment(IILIO *io)
         fwritec(io, 0);    //block terminator
     }
 }
-////////////////////////////////////////////////////////////////////////////////
-bool CImgGifFile::encodeRGB(IILIO *io)
-{
-    encodeHeader(io);
 
-//    encodeLoopExtension(io);
-
-    unsigned int w,h;
-    w=h=0;
-    const int cellw = 17;
-    const int cellh = 15;
-    GIF_RAW_IMAGE_DATA tmp;
-    CImgGifFile    gif;
-    gif.setImgData(&tmp);
-    for (int y=0;y<m_imgData->height;y+=cellh){
-        for (int x=0;x<m_imgData->width;x+=cellw){
-            if ((m_imgData->width -x)<cellw) w=m_imgData->width -x; else w=cellw;
-            if ((m_imgData->height-y)<cellh) h=m_imgData->height-y; else h=cellh;
-
-            if (w!=tmp.width || h!=tmp.height)
-                tmp.create(w,h,8);
-
-            if (m_imgData->isTransparent())
-            {
-                tmp.setTransIndex(0);
-                RGBQUAD    clr = m_imgData->getTransColor();
-                tmp.setPaletteIndex(0, clr);
-            }
-
-            uint8_t i;
-            for (unsigned int j=0;j<h;j++){
-                for (unsigned int k=0;k<w;k++){
-                    i=(uint8_t)(1+k+cellw*j);
-                    RGBQUAD    clr = m_imgData->getPixelColor(x+k,m_imgData->height-y-h+j);
-                    tmp.setPaletteIndex(i, clr);
-                    tmp.setPixelIndex(k,j,tmp.getNearestIndex(tmp.getPaletteColor(i)));
-                }
-            }
-
-            tmp.setOffset(x,y);
-            gif.encodeExtension(io);
-            gif.encodeBody(io,true);
-        }
-    }
-
-    encodeComment(io);
-
-    fwritec(io, ';'); // write the GIF file terminator
-
-    return true; // done!
-}
 //////////////////////////////////////////////////////////////////////////////
 // Return the next pixel from the image
 // <DP> fix for 1 & 4 bpp images

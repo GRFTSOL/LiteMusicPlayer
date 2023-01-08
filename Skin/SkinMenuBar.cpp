@@ -198,7 +198,7 @@ void CSkinMenuBar::onCreate() {
 
     m_wndMsgReceiver.create();
 
-    m_font.onCreate(m_pSkin);
+    m_font.setParent(m_pSkin);
 
     onLanguageChanged();
 }
@@ -237,7 +237,7 @@ void CSkinMenuBar::draw(CRawGraph *canvas) {
             clrText = m_clrPressed;
             clrOutlined = m_clrOutlinedPressed;
             bOutlined = m_bOutlinedPressed;
-            canvas->fillRect(&rcItem, m_clrBgPressed, BPM_OP_BLEND | BPM_CHANNEL_RGB);
+            canvas->fillRect(rcItem, m_clrBgPressed, BPM_OP_BLEND | BPM_CHANNEL_RGB);
         } else if (i == m_nSelSubMenu && m_bHover) {
             clrText = m_clrHover;
             clrOutlined = m_clrOutlinedHover;

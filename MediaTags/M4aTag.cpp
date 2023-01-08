@@ -479,13 +479,15 @@ int CM4aTag::getTags(BasicMediaTags &tags) {
     }
 
     for (auto child : parent->m_vChildren) {
-        printf("%s\n", child->m_szType);
+        // printf("%s\n", child->m_szType);
 
         if (child->isType("\xA9""art")) { getBoxText(child, tags.artist); }
         else if (child->isType("\xA9""ART")) { getBoxText(child, tags.artist); }
         else if (child->isType("aART")) { getBoxText(child, tags.artist); }
         else if (child->isType("\xA9""nam")) { getBoxText(child, tags.title); }
+        else if (child->isType("\xA9""NAM")) { getBoxText(child, tags.title); }
         else if (child->isType("\xA9""alb")) { getBoxText(child, tags.album); }
+        else if (child->isType("\xA9""ALB")) { getBoxText(child, tags.album); }
         else if (child->isType("\xA9""day")) { getBoxText(child, tags.year); }
         else if (child->isType("\xA9""gen")) { getBoxText(child, tags.genre); }
         else if (child->isType("gnre")) { getBoxGenre(child, tags.genre); }

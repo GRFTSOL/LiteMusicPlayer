@@ -15,6 +15,7 @@ class CUIObject;
 class CSkinAnimation;
 class SXNode;
 class CSkinWnd;
+class CSkinFactory;
 
 typedef vector<CUIObject *> VecUIObjects;
 typedef list<CUIObject *> ListUIObjects;

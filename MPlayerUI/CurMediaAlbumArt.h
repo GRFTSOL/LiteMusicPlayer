@@ -14,7 +14,7 @@ public:
 
     void close();
 
-    RawImageData *loadAlbumArtByIndex(int nIndex);
+    RawImageDataPtr loadAlbumArtByIndex(int nIndex);
 
     int getPicCount();
 

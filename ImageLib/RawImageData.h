@@ -57,12 +57,15 @@ enum _BlendPixMode {
 };
 
 class RawImageData {
+private:
+    RawImageData(const RawImageData &other);
+    RawImageData &operator=(const RawImageData &other);
+
 public:
     RawImageData();
     virtual ~RawImageData();
 
     void attach(uint8_t *buf, int nWidth, int nHeight, int nBitCount);
-    void attach(RawImageData *pSrc);
     void exchange(RawImageData *pSrc);
     void detach();
 
@@ -126,14 +129,16 @@ public:
 
 };
 
-RawImageData *loadRawImageDataFromFile(cstr_t szFile);
-RawImageData *loadRawImageDataFromMem(const void *buf, int nSize);
+using RawImageDataPtr = std::shared_ptr<RawImageData>;
 
-RawImageData *convertTo24BppRawImage(RawImageData *src);
+RawImageDataPtr createRawImageData(int width, int height, int bitCount);
 
-RawImageData *duplicateRawImage(RawImageData * src);
+RawImageDataPtr loadRawImageDataFromFile(cstr_t szFile);
+RawImageDataPtr loadRawImageDataFromMem(const void *buf, int nSize);
 
-void freeRawImage(RawImageData *image);
+RawImageDataPtr convertTo24BppRawImage(const RawImageDataPtr &src);
+
+RawImageDataPtr duplicateRawImage(RawImageData * src);
 
 void rawImageBGR24Set(RawImageData *image, uint8_t r, uint8_t g, uint8_t b);
 

@@ -15,14 +15,12 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-CRawGraph::CRawGraph() {
+CRawGraph::CRawGraph(float scaleFactor) : m_scaleFactor(scaleFactor) {
     m_rawBmpFont = nullptr;
 
     m_clrText.set(RGB(255, 255, 255));
     m_nOpacityPainting = 255;
     m_ptOrigin.x = m_ptOrigin.y = 0;
-
-    memset(&m_rcClip, 0 , sizeof(m_rcClip));
 
     m_bAlphaChannelEnabled = true;
 }
@@ -31,34 +29,40 @@ CRawGraph::~CRawGraph() {
 }
 
 bool CRawGraph::create(int cx, int cy, WindowHandleHolder *windowHandle, int nBitCount) {
+    m_rcClip.setLTWH(0, 0, cx, cy);
+    m_rcClipScaleMaped = scale(m_rcClip);
+    m_ptOrigin.x = m_ptOrigin.y = 0;
+    m_width = cx;
+    m_height = cy;
+
+    cx *= m_scaleFactor;
+    cy *= m_scaleFactor;
+
     if (!CRawGraphData::create(cx, cy, windowHandle, nBitCount)) {
         return false;
     }
-
-    m_rcClip.left = m_rcClip.top = 0;
-    m_rcClip.right = cx;
-    m_rcClip.bottom = cy;
-
-    m_ptOrigin.x = m_ptOrigin.y = 0;
 
     m_bAlphaChannelEnabled = (nBitCount == 32);
 
     return true;
 }
 
-void CRawGraph::line(int x1, int y1, int x2, int y2) {
-    typedef agg::scanline_p8 scanline_type;
-    scanline_type sl;
+void CRawGraph::drawToWindow(int xdest, int ydest, int width, int height, int xsrc, int ysrc) {
+    CRawGraphData::drawToWindow(xdest, ydest, width, height, xsrc, ysrc, m_scaleFactor);
+}
+
+void CRawGraph::line(float x1, float y1, float x2, float y2) {
+    agg::scanline_p8 sl;
     agg::rasterizer_scanline_aa<> ras;
 
-    x1 = mapX(x1);
-    x2 = mapX(x2);
-    y1 = mapY(y1);
-    y2 = mapY(y2);
+    x1 = mapAndScaleX(x1);
+    x2 = mapAndScaleX(x2);
+    y1 = mapAndScaleY(y1);
+    y2 = mapAndScaleY(y2);
 
     agg::path_storage ps;
     agg::conv_stroke<agg::path_storage> pg(ps);
-    agg::rgba    clr(m_pen.m_clrPen.r() / (double)255,
+    agg::rgba clr(m_pen.m_clrPen.r() / (double)255,
         m_pen.m_clrPen.g() / (double)255,
         m_pen.m_clrPen.b() / (double)255,
         m_pen.m_clrPen.a() * m_nOpacityPainting / 255 / (double)255);
@@ -77,7 +81,7 @@ void CRawGraph::line(int x1, int y1, int x2, int y2) {
         agg::rendering_buffer buf(m_imageData.buff, m_imageData.width, m_imageData.height, m_imageData.stride);
         pixfmt pixf(buf);
         renderer_mclip rb(pixf);
-        rb.add_clip_box(m_rcClip.left, m_rcClip.top, m_rcClip.right, m_rcClip.bottom);
+        rb.add_clip_box(m_rcClipScaleMaped.left, m_rcClipScaleMaped.top, m_rcClipScaleMaped.right, m_rcClipScaleMaped.bottom);
 
         agg::render_scanlines_aa_solid(ras, sl, rb, clr);
     } else if (m_imageData.bitCount == 32) {
@@ -87,17 +91,19 @@ void CRawGraph::line(int x1, int y1, int x2, int y2) {
         agg::rendering_buffer buf(m_imageData.buff, m_imageData.width, m_imageData.height, m_imageData.stride);
         pixfmt pixf(buf);
         renderer_mclip rb(pixf);
-        rb.add_clip_box(m_rcClip.left, m_rcClip.top, m_rcClip.right, m_rcClip.bottom);
+        rb.add_clip_box(m_rcClipScaleMaped.left, m_rcClipScaleMaped.top, m_rcClipScaleMaped.right, m_rcClipScaleMaped.bottom);
 
         agg::render_scanlines_aa_solid(ras, sl, rb, clr);
     }
 }
 
-void CRawGraph::rectangle(int x, int y, int width, int height) {
+void CRawGraph::rectangle(float x, float y, float width, float height) {
     typedef agg::scanline_p8 scanline_type;
 
-    x = mapX(x);
-    y = mapY(y);
+    x = mapAndScaleX(x);
+    y = mapAndScaleY(y);
+    width *= m_scaleFactor;
+    height *= m_scaleFactor;
 
     scanline_type sl;
     agg::rasterizer_scanline_aa<> ras;
@@ -126,7 +132,7 @@ void CRawGraph::rectangle(int x, int y, int width, int height) {
         agg::rendering_buffer buf(m_imageData.buff, m_imageData.width, m_imageData.height, m_imageData.stride);
         pixfmt pixf(buf);
         renderer_mclip rb(pixf);
-        rb.add_clip_box(m_rcClip.left, m_rcClip.top, m_rcClip.right, m_rcClip.bottom);
+        rb.add_clip_box(m_rcClipScaleMaped.left, m_rcClipScaleMaped.top, m_rcClipScaleMaped.right, m_rcClipScaleMaped.bottom);
 
         agg::render_scanlines_aa_solid(ras, sl, rb, clr);
     } else if (m_imageData.bitCount == 32) {
@@ -136,7 +142,7 @@ void CRawGraph::rectangle(int x, int y, int width, int height) {
         agg::rendering_buffer buf(m_imageData.buff, m_imageData.width, m_imageData.height, m_imageData.stride);
         pixfmt pixf(buf);
         renderer_mclip rb(pixf);
-        rb.add_clip_box(m_rcClip.left, m_rcClip.top, m_rcClip.right, m_rcClip.bottom);
+        rb.add_clip_box(m_rcClipScaleMaped.left, m_rcClipScaleMaped.top, m_rcClipScaleMaped.right, m_rcClipScaleMaped.bottom);
 
         agg::render_scanlines_aa_solid(ras, sl, rb, clr);
     }
@@ -144,6 +150,7 @@ void CRawGraph::rectangle(int x, int y, int width, int height) {
 
 void CRawGraph::setPen(CRawPen &pen) {
     m_pen = pen;
+    m_pen.m_nWidth *= m_scaleFactor;
 }
 
 void CRawGraph::getClipBoundBox(CRect &rc) {
@@ -151,135 +158,94 @@ void CRawGraph::getClipBoundBox(CRect &rc) {
 }
 
 void CRawGraph::setClipBoundBox(const CRect &rc) {
-    if (rc.left > m_rcClip.left) {
-        m_rcClip.left = rc.left;
-    }
-    if (rc.top > m_rcClip.top) {
-        m_rcClip.top = rc.top;
-    }
-
-    if (rc.right < m_rcClip.right) {
-        m_rcClip.right = rc.right;
-    }
-    if (rc.bottom < m_rcClip.bottom) {
-        m_rcClip.bottom = rc.bottom;
-    }
-
-
-    if (m_rcClip.right < m_rcClip.left) {
-        m_rcClip.right = m_rcClip.left;
-    }
-    if (m_rcClip.bottom < m_rcClip.top) {
-        m_rcClip.bottom = m_rcClip.top;
-    }
+    m_rcClip.intersect(rc);
+    m_rcClipScaleMaped.intersect(scale(rc));
 }
 
 void CRawGraph::resetClipBoundBox(const CRect &rc) {
-    m_rcClip = rc;
-    if (mapX(m_rcClip.left) < 0) {
-        m_rcClip.left = revertMapX(0);
-    }
-    if (mapY(m_rcClip.top) < 0) {
-        m_rcClip.top = revertMapY(0);
-    }
-    if (mapX(m_rcClip.right) > width()) {
-        m_rcClip.right = revertMapX(width());
-    }
-    if (mapY(m_rcClip.bottom) > height()) {
-        m_rcClip.bottom = revertMapY(height());
+    if (rc.empty()) {
+        m_rcClip.setEmpty();
+        m_rcClipScaleMaped.setEmpty();
+        return;
     }
 
-    if (m_rcClip.right < m_rcClip.left) {
-        m_rcClip.right = m_rcClip.left;
-    }
-    if (m_rcClip.bottom < m_rcClip.top) {
-        m_rcClip.bottom = m_rcClip.top;
-    }
+    m_rcClip = rc;
+    m_rcClip.offsetRect(m_ptOrigin.x, m_ptOrigin.y);
+    m_rcClipScaleMaped = scale(m_rcClip);
 }
 
 void CRawGraph::clearClipBoundBox() {
-    m_rcClip.left = revertMapX(0);
-    m_rcClip.top = revertMapY(0);
-    m_rcClip.right = revertMapX(width());
-    m_rcClip.bottom = revertMapY(height());
+    m_rcClip.setLTWH(-m_ptOrigin.x, -m_ptOrigin.y, m_width, m_height);
+    m_rcClipScaleMaped = scale(m_rcClip);
 }
 
-bool CRawGraph::textOut(int x, int y, cstr_t szText, size_t nLen) {
+bool CRawGraph::textOut(float x, float y, cstr_t szText, size_t nLen) {
     if (nLen == -1) {
         nLen = strlen(szText);
     }
 
     if (m_rawBmpFont) {
-        return m_rawBmpFont->textOut(this, mapX(x), mapY(y), m_clrText, szText, nLen, m_bAlphaChannelEnabled);
+        return m_rawBmpFont->textOut(this, x, y, m_clrText, szText, nLen, m_bAlphaChannelEnabled);
     }
     return false;
 }
 
-bool CRawGraph::drawTextClip(cstr_t szText, size_t nLen, const CRect &rcPos, int xLeftClipOffset) {
+bool CRawGraph::drawTextClip(cstr_t szText, size_t nLen, const CRect &rcPos, float xLeftClipOffset) {
     if (nLen == -1) {
         nLen = strlen(szText);
     }
 
     if (m_rawBmpFont) {
-        return m_rawBmpFont->drawText(this, mapX(rcPos.left), mapY(rcPos.top), mapX(rcPos.right - rcPos.left), mapX(xLeftClipOffset), m_clrText, szText, nLen, m_bAlphaChannelEnabled);
+        return m_rawBmpFont->drawTextClip(this, rcPos.left, rcPos.top, rcPos.right - rcPos.left, xLeftClipOffset, m_clrText, szText, nLen, m_bAlphaChannelEnabled);
     }
     return false;
 }
 
-bool CRawGraph::textOutOutlined(int x, int y, cstr_t szText, size_t nLen, const CColor &clrText, const CColor &clrBorder) {
+bool CRawGraph::textOutOutlined(float x, float y, cstr_t szText, size_t nLen, const CColor &clrText, const CColor &clrBorder) {
     if (nLen == -1) {
         nLen = strlen(szText);
     }
 
     if (m_rawBmpFont) {
-        return m_rawBmpFont->outlinedTextOut(this, mapX(x), mapY(y), clrText, clrBorder, szText, nLen, m_bAlphaChannelEnabled);
+        return m_rawBmpFont->outlinedTextOut(this, x, y, clrText, clrBorder, szText, nLen, m_bAlphaChannelEnabled);
     }
     return false;
 }
 
-bool CRawGraph::drawTextClipOutlined(cstr_t szText, size_t nLen, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, int xLeftClipOffset) {
+bool CRawGraph::drawTextClipOutlined(cstr_t szText, size_t nLen, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, float xLeftClipOffset) {
     if (nLen == -1) {
         nLen = strlen(szText);
     }
 
     if (m_rawBmpFont) {
-        return m_rawBmpFont->outlinedDrawText(this, mapX(rcPos.left), mapY(rcPos.top), mapX(rcPos.right - rcPos.left), mapX(xLeftClipOffset), clrText, clrBorder, szText, nLen, m_bAlphaChannelEnabled);
+        return m_rawBmpFont->outlinedDrawTextClip(this, rcPos.left, rcPos.top, rcPos.right - rcPos.left, xLeftClipOffset, clrText, clrBorder, szText, nLen, m_bAlphaChannelEnabled);
     }
     return false;
 }
-
 
 bool CRawGraph::drawTextOutlined(cstr_t szText, size_t nLen, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, uint32_t uFormat) {
     if (nLen == -1) {
         nLen = strlen(szText);
     }
 
-    CRect rc = rcPos;
-    mapRect(rc);
-
     if (m_rawBmpFont) {
-        return m_rawBmpFont->outlinedDrawTextEx(this, rc, clrText, clrBorder, szText, nLen, uFormat, m_bAlphaChannelEnabled);
+        return m_rawBmpFont->outlinedDrawTextEx(this, rcPos, clrText, clrBorder, szText, nLen, uFormat, m_bAlphaChannelEnabled);
     }
 
     return false;
 }
-
 
 bool CRawGraph::drawText(cstr_t szText, size_t nLen, const CRect &rcPos, uint32_t uFormat) {
     if (nLen == -1) {
         nLen = strlen(szText);
     }
 
-    CRect rc = rcPos;
-    mapRect(rc);
-
     if (m_rawBmpFont) {
-        return m_rawBmpFont->drawTextEx(this, rc, m_clrText, szText, nLen, uFormat, m_bAlphaChannelEnabled);
+        return m_rawBmpFont->drawTextEx(this, rcPos, m_clrText, szText, nLen, uFormat, m_bAlphaChannelEnabled);
     }
 
     return false;
 }
-
 
 bool CRawGraph::getTextExtentPoint32(cstr_t szText, size_t nLen, CSize *pSize) {
     if (nLen == -1) {
@@ -299,10 +265,11 @@ void CRawGraph::setFont(CRawBmpFont *font) {
         return;
     }
 
+    font->setScaleFactor(m_scaleFactor);
     m_rawBmpFont = font;
 }
 
-void CRawGraph::resetAlphaChannel(uint8_t byAlpha, const CRect *lpRect) {
+void CRawGraph::resetAlphaChannel(uint8_t alpha, const CRect &rcDst) {
     if (!m_bAlphaChannelEnabled) {
         return;
     }
@@ -310,27 +277,23 @@ void CRawGraph::resetAlphaChannel(uint8_t byAlpha, const CRect *lpRect) {
     assert(m_imageData.bitCount == 32);
 
     int x, y, xMax, yMax;
-    uint8_t *p, *pEnd, *pRow;
-    int nStrideModify;
-
-    clipAndMapRect(lpRect, x, y, xMax, yMax);
-    if (y >= yMax || x >= xMax) {
+    if (!clipMapScaleRect(rcDst, x, y, xMax, yMax)) {
         return;
     }
-    nStrideModify = (xMax - x) * PIX_SIZE;
+    int strideModify = (xMax - x) * PIX_SIZE;
 
     // Modify alpha channel directly
-    pRow = m_imageData.pixPtr(x, y) + PIX_A;
+    uint8_t *row = m_imageData.pixPtr(x, y) + PIX_A;
     for (; y < yMax; y++) {
-        pEnd = pRow + nStrideModify;
-        for (p = pRow; p < pEnd; p += PIX_SIZE) {
-            *p = byAlpha;
+        uint8_t *end = row + strideModify;
+        for (uint8_t *p = row; p < end; p += PIX_SIZE) {
+            *p = alpha;
         }
-        pRow += m_imageData.stride;
+        row += m_imageData.stride;
     }
 }
 
-void CRawGraph::multiplyAlpha(uint8_t byAlpha, const CRect *lpRect) {
+void CRawGraph::multiplyAlpha(uint8_t alpha, const CRect &rcDst) {
     if (!m_bAlphaChannelEnabled) {
         return;
     }
@@ -338,48 +301,36 @@ void CRawGraph::multiplyAlpha(uint8_t byAlpha, const CRect *lpRect) {
     assert(m_imageData.bitCount == 32);
 
     int x, y, xMax, yMax;
-    uint8_t *p, *pEnd, *pRow;
-    int nStrideModify;
-
-    clipAndMapRect(lpRect, x, y, xMax, yMax);
-    if (y >= yMax || x >= xMax) {
+    if (!clipMapScaleRect(rcDst, x, y, xMax, yMax)) {
         return;
     }
-    nStrideModify = (xMax - x) * PIX_SIZE;
-
     // PIX_SIZE is the pixel size(rgba).
-    pRow = m_imageData.pixPtr(x, y);
+    int strideModify = (xMax - x) * PIX_SIZE;
+
+    uint8_t *row = m_imageData.pixPtr(x, y);
     for (; y < yMax; y++) {
-        pEnd = pRow + nStrideModify;
-        for (p = pRow; p < pEnd; p ++) {
-            *p = (uint8_t)((*p * byAlpha) / 256);
+        uint8_t *end = row + strideModify;
+        for (uint8_t *p = row; p < end; p ++) {
+            *p = (uint8_t)((*p * alpha) / 256);
         }
-        pRow += m_imageData.stride;
+        row += m_imageData.stride;
     }
 }
 
-void CRawGraph::vertAlphaFadeOut(const CRect *lpRect, bool bTop) {
+void CRawGraph::vertAlphaFadeOut(const CRect &rcDst, bool bTop) {
     if (!m_bAlphaChannelEnabled) {
         return;
     }
 
     assert(m_imageData.bitCount == 32);
-    if (lpRect->bottom == lpRect->top) {
-        return;
-    }
 
     int x, y, xMax, yMax;
-    uint8_t *p, *pEnd, *pRow;
-    float fStep, fStart;
-    int nStrideModify;
-
-    clipAndMapRect(lpRect, x, y, xMax, yMax);
-    if (y >= yMax || x >= xMax) {
+    if (!clipMapScaleRect(rcDst, x, y, xMax, yMax)) {
         return;
     }
-    nStrideModify = (xMax - x) * PIX_SIZE;
+    int strideModify = (xMax - x) * PIX_SIZE;
 
-    fStep = (float)1 / (lpRect->bottom - lpRect->top);
+    float fStep = (float)1 / scale(rcDst.height()), fStart;
     if (bTop) {
         fStart = 0;
     } else {
@@ -387,82 +338,56 @@ void CRawGraph::vertAlphaFadeOut(const CRect *lpRect, bool bTop) {
         fStart = 1;
     }
 
-    fStart += fStep * (y - mapY(lpRect->top));
+    fStart += fStep * (y - mapAndScaleY(rcDst.top));
     assert(fStart <= 1.0 && fStart >= 0.0);
 
     // PIX_SIZE is the pixel size(rgba).
-    pRow = m_imageData.pixPtr(x, y);
+    uint8_t *row = m_imageData.pixPtr(x, y);
     for (; y < yMax; y++) {
-        pEnd = pRow + nStrideModify;
-        for (p = pRow; p < pEnd; p ++) {
+        uint8_t *end = row + strideModify;
+        for (uint8_t *p = row; p < end; p ++) {
             *p = (uint8_t)(*p * fStart);
         }
-        pRow += m_imageData.stride;
+        row += m_imageData.stride;
         fStart += fStep;
     }
 }
 
-void CRawGraph::vertFadeOut(const CRect *lpRect, const CColor &clrBg, bool bTop) {
+void CRawGraph::vertFadeOut(const CRect &rcDst, const CColor &clrBg, bool bTop) {
     assert(m_imageData.bitCount == 32);
-    if (lpRect->bottom == lpRect->top) {
+    if (rcDst.empty()) {
         return;
     }
+
+    int a = clrBg.getAlpha() * m_nOpacityPainting / 255;
+    int r = clrBg.r() * a / 255;
+    int g = clrBg.g() * a / 255;
+    int b = clrBg.b() * a / 255;
 
     int x, y, xMax, yMax;
-    uint8_t *p, *pEnd, *pRow;
-    // float        fStep, fStart;
-    int r, g, b, a;
-    int nStrideModify;
-
-    a = clrBg.getAlpha() * m_nOpacityPainting / 255;
-    r = clrBg.r() * a / 255;
-    g = clrBg.g() * a / 255;
-    b = clrBg.b() * a / 255;
-
-    clipAndMapRect(lpRect, x, y, xMax, yMax);
-    if (y >= yMax || x >= xMax) {
+    if (!clipMapScaleRect(rcDst, x, y, xMax, yMax)) {
         return;
     }
 
-    nStrideModify = (xMax - x) * PIX_SIZE;
+    int strideModify = (xMax - x) * PIX_SIZE;
 
-    int nFadeRange = lpRect->bottom - lpRect->top;
-    int nFadeStart = y - mapY(lpRect->top);
+    int nFadeRange = scale(rcDst.height());
+    int nFadeStart = y - mapAndScaleY(rcDst.top);
 
     if (!bTop) {
         nFadeStart = nFadeRange - nFadeStart;
     }
 
-    /*    fStep = (float)1 / (lpRect->bottom - lpRect->top);
-    if (bTop)
-    {
-        fStart = 0;
-    }
-    else
-    {
-        fStep = -fStep;
-        fStart = 1;
-    }
-
-    fStart += fStep * (y - mapY(lpRect->top));
-    assert(fStart <= 1.0 && fStart >= 0.0);*/
-
-    pRow = m_imageData.pixPtr(x, y);
+    uint8_t *row = m_imageData.pixPtr(x, y);
     for (; y < yMax; y++) {
-        pEnd = pRow + nStrideModify;
-        for (p = pRow; p < pEnd; p += PIX_SIZE) {
-            // a * f + b * (1 - f) = (a - b) * f + b
+        uint8_t *end = row + strideModify;
+        for (uint8_t *p = row; p < end; p += PIX_SIZE) {
             p[PIX_B] = (uint8_t)((p[PIX_B] - b) * nFadeStart / nFadeRange + b);
             p[PIX_G] = (uint8_t)((p[PIX_G] - g) * nFadeStart / nFadeRange + g);
             p[PIX_R] = (uint8_t)((p[PIX_R] - r) * nFadeStart / nFadeRange + r);
             p[PIX_A] = (uint8_t)((p[PIX_A] - a) * nFadeStart / nFadeRange + a);
-            /*            p[PIX_B] = (uint8_t)((p[PIX_B] - b) * fStart + b);
-            p[PIX_G] = (uint8_t)((p[PIX_G] - g) * fStart + g);
-            p[PIX_R] = (uint8_t)((p[PIX_R] - r) * fStart + r);
-            p[PIX_A] = (uint8_t)((p[PIX_A] - a) * fStart + a);*/
         }
-        pRow += m_imageData.stride;
-        // fStart += fStep;
+        row += m_imageData.stride;
         if (bTop) {
             nFadeStart++;
         } else {
@@ -472,28 +397,20 @@ void CRawGraph::vertFadeOut(const CRect *lpRect, const CColor &clrBg, bool bTop)
 }
 
 
-void CRawGraph::horzAlphaFadeOut(const CRect *lpRect, bool bLeft) {
+void CRawGraph::horzAlphaFadeOut(const CRect &rcDst, bool bLeft) {
     if (!m_bAlphaChannelEnabled) {
         return;
     }
 
     assert(m_imageData.bitCount == 32);
-    if (lpRect->left == lpRect->right) {
-        return;
-    }
 
     int x, y, xMax, yMax;
-    uint8_t *p, *pEnd, *pRow;
-    float fStep, fStart, f;
-    int nStrideModify;
-
-    clipAndMapRect(lpRect, x, y, xMax, yMax);
-    if (y >= yMax || x >= xMax) {
+    if (!clipMapScaleRect(rcDst, x, y, xMax, yMax)) {
         return;
     }
-    nStrideModify = (xMax - x) * PIX_SIZE;
+    int strideModify = (xMax - x) * PIX_SIZE;
 
-    fStep = (float)1 / (lpRect->right - lpRect->left);
+    float fStep = (float)1 / scale(rcDst.width()), fStart;
     if (bLeft) {
         fStart = 0;
     } else {
@@ -501,50 +418,41 @@ void CRawGraph::horzAlphaFadeOut(const CRect *lpRect, bool bLeft) {
         fStart = 1;
     }
 
-    fStart += fStep * (x - mapX(lpRect->left));
+    fStart += fStep * (x - mapAndScaleX(rcDst.left));
     assert(fStart <= 1.0 && fStart >= 0.0);
 
-    pRow = m_imageData.pixPtr(x, y);
+    uint8_t *row = m_imageData.pixPtr(x, y);
     for (; y < yMax; y++) {
-        f = fStart;
+        float f = fStart;
 
-        pEnd = pRow + nStrideModify;
-        for (p = pRow; p < pEnd; p += PIX_SIZE) {
+        uint8_t *end = row + strideModify;
+        for (uint8_t *p = row; p < end; p += PIX_SIZE) {
             p[PIX_B] = (uint8_t)(p[PIX_B] * f);
             p[PIX_G] = (uint8_t)(p[PIX_G] * f);
             p[PIX_R] = (uint8_t)(p[PIX_R] * f);
             p[PIX_A] = (uint8_t)(p[PIX_A] * f);
             f += fStep;
         }
-        pRow += m_imageData.stride;
+        row += m_imageData.stride;
     }
 }
 
 
-void CRawGraph::horzFadeOut(const CRect *lpRect, const CColor &clrBg, bool bLeft) {
+void CRawGraph::horzFadeOut(const CRect &rcDst, const CColor &clrBg, bool bLeft) {
     assert(m_imageData.bitCount == 32);
-    if (lpRect->left == lpRect->right) {
-        return;
-    }
+
+    int a = clrBg.getAlpha();
+    int r = clrBg.r() * a / 255;
+    int g = clrBg.g() * a / 255;
+    int b = clrBg.b() * a / 255;
 
     int x, y, xMax, yMax;
-    uint8_t *p, *pEnd, *pRow;
-    float fStep, fStart, f;
-    uint8_t r, g, b, a;
-    int nStrideModify;
-
-    a = clrBg.getAlpha();
-    r = clrBg.r() * a / 255;
-    g = clrBg.g() * a / 255;
-    b = clrBg.b() * a / 255;
-
-    clipAndMapRect(lpRect, x, y, xMax, yMax);
-    if (y >= yMax || x >= xMax) {
+    if (!clipMapScaleRect(rcDst, x, y, xMax, yMax)) {
         return;
     }
-    nStrideModify = (xMax - x) * PIX_SIZE;
+    int strideModify = (xMax - x) * PIX_SIZE;
 
-    fStep = (float)1 / (lpRect->right - lpRect->left);
+    float fStep = (float)1 / scale(rcDst.width()), fStart;
     if (bLeft) {
         fStart = 0;
     } else {
@@ -552,57 +460,51 @@ void CRawGraph::horzFadeOut(const CRect *lpRect, const CColor &clrBg, bool bLeft
         fStart = 1;
     }
 
-    fStart += fStep * (x - mapX(lpRect->left));
+    fStart += fStep * (x - mapAndScaleX(rcDst.left));
     assert(fStart <= 1.0 && fStart >= 0.0);
 
-    pRow = m_imageData.pixPtr(x, y);
+    uint8_t *row = m_imageData.pixPtr(x, y);
     for (; y < yMax; y++) {
-        f = fStart;
+        float f = fStart;
 
-        pEnd = pRow + nStrideModify;
-        for (p = pRow; p < pEnd; p += PIX_SIZE) {
+        uint8_t *end = row + strideModify;
+        for (uint8_t *p = row; p < end; p += PIX_SIZE) {
             p[PIX_B] = (uint8_t)((p[PIX_B] - b) * f + b);
             p[PIX_G] = (uint8_t)((p[PIX_G] - g) * f + g);
             p[PIX_R] = (uint8_t)((p[PIX_R] - r) * f + r);
             p[PIX_A] = (uint8_t)((p[PIX_A] - a) * f + a);
             f += fStep;
         }
-        pRow += m_imageData.stride;
+        row += m_imageData.stride;
     }
 }
 
-void CRawGraph::fillRectXOR(const CRect *lpRect, const CColor &clrFill) {
+void CRawGraph::fillRectXOR(const CRect &rcDst, const CColor &clrFill) {
     assert(m_imageData.bitCount == 32);
 
-    int x, y, xMax, yMax;
-    uint8_t *p, *pEnd, *pRow;
-    int nStrideModify;
     uint8_t r = clrFill.r(), g = clrFill.g(), b = clrFill.b();
 
-    clipAndMapRect(lpRect, x, y, xMax, yMax);
-    if (y >= yMax || x >= xMax) {
+    int x, y, xMax, yMax;
+    if (!clipMapScaleRect(rcDst, x, y, xMax, yMax)) {
         return;
     }
-    nStrideModify = (xMax - x) * PIX_SIZE;
+    int strideModify = (xMax - x) * PIX_SIZE;
 
-    pRow = m_imageData.pixPtr(x, y);
+    uint8_t *row = m_imageData.pixPtr(x, y);
     for (; y < yMax; y++) {
-        pEnd = pRow + nStrideModify;
-        for (p = pRow; p < pEnd; p += PIX_SIZE) {
+        uint8_t *end = row + strideModify;
+        for (uint8_t *p = row; p < end; p += PIX_SIZE) {
             p[PIX_B] = p[PIX_B] ^ b;
             p[PIX_G] = p[PIX_G] ^ g;
             p[PIX_R] = p[PIX_R] ^ r;
         }
-        pRow += m_imageData.stride;
+        row += m_imageData.stride;
     }
 }
 
 
 template<class _PixRGBBlender, class _PixAlphaBlender>
 void fillRectMask(RawImageData *pImage, int x, int y, int xMax, int yMax, RawImageData *pImageMask, int xMask, int yMask, uint8_t *srcPixel) {
-    uint8_t *p, *pEnd, *pRow;
-    uint8_t *pMask, *pRowMask;
-    int nStrideModify;
     int nPixSize, nPixSizeMask;
 
     if (pImage->bitCount == 32) {
@@ -623,30 +525,27 @@ void fillRectMask(RawImageData *pImage, int x, int y, int xMax, int yMax, RawIma
         return;
     }
 
-    nStrideModify = (xMax - x) * nPixSize;
+    int strideModify = (xMax - x) * nPixSize;
 
-    pRow = pImage->pixPtr(x, y);
-    pRowMask = pImageMask->pixPtr(xMask, yMask);
+    uint8_t *row = pImage->pixPtr(x, y);
+    uint8_t *pRowMask = pImageMask->pixPtr(xMask, yMask);
     for (; y < yMax; y++) {
-        pEnd = pRow + nStrideModify;
-        pMask = pRowMask;
-        for (p = pRow; p < pEnd; p += nPixSize) {
+        uint8_t *end = row + strideModify;
+        uint8_t *pMask = pRowMask;
+        for (uint8_t *p = row; p < end; p += nPixSize, pMask += nPixSizeMask) {
             if (pMask[3] != 0) {
                 _PixRGBBlender::blend(p, srcPixel, pMask);
                 _PixAlphaBlender::blend(p, srcPixel, pMask);
             }
-            pMask += nPixSizeMask;
         }
-        pRow += pImage->stride;
+        row += pImage->stride;
         pRowMask += pImageMask->stride;
     }
 }
 
-
-void CRawGraph::fillRect(const CRect *lpRect, RawImageData *pImgMask, const CRect *rcMask, const CColor &clrFill, BlendPixMode bpm) {
+void CRawGraph::fillRect(const CRect &rcDst, CRawImage &imageMask, const CRect &rcMask, const CColor &clrFill, BlendPixMode bpm) {
     assert(m_imageData.bitCount == 32 || m_imageData.bitCount == 24);
 
-    int x, y, xMax, yMax;
     uint8_t srcPixel[4];
 
     srcPixel[PIX_R] = clrFill.r() * clrFill.getAlpha() / 255;
@@ -654,69 +553,73 @@ void CRawGraph::fillRect(const CRect *lpRect, RawImageData *pImgMask, const CRec
     srcPixel[PIX_B] = clrFill.b() * clrFill.getAlpha() / 255;
     srcPixel[PIX_A] = clrFill.getAlpha();
 
-    assert(pImgMask);
-    if (!pImgMask) {
+    if (!imageMask.isValid()) {
         return;
     }
 
-    if (pImgMask->pixFormat != PF_RGBA32) {
+    RawImageData *maskImageData = imageMask.getRawImageData(getScaleFactor()).get();
+    if (maskImageData->pixFormat != PF_RGBA32) {
         return;
     }
 
-    clipAndMapRect(lpRect, x, y, xMax, yMax);
-    if (y >= yMax || x >= xMax) {
+    int x, y, xMax, yMax;
+    if (!clipMapScaleRect(rcDst, x, y, xMax, yMax)) {
         return;
     }
+
+    CRect realRcMask = scale(rcMask);
 
     if (!m_bAlphaChannelEnabled) {
         bpm &= ~BPM_CHANNEL_ALPHA;
     }
 
     // Fill region must be within mask image
-    if (xMax - x > rcMask->right - rcMask->left) {
-        xMax = rcMask->right - rcMask->left + x;
+    if (xMax - x > realRcMask.width()) {
+        xMax = realRcMask.width() + x;
     }
-    if (yMax - y > rcMask->bottom - rcMask->top) {
-        yMax = rcMask->bottom - rcMask->top + y;
+    if (yMax - y > realRcMask.height()) {
+        yMax = realRcMask.height() + y;
     }
+
+    int xSrc = realRcMask.left, ySrc = realRcMask.top;
 
     if (isFlagSet(bpm, BPM_OP_BLEND)) {
         // blend
         if (isFlagSet(bpm, BPM_CHANNEL_RGB)) {
             if (isFlagSet(bpm, BPM_CHANNEL_ALPHA)) {
-                ::fillRectMask<mask_blend_rgb, mask_blend_alpha>(&m_imageData, x, y, xMax, yMax, pImgMask, rcMask->left, rcMask->top, srcPixel);
+                ::fillRectMask<mask_blend_rgb, mask_blend_alpha>(&m_imageData, x, y, xMax, yMax, maskImageData, xSrc, ySrc, srcPixel);
             } else {
-                ::fillRectMask<mask_blend_rgb, mask_blend_copy_none>(&m_imageData, x, y, xMax, yMax, pImgMask, rcMask->left, rcMask->top, srcPixel);
+                ::fillRectMask<mask_blend_rgb, mask_blend_copy_none>(&m_imageData, x, y, xMax, yMax, maskImageData, xSrc, ySrc, srcPixel);
             }
         } else {
             if (isFlagSet(bpm, BPM_CHANNEL_ALPHA)) {
-                ::fillRectMask<mask_blend_copy_none, mask_blend_alpha>(&m_imageData, x, y, xMax, yMax, pImgMask, rcMask->left, rcMask->top, srcPixel);
+                ::fillRectMask<mask_blend_copy_none, mask_blend_alpha>(&m_imageData, x, y, xMax, yMax, maskImageData, xSrc, ySrc, srcPixel);
             }
         }
     } else if (isFlagSet(bpm, BPM_OP_MULTIPLY)) {
         // Multiply
         if (isFlagSet(bpm, BPM_CHANNEL_RGB)) {
             if (isFlagSet(bpm, BPM_CHANNEL_ALPHA)) {
-                ::fillRectMask<mask_multiply_rgb, mask_multiply_alpha>(&m_imageData, x, y, xMax, yMax, pImgMask, rcMask->left, rcMask->top, srcPixel);
+                ::fillRectMask<mask_multiply_rgb, mask_multiply_alpha>(&m_imageData, x, y, xMax, yMax, maskImageData, xSrc, ySrc, srcPixel);
             } else {
-                ::fillRectMask<mask_multiply_rgb, mask_blend_copy_none>(&m_imageData, x, y, xMax, yMax, pImgMask, rcMask->left, rcMask->top, srcPixel);
+                ::fillRectMask<mask_multiply_rgb, mask_blend_copy_none>(&m_imageData, x, y, xMax, yMax, maskImageData, xSrc, ySrc, srcPixel);
             }
         } else {
             if (isFlagSet(bpm, BPM_CHANNEL_ALPHA)) {
-                ::fillRectMask<mask_blend_copy_none, mask_multiply_alpha>(&m_imageData, x, y, xMax, yMax, pImgMask, rcMask->left, rcMask->top, srcPixel);
+                ::fillRectMask<mask_blend_copy_none, mask_multiply_alpha>(&m_imageData, x, y, xMax, yMax, maskImageData, xSrc, ySrc, srcPixel);
             }
         }
     } else {
         // copy
         if (isFlagSet(bpm, BPM_CHANNEL_RGB)) {
             if (isFlagSet(bpm, BPM_CHANNEL_ALPHA)) {
-                ::fillRectMask<mask_copy_rgb, mask_copy_alpha>(&m_imageData, x, y, xMax, yMax, pImgMask, rcMask->left, rcMask->top, srcPixel);
+                ::fillRectMask<mask_copy_rgb, mask_copy_alpha>(&m_imageData, x, y, xMax, yMax, maskImageData, xSrc, ySrc, srcPixel);
             } else {
-                ::fillRectMask<mask_copy_rgb, mask_blend_copy_none>(&m_imageData, x, y, xMax, yMax, pImgMask, rcMask->left, rcMask->top, srcPixel);
+                ::fillRectMask<mask_copy_rgb, mask_blend_copy_none>(&m_imageData, x, y, xMax, yMax, maskImageData, xSrc, ySrc, srcPixel);
             }
         } else {
             if (isFlagSet(bpm, BPM_CHANNEL_ALPHA)) {
-                ::fillRectMask<mask_blend_copy_none, mask_copy_alpha>(&m_imageData, x, y, xMax, yMax, pImgMask, rcMask->left, rcMask->top, srcPixel);
+                ::fillRectMask<mask_blend_copy_none, mask_copy_alpha>(&m_imageData, x, y, xMax, yMax, maskImageData, xSrc, ySrc, srcPixel);
             }
         }
     }
@@ -725,8 +628,8 @@ void CRawGraph::fillRect(const CRect *lpRect, RawImageData *pImgMask, const CRec
 
 template<class _PixRGBBlender, class _PixAlphaBlender, class _PixRGBBlender_Opacity, class _PixAlphaBlender_Opacity>
 void fillRect(RawImageData *pImage, int x, int y, int xMax, int yMax, uint8_t *srcPixel, uint8_t alpha) {
-    uint8_t *p, *pEnd, *pRow;
-    int nStrideModify;
+    uint8_t *p, *end, *row;
+    int strideModify;
     int nPixSize;
 
     if (pImage->bitCount == 32) {
@@ -738,26 +641,26 @@ void fillRect(RawImageData *pImage, int x, int y, int xMax, int yMax, uint8_t *s
         return;
     }
 
-    nStrideModify = (xMax - x) * nPixSize;
-    pRow = pImage->pixPtr(x, y);
+    strideModify = (xMax - x) * nPixSize;
+    row = pImage->pixPtr(x, y);
 
     if (alpha == 255) {
         for (; y < yMax; y++) {
-            pEnd = pRow + nStrideModify;
-            for (p = pRow; p < pEnd; p += nPixSize) {
+            end = row + strideModify;
+            for (p = row; p < end; p += nPixSize) {
                 _PixRGBBlender::blend(p, srcPixel);
                 _PixAlphaBlender::blend(p, srcPixel);
             }
-            pRow += pImage->stride;
+            row += pImage->stride;
         }
     } else {
         for (; y < yMax; y++) {
-            pEnd = pRow + nStrideModify;
-            for (p = pRow; p < pEnd; p += nPixSize) {
+            end = row + strideModify;
+            for (p = row; p < end; p += nPixSize) {
                 _PixRGBBlender_Opacity::blend(p, srcPixel, alpha);
                 _PixAlphaBlender_Opacity::blend(p, srcPixel, alpha);
             }
-            pRow += pImage->stride;
+            row += pImage->stride;
         }
     }
 }
@@ -815,12 +718,11 @@ void fillRect(RawImageData *pImage, int x, int y, int xMax, int yMax, const CCol
     }
 }
 
-void CRawGraph::fillRect(const CRect *lpRect, const CColor &clrFill, BlendPixMode bpm) {
+void CRawGraph::fillRect(const CRect &rcDst, const CColor &clrFill, BlendPixMode bpm) {
     assert(m_imageData.bitCount == 32 || m_imageData.bitCount == 24);
 
     int x, y, xMax, yMax;
-    clipAndMapRect(lpRect, x, y, xMax, yMax);
-    if (y >= yMax || x >= xMax) {
+    if (!clipMapScaleRect(rcDst, x, y, xMax, yMax)) {
         return;
     }
 
@@ -831,61 +733,82 @@ void CRawGraph::fillRect(const CRect *lpRect, const CColor &clrFill, BlendPixMod
     ::fillRect(&m_imageData, x, y, xMax, yMax, clrFill, bpm, m_nOpacityPainting);
 }
 
-CPoint CRawGraph::setOrigin(const CPoint &ptOrg) {
-    CPoint ptOrgOld = m_ptOrigin;
+void CRawGraph::bltImage(int xDest, int yDest, int widthDest, int heightDest, RawImageData *image, int xSrc, int ySrc, BlendPixMode bpm, int nOpacitySrc)
+{
+    assert(image);
+    widthDest = min(widthDest, (int)image->width);
+    heightDest = min(heightDest, (int)image->height);
+
+    CRect rcDst = m_rcClipScaleMaped;
+
+    // get the clip box to copy
+    rcDst.right = min(rcDst.right, xDest + widthDest);
+    rcDst.bottom = min(rcDst.bottom, yDest + heightDest);
+
+    // determine the start position of Graph, image, mask.
+    if (xDest >= rcDst.left) {
+        rcDst.left = xDest;
+    } else {
+        xSrc += rcDst.left - xDest;
+    }
+    if (yDest >= rcDst.top) {
+        rcDst.top = yDest;
+    } else {
+        ySrc += rcDst.top - yDest;
+    }
+
+    if (rcDst.empty()) {
+        return;
+    }
+
+    if (!getEnableAlphaChannel()) {
+        bpm &= ~BPM_CHANNEL_ALPHA;
+    }
+
+    bltRawImage(getRawBuff(), rcDst, image, xSrc, ySrc, bpm, getOpacityPainting());
+}
+
+CPoint CRawGraph::resetOrigin(const CPoint &ptOrg) {
+    // 重置 origin
+    auto ptOrgOld = m_ptOrigin;
+
+    // 先恢复 clipBox 的 origin
+    m_rcClip.offsetRect(-m_ptOrigin.x, -m_ptOrigin.y);
+
+    // 设置新的
+    m_rcClip.offsetRect(ptOrg.x, ptOrg.y);
+    m_rcClipScaleMaped = scale(m_rcClip);
+
     m_ptOrigin = ptOrg;
-
-    m_rcClip.left += ptOrgOld.x - ptOrg.x;
-    m_rcClip.right += ptOrgOld.x - ptOrg.x;
-
-    m_rcClip.top += ptOrgOld.y - ptOrg.y;
-    m_rcClip.bottom += ptOrgOld.y - ptOrg.y;
 
     return ptOrgOld;
 }
 
+void CRawGraph::mapAndScale(CRect &r) const {
+    r.left = mapAndScaleX(r.left);
+    r.top = mapAndScaleY(r.top);
+    r.right = mapAndScaleX(r.right);
+    r.bottom = mapAndScaleY(r.bottom);
+}
 
-void CRawGraph::clipAndMapRect(const CRect *lpRect, int &x, int &y, int &xMax, int &yMax) {
-    if (!lpRect) {
-        x = m_rcClip.left;
-        y = m_rcClip.top;
-        xMax = m_rcClip.right;
-        yMax = m_rcClip.bottom;
-        mapPoint(x, y);
-        mapPoint(xMax, yMax);
-        return;
-    }
+bool CRawGraph::clipMapScaleRect(const CRect &rc, int &x, int &y, int &xMax, int &yMax) {
+    x = max(rc.left, m_rcClip.left);
+    y = max(rc.top, m_rcClip.top);
 
-    if (lpRect->left < m_rcClip.left) {
-        x = m_rcClip.left;
-    } else {
-        x = lpRect->left;
-    }
-
-    if (lpRect->top < m_rcClip.top) {
-        y = m_rcClip.top;
-    } else {
-        y = lpRect->top;
-    }
-
-    if (lpRect->right > m_rcClip.right) {
-        xMax = m_rcClip.right;
-    } else {
-        xMax = lpRect->right;
-    }
+    xMax = min(rc.right, m_rcClip.right);
     if (xMax < x) {
         xMax = x;
     }
 
-    if (lpRect->bottom > m_rcClip.bottom) {
-        yMax = m_rcClip.bottom;
-    } else {
-        yMax = lpRect->bottom;
-    }
+    yMax = min(rc.bottom, m_rcClip.bottom);
     if (yMax < y) {
         yMax = y;
     }
 
-    mapPoint(x, y);
-    mapPoint(xMax, yMax);
+    x = mapAndScaleX(x);
+    y = mapAndScaleY(y);
+    xMax = mapAndScaleX(xMax);
+    yMax = mapAndScaleY(yMax);
+
+    return x < xMax && y < yMax;
 }

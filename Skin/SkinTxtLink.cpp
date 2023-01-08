@@ -88,7 +88,7 @@ void CSkinTxtLink::enumProperties(CUIObjProperties &listProperties) {
 void CSkinTxtLink::onCreate() {
     CUIObject::onCreate();
 
-    m_font.onCreate(m_pSkin);
+    m_font.setParent(m_pSkin);
     m_font.setProperty("FontUnderLine", "1");
 
     m_Cursor.loadStdCursor(Cursor::C_HAND);

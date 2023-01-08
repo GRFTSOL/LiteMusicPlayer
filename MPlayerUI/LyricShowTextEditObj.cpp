@@ -488,7 +488,7 @@ void CLyricShowTextEditObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
                         // DBG_LOG0("update only one line, faster.");
                         prcUpdate->top = rc.top + m_yMargin + getLineDy() * (m_nCurPosLineOld - m_nTopVisibleLine);
                         prcUpdate->bottom = prcUpdate->top + getLineDy();
-                        fillGraph(canvas, prcUpdate,
+                        fillGraph(canvas, *prcUpdate,
                             m_nCaretRow == m_nCurPosLineOld ? CN_EDIT_LINE_BG : CN_BG);
                         drawLineGradual(canvas, pLyrLine, xStart, rc.right - m_xMargin, prcUpdate->top);
                         return;
@@ -546,7 +546,7 @@ void CLyricShowTextEditObj::reDraw(CRawGraph *canvas) {
 
     canvas->setFont(m_font.getFont());
 
-    fillGraph(canvas, &rc, CN_BG);
+    fillGraph(canvas, rc, CN_BG);
 
     CRawGraph::CClipBoxAutoRecovery autoCBR(canvas);
     rcClip.setLTRB(rc.left + m_xMargin, rc.top + m_yMargin, rc.right - m_xMargin, rc.bottom - m_yMargin);
@@ -1527,16 +1527,14 @@ void CLyricShowTextEditObj::updateTextFontColor() {
     setColorTheme(m_clrHighlight, m_clrLowlight, m_clrTag, m_clrFocusLineBg);
 
     const int nEditorFontMaxSize = 22;
-    int nHeight, nWeight;
-    uint8_t byItalic;
-    string strFaceName, strFaceNameOthers;
 
-    profileGetLyricsFont(SZ_SECT_LYR_DISPLAY, nHeight, nWeight, byItalic, strFaceName, strFaceNameOthers);
-    if (nHeight > nEditorFontMaxSize) {
-        nHeight = nEditorFontMaxSize;
+    FontInfoEx info;
+    profileGetLyricsFont(SZ_SECT_LYR_DISPLAY, info);
+    if (info.height > nEditorFontMaxSize) {
+        info.height = nEditorFontMaxSize;
     }
 
-    m_font.create(strFaceName.c_str(), strFaceNameOthers.c_str(), nHeight, nWeight, byItalic, false);
+    m_font.create(info);
 
     onFontChanged();
 }

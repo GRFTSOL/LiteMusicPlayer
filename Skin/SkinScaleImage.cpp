@@ -71,7 +71,7 @@ bool CSkinXScaleImage::setProperty(cstr_t szProperty, cstr_t szValue) {
 
     if (strcasecmp(szProperty, SZ_PN_IMAGE) == 0) {
         m_strBmpBkFile = szValue;
-        m_imgBk.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imgBk.loadFromSRM(m_pSkin, szValue);
     } else if (strcasecmp(szProperty, SZ_PN_IMAGERECT) == 0) {
         if (!getRectValue(szValue, m_imgBk)) {
             ERR_LOG2("Analyse Value: %s = %s FAILED.", szProperty, szValue);
@@ -172,7 +172,7 @@ bool CSkinYScaleImage::setProperty(cstr_t szProperty, cstr_t szValue) {
 
     if (strcasecmp(szProperty, SZ_PN_IMAGE) == 0) {
         m_strBmpBkFile = szValue;
-        m_imgBk.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imgBk.loadFromSRM(m_pSkin, szValue);
     } else if (strcasecmp(szProperty, SZ_PN_IMAGERECT) == 0) {
         if (!getRectValue(szValue, m_imgBk)) {
             ERR_LOG2("Analyse Value: %s = %s FAILED.", szProperty, szValue);

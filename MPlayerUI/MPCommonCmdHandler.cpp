@@ -566,29 +566,25 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
     case CMD_FONT_SIZE_DEC:
         {
             // increase the font size.
-            int nHeight, nWeight;
-            uint8_t byItalic;
-            string strFaceNameLatin9, strFaceNameOthers;
+            FontInfoEx font;
 
             // get default settings in profile
-            profileGetLyricsFont(m_strSectName.c_str(), nHeight, nWeight,
-                byItalic, strFaceNameLatin9, strFaceNameOthers);
+            profileGetLyricsFont(m_strSectName.c_str(), font);
 
             if (nID == CMD_FONT_SIZE_INC) {
-                nHeight++;
-                if (nHeight >= 96 * 2) { // 96 is the max font size in font choosing dialog.
+                font.height++;
+                if (font.height >= 96 * 2) { // 96 is the max font size in font choosing dialog.
                     break;
                 }
             } else {
-                nHeight--;
-                if (nHeight < 8) { // 8 is a reasonable smallest font size.
+                font.height--;
+                if (font.height < 8) { // 8 is a reasonable smallest font size.
                     break;
                 }
             }
 
             // now save to profile
-            profileWriteLyricsFont(m_etDispSettings, m_strSectName.c_str(), nHeight, nWeight,
-                byItalic, nullptr, nullptr);
+            profileWriteLyricsFont(m_etDispSettings, m_strSectName.c_str(), font);
         }
         break;
     case CMD_CLR_PREV_HUE:

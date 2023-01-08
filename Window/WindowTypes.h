@@ -93,6 +93,15 @@ struct CRect {
         return true;
     }
 
+    void intersect(const CRect &other) {
+        if (other.left > left) left = other.left;
+        if (other.top > top) top = other.top;
+        if (other.right < right) right = other.right;
+        if (other.bottom < bottom) bottom = other.bottom;
+
+        if (empty()) setEmpty();
+    }
+
     bool ptInRect(const CPoint &pt) const {
         return pt.x >= left && pt.x < right && pt.y >= top && pt.y < bottom;
     }
@@ -109,3 +118,6 @@ struct CRect {
     }
 
 };
+
+inline CRect makeRectLTWH(int left, int top, int width, int height)
+    { return CRect(left, top, left + width, top + height); }

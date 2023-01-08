@@ -396,14 +396,14 @@ class CBuffMaskBlter {
 public:
     template<class pixfmtDst, class pixfmtSrc, class PixRGBBlender, class PixAlphaBlender>
     inline void blt_buff(pixfmtDst &pixfDest, pixfmtSrc &pixfSrc, PixRGBBlender &pixRGBBlender, PixAlphaBlender &pixAlphaBlender) {
-        agg::rendering_buffer rbufMask(pImageMask->buff, pImageMask->width, pImageMask->height, pImageMask->stride);
+        agg::rendering_buffer rbufMask(imageMask->buff, imageMask->width, imageMask->height, imageMask->stride);
         typedef agg::pixfmt_rgba32 pixfmt32;
         pixfmt32 pixfMask(rbufMask);
 
         ::mask_blt_buff(pixfDest, pixfSrc, pixfMask, rcDest, xSrc, ySrc, xMask, yMask, pixRGBBlender, pixAlphaBlender);
     }
 
-    RawImageData                *pImageMask;
+    RawImageData                *imageMask;
     CRect                       rcDest;
     int                         xSrc, ySrc, xMask, yMask;
 
@@ -413,14 +413,14 @@ class CBuffMaskBlterOpacity {
 public:
     template<class pixfmtDst, class pixfmtSrc, class PixRGBBlender, class PixAlphaBlender>
     inline void blt_buff(pixfmtDst &pixfDest, pixfmtSrc &pixfSrc, PixRGBBlender &pixRGBBlender, PixAlphaBlender &pixAlphaBlender) {
-        agg::rendering_buffer rbufMask(pImageMask->buff, pImageMask->width, pImageMask->height, pImageMask->stride);
+        agg::rendering_buffer rbufMask(imageMask->buff, imageMask->width, imageMask->height, imageMask->stride);
         typedef agg::pixfmt_rgba32 pixfmt32;
         pixfmt32 pixfMask(rbufMask);
 
         ::mask_blt_buff_opacity(pixfDest, pixfSrc, pixfMask, rcDest, xSrc, ySrc, xMask, yMask, nOpacitySrc, pixRGBBlender, pixAlphaBlender);
     }
 
-    RawImageData                *pImageMask;
+    RawImageData                *imageMask;
     CRect                       rcDest;
     int                         xSrc, ySrc, xMask, yMask;
     int                         nOpacitySrc;

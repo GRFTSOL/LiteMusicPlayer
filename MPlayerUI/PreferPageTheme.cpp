@@ -188,29 +188,30 @@ public:
 
     bool onCustomCommand(int nId) override {
         if (nId == CID_DS_LOAD_LATIN_FONT || nId == CID_DS_LOAD_OTHER_FONT) {
-            int nSize, nWeight;
-            uint8_t byItalic;
-            string strFaceNameLatin9, strFaceNameOthers;
-            int nRet;
             bool bLatin9 = (nId == CID_DS_LOAD_LATIN_FONT);
 
             // get default settings in profile
-            profileGetLyricsFont(m_strSectName.c_str(), nSize, nWeight,
-                byItalic, strFaceNameLatin9, strFaceNameOthers);
+            FontInfoEx font;
+            profileGetLyricsFont(m_strSectName.c_str(), font);
 
             CDlgChooseFont chooser;
 
-            nRet = chooser.doModal(m_pSkin, bLatin9 ? strFaceNameLatin9.c_str() : strFaceNameOthers.c_str(),
-                nSize, nWeight, byItalic != 0);
-            if (nRet == IDOK) {
-                nSize = chooser.getSize();
-                if (nSize < 0) {
-                    nSize = -nSize;
+            int ret = chooser.doModal(m_pSkin, bLatin9 ? font.nameLatin9.c_str() : font.nameOthers.c_str(),
+                font.height, font.weight, font.italic != 0);
+            if (ret == IDOK) {
+                font.height = chooser.getSize();
+                if (font.height < 0) {
+                    font.height = -font.height;
+                }
+
+                if (bLatin9) {
+                    font.nameLatin9 = chooser.getFaceName();
+                } else {
+                    font.nameOthers = chooser.getFaceName();
                 }
 
                 // now save to profile
-                profileWriteLyricsFont(m_eventType, m_strSectName.c_str(), nSize, chooser.getWeight(),
-                    chooser.getItalic(), bLatin9 ? chooser.getFaceName() : nullptr, bLatin9 ? nullptr : chooser.getFaceName());
+                profileWriteLyricsFont(m_eventType, m_strSectName.c_str(), font);
             }
         } else if (nId == CID_DS_CLR_HIGH || nId == CID_DS_CLR_LOW) {
             CRect rc;
@@ -381,9 +382,8 @@ protected:
         loadLyrOverlayBlendingSettings(m_strSectName.c_str(), tob, rc.height(), bHilight);
 
         if (tob.obm == OBM_COLOR) {
-            RawImageData *image = new RawImageData;
-            image->create(rc.width(), rc.height(), 24);
-            rawImageSet(image, tob.clr[CLyricShowObj::TCI_FILL].r(),
+            RawImageDataPtr image = createRawImageData(rc.width(), rc.height(), 24);
+            rawImageSet(image.get(), tob.clr[CLyricShowObj::TCI_FILL].r(),
                 tob.clr[CLyricShowObj::TCI_FILL].g(),
                 tob.clr[CLyricShowObj::TCI_FILL].b(),
                 tob.clr[CLyricShowObj::TCI_FILL].getAlpha());

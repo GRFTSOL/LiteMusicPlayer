@@ -10,6 +10,7 @@
 #include "Skin.h"
 #include "SkinResMgr.h"
 #include "../Utils/Utils.h"
+#include "../third-parties/Agg/include/agg_basics.h"
 
 
 CSkinResMgr::CSkinResMgr() {
@@ -20,16 +21,6 @@ CSkinResMgr::CSkinResMgr() {
 }
 
 CSkinResMgr::~CSkinResMgr() {
-    map<string, ResourceRef>::iterator it;
-
-    // 释放所有未释放的资源
-    for (it = m_mapBitmap.begin(); it != m_mapBitmap.end(); it++) {
-        if ((*it).second.nCount > 0) {
-            // ERR_LOG1("Bitmap resource :%d is NOT freed before exit.", (int)(*it).second.image);
-            freeRawImage((*it).second.image);
-        }
-    }
-
     m_mapBitmap.clear();
 }
 
@@ -40,7 +31,7 @@ void CSkinResMgr::onClose() {
     m_luminance = 0;
 }
 
-RawImageData *CSkinResMgr::loadBitmap(cstr_t resName) {
+RawImageDataPtr CSkinResMgr::loadBitmap(cstr_t resName, float scaleFactor) {
     if (isEmptyString(resName)) {
         return nullptr;
     }
@@ -53,68 +44,41 @@ RawImageData *CSkinResMgr::loadBitmap(cstr_t resName) {
         return nullptr;
     }
 
-    auto it = m_mapBitmap.find(file.c_str());
-    if (it == m_mapBitmap.end()) {
-        // 不存在，则重新加载新的位图
-        ResourceRef res;
-        res.image = loadRawImageDataFromFile(file.c_str()); // LoadBitmapFromFile(szFile);
+    int fileScale = 1;
+    for (int n = ceil(scaleFactor); n > 1; n--) {
+        string str = file;
+        fileSetExt(str, "");
+        str += stringPrintf("@%dx", n) + fileGetExt(file.c_str());
+        if (isFileExist(str.c_str())) {
+            file = str;
+            fileScale = n;
+            break;
+        }
+    }
 
-        if (res.image == nullptr) {
-            ERR_LOG1("Failed to load Image: %s, Please check the skin xml file.", file.c_str());
+    RawImageDataPtr image;
+    string key = file + stringPrintf("-%f", scaleFactor);
+    auto it = m_mapBitmap.find(key);
+    if (it != m_mapBitmap.end()) {
+        image = (*it).second.image.lock();
+    }
+
+    if (image == nullptr) {
+        // 不存在，则重新加载新的位图
+        image = loadImageFile(file.c_str(), scaleFactor, fileScale);
+        if (image == nullptr) {
             return nullptr;
         }
 
-        res.nCount = 1;
+        ResourceRef res;
+        res.file = file;
+        res.image = image;
+        res.scaleFactor = scaleFactor;
+        res.fileScaleFactor = fileScale;
         m_mapBitmap[file.c_str()] = res;
-
-        if (m_hue != 0.0) {
-            adjustImageHue(res.image, m_hue);
-        }
-
-        return res.image;
-    } else {
-        // 存在，则使用前面的位图句柄
-        (*it).second.nCount++;
-        return (*it).second.image;
-    }
-}
-
-void CSkinResMgr::freeBitmap(RawImageData *image) {
-    assert(image);
-
-    map<string, ResourceRef>::iterator it;
-
-    // 释放所有未释放的资源
-    for (it = m_mapBitmap.begin(); it != m_mapBitmap.end(); it++) {
-        ResourceRef &res = (*it).second;
-        if (res.image == image) {
-            if (res.nCount <= 1) {
-                freeRawImage(res.image);
-                m_mapBitmap.erase(it);
-            } else {
-                res.nCount--;
-            }
-            return;
-        }
     }
 
-    ERR_LOG1("delete, But Not Found Bitmap Object:%d", (int)(long)image);
-    // freeRawImage(image);
-}
-
-void CSkinResMgr::incBitmapReference(RawImageData *image) {
-    assert(image);
-
-    map<string, ResourceRef>::iterator it;
-
-    for (it = m_mapBitmap.begin(); it != m_mapBitmap.end(); it++) {
-        if ((*it).second.image == image) {
-            (*it).second.nCount++;
-            return;
-        }
-    }
-
-    ERR_LOG1("add reference, but Not Found Bitmap Object:%d", (int)(long)image);
+    return image;
 }
 
 void CSkinResMgr::addRessourceDir(cstr_t szResDir, int nPos) {
@@ -176,23 +140,17 @@ void CSkinResMgr::adjustHue(float hue, float saturation, float luminance) {
     m_luminance = luminance;
     m_saturation = saturation;
 
-    // adjust the hue of opened images
-    map<string, ResourceRef>::iterator it;
+    for (auto &item : m_mapBitmap) {
+        ResourceRef &res = item.second;
 
-    for (it = m_mapBitmap.begin(); it != m_mapBitmap.end(); it++) {
-        ResourceRef &item = (*it).second;
-        cstr_t szFile = (*it).first.c_str();
-
-        RawImageData *image = loadRawImageDataFromFile(szFile); // LoadBitmapFromFile(szFile);
-        if (image == nullptr) {
-            continue;
-        }
-
-        item.image->exchange(image);
-        freeRawImage(image);
-
-        if (hue != 0) {
-            adjustImageHue(item.image, hue);
+        RawImageDataPtr orgImage = res.image.lock();
+        if (orgImage) {
+            // 调整了 hue，重新加载所有的图片.
+            auto image = loadImageFile(res.file.c_str(), res.scaleFactor, res.fileScaleFactor);
+            assert(image);
+            if (image) {
+                orgImage->exchange(image.get());
+            }
         }
     }
 }
@@ -219,3 +177,33 @@ void CSkinResMgr::dbgOutLoadedImages() {
     }
 }
 #endif
+
+bool stretchBltRawImage(RawImageData *pImageSrc, RawImageData *pImageDst, const CRect &rcDst, const agg::rect_f &rcSrc, BlendPixMode bpm, int nOpacitySrc);
+
+RawImageDataPtr CSkinResMgr::loadImageFile(cstr_t file, float expectedScaleFactor, int fileScaleFactor) {
+    RawImageDataPtr image = loadRawImageDataFromFile(file);
+    if (image == nullptr) {
+        ERR_LOG1("Failed to load Image: %s, not supported image format?", file);
+        return nullptr;
+    }
+
+    if (m_hue != 0.0) {
+        adjustImageHue(image.get(), m_hue);
+    }
+
+    if (expectedScaleFactor != fileScaleFactor) {
+        // 需要按照 expectedScaleFactor 来缩放 image;
+        RawImageDataPtr expectedImage = make_shared<RawImageData>();
+
+        int width = image->width * expectedScaleFactor / fileScaleFactor;
+        int height = image->height * expectedScaleFactor / fileScaleFactor;
+        expectedImage->create(width, height, image->bitCount);
+
+        agg::rect_f rcSrc(0, 0, image->width, image->height);
+        stretchBltRawImage(image.get(), expectedImage.get(), CRect(0, 0, width, height), rcSrc, BPM_COPY, 255);
+
+        return expectedImage;
+    }
+
+    return image;
+}

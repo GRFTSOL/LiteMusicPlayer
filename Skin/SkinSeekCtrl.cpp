@@ -315,19 +315,19 @@ bool CSkinSeekCtrl::setProperty(cstr_t szProperty, cstr_t szValue) {
     if (strcasecmp(szProperty, "EndWidth") == 0) {
         m_nWidthEnd = atoi(szValue);
     } else if (strcasecmp(szProperty, "ImageSimple") == 0) {
-        m_imgSimple.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imgSimple.loadFromSRM(m_pSkin, szValue);
     } else if (isPropertyName(szProperty, "ImageTrack")) {
         m_strImageTrack = szValue;
 
-        m_imgTrackNormal.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
-        m_imgTrackPlayed.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imgTrackNormal.loadFromSRM(m_pSkin, szValue);
+        m_imgTrackPlayed.loadFromSRM(m_pSkin, szValue);
 
         m_imgTrackNormal.m_cy = m_imgTrackPlayed.m_cy = m_imgTrackNormal.m_cy / 2;
         m_imgTrackPlayed.m_y = m_imgTrackNormal.m_cy;
     } else if (isPropertyName(szProperty, "ImageThumb")) {
         m_strImageThumb = szValue;
 
-        m_imgThumb.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imgThumb.loadFromSRM(m_pSkin, szValue);
         m_nWidthThumb = m_imgThumb.width();
     } else {
         return false;

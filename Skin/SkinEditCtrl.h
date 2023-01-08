@@ -60,7 +60,7 @@ public:
             return;
         }
 
-        canvas->fillRectXOR(&m_rcCaret, m_clrCaret);
+        canvas->fillRectXOR(m_rcCaret, m_clrCaret);
         m_bOldDrawed = !m_bOldDrawed;
     }
 
@@ -70,7 +70,7 @@ public:
         }
 
         if (m_bOldDrawed) {
-            canvas->fillRectXOR(&m_rcCaret, m_clrCaret);
+            canvas->fillRectXOR(m_rcCaret, m_clrCaret);
         }
     }
 
@@ -380,9 +380,9 @@ protected:
 
     void updateRectToScreen(const CRect *rc);
 
-    void fillGraph(CRawGraph *canvas, const CRect *rc, int nColorName);
+    void fillGraph(CRawGraph *canvas, const CRect &rc, int nColorName);
     void fillGraph(CRawGraph *canvas, int x, int y, int nWidth, int nHeight, int nColorName)
-        { CRect        rc(x, y, x + nWidth, y + nHeight); fillGraph(canvas, &rc, nColorName); }
+        { fillGraph(canvas, CRect(x, y, x + nWidth, y + nHeight), nColorName); }
     void fillSelectedLineBg(CRawGraph *canvas, int x, int y, COneLine *pLine, int nBegSelCol, int nEndSelCol);
 
     void drawLine(CRawGraph *canvas, COneLine *pLine, int x, int xMax, int y);

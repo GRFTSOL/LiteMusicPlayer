@@ -5,7 +5,7 @@
 
 UIOBJECT_CLASS_NAME_IMP(CSkinToggleCtrlContainer, "ToggleCtrlContainer")
 
-CSkinToggleCtrlContainer::CSkinToggleCtrlContainer(void) {
+CSkinToggleCtrlContainer::CSkinToggleCtrlContainer(void) : m_memGraph(1.0) {
     m_nAnimateDuration = 800;
     m_nToggleToCtrl = UID_INVALID;
     m_nActiveCtrl = UID_INVALID;
@@ -15,25 +15,23 @@ CSkinToggleCtrlContainer::CSkinToggleCtrlContainer(void) {
 
 CSkinToggleCtrlContainer::~CSkinToggleCtrlContainer(void) {
 }
-//
-//CRawGraph *CSkinToggleCtrlContainer::getMemGraph()
-//{
-//    if (m_nIDTimerAnimation == 0)
-//        return CSkinContainer::getMemGraph();
-//
-//    if (m_memGraph.isValid() && (m_rcObj.width() != m_memGraph.width() || m_rcObj.height() != m_memGraph.height()))
-//        m_memGraph.destroy();
-//
-//    if (!m_memGraph.isValid())
-//    {
-//        CGraphics *pTemp = m_pSkin->getGraphics();
-//        m_memGraph.create(m_rcObj.width(), m_rcObj.height(), pTemp);
-//        m_memGraph.setOrigin(CPoint(-m_rcObj.left, -m_rcObj.top));
-//        m_pSkin->releaseGraphics(pTemp);
-//    }
-//
-//    return &m_memGraph;
-//}
+
+CRawGraph *CSkinToggleCtrlContainer::getMemGraph() {
+    if (m_nIDTimerAnimation == 0) {
+        return CSkinContainer::getMemGraph();
+    }
+
+    if (m_memGraph.isValid() && (m_rcObj.width() != m_memGraph.width() || m_rcObj.height() != m_memGraph.height())) {
+        m_memGraph.destroy();
+    }
+
+    if (!m_memGraph.isValid()) {
+        m_memGraph.create(m_rcObj.width(), m_rcObj.height(), m_pSkin->getHandleHolder());
+        m_memGraph.resetOrigin(CPoint(-m_rcObj.left, -m_rcObj.top));
+    }
+
+    return &m_memGraph;
+}
 
 void CSkinToggleCtrlContainer::invalidateUIObject(CUIObject *pObj) {
     if (m_pContainer) {
@@ -53,9 +51,9 @@ void CSkinToggleCtrlContainer::updateMemGraphicsToScreen(const CRect* lpRect, CU
 
 void CSkinToggleCtrlContainer::draw(CRawGraph *canvas) {
     if (m_nIDTimerAnimation) {
-        //        getMemGraph();
-        //
-        //        m_memGraph.resetClipBoundBox(m_rcObj);
+        getMemGraph();
+
+        m_memGraph.resetClipBoundBox(m_rcObj);
 
         // show child controls in animation
         // draw active control
@@ -65,31 +63,27 @@ void CSkinToggleCtrlContainer::draw(CRawGraph *canvas) {
             pObj->tryToCallInitialUpdate();
             pObj->draw(canvas);
         }
-        //
-        //        pObj = getUIObjectById(m_nToggleToCtrl, nullptr);
-        //        if (pObj)
-        //        {
-        //            nOpaque = (getTickCount() - m_timeBeginAni) * 255 / m_nAnimateDuration;
-        //            if (nOpaque > 255)
-        //                nOpaque = 255;
-        //            nOpaque = canvas->setOpacityPainting(nOpaque);
-        //
-        //            // draw toggle to control
-        //            if (isUseParentBg() || pObj->isUseParentBg())
-        //                m_pContainer->redrawBackground(&m_memGraph, m_rcObj);
-        //            CRawGraph::COpacityBlendAutoRecovery opacityAR(&m_memGraph, pObj->getOpacity());
-        //            pObj->tryToCallInitialUpdate();
-        //            pObj->draw(&m_memGraph);
-        //            opacityAR.recover();
-        //
-        //            // draw final result
-        //            CRawImage    imgTemp;
-        //            imgTemp.attach(m_memGraph.getRawBuff());
-        //            imgTemp.blt(canvas, m_rcObj.left, m_rcObj.top, m_rcObj.width(), m_rcObj.height(), 0, 0, BPM_COPY);
-        //            imgTemp.detach();
-        //
-        //            canvas->setOpacityPainting(nOpaque);
-        //        }
+
+        pObj = getUIObjectById(m_nToggleToCtrl, nullptr);
+        if (pObj)
+        {
+            int opaque = int(getTickCount() - m_timeBeginAni) * 255 / m_nAnimateDuration;
+            if (opaque > 255)
+                opaque = 255;
+            opaque = canvas->setOpacityPainting(opaque);
+
+            // draw toggle to control
+            if (isUseParentBg() || pObj->isUseParentBg())
+                m_pContainer->redrawBackground(&m_memGraph, m_rcObj);
+            CRawGraph::COpacityBlendAutoRecovery opacityAR(&m_memGraph, pObj->getOpacity());
+            pObj->tryToCallInitialUpdate();
+            pObj->draw(&m_memGraph);
+            opacityAR.recover();
+
+            // draw final result
+            canvas->bltImage(m_rcObj.left, m_rcObj.top, m_rcObj.width(), m_rcObj.height(), m_memGraph.getRawBuff(), 0, 0, BPM_COPY);
+            canvas->setOpacityPainting(opaque);
+        }
     } else {
         CSkinContainer::draw(canvas);
     }

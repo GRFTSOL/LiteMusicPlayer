@@ -16,6 +16,8 @@ public:
         T_ANIMATION                 = 1
     };
 
+    CRawGraph *getMemGraph() override;
+
     void invalidateUIObject(CUIObject *pObj) override;
 
     void updateMemGraphicsToScreen(const CRect* lpRect, CUIObject *pObjCallUpdate) override;

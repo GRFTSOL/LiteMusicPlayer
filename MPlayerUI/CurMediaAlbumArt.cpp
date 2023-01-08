@@ -158,7 +158,7 @@ void CCurMediaAlbumArt::close() {
     m_bLoaded = false;
 }
 
-RawImageData *CCurMediaAlbumArt::loadAlbumArtByIndex(int nIndex) {
+RawImageDataPtr CCurMediaAlbumArt::loadAlbumArtByIndex(int nIndex) {
     if (nIndex < 0) {
         return nullptr;
     }

@@ -3,17 +3,17 @@
 
 #pragma once
 
-typedef const struct __CFDictionary * CFDictionaryRef;
+#include "GfxFont.h"
 
-#include "MLFont.h"
 
+class Glyph;
 
 class CRawGlyphBuilder {
 public:
     CRawGlyphBuilder();
     virtual ~CRawGlyphBuilder();
 
-    void init(const CFontInfo &font);
+    void init(const FontInfoEx &font);
 
     int getHeight() const;
 
@@ -25,10 +25,10 @@ protected:
     int getHeightBitmap();
 
 protected:
-    CMLFont                     m_font;
+    FontInfoEx                  m_fontInfo;
+    GfxFont                     m_fontLatin;
+    GfxFont                     m_fontOthers;
     CRawGraphData               m_fontMemGraph;
-    CFDictionaryRef             m_attributes;
-    int                         m_nLineHeight;
 
 };
 

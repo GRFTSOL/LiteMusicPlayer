@@ -43,7 +43,7 @@ public:
 
     int insertItem(int nItem, cstr_t lpszItem, int nImageIndex = 0, uint32_t nItemData = 0);
     bool setItemText(int nItem, int nSubItem, cstr_t lpszText);
-    bool setItemImage(int nItem, int nSubItem, RawImageData *image);
+    bool setItemImage(int nItem, int nSubItem, const RawImageDataPtr &image);
 
     void setItemData(int nItem, uint32_t nItemData);
     uint32_t getItemData(int nItem);

@@ -14,7 +14,7 @@ CSkinSquare::~CSkinSquare() {
 }
 
 void CSkinSquare::draw(CRawGraph *canvas) {
-    canvas->fillRect(&m_rcObj, m_clrBg);
+    canvas->fillRect(m_rcObj, m_clrBg);
 }
 
 

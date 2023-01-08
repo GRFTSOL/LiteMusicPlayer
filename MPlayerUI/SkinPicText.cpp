@@ -81,7 +81,7 @@ bool CSkinPicText::setProperty(cstr_t szProperty, cstr_t szValue) {
         m_vPos.clear();
     } else if (strcasecmp(szProperty, "TextImage") == 0) {
         m_strImgText = szValue;
-        m_imgText.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imgText.loadFromSRM(m_pSkin, szValue);
     } else if (strcasecmp(szProperty, "ImageChars") == 0) {
         m_strImgChars = szValue;
         cstr_t szPos = strchr(m_strImgChars.c_str(), ' ');

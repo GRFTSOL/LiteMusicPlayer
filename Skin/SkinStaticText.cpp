@@ -27,7 +27,7 @@ CSkinStaticText::~CSkinStaticText() {
 void CSkinStaticText::onCreate() {
     CUIObject::onCreate();
 
-    m_font.onCreate(m_pSkin);
+    m_font.setParent(m_pSkin);
 }
 
 int countOfChar(cstr_t str, char ch) {

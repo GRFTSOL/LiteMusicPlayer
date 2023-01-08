@@ -47,10 +47,9 @@ ima_jpeg_error_exit (j_common_ptr cinfo) {
 }
 
 
-RawImageData *loadRawImageDataFromJpgFile(IILIO *io) {
-    RawImageData *imgData = nullptr;
-
+RawImageDataPtr loadRawImageDataFromJpgFile(IILIO *io) {
     CxFileJpg src(io);
+    RawImageDataPtr imgData;
 
     /* This struct contains the JPEG decompression parameters and pointers to
     * working space (which is allocated as needed by the JPEG library).
@@ -108,7 +107,7 @@ RawImageData *loadRawImageDataFromJpgFile(IILIO *io) {
     * output image dimensions available, as well as the output colormap
     * if we asked for color quantization.
     */
-    imgData = new RawImageData;
+    imgData = make_shared<RawImageData>();
     if (!imgData->create(cinfo.image_width, cinfo.image_height, 8 * cinfo.num_components)) {
         goto R_FAILED;
     }
@@ -212,11 +211,6 @@ RawImageData *loadRawImageDataFromJpgFile(IILIO *io) {
     return imgData;
 
 R_FAILED:
-    if (imgData) {
-        imgData->free();
-        delete imgData;
-    }
-
     return nullptr;
 }
 //

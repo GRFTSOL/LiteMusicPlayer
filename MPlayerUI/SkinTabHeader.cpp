@@ -102,7 +102,7 @@ void CSkinTabHeader::Button::toXML(CSkinTabHeader *pTabHeader, CXMLWriter &xml) 
 void CSkinTabHeader::onCreate() {
     CUIObject::onCreate();
 
-    m_font.onCreate(m_pSkin);
+    m_font.setParent(m_pSkin);
 
     m_nActiveButton = g_profile.getInt((string("TabActiveBt_") + m_strName).c_str(), m_nActiveButton);
     if (m_nActiveButton < 0 || m_nActiveButton >= (int)m_vButtons.size()) {
@@ -336,7 +336,7 @@ bool CSkinTabHeader::setProperty(cstr_t szProperty, cstr_t szValue) {
 
     if (isPropertyName(szProperty, SZ_PN_IMAGE)) {
         m_strImageFile = szValue;
-        m_img.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_img.loadFromSRM(m_pSkin, szValue);
     } else if (isPropertyName(szProperty, SZ_PN_IMAGERECT)) {
         if (!getRectValue(szValue, m_img)) {
             ERR_LOG2("Analyse Value: %s = %s FAILED.", szProperty, szValue);
@@ -438,21 +438,19 @@ int CSkinTabHeader::buttonHitTest(CPoint pt) {
     return -1;
 }
 
-void tillFill(CRawGraph *canvas, CRect *rcFill, RawImageData *rawImage, CRect *rcMask, const CColor &clrFill) {
-    CRect rc = *rcFill;
-    int nWidthMask = rcMask->right - rcMask->left;
+void tillFill(CRawGraph *canvas, const CRect &rcFill, CRawImage &rawImage, const CRect &rcMask, const CColor &clrFill) {
+    CRect rc = rcFill;
+    int nWidthMask = rcMask.width();
 
-    rc.right = rc.left + nWidthMask;
-    if (rc.right > rcFill->right) {
-        rc.right = rcFill->right;
-    }
-    for (; rc.right <= rcFill->right; rc.left += nWidthMask, rc.right += nWidthMask) {
-        canvas->fillRect(&rc, rawImage, rcMask, clrFill);
+    rc.right = max(rc.left + nWidthMask, rcFill.right);
+
+    for (; rc.right <= rcFill.right; rc.left += nWidthMask, rc.right += nWidthMask) {
+        canvas->fillRect(rc, rawImage, rcMask, clrFill);
     }
 
-    if (rc.right > rcFill->right) {
-        rc.right = rcFill->right;
-        canvas->fillRect(&rc, rawImage, rcMask, clrFill);
+    if (rc.right > rcFill.right) {
+        rc.right = rcFill.right;
+        canvas->fillRect(rc, rawImage, rcMask, clrFill);
     }
 }
 
@@ -483,21 +481,21 @@ void CSkinTabHeader::drawTabButton(CRawGraph *canvas, Button &bt, CRect &rcButto
         // Fill left border
         rc = rcButton;
         rc.right = rc.left + m_nButtonBorderSize;
-        canvas->fillRect(&rc, m_img.getHandle(), &rcMask, clrBg);
+        canvas->fillRect(rc, m_img, rcMask, clrBg);
 
         // Button face
         rc.left = rc.right;
         rc.right = rcButton.right;
         rcMask.left += m_nButtonBorderSize;
         rcMask.right -= m_nButtonBorderSize;
-        tillFill(canvas, &rc, m_img.getHandle(), &rcMask, clrBg);
+        tillFill(canvas, rc, m_img, rcMask, clrBg);
 
         // Fill right border
         rc.left = rc.right;
         rc.right = rc.left + m_nButtonBorderSize;
         rcMask.left = rcMask.right;
         rcMask.right += m_nButtonBorderSize;
-        canvas->fillRect(&rc, m_img.getHandle(), &rcMask, clrBg);
+        canvas->fillRect(rc, m_img, rcMask, clrBg);
     } else {
         nYPosTabButton = TIP_INACTIVE * m_nTabHeight;
     }

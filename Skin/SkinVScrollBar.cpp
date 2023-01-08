@@ -707,19 +707,19 @@ bool CSkinVScrollBar::setProperty(cstr_t szProperty, cstr_t szValue) {
         // 图片
         m_strBmpFile = szValue;
 
-        m_imgTopBtNormal.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
-        m_imgTopBtFocus.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
-        m_imgTopBtPushDown.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imgTopBtNormal.loadFromSRM(m_pSkin, szValue);
+        m_imgTopBtFocus.loadFromSRM(m_pSkin, szValue);
+        m_imgTopBtPushDown.loadFromSRM(m_pSkin, szValue);
 
-        m_imgBottomBtNormal.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
-        m_imgBottomBtFocus.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
-        m_imgBottomBtPushDown.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imgBottomBtNormal.loadFromSRM(m_pSkin, szValue);
+        m_imgBottomBtFocus.loadFromSRM(m_pSkin, szValue);
+        m_imgBottomBtPushDown.loadFromSRM(m_pSkin, szValue);
 
-        m_imgThumbNormal.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
-        m_imgThumbFocus.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
-        m_imgThumbPushDown.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imgThumbNormal.loadFromSRM(m_pSkin, szValue);
+        m_imgThumbFocus.loadFromSRM(m_pSkin, szValue);
+        m_imgThumbPushDown.loadFromSRM(m_pSkin, szValue);
 
-        m_imgTrack.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imgTrack.loadFromSRM(m_pSkin, szValue);
 
         // 根据前面设置的
         // 上面的按钮
@@ -1008,19 +1008,19 @@ bool CSkinHScrollBar::setProperty(cstr_t szProperty, cstr_t szValue) {
         // 图片
         m_strBmpFile = szValue;
 
-        m_imgTopBtNormal.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
-        m_imgTopBtFocus.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
-        m_imgTopBtPushDown.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imgTopBtNormal.loadFromSRM(m_pSkin, szValue);
+        m_imgTopBtFocus.loadFromSRM(m_pSkin, szValue);
+        m_imgTopBtPushDown.loadFromSRM(m_pSkin, szValue);
 
-        m_imgBottomBtNormal.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
-        m_imgBottomBtFocus.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
-        m_imgBottomBtPushDown.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imgBottomBtNormal.loadFromSRM(m_pSkin, szValue);
+        m_imgBottomBtFocus.loadFromSRM(m_pSkin, szValue);
+        m_imgBottomBtPushDown.loadFromSRM(m_pSkin, szValue);
 
-        m_imgThumbNormal.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
-        m_imgThumbFocus.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
-        m_imgThumbPushDown.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imgThumbNormal.loadFromSRM(m_pSkin, szValue);
+        m_imgThumbFocus.loadFromSRM(m_pSkin, szValue);
+        m_imgThumbPushDown.loadFromSRM(m_pSkin, szValue);
 
-        m_imgTrack.loadFromSRM(m_pSkin->getSkinFactory(), szValue);
+        m_imgTrack.loadFromSRM(m_pSkin, szValue);
 
         // 根据前面设置的
         // 上面的按钮

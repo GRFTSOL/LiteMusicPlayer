@@ -45,7 +45,7 @@ static void PNGAPI png_read_data(png_structp png_ptr, png_bytep data, png_size_t
     }
 }
 
-RawImageData *loadRawImageDataFromPngFile(IILIO *io) {
+RawImageDataPtr loadRawImageDataFromPngFile(IILIO *io) {
     png_structp png_ptr = nullptr;
     png_infop info_ptr = nullptr;
 
@@ -58,7 +58,7 @@ RawImageData *loadRawImageDataFromPngFile(IILIO *io) {
     png_byte **ppbRowPointers = nullptr;
     unsigned long i;
     png_uint_32 nWidth, nHeight;
-    RawImageData *imgData = nullptr;
+    RawImageDataPtr imgData;
     png_bytep pRow;
 
     // first check the eight uint8_t PNG signature
@@ -85,7 +85,7 @@ RawImageData *loadRawImageDataFromPngFile(IILIO *io) {
         goto R_FAILED;
     }
 
-    imgData = new RawImageData;
+    imgData = make_shared<RawImageData>();
 
     //     __try
     //     {
@@ -182,7 +182,7 @@ RawImageData *loadRawImageDataFromPngFile(IILIO *io) {
     png_read_image(png_ptr, ppbRowPointers);
 
     if (ulChannels == 4) {
-        preMultiplyRGBChannels(imgData);
+        preMultiplyRGBChannels(imgData.get());
     }
 
     // read the additional chunks in the PNG file (not really needed)
@@ -207,10 +207,6 @@ RawImageData *loadRawImageDataFromPngFile(IILIO *io) {
     return imgData;
 
 R_FAILED:
-    if (imgData) {
-        freeRawImage(imgData);
-    }
-
     if (png_ptr) {
         if (info_ptr) {
             png_destroy_info_struct(png_ptr, &info_ptr);

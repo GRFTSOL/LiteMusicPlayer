@@ -57,7 +57,7 @@ public:
 
     bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 
-    void setContentImage(RawImageData *image);
+    void setContentImage(const RawImageDataPtr &image);
 
     void setColor(const CColor &clr, bool bAutoSelColor);
 

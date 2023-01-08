@@ -7,7 +7,7 @@
 
 
 CGContextRef createViewContext(ViewMacImp *view) {
-    CGContextRef viewContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    CGContextRef viewContext = (CGContextRef)[[NSGraphicsContext currentContext] CGContext];
     assert(viewContext);
 
     CGContextSaveGState(viewContext);
@@ -57,7 +57,7 @@ void CRawGraphData::destroy() {
     m_imageData.free();
 }
 
-void CRawGraphData::drawToWindow(int xdest, int ydest, int width, int height, int xsrc, int ysrc) {
+void CRawGraphData::drawToWindow(int xdest, int ydest, int width, int height, int xsrc, int ysrc, float scaleFactor) {
     assert(m_context);
 
     CGImageRef rawImage = CGBitmapContextCreateImage(m_context);
@@ -79,7 +79,8 @@ void CRawGraphData::drawToWindow(int xdest, int ydest, int width, int height, in
         return;
     }
 
-    CGRect rcSrc = CGRectMake(xsrc, m_imageData.height - height - ydest, width, height);
+    CGRect rcSrc = CGRectMake(xsrc * scaleFactor, m_imageData.height - (height + ydest) * scaleFactor,
+        width * scaleFactor, height * scaleFactor);
     CGImageRef partImage = CGImageCreateWithImageInRect(rawImage, rcSrc);
 
     CGContextDrawImage(viewContext, rcDest, partImage);
@@ -87,7 +88,4 @@ void CRawGraphData::drawToWindow(int xdest, int ydest, int width, int height, in
     CGContextRestoreGState(viewContext);
     CGImageRelease(partImage);
     CGImageRelease(rawImage);
-}
-
-void CRawGraphData::drawToWindowStretch(int xdest, int ydest, int width, int height, int xsrc, int ysrc, int widthsrc, int heightsrc) {
 }
