@@ -242,23 +242,36 @@ void CSkinListView::onSize() {
         return;
     }
 
-    int w = m_rcContent.width();
+    int remaining = m_rcContent.width();
     if (m_vHeading.size() == 1) {
-        m_vHeading[0]->nWidth = w;
+        m_vHeading[0]->nWidth = remaining;
     } else {
-        int n = 0;
-        int maxIndex = 0, maxWidth = 0;
+        int maxIndex = 0, maxWidth = 0, secondWidth = 0;
         for (int i = 0; i < (int)m_vHeading.size(); i++) {
-            if (m_vHeading[i]->nWidth > maxWidth) {
-                maxWidth = m_vHeading[i]->nWidth;
+            int w = m_vHeading[i]->nWidth;
+            if (w > maxWidth) {
+                secondWidth = maxWidth;
+                maxWidth = w;
                 maxIndex = i;
+                printf("maxIndex: %d, %d, second: %d\n", maxIndex, maxWidth, secondWidth);
+            } else if (w > secondWidth) {
+                secondWidth = w;
             }
-            n += m_vHeading[i]->nWidth;
+            remaining -= w;
         }
 
-        if (n < w) {
+        if (remaining >= 0) {
             // 将剩余的空间都给宽度最大的一行.
-            m_vHeading[maxIndex]->nWidth += w - n;
+            m_vHeading[maxIndex]->nWidth += remaining;
+        } else {
+            if (m_vHeading[maxIndex]->nWidth + remaining <= secondWidth) {
+                // 不能缩小得比第二的还小，否则就无法自动调节大小了.
+                m_vHeading[maxIndex]->nWidth = secondWidth + 5;
+                printf("max new width: %d\n", m_vHeading[maxIndex]->nWidth);
+            } else {
+                m_vHeading[maxIndex]->nWidth += remaining;
+                printf("@max new width: %d\n", m_vHeading[maxIndex]->nWidth);
+            }
         }
     }
 

@@ -384,6 +384,7 @@ void CSkinEditCtrl::setCaret(int nRow, int nCol) {
 void CSkinEditCtrl::setText(cstr_t szText) {
     m_undoMgr.clear();
     doSetText(szText);
+    showCaret();
     updateScrollInfo();
 }
 
@@ -2317,6 +2318,9 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
             break;
         }
     default:
+        if (m_pEditNotification) {
+            m_pEditNotification->onEditorKeyDown(nChar, nFlags);
+        }
         return;
     }
 

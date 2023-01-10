@@ -12,11 +12,30 @@
 
 class CMPlayer;
 
+/**
+ * 存储在数据库中的 playlist 信息.
+ */
+struct PlaylistInfo {
+    int                         id;
+    string                      name;
+    int                         duration; // 总时长，单位秒
+    int                         count;
+    int                         rating;
+    bool                        isUpToDate; // 是否 duration, count 已经更新.
+    vector<int>                 mediaIds;
+
+};
+
+using VecPlaylistInfo = vector<PlaylistInfo>;
+
 class CMediaLibrary : public IMediaLibrary {
     OBJ_REFERENCE_DECL
 public:
     CMediaLibrary();
     virtual ~CMediaLibrary();
+
+    virtual void getMediaCategories(VecMediaCategories &categoriesOut);
+    virtual MLRESULT getMediaCategory(const MediaCategory &category, IPlaylist **playlist);
 
     virtual MLRESULT getAllArtist(IVString **ppvArtist);
 
@@ -31,6 +50,7 @@ public:
     virtual uint32_t getMediaCount();
 
     virtual MLRESULT getMediaByUrl(cstr_t szUrl, IMedia **pMedia);
+    virtual MLRESULT getMediaByID(int id, IMedia **pMedia);
 
     virtual MLRESULT add(cstr_t szMediaUrl, IMedia **ppMedia);
 
@@ -117,16 +137,26 @@ protected:
 
     int upgradeCheck();
 
+    void loadPlaylists();
+    int savePlaylist(const PlaylistInfo &playlist);
+    IPlaylist *getPlaylist(int playlistId);
+    void deltePlaylist(int playlistId);
+    void updateMediaCategories();
+
 protected:
     friend class CMLQueryPlaylist;
 
     CMPAutoPtr<IPlaylist>       m_allMedias;
     CMPAutoPtr<CMPlayer>        m_player;
 
+    VecPlaylistInfo             m_playlists;
+    VecMediaCategories          m_mediaCategories;
+    uint64_t                    m_timeMediaCategoryUpdated;
+
     CSqlite3                    m_db;
     std::recursive_mutex        m_mutexDataAccess;
 
-    CSqlite3Stmt                m_sqlAdd, m_sqlAddFast, m_sqlQueryByUrl;
+    CSqlite3Stmt                m_sqlAdd, m_sqlAddFast, m_sqlQueryByUrl, m_stmtQueryByID;
     int                         m_nInitResult;
 
 };

@@ -77,21 +77,23 @@ bool CSkinListCtrl::setItemText(int rowIdx, int colIdx, cstr_t text, bool isRedr
     assert(rowIdx >= 0 && rowIdx < (int)m_vRows.size());
     if (rowIdx >= 0 && rowIdx < (int)m_vRows.size()) {
         Row *row = m_vRows[rowIdx];
-        if (m_vHeading[colIdx]->colType == CColHeader::TYPE_TEXT) {
-            ItemString *item = (ItemString *)row->vItems[colIdx];
-            item->text = text;
-            if (isRedraw) {
-                invalidateItem(rowIdx);
+        if (colIdx >= 0 && colIdx < row->vItems.size()) {
+            if (m_vHeading[colIdx]->colType == CColHeader::TYPE_TEXT) {
+                ItemString *item = (ItemString *)row->vItems[colIdx];
+                item->text = text;
+                if (isRedraw) {
+                    invalidateItem(rowIdx);
+                }
+                return true;
+            } else if (m_vHeading[colIdx]->colType == CColHeader::TYPE_TEXT_EX) {
+                ItemStringEx *item = (ItemStringEx *)row->vItems[colIdx];
+                item->text = text;
+                item->vTextColor.clear();
+                if (isRedraw) {
+                    invalidateItem(rowIdx);
+                }
+                return true;
             }
-            return true;
-        } else if (m_vHeading[colIdx]->colType == CColHeader::TYPE_TEXT_EX) {
-            ItemStringEx *item = (ItemStringEx *)row->vItems[colIdx];
-            item->text = text;
-            item->vTextColor.clear();
-            if (isRedraw) {
-                invalidateItem(rowIdx);
-            }
-            return true;
         }
     }
 
@@ -209,6 +211,8 @@ bool CSkinListCtrl::deleteAllItems(bool bRedraw) {
 
     m_nEndSelRow = -1;
     m_nBegSelRow = -1;
+
+    m_nowPlayingRow = -1;
 
     if (bRedraw) {
         invalidate();

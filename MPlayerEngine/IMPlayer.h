@@ -298,11 +298,45 @@ enum MediaLibOrderBy {
 
 };
 
+/**
+ * 按照分类统计出媒体库的歌曲.
+ *
+ * 在搜索时，可以根据分类名来搜索歌曲.
+ */
+struct MediaCategory {
+    enum Type {
+        ALL,
+        PLAYLIST,
+        FOLDER,
+        ARTIST,
+        ALBUM,
+        GENRE,
+        _COUNT,
+    };
+
+    Type                        type;
+    string                      name;
+    string                      value;
+    uint32_t                    mediaCount;     // 歌曲数量
+    uint32_t                    mediaDuration;  // 总共时长，单位秒
+
+    MediaCategory(Type type, cstr_t name, cstr_t value, uint32_t mediaCount = 0, uint32_t mediaDuration = 0) : type(type), name(name), value(value), mediaCount(mediaCount), mediaDuration(mediaDuration) {
+    }
+
+};
+
+using VecMediaCategories = vector<MediaCategory>;
+
+cstr_t mediaCategoryTypeToString(MediaCategory::Type type);
+
 interface IMediaLibrary {
     virtual ~IMediaLibrary() { }
 
     virtual void addRef() = 0;
     virtual void release() = 0;
+
+    virtual void getMediaCategories(VecMediaCategories &categoriesOut) = 0;
+    virtual MLRESULT getMediaCategory(const MediaCategory &category, IPlaylist **playlist) = 0;
 
     virtual MLRESULT getAllArtist(IVString **ppvArtist) = 0;
 
@@ -317,6 +351,7 @@ interface IMediaLibrary {
     virtual uint32_t getMediaCount() = 0;
 
     virtual MLRESULT getMediaByUrl(cstr_t szUrl, IMedia **pMedia) = 0;
+    virtual MLRESULT getMediaByID(int id, IMedia **pMedia) = 0;
 
     virtual MLRESULT add(cstr_t szMediaUrl, IMedia **ppMedia) = 0;
 

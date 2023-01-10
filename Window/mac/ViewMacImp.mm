@@ -96,7 +96,9 @@
     int code = [theEvent keyCode];
 
     if (mIsTextInputMode) {
-        if (mIsMarkedText || (code < kVK_Delete && (modifierFlags & ~NSEventModifierFlagShift) == 0)) {
+        if (mIsMarkedText || (code != kVK_Return && code != kVK_Escape && code < kVK_Delete &&
+            (modifierFlags & ~NSEventModifierFlagShift) == 0))
+        {
             // 输入法来处理键盘输入
             if ([[self inputContext] handleEvent:theEvent]) {
                 return;

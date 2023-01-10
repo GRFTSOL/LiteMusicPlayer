@@ -17,6 +17,7 @@ public:
     virtual MLRESULT getTitle(IString *strTitle);
     virtual MLRESULT getAlbum(IString *strAlbum);
 
+    // 歌曲长度：单位毫秒
     virtual int getDuration();
 
     virtual MLRESULT setSourceUrl(cstr_t strUrl);
@@ -48,6 +49,7 @@ protected:
     int16_t                     m_nYear;
     string                      m_strGenre;
     string                      m_strComment;
+    // 歌曲长度：单位毫秒
     int                         m_nLength;
     uint32_t                    m_nFileSize;
     time_t                      m_timeAdded;

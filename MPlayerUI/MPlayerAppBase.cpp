@@ -183,8 +183,9 @@ bool CMPlayerAppBase::init() {
 }
 
 void CMPlayerAppBase::quit() {
-    g_LyricSearch.quit();
-    g_LyricsDownloader.quit();
+    // 因为网络原因会导致 线程卡住，不主动调用 quit.
+    // g_LyricSearch.quit();
+    // g_LyricsDownloader.quit();
 
     g_lyrOutPlguinMgr.quit();
     g_OnlineSearch.quit();

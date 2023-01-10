@@ -22,6 +22,14 @@ public:
         void add(uint8_t _nCountOfText, uint8_t _nClrIndex) {
             push_back(TextColor(_nCountOfText, _nClrIndex));
         }
+
+        int sumCount() {
+            int count = 0;
+            for (auto &item : *this) {
+                count += item.nCountOfText;
+            }
+            return count;
+        }
     };
 
     class Item {

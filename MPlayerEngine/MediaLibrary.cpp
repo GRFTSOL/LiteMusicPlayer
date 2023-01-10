@@ -3,61 +3,12 @@
 #include "MediaLibrary.h"
 
 
+#define ALBUM_ARTIST_SEP        "~@~"
+#define ALBUM_ARTIST_SEP_LEN    3
+
 #define MEDIA_LIB_VER_NAME  "version"
 #define MEDIA_LIB_VER_CUR   "1"
 
-
-/*
-
-CREATE TABLE lib_ver
-(
-  version integer Primary Key,
-);
-
-
-CREATE TABLE IF NOT EXISTS medialib
-(
-  id integer Primary Key,
-  url text COLLATE NOCASE,
-  file_deleted integer,
-  info_updated integer,
-  is_user_rating integer,
-  artist text COLLATE NOCASE,
-  album text COLLATE NOCASE,
-  title text COLLATE NOCASE,
-  track integer,
-  year integer,
-  genre integer COLLATE NOCASE,
-  comment integer COLLATE NOCASE,
-  length integer,
-  filesize integer,
-  time_added integer,
-  time_played integer,
-  rating integer,
-  times_played integer,
-  times_play_skipped integer,
-  lyrics_file text COLLATE NOCASE
-);
-
-CREATE INDEX IF NOT EXISTS mli_url on medialib (url);
-CREATE INDEX IF NOT EXISTS mli_artist on medialib (artist);
-CREATE INDEX IF NOT EXISTS mli_album on medialib (album);
-CREATE INDEX IF NOT EXISTS mli_title on medialib (title);
-CREATE INDEX IF NOT EXISTS mli_genre on medialib (genre);
-CREATE INDEX IF NOT EXISTS mli_comment on medialib (comment);
-CREATE INDEX IF NOT EXISTS mli_time_added on medialib (time_added);
-CREATE INDEX IF NOT EXISTS mli_time_played on medialib (time_played);
-CREATE INDEX IF NOT EXISTS mli_rating on medialib (rating);
-CREATE INDEX IF NOT EXISTS mli_times_played on medialib (times_played);
-// CREATE INDEX IF NOT EXISTS ml_ on medialib ();
-
-  update medialib set url=?, info_updated=1, artist=?, album=?, title=?, track=?,
-    year=?, genre=?, comment=?, length=?, filesize=?, lyrics_file=?
-
-add Media
-    insert into medialib values (nullptr, ?, ?, ?, ?,  ?, ?, ?, ?,  ?, ?, ?, ?,  ?, 0, 0, 0, ?);
-                                 id                 title        comment      time_played
-*/
 
 #define SQL_CREATE_SETTINGS        "CREATE TABLE IF NOT EXISTS settings\
 (\
@@ -129,6 +80,24 @@ DROP INDEX IF EXISTS mli_times_played;"
                               "VALUES (?, ?, ?);"
 
 #define SQL_QUERY_MEDIA_BY_URL  "select * from medialib where url=? "
+#define SQL_QUERY_MEDIA_BY_ID   "select * from medialib where id=? "
+
+
+#define SQL_CREATE_TABLE_PLAYLIST   "CREATE TABLE IF NOT EXISTS playlists \
+(\
+  id integer Primary Key,\
+  name text,\
+  duration integer DEFAULT 0,\
+  count integer DEFAULT 0,\
+  rating integer DEFAULT 300,\
+  is_up_to_date integer DEFAULT 0,\
+  media_ids text DEFAULT NULL\
+);"
+
+#define SQL_QUERY_ALL_PLAYLISTS     "SELECT * FROM playlists"
+#define SQL_ADD_PLAYLIST            "INSERT INTO playlists (name, duration, count, rating, is_up_to_date, media_ids) VALUES ('?, ?, ?, ?, ?, ?"
+#define SQL_UPDATE_PLAYLIST_BY_ID   "UPDATE playlists SET name=?, duration=?, count=?, rating=?, is_up_to_date=?, media_ids=?"
+#define SQL_DELETE_PLAYLIST_BY_ID   "DELETE FROM playlists WHERE id=?"
 
 #define SQLITE3_BIND_TEXT(sqlstmt, strData)            \
     nRet = sqlstmt.bindText(n, strData.c_str(), (int)strData.size());\
@@ -144,6 +113,15 @@ CMedia *newMedia() {
 
     return pMedia;
 }
+
+cstr_t mediaCategoryTypeToString(MediaCategory::Type type) {
+    static cstr_t NAMES[] = { _TLM("All Musics"), _TLM("Playlist"), _TLM("Folder"), _TLM("Artist"), _TLM("Album"), _TLM("Genre") };
+    assert(CountOf(NAMES) == MediaCategory::_COUNT);
+    assert(type >= 0 && type <= MediaCategory::_COUNT);
+
+    return NAMES[type];
+}
+
 
 /*
 How to calculate auto rating value:
@@ -269,6 +247,92 @@ CMediaLibrary::CMediaLibrary() {
 
 CMediaLibrary::~CMediaLibrary() {
     close();
+}
+
+void CMediaLibrary::getMediaCategories(VecMediaCategories &categoriesOut) {
+    updateMediaCategories();
+
+    categoriesOut = m_mediaCategories;
+}
+
+MLRESULT CMediaLibrary::getMediaCategory(const MediaCategory &category, IPlaylist **playlist) {
+    assert(playlist != nullptr);
+    if (category.type == MediaCategory::ALL) {
+        m_allMedias->addRef();
+        *playlist = m_allMedias;
+        return ERR_OK;
+    } else if (category.type == MediaCategory::PLAYLIST) {
+        *playlist = getPlaylist(atoi(category.value.c_str()));
+        return ERR_OK;
+    }
+
+    int count = m_allMedias->getCount();
+    auto pl = newPlaylist();
+
+    switch (category.type) {
+        case MediaCategory::FOLDER: {
+            CXStr url;
+            for (int i = 0; i < count; i++) {
+                CMPAutoPtr<IMedia> media;
+                m_allMedias->getItem(i, &media);
+                media->getSourceUrl(&url);
+                if (startsWith(url.c_str(), category.value.c_str())) {
+                    pl->insertItem(-1, media);
+                }
+            }
+            break;
+        }
+        case MediaCategory::ARTIST: {
+            CXStr str;
+            for (int i = 0; i < count; i++) {
+                CMPAutoPtr<IMedia> media;
+                m_allMedias->getItem(i, &media);
+                media->getArtist(&str);
+                if (category.value == str.c_str()) {
+                    pl->insertItem(-1, media);
+                }
+            }
+            break;
+        }
+        case MediaCategory::ALBUM: {
+            CXStr str;
+            for (int i = 0; i < count; i++) {
+                CMPAutoPtr<IMedia> media;
+                m_allMedias->getItem(i, &media);
+                media->getArtist(&str);
+                if (startsWith(category.value.c_str(), str.c_str())) {
+                    SizedString key(category.value.c_str(), category.value.size());
+                    key.shrink((int)str.size());
+                    if (key.startsWith(ALBUM_ARTIST_SEP)) {
+                        key.shrink(ALBUM_ARTIST_SEP_LEN);
+                        media->getAlbum(&str);
+                        if (key.equal(str.c_str())) {
+                            pl->insertItem(-1, media);
+                        }
+                    }
+                }
+            }
+            break;
+        }
+        case MediaCategory::GENRE: {
+            CXStr str;
+            for (int i = 0; i < count; i++) {
+                CMPAutoPtr<IMedia> media;
+                m_allMedias->getItem(i, &media);
+                if (media->getAttribute(MA_GENRE, &str) == ERR_OK &&
+                        category.value == str.c_str()) {
+                    pl->insertItem(-1, media);
+                }
+            }
+            break;
+        }
+        default:
+            assert(0);
+            break;
+    }
+
+    *playlist = pl;
+    return ERR_OK;
 }
 
 MLRESULT CMediaLibrary::getAllArtist(IVString **ppvArtist) {
@@ -401,6 +465,39 @@ MLRESULT CMediaLibrary::getMediaByUrl(cstr_t szUrl, IMedia **ppMedia) {
     }
 
     m_sqlQueryByUrl.reset();
+
+    return nRet;
+}
+
+MLRESULT CMediaLibrary::getMediaByID(int id, IMedia **ppMedia) {
+    assert(ppMedia);
+
+    if (!isOK()) {
+        return m_nInitResult;
+    }
+
+    *ppMedia = nullptr;
+
+    RMutexAutolock autolock(m_mutexDataAccess);
+
+    m_stmtQueryByID.bindInt(1, id);
+
+    int nRet = m_stmtQueryByID.step();
+    if (nRet == ERR_SL_OK_ROW) {
+        nRet = ERR_OK;
+        CMedia *media;
+
+        media = newMedia();
+        sqliteQueryMedia(&m_stmtQueryByID, media);
+        if (!media->m_bIsFileDeleted) {
+            *ppMedia = media;
+            nRet = ERR_NOT_FOUND;
+        }
+    } else {
+        nRet = ERR_NOT_FOUND;
+    }
+
+    m_stmtQueryByID.reset();
 
     return nRet;
 }
@@ -970,19 +1067,24 @@ int CMediaLibrary::init(CMPlayer *pPlayer) {
     }
 
     m_nInitResult = m_sqlAdd.prepare(&m_db, SQL_ADD_MEDIA);
-    if (m_nInitResult != ERR_OK) {
-        goto INIT_FAILED;
-    }
+    assert(m_nInitResult == ERR_OK);
 
     m_nInitResult = m_sqlAddFast.prepare(&m_db, SQL_ADD_MEDIA_FAST);
-    if (m_nInitResult != ERR_OK) {
-        goto INIT_FAILED;
-    }
+    assert(m_nInitResult == ERR_OK);
 
     m_nInitResult = m_sqlQueryByUrl.prepare(&m_db, SQL_QUERY_MEDIA_BY_URL);
+    assert(m_nInitResult == ERR_OK);
+
+    m_nInitResult = m_stmtQueryByID.prepare(&m_db, SQL_QUERY_MEDIA_BY_ID);
+    assert(m_nInitResult == ERR_OK);
+
+    // 创建 playlists 的 table
+    m_nInitResult = m_db.exec(SQL_CREATE_TABLE_PLAYLIST);
     if (m_nInitResult != ERR_OK) {
-        goto INIT_FAILED;
+        return m_nInitResult;
     }
+
+    loadPlaylists();
 
     m_player = pPlayer;
 
@@ -1002,6 +1104,7 @@ void CMediaLibrary::close() {
     m_sqlAdd.finalize();
     m_sqlAddFast.finalize();
     m_sqlQueryByUrl.finalize();
+    m_stmtQueryByID.finalize();
     m_db.close();
     m_player.release();
 }
@@ -1318,6 +1421,7 @@ int CMediaLibrary::upgradeCheck() {
 void CMediaLibrary::updateMediaInMem(IMedia *media) {
     auto id = media->getID();
     auto count =  m_allMedias->getCount();
+
     for (uint32_t i = 0; i < count; i++) {
         CMPAutoPtr<IMedia> item;
         if (m_allMedias->getItem(i, &item) == ERR_OK) {
@@ -1333,6 +1437,7 @@ void CMediaLibrary::updateMediaInMem(IMedia *media) {
 void CMediaLibrary::removeMediaInMem(IMedia *media) {
     auto id = media->getID();
     auto count =  m_allMedias->getCount();
+
     for (uint32_t i = 0; i < count; i++) {
         CMPAutoPtr<IMedia> item;
         if (m_allMedias->getItem(i, &item) == ERR_OK) {
@@ -1342,4 +1447,262 @@ void CMediaLibrary::removeMediaInMem(IMedia *media) {
             }
         }
     }
+}
+
+void CMediaLibrary::loadPlaylists() {
+    m_playlists.clear();
+
+    CSqlite3Stmt stmt;
+    auto ret = stmt.prepare(&m_db, SQL_QUERY_ALL_PLAYLISTS);
+    assert(ret == ERR_OK);
+
+    int nRet = stmt.step();
+    while (nRet == ERR_SL_OK_ROW) {
+        PlaylistInfo info;
+        int idx = 0;
+        info.id = stmt.columnInt(idx++);
+        info.name = stmt.columnText(idx++);
+        info.duration = stmt.columnInt(idx++);
+        info.count = stmt.columnInt(idx++);
+        info.rating = stmt.columnInt(idx++);
+        info.isUpToDate = stmt.columnInt(idx++) != 0;
+        string idsText = stmt.columnText(idx++);
+
+        VecStrings ids;
+        strSplit(idsText.c_str(), ',', ids);
+        for (auto &id : ids) {
+            info.mediaIds.push_back(atoi(id.c_str()));
+        }
+
+        m_playlists.push_back(info);
+
+        nRet = stmt.step();
+    }
+}
+
+int CMediaLibrary::savePlaylist(const PlaylistInfo &playlist) {
+    CSqlite3Stmt stmt;
+
+    if (playlist.id == -1) {
+        auto ret = stmt.prepare(&m_db, SQL_ADD_PLAYLIST);
+        assert(ret == ERR_OK);
+    } else {
+        auto ret = stmt.prepare(&m_db, SQL_UPDATE_PLAYLIST_BY_ID);
+        assert(ret == ERR_OK);
+    }
+
+    string ids = strJoin(playlist.mediaIds.begin(), playlist.mediaIds.end(), ",");
+
+    int idx = 0;
+    auto ret = stmt.bindStaticText(idx++, playlist.name.c_str()); assert(ret == ERR_OK);
+    ret = stmt.bindInt(idx++, playlist.duration); assert(ret == ERR_OK);
+    ret = stmt.bindInt(idx++, playlist.count); assert(ret == ERR_OK);
+    ret = stmt.bindInt(idx++, playlist.rating); assert(ret == ERR_OK);
+    ret = stmt.bindInt(idx++, playlist.isUpToDate); assert(ret == ERR_OK);
+    ret = stmt.bindStaticText(idx++, ids.c_str()); assert(ret == ERR_OK);
+
+    ret = stmt.step();
+    assert(ret == ERR_OK);
+    return m_db.LastInsertRowId();
+}
+
+IPlaylist *CMediaLibrary::getPlaylist(int playlistId) {
+    for (auto &info : m_playlists) {
+        if (info.id == playlistId) {
+            auto playlist = newPlaylist();
+            for (auto id : info.mediaIds) {
+                CMPAutoPtr<IMedia> m;
+                if (getMediaByID(id, &m) == ERR_OK) {
+                    playlist->insertItem(-1, m);
+                }
+            }
+            return playlist;
+        }
+    }
+
+    return nullptr;
+}
+
+void CMediaLibrary::deltePlaylist(int playlistId) {
+    string str = stringPrintf("DELETE FROM playlists WHERE id=%d", playlistId);
+
+    auto ret = m_db.exec(str.c_str());
+    assert(ret == ERR_OK);
+
+    for (auto it = m_playlists.begin(); it != m_playlists.end(); ++it) {
+        auto &info = *it;
+        if (info.id == playlistId) {
+            m_playlists.erase(it);
+            break;
+        }
+    }
+}
+
+/**
+ * 根据目录名，将歌曲统计到对应的目录下
+ *
+ *  在统计的时候使用树状的结构. 目录下的子目录一般也不多，所以没有必要使用 map 之类
+ */
+struct MediaTree {
+    string                      name;
+    int                         mediaCount;     // 歌曲数量
+    int                         mediaDuration;  // 总共时长，单位秒
+
+    vector<MediaTree>           children;
+
+    MediaTree(const string &name, int duration, int count = 1) : name(name), mediaDuration(duration), mediaCount(count) {
+    }
+};
+
+void addMediaTree(MediaTree &parent, VecStrings::iterator itPathName, const VecStrings::iterator &end, int duration) {
+    parent.mediaDuration += duration;
+    parent.mediaCount++;
+
+    if (itPathName == end) {
+        return;
+    }
+
+    string &name = *itPathName;
+    for (auto &child : parent.children) {
+        if (child.name == name) {
+            addMediaTree(child, ++itPathName, end, duration);
+            return;
+        }
+    }
+
+    // 添加
+    parent.children.push_back(MediaTree(*itPathName, duration));
+    addMediaTree(parent.children.back(), ++itPathName, end, duration);
+}
+
+void mediaTreeToFolderCategory(string path, MediaTree &parent, VecMediaCategories &mediaCategories) {
+    path += PATH_SEP_STR + parent.name;
+
+    if (parent.children.size() == 1 && parent.mediaCount == parent.children[0].mediaCount) {
+        // 只有一层目录，就不必添加了
+        mediaTreeToFolderCategory(path, parent.children[0], mediaCategories);
+        return;
+    }
+
+    mediaCategories.push_back(MediaCategory(MediaCategory::FOLDER, parent.name.c_str(), path.c_str(), parent.mediaCount, parent.mediaDuration));
+
+    for (auto &child : parent.children) {
+        mediaTreeToFolderCategory(path, child, mediaCategories);
+    }
+}
+
+void CMediaLibrary::updateMediaCategories() {
+    const int64_t UPDATE_DURATION = 60 * 3;
+
+    auto now = getTickCount();
+    if (abs((int64_t)(now - m_timeMediaCategoryUpdated)) < UPDATE_DURATION) {
+        return;
+    }
+    m_timeMediaCategoryUpdated = now;
+
+    m_mediaCategories.clear();
+
+    uint32_t totalDuration = 0;
+    m_mediaCategories.push_back(MediaCategory(MediaCategory::ALL,
+        "", "", m_allMedias->getCount(), 0));
+
+    for (auto &info : m_playlists) {
+        m_mediaCategories.push_back(MediaCategory(MediaCategory::PLAYLIST,
+            info.name.c_str(), info.name.c_str(), info.count, info.duration));
+    }
+
+    unordered_map<string, MediaCategory> byArtist;
+    unordered_map<string, MediaCategory> byAlbum;
+    unordered_map<string, MediaCategory> byGenre;
+    MediaTree root("", 0, 0);
+    int count = m_allMedias->getCount();
+
+    for (int i = 0; i < count; i++) {
+        CMPAutoPtr<IMedia> media;
+        if (m_allMedias->getItem(i, &media) == ERR_OK) {
+            CXStr str;
+
+            int duration = media->getDuration() / 1000;
+            totalDuration += duration;
+
+            // Artist
+            media->getArtist(&str);
+            auto it = byArtist.find(str.c_str());
+            if (it == byArtist.end()) {
+                byArtist.insert(std::pair<string, MediaCategory>(string(str.c_str()), MediaCategory(MediaCategory::ARTIST, str.c_str(), str.c_str(), 1, duration)));
+            } else {
+                auto &info = (*it).second;
+                info.mediaCount++;
+                info.mediaDuration += duration;
+            }
+
+            // Artist-Album
+            string key(str.c_str());
+            media->getAlbum(&str);
+            key.append(ALBUM_ARTIST_SEP);
+            key.append(str.c_str());
+            it = byAlbum.find(key);
+            if (it == byAlbum.end()) {
+                byAlbum.insert(std::pair<string, MediaCategory>(key, MediaCategory(MediaCategory::ALBUM, str.c_str(), key.c_str(), 1, duration)));
+            } else {
+                auto &info = (*it).second;
+                info.mediaCount++;
+                info.mediaDuration += duration;
+            }
+
+            // Genre
+            if (media->getAttribute(MA_GENRE, &str) == ERR_OK) {
+                auto it = byGenre.find(str.c_str());
+                if (it == byGenre.end()) {
+                    byGenre.insert(std::pair<string, MediaCategory>(string(str.c_str()), MediaCategory(MediaCategory::GENRE, str.c_str(), str.c_str(), 1, duration)));
+                } else {
+                    auto &info = (*it).second;
+                    info.mediaCount++;
+                    info.mediaDuration += duration;
+                }
+            }
+
+            VecStrings paths;
+            media->getSourceUrl(&str);
+            strSplit(str.c_str(), PATH_SEP_CHAR, paths);
+            paths.pop_back(); // 去掉文件名
+            addMediaTree(root, paths.begin(), paths.end(), duration);
+        }
+    }
+
+    m_mediaCategories.front().mediaDuration = totalDuration;
+
+    for (auto &item : byArtist) {
+        m_mediaCategories.push_back(item.second);
+    }
+
+    for (auto &item : byAlbum) {
+        m_mediaCategories.push_back(item.second);
+    }
+
+    for (auto &item : byGenre) {
+        m_mediaCategories.push_back(item.second);
+    }
+
+    for (auto &parent : root.children) {
+        auto &children = parent.children;
+        for (auto &child : children) {
+            mediaTreeToFolderCategory(parent.name, child, m_mediaCategories);
+        }
+    }
+
+    std::sort(m_mediaCategories.begin(), m_mediaCategories.end(),
+            [](const MediaCategory &a, const MediaCategory &b) {
+        // 按照 type, mediaCount, name 来排序
+        if (a.type < b.type) {
+            return true;
+        } else if (a.type == b.type) {
+            if (a.mediaCount > b.mediaCount) {
+                return true;
+            } else if (a.mediaCount == b.mediaCount) {
+                return a.name < b.name;
+            }
+        }
+        return false;
+    });
 }

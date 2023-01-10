@@ -46,11 +46,12 @@ protected:
 
     void onCurrentPlaylistEvent(CEventPlaylistChanged *pEventPlaylistChanged = nullptr);
 
-    int getItemImageIndex(int nItem) override;
+    void setItemMediaDuration(int index, int seconds);
+
+    void playItem(int index);
 
     void updatePlaylist(bool isRedraw);
     void doSearch(cstr_t keyword);
-    void useResultAsNowPlaying();
     void showHideEditorSearch(int row);
 
 protected:
@@ -59,5 +60,6 @@ protected:
     int                         m_timerIdBeginSearch;
 
     CMPAutoPtr<IPlaylist>       m_searchResults;
+    VecMediaCategories          m_categoriesResults;
 
 };

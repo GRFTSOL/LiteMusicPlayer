@@ -138,8 +138,8 @@
           HeaderHeight="17" LineColor="#808080" ImageSortedHeader="s_listctrl_sorted_header.png"
           ImageHeader="s_listctrl_header.png" ImageSortFlag="s_listctrl_sort_flag.png"/>
     <NormalPlaylist Extends="Playlist" ID="ID_PLAYLIST" BgColor="#FFFFFF,#EDF3FE" SelBgColor="#3875D7" 
-          NowPlayingBgColor="#007F00" NowPlayingTextColor="#FFFFFF" CustomizedColors="#FF7F00"
-          TextColor="#000000" SelTextColor="#FFFFFF" FontName="Verdana" FontHeight="14"
+          NowPlayingBgColor="#007F00" NowPlayingTextColor="#FFFFFF" CustomizedColors="#FF7F00,#A9A9A9"
+          TextColor="#000000" SelTextColor="#FFFFFF" FontName="Verdana" FontHeight="14" LineHeight="24"
           HeaderHeight="17" LineColor="#808080" ImageSortedHeader="s_listctrl_sorted_header.png"
           ImageHeader="s_listctrl_header.png" ImageSortFlag="s_listctrl_sort_flag.png"/>
     <NormalTabButton Extends="TabButton" Height="22" 
