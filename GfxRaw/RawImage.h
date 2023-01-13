@@ -74,7 +74,7 @@ public:
     void tileMaskBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, CRawImage *imageMask, BlendPixMode bpm = BPM_BLEND);
     void tileBltEx(CRawGraph *canvas, int xOrg, int yOrg, int xDest, int yDest, int nWidthDest, int nHeightDest, BlendPixMode bpm = BPM_BLEND);
 
-    bool isPixelTransparent(CPoint pt) const;
+    virtual bool isPixelTransparent(CPoint pt) const;
 
     int x() const { return m_x; }
     int y() const { return m_y; }

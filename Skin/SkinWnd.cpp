@@ -1070,6 +1070,11 @@ void CSkinWnd::onSetFocus() {
 }
 
 void CSkinWnd::onKillFocus() {
+    if (m_pUIObjCapMouse) {
+        m_pUIObjCapMouse->onMouseMove(CPoint(-1, -1));
+        releaseCaptureMouse(m_pUIObjCapMouse);
+    }
+
     CUIObject *pObj = getFocusUIObj();
     if (pObj) {
         pObj->onKillFocus();

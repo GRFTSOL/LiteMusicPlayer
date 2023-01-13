@@ -48,8 +48,6 @@ protected:
     void setMaxStat(int nMaxStat);
     void destroy();
 
-    bool isMouseHitBt(CPoint &pt);
-
 protected:
 
     struct BtStatImg {

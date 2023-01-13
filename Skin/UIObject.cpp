@@ -881,6 +881,8 @@ bool CUIObject::isPtIn(CPoint pt) {
     }
 
     if (m_imgMask.isValid()) {
+        pt.x -= m_rcObj.left;
+        pt.y -= m_rcObj.top;
         if (m_imgMask.isPixelTransparent(pt)) {
             // pt 所在的点是透明的.
             return false;

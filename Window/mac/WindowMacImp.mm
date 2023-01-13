@@ -35,9 +35,11 @@ backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
 
 - (void)windowDidChangeBackingProperties:(NSNotification *)notification {
     CGFloat scaleFactor = [self backingScaleFactor];
-    DBG_LOG1("ScaleFactorChanged to: %f\n", scaleFactor);
-    mBaseWnd->m_scaleFactor = scaleFactor;
-    mBaseWnd->onScaleFactorChanged(scaleFactor);
+    if (mBaseWnd->m_scaleFactor != scaleFactor) {
+        DBG_LOG1("ScaleFactorChanged to: %f\n", scaleFactor);
+        mBaseWnd->m_scaleFactor = scaleFactor;
+        mBaseWnd->onScaleFactorChanged(scaleFactor);
+    }
 }
 
 - (void) rightMouseDown:(NSEvent *)theEvent {

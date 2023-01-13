@@ -24,6 +24,8 @@ public:
 
     virtual const RawImageDataPtr &getRawImageData(float scaleFactor) override;
 
+    virtual bool isPixelTransparent(CPoint pt) const override;
+
 protected:
     void copyFrom(const CSFImage &src);
 

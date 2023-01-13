@@ -723,6 +723,6 @@ void CRawImage::tileBltEx(CRawGraph *canvas, int xOrg, int yOrg, int xDest, int 
 }
 
 bool CRawImage::isPixelTransparent(CPoint pt) const {
-    RGBQUAD pixel = m_image->getPixel(pt.x, pt.y);
+    RGBQUAD pixel = m_image->getPixel(pt.x + m_x, pt.y + m_y);
     return pixel.rgbReserved == 0;
 }

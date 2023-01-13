@@ -39,7 +39,7 @@ CSkinNStatusButton::~CSkinNStatusButton() {
 bool CSkinNStatusButton::onLButtonDown(uint32_t nFlags, CPoint point) {
     assert(m_pSkin);
 
-    if (!isMouseHitBt(point)) {
+    if (!isPtIn(point)) {
         return false;
     }
 
@@ -65,7 +65,7 @@ void CSkinNStatusButton::onTimer(int nId) {
         CPoint pt = getCursorPos();
         m_pSkin->screenToClient(pt);
 
-        if (isMouseHitBt(pt)) {
+        if (isPtIn(pt)) {
             if (m_id != UID_INVALID) {
                 m_pSkin->postCustomCommandMsg(m_id);
             }
@@ -105,7 +105,7 @@ bool CSkinNStatusButton::onLButtonUp(uint32_t nFlags, CPoint point) {
 bool CSkinNStatusButton::onMouseDrag(CPoint point) {
     bool bStatusChanged = false;
 
-    if (!isMouseHitBt(point)) {
+    if (!isPtIn(point)) {
         m_bLBtDown = false;
         bStatusChanged = true;
     } else if (!m_bLBtDown) {
@@ -132,7 +132,7 @@ bool CSkinNStatusButton::onMouseDrag(CPoint point) {
 bool CSkinNStatusButton::onMouseMove(CPoint point) {
     bool bStatusChanged = false;
 
-    if (isMouseHitBt(point)) {
+    if (isPtIn(point)) {
         if (!m_bLBtDown && m_bEnableHover && !m_bHover) {
             m_bHover = true;
             m_pSkin->setCaptureMouse(this);
@@ -527,19 +527,4 @@ void CSkinNStatusButton::destroy() {
         delete m_vBtStatImg[i];
     }
     m_vBtStatImg.clear();
-}
-
-bool CSkinNStatusButton::isMouseHitBt(CPoint &pt) {
-    if (m_rcPadding.left == 0 && m_rcPadding.top == 0
-        && m_rcPadding.right == 0 && m_rcPadding.bottom == 0) {
-        return m_rcObj.ptInRect(pt);
-    }
-
-    CRect rc = m_rcObj;
-
-    rc.left -= m_rcPadding.left;
-    rc.top -= m_rcPadding.top;
-    rc.right += m_rcPadding.right;
-    rc.bottom += m_rcPadding.bottom;
-    return rc.ptInRect(pt);
 }

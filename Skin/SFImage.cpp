@@ -82,6 +82,11 @@ const RawImageDataPtr &CSFImage::getRawImageData(float scaleFactor) {
     return m_image;
 }
 
+bool CSFImage::isPixelTransparent(CPoint pt) const {
+    RGBQUAD pixel = m_image->getPixel((pt.x + m_x) * m_scaleFactor, (pt.y + m_y) * m_scaleFactor);
+    return pixel.rgbReserved == 0;
+}
+
 /*
 void CSFImage::tileBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDest, int nHeightDest, BlendPixMode bpm)
 {
