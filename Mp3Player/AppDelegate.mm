@@ -62,7 +62,7 @@ NSMenuItem *duplicateMenuItem(NSMenuItem *org) {
         return item;
 
     NSMenu *subMenu = [org submenu];
-    NSMenu *newSubMenu = [[NSMenu allocWithZone:[NSMenu menuZone]] initWithTitle:[org title]];
+    NSMenu *newSubMenu = [[NSMenu alloc] initWithTitle:[org title]];
     [newSubMenu setAutoenablesItems:NO];
     [item setSubmenu:newSubMenu];
 
@@ -85,7 +85,7 @@ NSMenuItem *duplicateMenuItem(NSMenuItem *org) {
 
     const char *szMenu = "MainWndMenu";
     if (pApp->getSkinFactory()->loadMenu(pApp->getMainWnd(), (CMenu **)&_menu, szMenu)) {
-        _menu->updateMenuStatus();
+        _menu->updateMenuStatus(pApp->getMainWnd());
 
         NSMenu *mainMenu = [NSApp mainMenu];
         NSMenu *menu = (NSMenu*)_menu->getHandle();
@@ -169,7 +169,8 @@ NSMenuItem *duplicateMenuItem(NSMenuItem *org) {
     __persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:mom];
     if (![__persistentStoreCoordinator addPersistentStoreWithType:NSXMLStoreType configuration:nil URL:url options:nil error:&error]) {
         [[NSApplication sharedApplication] presentError:error];
-        [__persistentStoreCoordinator release], __persistentStoreCoordinator = nil;
+        [__persistentStoreCoordinator release];
+        __persistentStoreCoordinator = nil;
         return nil;
     }
 
@@ -194,7 +195,7 @@ NSMenuItem *duplicateMenuItem(NSMenuItem *org) {
         [[NSApplication sharedApplication] presentError:error];
         return nil;
     }
-    __managedObjectContext = [[NSManagedObjectContext alloc] init];
+    __managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
     [__managedObjectContext setPersistentStoreCoordinator:coordinator];
 
     return __managedObjectContext;

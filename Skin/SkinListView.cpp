@@ -253,7 +253,6 @@ void CSkinListView::onSize() {
                 secondWidth = maxWidth;
                 maxWidth = w;
                 maxIndex = i;
-                printf("maxIndex: %d, %d, second: %d\n", maxIndex, maxWidth, secondWidth);
             } else if (w > secondWidth) {
                 secondWidth = w;
             }

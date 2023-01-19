@@ -5,6 +5,23 @@
 
 class Window;
 
+struct MenuItemInfo {
+    bool                        isEnabled;
+    bool                        isSeparator;
+    bool                        isSubmenu;
+    bool                        isChecked;
+    string                      text, shortcutKey;
+    uint32_t                    id;
+
+    MenuItemInfo() {
+        isEnabled = true;
+        isSeparator = false;
+        isSubmenu = false;
+        isChecked = false;
+        id = 0;
+    }
+};
+
 class CMenu {
 public:
     CMenu();
@@ -18,6 +35,9 @@ public:
     virtual void onLoadMenu() { }
 
     void destroy();
+
+    // 在弹出菜单前会调用此函数更新菜单状态
+    virtual void updateMenuStatus(Window *window) { }
 
     virtual void trackPopupMenu(int x, int y, Window *pWnd, CRect *prcNotOverlap = nullptr);
 
@@ -41,15 +61,17 @@ public:
 
     void removeItem(int nPos);
 
-    bool getMenuItemText(uint32_t nItem, string &strText, bool bByPosition);
+    bool getMenuItemText(uint32_t item, string &strText, bool byPosition);
 
-    bool getMenuItemInfo(uint32_t nItem, string &strText, uint32_t &nID, bool &bSubMenu, bool bByPosition);
+    bool getMenuItemInfo(uint32_t item, bool byPosition, MenuItemInfo &itemOut);
+    bool isSeparator(int pos);
+    string getShortcutKeyText(int pos);
 
     bool hasItem(int nPos);
     bool hasSubmenu(int nPos);
     CMenu getSubmenu(int nPos);
 
-    CMenu & operator = (CMenu &menu);
+    CMenu & operator = (const CMenu &menu);
 
     // For Mac
     void *getHandle();

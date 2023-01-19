@@ -3,15 +3,14 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-CRawPen::CRawPen() {
-    m_nWidth = 1;
+CRawPen::CRawPen(int width, COLORREF clr) : m_nWidth(width), m_clrPen(clr) {
 }
 
 CRawPen::~CRawPen() {
 }
 
-bool CRawPen::createSolidPen(int nWidth, CColor &color) {
-    m_nWidth = nWidth;
+bool CRawPen::createSolidPen(int width, const CColor &color) {
+    m_nWidth = width;
     m_clrPen = color;
 
     return true;

@@ -16,6 +16,8 @@ public:
 
     bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 
+    int getItemsMinSumHeight();
+
 protected:
     void onSizeForVert();
     void onSizeForHorz();

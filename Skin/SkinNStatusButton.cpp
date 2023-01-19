@@ -15,10 +15,9 @@ CSkinNStatusButton::CSkinNStatusButton() {
     m_xExtendStart = m_xExtendEnd = -1;
     m_bTile = true;
 
-    m_bLBtDown = false;
+    m_btnState = BS_NORMAL;
     m_nCurStatus = 0;
 
-    m_bHover = false;
     m_bEnableHover = false;
 
     m_bContinuousBegin = false;
@@ -43,12 +42,6 @@ bool CSkinNStatusButton::onLButtonDown(uint32_t nFlags, CPoint point) {
         return false;
     }
 
-    if (m_bHover) {
-        m_bHover = false;
-    } else {
-        m_pSkin->setCaptureMouse(this);
-    }
-
     buttonDownAction();
 
     return true;
@@ -61,7 +54,9 @@ void CSkinNStatusButton::onTimer(int nId) {
         return;
     }
 
-    if (m_bLBtDown) {
+    assert(nId == m_nTimerIdContinuous);
+
+    if (m_btnState == BS_PRESSED) {
         CPoint pt = getCursorPos();
         m_pSkin->screenToClient(pt);
 
@@ -91,9 +86,7 @@ void CSkinNStatusButton::onTimer(int nId) {
 }
 
 bool CSkinNStatusButton::onLButtonUp(uint32_t nFlags, CPoint point) {
-    m_pSkin->releaseCaptureMouse(this);
-
-    if (!m_bLBtDown) {
+    if (m_btnState != BS_PRESSED) {
         return true;
     }
 
@@ -102,61 +95,12 @@ bool CSkinNStatusButton::onLButtonUp(uint32_t nFlags, CPoint point) {
     return true;
 }
 
-bool CSkinNStatusButton::onMouseDrag(CPoint point) {
-    bool bStatusChanged = false;
-
-    if (!isPtIn(point)) {
-        m_bLBtDown = false;
-        bStatusChanged = true;
-    } else if (!m_bLBtDown) {
-        m_bLBtDown = true;
-        bStatusChanged = true;
-
-        if (m_bHover) {
-            m_bHover = false;
-        } else {
-            m_pSkin->setCaptureMouse(this);
-        }
-    }
-
-    if (bStatusChanged) {
-        if (m_nTimerIdFadein == 0) {
-            startFadeDrawTimer(m_bLBtDown, m_bHover);
-        }
-        invalidate();
-    }
-
-    return true;
+void CSkinNStatusButton::onMouseEnter(CPoint point) {
+    changeButtonState(BS_HOVER);
 }
 
-bool CSkinNStatusButton::onMouseMove(CPoint point) {
-    bool bStatusChanged = false;
-
-    if (isPtIn(point)) {
-        if (!m_bLBtDown && m_bEnableHover && !m_bHover) {
-            m_bHover = true;
-            m_pSkin->setCaptureMouse(this);
-
-            bStatusChanged = true;
-        }
-    } else {
-        if (m_bHover) {
-            m_bHover = false;
-
-            m_pSkin->releaseCaptureMouse(this);
-
-            bStatusChanged = true;
-        }
-    }
-
-    if (bStatusChanged) {
-        if (m_nTimerIdFadein == 0) {
-            startFadeDrawTimer(m_bLBtDown, m_bHover);
-        }
-        invalidate();
-    }
-
-    return true;
+void CSkinNStatusButton::onMouseLeave(CPoint point) {
+    changeButtonState(BS_NORMAL);
 }
 
 void CSkinNStatusButton::onKeyUp(uint32_t nChar, uint32_t nFlags) {
@@ -166,7 +110,7 @@ void CSkinNStatusButton::onKeyUp(uint32_t nChar, uint32_t nFlags) {
 }
 
 void CSkinNStatusButton::onKeyDown(uint32_t nChar, uint32_t nFlags) {
-    if (nChar == VK_SPACE && !m_bLBtDown) {
+    if (nChar == VK_SPACE && m_btnState != BS_PRESSED) {
         buttonDownAction();
     } else if (nChar == VK_RETURN) {
         buttonDownAction();
@@ -175,17 +119,15 @@ void CSkinNStatusButton::onKeyDown(uint32_t nChar, uint32_t nFlags) {
 }
 
 void CSkinNStatusButton::onSetFocus() {
-    m_bHover = true;
+    changeButtonState(BS_HOVER);
+
     invalidate();
 }
 
 void CSkinNStatusButton::onKillFocus() {
-    if (m_bLBtDown) {
-        m_bLBtDown = false;
+    if (!m_isMouseIn) {
+        changeButtonState(BS_NORMAL);
     }
-
-    m_bHover = false;
-    invalidate();
 }
 
 void CSkinNStatusButton::draw(CRawGraph *canvas) {
@@ -201,9 +143,9 @@ void CSkinNStatusButton::draw(CRawGraph *canvas) {
     CSFImage *pImage = nullptr;
 
     if (m_enable) {
-        if (m_bLBtDown && btimg->imgSel.isValid()) {
+        if (m_btnState == BS_PRESSED && btimg->imgSel.isValid()) {
             pImage = &btimg->imgSel;
-        } else if (m_bEnableHover && m_bHover && btimg->imgHover.isValid()) {
+        } else if (m_bEnableHover && m_btnState == BS_HOVER && btimg->imgHover.isValid()) {
             pImage = &btimg->imgHover;
         } else if (btimg->imgBk.isValid()) {
             pImage = &btimg->imgBk;
@@ -455,18 +397,12 @@ void CSkinNStatusButton::setMaxStat(int nMaxStat) {
 }
 
 void CSkinNStatusButton::buttonDownAction() {
-    if (m_bFadein) {
-        startFadeDrawTimer(false, true);
-    }
+    changeButtonState(BS_PRESSED);
 
     if (m_bContinuousCmd) {
         m_bContinuousBegin = true;
         m_nTimerIdContinuous = m_pSkin->registerTimerObject(this, 500);
     }
-
-    m_bLBtDown = true;
-
-    invalidate();
 }
 
 void CSkinNStatusButton::buttonUpAction() {
@@ -474,12 +410,6 @@ void CSkinNStatusButton::buttonUpAction() {
         m_pSkin->unregisterTimerObject(this, m_nTimerIdContinuous);
         m_nTimerIdContinuous = 0;
     }
-
-    if (m_bFadein) {
-        startFadeDrawTimer(true, false);
-    }
-
-    m_bLBtDown = false;
 
     if (m_nCurStatus >= 0 && m_nCurStatus < (int)m_vBtStatImg.size() - 1) {
         m_nCurStatus++;
@@ -491,7 +421,7 @@ void CSkinNStatusButton::buttonUpAction() {
         m_bEnableHover = m_vBtStatImg[m_nCurStatus]->imgHover.isValid();
     }
 
-    invalidate();
+    changeButtonState(BS_HOVER);
 
     if (m_id != UID_INVALID) {
         m_pSkin->postCustomCommandMsg(m_id);
@@ -502,7 +432,12 @@ void CSkinNStatusButton::buttonUpAction() {
     }
 }
 
-void CSkinNStatusButton::startFadeDrawTimer(bool bPrevButtonDown, bool bPrevHover) {
+void CSkinNStatusButton::changeButtonState(ButtonState state) {
+    if (m_btnState == state) {
+        invalidate(); // m_nCurStatus 可能改变了
+        return;
+    }
+
     assert(m_nCurStatus >= 0 && m_nCurStatus <= (int)m_vBtStatImg.size());
     if (m_nTimerIdFadein != 0) {
         m_pSkin->unregisterTimerObject(this, m_nTimerIdFadein);
@@ -513,13 +448,15 @@ void CSkinNStatusButton::startFadeDrawTimer(bool bPrevButtonDown, bool bPrevHove
     BtStatImg *btimg = m_vBtStatImg[m_nCurStatus];
 
     m_pLastImage = nullptr;
-    if (bPrevButtonDown && btimg->imgSel.isValid()) {
+    if (m_btnState == BS_PRESSED && btimg->imgSel.isValid()) {
         m_pLastImage = &btimg->imgSel;
-    } else if (m_bEnableHover && bPrevHover && btimg->imgHover.isValid()) {
+    } else if (m_btnState == BS_HOVER && btimg->imgHover.isValid()) {
         m_pLastImage = &btimg->imgHover;
     } else if (btimg->imgBk.isValid()) {
         m_pLastImage = &btimg->imgBk;
     }
+
+    m_btnState = state;
 }
 
 void CSkinNStatusButton::destroy() {

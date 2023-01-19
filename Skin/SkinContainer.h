@@ -24,6 +24,7 @@ public:
     virtual void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
     virtual bool onMouseDrag(CPoint point) override;
     virtual bool onMouseMove(CPoint point) override;
+    virtual void onMouseLeave(CPoint point) override;
     virtual bool onLButtonDown(uint32_t nFlags, CPoint point) override;
     virtual bool onLButtonDblClk(uint32_t nFlags, CPoint point) override;
     virtual bool onLButtonUp(uint32_t nFlags, CPoint point) override;
@@ -32,6 +33,7 @@ public:
 
     virtual bool onMenuKey(uint32_t nChar, uint32_t nFlags) override;
 
+    virtual void onKillFocus() override;
     virtual void onSize() override;
 
     virtual bool onCommand(int nID) override;

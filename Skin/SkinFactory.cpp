@@ -10,6 +10,7 @@
 #include "SkinEditCtrl.h"
 #include "SkinLinearContainer.h"
 #include "SkinResizableLinearContainer.h"
+#include "SkinMenuItemsContainer.hpp"
 
 
 #define _SZ_SKINWND         "skinwnd"
@@ -535,7 +536,6 @@ int CSkinFactory::init() {
     AddUIObjNewer(CSkinClientArea);
     AddUIObjNewer(CSkinAnimationUIObj);
     AddUIObjNewer(CSkinFrameCtrl);
-    AddUIObjNewer(CSkinHoverActionButton);
     AddUIObjNewer(CSkinComboBox);
     AddUIObjNewer(CSkinListCtrl);
     AddUIObjNewer(CSkinListView);
@@ -547,1227 +547,1227 @@ int CSkinFactory::init() {
     AddUIObjNewer(CSkinTxtLink);
     AddUIObjNewer(CSkinLinearContainer);
     AddUIObjNewer(CSkinResizableLinearContainer);
+    AddUIObjNewer(SkinMenuItemsContainer);
 
     return ERR_OK;
 }
 
 void CSkinFactory::quit() {
-    for (MapUIObjNewer::iterator it = m_mapUIObjNewer.begin();
-    it != m_mapUIObjNewer.end(); ++it)
+    for (MapUIObjNewer::iterator it = m_mapUIObjNewer.begin(); it != m_mapUIObjNewer.end(); ++it) {
         delete (*it).second;
-        m_mapUIObjNewer.clear();
-
-        close(true);
-        }
-
-        int CSkinFactory::getIDByNameEx(cstr_t szId, string *pstrToolTip)
-        {
-        assert(szId);
-        if (isEmptyString(szId)) {
-            return UID_INVALID;
-        }
-
-        if (pstrToolTip) {
-            pstrToolTip->resize(0);
-        }
-
-        UIObjectIDDefinition uidDef;
-        uidDef.szId = szId;
-
-        SetUIObjectIDDefinition::iterator it = m_setUIDDefinition.find(&uidDef);
-        if (it != m_setUIDDefinition.end()) {
-            UIObjectIDDefinition *p = *it;
-            if (pstrToolTip && p->szToolTip) {
-                *pstrToolTip = p->szToolTip;
-            }
-            return p->nId;
-        }
-
-        m_nCustomCmdIDNext++;
-
-        UIObjectIDDefinition *p = (UIObjectIDDefinition *)m_allocator.allocate(sizeof(UIObjectIDDefinition));
-        p->szId = m_allocator.duplicate(szId);
-        p->nIdMenu = 0;
-        p->szToolTip = nullptr;
-        p->nId = m_nCustomCmdIDNext;
-        m_setUIDDefinition.insert(p);
-
-        return m_nCustomCmdIDNext;
     }
 
-    void CSkinFactory::getTooltip(int nUID, string &strToolTip) {
-        UIObjectIDDefinition *p = getUidDef(nUID);
-        if (p && p->szToolTip) {
-            strToolTip = p->szToolTip;
-        } else {
-            strToolTip.resize(0);
-        }
-    }
+    m_mapUIObjNewer.clear();
 
-    int CSkinFactory::getMenuIDByUID(int nUID, bool bAllocIfInexistence) {
-        UIObjectIDDefinition *p = getUidDef(nUID);
-        if (!p) {
-            return 0;
-        }
+    close(true);
+}
 
-        if (p->nIdMenu == 0) {
-            p->nIdMenu = ++m_nMenuIDNext;
-        }
-        return p->nIdMenu;
-    }
-
-    bool CSkinFactory::setMenuIDByUID(int nUID, int nMenuId) {
-        UIObjectIDDefinition *p = getUidDef(nUID);
-        if (!p) {
-            return false;
-        }
-
-        assert(p->nIdMenu == 0 || p->nIdMenu == nMenuId);
-        p->nIdMenu = nMenuId;
-        return true;
-    }
-
-    int CSkinFactory::getUIDByMenuID(int nMenuID) {
-        if (nMenuID == 0) {
-            return UID_INVALID;
-        }
-
-        for (SetUIObjectIDDefinition::iterator it = m_setUIDDefinition.begin();
-        it != m_setUIDDefinition.end(); ++it)
-            {
-            UIObjectIDDefinition *p = *it;
-            if (p->nIdMenu == nMenuID) {
-                return p->nId;
-            }
-        }
-
+int CSkinFactory::getIDByNameEx(cstr_t szId, string *pstrToolTip) {
+    assert(szId);
+    if (isEmptyString(szId)) {
         return UID_INVALID;
     }
 
-#ifdef _DEBUG
-    void CSkinFactory::dumpUID() {
-        typedef map<int, string> MapInt2String;
+    if (pstrToolTip) {
+        pstrToolTip->resize(0);
+    }
 
-        MapInt2String mapUID;
+    UIObjectIDDefinition uidDef;
+    uidDef.szId = szId;
 
-        for (SetUIObjectIDDefinition::iterator it = m_setUIDDefinition.begin();
-        it != m_setUIDDefinition.end(); ++it)
-            {
-            UIObjectIDDefinition *p = *it;
-            // MapInt2String::iterator i = mapUID.find(p->nId);
-            // assert(i == mapUID.end());
-            mapUID[p->nId] = string(p->szId);
+    SetUIObjectIDDefinition::iterator it = m_setUIDDefinition.find(&uidDef);
+    if (it != m_setUIDDefinition.end()) {
+        UIObjectIDDefinition *p = *it;
+        if (pstrToolTip && p->szToolTip) {
+            *pstrToolTip = p->szToolTip;
         }
+        return p->nId;
+    }
 
-        for (MapInt2String::iterator it = mapUID.begin(); it != mapUID.end(); ++it) {
-            DBG_LOG2("UID: %04X, %s", (*it).first, (*it).second.c_str());
+    m_nCustomCmdIDNext++;
+
+    UIObjectIDDefinition *p = (UIObjectIDDefinition *)m_allocator.allocate(sizeof(UIObjectIDDefinition));
+    p->szId = m_allocator.duplicate(szId);
+    p->nIdMenu = 0;
+    p->szToolTip = nullptr;
+    p->nId = m_nCustomCmdIDNext;
+    m_setUIDDefinition.insert(p);
+
+    return m_nCustomCmdIDNext;
+}
+
+void CSkinFactory::getTooltip(int nUID, string &strToolTip) {
+    UIObjectIDDefinition *p = getUidDef(nUID);
+    if (p && p->szToolTip) {
+        strToolTip = p->szToolTip;
+    } else {
+        strToolTip.resize(0);
+    }
+}
+
+int CSkinFactory::getMenuIDByUID(int nUID, bool bAllocIfInexistence) {
+    UIObjectIDDefinition *p = getUidDef(nUID);
+    if (!p) {
+        return 0;
+    }
+
+    if (p->nIdMenu == 0) {
+        p->nIdMenu = ++m_nMenuIDNext;
+    }
+    return p->nIdMenu;
+}
+
+bool CSkinFactory::setMenuIDByUID(int nUID, int nMenuId) {
+    UIObjectIDDefinition *p = getUidDef(nUID);
+    if (!p) {
+        return false;
+    }
+
+    assert(p->nIdMenu == 0 || p->nIdMenu == nMenuId);
+    p->nIdMenu = nMenuId;
+    return true;
+}
+
+int CSkinFactory::getUIDByMenuID(int nMenuID) {
+    if (nMenuID == 0) {
+        return UID_INVALID;
+    }
+
+    for (SetUIObjectIDDefinition::iterator it = m_setUIDDefinition.begin();
+    it != m_setUIDDefinition.end(); ++it)
+        {
+        UIObjectIDDefinition *p = *it;
+        if (p->nIdMenu == nMenuID) {
+            return p->nId;
         }
     }
+
+    return UID_INVALID;
+}
+
+#ifdef _DEBUG
+void CSkinFactory::dumpUID() {
+    typedef map<int, string> MapInt2String;
+
+    MapInt2String mapUID;
+
+    for (SetUIObjectIDDefinition::iterator it = m_setUIDDefinition.begin();
+    it != m_setUIDDefinition.end(); ++it)
+        {
+        UIObjectIDDefinition *p = *it;
+        // MapInt2String::iterator i = mapUID.find(p->nId);
+        // assert(i == mapUID.end());
+        mapUID[p->nId] = string(p->szId);
+    }
+
+    for (MapInt2String::iterator it = mapUID.begin(); it != mapUID.end(); ++it) {
+        DBG_LOG2("UID: %04X, %s", (*it).first, (*it).second.c_str());
+    }
+}
 #endif
 
-    UIObjectIDDefinition *CSkinFactory::getUidDef(int nUID) {
-        if (nUID == UID_INVALID) {
-            return nullptr;
-        }
-
-        for (SetUIObjectIDDefinition::iterator it = m_setUIDDefinition.begin();
-        it != m_setUIDDefinition.end(); ++it)
-            {
-            UIObjectIDDefinition *p = *it;
-            if (p->nId == nUID) {
-                return p;
-            }
-        }
-
+UIObjectIDDefinition *CSkinFactory::getUidDef(int nUID) {
+    if (nUID == UID_INVALID) {
         return nullptr;
     }
 
-    int CSkinFactory::allocUID() {
-        m_nCustomCmdIDNext++;
-        assert(m_nCustomCmdIDNext <= uint16_t(-1));
-        if (m_nCustomCmdIDNext >= uint16_t(-1)) {
-            m_nCustomCmdIDNext = CMD_ID_CUSTOM_BASE + 1000;
-        }
-
-        return m_nCustomCmdIDNext;
-    }
-
-    string CSkinFactory::getStringOfID(int nID) {
-        for (SetUIObjectIDDefinition::iterator it = m_setUIDDefinition.begin();
-        it != m_setUIDDefinition.end(); ++it)
-            {
-            UIObjectIDDefinition *p = *it;
-            if (p->nId == nID) {
-                return p->szId;
-            }
-        }
-
-        return "";
-    }
-
-    int CSkinFactory::openSkin(cstr_t szSkinName, cstr_t szSkinDir, cstr_t szExtraDir) {
-        string strSkinDir;
-
-        assert(szSkinDir && szExtraDir);
-
-        close();
-
-        // If szSkinDir is nullptr, set to default position: %SkinRoot%\\szSkinName.
-        if (szSkinDir == nullptr || isEmptyString(szSkinDir)) {
-            strSkinDir = getSkinRootDir();
-            strSkinDir += szSkinName;
-            szSkinDir = strSkinDir.c_str();
-        }
-
-        m_strSkinName = szSkinName;
-
-        m_resourceMgr.clearRessourceDir();
-        m_resourceMgr.addRessourceDir(szSkinDir);
-        if (szExtraDir && !isEmptyString(szExtraDir)) {
-            m_resourceMgr.addRessourceDir(szExtraDir);
-        }
-        m_resourceMgr.addRessourceDir(dirStringJoin(getSkinRootDir(), "assets").c_str());
-
-        string skinFile;
-        if (!m_resourceMgr.getResourcePathName(m_strSkinFileName.c_str(), skinFile)) {
-            ERR_LOG2("Can't find skin file in dir: %s, %s", szSkinDir, szExtraDir);
-            return ERR_OPEN_FILE;
-        }
-
-        return openSkinFile(skinFile.c_str());
-    }
-
-    int CSkinFactory::changeSkin(cstr_t szSkinName, cstr_t szSkinDir, cstr_t szExtraDir, bool bLoadSkinColorTheme, bool bCreateSkinWnd) {
-        int nRet = openSkin(szSkinName, szSkinDir, szExtraDir);
-        if (nRet != ERR_OK) {
-            return nRet;
-        }
-
-        if (bLoadSkinColorTheme) {
-            // load the default theme settings of skin
-            g_profile.writeInt(szSkinName, "Hue", 0);
-
-            applyDefaultThemeOfSkin();
-        }
-
-        float hue = (float)g_profile.getInt(szSkinName, "Hue", 0);
-        if (hue < 0) {
-            hue = 0;
-        } else if (hue > 360) {
-            hue = 360;
-        }
-        m_resourceMgr.adjustHue((float)hue, 0.5, 0.5);
-
-        if (!bCreateSkinWnd) {
-            return ERR_OK;
-        }
-
-        // change the skins of existed windows.
-        string strSkinWndDef;
-        string strSkinWndName;
-        string strOpenedSkinWnds;
-        SetICaseStr setOpenedSkinWnds;
-
-        strOpenedSkinWnds = g_profile.getString(getSkinFileName(), "LatestOpenedSkinWnds", "");
-        strSkinWndDef = g_profile.getString(getSkinFileName(), "DefaultSkinWnd", "");
-
-        VecStrings strs;
-        SizedString(strOpenedSkinWnds).split(',', strs);
-        for (auto &s : strs) {
-            setOpenedSkinWnds.insert(s);
-        }
-
-        nRet = m_skinFile.getMainSkinWnd(strSkinWndName, strSkinWndDef.c_str());
-        if (nRet != ERR_OK) {
-            ERR_LOG1("Can't get main window name: %s", m_skinFile.getFileName());
-            return nRet;
-        }
-
+    for (SetUIObjectIDDefinition::iterator it = m_setUIDDefinition.begin();
+    it != m_setUIDDefinition.end(); ++it)
         {
-            // remove main window from other windows.
-            SetICaseStr::iterator it = setOpenedSkinWnds.find(strSkinWndName.c_str());
-            if (it != setOpenedSkinWnds.end()) {
-                setOpenedSkinWnds.erase(it);
-            }
+        UIObjectIDDefinition *p = *it;
+        if (p->nId == nUID) {
+            return p;
         }
+    }
 
-        // create or open Main Window
-        CSkinWnd *pMainWnd = nullptr;
-        if (m_listSkinWnds.empty()) {
-            pMainWnd = newSkinWnd("MiniLyrics", true);
+    return nullptr;
+}
 
-            SkinWndStartupInfo skinWndStartupInfo("MiniLyrics", "MiniLyrics", strSkinWndName.c_str(), nullptr, true);
-            int nRet = pMainWnd->create(skinWndStartupInfo, this, false);
-            assert(nRet == ERR_OK);
-            if (nRet == ERR_OK) {
-                pMainWnd->setMainAppWnd(true);
-            }
-        } else {
-            pMainWnd = m_listSkinWnds.front();
-            nRet = pMainWnd->openSkin(strSkinWndName.c_str());
-            if (nRet != ERR_OK) {
-                return nRet;
-            }
-            pMainWnd->show();
+int CSkinFactory::allocUID() {
+    m_nCustomCmdIDNext++;
+    assert(m_nCustomCmdIDNext <= uint16_t(-1));
+    if (m_nCustomCmdIDNext >= uint16_t(-1)) {
+        m_nCustomCmdIDNext = CMD_ID_CUSTOM_BASE + 1000;
+    }
+
+    return m_nCustomCmdIDNext;
+}
+
+string CSkinFactory::getStringOfID(int nID) {
+    for (SetUIObjectIDDefinition::iterator it = m_setUIDDefinition.begin();
+    it != m_setUIDDefinition.end(); ++it)
+        {
+        UIObjectIDDefinition *p = *it;
+        if (p->nId == nID) {
+            return p->szId;
         }
+    }
 
-        ListSkinWnds listToBeProcessed;
+    return "";
+}
 
-        // destroy other skin windows.
-        if (m_listSkinWnds.size() > 1) {
-            listToBeProcessed.insert(listToBeProcessed.begin(), ++(m_listSkinWnds.begin()), m_listSkinWnds.end());
+int CSkinFactory::openSkin(cstr_t szSkinName, cstr_t szSkinDir, cstr_t szExtraDir) {
+    string strSkinDir;
 
-            for (auto it = listToBeProcessed.begin(); it != listToBeProcessed.end(); ++it) {
-                CSkinWnd *pSkinWnd = *it;
-                nRet = pSkinWnd->openDefaultSkin();
-                if (nRet != ERR_OK) {
-                    pSkinWnd->destroy();
-                } else {
-                    setOpenedSkinWnds.erase(pSkinWnd->getSkinWndName());
-                }
-            }
-        }
+    assert(szSkinDir && szExtraDir);
 
-        for (SetICaseStr::iterator itSet = setOpenedSkinWnds.begin();
-        itSet != setOpenedSkinWnds.end(); ++itSet)
-            {
-            if (!isAppResSkinWnd((*itSet).c_str())) {
-                SkinWndStartupInfo skinWndStartupInfo(_SZ_SKINWND_CLASS_NAME, (*itSet).c_str(), (*itSet).c_str(), nullptr);
-                nRet = createSkinWnd(skinWndStartupInfo);
-                if (nRet != ERR_OK) {
-                    DBG_LOG1("Failed to create skin window: %s", Error2Str(nRet).c_str());
-                }
-            }
-        }
+    close();
 
+    // If szSkinDir is nullptr, set to default position: %SkinRoot%\\szSkinName.
+    if (szSkinDir == nullptr || isEmptyString(szSkinDir)) {
+        strSkinDir = getSkinRootDir();
+        strSkinDir += szSkinName;
+        szSkinDir = strSkinDir.c_str();
+    }
+
+    m_strSkinName = szSkinName;
+
+    m_resourceMgr.clearRessourceDir();
+    m_resourceMgr.addRessourceDir(szSkinDir);
+    if (szExtraDir && !isEmptyString(szExtraDir)) {
+        m_resourceMgr.addRessourceDir(szExtraDir);
+    }
+    m_resourceMgr.addRessourceDir(dirStringJoin(getSkinRootDir(), "assets").c_str());
+
+    string skinFile;
+    if (!m_resourceMgr.getResourcePathName(m_strSkinFileName.c_str(), skinFile)) {
+        ERR_LOG2("Can't find skin file in dir: %s, %s", szSkinDir, szExtraDir);
+        return ERR_OPEN_FILE;
+    }
+
+    return openSkinFile(skinFile.c_str());
+}
+
+int CSkinFactory::changeSkin(cstr_t szSkinName, cstr_t szSkinDir, cstr_t szExtraDir, bool bLoadSkinColorTheme, bool bCreateSkinWnd) {
+    int nRet = openSkin(szSkinName, szSkinDir, szExtraDir);
+    if (nRet != ERR_OK) {
+        return nRet;
+    }
+
+    if (bLoadSkinColorTheme) {
+        // load the default theme settings of skin
+        g_profile.writeInt(szSkinName, "Hue", 0);
+
+        applyDefaultThemeOfSkin();
+    }
+
+    float hue = (float)g_profile.getInt(szSkinName, "Hue", 0);
+    if (hue < 0) {
+        hue = 0;
+    } else if (hue > 360) {
+        hue = 360;
+    }
+    m_resourceMgr.adjustHue((float)hue, 0.5, 0.5);
+
+    if (!bCreateSkinWnd) {
         return ERR_OK;
     }
 
-    void CSkinFactory::getWndDragAutoCloseTo(vector<Window *> &vWnd) {
-        auto itEnd = m_listSkinWnds.end();
-        for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
-            CSkinWnd *pSkinWnd = *it;
-            vWnd.push_back(pSkinWnd);
+    // change the skins of existed windows.
+    string strSkinWndDef;
+    string strSkinWndName;
+    string strOpenedSkinWnds;
+    SetICaseStr setOpenedSkinWnds;
+
+    strOpenedSkinWnds = g_profile.getString(getSkinFileName(), "LatestOpenedSkinWnds", "");
+    strSkinWndDef = g_profile.getString(getSkinFileName(), "DefaultSkinWnd", "");
+
+    VecStrings strs;
+    SizedString(strOpenedSkinWnds).split(',', strs);
+    for (auto &s : strs) {
+        setOpenedSkinWnds.insert(s);
+    }
+
+    nRet = m_skinFile.getMainSkinWnd(strSkinWndName, strSkinWndDef.c_str());
+    if (nRet != ERR_OK) {
+        ERR_LOG1("Can't get main window name: %s", m_skinFile.getFileName());
+        return nRet;
+    }
+
+    {
+        // remove main window from other windows.
+        SetICaseStr::iterator it = setOpenedSkinWnds.find(strSkinWndName.c_str());
+        if (it != setOpenedSkinWnds.end()) {
+            setOpenedSkinWnds.erase(it);
         }
     }
 
-    void CSkinFactory::getWndDragTrackMove(vector<Window *> &vWnd) {
-        auto itEnd = m_listSkinWnds.end();
-        for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
-            CSkinWnd *pSkinWnd = *it;
-            vWnd.push_back(pSkinWnd);
+    // create or open Main Window
+    CSkinWnd *pMainWnd = nullptr;
+    if (m_listSkinWnds.empty()) {
+        pMainWnd = newSkinWnd("MiniLyrics", true);
+
+        SkinWndStartupInfo skinWndStartupInfo("MiniLyrics", "MiniLyrics", strSkinWndName.c_str(), nullptr, true);
+        int nRet = pMainWnd->create(skinWndStartupInfo, this, false);
+        assert(nRet == ERR_OK);
+        if (nRet == ERR_OK) {
+            pMainWnd->setMainAppWnd(true);
         }
-    }
-
-    int CSkinFactory::openSkinFile(cstr_t szSkinFile) {
-        int nRet;
-        SXNode *pNode;
-
-        nRet = m_skinFile.load(szSkinFile);
+    } else {
+        pMainWnd = m_listSkinWnds.front();
+        nRet = pMainWnd->openSkin(strSkinWndName.c_str());
         if (nRet != ERR_OK) {
-            ERR_LOG1("Failed to parse skin file(xml): %s", szSkinFile);
             return nRet;
         }
-
-        // Extra resource folder can be muliple folder, seperated with ','.
-        cstr_t szExtraResouceFolder = m_skinFile.getSkinProperty("ExtraResouceFolder");
-        if (szExtraResouceFolder && !isEmptyString(szExtraResouceFolder)) {
-            VecStrings vExtraResDirs;
-
-            strSplit(szExtraResouceFolder, ',', vExtraResDirs);
-
-            for (auto &path : vExtraResDirs) {
-                trimStr(path);
-                if (path.empty()) {
-                    continue;
-                }
-#ifdef WIN32
-                strrep(path, "/", PATH_SEP_STR);
-#else
-                strrep(path, "\\", PATH_SEP_STR);
-#endif
-                string strExtraDirAbs;
-                strExtraDirAbs = getSkinRootDir();
-                if (path[0] == PATH_SEP_CHAR) {
-                    strExtraDirAbs += path.c_str() + 1;
-                } else {
-                    strExtraDirAbs += path;
-                }
-                m_resourceMgr.addRessourceDir(strExtraDirAbs.c_str(), 1);
-            }
-        }
-
-        expandIncludeNode(m_skinFile.getRootNode());
-
-        m_skinStyle.fromXML(m_skinFile.getRootNode());
-
-        pNode = m_skinFile.getDynamicCmdsNode();
-        if (pNode) {
-            m_dynamicCmds.fromXML(pNode);
-        }
-
-        return ERR_OK;
+        pMainWnd->show();
     }
 
-    void CSkinFactory::expandIncludeNode(SXNode *pNodeRoot) {
-        for (SXNode::LIST_CHILDREN::iterator it = pNodeRoot->listChildren.begin();
-        it != pNodeRoot->listChildren.end(); ++it)
-            {
-            SXNode *p = *it;
-            if (isPropertyName(p->name.c_str(), "include")) {
-                cstr_t szName = p->getProperty(SZ_PN_NAME);
-                if (!szName || isEmptyString(szName)) {
-                    ERR_LOG0("Invalid include node");
-                    continue;
-                }
+    ListSkinWnds listToBeProcessed;
 
-                CSimpleXML xml;
-                string includeFile;
-                if (!m_resourceMgr.getResourcePathName(szName, includeFile)) {
-                    ERR_LOG1("Can't get resource file: %s", szName);
-                    continue;
-                }
+    // destroy other skin windows.
+    if (m_listSkinWnds.size() > 1) {
+        listToBeProcessed.insert(listToBeProcessed.begin(), ++(m_listSkinWnds.begin()), m_listSkinWnds.end());
 
-                if (!xml.parseFile(includeFile.c_str())) {
-                    ERR_LOG1("Failed to parse xml file: %s", includeFile.c_str());
-                    continue;
-                }
-                expandIncludeNode(xml.m_pRoot);
-
-                delete p;
-                *it = xml.m_pRoot;
-                xml.m_pRoot = nullptr;
+        for (auto it = listToBeProcessed.begin(); it != listToBeProcessed.end(); ++it) {
+            CSkinWnd *pSkinWnd = *it;
+            nRet = pSkinWnd->openDefaultSkin();
+            if (nRet != ERR_OK) {
+                pSkinWnd->destroy();
             } else {
-                expandIncludeNode(p);
+                setOpenedSkinWnds.erase(pSkinWnd->getSkinWndName());
             }
         }
     }
 
-    int CSkinFactory::saveSkinFile(cstr_t szFile) {
-        /*
-    CXMLWriter        xmlStream;
-
-    xmlStream.pushCategory("skin");
-    toXML(xmlStream);
-    xmlStream.popCategory();
-
-    if (xmlStream.saveAsFile(szFile))
-        return ERR_OK;
-
-*/
-        return ERR_FAILED;
+    for (SetICaseStr::iterator itSet = setOpenedSkinWnds.begin();
+    itSet != setOpenedSkinWnds.end(); ++itSet)
+        {
+        if (!isAppResSkinWnd((*itSet).c_str())) {
+            SkinWndStartupInfo skinWndStartupInfo(_SZ_SKINWND_CLASS_NAME, (*itSet).c_str(), (*itSet).c_str(), nullptr);
+            nRet = createSkinWnd(skinWndStartupInfo);
+            if (nRet != ERR_OK) {
+                DBG_LOG1("Failed to create skin window: %s", Error2Str(nRet).c_str());
+            }
+        }
     }
 
-    void CSkinFactory::close(bool bQuit) {
-        m_skinStyle.free();
-        m_dynamicCmds.free();
-        m_skinFile.close();
+    return ERR_OK;
+}
 
-        // save opened window name, and close it.
-        string strOpenedSkinWnds;
-        ListSkinWnds listSkinWnds = m_listSkinWnds;
-        for (auto it = listSkinWnds.begin(); it != listSkinWnds.end(); ++it) {
-            CSkinWnd *pSkin = *it;
+void CSkinFactory::getWndDragAutoCloseTo(vector<Window *> &vWnd) {
+    auto itEnd = m_listSkinWnds.end();
+    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
+        CSkinWnd *pSkinWnd = *it;
+        vWnd.push_back(pSkinWnd);
+    }
+}
 
-            // If the skin window has been destroyed, ignore it.
-            if (find(m_listSkinWnds.begin(), m_listSkinWnds.end(), *it) == m_listSkinWnds.end()) {
+void CSkinFactory::getWndDragTrackMove(vector<Window *> &vWnd) {
+    auto itEnd = m_listSkinWnds.end();
+    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
+        CSkinWnd *pSkinWnd = *it;
+        vWnd.push_back(pSkinWnd);
+    }
+}
+
+int CSkinFactory::openSkinFile(cstr_t szSkinFile) {
+    int nRet;
+    SXNode *pNode;
+
+    nRet = m_skinFile.load(szSkinFile);
+    if (nRet != ERR_OK) {
+        ERR_LOG1("Failed to parse skin file(xml): %s", szSkinFile);
+        return nRet;
+    }
+
+    // Extra resource folder can be muliple folder, seperated with ','.
+    cstr_t szExtraResouceFolder = m_skinFile.getSkinProperty("ExtraResouceFolder");
+    if (szExtraResouceFolder && !isEmptyString(szExtraResouceFolder)) {
+        VecStrings vExtraResDirs;
+
+        strSplit(szExtraResouceFolder, ',', vExtraResDirs);
+
+        for (auto &path : vExtraResDirs) {
+            trimStr(path);
+            if (path.empty()) {
+                continue;
+            }
+#ifdef WIN32
+            strrep(path, "/", PATH_SEP_STR);
+#else
+            strrep(path, "\\", PATH_SEP_STR);
+#endif
+            string strExtraDirAbs;
+            strExtraDirAbs = getSkinRootDir();
+            if (path[0] == PATH_SEP_CHAR) {
+                strExtraDirAbs += path.c_str() + 1;
+            } else {
+                strExtraDirAbs += path;
+            }
+            m_resourceMgr.addRessourceDir(strExtraDirAbs.c_str(), 1);
+        }
+    }
+
+    expandIncludeNode(m_skinFile.getRootNode());
+
+    m_skinStyle.fromXML(m_skinFile.getRootNode());
+
+    pNode = m_skinFile.getDynamicCmdsNode();
+    if (pNode) {
+        m_dynamicCmds.fromXML(pNode);
+    }
+
+    return ERR_OK;
+}
+
+void CSkinFactory::expandIncludeNode(SXNode *pNodeRoot) {
+    for (SXNode::LIST_CHILDREN::iterator it = pNodeRoot->listChildren.begin();
+    it != pNodeRoot->listChildren.end(); ++it)
+        {
+        SXNode *p = *it;
+        if (isPropertyName(p->name.c_str(), "include")) {
+            cstr_t szName = p->getProperty(SZ_PN_NAME);
+            if (!szName || isEmptyString(szName)) {
+                ERR_LOG0("Invalid include node");
                 continue;
             }
 
-            if (pSkin->isMainAppWnd()) {
-                g_profile.writeString(getSkinFileName(), "DefaultSkinWnd", pSkin->getSkinWndName());
-            } else {
-                if (!strOpenedSkinWnds.empty()) {
-                    strOpenedSkinWnds += ",";
-                }
-                strOpenedSkinWnds += pSkin->getSkinWndName();
+            CSimpleXML xml;
+            string includeFile;
+            if (!m_resourceMgr.getResourcePathName(szName, includeFile)) {
+                ERR_LOG1("Can't get resource file: %s", szName);
+                continue;
             }
 
-            if (bQuit) {
-                pSkin->destroy();
-            } else {
-                pSkin->closeSkin();
+            if (!xml.parseFile(includeFile.c_str())) {
+                ERR_LOG1("Failed to parse xml file: %s", includeFile.c_str());
+                continue;
             }
-        }
-        if (listSkinWnds.size() > 0) {
-            g_profile.writeString(getSkinFileName(), "LatestOpenedSkinWnds", strOpenedSkinWnds.c_str());
-        }
+            expandIncludeNode(xml.m_pRoot);
 
-        // assert(m_listSkinWnds.size() <= 1);
-
-        m_resourceMgr.onClose();
-
-        // Recover the original UIDs.
-        m_nCustomCmdIDNext = CMD_ID_CUSTOM_BASE;
-        m_nMenuIDNext = MENU_ID_CUSTOM_BASE;
-        for (SetUIObjectIDDefinition::iterator it = m_setUIDDefinition.begin();
-        it != m_setUIDDefinition.end();)
-            {
-            UIObjectIDDefinition *p = *it;
-            if (p->nId >= CMD_ID_CUSTOM_BASE) {
-                SetUIObjectIDDefinition::iterator itRemove = it;
-                ++it;
-                m_setUIDDefinition.erase(itRemove);
-            } else {
-                ++it;
-            }
-        }
-    }
-
-    CSkinWnd *CSkinFactory::newSkinWnd(cstr_t szSkinWndName, bool bMainWnd) {
-        return new CSkinWnd;
-    }
-
-    CSkinWnd *CSkinFactory::findSkinWnd(cstr_t szSkinWndName) {
-        auto itEnd = m_listSkinWnds.end();
-        for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
-            CSkinWnd *pSkinWnd = *it;
-            if (strcasecmp(szSkinWndName, pSkinWnd->getSkinWndName()) == 0) {
-                return pSkinWnd;
-            }
-        }
-
-        return nullptr;
-    }
-
-    bool CSkinFactory::isValidSkinWnd(CSkinWnd *pWnd) {
-        for (auto it = m_listSkinWnds.begin(); it != m_listSkinWnds.end(); ++it) {
-            if (*it == pWnd) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    int CSkinFactory::activeOrCreateSkinWnd(SkinWndStartupInfo &skinWndStartupInfo) {
-        CSkinWnd *pSkinWnd = findSkinWnd(skinWndStartupInfo.strSkinWnd.c_str());
-        if (pSkinWnd) {
-            if (!pSkinWnd->isVisible()) {
-                pSkinWnd->show();
-            }
-            if (pSkinWnd->isIconic()) {
-                pSkinWnd->restore();
-            }
-            pSkinWnd->setForeground();
-            skinWndStartupInfo.pSkinWnd = pSkinWnd;
-            return ERR_OK;
-        }
-
-        return createSkinWnd(skinWndStartupInfo);
-    }
-
-    int CSkinFactory::openOrCloseSkinWnd(SkinWndStartupInfo &skinWndStartupInfo) {
-        CSkinWnd *pSkinWnd = findSkinWnd(skinWndStartupInfo.strSkinWnd.c_str());
-        if (pSkinWnd) {
-            pSkinWnd->destroy();
-            return ERR_OK;
-        }
-
-        return createSkinWnd(skinWndStartupInfo);
-    }
-
-    int CSkinFactory::createSkinWnd(SkinWndStartupInfo &skinWndStartupInfo) {
-        // If the skinwnd doesn't exist, return ERR_NOT_FOUND
-        if (getSkinWndNode(skinWndStartupInfo.strSkinWnd.c_str()) == nullptr) {
-            if (!isAppResSkinWnd(skinWndStartupInfo.strSkinWnd.c_str())) {
-                return ERR_NOT_FOUND;
-            }
-        }
-
-        // If the pSkinWnd is newed already, use it.
-        if (skinWndStartupInfo.pSkinWnd == nullptr) {
-            skinWndStartupInfo.pSkinWnd = newSkinWnd(skinWndStartupInfo.strSkinWnd.c_str(), skinWndStartupInfo.bMainWnd);
-        }
-        assert(skinWndStartupInfo.pSkinWnd);
-        skinWndStartupInfo.pSkinWnd->setFreeOnDestory(true);
-        int nRet = skinWndStartupInfo.pSkinWnd->create(skinWndStartupInfo, this);
-        if (nRet == ERR_OK) {
-#ifdef _WIN32
-            if (!skinWndStartupInfo.bMainWnd && skinWndStartupInfo.pSkinWnd->isWindowsAppearance()) {
-                showAsAppWindow(skinWndStartupInfo.pSkinWnd->getHandle());
-            }
-#endif
+            delete p;
+            *it = xml.m_pRoot;
+            xml.m_pRoot = nullptr;
         } else {
-            delete skinWndStartupInfo.pSkinWnd;
+            expandIncludeNode(p);
+        }
+    }
+}
+
+int CSkinFactory::saveSkinFile(cstr_t szFile) {
+    /*
+CXMLWriter        xmlStream;
+
+xmlStream.pushCategory("skin");
+toXML(xmlStream);
+xmlStream.popCategory();
+
+if (xmlStream.saveAsFile(szFile))
+    return ERR_OK;
+
+*/
+    return ERR_FAILED;
+}
+
+void CSkinFactory::close(bool bQuit) {
+    m_skinStyle.free();
+    m_dynamicCmds.free();
+    m_skinFile.close();
+
+    // save opened window name, and close it.
+    string strOpenedSkinWnds;
+    ListSkinWnds listSkinWnds = m_listSkinWnds;
+    for (auto it = listSkinWnds.begin(); it != listSkinWnds.end(); ++it) {
+        CSkinWnd *pSkin = *it;
+
+        // If the skin window has been destroyed, ignore it.
+        if (find(m_listSkinWnds.begin(), m_listSkinWnds.end(), *it) == m_listSkinWnds.end()) {
+            continue;
         }
 
-        return nRet;
-    }
-
-    void CSkinFactory::onSkinWndCreate(CSkinWnd *pSkinWnd) {
-#ifdef _DEBUG
-        for (auto it = m_listSkinWnds.begin(); it != m_listSkinWnds.end(); ++it) {
-            CSkinWnd *pSkin = *it;
-            assert(pSkin != pSkinWnd);
-        }
-#endif
-
-        m_listSkinWnds.push_back(pSkinWnd);
-    }
-
-    void CSkinFactory::onSkinWndDestory(CSkinWnd *pSkinWnd) {
-        auto itEnd = m_listSkinWnds.end();
-        for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
-            CSkinWnd *pSkin = *it;
-            if (pSkin == pSkinWnd) {
-                m_listSkinWnds.erase(it);
-                return;
+        if (pSkin->isMainAppWnd()) {
+            g_profile.writeString(getSkinFileName(), "DefaultSkinWnd", pSkin->getSkinWndName());
+        } else {
+            if (!strOpenedSkinWnds.empty()) {
+                strOpenedSkinWnds += ",";
             }
+            strOpenedSkinWnds += pSkin->getSkinWndName();
+        }
+
+        if (bQuit) {
+            pSkin->destroy();
+        } else {
+            pSkin->closeSkin();
+        }
+    }
+    if (listSkinWnds.size() > 0) {
+        g_profile.writeString(getSkinFileName(), "LatestOpenedSkinWnds", strOpenedSkinWnds.c_str());
+    }
+
+    // assert(m_listSkinWnds.size() <= 1);
+
+    m_resourceMgr.onClose();
+
+    // Recover the original UIDs.
+    m_nCustomCmdIDNext = CMD_ID_CUSTOM_BASE;
+    m_nMenuIDNext = MENU_ID_CUSTOM_BASE;
+    for (SetUIObjectIDDefinition::iterator it = m_setUIDDefinition.begin();
+    it != m_setUIDDefinition.end();)
+        {
+        UIObjectIDDefinition *p = *it;
+        if (p->nId >= CMD_ID_CUSTOM_BASE) {
+            SetUIObjectIDDefinition::iterator itRemove = it;
+            ++it;
+            m_setUIDDefinition.erase(itRemove);
+        } else {
+            ++it;
+        }
+    }
+}
+
+CSkinWnd *CSkinFactory::newSkinWnd(cstr_t szSkinWndName, bool bMainWnd) {
+    return new CSkinWnd;
+}
+
+CSkinWnd *CSkinFactory::findSkinWnd(cstr_t szSkinWndName) {
+    auto itEnd = m_listSkinWnds.end();
+    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
+        CSkinWnd *pSkinWnd = *it;
+        if (strcasecmp(szSkinWndName, pSkinWnd->getSkinWndName()) == 0) {
+            return pSkinWnd;
         }
     }
 
-    void CSkinFactory::onMainSkinWndDestory(CSkinWnd *pSkinWnd) {
-        int nMainAppWnd = 0;
-        for (ListSkinWnds::iterator it = m_listSkinWnds.begin();
-        it != m_listSkinWnds.end(); ++it)
-            {
-            CSkinWnd *p = *it;
-            if (p->isMainAppWnd()) {
-                nMainAppWnd++;
-            }
-        }
-        if (nMainAppWnd <= 1) {
-            m_pApp->postQuitMessage();
+    return nullptr;
+}
+
+bool CSkinFactory::isValidSkinWnd(CSkinWnd *pWnd) {
+    for (auto it = m_listSkinWnds.begin(); it != m_listSkinWnds.end(); ++it) {
+        if (*it == pWnd) {
+            return true;
         }
     }
 
-    // methods for skin window
-    SXNode *CSkinFactory::getSkinWndNode(cstr_t szSkinWndName) {
-        return m_skinFile.getSkinWndNode(szSkinWndName);
-    }
+    return false;
+}
 
-    int CSkinFactory::loadAppResSkinWndXml(cstr_t szSkinWndName, CSimpleXML &xml) {
-        string file;
-        if (!m_resourceMgr.getResourcePathName(szSkinWndName, file)) {
-            return ERR_NOT_FOUND;
+int CSkinFactory::activeOrCreateSkinWnd(SkinWndStartupInfo &skinWndStartupInfo) {
+    CSkinWnd *pSkinWnd = findSkinWnd(skinWndStartupInfo.strSkinWnd.c_str());
+    if (pSkinWnd) {
+        if (!pSkinWnd->isVisible()) {
+            pSkinWnd->show();
         }
-
-        if (!xml.parseFile(file.c_str())) {
-            return ERR_PARSE_XML;
+        if (pSkinWnd->isIconic()) {
+            pSkinWnd->restore();
         }
-
-        expandIncludeNode(xml.m_pRoot);
-
+        pSkinWnd->setForeground();
+        skinWndStartupInfo.pSkinWnd = pSkinWnd;
         return ERR_OK;
     }
 
-    bool CSkinFactory::isAppResSkinWnd(cstr_t szSkinWndName) {
-        string file;
-        if (m_resourceMgr.getResourcePathName(szSkinWndName, file)) {
-            return true;
-        }
+    return createSkinWnd(skinWndStartupInfo);
+}
 
-        return false;
+int CSkinFactory::openOrCloseSkinWnd(SkinWndStartupInfo &skinWndStartupInfo) {
+    CSkinWnd *pSkinWnd = findSkinWnd(skinWndStartupInfo.strSkinWnd.c_str());
+    if (pSkinWnd) {
+        pSkinWnd->destroy();
+        return ERR_OK;
     }
 
-    void CSkinFactory::registerUIObjNewer(cstr_t szClassName, IUIObjNewer *pObjNewer) {
-        assert(m_mapUIObjNewer.find(szClassName) == m_mapUIObjNewer.end());
-        m_mapUIObjNewer[szClassName] = pObjNewer;
-    }
+    return createSkinWnd(skinWndStartupInfo);
+}
 
-    // create new uiobject by class name
-    CUIObject * CSkinFactory::createUIObject(CSkinWnd *pSkin, cstr_t szClassName, CSkinContainer *pContainer) {
-        SXNode *pNode = m_skinStyle.getClassNode(szClassName);
-        if (!pNode) {
-            return newUIObject(pSkin, pContainer, szClassName);
-        }
-
-        cstr_t szExtends = pNode->getProperty(SZ_PN_EXTENDS);
-        if (szExtends) {
-            szClassName = szExtends;
-        }
-
-        CUIObject *pObj = newUIObject(pSkin, pContainer, szClassName);
-
-        // set styled properties of Extends from
-        if (pObj) {
-            pObj->fromXML(pNode);
-        }
-
-        return pObj;
-    }
-
-    CUIObject *CSkinFactory::newUIObject(CSkinWnd *pSkin, CSkinContainer *pContainer, cstr_t szClassName) {
-        MapUIObjNewer::iterator it = m_mapUIObjNewer.find(szClassName);
-        if (it == m_mapUIObjNewer.end()) {
-            return nullptr;
-        }
-
-        CUIObject *pObj = (*it).second->New();
-        assert(pObj);
-        pObj->setParent(pSkin, pContainer);
-
-        return pObj;
-    }
-
-    CUIObject *CSkinFactory::createDynamicCtrl(CSkinContainer *pContainer, cstr_t szClassName, int nIDAssign, cstr_t szLeft, cstr_t szTop, cstr_t szWidth, cstr_t szHeight) {
-        CUIObject *pObj = nullptr;
-
-        // create the control
-        pObj = createUIObject(pContainer->getSkinWnd(), szClassName, pContainer);
-        assert(pObj);
-        if (pObj) {
-            if (nIDAssign == UID_INVALID) {
-                nIDAssign = pContainer->getSkinWnd()->allocUIObjID();
-            }
-            pObj->m_id = nIDAssign;
-
-            //
-            // 先使用参数来设置高度和宽度
-            if (szWidth && !isEmptyString(szWidth)) {
-                pObj->setProperty(SZ_PN_WIDTH, szWidth);
-            }
-            if (szHeight && !isEmptyString(szHeight)) {
-                pObj->setProperty(SZ_PN_HEIGHT, szHeight);
-            }
-            if (szLeft && !isEmptyString(szLeft)) {
-                pObj->setProperty(SZ_PN_LEFT, szLeft);
-            }
-            if (szLeft && !isEmptyString(szTop)) {
-                pObj->setProperty(SZ_PN_TOP, szTop);
-            }
-
-            // 添加到数组中
-            pContainer->addUIObject(pObj);
-        }
-
-        return pObj;
-    }
-
-    void CSkinFactory::setSkinsRootDir(cstr_t szSkinsRootDir) {
-        m_strSkinRootDir = szSkinsRootDir;
-        if (!m_strSkinRootDir.empty()) {
-            dirStringAddSep(m_strSkinRootDir);
-            g_profile.writeString("SkinRootDir", m_strSkinRootDir.c_str());
+int CSkinFactory::createSkinWnd(SkinWndStartupInfo &skinWndStartupInfo) {
+    // If the skinwnd doesn't exist, return ERR_NOT_FOUND
+    if (getSkinWndNode(skinWndStartupInfo.strSkinWnd.c_str()) == nullptr) {
+        if (!isAppResSkinWnd(skinWndStartupInfo.strSkinWnd.c_str())) {
+            return ERR_NOT_FOUND;
         }
     }
 
-    cstr_t CSkinFactory::getSkinRootDir() {
-        if (m_strSkinRootDir.empty()) {
-            m_strSkinRootDir = g_profile.getString("SkinRootDir", "");
-            if (!m_strSkinRootDir.empty()) {
-                dirStringAddSep(m_strSkinRootDir);
-                if (isDirExist(m_strSkinRootDir.c_str())) {
-                    return m_strSkinRootDir.c_str();
-                }
-            }
-
-            m_strSkinRootDir = getAppResourceDir();
-            m_strSkinRootDir += "skins";
-            m_strSkinRootDir += PATH_SEP_STR;
-
-#if defined (_DEBUG) && defined (_WIN32)
-            if (!isDirExist(m_strSkinRootDir.c_str())) {
-                m_strSkinRootDir = getInstallShareDir();
-
-                m_strSkinRootDir += "skins\\";
-            }
+    // If the pSkinWnd is newed already, use it.
+    if (skinWndStartupInfo.pSkinWnd == nullptr) {
+        skinWndStartupInfo.pSkinWnd = newSkinWnd(skinWndStartupInfo.strSkinWnd.c_str(), skinWndStartupInfo.bMainWnd);
+    }
+    assert(skinWndStartupInfo.pSkinWnd);
+    skinWndStartupInfo.pSkinWnd->setFreeOnDestory(true);
+    int nRet = skinWndStartupInfo.pSkinWnd->create(skinWndStartupInfo, this);
+    if (nRet == ERR_OK) {
+#ifdef _WIN32
+        if (!skinWndStartupInfo.bMainWnd && skinWndStartupInfo.pSkinWnd->isWindowsAppearance()) {
+            showAsAppWindow(skinWndStartupInfo.pSkinWnd->getHandle());
+        }
 #endif
-        }
-
-        return m_strSkinRootDir.c_str();
+    } else {
+        delete skinWndStartupInfo.pSkinWnd;
     }
 
-    void CSkinFactory::setSkinFileName(cstr_t szSkinFileName) {
-        m_strSkinFileName = szSkinFileName;
+    return nRet;
+}
+
+void CSkinFactory::onSkinWndCreate(CSkinWnd *pSkinWnd) {
+#ifdef _DEBUG
+    for (auto it = m_listSkinWnds.begin(); it != m_listSkinWnds.end(); ++it) {
+        CSkinWnd *pSkin = *it;
+        assert(pSkin != pSkinWnd);
     }
+#endif
 
-    // 枚举 skin
-    // COMMENT:
-    //        查找Skin目录下的第一个Skin
-    // RETURN:
-    //        The handle of find skin
-    //        INVALID_HANDLE_VALUE - 没有找到
-    bool CSkinFactory::findFirstSkin(string &strSkin) {
-        FileFind find;
+    m_listSkinWnds.push_back(pSkinWnd);
+}
 
-        if (!find.openDir(getSkinRootDir())) {
-            return false;
-        }
-
-        while (find.findNext()) {
-            if (find.isCurDir()) {
-                string fn = getSkinRootDir();
-                fn += find.getCurName();
-                fn += PATH_SEP_STR;
-                fn += m_strSkinFileName;
-
-                if (isFileExist(fn.c_str())) {
-                    strSkin = find.getCurName();
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    bool CSkinFactory::enumAllSkins(vector<string> &vSkins) {
-        FileFind find;
-
-        if (!find.openDir(getSkinRootDir())) {
-            return false;
-        }
-
-        while (find.findNext()) {
-            if (find.isCurDir()) {
-                string fn = getSkinRootDir();
-                fn += find.getCurName();
-                fn += PATH_SEP_STR;
-                fn += m_strSkinFileName;
-
-                if (isFileExist(fn.c_str())) {
-                    vSkins.push_back(find.getCurName());
-                }
-            }
-        }
-
-        // sort(vSkins.begin(), vSkins.end());
-
-        return true;
-    }
-
-    CSkinWnd *CSkinFactory::getMainWnd() {
-        for (auto it = m_listSkinWnds.begin(); it != m_listSkinWnds.end(); ++it) {
-            CSkinWnd *p = *it;
-            if (p->isMainAppWnd()) {
-                return p;
-            }
-        }
-
-        return nullptr;
-    }
-
-    SXNode *CSkinFactory::getExtendsStyle(cstr_t szExtendsSkinWnd) const {
-        return m_skinStyle.getClassNode(szExtendsSkinWnd);
-    }
-
-    static SXNode *getMenuOfMenus(SXNode *pNodeMenus, cstr_t szMenuName) {
-        SXNode::iterator it, itEnd;
-        itEnd = pNodeMenus->listChildren.end();
-        for (it = pNodeMenus->listChildren.begin(); it != itEnd; ++it) {
-            SXNode *pNode = *it;
-
-            // OK, found the contorl
-            if (strcasecmp(pNode->name.c_str(), "Menu") == 0) {
-                if (strcasecmp(pNode->getPropertySafe("Name"), szMenuName) == 0) {
-                    return pNode;
-                }
-            }
-        }
-
-        return nullptr;
-    }
-
-    bool CSkinFactory::loadMenu(CSkinWnd *pWnd, CMenu **ppMenu, cstr_t szMenu) {
-        CSkinMenu *pSkinMenu = nullptr;
-        SXNode *pNodeMenus = nullptr, *pNode = nullptr;
-
-        *ppMenu = nullptr;
-
-        // load menu from xml
-        pNodeMenus = m_skinFile.getMenusNode();
-        if (pNodeMenus) {
-            pNode = getMenuOfMenus(pNodeMenus, szMenu);
-            if (pNode) {
-                cstr_t szFromMenu = pNode->getProperty("From");
-                if (szFromMenu) {
-                    pSkinMenu = loadPresetMenu(pWnd, szFromMenu);
-                }
-
-                if (!pSkinMenu) {
-                    pSkinMenu = new CSkinMenu();
-                }
-
-                pSkinMenu->fromXML(pNode, pSkinMenu->getOrgAppendPos());
-            }
-        }
-
-        if (!pSkinMenu) {
-            // is this a preset menu?
-            pSkinMenu = loadPresetMenu(pWnd, szMenu);
-            if (pSkinMenu) {
-                *ppMenu = pSkinMenu;
-                return true;
-            }
-        }
-
-        *ppMenu = pSkinMenu;
-
-        return pSkinMenu != nullptr;
-    }
-
-    void CSkinFactory::showPopupMenu(CSkinWnd *pWnd, cstr_t menuName) {
-        CMenu *menu = nullptr;
-
-        if (loadMenu(pWnd, &menu, menuName)) {
-            CPoint pt = getCursorPos();
-            menu->trackPopupMenu(pt.x, pt.y, pWnd, nullptr);
-            delete menu;
+void CSkinFactory::onSkinWndDestory(CSkinWnd *pSkinWnd) {
+    auto itEnd = m_listSkinWnds.end();
+    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
+        CSkinWnd *pSkin = *it;
+        if (pSkin == pSkinWnd) {
+            m_listSkinWnds.erase(it);
+            return;
         }
     }
+}
 
-    CSkinMenu *CSkinFactory::loadPresetMenu(CSkinWnd *pWnd, cstr_t szMenu) {
-        if (m_menus.IsNull()) {
-            string fn = CSkinApp::getInstance()->getSkinFactory()->getResourceMgr()->getResourcePathName("menu.json");
-            string content;
-            if (!readFile(fn.c_str(), content)) {
-                ERR_LOG1("Failed to load menu file: %s", fn.c_str());
-                return nullptr;
-            }
-
-            m_menus.Parse(content.c_str(), content.size());
-            assert(m_menus.IsObject());
-        }
-
-        if (m_menus.HasMember(szMenu)) {
-            return newSkinMenu(pWnd, m_menus[szMenu]);
-        } else {
-            ERR_LOG1("Can NOT find menu %s.", szMenu);
-            return nullptr;
+void CSkinFactory::onMainSkinWndDestory(CSkinWnd *pSkinWnd) {
+    int nMainAppWnd = 0;
+    for (ListSkinWnds::iterator it = m_listSkinWnds.begin();
+    it != m_listSkinWnds.end(); ++it)
+        {
+        CSkinWnd *p = *it;
+        if (p->isMainAppWnd()) {
+            nMainAppWnd++;
         }
     }
-
-    int CSkinFactory::onDynamicCmd(int nCmdID, CSkinWnd *pSkinWnd) {
-        int nRet = ERR_NOT_FOUND;
-
-        CDynamicCmds::DynamicCmd cmd;
-        if (m_dynamicCmds.getCmd(nCmdID, cmd)) {
-            nRet = exeDynamicCmd(cmd, pSkinWnd);
-        } else {
-            nRet = ERR_NOT_FOUND;
-        }
-
-        return nRet;
+    if (nMainAppWnd <= 1) {
+        m_pApp->postQuitMessage();
     }
+}
 
-    int CSkinFactory::exeDynamicCmd(const CDynamicCmds::DynamicCmd &cmd, CSkinWnd *pSkinWnd) {
-        if (cmd.strFunction == "change_skin_wnd") {
-            return pSkinWnd->openSkin(cmd.strParam.c_str());
-        } else if (cmd.strFunction == "create_skin_wnd") {
-            SkinWndStartupInfo skinWndStartupInfo(_SZ_SKINWND_CLASS_NAME, cmd.strParam.c_str(), cmd.strParam.c_str(), nullptr);
-            return activeOrCreateSkinWnd(skinWndStartupInfo);
-        } else if (cmd.strFunction == "openclose_skin_wnd") {
-            CSkinWnd *pSkinWnd = findSkinWnd(cmd.strParam.c_str());
-            if (pSkinWnd) {
-                if (pSkinWnd->isIconic()) {
-                    pSkinWnd->activateWindow();
-                } else {
-                    pSkinWnd->postDestroy();
-                }
-                return ERR_OK;
-            }
+// methods for skin window
+SXNode *CSkinFactory::getSkinWndNode(cstr_t szSkinWndName) {
+    return m_skinFile.getSkinWndNode(szSkinWndName);
+}
 
-            SkinWndStartupInfo skinWndStartupInfo(_SZ_SKINWND_CLASS_NAME, cmd.strParam.c_str(), cmd.strParam.c_str(), nullptr);
-            return createSkinWnd(skinWndStartupInfo);
-        } else if (cmd.strFunction == "is_skin_wnd_visible") {
-            CSkinWnd *pSkinWnd = findSkinWnd(cmd.strParam.c_str());
-            if (pSkinWnd) {
-                return ERR_OK;
-            } else {
-                return ERR_FALSE;
-            }
-        } else if (cmd.strFunction == "load_ctrl_visible_state") {
-            VecStrings vStrParam;
-            CUIObject *pObj;
-
-            strSplit(cmd.strParam.c_str(), ',', vStrParam);
-            if (vStrParam.size() > 2 || vStrParam.size() == 0) {
-                return ERR_FALSE;
-            }
-            for (int i = 0; i < (int)vStrParam.size(); i++) {
-                trimStr(vStrParam[i]);
-
-                pObj = pSkinWnd->getUIObjectById(getIDByName(vStrParam[0].c_str()));
-                if (pObj) {
-                    // Proceed only if visible state is set.
-                    string strValue = pObj->getString("VisibleState", "");
-                    if (!strValue.empty()) {
-                        pObj->setVisible(isTRUE(strValue.c_str()));
-                    }
-                }
-            }
-
-            pSkinWnd->invalidateRect();
-
-            return ERR_OK;
-        } else if (cmd.strFunction == "save_ctrl_visible_state") {
-            VecStrings vStrParam;
-            CUIObject *pObj;
-
-            strSplit(cmd.strParam.c_str(), ',', vStrParam);
-            for (int i = 0; i < (int)vStrParam.size(); i++) {
-                trimStr(vStrParam[i]);
-
-                pObj = pSkinWnd->getUIObjectById(getIDByName(vStrParam[i].c_str()));
-                if (pObj) {
-                    pObj->writeInt("VisibleState", pObj->isVisible());
-                }
-            }
-
-            return ERR_OK;
-        } else if (cmd.strFunction == "toggle_ctrl_visible") {
-            VecStrings vStrParam;
-            CUIObject *pObj;
-
-            strSplit(cmd.strParam.c_str(), ',', vStrParam);
-            for (int i = 0; i < (int)vStrParam.size(); i++) {
-                trimStr(vStrParam[i]);
-            }
-
-            pObj = pSkinWnd->getUIObjectById(getIDByName(vStrParam[0].c_str()));
-            if (pObj) {
-                bool bVisible;
-                if (vStrParam.size() > 1) {
-                    bVisible = isTRUE(vStrParam[1].c_str());
-                } else {
-                    bVisible = !pObj->isVisible();
-                }
-                pObj->setVisible(bVisible);
-                pSkinWnd->invalidateRect();
-                return ERR_OK;
-            } else {
-                return ERR_FALSE;
-            }
-        } else if (cmd.strFunction == "show_hide_ctrl") {
-            VecStrings vStrParam;
-            CUIObject *pObj;
-
-            strSplit(cmd.strParam.c_str(), ',', vStrParam);
-            if (vStrParam.size() != 2) {
-                return ERR_FALSE;
-            }
-            for (int i = 0; i < (int)vStrParam.size(); i++) {
-                trimStr(vStrParam[i]);
-            }
-
-            // show first
-            pObj = pSkinWnd->getUIObjectById(getIDByName(vStrParam[0].c_str()));
-            if (pObj) {
-                pObj->setVisible(true);
-            }
-
-            // hide second
-            pObj = pSkinWnd->getUIObjectById(getIDByName(vStrParam[1].c_str()));
-            if (pObj) {
-                pObj->setVisible(false);
-            }
-            pSkinWnd->invalidateRect();
-
-            return ERR_OK;
-        } else if (cmd.strFunction == "is_ctrl_visible") {
-            CUIObject *pObj = pSkinWnd->getUIObjectById(getIDByName(cmd.strParam.c_str()));
-            if (pObj && pObj->isVisible()) {
-                return ERR_OK;
-            }
-
-            return ERR_FALSE;
-        } else if (cmd.strFunction == "set_property") {
-            // p1: property name, p2: value
-            VecStrings vStrParam;
-
-            strSplit(cmd.strParam.c_str(), ',', vStrParam);
-            if (vStrParam.size() != 2) {
-                return ERR_FALSE;
-            }
-            for (int i = 0; i < (int)vStrParam.size(); i++) {
-                trimStr(vStrParam[i]);
-            }
-
-            pSkinWnd->setProperty(vStrParam[0].c_str(), vStrParam[1].c_str());
-
-            pSkinWnd->invalidateRect();
-
-            return ERR_OK;
-        } else if (cmd.strFunction == "set_ctrl_property") {
-            VecStrings vStrParam;
-            CUIObject *pObj;
-
-            strSplit(cmd.strParam.c_str(), ',', vStrParam);
-            if (vStrParam.size() != 3) {
-                return ERR_FALSE;
-            }
-            trimStr(vStrParam);
-
-            pObj = pSkinWnd->getUIObjectById(getIDByName(vStrParam[0].c_str()));
-            if (pObj) {
-                pObj->setProperty(vStrParam[1].c_str(), vStrParam[2].c_str());
-            }
-
-            return ERR_OK;
-        } else if (cmd.strFunction == "start_animation") {
-            pSkinWnd->startAnimation(getIDByName(cmd.strParam.c_str()));
-
-            return ERR_OK;
-        } else if (cmd.strFunction == "multi_cmd") {
-            VecStrings vStrParam;
-            int nRet = ERR_NOT_FOUND;
-
-            strSplit(cmd.strParam.c_str(), ',', vStrParam);
-            for (int i = 0; i < (int)vStrParam.size(); i++) {
-                trimStr(vStrParam[i]);
-                nRet = onDynamicCmd(getIDByName(vStrParam[i].c_str()), pSkinWnd);
-                if (nRet != ERR_OK) {
-                    ERR_LOG2("execute subcommand failed: %s, %s", vStrParam[i].c_str(), (cstr_t)Error2Str(nRet));
-                }
-            }
-            return nRet;
-        } else if (cmd.strFunction == "get_profile_bool") {
-            VecStrings vStrParam;
-            strSplit(cmd.strParam.c_str(), ',', vStrParam);
-            trimStr(vStrParam);
-
-            if (vStrParam.size() == 0) {
-                return ERR_FALSE;
-            }
-
-            bool bDefault = true;
-            if (vStrParam.size() > 1) {
-                bDefault = isTRUE(vStrParam[1].c_str());
-            }
-            if (g_profile.getBool(getSkinName(), vStrParam[0].c_str(), bDefault)) {
-                return ERR_OK;
-            }
-
-            return ERR_FALSE;
-        }
-        //    else if (cmd.strFunction == "open_skin_wnd")
-        //        return activeOrCreateSkinWnd(false, _SZ_SKINWND_CLASS_NAME, cmd.strParam.c_str(), cmd.strParam.c_str());
-
+int CSkinFactory::loadAppResSkinWndXml(cstr_t szSkinWndName, CSimpleXML &xml) {
+    string file;
+    if (!m_resourceMgr.getResourcePathName(szSkinWndName, file)) {
         return ERR_NOT_FOUND;
     }
 
-    void CSkinFactory::adjustHue(float hue, float saturation, float luminance) {
-        // reload the resource which is set to adjust hue
-        m_resourceMgr.adjustHue(hue, saturation, luminance);
-
-        // Notify each child ctrl of this message.
-        auto itEnd = m_listSkinWnds.end();
-        for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
-            CSkinWnd *pSkin = *it;
-            pSkin->onAdjustHue(hue, saturation, luminance);
-            pSkin->invalidateRect();
-        }
+    if (!xml.parseFile(file.c_str())) {
+        return ERR_PARSE_XML;
     }
 
-    void CSkinFactory::getAdjustedHueResult(CColor &clr) {
-        float H, S, L;
-        COLORREF c;
+    expandIncludeNode(xml.m_pRoot);
 
-        m_resourceMgr.getAdjustHueParam(H, S, L);
-        if (H != 0) {
-            c = clr.get();
-            adjustColorHue(c, H);
-            clr.set(c);
-        }
+    return ERR_OK;
+}
+
+bool CSkinFactory::isAppResSkinWnd(cstr_t szSkinWndName) {
+    string file;
+    if (m_resourceMgr.getResourcePathName(szSkinWndName, file)) {
+        return true;
     }
 
-    void CSkinFactory::getAdjustedHueResult(COLORREF &clr) {
-        float H, S, L;
+    return false;
+}
 
-        m_resourceMgr.getAdjustHueParam(H, S, L);
-        if (H != 0) {
-            adjustColorHue(clr, H);
-        }
+void CSkinFactory::registerUIObjNewer(cstr_t szClassName, IUIObjNewer *pObjNewer) {
+    assert(m_mapUIObjNewer.find(szClassName) == m_mapUIObjNewer.end());
+    m_mapUIObjNewer[szClassName] = pObjNewer;
+}
+
+// create new uiobject by class name
+CUIObject * CSkinFactory::createUIObject(CSkinWnd *pSkin, cstr_t szClassName, CSkinContainer *pContainer) {
+    SXNode *pNode = m_skinStyle.getClassNode(szClassName);
+    if (!pNode) {
+        return newUIObject(pSkin, pContainer, szClassName);
     }
 
-    void CSkinFactory::onLanguageChanged() {
-        auto itEnd = m_listSkinWnds.end();
-        for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
-            CSkinWnd *pWnd = *it;
-            pWnd->onLanguageChanged();
-        }
+    cstr_t szExtends = pNode->getProperty(SZ_PN_EXTENDS);
+    if (szExtends) {
+        szClassName = szExtends;
     }
 
-    void CSkinFactory::applyDefaultThemeOfSkin() {
-        string themeFile;
-        if (!m_resourceMgr.getResourcePathName("theme.xml", themeFile)) {
-            return;
+    CUIObject *pObj = newUIObject(pSkin, pContainer, szClassName);
+
+    // set styled properties of Extends from
+    if (pObj) {
+        pObj->fromXML(pNode);
+    }
+
+    return pObj;
+}
+
+CUIObject *CSkinFactory::newUIObject(CSkinWnd *pSkin, CSkinContainer *pContainer, cstr_t szClassName) {
+    MapUIObjNewer::iterator it = m_mapUIObjNewer.find(szClassName);
+    if (it == m_mapUIObjNewer.end()) {
+        return nullptr;
+    }
+
+    CUIObject *pObj = (*it).second->New();
+    assert(pObj);
+    pObj->setParent(pSkin, pContainer);
+
+    return pObj;
+}
+
+CUIObject *CSkinFactory::createDynamicCtrl(CSkinContainer *pContainer, cstr_t szClassName, int nIDAssign, cstr_t szLeft, cstr_t szTop, cstr_t szWidth, cstr_t szHeight) {
+    CUIObject *pObj = nullptr;
+
+    // create the control
+    pObj = createUIObject(pContainer->getSkinWnd(), szClassName, pContainer);
+    assert(pObj);
+    if (pObj) {
+        if (nIDAssign == UID_INVALID) {
+            nIDAssign = pContainer->getSkinWnd()->allocUIObjID();
+        }
+        pObj->m_id = nIDAssign;
+
+        //
+        // 先使用参数来设置高度和宽度
+        if (szWidth && !isEmptyString(szWidth)) {
+            pObj->setProperty(SZ_PN_WIDTH, szWidth);
+        }
+        if (szHeight && !isEmptyString(szHeight)) {
+            pObj->setProperty(SZ_PN_HEIGHT, szHeight);
+        }
+        if (szLeft && !isEmptyString(szLeft)) {
+            pObj->setProperty(SZ_PN_LEFT, szLeft);
+        }
+        if (szLeft && !isEmptyString(szTop)) {
+            pObj->setProperty(SZ_PN_TOP, szTop);
         }
 
-        CSimpleXML xml;
-        if (!xml.parseFile(themeFile.c_str())) {
-            ERR_LOG1("Failed to parse theme file: %s", themeFile.c_str());
-            return;
-        }
+        // 添加到数组中
+        pContainer->addUIObject(pObj);
+    }
 
-        if (strcmp(xml.m_pRoot->name.c_str(), "Theme") != 0) {
-            return;
-        }
+    return pObj;
+}
 
-        for (SXNode::iterator itSection = xml.m_pRoot->listChildren.begin();
-        itSection != xml.m_pRoot->listChildren.end(); ++itSection)
-            {
-            SXNode *pNodeSection = *itSection;
-            for (SXNode::iterator itValue = pNodeSection->listChildren.begin();
-            itValue != pNodeSection->listChildren.end(); ++itValue)
-                {
-                SXNode *pNodeValue = *itValue;
-                g_profile.writeString(pNodeSection->name.c_str(),
-                    pNodeValue->name.c_str(), pNodeValue->strContent.c_str());
+void CSkinFactory::setSkinsRootDir(cstr_t szSkinsRootDir) {
+    m_strSkinRootDir = szSkinsRootDir;
+    if (!m_strSkinRootDir.empty()) {
+        dirStringAddSep(m_strSkinRootDir);
+        g_profile.writeString("SkinRootDir", m_strSkinRootDir.c_str());
+    }
+}
+
+cstr_t CSkinFactory::getSkinRootDir() {
+    if (m_strSkinRootDir.empty()) {
+        m_strSkinRootDir = g_profile.getString("SkinRootDir", "");
+        if (!m_strSkinRootDir.empty()) {
+            dirStringAddSep(m_strSkinRootDir);
+            if (isDirExist(m_strSkinRootDir.c_str())) {
+                return m_strSkinRootDir.c_str();
             }
         }
-    }
 
-    //
-    // Bring all the skin windows to the top
-    //
-    void CSkinFactory::onSkinWndActivate(CSkinWnd *pWndActive) {
-#ifdef _WIN32
-        ListSkinWnds::iterator it, itEnd;
+        m_strSkinRootDir = getAppResourceDir();
+        m_strSkinRootDir += "skins";
+        m_strSkinRootDir += PATH_SEP_STR;
 
-        HWND hWndPrev, hWndNext, hWndActive;
-        HDWP hWindowPosInfo;
-        vector<HWND> vToBring;
+#if defined (_DEBUG) && defined (_WIN32)
+        if (!isDirExist(m_strSkinRootDir.c_str())) {
+            m_strSkinRootDir = getInstallShareDir();
 
-        if (pWndActive) {
-            hWndActive = pWndActive->getHandle();
-        } else {
-            hWndActive = GetForegroundWindow();
+            m_strSkinRootDir += "skins\\";
         }
-
-        if (isTopmostWindow(hWndActive)) {
-            vToBring.push_back(HWND_TOP);
-        } else {
-            vToBring.push_back(hWndActive);
-        }
-
-        hWndPrev = hWndNext = hWndActive;
-        hWndNext = GetWindow(hWndNext, GW_HWNDNEXT);
-        while (hWndNext) {
-            itEnd = m_listSkinWnds.end();
-            for (it = m_listSkinWnds.begin(); it != itEnd; ++it) {
-                if ((*it)->getHandle() == hWndNext && hWndNext != hWndActive) {
-                    if (!isTopmostWindow(hWndNext) && !::isIconic(hWndNext)) {
-                        vToBring.push_back(hWndNext);
-                        hWndPrev = hWndNext;
-                    }
-                    break;
-                }
-            }
-            hWndNext = GetWindow(hWndNext, GW_HWNDNEXT);
-        }
-        hWindowPosInfo = BeginDeferWindowPos(vToBring.size());
-        for (int i = 1; i < (int)vToBring.size(); i++) {
-            DeferWindowPos(hWindowPosInfo, vToBring[i], vToBring[i - 1], 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
-        }
-        EndDeferWindowPos(hWindowPosInfo);
-
-        // DBG_LOG1("onSkinWndActivate: %s", pWndActive->getSkinWndName());
 #endif
     }
 
-    void CSkinFactory::enterInDrawUpdate() {
-        for (auto it = m_listSkinWnds.begin(); it != m_listSkinWnds.end(); ++it) {
-            CSkinWnd *pWnd = *it;
-            pWnd->enterInDrawUpdate();
+    return m_strSkinRootDir.c_str();
+}
+
+void CSkinFactory::setSkinFileName(cstr_t szSkinFileName) {
+    m_strSkinFileName = szSkinFileName;
+}
+
+// 枚举 skin
+// COMMENT:
+//        查找Skin目录下的第一个Skin
+// RETURN:
+//        The handle of find skin
+//        INVALID_HANDLE_VALUE - 没有找到
+bool CSkinFactory::findFirstSkin(string &strSkin) {
+    FileFind find;
+
+    if (!find.openDir(getSkinRootDir())) {
+        return false;
+    }
+
+    while (find.findNext()) {
+        if (find.isCurDir()) {
+            string fn = getSkinRootDir();
+            fn += find.getCurName();
+            fn += PATH_SEP_STR;
+            fn += m_strSkinFileName;
+
+            if (isFileExist(fn.c_str())) {
+                strSkin = find.getCurName();
+                return true;
+            }
         }
     }
 
-    void CSkinFactory::leaveInDrawUpdate() {
-        for (auto it = m_listSkinWnds.begin(); it != m_listSkinWnds.end(); ++it) {
-            CSkinWnd *pWnd = *it;
-            pWnd->leaveInDrawUpdate();
+    return false;
+}
+
+bool CSkinFactory::enumAllSkins(vector<string> &vSkins) {
+    FileFind find;
+
+    if (!find.openDir(getSkinRootDir())) {
+        return false;
+    }
+
+    while (find.findNext()) {
+        if (find.isCurDir()) {
+            string fn = getSkinRootDir();
+            fn += find.getCurName();
+            fn += PATH_SEP_STR;
+            fn += m_strSkinFileName;
+
+            if (isFileExist(fn.c_str())) {
+                vSkins.push_back(find.getCurName());
+            }
         }
     }
+
+    // sort(vSkins.begin(), vSkins.end());
+
+    return true;
+}
+
+CSkinWnd *CSkinFactory::getMainWnd() {
+    for (auto it = m_listSkinWnds.begin(); it != m_listSkinWnds.end(); ++it) {
+        CSkinWnd *p = *it;
+        if (p->isMainAppWnd()) {
+            return p;
+        }
+    }
+
+    return nullptr;
+}
+
+SXNode *CSkinFactory::getExtendsStyle(cstr_t szExtendsSkinWnd) const {
+    return m_skinStyle.getClassNode(szExtendsSkinWnd);
+}
+
+static SXNode *getMenuOfMenus(SXNode *pNodeMenus, cstr_t szMenuName) {
+    SXNode::iterator it, itEnd;
+    itEnd = pNodeMenus->listChildren.end();
+    for (it = pNodeMenus->listChildren.begin(); it != itEnd; ++it) {
+        SXNode *pNode = *it;
+
+        // OK, found the contorl
+        if (strcasecmp(pNode->name.c_str(), "Menu") == 0) {
+            if (strcasecmp(pNode->getPropertySafe("Name"), szMenuName) == 0) {
+                return pNode;
+            }
+        }
+    }
+
+    return nullptr;
+}
+
+bool CSkinFactory::loadMenu(CSkinWnd *pWnd, CMenu **ppMenu, cstr_t szMenu) {
+    CSkinMenu *pSkinMenu = nullptr;
+
+    *ppMenu = nullptr;
+
+    // load menu from xml
+    SXNode *pNodeMenus = m_skinFile.getMenusNode();
+    if (pNodeMenus) {
+        SXNode *pNode = getMenuOfMenus(pNodeMenus, szMenu);
+        if (pNode) {
+            cstr_t szFromMenu = pNode->getProperty("From");
+            if (szFromMenu) {
+                pSkinMenu = loadPresetMenu(pWnd, szFromMenu);
+            }
+
+            if (!pSkinMenu) {
+                pSkinMenu = new CSkinMenu();
+            }
+
+            pSkinMenu->fromXML(pNode, pSkinMenu->getOrgAppendPos());
+        }
+    }
+
+    if (!pSkinMenu) {
+        // is this a preset menu?
+        pSkinMenu = loadPresetMenu(pWnd, szMenu);
+        if (pSkinMenu) {
+            *ppMenu = pSkinMenu;
+            return true;
+        }
+    }
+
+    *ppMenu = pSkinMenu;
+
+    return pSkinMenu != nullptr;
+}
+
+void CSkinFactory::showPopupMenu(CSkinWnd *pWnd, cstr_t menuName) {
+    CMenu *menu = nullptr;
+
+    if (loadMenu(pWnd, &menu, menuName)) {
+        CPoint pt = getCursorPos();
+        menu->trackPopupMenu(pt.x, pt.y, pWnd, nullptr);
+        delete menu;
+    }
+}
+
+CSkinMenu *CSkinFactory::loadPresetMenu(CSkinWnd *pWnd, cstr_t szMenu) {
+    if (m_menus.IsNull()) {
+        string fn = CSkinApp::getInstance()->getSkinFactory()->getResourceMgr()->getResourcePathName("menu.json");
+        string content;
+        if (!readFile(fn.c_str(), content)) {
+            ERR_LOG1("Failed to load menu file: %s", fn.c_str());
+            return nullptr;
+        }
+
+        m_menus.Parse(content.c_str(), content.size());
+        assert(m_menus.IsObject());
+    }
+
+    if (m_menus.HasMember(szMenu)) {
+        return newSkinMenu(pWnd, m_menus[szMenu]);
+    } else {
+        ERR_LOG1("Can NOT find menu %s.", szMenu);
+        return nullptr;
+    }
+}
+
+int CSkinFactory::onDynamicCmd(int nCmdID, CSkinWnd *pSkinWnd) {
+    int nRet = ERR_NOT_FOUND;
+
+    CDynamicCmds::DynamicCmd cmd;
+    if (m_dynamicCmds.getCmd(nCmdID, cmd)) {
+        nRet = exeDynamicCmd(cmd, pSkinWnd);
+    } else {
+        nRet = ERR_NOT_FOUND;
+    }
+
+    return nRet;
+}
+
+int CSkinFactory::exeDynamicCmd(const CDynamicCmds::DynamicCmd &cmd, CSkinWnd *pSkinWnd) {
+    if (cmd.strFunction == "change_skin_wnd") {
+        return pSkinWnd->openSkin(cmd.strParam.c_str());
+    } else if (cmd.strFunction == "create_skin_wnd") {
+        SkinWndStartupInfo skinWndStartupInfo(_SZ_SKINWND_CLASS_NAME, cmd.strParam.c_str(), cmd.strParam.c_str(), nullptr);
+        return activeOrCreateSkinWnd(skinWndStartupInfo);
+    } else if (cmd.strFunction == "openclose_skin_wnd") {
+        CSkinWnd *pSkinWnd = findSkinWnd(cmd.strParam.c_str());
+        if (pSkinWnd) {
+            if (pSkinWnd->isIconic()) {
+                pSkinWnd->activateWindow();
+            } else {
+                pSkinWnd->postDestroy();
+            }
+            return ERR_OK;
+        }
+
+        SkinWndStartupInfo skinWndStartupInfo(_SZ_SKINWND_CLASS_NAME, cmd.strParam.c_str(), cmd.strParam.c_str(), nullptr);
+        return createSkinWnd(skinWndStartupInfo);
+    } else if (cmd.strFunction == "is_skin_wnd_visible") {
+        CSkinWnd *pSkinWnd = findSkinWnd(cmd.strParam.c_str());
+        if (pSkinWnd) {
+            return ERR_OK;
+        } else {
+            return ERR_FALSE;
+        }
+    } else if (cmd.strFunction == "load_ctrl_visible_state") {
+        VecStrings vStrParam;
+        CUIObject *pObj;
+
+        strSplit(cmd.strParam.c_str(), ',', vStrParam);
+        if (vStrParam.size() > 2 || vStrParam.size() == 0) {
+            return ERR_FALSE;
+        }
+        for (int i = 0; i < (int)vStrParam.size(); i++) {
+            trimStr(vStrParam[i]);
+
+            pObj = pSkinWnd->getUIObjectById(getIDByName(vStrParam[0].c_str()));
+            if (pObj) {
+                // Proceed only if visible state is set.
+                string strValue = pObj->getString("VisibleState", "");
+                if (!strValue.empty()) {
+                    pObj->setVisible(isTRUE(strValue.c_str()));
+                }
+            }
+        }
+
+        pSkinWnd->invalidateRect();
+
+        return ERR_OK;
+    } else if (cmd.strFunction == "save_ctrl_visible_state") {
+        VecStrings vStrParam;
+        CUIObject *pObj;
+
+        strSplit(cmd.strParam.c_str(), ',', vStrParam);
+        for (int i = 0; i < (int)vStrParam.size(); i++) {
+            trimStr(vStrParam[i]);
+
+            pObj = pSkinWnd->getUIObjectById(getIDByName(vStrParam[i].c_str()));
+            if (pObj) {
+                pObj->writeInt("VisibleState", pObj->isVisible());
+            }
+        }
+
+        return ERR_OK;
+    } else if (cmd.strFunction == "toggle_ctrl_visible") {
+        VecStrings vStrParam;
+        CUIObject *pObj;
+
+        strSplit(cmd.strParam.c_str(), ',', vStrParam);
+        for (int i = 0; i < (int)vStrParam.size(); i++) {
+            trimStr(vStrParam[i]);
+        }
+
+        pObj = pSkinWnd->getUIObjectById(getIDByName(vStrParam[0].c_str()));
+        if (pObj) {
+            bool bVisible;
+            if (vStrParam.size() > 1) {
+                bVisible = isTRUE(vStrParam[1].c_str());
+            } else {
+                bVisible = !pObj->isVisible();
+            }
+            pObj->setVisible(bVisible);
+            pSkinWnd->invalidateRect();
+            return ERR_OK;
+        } else {
+            return ERR_FALSE;
+        }
+    } else if (cmd.strFunction == "show_hide_ctrl") {
+        VecStrings vStrParam;
+        CUIObject *pObj;
+
+        strSplit(cmd.strParam.c_str(), ',', vStrParam);
+        if (vStrParam.size() != 2) {
+            return ERR_FALSE;
+        }
+        for (int i = 0; i < (int)vStrParam.size(); i++) {
+            trimStr(vStrParam[i]);
+        }
+
+        // show first
+        pObj = pSkinWnd->getUIObjectById(getIDByName(vStrParam[0].c_str()));
+        if (pObj) {
+            pObj->setVisible(true);
+        }
+
+        // hide second
+        pObj = pSkinWnd->getUIObjectById(getIDByName(vStrParam[1].c_str()));
+        if (pObj) {
+            pObj->setVisible(false);
+        }
+        pSkinWnd->invalidateRect();
+
+        return ERR_OK;
+    } else if (cmd.strFunction == "is_ctrl_visible") {
+        CUIObject *pObj = pSkinWnd->getUIObjectById(getIDByName(cmd.strParam.c_str()));
+        if (pObj && pObj->isVisible()) {
+            return ERR_OK;
+        }
+
+        return ERR_FALSE;
+    } else if (cmd.strFunction == "set_property") {
+        // p1: property name, p2: value
+        VecStrings vStrParam;
+
+        strSplit(cmd.strParam.c_str(), ',', vStrParam);
+        if (vStrParam.size() != 2) {
+            return ERR_FALSE;
+        }
+        for (int i = 0; i < (int)vStrParam.size(); i++) {
+            trimStr(vStrParam[i]);
+        }
+
+        pSkinWnd->setProperty(vStrParam[0].c_str(), vStrParam[1].c_str());
+
+        pSkinWnd->invalidateRect();
+
+        return ERR_OK;
+    } else if (cmd.strFunction == "set_ctrl_property") {
+        VecStrings vStrParam;
+        CUIObject *pObj;
+
+        strSplit(cmd.strParam.c_str(), ',', vStrParam);
+        if (vStrParam.size() != 3) {
+            return ERR_FALSE;
+        }
+        trimStr(vStrParam);
+
+        pObj = pSkinWnd->getUIObjectById(getIDByName(vStrParam[0].c_str()));
+        if (pObj) {
+            pObj->setProperty(vStrParam[1].c_str(), vStrParam[2].c_str());
+        }
+
+        return ERR_OK;
+    } else if (cmd.strFunction == "start_animation") {
+        pSkinWnd->startAnimation(getIDByName(cmd.strParam.c_str()));
+
+        return ERR_OK;
+    } else if (cmd.strFunction == "multi_cmd") {
+        VecStrings vStrParam;
+        int nRet = ERR_NOT_FOUND;
+
+        strSplit(cmd.strParam.c_str(), ',', vStrParam);
+        for (int i = 0; i < (int)vStrParam.size(); i++) {
+            trimStr(vStrParam[i]);
+            nRet = onDynamicCmd(getIDByName(vStrParam[i].c_str()), pSkinWnd);
+            if (nRet != ERR_OK) {
+                ERR_LOG2("execute subcommand failed: %s, %s", vStrParam[i].c_str(), (cstr_t)Error2Str(nRet));
+            }
+        }
+        return nRet;
+    } else if (cmd.strFunction == "get_profile_bool") {
+        VecStrings vStrParam;
+        strSplit(cmd.strParam.c_str(), ',', vStrParam);
+        trimStr(vStrParam);
+
+        if (vStrParam.size() == 0) {
+            return ERR_FALSE;
+        }
+
+        bool bDefault = true;
+        if (vStrParam.size() > 1) {
+            bDefault = isTRUE(vStrParam[1].c_str());
+        }
+        if (g_profile.getBool(getSkinName(), vStrParam[0].c_str(), bDefault)) {
+            return ERR_OK;
+        }
+
+        return ERR_FALSE;
+    }
+    //    else if (cmd.strFunction == "open_skin_wnd")
+    //        return activeOrCreateSkinWnd(false, _SZ_SKINWND_CLASS_NAME, cmd.strParam.c_str(), cmd.strParam.c_str());
+
+    return ERR_NOT_FOUND;
+}
+
+void CSkinFactory::adjustHue(float hue, float saturation, float luminance) {
+    // reload the resource which is set to adjust hue
+    m_resourceMgr.adjustHue(hue, saturation, luminance);
+
+    // Notify each child ctrl of this message.
+    auto itEnd = m_listSkinWnds.end();
+    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
+        CSkinWnd *pSkin = *it;
+        pSkin->onAdjustHue(hue, saturation, luminance);
+        pSkin->invalidateRect();
+    }
+}
+
+void CSkinFactory::getAdjustedHueResult(CColor &clr) {
+    float H, S, L;
+    COLORREF c;
+
+    m_resourceMgr.getAdjustHueParam(H, S, L);
+    if (H != 0) {
+        c = clr.get();
+        adjustColorHue(c, H);
+        clr.set(c);
+    }
+}
+
+void CSkinFactory::getAdjustedHueResult(COLORREF &clr) {
+    float H, S, L;
+
+    m_resourceMgr.getAdjustHueParam(H, S, L);
+    if (H != 0) {
+        adjustColorHue(clr, H);
+    }
+}
+
+void CSkinFactory::onLanguageChanged() {
+    auto itEnd = m_listSkinWnds.end();
+    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
+        CSkinWnd *pWnd = *it;
+        pWnd->onLanguageChanged();
+    }
+}
+
+void CSkinFactory::applyDefaultThemeOfSkin() {
+    string themeFile;
+    if (!m_resourceMgr.getResourcePathName("theme.xml", themeFile)) {
+        return;
+    }
+
+    CSimpleXML xml;
+    if (!xml.parseFile(themeFile.c_str())) {
+        ERR_LOG1("Failed to parse theme file: %s", themeFile.c_str());
+        return;
+    }
+
+    if (strcmp(xml.m_pRoot->name.c_str(), "Theme") != 0) {
+        return;
+    }
+
+    for (SXNode::iterator itSection = xml.m_pRoot->listChildren.begin();
+    itSection != xml.m_pRoot->listChildren.end(); ++itSection)
+        {
+        SXNode *pNodeSection = *itSection;
+        for (SXNode::iterator itValue = pNodeSection->listChildren.begin();
+        itValue != pNodeSection->listChildren.end(); ++itValue)
+            {
+            SXNode *pNodeValue = *itValue;
+            g_profile.writeString(pNodeSection->name.c_str(),
+                pNodeValue->name.c_str(), pNodeValue->strContent.c_str());
+        }
+    }
+}
+
+//
+// Bring all the skin windows to the top
+//
+void CSkinFactory::onSkinWndActivate(CSkinWnd *pWndActive) {
+#ifdef _WIN32
+    ListSkinWnds::iterator it, itEnd;
+
+    HWND hWndPrev, hWndNext, hWndActive;
+    HDWP hWindowPosInfo;
+    vector<HWND> vToBring;
+
+    if (pWndActive) {
+        hWndActive = pWndActive->getHandle();
+    } else {
+        hWndActive = GetForegroundWindow();
+    }
+
+    if (isTopmostWindow(hWndActive)) {
+        vToBring.push_back(HWND_TOP);
+    } else {
+        vToBring.push_back(hWndActive);
+    }
+
+    hWndPrev = hWndNext = hWndActive;
+    hWndNext = GetWindow(hWndNext, GW_HWNDNEXT);
+    while (hWndNext) {
+        itEnd = m_listSkinWnds.end();
+        for (it = m_listSkinWnds.begin(); it != itEnd; ++it) {
+            if ((*it)->getHandle() == hWndNext && hWndNext != hWndActive) {
+                if (!isTopmostWindow(hWndNext) && !::isIconic(hWndNext)) {
+                    vToBring.push_back(hWndNext);
+                    hWndPrev = hWndNext;
+                }
+                break;
+            }
+        }
+        hWndNext = GetWindow(hWndNext, GW_HWNDNEXT);
+    }
+    hWindowPosInfo = BeginDeferWindowPos(vToBring.size());
+    for (int i = 1; i < (int)vToBring.size(); i++) {
+        DeferWindowPos(hWindowPosInfo, vToBring[i], vToBring[i - 1], 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+    }
+    EndDeferWindowPos(hWindowPosInfo);
+
+    // DBG_LOG1("onSkinWndActivate: %s", pWndActive->getSkinWndName());
+#endif
+}
+
+void CSkinFactory::enterInDrawUpdate() {
+    for (auto it = m_listSkinWnds.begin(); it != m_listSkinWnds.end(); ++it) {
+        CSkinWnd *pWnd = *it;
+        pWnd->enterInDrawUpdate();
+    }
+}
+
+void CSkinFactory::leaveInDrawUpdate() {
+    for (auto it = m_listSkinWnds.begin(); it != m_listSkinWnds.end(); ++it) {
+        CSkinWnd *pWnd = *it;
+        pWnd->leaveInDrawUpdate();
+    }
+}

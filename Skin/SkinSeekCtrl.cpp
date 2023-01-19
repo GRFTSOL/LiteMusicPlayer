@@ -129,12 +129,6 @@ bool CSkinSeekCtrl::onLButtonUp(uint32_t nFlags, CPoint point) {
 
     m_PushDownPos = PUSH_DOWN_NONE;
 
-    //    PUSH_DOWN_POS        CursorPosNew;
-
-    //    CursorPosNew = getPushDownPos(point);
-    //     if (CursorPosNew != PUSH_DOWN_NONE)
-    //         m_pSkin->setCaptureMouse(this);
-
     invalidate();
 
     return true;
@@ -194,15 +188,6 @@ bool CSkinSeekCtrl::onMouseMove(CPoint point) {
             PUSH_DOWN_POS CursorPosNew;
 
             CursorPosNew = getPushDownPos(point);
-
-            // DBG_LOG2("CursorPosNew: %d, m_CursorPosLatest: %d", CursorPosNew, m_CursorPosLatest);
-            if (m_pSkin->getCaptureMouse() != this) {
-                m_pSkin->setCaptureMouse(this);
-            } else if (CursorPosNew == PUSH_DOWN_NONE) {
-                if (m_pSkin->getCaptureMouse() == this) {
-                    m_pSkin->releaseCaptureMouse(this);
-                }
-            }
 
             if (CursorPosNew != m_CursorPosLatest) {
                 m_CursorPosLatest = CursorPosNew;

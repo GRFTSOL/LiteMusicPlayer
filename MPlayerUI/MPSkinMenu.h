@@ -72,17 +72,13 @@ public:
     CMPSkinMenu();
     virtual ~CMPSkinMenu();
 
-    virtual void trackPopupMenu(int x, int y, Window *pWnd, CRect *prcNotOverlap = nullptr);
-    virtual void trackPopupSubMenu(int x, int y, int nSubMenu, Window *pWnd, CRect *prcNotOverlap = nullptr);
-
-    virtual void onLoadMenu();
+    virtual void onLoadMenu() override;
+    virtual void updateMenuStatus(Window *window) override;
 
     void addUICheckStatusIf(IUICheckStatus *pIfUICheckStatus) { m_autoCheckMenu.addUICheckStatusIf(pIfUICheckStatus); }
 
-    void updateMenuStatus();
-
 protected:
-    virtual bool getShortcutKey(int nMenuID, string &strShortcut);
+    virtual bool getShortcutKey(int nMenuID, string &strShortcut) override;
 
     void insertSkinMenu(CMenu &menu, int nPosStart);
 

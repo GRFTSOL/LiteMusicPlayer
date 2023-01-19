@@ -601,6 +601,7 @@ void CSkinWnd::onLButtonUp(uint32_t nFlags, CPoint point) {
                 return;
             }
         } else {
+            m_pUIObjCapMouse = nullptr;
             // capture lost!
         }
     }
@@ -625,6 +626,7 @@ void CSkinWnd::onRButtonDown(uint32_t nFlags, CPoint point) {
             }
         } else {
             // capture lost!
+            m_pUIObjCapMouse = nullptr;
         }
     }
 
@@ -648,6 +650,7 @@ void CSkinWnd::onRButtonUp(uint32_t nFlags, CPoint point) {
             }
         } else {
             // capture lost!
+            m_pUIObjCapMouse = nullptr;
         }
     }
 
@@ -995,9 +998,13 @@ CUIObject * CSkinWnd::getCaptureMouse() {
 }
 
 void CSkinWnd::releaseCaptureMouse(CUIObject *pUIObj) {
-    releaseCapture();
+    if (pUIObj == m_pUIObjCapMouse) {
+        releaseCapture();
 
-    m_pUIObjCapMouse = nullptr;
+        m_pUIObjCapMouse = nullptr;
+    } else {
+        DBG_LOG2("NOT captured mouse, m_pUIObjCapMouse: %lx, pUIObj: %lx", m_pUIObjCapMouse, pUIObj);
+    }
 }
 
 void CSkinWnd::onMove(int x, int y) {
@@ -1075,10 +1082,7 @@ void CSkinWnd::onKillFocus() {
         releaseCaptureMouse(m_pUIObjCapMouse);
     }
 
-    CUIObject *pObj = getFocusUIObj();
-    if (pObj) {
-        pObj->onKillFocus();
-    }
+    m_rootConainter.onKillFocus();
 }
 
 bool CSkinWnd::moveWindow(int X, int Y, int nWidth, int nHeight, bool bRepaint) {

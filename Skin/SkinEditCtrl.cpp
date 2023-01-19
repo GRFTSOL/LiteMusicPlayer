@@ -224,9 +224,8 @@ bool CSkinEditCtrl::CGlyph::reverseiCmp(const char *str) {
 }
 
 void CSkinEditCtrl::onFontChanged() {
-    CRawGraph *canvas;
-
-    canvas = getMemGraphics();
+    CRawGraph *canvas = getMemGraphics();
+    canvas->setFont(m_font.getFont());
 
     m_nOneCharDx = 0;
     for (char ch = 'A'; ch <= 'Z'; ch++) {
@@ -684,6 +683,8 @@ void CSkinEditCtrl::onCreate() {
     m_nCaretY = m_yMargin;
 
     m_font.setParent(m_pSkin);
+
+    updateWidthOfAllLines();
 }
 
 void CSkinEditCtrl::fillSelectedLineBg(CRawGraph *canvas, int x, int y, COneLine *pLine, int nBegSelCol, int nEndSelCol) {
@@ -960,6 +961,15 @@ void CSkinEditCtrl::updateWidthInfoOfLine(CRawGraph *canvas, COneLine *pLine) {
     }
 }
 
+void CSkinEditCtrl::updateWidthOfAllLines() {
+    CRawGraph *canvas = getMemGraphics();
+    canvas->setFont(m_font.getFont());
+
+    for (int i = 0; i < (int)m_vLines.size(); i++) {
+        updateWidthInfoOfLine(canvas, m_vLines[i]);
+    }
+}
+
 bool CSkinEditCtrl::doSetText(cstr_t szText) {
     COneLine *pLine = nullptr;
 
@@ -1013,10 +1023,7 @@ bool CSkinEditCtrl::doSetText(cstr_t szText) {
     // update line width
     //
     if (m_bCreated) {
-        CRawGraph *canvas = getMemGraphics();
-        for (int i = 0; i < (int)m_vLines.size(); i++) {
-            updateWidthInfoOfLine(canvas, m_vLines[i]);
-        }
+        updateWidthOfAllLines();
     }
 
     return true;
@@ -1418,11 +1425,8 @@ void CSkinEditCtrl::removeSelected(int *pnBegSelRow, int *pnBegSelCol) {
         return;
     }
 
-    CRawGraph *canvas;
-    // SIZE                size;
-
-    canvas = getMemGraphics();
-
+    CRawGraph *canvas = getMemGraphics();
+    canvas->setFont(m_font.getFont());
 
     // remove selection
     for (int i = nEndSelRow; i >= nBegSelRow; i--) {
@@ -1461,10 +1465,8 @@ void CSkinEditCtrl::removeStr(int nRow, int nCol, int nSize) {
     assert(nRow >= 0 && nRow < (int)m_vLines.size());
 
     COneLine *pLine = nullptr;
-    CRawGraph *canvas;
-    // SIZE                size;
-
-    canvas = getMemGraphics();
+    CRawGraph *canvas = getMemGraphics();
+    canvas->setFont(m_font.getFont());
 
     while (nRow < (int)m_vLines.size() && nSize > 0) {
         pLine = m_vLines[nRow];
@@ -1503,7 +1505,6 @@ void CSkinEditCtrl::removeStr(int nRow, int nCol, int nSize) {
     if (pLine) {
         updateWidthInfoOfLine(canvas, pLine);
     }
-
 }
 
 void CSkinEditCtrl::removeChar(int nRow, int nCol) {
@@ -1528,10 +1529,8 @@ void CSkinEditCtrl::removeChar(int nRow, int nCol) {
 
     onNotifyParseLine(nRow);
 
-    CRawGraph *canvas;
-    // SIZE                size;
-
-    canvas = getMemGraphics();
+    CRawGraph *canvas = getMemGraphics();
+    canvas->setFont(m_font.getFont());
 
     updateWidthInfoOfLine(canvas, pLine);
 }
@@ -1588,11 +1587,6 @@ void CSkinEditCtrl::insertChar(int nRow, int nCol, WCHAR chInsert) {
 
     CGlyph glyph;
 
-    CRawGraph *canvas;
-    // SIZE                size;
-
-    canvas = getMemGraphics();
-
     glyph.chGlyph = chInsert;
     glyph.clrIndex = CN_TEXT;
 
@@ -1604,11 +1598,13 @@ void CSkinEditCtrl::insertChar(int nRow, int nCol, WCHAR chInsert) {
 
     onNotifyParseLine(nRow);
 
+    CRawGraph *canvas = getMemGraphics();
+    canvas->setFont(m_font.getFont());
+
     updateWidthInfoOfLine(canvas, pLine);
 }
 
 void CSkinEditCtrl::insertStr(int nRow, int nCol, cstr_t szText) {
-    CRawGraph *canvas;
     string strSingleLine;
 
     // insert only first line, if it's single line
@@ -1621,7 +1617,8 @@ void CSkinEditCtrl::insertStr(int nRow, int nCol, cstr_t szText) {
         szText = strSingleLine.c_str();
     }
 
-    canvas = getMemGraphics();
+    CRawGraph *canvas = getMemGraphics();
+    canvas->setFont(m_font.getFont());
 
     assert(nRow >= 0 && nRow < (int)m_vLines.size());
     COneLine leftGlyphOfLine;
@@ -1640,8 +1637,6 @@ void CSkinEditCtrl::insertStr(int nRow, int nCol, cstr_t szText) {
         glyph.chGlyph = szText;
         glyph.clrIndex = CN_TEXT;
         if (*szText == '\r') {
-            //             glyph.width = 0;
-            //             pLine->push_back(glyph);
             szText++;
             updateWidthInfoOfLine(canvas, pLine);
             if (*szText == '\n') {
@@ -1824,7 +1819,6 @@ bool CSkinEditCtrl::onLButtonDown(uint32_t nFlags, CPoint point) {
             m_nBegSelCol = m_nCaretCol;
         }
 
-        m_pSkin->setCaptureMouse(this);
         setCaretToPos(point.x, point.y);
         makeCaretInSight();
 

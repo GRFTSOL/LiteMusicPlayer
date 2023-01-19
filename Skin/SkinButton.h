@@ -75,44 +75,4 @@ protected:
 
 };
 
-class CSkinHoverActionBtEventNotify : public IUIObjNotify {
-public:
-    CSkinHoverActionBtEventNotify(CUIObject *pObject) : IUIObjNotify(pObject) { cmd = C_CLICK; }
-    enum Command {
-        C_CLICK,
-        C_BEGIN_HOVER,
-        C_HOVER_ACTION,
-        C_END_HOVER,
-    };
-
-    Command                     cmd;
-
-};
-
-class CSkinHoverActionButton : public CSkinButton {
-    UIOBJECT_CLASS_NAME_DECLARE(CSkinButton)
-
-public:
-    CSkinHoverActionButton();
-    virtual ~CSkinHoverActionButton();
-
-    bool onLButtonUp(uint32_t nFlags, CPoint point) override;
-    bool onMouseMove(CPoint point) override;
-
-    void buttonUpAction() override;
-
-    void onTimer(int nId) override;
-
-protected:
-    void dispatchEvent(CSkinHoverActionBtEventNotify::Command cmd);
-
-    void endHover();
-
-protected:
-    int                         m_nTimerIdHoverAction;
-    bool                        m_bHoverActionBegin;
-    int64_t                     m_timeBeginHover;
-
-};
-
 #endif // !defined(Skin_SkinButton_h)

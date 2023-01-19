@@ -273,6 +273,8 @@ public:
     virtual bool onLButtonDblClk(uint32_t nFlags, CPoint point) { return false; }
     virtual bool onMouseDrag(CPoint point) { return false; }
     virtual bool onMouseMove(CPoint point) { return false; }
+    virtual void onMouseEnter(CPoint point) { }
+    virtual void onMouseLeave(CPoint point) { }
     virtual void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) { }
     virtual void onMagnify(float magnification) { }
 
@@ -414,6 +416,7 @@ public:
     bool                        m_visible;
     bool                        m_hideIfWndInactive;
     bool                        m_bHideIfMouseInactive;
+    bool                        m_isMouseIn;        // 鼠标是否在此组件内？
 
     /**
      * Background related properties.

@@ -8,12 +8,12 @@
 
 class CRawPen {
 public:
-    CRawPen();
+    CRawPen(int width = 1, COLORREF clr = RGB(0, 0, 0));
     virtual ~CRawPen();
 
     bool isValid() const { return true; }
 
-    bool createSolidPen(int nWidth, CColor &color);
+    bool createSolidPen(int width, const CColor &color);
 
     void destroy() { }
 

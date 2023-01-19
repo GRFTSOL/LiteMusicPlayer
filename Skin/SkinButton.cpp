@@ -110,8 +110,7 @@ bool CSkinButton::isCheck() {
 void CSkinButton::buttonUpAction() {
     if (m_bRadioBt) {
         if (m_nCurStatus >= (int)m_vBtStatImg.size() - 1) {
-            m_bLBtDown = false;
-            invalidate();
+            changeButtonState(BS_HOVER);
             return;
         }
     }
@@ -142,7 +141,7 @@ void CSkinActiveButton::draw(CRawGraph *canvas) {
 
     BtStatImg *btimg = m_vBtStatImg[m_nCurStatus];
 
-    if (m_enable && !m_bLBtDown && !m_bHover) {
+    if (m_enable && m_btnState == BS_NORMAL) {
         if (m_pSkin->isWndActive()) {
             if (m_imgMask.isValid()) {
                 btimg->imgHover.maskBlt(canvas, m_rcObj.left, m_rcObj.top, &m_imgMask, m_bpm);
@@ -222,99 +221,10 @@ void CSkinImageButton::buttonUpAction() {
         if (dlg.doModal(m_pSkin, m_clrContent) == IDOK) {
             m_clrContent = dlg.getColor();
         } else {
-            m_bLBtDown = false;
-            invalidate();
+            changeButtonState(BS_HOVER);
             return;
         }
     }
-
-    return CSkinButton::buttonUpAction();
-}
-
-///////////////////////////////////////////////////////////////////////////////
-UIOBJECT_CLASS_NAME_IMP(CSkinHoverActionButton, "HoverActionButton")
-
-CSkinHoverActionButton::CSkinHoverActionButton() {
-    m_nTimerIdHoverAction = 0;
-    m_bHoverActionBegin = false;
-    m_timeBeginHover = 0;
-}
-
-CSkinHoverActionButton::~CSkinHoverActionButton() {
-}
-
-bool CSkinHoverActionButton::onLButtonUp(uint32_t nFlags, CPoint point) {
-    if (!CSkinButton::onLButtonUp(nFlags, point)) {
-        return false;
-    }
-
-    if (!m_bHover) {
-        m_bHover = true;
-
-        // 捕捉鼠标输入
-        m_pSkin->setCaptureMouse(this);
-    }
-
-    return true;
-}
-
-bool CSkinHoverActionButton::onMouseMove(CPoint point) {
-    bool bHoverPrev = m_bHover;
-
-    bool bRet = CSkinButton::onMouseMove(point);
-
-    if (!m_bLBtDown && bHoverPrev != m_bHover) {
-        // NOT in button down && hover status changed.
-        if (m_bHover) {
-            m_nTimerIdHoverAction = m_pSkin->registerTimerObject(this, 500);
-            m_bHoverActionBegin = true;
-        } else {
-            endHover();
-        }
-    }
-
-    return bRet;
-}
-
-void CSkinHoverActionButton::onTimer(int nId) {
-    if (nId == m_nTimerIdHoverAction) {
-        if (m_bHoverActionBegin) {
-            m_bHoverActionBegin = false;
-            m_pSkin->unregisterTimerObject(this, m_nTimerIdHoverAction);
-            m_nTimerIdHoverAction = m_pSkin->registerTimerObject(this, 100);
-            m_timeBeginHover = getTickCount();
-            dispatchEvent(CSkinHoverActionBtEventNotify::C_BEGIN_HOVER);
-        } else {
-            auto now = getTickCount();
-            const int MAX_HOVER_ACTION_TIME = 20 * 1000;
-            if (now - m_timeBeginHover >= MAX_HOVER_ACTION_TIME) {
-                endHover();
-            } else {
-                dispatchEvent(CSkinHoverActionBtEventNotify::C_HOVER_ACTION);
-            }
-        }
-
-        return;
-    }
-
-    CSkinButton::onTimer(nId);
-}
-
-void CSkinHoverActionButton::dispatchEvent(CSkinHoverActionBtEventNotify::Command cmd) {
-    CSkinHoverActionBtEventNotify event(this);
-
-    event.cmd = cmd;
-    m_pSkin->dispatchUIObjNotify(&event);
-}
-
-void CSkinHoverActionButton::endHover() {
-    m_pSkin->unregisterTimerObject(this, m_nTimerIdHoverAction);
-    m_nTimerIdHoverAction = 0;
-    dispatchEvent(CSkinHoverActionBtEventNotify::C_END_HOVER);
-}
-
-void CSkinHoverActionButton::buttonUpAction() {
-    dispatchEvent(CSkinHoverActionBtEventNotify::C_CLICK);
 
     return CSkinButton::buttonUpAction();
 }

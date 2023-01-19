@@ -146,18 +146,16 @@ void CMenuAutoCheck::initProcSubMenu(CMenu &menu) {
 
     int count = menu.getItemCount();
     for (int i = 0; i < count; i++) {
-        string strText;
-        uint32_t nID;
-        bool bSubMenu;
+        MenuItemInfo info;
 
-        if (!menu.getMenuItemInfo(i, strText, nID, bSubMenu, true)) {
+        if (!menu.getMenuItemInfo(i, true, info)) {
             if (nInRadioGroupIndex != -1) {
                 m_vMenuItemsRadio.push_back(radioGroup);
             }
             break;
         }
 
-        if (bSubMenu) {
+        if (info.isSubmenu) {
             if (nInRadioGroupIndex != -1) {
                 m_vMenuItemsRadio.push_back(radioGroup);
                 nInRadioGroupIndex = -1;
@@ -165,6 +163,7 @@ void CMenuAutoCheck::initProcSubMenu(CMenu &menu) {
             CMenu subMenu = menu.getSubmenu(i);
             initProcSubMenu(subMenu);
         } else {
+            int nID = info.id;
             if (nID == IDC_SKIN_POS) {
                 m_hInsertSkinsMenu = menu;
                 m_nInsertSkinsPos = i;
@@ -328,19 +327,7 @@ void CMPSkinMenu::onLoadMenu() {
 #endif
 }
 
-void CMPSkinMenu::trackPopupMenu(int x, int y, Window *pWnd, CRect *prcNotOverlap) {
-    updateMenuStatus();
-
-    CSkinMenu::trackPopupMenu(x, y, pWnd, prcNotOverlap);
-}
-
-void CMPSkinMenu::trackPopupSubMenu(int x, int y, int nSubMenu, Window *pWnd, CRect *prcNotOverlap) {
-    updateMenuStatus();
-
-    CSkinMenu::trackPopupSubMenu(x, y, nSubMenu, pWnd, prcNotOverlap);
-}
-
-void CMPSkinMenu::updateMenuStatus() {
+void CMPSkinMenu::updateMenuStatus(Window *window) {
     m_autoCheckMenu.updateMenuCheckStatus();
 
     if (m_autoCheckMenu.m_hInsertSkinsMenu.isValid()) {

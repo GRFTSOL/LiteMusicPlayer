@@ -93,13 +93,15 @@
 		5FBCCAA5147D3C7100D7C64A /* pngset.c in Sources */ = {isa = PBXBuildFile; fileRef = 5FBCCA2B147D3C7100D7C64A /* pngset.c */; };
 		5FBCCAA6147D3C7100D7C64A /* pngstruct.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FBCCA2C147D3C7100D7C64A /* pngstruct.h */; };
 		5FBCCAA8147D3C7100D7C64A /* pngtrans.c in Sources */ = {isa = PBXBuildFile; fileRef = 5FBCCA2F147D3C7100D7C64A /* pngtrans.c */; };
-		5FBCCAA9147D3C7100D7C64A /* pngvalid.c in Sources */ = {isa = PBXBuildFile; fileRef = 5FBCCA30147D3C7100D7C64A /* pngvalid.c */; };
 		5FBCCAAA147D3C7100D7C64A /* pngwio.c in Sources */ = {isa = PBXBuildFile; fileRef = 5FBCCA31147D3C7100D7C64A /* pngwio.c */; };
 		5FBCCAAB147D3C7100D7C64A /* pngwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 5FBCCA32147D3C7100D7C64A /* pngwrite.c */; };
 		5FBCCAAC147D3C7100D7C64A /* pngwtran.c in Sources */ = {isa = PBXBuildFile; fileRef = 5FBCCA33147D3C7100D7C64A /* pngwtran.c */; };
 		5FBCCAAD147D3C7100D7C64A /* pngwutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 5FBCCA34147D3C7100D7C64A /* pngwutil.c */; };
 		5FBCCAAE147D3C7100D7C64A /* RawImageData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FBCCA39147D3C7100D7C64A /* RawImageData.cpp */; };
 		5FBCCAAF147D3C7100D7C64A /* RawImageData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FBCCA3A147D3C7100D7C64A /* RawImageData.h */; };
+		C04DBADF2976947500A0FCB1 /* palette_neon_intrinsics.c in Sources */ = {isa = PBXBuildFile; fileRef = C04DBADE2976947500A0FCB1 /* palette_neon_intrinsics.c */; };
+		C04DBAE12976949200A0FCB1 /* arm_init.c in Sources */ = {isa = PBXBuildFile; fileRef = C04DBAE02976949200A0FCB1 /* arm_init.c */; };
+		C04DBAE3297694A400A0FCB1 /* filter_neon_intrinsics.c in Sources */ = {isa = PBXBuildFile; fileRef = C04DBAE2297694A400A0FCB1 /* filter_neon_intrinsics.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -197,13 +199,15 @@
 		5FBCCA2B147D3C7100D7C64A /* pngset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngset.c; sourceTree = "<group>"; };
 		5FBCCA2C147D3C7100D7C64A /* pngstruct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngstruct.h; sourceTree = "<group>"; };
 		5FBCCA2F147D3C7100D7C64A /* pngtrans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngtrans.c; sourceTree = "<group>"; };
-		5FBCCA30147D3C7100D7C64A /* pngvalid.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngvalid.c; sourceTree = "<group>"; };
 		5FBCCA31147D3C7100D7C64A /* pngwio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngwio.c; sourceTree = "<group>"; };
 		5FBCCA32147D3C7100D7C64A /* pngwrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngwrite.c; sourceTree = "<group>"; };
 		5FBCCA33147D3C7100D7C64A /* pngwtran.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngwtran.c; sourceTree = "<group>"; };
 		5FBCCA34147D3C7100D7C64A /* pngwutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngwutil.c; sourceTree = "<group>"; };
 		5FBCCA39147D3C7100D7C64A /* RawImageData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RawImageData.cpp; sourceTree = SOURCE_ROOT; };
 		5FBCCA3A147D3C7100D7C64A /* RawImageData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawImageData.h; sourceTree = SOURCE_ROOT; };
+		C04DBADE2976947500A0FCB1 /* palette_neon_intrinsics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = palette_neon_intrinsics.c; path = arm/palette_neon_intrinsics.c; sourceTree = "<group>"; };
+		C04DBAE02976949200A0FCB1 /* arm_init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = arm_init.c; path = arm/arm_init.c; sourceTree = "<group>"; };
+		C04DBAE2297694A400A0FCB1 /* filter_neon_intrinsics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = filter_neon_intrinsics.c; path = arm/filter_neon_intrinsics.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -354,6 +358,9 @@
 		5FBCC9B7147D3C7100D7C64A /* png */ = {
 			isa = PBXGroup;
 			children = (
+				C04DBAE2297694A400A0FCB1 /* filter_neon_intrinsics.c */,
+				C04DBAE02976949200A0FCB1 /* arm_init.c */,
+				C04DBADE2976947500A0FCB1 /* palette_neon_intrinsics.c */,
 				5FBCCA19147D3C7100D7C64A /* png.c */,
 				5FBCCA1A147D3C7100D7C64A /* png.h */,
 				5FBCCA1D147D3C7100D7C64A /* pngconf.h */,
@@ -373,7 +380,6 @@
 				5FBCCA2B147D3C7100D7C64A /* pngset.c */,
 				5FBCCA2C147D3C7100D7C64A /* pngstruct.h */,
 				5FBCCA2F147D3C7100D7C64A /* pngtrans.c */,
-				5FBCCA30147D3C7100D7C64A /* pngvalid.c */,
 				5FBCCA31147D3C7100D7C64A /* pngwio.c */,
 				5FBCCA32147D3C7100D7C64A /* pngwrite.c */,
 				5FBCCA33147D3C7100D7C64A /* pngwtran.c */,
@@ -480,6 +486,7 @@
 				5FBCCA4B147D3C7100D7C64A /* jchuff.c in Sources */,
 				5FBCCA4D147D3C7100D7C64A /* jcinit.c in Sources */,
 				5FBCCA4E147D3C7100D7C64A /* jcmainct.c in Sources */,
+				C04DBAE3297694A400A0FCB1 /* filter_neon_intrinsics.c in Sources */,
 				5FBCCA4F147D3C7100D7C64A /* jcmarker.c in Sources */,
 				5FBCCA50147D3C7100D7C64A /* jcmaster.c in Sources */,
 				5FBCCA51147D3C7100D7C64A /* jcomapi.c in Sources */,
@@ -491,6 +498,7 @@
 				5FBCCA58147D3C7100D7C64A /* jdapimin.c in Sources */,
 				5FBCCA59147D3C7100D7C64A /* jdapistd.c in Sources */,
 				5FBCCA5A147D3C7100D7C64A /* jdatadst.c in Sources */,
+				C04DBAE12976949200A0FCB1 /* arm_init.c in Sources */,
 				5FBCCA5B147D3C7100D7C64A /* jdatasrc.c in Sources */,
 				5FBCCA5C147D3C7100D7C64A /* jdcoefct.c in Sources */,
 				5FBCCA5D147D3C7100D7C64A /* jdcolor.c in Sources */,
@@ -500,6 +508,7 @@
 				5FBCCA63147D3C7100D7C64A /* jdmainct.c in Sources */,
 				5FBCCA64147D3C7100D7C64A /* jdmarker.c in Sources */,
 				5FBCCA65147D3C7100D7C64A /* jdmaster.c in Sources */,
+				C04DBADF2976947500A0FCB1 /* palette_neon_intrinsics.c in Sources */,
 				5FBCCA66147D3C7100D7C64A /* jdmerge.c in Sources */,
 				5FBCCA67147D3C7100D7C64A /* jdphuff.c in Sources */,
 				5FBCCA68147D3C7100D7C64A /* jdpostct.c in Sources */,
@@ -529,7 +538,6 @@
 				5FBCCAA4147D3C7100D7C64A /* pngrutil.c in Sources */,
 				5FBCCAA5147D3C7100D7C64A /* pngset.c in Sources */,
 				5FBCCAA8147D3C7100D7C64A /* pngtrans.c in Sources */,
-				5FBCCAA9147D3C7100D7C64A /* pngvalid.c in Sources */,
 				5FBCCAAA147D3C7100D7C64A /* pngwio.c in Sources */,
 				5FBCCAAB147D3C7100D7C64A /* pngwrite.c in Sources */,
 				5FBCCAAC147D3C7100D7C64A /* pngwtran.c in Sources */,

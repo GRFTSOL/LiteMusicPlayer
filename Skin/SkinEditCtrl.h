@@ -387,6 +387,7 @@ protected:
 
     void drawLine(CRawGraph *canvas, COneLine *pLine, int x, int xMax, int y);
     void updateWidthInfoOfLine(CRawGraph *canvas, COneLine *pLine);
+    void updateWidthOfAllLines();
 
     bool doSetText(cstr_t szText);
 

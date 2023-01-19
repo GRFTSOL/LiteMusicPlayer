@@ -15,8 +15,8 @@ public:
 
     void onTimer(int nId) override;
 
-    bool onMouseDrag(CPoint point) override;
-    bool onMouseMove(CPoint point) override;
+    void onMouseEnter(CPoint point) override;
+    void onMouseLeave(CPoint point) override;
     bool onLButtonUp(uint32_t nFlags, CPoint point) override;
     bool onLButtonDown(uint32_t nFlags, CPoint point) override;
 
@@ -37,10 +37,16 @@ public:
     void setStatus(int nStatus);
 
 protected:
+    enum ButtonState : uint8_t {
+        BS_NORMAL,
+        BS_HOVER,
+        BS_PRESSED,
+    };
+
     virtual void buttonDownAction();
     virtual void buttonUpAction();
 
-    // This should be called before status changed.
+    void changeButtonState(ButtonState state);
     void startFadeDrawTimer(bool bPrevButtonDown, bool bPrevHover);
 
     void fadeInDrawBt(CRawGraph *canvas, CSFImage *pImage, int nAlpha);
@@ -67,8 +73,7 @@ protected:
     int                         m_nCurStatus;
 
     bool                        m_bEnableHover;
-    bool                        m_bHover;
-    bool                        m_bLBtDown;
+    ButtonState                 m_btnState;
 
     // Will the cmd be triggered continuous?
     int                         m_nTimerIdContinuous;

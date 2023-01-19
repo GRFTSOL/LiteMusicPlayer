@@ -71,10 +71,6 @@
       <SeekCtrl Name="Seek" ID="ID_SEEK" Left="26+35+3" Top="11-8" Width="w-(26+35+3)-6-10-90" Height="7" EndWidth="2" ThumbWidth="3" TrackWidthLeft="5" TrackWidthRight="24" SeekCtrlHeight="7" Image="progress-bar.png" BlendPixMode="alpha_blend"/>
       <MediaInfoText Name="Title" Left="75" Top="12" Width="w-75-120" Height="16" FontHeight="14" TextColor="#404040" FontBold="FALSE" TextOutlined="FALSE" LeftMargin="0" Text="" MediaInfoType="Title" ShowTitle="false" PaintBg="false"/>
       <PlayingTimeText Name="PlayingTime" Left="w-80" Top="14" Width="70" Height="16" FontHeight="14" TextColor="#404040" FontBold="FALSE" TextOutlined="FALSE" LeftMargin="0" Text="" PaintBg="false"/>
-      <TabHeader left="w-88-12" top="0" width="88" height="12" Name="LyrPLSwitch" UseSkinBg="FALSE" FontHeight="12" FontBold="FALSE" TextOutlined="FALSE" Image="TabHeader.png" ImageRect="0,0,47,36" ButtonFaceSize="23" ButtonBorderSize="12" TabHeight="12" TextColor="#404040">
-        <Button width="40" ID="" Text="PL"  IDAssociatedObj="CID_PLAYLIST"/>
-        <Button width="40" ID="" Text="LY" IDAssociatedObj="CID_LYRICS"/>
-      </TabHeader>
     </DecorativeContainer>
 
     <DecorativeContainer Name="Body" Left="0" Top="24" Width="w-8" Height="h-24">

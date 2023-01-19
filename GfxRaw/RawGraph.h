@@ -117,29 +117,31 @@ public:
 
     void drawToWindow(int xdest, int ydest, int width, int height, int xsrc, int ysrc);
 
-    virtual void line(float x1, float y1, float x2, float y2);
+    void line(float x1, float y1, float x2, float y2);
 
-    virtual void rectangle(float x, float y, float width, float height);
+    void rectangle(float x, float y, float width, float height);
+    void roundedRect(float x, float y, float width, float height, float radius);
+    void fillRoundedRect(float x, float y, float width, float height, float radius, const CColor &clrFill);
 
-    virtual void setPen(CRawPen &pen);
+    void setPen(const CRawPen &pen);
 
-    virtual void getClipBoundBox(CRect &rc);
-    virtual void setClipBoundBox(const CRect &rc);
-    virtual void resetClipBoundBox(const CRect &rc);
-    virtual void clearClipBoundBox();
+    void getClipBoundBox(CRect &rc);
+    void setClipBoundBox(const CRect &rc);
+    void resetClipBoundBox(const CRect &rc);
+    void clearClipBoundBox();
 
-    virtual bool textOut(float x, float y, cstr_t szText, size_t nLen);
-    virtual bool drawTextClip(cstr_t szText, size_t nLen, const CRect &rcPos, float xLeftClipOffset = 0);
+    bool textOut(float x, float y, cstr_t szText, size_t nLen);
+    bool drawTextClip(cstr_t szText, size_t nLen, const CRect &rcPos, float xLeftClipOffset = 0);
 
-    virtual bool textOutOutlined(float x, float y, cstr_t szText, size_t nLen, const CColor &clrText, const CColor &clrBorder);
-    virtual bool drawTextClipOutlined(cstr_t szText, size_t nLen, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, float xLeftClipOffset = 0);
-    virtual bool drawTextOutlined(cstr_t szText, size_t nLen, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, uint32_t uFormat = DT_SINGLELINE | DT_LEFT);
+    bool textOutOutlined(float x, float y, cstr_t szText, size_t nLen, const CColor &clrText, const CColor &clrBorder);
+    bool drawTextClipOutlined(cstr_t szText, size_t nLen, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, float xLeftClipOffset = 0);
+    bool drawTextOutlined(cstr_t szText, size_t nLen, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, uint32_t uFormat = DT_SINGLELINE | DT_LEFT);
 
-    virtual bool drawText(cstr_t szText, size_t nLen, const CRect &rcPos, uint32_t uFormat = DT_SINGLELINE | DT_LEFT);
+    bool drawText(cstr_t szText, size_t nLen, const CRect &rcPos, uint32_t uFormat = DT_SINGLELINE | DT_LEFT);
 
-    virtual bool getTextExtentPoint32(cstr_t szText, size_t nLen, CSize *pSize);
+    bool getTextExtentPoint32(cstr_t szText, size_t nLen, CSize *pSize);
 
-    virtual void setTextColor(const CColor &color) {
+    void setTextColor(const CColor &color) {
         m_clrText = color;
     }
 

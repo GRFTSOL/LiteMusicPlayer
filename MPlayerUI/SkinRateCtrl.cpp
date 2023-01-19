@@ -23,13 +23,6 @@ bool CSkinRateCtrl::onLButtonDown(uint32_t nFlags, CPoint point) {
 
     m_bLBtDown = true;
 
-    //    DBG_LOG1("Rating: %d", m_nRating);
-
-    // 捕捉鼠标输入
-    //    m_pSkin->setCaptureMouse(this);
-
-    //    invalidate();
-
     return true;
 }
 
@@ -41,69 +34,11 @@ bool CSkinRateCtrl::onLButtonUp(uint32_t nFlags, CPoint point) {
         m_nRating = 0;
     }
 
-    // 释放鼠标输入
-    //    m_pSkin->releaseCaptureMouse(this);
-
     invalidate();
 
     m_pSkin->postCustomCommandMsg(m_id);
 
     return true;
-}
-
-bool CSkinRateCtrl::onMouseMove(CPoint point) {
-    return false;
-    /*    assert(m_pSkin);
-
-    if (isPtIn(point))
-    {
-        if (!m_bLBtDown && (nFlags & MK_LBUTTON))
-        {
-            m_bLBtDown = true;
-
-            if (m_bHover)
-                m_bHover = false;
-            else
-            {
-                // 捕捉鼠标输入
-                m_pSkin->setCaptureMouse(this);
-            }
-
-            invalidate();
-        }
-        else if (!m_bLBtDown && m_bEnableHover)
-        {
-            m_bHover = true;
-
-            // 捕捉鼠标输入
-            m_pSkin->setCaptureMouse(this);
-
-            invalidate();
-        }
-    }
-    else
-    {
-        if (m_bLBtDown)
-        {
-            m_bLBtDown = false;
-
-            // 释放鼠标输入
-            m_pSkin->releaseCaptureMouse(this);
-
-            invalidate();
-        }
-        else if (m_bHover)
-        {
-            m_bHover = false;
-
-            // 释放鼠标输入
-            m_pSkin->releaseCaptureMouse(this);
-
-            invalidate();
-        }
-    }
-
-    return true;*/
 }
 
 cstr_t CSkinRateCtrl::getClassName() {

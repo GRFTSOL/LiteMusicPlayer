@@ -7,6 +7,7 @@
 #include "../third-parties/Agg/include/agg_scanline_u.h"
 #include "../third-parties/Agg/include/agg_conv_stroke.h"
 #include "../third-parties/Agg/include/agg_renderer_mclip.h"
+#include "../third-parties/Agg/include/agg_rounded_rect.h"
 
 #include "GfxRaw.h"
 #include "RawGraph.h"
@@ -74,27 +75,17 @@ void CRawGraph::line(float x1, float y1, float x2, float y2) {
     ps.line_to(x2, y2);
     ras.add_path(pg);
 
-    if (m_imageData.bitCount == 24) {
-        typedef agg::pixfmt_rgb24 pixfmt;
-        typedef agg::renderer_mclip<pixfmt> renderer_mclip;
+    assert(m_imageData.bitCount == 32);
 
-        agg::rendering_buffer buf(m_imageData.buff, m_imageData.width, m_imageData.height, m_imageData.stride);
-        pixfmt pixf(buf);
-        renderer_mclip rb(pixf);
-        rb.add_clip_box(m_rcClipScaleMaped.left, m_rcClipScaleMaped.top, m_rcClipScaleMaped.right, m_rcClipScaleMaped.bottom);
+    typedef agg::pixfmt_rgba32 pixfmt;
+    typedef agg::renderer_mclip<pixfmt> renderer_mclip;
 
-        agg::render_scanlines_aa_solid(ras, sl, rb, clr);
-    } else if (m_imageData.bitCount == 32) {
-        typedef agg::pixfmt_rgba32 pixfmt;
-        typedef agg::renderer_mclip<pixfmt> renderer_mclip;
+    agg::rendering_buffer buf(m_imageData.buff, m_imageData.width, m_imageData.height, m_imageData.stride);
+    pixfmt pixf(buf);
+    renderer_mclip rb(pixf);
+    rb.add_clip_box(m_rcClipScaleMaped.left, m_rcClipScaleMaped.top, m_rcClipScaleMaped.right, m_rcClipScaleMaped.bottom);
 
-        agg::rendering_buffer buf(m_imageData.buff, m_imageData.width, m_imageData.height, m_imageData.stride);
-        pixfmt pixf(buf);
-        renderer_mclip rb(pixf);
-        rb.add_clip_box(m_rcClipScaleMaped.left, m_rcClipScaleMaped.top, m_rcClipScaleMaped.right, m_rcClipScaleMaped.bottom);
-
-        agg::render_scanlines_aa_solid(ras, sl, rb, clr);
-    }
+    agg::render_scanlines_aa_solid(ras, sl, rb, clr);
 }
 
 void CRawGraph::rectangle(float x, float y, float width, float height) {
@@ -110,14 +101,13 @@ void CRawGraph::rectangle(float x, float y, float width, float height) {
 
     agg::path_storage ps;
     agg::conv_stroke<agg::path_storage> pg(ps);
-    agg::rgba    clr(m_pen.m_clrPen.r() / (double)255,
+    agg::rgba clr(m_pen.m_clrPen.r() / (double)255,
         m_pen.m_clrPen.g() / (double)255,
         m_pen.m_clrPen.b() / (double)255,
         m_pen.m_clrPen.a() * m_nOpacityPainting / 255 / (double)255);
 
     pg.width(m_pen.m_nWidth);
 
-    ps.remove_all();
     ps.move_to(x, y);
     ps.line_to(x + width, y);
     ps.line_to(x + width, y + height);
@@ -125,30 +115,83 @@ void CRawGraph::rectangle(float x, float y, float width, float height) {
     ps.line_to(x, y);
     ras.add_path(pg);
 
-    if (m_imageData.bitCount == 24) {
-        typedef agg::pixfmt_rgb24 pixfmt;
-        typedef agg::renderer_mclip<pixfmt> renderer_mclip;
+    assert(m_imageData.bitCount == 32);
+    typedef agg::pixfmt_rgba32 pixfmt;
+    typedef agg::renderer_mclip<pixfmt> renderer_mclip;
 
-        agg::rendering_buffer buf(m_imageData.buff, m_imageData.width, m_imageData.height, m_imageData.stride);
-        pixfmt pixf(buf);
-        renderer_mclip rb(pixf);
-        rb.add_clip_box(m_rcClipScaleMaped.left, m_rcClipScaleMaped.top, m_rcClipScaleMaped.right, m_rcClipScaleMaped.bottom);
+    agg::rendering_buffer buf(m_imageData.buff, m_imageData.width, m_imageData.height, m_imageData.stride);
+    pixfmt pixf(buf);
+    renderer_mclip rb(pixf);
+    rb.add_clip_box(m_rcClipScaleMaped.left, m_rcClipScaleMaped.top, m_rcClipScaleMaped.right, m_rcClipScaleMaped.bottom);
 
-        agg::render_scanlines_aa_solid(ras, sl, rb, clr);
-    } else if (m_imageData.bitCount == 32) {
-        typedef agg::pixfmt_rgba32 pixfmt;
-        typedef agg::renderer_mclip<pixfmt> renderer_mclip;
-
-        agg::rendering_buffer buf(m_imageData.buff, m_imageData.width, m_imageData.height, m_imageData.stride);
-        pixfmt pixf(buf);
-        renderer_mclip rb(pixf);
-        rb.add_clip_box(m_rcClipScaleMaped.left, m_rcClipScaleMaped.top, m_rcClipScaleMaped.right, m_rcClipScaleMaped.bottom);
-
-        agg::render_scanlines_aa_solid(ras, sl, rb, clr);
-    }
+    agg::render_scanlines_aa_solid(ras, sl, rb, clr);
 }
 
-void CRawGraph::setPen(CRawPen &pen) {
+void CRawGraph::roundedRect(float x, float y, float width, float height, float radius) {
+    typedef agg::scanline_p8 scanline_type;
+
+    x = mapAndScaleX(x);
+    y = mapAndScaleY(y);
+    width *= m_scaleFactor;
+    height *= m_scaleFactor;
+
+    scanline_type sl;
+    agg::rasterizer_scanline_aa<> ras;
+
+    agg::rounded_rect rr(x, y, x + width, y + height, radius);
+    rr.normalize_radius();
+
+    agg::conv_stroke<agg::rounded_rect> pg(rr);
+    pg.width(m_pen.m_nWidth);
+    ras.add_path(pg);
+
+    assert(m_imageData.bitCount == 32);
+    typedef agg::pixfmt_rgba32 pixfmt;
+    typedef agg::renderer_mclip<pixfmt> renderer_mclip;
+
+    agg::rendering_buffer buf(m_imageData.buff, m_imageData.width, m_imageData.height, m_imageData.stride);
+    pixfmt pixf(buf);
+    renderer_mclip rb(pixf);
+    rb.add_clip_box(m_rcClipScaleMaped.left, m_rcClipScaleMaped.top, m_rcClipScaleMaped.right, m_rcClipScaleMaped.bottom);
+
+    agg::rgba clr(m_pen.m_clrPen.r() / (double)255,
+        m_pen.m_clrPen.g() / (double)255,
+        m_pen.m_clrPen.b() / (double)255,
+        m_pen.m_clrPen.a() * m_nOpacityPainting / 255 / (double)255);
+
+    agg::render_scanlines_aa_solid(ras, sl, rb, clr);
+}
+
+void CRawGraph::fillRoundedRect(float x, float y, float width, float height, float radius, const CColor &clrFill) {
+    typedef agg::scanline_p8 scanline_type;
+
+    x = mapAndScaleX(x); y = mapAndScaleY(y);
+    width *= m_scaleFactor; height *= m_scaleFactor;
+
+    scanline_type sl;
+    agg::rasterizer_scanline_aa<> ras;
+
+    agg::rounded_rect rr(x, y, x + width, y + height, radius);
+    rr.normalize_radius();
+
+    ras.add_path(rr);
+
+    assert(m_imageData.bitCount == 32);
+    typedef agg::pixfmt_rgba32 pixfmt;
+    typedef agg::renderer_mclip<pixfmt> renderer_mclip;
+
+    agg::rendering_buffer buf(m_imageData.buff, m_imageData.width, m_imageData.height, m_imageData.stride);
+    pixfmt pixf(buf);
+    renderer_mclip rb(pixf);
+    rb.add_clip_box(m_rcClipScaleMaped.left, m_rcClipScaleMaped.top, m_rcClipScaleMaped.right, m_rcClipScaleMaped.bottom);
+
+    agg::rgba clr(clrFill.r() / (double)255, clrFill.g() / (double)255,
+        clrFill.b() / (double)255, clrFill.a() * m_nOpacityPainting / 255 / (double)255);
+
+    agg::render_scanlines_aa_solid(ras, sl, rb, clr);
+}
+
+void CRawGraph::setPen(const CRawPen &pen) {
     m_pen = pen;
     m_pen.m_nWidth *= m_scaleFactor;
 }
@@ -505,16 +548,10 @@ void CRawGraph::fillRectXOR(const CRect &rcDst, const CColor &clrFill) {
 
 template<class _PixRGBBlender, class _PixAlphaBlender>
 void fillRectMask(RawImageData *pImage, int x, int y, int xMax, int yMax, RawImageData *pImageMask, int xMask, int yMask, uint8_t *srcPixel) {
-    int nPixSize, nPixSizeMask;
+    int nPixSizeMask;
 
-    if (pImage->bitCount == 32) {
-        nPixSize = 4;
-    } else if (pImage->bitCount == 24) {
-        nPixSize = 3;
-    } else {
-        assert(0);
-        return;
-    }
+    assert(pImage->bitCount == 32);
+    const int nPixSize = 4;
 
     if (pImageMask->bitCount == 32) {
         nPixSizeMask = 4;
@@ -544,7 +581,7 @@ void fillRectMask(RawImageData *pImage, int x, int y, int xMax, int yMax, RawIma
 }
 
 void CRawGraph::fillRect(const CRect &rcDst, CRawImage &imageMask, const CRect &rcMask, const CColor &clrFill, BlendPixMode bpm) {
-    assert(m_imageData.bitCount == 32 || m_imageData.bitCount == 24);
+    assert(m_imageData.bitCount == 32);
 
     uint8_t srcPixel[4];
 
@@ -628,26 +665,16 @@ void CRawGraph::fillRect(const CRect &rcDst, CRawImage &imageMask, const CRect &
 
 template<class _PixRGBBlender, class _PixAlphaBlender, class _PixRGBBlender_Opacity, class _PixAlphaBlender_Opacity>
 void fillRect(RawImageData *pImage, int x, int y, int xMax, int yMax, uint8_t *srcPixel, uint8_t alpha) {
-    uint8_t *p, *end, *row;
-    int strideModify;
-    int nPixSize;
+    assert(pImage->bitCount == 32);
+    const int nPixSize = 4;
 
-    if (pImage->bitCount == 32) {
-        nPixSize = 4;
-    } else if (pImage->bitCount == 24) {
-        nPixSize = 3;
-    } else {
-        assert(0);
-        return;
-    }
-
-    strideModify = (xMax - x) * nPixSize;
-    row = pImage->pixPtr(x, y);
+    int strideModify = (xMax - x) * nPixSize;
+    uint8_t *row = pImage->pixPtr(x, y);
 
     if (alpha == 255) {
         for (; y < yMax; y++) {
-            end = row + strideModify;
-            for (p = row; p < end; p += nPixSize) {
+            uint8_t *end = row + strideModify;
+            for (uint8_t *p = row; p < end; p += nPixSize) {
                 _PixRGBBlender::blend(p, srcPixel);
                 _PixAlphaBlender::blend(p, srcPixel);
             }
@@ -655,8 +682,8 @@ void fillRect(RawImageData *pImage, int x, int y, int xMax, int yMax, uint8_t *s
         }
     } else {
         for (; y < yMax; y++) {
-            end = row + strideModify;
-            for (p = row; p < end; p += nPixSize) {
+            uint8_t *end = row + strideModify;
+            for (uint8_t *p = row; p < end; p += nPixSize) {
                 _PixRGBBlender_Opacity::blend(p, srcPixel, alpha);
                 _PixAlphaBlender_Opacity::blend(p, srcPixel, alpha);
             }
@@ -719,7 +746,7 @@ void fillRect(RawImageData *pImage, int x, int y, int xMax, int yMax, const CCol
 }
 
 void CRawGraph::fillRect(const CRect &rcDst, const CColor &clrFill, BlendPixMode bpm) {
-    assert(m_imageData.bitCount == 32 || m_imageData.bitCount == 24);
+    assert(m_imageData.bitCount == 32);
 
     int x, y, xMax, yMax;
     if (!clipMapScaleRect(rcDst, x, y, xMax, yMax)) {

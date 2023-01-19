@@ -11,7 +11,6 @@ public:
 
     cstr_t getClassName() override;
 
-    bool onMouseMove(CPoint point) override;
     bool onLButtonUp(uint32_t nFlags, CPoint point) override;
     bool onLButtonDown(uint32_t nFlags, CPoint point) override;
     void draw(CRawGraph *canvas) override;

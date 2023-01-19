@@ -117,6 +117,9 @@
 			  Height="20" Padding="5,4" TabFocus="true"
 			  Image="s_image_button.png" ImageSize="70,28" ExtendPos="20,50"
 			  ImagePos="0,0" ImageSelPos="0,56" ImageFocusPos="0,28"/>
+		<MenuItemsContainer FontName="Verdana" FontHeight="14" FontBold="false" TextColor="#000000" BgColor="#E0E0E0"
+            TextColorHover="#000000" BgColorHover="#558ff3" FrameColor="#A0A0A0" DisabledTextColor="#808080" BgColorInactive="#C0C0C0"
+            ImageChecked="menu-check.png" ImageSubmenu="menu-right.png" ImageUpArrow="expand_less.png" ImageDownArrow="expand_more.png"/>
 		<NormalCheckBox Extends="TextButton" FontName="Verdana" FontHeight="14" TextColor="#000000" DisabledTextColor="#808080"
 			  Height="20" Padding="3,2" TextLeftMargin="25" AlignText="AT_LEFT"
 			  CheckBox="true" TabFocus="true"

@@ -41,6 +41,7 @@ string colorToStr(const CColor &clr);
 // "#FFFFFF"
 void getColorValue(CColor &clr, cstr_t szColor);
 inline CColor getColorValue(cstr_t str) { CColor c; getColorValue(c, str); return c;}
+inline CColor parseColorString(cstr_t str) { CColor c; getColorValue(c, str); return c;}
 
 int getMenuKey(cstr_t szText);
 

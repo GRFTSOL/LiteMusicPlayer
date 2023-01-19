@@ -81,6 +81,8 @@ void CMenu::destroy() {
 }
 
 void CMenu::trackPopupMenu(int x, int y, Window *pWnd, CRect *prcNotOverlap) {
+    updateMenuStatus(pWnd);
+
     NSPoint pt = { float(x), float(y) };
     [m_info->menuImp setBaseWnd:pWnd];
     @try {
@@ -93,6 +95,8 @@ void CMenu::trackPopupMenu(int x, int y, Window *pWnd, CRect *prcNotOverlap) {
 }
 
 void CMenu::trackPopupSubMenu(int x, int y, int nSubMenu, Window *pWnd, CRect *prcNotOverlap) {
+    updateMenuStatus(pWnd);
+
     NSPoint pt = { float(x), float(y) };
     [m_info->menuImp setBaseWnd:pWnd];
     NSMenuItem *item = [m_info->menu itemAtIndex:nSubMenu];
@@ -246,20 +250,24 @@ void CMenu::removeItem(int nPos) {
     [m_info->menu removeItemAtIndex:nPos];
 }
 
-bool CMenu::getMenuItemText(uint32_t nItem, string &strText, bool bByPosition) {
-    uint32_t nID;
-    bool bSubMenu;
+bool CMenu::getMenuItemText(uint32_t index, string &strText, bool byPosition) {
+    MenuItemInfo info;
 
-    return getMenuItemInfo(nItem, strText, nID, bSubMenu, bByPosition);
+    if (getMenuItemInfo(index, byPosition, info)) {
+        strText = info.text;
+        return true;
+    }
+
+    return false;
 }
 
-bool CMenu::getMenuItemInfo(uint32_t nItem, string &strText, uint32_t &nID, bool &bSubMenu, bool bByPosition) {
+bool CMenu::getMenuItemInfo(uint32_t index, bool byPosition, MenuItemInfo &itemOut) {
     NSMenuItem *item = nil;
     @try {
-        if (bByPosition) {
-            item = [m_info->menu itemAtIndex:nItem];
+        if (byPosition) {
+            item = [m_info->menu itemAtIndex:index];
         } else {
-            item = [m_info->menu itemWithTag:nItem];
+            item = [m_info->menu itemWithTag:index];
         }
     }
     @catch (NSException *exception) {
@@ -269,11 +277,40 @@ bool CMenu::getMenuItemInfo(uint32_t nItem, string &strText, uint32_t &nID, bool
         return false;
     }
 
-    strText = [[item title] UTF8String];
-    nID = (int)[item tag];
-    bSubMenu = [item hasSubmenu] == YES;
+    itemOut.text = [[item title] UTF8String];
+    itemOut.id = (int)[item tag];
+    itemOut.isSubmenu = [item hasSubmenu] == YES;
+    itemOut.isSeparator = [item isSeparatorItem];
+    itemOut.isEnabled = [item isEnabled];
+    itemOut.isChecked = [item state] == NSControlStateValueOn;
+    itemOut.shortcutKey = [[item keyEquivalent] UTF8String];
 
     return true;
+}
+
+bool CMenu::isSeparator(int pos) {
+    @try {
+        NSMenuItem *item = [m_info->menu itemAtIndex:pos];
+        if (item) {
+            return [item isSeparatorItem];
+        }
+    }
+    @catch (NSException *exception) {
+        return false;
+    }
+    return false;
+}
+
+string CMenu::getShortcutKeyText(int pos) {
+    @try {
+        NSMenuItem *item = [m_info->menu itemAtIndex:pos];
+        if (item) {
+            return [[item keyEquivalent] UTF8String];
+        }
+    }
+    @catch (NSException *exception) {
+    }
+    return "";
 }
 
 bool CMenu::hasItem(int nPos) {
@@ -315,7 +352,7 @@ CMenu CMenu::getSubmenu(int nPos) {
     return menu;
 }
 
-CMenu & CMenu::operator = (CMenu &menu) {
+CMenu & CMenu::operator = (const CMenu &menu) {
     m_info->menu = menu.m_info->menu;
     m_info->menuImp = menu.m_info->menuImp;
 

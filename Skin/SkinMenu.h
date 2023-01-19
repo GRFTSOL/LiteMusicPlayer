@@ -39,9 +39,7 @@ public:
 
     int loadMenu(const rapidjson::Value &items);
 
-    void trackPopupMenu(int x, int y, Window *pWnd, CRect *prcNotOverlap = nullptr);
-
-    void trackPopupSubMenu(int x, int y, int nSubMenu, Window *pWnd, CRect *prcNotOverlap = nullptr);
+    virtual void updateMenuStatus(Window *window) override;
 
     virtual int fromXML(SXNode *pNodeMenu, int nAppendPos);
 

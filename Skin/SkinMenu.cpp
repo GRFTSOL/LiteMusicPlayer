@@ -91,38 +91,15 @@ void CSkinMenu::loadMenu(const rapidjson::Value &items, CMenu &menu) {
     onLoadMenu();
 }
 
-void CSkinMenu::trackPopupMenu(int x, int y, Window *pWnd, CRect *prcNotOverlap) {
+void CSkinMenu::updateMenuStatus(Window *window) {
     CSkinFactory *pSkinFactory = CSkinApp::getInstance()->getSkinFactory();
-    LIST_ITEMS::iterator it, itEnd;
-    int nRet;
 
-    itEnd = m_listItems.end();
-    for (it = m_listItems.begin(); it != itEnd; ++it) {
-        Item &item = *it;
+    for (Item &item : m_listItems) {
         if (item.nIDCmdIsChecked != UID_INVALID && item.bCanCheck) {
-            nRet = pSkinFactory->onDynamicCmd(item.nIDCmdIsChecked, (CSkinWnd *)pWnd);
-            checkItem(item.nMenuID, nRet == ERR_OK);
+            int ret = pSkinFactory->onDynamicCmd(item.nIDCmdIsChecked, (CSkinWnd *)window);
+            checkItem(item.nMenuID, ret == ERR_OK);
         }
     }
-
-    CMenu::trackPopupMenu(x, y, pWnd, prcNotOverlap);
-}
-
-void CSkinMenu::trackPopupSubMenu(int x, int y, int nSubMenu, Window *pWnd, CRect *prcNotOverlap) {
-    CSkinFactory *pSkinFactory = CSkinApp::getInstance()->getSkinFactory();
-    LIST_ITEMS::iterator it, itEnd;
-    int nRet;
-
-    itEnd = m_listItems.end();
-    for (it = m_listItems.begin(); it != itEnd; ++it) {
-        Item &item = *it;
-        if (item.nIDCmdIsChecked != UID_INVALID && item.bCanCheck) {
-            nRet = pSkinFactory->onDynamicCmd(item.nIDCmdIsChecked, (CSkinWnd *)pWnd);
-            checkItem(item.nMenuID, nRet == ERR_OK);
-        }
-    }
-
-    CMenu::trackPopupSubMenu(x, y, nSubMenu, pWnd, prcNotOverlap);
 }
 
 int CSkinMenu::fromXML(SXNode *pNodeMenu, int nAppendPos) {

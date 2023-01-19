@@ -186,9 +186,8 @@ void CSkinContainer::onKeyDown(uint32_t nChar, uint32_t nFlags) {
 bool CSkinContainer::onMouseDrag(CPoint point) {
     bool bMsgProceed = false;
 
-    for (int i = 0; i < (int)m_vUIObjs.size(); i++) {
-        CUIObject *pObj;
-        pObj = m_vUIObjs[i];
+    for (int i = (int)m_vUIObjs.size() - 1; i >= 0; i--) {
+        CUIObject *pObj = m_vUIObjs[i];
 
         if ((pObj->needMsgMouseMove() || pObj->isContainer()) && pObj->isVisible()
             && pObj->isEnable() && pObj->isPtIn(point)) {
@@ -203,34 +202,46 @@ bool CSkinContainer::onMouseDrag(CPoint point) {
 }
 
 bool CSkinContainer::onMouseMove(CPoint point) {
-    bool bMsgProceed = false;
+    for (int i = (int)m_vUIObjs.size() - 1; i >= 0; i--) {
+        CUIObject *pObj = m_vUIObjs[i];
 
-    for (int i = 0; i < (int)m_vUIObjs.size(); i++) {
-        CUIObject *pObj;
-        pObj = m_vUIObjs[i];
+        bool isMouseIn = pObj->isPtIn(point);
+        if (pObj->m_isMouseIn != isMouseIn) {
+            pObj->m_isMouseIn = isMouseIn;
+            if (isMouseIn) {
+                pObj->onMouseEnter(point);
+            } else {
+                pObj->onMouseLeave(point);
+            }
+        }
 
         if ((pObj->needMsgMouseMove() || pObj->isContainer()) && pObj->isVisible()
-            && pObj->isEnable() && pObj->isPtIn(point)) {
+            && pObj->isEnable() && isMouseIn) {
             if (pObj->onMouseMove(point)) {
-                bMsgProceed = true;
-                break;
+                return true;
             }
         }
     }
 
-    return bMsgProceed;
+    return false;
+}
+
+void CSkinContainer::onMouseLeave(CPoint point) {
+    for (int i = (int)m_vUIObjs.size() - 1; i >= 0; i--) {
+        CUIObject *pObj = m_vUIObjs[i];
+        if (pObj->m_isMouseIn) {
+            // 通知 child 鼠标离开了
+            pObj->onMouseLeave(point);
+        }
+    }
 }
 
 bool CSkinContainer::onLButtonDown(uint32_t nFlags, CPoint point) {
-    int nCount;
     bool bMsgProceed = false;
 
     // send mouse move message to the ui objects that want to process
-    nCount = (int)m_vUIObjs.size();
-    for (int i = nCount - 1; i >= 0; i--) {
-        CUIObject *pObj;
-        pObj = m_vUIObjs[i];
-        assert(pObj);
+    for (int i = (int)m_vUIObjs.size() - 1; i >= 0; i--) {
+        CUIObject *pObj = m_vUIObjs[i];
 
         if ((pObj->needMsgLButton() || pObj->isContainer()) && pObj->isVisible()
             && pObj->isEnable() && pObj->isPtIn(point)) {
@@ -248,15 +259,10 @@ bool CSkinContainer::onLButtonDown(uint32_t nFlags, CPoint point) {
 }
 
 bool CSkinContainer::onLButtonDblClk(uint32_t nFlags, CPoint point) {
-    int nCount;
     bool bMsgProceed = false;
 
-    // send mouse move message to the ui objects that want to process
-    nCount = (int)m_vUIObjs.size();
-    for (int i = nCount - 1; i >= 0; i--) {
-        CUIObject *pObj;
-        pObj = m_vUIObjs[i];
-        assert(pObj);
+    for (int i = (int)m_vUIObjs.size() - 1; i >= 0; i--) {
+        CUIObject *pObj = m_vUIObjs[i];
 
         if ((pObj->needMsgLButton() || pObj->isContainer()) && pObj->isVisible()
             && pObj->isEnable() && pObj->isPtIn(point)) {
@@ -274,15 +280,11 @@ bool CSkinContainer::onLButtonDblClk(uint32_t nFlags, CPoint point) {
 }
 
 bool CSkinContainer::onLButtonUp(uint32_t nFlags, CPoint point) {
-    int nCount;
     bool bMsgProceed = false;
 
     // send mouse move message to the ui objects that want to process
-    nCount = (int)m_vUIObjs.size();
-    for (int i = nCount - 1; i >= 0; i--) {
-        CUIObject *pObj;
-        pObj = m_vUIObjs[i];
-        //        assert(pObj == nullptr);
+    for (int i = (int)m_vUIObjs.size() - 1; i >= 0; i--) {
+        CUIObject *pObj = m_vUIObjs[i];
 
         if ((pObj->needMsgLButton() || pObj->isContainer()) && pObj->isVisible()
             && pObj->isEnable() && pObj->isPtIn(point)) {
@@ -297,15 +299,10 @@ bool CSkinContainer::onLButtonUp(uint32_t nFlags, CPoint point) {
 }
 
 bool CSkinContainer::onRButtonDown(uint32_t nFlags, CPoint point) {
-    int nCount;
     bool bMsgProceed = false;
 
-    // send mouse move message to the ui objects that want to process
-    nCount = (int)m_vUIObjs.size();
-    for (int i = nCount - 1; i >= 0; i--) {
-        CUIObject *pObj;
-        pObj = m_vUIObjs[i];
-        //        assert(pObj == nullptr);
+    for (int i = (int)m_vUIObjs.size() - 1; i >= 0; i--) {
+        CUIObject *pObj = m_vUIObjs[i];
 
         if ((pObj->needMsgRButton() || pObj->isContainer()) && pObj->isVisible()
             && pObj->isEnable() && pObj->isPtIn(point)) {
@@ -320,15 +317,10 @@ bool CSkinContainer::onRButtonDown(uint32_t nFlags, CPoint point) {
 }
 
 bool CSkinContainer::onRButtonUp(uint32_t nFlags, CPoint point) {
-    int nCount;
     bool bMsgProceed = false;
 
-    // send mouse move message to the ui objects that want to process
-    nCount = (int)m_vUIObjs.size();
-    for (int i = nCount - 1; i >= 0; i--) {
-        CUIObject *pObj;
-        pObj = m_vUIObjs[i];
-        //        assert(pObj == nullptr);
+    for (int i = (int)m_vUIObjs.size() - 1; i >= 0; i--) {
+        CUIObject *pObj = m_vUIObjs[i];
 
         if ((pObj->needMsgRButton() || pObj->isContainer()) && pObj->isVisible()
             && pObj->isEnable() && pObj->isPtIn(point)) {
@@ -363,20 +355,25 @@ bool CSkinContainer::onMenuKey(uint32_t nChar, uint32_t nFlags) {
     return false;
 }
 
+void CSkinContainer::onKillFocus() {
+    for (int i = (int)m_vUIObjs.size() - 1; i >= 0; i--) {
+        CUIObject *child = m_vUIObjs[i];
+        child->onKillFocus();
+    }
+}
+
 void CSkinContainer::onSize() {
     CUIObject::onSize();
 
-    // recalculate all UIObjects' position
-    FORMULA_VAR     vars[] = {
+    FORMULA_VAR vars[] = {
         {'w', m_rcObj.width()},
         {'h', m_rcObj.height()},
         {0, 0}
     };
 
-    // recalculate every UIObjects' position on back buffer one by one
-    for (uint32_t i = 0; i < m_vUIObjs.size(); i++) {
-        m_vUIObjs[i]->onMeasureSizePos(vars);
-        m_vUIObjs[i]->onSize();
+    for (CUIObject *pObj : m_vUIObjs) {
+        pObj->onMeasureSizePos(vars);
+        pObj->onSize();
     }
 }
 
@@ -388,15 +385,13 @@ void CSkinContainer::onLanguageChanged() {
         m_pSkin->getSkinFactory()->loadMenu(m_pSkin, &m_pMenu, m_strContextMenu.c_str());
     }
 
-    // Notify to child container...
-    for (int i = 0; i < (int)m_vUIObjs.size(); i++) {
-        m_vUIObjs[i]->onLanguageChanged();
+    for (CUIObject *pObj : m_vUIObjs) {
+        pObj->onLanguageChanged();
     }
 }
 
 CUIObject *CSkinContainer::getChildByClass(cstr_t szClassName) {
-    for (int i = 0; i < (int)m_vUIObjs.size(); i++) {
-        CUIObject *pObj = m_vUIObjs[i];
+    for (CUIObject *pObj : m_vUIObjs) {
         if (pObj->isKindOf(szClassName)) {
             return pObj;
         }
@@ -409,8 +404,7 @@ void CSkinContainer::onAdjustHue(float hue, float saturation, float luminance) {
     m_clrBg = m_clrBgOrg;
     m_pSkin->getSkinFactory()->getAdjustedHueResult(m_clrBg);
 
-    for (int i = 0; i < (int)m_vUIObjs.size(); i++) {
-        CUIObject *pObj = m_vUIObjs[i];
+    for (CUIObject *pObj : m_vUIObjs) {
         pObj->onAdjustHue(hue, saturation, luminance);
     }
 }
@@ -441,8 +435,7 @@ void CSkinContainer::draw(CRawGraph *canvas) {
 
     CUIObject::draw(canvas);
 
-    for (int i = 0; i < (int)m_vUIObjs.size(); i++) {
-        CUIObject *pObj = m_vUIObjs[i];
+    for (CUIObject *pObj : m_vUIObjs) {
         if (pObj->isVisible()) {
             CRawGraph::COpacityBlendAutoRecovery opacityAR(canvas, pObj->getOpacity());
 
@@ -549,8 +542,7 @@ void CSkinContainer::destroy() {
 
 // functions for CSkinWnd
 CUIObject *CSkinContainer::getUIObjectByClassName(cstr_t szClassName) {
-    for (int i = 0; i < (int)m_vUIObjs.size(); i++) {
-        CUIObject *pObj = m_vUIObjs[i];
+    for (CUIObject *pObj : m_vUIObjs) {
         if (pObj->isKindOf(szClassName)) {
             return pObj;
         }
@@ -570,9 +562,7 @@ CUIObject *CSkinContainer::getUIObjectById(int nId, cstr_t szClassName) {
         return nullptr;
     }
 
-    // send mouse move message to every ui objects that want to process
-    for (int i = 0; i < (int)m_vUIObjs.size(); i++) {
-        CUIObject *pObj = m_vUIObjs[i];
+    for (CUIObject *pObj : m_vUIObjs) {
         if (pObj->m_id == nId) {
             if (!szClassName) {
                 return pObj;
@@ -1031,9 +1021,7 @@ void CSkinContainer::recalculateUIObjSizePos(CUIObject *pObj) {
 }
 
 bool CSkinContainer::isChild(CUIObject *pObj) {
-    for (int i = 0; i < (int)m_vUIObjs.size(); i++) {
-        CUIObject *p = m_vUIObjs[i];
-
+    for (CUIObject *p : m_vUIObjs) {
         if (pObj == p) {
             return true;
         }
@@ -1124,7 +1112,7 @@ void CSkinContainer::setExPool(cstr_t szProperty, int value) {
 }
 
 string CSkinContainer::getExPoolStr(cstr_t szProperty, cstr_t szDefault) {
-    MapStrings::iterator it = m_pSkin->m_mapExchangePool.find(szProperty);
+    auto it = m_pSkin->m_mapExchangePool.find(szProperty);
     if (it != m_pSkin->m_mapExchangePool.end()) {
         return (*it).second;
     } else {
@@ -1133,7 +1121,7 @@ string CSkinContainer::getExPoolStr(cstr_t szProperty, cstr_t szDefault) {
 }
 
 int CSkinContainer::getExPoolInt(cstr_t szProperty, int nDefault) {
-    MapStrings::iterator it = m_pSkin->m_mapExchangePool.find(szProperty);
+    auto it = m_pSkin->m_mapExchangePool.find(szProperty);
     if (it != m_pSkin->m_mapExchangePool.end()) {
         return atoi((*it).second.c_str());
     } else {
@@ -1142,7 +1130,7 @@ int CSkinContainer::getExPoolInt(cstr_t szProperty, int nDefault) {
 }
 
 bool CSkinContainer::getExPoolBool(cstr_t szProperty, bool bDefault) {
-    MapStrings::iterator it = m_pSkin->m_mapExchangePool.find(szProperty);
+    auto it = m_pSkin->m_mapExchangePool.find(szProperty);
     if (it != m_pSkin->m_mapExchangePool.end()) {
         return isTRUE((*it).second.c_str());
     } else {

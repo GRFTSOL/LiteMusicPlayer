@@ -191,6 +191,31 @@ void CSkinLinearContainer::uIObjsToItems(VecUIObjects::iterator itBeg, VecUIObje
     totalFixedSize -= m_nSeparatorThickness;
 }
 
+int CSkinLinearContainer::getItemsMinSumHeight() {
+    int n = 0;
+
+    for (auto p : m_vUIObjs) {
+        if (!p->isVisible()) {
+            continue;
+        }
+
+        n += m_nSeparatorThickness;
+
+        assert(m_bVertical);
+        if (p->isFixedHeight()) {
+            n += p->m_rcObj.height() + p->getMargin().top + p->getMargin().bottom;
+        } else {
+            n += p->getMinHeight() + p->getMargin().top + p->getMargin().bottom;
+        }
+    }
+
+    if (n > m_nSeparatorThickness) {
+        n -= m_nSeparatorThickness;
+    }
+
+    return n;
+}
+
 void CSkinLinearContainer::resizeFromItemsToUIObjs(VecItems &vItems, VecUIObjects::iterator itBeg, VecUIObjects::iterator itEnd, int startPos) {
     // Calculate size position for every UIObject
     if (m_bVertical) {

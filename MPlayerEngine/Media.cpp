@@ -212,6 +212,8 @@ MLRESULT CMedia::getAttribute(MediaAttribute mediaAttr, int64_t *pnValue) {
 }
 
 MLRESULT CMedia::setAttribute(MediaAttribute mediaAttr, int64_t value) {
+    m_bInfoUpdated = false;
+
     switch (mediaAttr) {
         case MA_TRACK_NUMB : m_nTrackNumb = value; break;
         case MA_YEAR : m_nYear = value; break;

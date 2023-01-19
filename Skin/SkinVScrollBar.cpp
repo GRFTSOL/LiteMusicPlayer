@@ -354,24 +354,11 @@ bool CSkinSrollBarBase::onMouseMove(CPoint point) {
         break;
     case PUSH_DOWN_NONE:
         {
-            PUSH_DOWN_POS CursorPosNew;
+            PUSH_DOWN_POS posNew = getPushDownPos(point);
 
-            CursorPosNew = getPushDownPos(point);
 
-            // DBG_LOG2("CursorPosNew: %d, m_CursorPosLatest: %d", CursorPosNew, m_CursorPosLatest);
-            // if (m_pSkin->getCaptureMouse() != this)
-            // if (CursorPosNew != PUSH_DOWN_NONE && m_CursorPosLatest == PUSH_DOWN_NONE)
-            if (m_pSkin->getCaptureMouse() != this) {
-                // 捕捉鼠标输入
-                m_pSkin->setCaptureMouse(this);
-            } else if (CursorPosNew == PUSH_DOWN_NONE) {
-                if (m_pSkin->getCaptureMouse() == this) {
-                    m_pSkin->releaseCaptureMouse(this);
-                }
-            }
-
-            if (CursorPosNew != m_CursorPosLatest) {
-                m_CursorPosLatest = CursorPosNew;
+            if (posNew != m_CursorPosLatest) {
+                m_CursorPosLatest = posNew;
                 invalidate();
             }
         }

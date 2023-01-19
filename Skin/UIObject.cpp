@@ -404,6 +404,7 @@ CUIObject::CUIObject() {
     m_visible = true;
     m_hideIfWndInactive = false;
     m_bHideIfMouseInactive = false;
+    m_isMouseIn = false;
 
     m_translucencyWithSkin = false;
     m_opacity = 255;

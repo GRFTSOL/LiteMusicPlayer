@@ -1,13 +1,14 @@
 #include "RawImageData.h"
 #include "ILIO.h"
 
+//#define PNG_EXPORTA(ordinal, type, name, args, attributes) type name args
+
 extern "C" {
-#include "./png/png.h"
+#include "./png/pngpriv.h"
 #include "./png/pngstruct.h"
 #include "./png/pnginfo.h"
-
-
 }
+
 
 // cexcept interface
 
@@ -35,7 +36,7 @@ void preMultiplyRGBChannels(RawImageData *imgData) {
     }
 }
 
-static void PNGAPI png_read_data(png_structp png_ptr, png_bytep data, png_size_t length) {
+static void PNGAPI png_read_data_x(png_structp png_ptr, png_bytep data, png_size_t length) {
     IILIO *io;
 
     io = (IILIO*)png_ptr->io_ptr;
@@ -91,7 +92,7 @@ RawImageDataPtr loadRawImageDataFromPngFile(IILIO *io) {
     //     {
     // initialize the png structure
     // png_init_io(png_ptr, pfFile);
-    png_set_read_fn(png_ptr, io, png_read_data);
+    png_set_read_fn(png_ptr, io, png_read_data_x);
 
     png_set_sig_bytes(png_ptr, 8);
 
