@@ -14,8 +14,8 @@ public:
 
     bool onCommand(int nId) override;
 
-    void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
-    void onHandleKeyDown(uint32_t nChar, uint32_t nFlags) override;
+    bool onKeyDown(uint32_t nChar, uint32_t nFlags) override;
+    bool onHandleKeyDown(uint32_t nChar, uint32_t nFlags) override;
 
     void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override;
 

@@ -541,15 +541,32 @@ void CMPSkinWnd::onUIObjNotify(IUIObjNotify *pNotify) {
     }
 }
 
-void CMPSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags) {
+bool CMPSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags) {
     CMPSkinMainWnd *pMainWnd = CMPlayerAppBase::getMainWnd();
     if (pMainWnd) {
         if (CMPlayerAppBase::getHotkey().onKeyDown(this, nChar, nFlags)) {
-            return;
+            return true;
         }
     }
 
-    CSkinWnd::onKeyDown(nChar, nFlags);
+    if (CSkinWnd::onKeyDown(nChar, nFlags)) {
+        return true;
+    }
+
+    if (nChar == VK_SPACE) {
+        g_Player.playPause();
+        return true;
+    } else if (nFlags == MK_COMMAND) {
+        if (nChar == VK_LEFT) {
+            g_Player.prev();
+            return true;
+        } else if (nChar == VK_RIGHT) {
+            g_Player.next();
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void CMPSkinWnd::onSizeModeChanged(WndSizeMode sizeMode) {

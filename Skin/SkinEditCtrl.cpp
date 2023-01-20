@@ -2036,7 +2036,7 @@ void CSkinEditCtrl::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) {
     }
 }
 
-void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
+bool CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
     bool shift = isModifierKeyPressed(MK_SHIFT, nFlags);
 #ifdef _MAC_OS
     bool ctrl = isModifierKeyPressed(MK_COMMAND, nFlags);
@@ -2097,7 +2097,7 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
                 onCmdCut();
             }
             // just return, the OnCmdXXX will update the view.
-            return;
+            return true;
         }
     // case VK_INSERT:
     //     {
@@ -2115,7 +2115,7 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
                 onCmdPaste();
             }
             // just return, the OnCmdXXX will update the view.
-            return;
+            return true;
         }
     case VK_C:
         {
@@ -2124,7 +2124,7 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
                 onCmdCopy();
             }
             // just return, the OnCmdXXX will update the view.
-            return;
+            return true;
         }
     case VK_END:
         {
@@ -2179,7 +2179,7 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         {
             if (isSingleLine() && m_pEditNotification) {
                 m_pEditNotification->onEditorKeyDown(nChar, nFlags);
-                return;
+                return true;
             }
 
             bSelKey = true;
@@ -2193,7 +2193,7 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         {
             if (isSingleLine() && m_pEditNotification) {
                 m_pEditNotification->onEditorKeyDown(nChar, nFlags);
-                return;
+                return true;
             }
 
             bSelKey = true;
@@ -2207,7 +2207,7 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         {
             if (isSingleLine() && m_pEditNotification) {
                 m_pEditNotification->onEditorKeyDown(nChar, nFlags);
-                return;
+                return true;
             }
 
             bSelKey = true;
@@ -2225,7 +2225,7 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         {
             if (isSingleLine() && m_pEditNotification) {
                 m_pEditNotification->onEditorKeyDown(nChar, nFlags);
-                return;
+                return true;
             }
 
             bSelKey = true;
@@ -2315,7 +2315,7 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         if (m_pEditNotification) {
             m_pEditNotification->onEditorKeyDown(nChar, nFlags);
         }
-        return;
+        return true;
     }
 
     if (bSelKey) {
@@ -2341,6 +2341,8 @@ void CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
     if (bRecoverCaretMaxXLatestOrg) {
         m_nCaretMaxXLatest = nCaretMaxXLatestOrg;
     }
+
+    return true;
 }
 
 void CSkinEditCtrl::onChar(uint32_t nChar) {

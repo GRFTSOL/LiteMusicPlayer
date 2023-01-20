@@ -1220,8 +1220,12 @@ int CLyricShowObj::getLyricRowAlignPos(CRawGraph    *canvas, LyricsLine *pLyricR
     return x;
 }
 
-void CLyricShowObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
+bool CLyricShowObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
     assert(m_pMLData);
+
+    if (nFlags != 0) {
+        return false;
+    }
 
     switch (nChar) {
     case VK_UP:
@@ -1279,8 +1283,9 @@ void CLyricShowObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         }
         break;
     default:
-        break;
+        return false;
     }
+    return true;
 }
 
 bool CLyricShowObj::onMouseDrag(CPoint point) {

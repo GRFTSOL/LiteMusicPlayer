@@ -92,7 +92,10 @@
 }
 
 - (void) keyDown:(NSEvent *)theEvent {
-    uint32_t modifierFlags = [theEvent modifierFlags] & NSEventModifierFlagDeviceIndependentFlagsMask;
+    const uint32_t NEEDED_FLAGS = NSEventModifierFlagShift | NSEventModifierFlagControl
+        | NSEventModifierFlagOption | NSEventModifierFlagCommand;
+
+    uint32_t modifierFlags = [theEvent modifierFlags] & NEEDED_FLAGS;
     int code = [theEvent keyCode];
 
     if (mIsTextInputMode) {

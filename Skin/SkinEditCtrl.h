@@ -454,7 +454,7 @@ public:
     virtual bool onMouseMove(CPoint point) override;
     virtual bool onRButtonUp(uint32_t nFlags, CPoint point) override;
     virtual void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) override;
-    virtual void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
+    virtual bool onKeyDown(uint32_t nChar, uint32_t nFlags) override;
     virtual void onChar(uint32_t nChar) override;
 
     virtual void onContexMenu(int xPos, int yPos);

@@ -50,7 +50,7 @@ public:
 
     bool removeFocusUIObject();
 
-    void onKeyDown(uint32_t nChar, uint32_t nFlags);
+    bool onKeyDown(uint32_t nChar, uint32_t nFlags);
     void onLButtonDown(uint32_t nFlags, CPoint point);
     void onMouseMove(uint32_t nFlags, CPoint point);
 

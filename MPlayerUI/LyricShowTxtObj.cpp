@@ -41,10 +41,9 @@ CLyricShowTxtObj::CLyricShowTxtObj() {
 CLyricShowTxtObj::~CLyricShowTxtObj() {
 }
 
-void CLyricShowTxtObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
+bool CLyricShowTxtObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
     if (g_LyricData.getLyrContentType() != LCT_TXT && !m_bReplayScrollingActionsEnabled) {
-        CLyricShowMultiRowObj::onKeyDown(nChar, nFlags);
-        return;
+        return CLyricShowMultiRowObj::onKeyDown(nChar, nFlags);
     }
 
     bool bProcessed = false;
@@ -107,8 +106,9 @@ void CLyricShowTxtObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
             }
             startScrollAnimation(nCurLineNew);
         }
+        return true;
     } else {
-        CLyricShowMultiRowObj::onKeyDown(nChar, nFlags);
+        return CLyricShowMultiRowObj::onKeyDown(nChar, nFlags);
     }
 }
 

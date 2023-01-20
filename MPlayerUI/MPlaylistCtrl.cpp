@@ -287,16 +287,14 @@ bool CMPlaylistCtrl::onCommand(int nId) {
     return false;
 }
 
-void CMPlaylistCtrl::onKeyDown(uint32_t code, uint32_t flags) {
-    CSkinListCtrl::onKeyDown(code, flags);
-
-    if (m_vRows.empty() || m_nFocusUIObj != -1) {
-        return;
-    }
+bool CMPlaylistCtrl::onKeyDown(uint32_t code, uint32_t flags) {
+    return CSkinListCtrl::onKeyDown(code, flags);
 }
 
-void CMPlaylistCtrl::onHandleKeyDown(uint32_t code, uint32_t flags) {
-    CSkinListCtrl::onHandleKeyDown(code, flags);
+bool CMPlaylistCtrl::onHandleKeyDown(uint32_t code, uint32_t flags) {
+    if (CSkinListCtrl::onHandleKeyDown(code, flags)) {
+        return true;
+    }
 
     if (code == VK_RETURN) {
         playItem(getNextSelectedItem(-1));
@@ -315,7 +313,11 @@ void CMPlaylistCtrl::onHandleKeyDown(uint32_t code, uint32_t flags) {
         if (ctrl) {
             offsetAllSelectedItems(code == VK_DOWN);
         }
+    } else {
+        return false;
     }
+
+    return true;
 }
 
 void CMPlaylistCtrl::onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) {

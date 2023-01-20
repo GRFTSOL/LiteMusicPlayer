@@ -25,7 +25,7 @@ public:
     virtual ~CLyricShowTxtObj();
 
 public:
-    void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
+    bool onKeyDown(uint32_t nChar, uint32_t nFlags) override;
     void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) override;
     void onLyricsChanged() override;
 

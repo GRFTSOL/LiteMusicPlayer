@@ -45,7 +45,7 @@ public:
     virtual void disableScrollBar() override { }
     virtual bool handleScrollCode(uint32_t nSBCode, int nPos) override { return true; }
 
-    void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
+    bool onKeyDown(uint32_t nChar, uint32_t nFlags) override;
     bool onLButtonUp(uint32_t nFlags, CPoint point) override;
     bool onLButtonDown(uint32_t nFlags, CPoint point) override;
     bool onMouseDrag(CPoint point) override;

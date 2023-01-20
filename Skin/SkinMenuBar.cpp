@@ -149,29 +149,30 @@ void CSkinMenuBar::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) {
     }
 }
 
-void CSkinMenuBar::onKeyDown(uint32_t nChar, uint32_t nFlags) {
+bool CSkinMenuBar::onKeyDown(uint32_t nChar, uint32_t nFlags) {
     if (m_nSelSubMenu == -1) {
-        return;
+        return false;
     }
 
     if (nChar == VK_ESCAPE && isMenuPopuped()) {
         hideSubMenu();
-        return;
+        return true;
     }
 
     if (isMenuPopuped()) {
-        m_popupMenu->onKeyDown(nChar, nFlags);
-        return;
+        return m_popupMenu->onKeyDown(nChar, nFlags);
     }
 
     switch (nChar) {
         case VK_LEFT:
             onMenuItemSelected(m_nSelSubMenu > 0 ? m_nSelSubMenu  - 1 : (int)m_vSubMenus.size() - 1);
-            break;
+            return true;
         case VK_RIGHT:
             onMenuItemSelected(m_nSelSubMenu >= (int)m_vSubMenus.size() - 1 ? 0 : m_nSelSubMenu + 1);
-            break;
+            return true;
     }
+
+    return false;
 }
 
 void CSkinMenuBar::onPopupMenuClosed() {

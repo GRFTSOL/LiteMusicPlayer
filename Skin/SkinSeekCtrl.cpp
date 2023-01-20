@@ -31,7 +31,7 @@ CSkinSeekCtrl::CSkinSeekCtrl() {
 CSkinSeekCtrl::~CSkinSeekCtrl() {
 }
 
-void CSkinSeekCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
+bool CSkinSeekCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
     if (nChar == VK_UP) {
         setScrollPos(getScrollPos() - m_nVirtualLine);
     } else if (nChar == VK_DOWN) {
@@ -40,9 +40,12 @@ void CSkinSeekCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         setScrollPos(getScrollPos() - m_nVirtualPage);
     } else if (nChar == VK_RIGHT || nChar == VK_NEXT) {
         setScrollPos(getScrollPos() + m_nVirtualPage);
+    } else {
+        return false;
     }
 
     onVScroll(SB_THUMBPOSITION);
+    return true;
 }
 
 bool CSkinSeekCtrl::onLButtonDown(uint32_t nFlags, CPoint point) {
@@ -62,7 +65,7 @@ bool CSkinSeekCtrl::onLButtonDown(uint32_t nFlags, CPoint point) {
         trackOnLButtonDown(nFlags, point);
         break;
     default:
-        break;
+        return false;
     }
 
     return true;

@@ -917,7 +917,7 @@ void CUIObject::enumProperties(CUIObjProperties &listProperties) {
 int CUIObject::fromXML(SXNode *pXmlNode) {
     for (SXNode::Property &prop : pXmlNode->listProperties) {
         if (!setProperty(prop.name.c_str(), prop.strValue.c_str())) {
-#ifdef _DEBUG
+#ifdef DEBUG
             if (!isPropertyName(prop.name.c_str(), SZ_PN_EXTENDS)) {
                 DBG_LOG3("%s - Unknown property: %s=%s",
                     (string(getClassName()) + pXmlNode->getPropertySafe(SZ_PN_ID)).c_str(),

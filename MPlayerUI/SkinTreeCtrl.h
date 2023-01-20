@@ -165,7 +165,7 @@ public:
 
     TreeArea hitTest(CPoint point, ISkinTreeNode **ppNode);
 
-    void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
+    bool onKeyDown(uint32_t nChar, uint32_t nFlags) override;
 
     bool onLButtonUp(uint32_t nFlags, CPoint point) override;
     bool onLButtonDown(uint32_t nFlags, CPoint point) override;

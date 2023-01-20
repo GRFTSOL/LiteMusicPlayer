@@ -20,8 +20,6 @@ public:
     virtual void onInitialUpdate() override;
     virtual void onDestroy() override;
 
-    virtual void onKeyUp(uint32_t nChar, uint32_t nFlags) override;
-    virtual void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
     virtual bool onMouseDrag(CPoint point) override;
     virtual bool onMouseMove(CPoint point) override;
     virtual void onMouseLeave(CPoint point) override;
@@ -159,7 +157,7 @@ public:
     int getExPoolInt(cstr_t szProperty, int nDefault = 0);
     bool getExPoolBool(cstr_t szProperty, bool bDefault = false);
 
-#ifdef _DEBUG
+#ifdef DEBUG
     void dumpUIObject(int &nDeep, CPoint *pt);
 #endif
 

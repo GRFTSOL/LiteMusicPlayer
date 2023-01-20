@@ -169,20 +169,6 @@ void CSkinContainer::onDestroy() {
     m_bInitialUpdated = false;
 }
 
-void CSkinContainer::onKeyUp(uint32_t nChar, uint32_t nFlags) {
-    if (m_nFocusUIObj >= 0 && m_nFocusUIObj < (int)m_vUIObjs.size()) {
-        CUIObject *pObj = m_vUIObjs[m_nFocusUIObj];
-        pObj->onKeyUp(nChar, nFlags);
-    }
-}
-
-void CSkinContainer::onKeyDown(uint32_t nChar, uint32_t nFlags) {
-    if (m_nFocusUIObj >= 0 && m_nFocusUIObj < (int)m_vUIObjs.size()) {
-        CUIObject *pObj = m_vUIObjs[m_nFocusUIObj];
-        pObj->onKeyDown(nChar, nFlags);
-    }
-}
-
 bool CSkinContainer::onMouseDrag(CPoint point) {
     bool bMsgProceed = false;
 
@@ -1138,7 +1124,7 @@ bool CSkinContainer::getExPoolBool(cstr_t szProperty, bool bDefault) {
     }
 }
 
-#ifdef _DEBUG
+#ifdef DEBUG
 void CSkinContainer::dumpUIObject(int &nDeep, CPoint *pt) {
     string strDeep;
     strDeep.resize(nDeep * 2, ' ');

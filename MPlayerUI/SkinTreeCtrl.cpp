@@ -610,9 +610,9 @@ bool CSkinTreeCtrl::onLButtonDblClk(uint32_t nFlags, CPoint point) {
     return true;
 }
 
-void CSkinTreeCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
+bool CSkinTreeCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
     if (!m_pTreeData) {
-        return;
+        return false;
     }
 
     switch (nChar) {
@@ -629,7 +629,7 @@ void CSkinTreeCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
                 if (pNodeSel) {
                     setSelNode(pNodeSel);
                 }
-                return;
+                return true;
             }
 
             if (nChar == VK_LEFT) {
@@ -657,7 +657,7 @@ void CSkinTreeCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
                         setSelNode(pNodeSel);
                         invalidate();
                     }
-                    return;
+                    return true;
                 } else {
                     pNodeSel = pNodeSel->prevSibling();
                 }
@@ -671,14 +671,14 @@ void CSkinTreeCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
                     pNodeSel = pNodeSel->firstChild();
                     setSelNode(pNodeSel);
                     invalidate();
-                    return;
+                    return true;
                 }
 
                 if (pNodeSel->nextSibling()) {
                     pNodeSel = pNodeSel->nextSibling();
                     setSelNode(pNodeSel);
                     invalidate();
-                    return;
+                    return true;
                 }
 
                 // to its parent's next sibling
@@ -705,7 +705,11 @@ void CSkinTreeCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
             notifyEvent(CSkinTreeCtrlEventNotify::C_KEY_DELETE);
             break;
         }
+    default:
+        return false;
     }
+
+    return true;
 }
 
 bool CSkinTreeCtrl::onLButtonUp(uint32_t nFlags, CPoint point) {

@@ -40,8 +40,8 @@ public:
     virtual void onCreate();
     virtual void onDestroy() { }
 
-    virtual void onKeyDown(uint32_t nChar, uint32_t nFlags) { }
-    virtual void onKeyUp(uint32_t nChar, uint32_t nFlags) { }
+    virtual bool onKeyDown(uint32_t nChar, uint32_t nFlags) { return false; }
+    virtual bool onKeyUp(uint32_t nChar, uint32_t nFlags) { return false; }
     virtual void onChar(uint32_t nChar) { }
     virtual void onLButtonUp(uint32_t nFlags, CPoint point) { }
     virtual void onLButtonDown(uint32_t nFlags, CPoint point) { }

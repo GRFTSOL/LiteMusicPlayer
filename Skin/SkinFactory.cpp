@@ -645,7 +645,7 @@ int CSkinFactory::getUIDByMenuID(int nMenuID) {
     return UID_INVALID;
 }
 
-#ifdef _DEBUG
+#ifdef DEBUG
 void CSkinFactory::dumpUID() {
     typedef map<int, string> MapInt2String;
 
@@ -1097,7 +1097,7 @@ int CSkinFactory::createSkinWnd(SkinWndStartupInfo &skinWndStartupInfo) {
 }
 
 void CSkinFactory::onSkinWndCreate(CSkinWnd *pSkinWnd) {
-#ifdef _DEBUG
+#ifdef DEBUG
     for (auto it = m_listSkinWnds.begin(); it != m_listSkinWnds.end(); ++it) {
         CSkinWnd *pSkin = *it;
         assert(pSkin != pSkinWnd);

@@ -197,8 +197,8 @@ public:
     virtual void onCancel();
 
     // normal input message
-    virtual void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
-    virtual void onKeyUp(uint32_t nChar, uint32_t nFlags) override;
+    virtual bool onKeyDown(uint32_t nChar, uint32_t nFlags) override;
+    virtual bool onKeyUp(uint32_t nChar, uint32_t nFlags) override;
     virtual void onChar(uint32_t nChar) override;
     virtual void onLButtonUp(uint32_t nFlags, CPoint point ) override;
     virtual void onLButtonDown(uint32_t nFlags, CPoint point ) override;

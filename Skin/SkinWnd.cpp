@@ -658,13 +658,8 @@ void CSkinWnd::onRButtonUp(uint32_t nFlags, CPoint point) {
     m_rootConainter.onRButtonUp(nFlags, point);
 }
 
-// COMMENT
-//        if ui objects in skin processed this message
-//            return true;
-//        else
-//            return false;
-void CSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags) {
-#ifdef _DEBUG
+bool CSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags) {
+#ifdef DEBUG
     {
         // dump UIObject
         if (isModifierKeyPressed(MK_CONTROL, nFlags)) {
@@ -688,17 +683,18 @@ void CSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags) {
     CUIObject *pObjFocus = getFocusUIObj();
     if (pObjFocus) {
         if (pObjFocus->needMsgKey()) {
-            pObjFocus->onKeyDown(nChar, nFlags);
-            return;
+            if (pObjFocus->onKeyDown(nChar, nFlags)) {
+                return true;
+            }
         }
 
         if (isDialogWnd()) {
             if (nChar == VK_ESCAPE) {
                 onCancel();
-                return;
+                return true;
             } else if (nChar == VK_RETURN && !pObjFocus->needMsgEnterKey()) {
                 onOK();
-                return;
+                return true;
             }
         }
     }
@@ -716,20 +712,20 @@ void CSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         // Ignore '\t' WM_CHAR message.
         m_bIgnoreNextOnCharMsg = true;
 
-        return;
+        return true;
     }
 
-    m_rootConainter.onKeyDown(nChar, nFlags);
+    return false;
 }
 
-void CSkinWnd::onKeyUp(uint32_t nChar, uint32_t nFlags) {
+bool CSkinWnd::onKeyUp(uint32_t nChar, uint32_t nFlags) {
     // Let focus UIObject to process key message
     CUIObject *pObjFocus = getFocusUIObj();
     if (pObjFocus && pObjFocus->needMsgKey()) {
-        pObjFocus->onKeyUp(nChar, nFlags);
-    } else {
-        m_rootConainter.onKeyUp(nChar, nFlags);
+        return pObjFocus->onKeyUp(nChar, nFlags);
     }
+
+    return false;
 }
 
 void CSkinWnd::onContexMenu(int xPos, int yPos) {

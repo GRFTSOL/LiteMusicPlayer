@@ -20,8 +20,8 @@ public:
     bool onLButtonUp(uint32_t nFlags, CPoint point) override;
     bool onLButtonDown(uint32_t nFlags, CPoint point) override;
 
-    virtual void onKeyUp(uint32_t nChar, uint32_t nFlags) override;
-    virtual void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
+    virtual bool onKeyUp(uint32_t nChar, uint32_t nFlags) override;
+    virtual bool onKeyDown(uint32_t nChar, uint32_t nFlags) override;
 
     virtual void onSetFocus() override;
     virtual void onKillFocus() override;

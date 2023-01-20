@@ -321,10 +321,6 @@ void CMPSkinMenu::onLoadMenu() {
         setOrgAppendPos(m_autoCheckMenu.m_nInsertNewItemPos);
         m_autoCheckMenu.m_hInsertNewItemMenu.removeItem(m_autoCheckMenu.m_nInsertNewItemPos);
     }
-
-#ifdef _DEBUG
-    appendItem(3999, "test");
-#endif
 }
 
 void CMPSkinMenu::updateMenuStatus(Window *window) {

@@ -604,7 +604,7 @@ int CID3v2IF::updateTextFrame(uint32_t nFrameID, cstr_t szText) {
         // not found, so add it.
         pFrame = new CID3v2Frame(nFrameID);
 
-#ifdef _DEBUG
+#ifdef DEBUG
         if (m_id3v2Header.byMajorVer == ID3v2Header::ID3V2_V2) {
             assert((nFrameID & 0xFF) == 0);
         }

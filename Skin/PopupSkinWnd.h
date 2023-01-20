@@ -20,7 +20,7 @@ public:
 
     virtual void onKillFocus() override;
 
-    void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
+    bool onKeyDown(uint32_t nChar, uint32_t nFlags) override;
 
 protected:
     IPopupSkinWndNotify         *m_pPopupSkinWndNotify;

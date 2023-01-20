@@ -1080,27 +1080,26 @@ bool CSkinListView::onLButtonDblClk(uint32_t nFlags, CPoint point) {
     return true;
 }
 
-void CSkinListView::onKeyDown(uint32_t nChar, uint32_t nFlags) {
+bool CSkinListView::onKeyDown(uint32_t nChar, uint32_t nFlags) {
     if (m_nFocusUIObj >= 0 && m_nFocusUIObj < (int)m_vUIObjs.size()) {
         CUIObject *pObj = m_vUIObjs[m_nFocusUIObj];
-        pObj->onKeyDown(nChar, nFlags);
-        return;
+        return pObj->onKeyDown(nChar, nFlags);
     }
 
-    onHandleKeyDown(nChar, nFlags);
+    return onHandleKeyDown(nChar, nFlags);
 }
 
-void CSkinListView::onHandleKeyDown(uint32_t nChar, uint32_t nFlags) {
+bool CSkinListView::onHandleKeyDown(uint32_t nChar, uint32_t nFlags) {
     if (getRowCount() == 0) {
-        return;
+        return false;
     }
 
     if (nChar == VK_RETURN) {
         sendNotifyEvent(CSkinListCtrlEventNotify::C_ENTER);
-        return;
+        return true;
     } else if (nChar == VK_DELETE) {
         sendNotifyEvent(CSkinListCtrlEventNotify::C_KEY_DELETE);
-        return;
+        return true;
     } else if (nChar == 'A') {
         bool bCtrl = isModifierKeyPressed(MK_CONTROL, nFlags);
 
@@ -1113,7 +1112,7 @@ void CSkinListView::onHandleKeyDown(uint32_t nChar, uint32_t nFlags) {
                 invalidate();
             }
         }
-        return;
+        return true;
     } else if (nChar == 'I') {
         bool bCtrl = isModifierKeyPressed(MK_CONTROL, nFlags);
 
@@ -1126,14 +1125,14 @@ void CSkinListView::onHandleKeyDown(uint32_t nChar, uint32_t nFlags) {
             }
             invalidate();
         }
-        return;
+        return true;
     }
 
     bool bShift = isModifierKeyPressed(MK_SHIFT, nFlags);
 
     if (nChar != VK_UP && nChar != VK_DOWN && nChar != VK_PRIOR && nChar != VK_NEXT
         && nChar != VK_HOME && nChar != VK_END) {
-        return;
+        return false;
     }
 
     CPaintUpdater updater(this);
@@ -1142,13 +1141,6 @@ void CSkinListView::onHandleKeyDown(uint32_t nChar, uint32_t nFlags) {
     switch (nChar) {
     case VK_UP:
         {
-            //             bool        bAlt = isKeyPressed(VK_MENU);
-            //             if (bAlt)
-            //             {
-            //                 updater.setUpdateFlag(offsetAllSelectedRow(false));
-            //                 return;
-            //             }
-
             if (m_nEndSelRow == -1) {
                 m_nEndSelRow = m_nFirstVisibleRow;
             } else if (m_nEndSelRow > 0) {
@@ -1167,13 +1159,6 @@ void CSkinListView::onHandleKeyDown(uint32_t nChar, uint32_t nFlags) {
         break;
     case VK_DOWN:
         {
-            //             bool        bAlt = isKeyPressed(VK_MENU);
-            //             if (bAlt)
-            //             {
-            //                 updater.setUpdateFlag(offsetAllSelectedRow(true));
-            //                 return;
-            //             }
-
             if (m_nEndSelRow == -1) {
                 m_nEndSelRow = m_nFirstVisibleRow;
             } else if (m_nEndSelRow < (int)getRowCount() - 1) {
@@ -1282,6 +1267,8 @@ void CSkinListView::onHandleKeyDown(uint32_t nChar, uint32_t nFlags) {
         updater.setUpdateFlag(true);
         sendNotifyEvent(CSkinListCtrlEventNotify::C_SEL_CHANGED);
     }
+
+    return true;
 }
 
 bool CSkinListView::onLButtonUp(uint32_t nFlags, CPoint point) {

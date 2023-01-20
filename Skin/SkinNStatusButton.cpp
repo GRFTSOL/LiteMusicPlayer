@@ -103,19 +103,26 @@ void CSkinNStatusButton::onMouseLeave(CPoint point) {
     changeButtonState(BS_NORMAL);
 }
 
-void CSkinNStatusButton::onKeyUp(uint32_t nChar, uint32_t nFlags) {
+bool CSkinNStatusButton::onKeyUp(uint32_t nChar, uint32_t nFlags) {
     if (nChar == VK_SPACE) {
         buttonUpAction();
+        return true;
     }
+
+    return false;
 }
 
-void CSkinNStatusButton::onKeyDown(uint32_t nChar, uint32_t nFlags) {
+bool CSkinNStatusButton::onKeyDown(uint32_t nChar, uint32_t nFlags) {
     if (nChar == VK_SPACE && m_btnState != BS_PRESSED) {
         buttonDownAction();
     } else if (nChar == VK_RETURN) {
         buttonDownAction();
         buttonUpAction();
+    } else {
+        return false;
     }
+
+    return true;
 }
 
 void CSkinNStatusButton::onSetFocus() {

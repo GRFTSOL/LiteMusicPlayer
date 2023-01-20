@@ -47,7 +47,7 @@ public:
         FTF_WHOLEWORD               = 0x1 << 2,
     };
 
-    void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
+    bool onKeyDown(uint32_t nChar, uint32_t nFlags) override;
 
     void autoVScrollDown(int nDownLine);
 

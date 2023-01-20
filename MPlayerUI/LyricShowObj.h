@@ -109,7 +109,7 @@ public:
     // IEventHandle overrider
     virtual void onEvent(const IEvent *pEvent) override;
 
-    virtual void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
+    virtual bool onKeyDown(uint32_t nChar, uint32_t nFlags) override;
 
     void draw(CRawGraph *canvas) override;
 

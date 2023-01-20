@@ -201,8 +201,8 @@ public:
 
     void onKillFocus();
 
-    void onKeyDown(uint32_t nChar, uint32_t nFlags);
-    void onKeyUp(uint32_t nChar, uint32_t nFlags);
+    bool onKeyDown(uint32_t nChar, uint32_t nFlags);
+    bool onKeyUp(uint32_t nChar, uint32_t nFlags);
     void onLButtonUp(uint32_t nFlags, CPoint point);
     void onLButtonDown(uint32_t nFlags, CPoint point);
 

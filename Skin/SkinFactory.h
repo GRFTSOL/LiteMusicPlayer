@@ -221,7 +221,7 @@ public:
     bool setMenuIDByUID(int nUID, int nMenuId);
     int getUIDByMenuID(int nMenuID);
 
-#ifdef _DEBUG
+#ifdef DEBUG
     void dumpUID();
 #endif
 

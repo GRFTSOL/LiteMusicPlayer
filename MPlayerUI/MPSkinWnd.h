@@ -25,7 +25,7 @@ public:
 
     void onUIObjNotify(IUIObjNotify *pNotify) override;
 
-    void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
+    bool onKeyDown(uint32_t nChar, uint32_t nFlags) override;
 
     void onSizeModeChanged(WndSizeMode sizeMode) override;
 

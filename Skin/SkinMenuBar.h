@@ -21,7 +21,7 @@ public:
     bool onLButtonDown(uint32_t nFlags, CPoint point) override;
     bool onMouseMove(CPoint point) override;
     void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) override;
-    void onKeyDown(uint32_t nChar, uint32_t nFlags) override;
+    bool onKeyDown(uint32_t nChar, uint32_t nFlags) override;
     bool onMenuKey(uint32_t nChar, uint32_t nFlags) override;
     void onKillFocus() override;
 

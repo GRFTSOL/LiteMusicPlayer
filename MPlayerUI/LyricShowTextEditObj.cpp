@@ -210,14 +210,14 @@ void CLyricShowTextEditObj::autoVScrollDown(int nDownLine) {
     invalidate();
 }
 
-void CLyricShowTextEditObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
+bool CLyricShowTextEditObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
     bool ctrl = isModifierKeyPressed(MK_CONTROL, nFlags);
     bool shift = isModifierKeyPressed(MK_SHIFT, nFlags);
 
     if (!ctrl && !shift) {
         if (nChar == VK_F3) {
             findNext();
-            return;
+            return true;
         } else if ((nChar == VK_UP || nChar == VK_DOWN) && !isSelected()) {
             //
             // Adjust the time tag value, with up/down key.
@@ -273,7 +273,7 @@ void CLyricShowTextEditObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
                     replaceSel(stringPrintf("%02d", n).c_str());
                     setCaret(m_nCaretRow, nCaretColOld);
 
-                    return;
+                    return true;
                 }
             }
         }
@@ -283,14 +283,14 @@ void CLyricShowTextEditObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         switch (nChar) {
         case 'F':
             showFindDialog();
-            break;
+            return true;
         case 'H':
             showFindDialog(false);
-            break;
+            return true;
         }
     }
 
-    CSkinEditCtrl::onKeyDown(nChar, nFlags);
+    return CSkinEditCtrl::onKeyDown(nChar, nFlags);
 }
 
 bool CLyricShowTextEditObj::findText(cstr_t szText, uint32_t dwFlags) {

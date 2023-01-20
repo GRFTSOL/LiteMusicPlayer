@@ -198,10 +198,9 @@ bool SkinMenuItemsContainer::onMouseMove(CPoint point) {
     return true;
 }
 
-void SkinMenuItemsContainer::onKeyDown(uint32_t nChar, uint32_t nFlags) {
+bool SkinMenuItemsContainer::onKeyDown(uint32_t nChar, uint32_t nFlags) {
     if (isChildMenuVisible() && !m_isMenuActive) {
-        m_childMenu->onKeyDown(nChar, nFlags);
-        return;
+        return m_childMenu->onKeyDown(nChar, nFlags);
     }
 
     switch (nChar) {
@@ -256,8 +255,10 @@ void SkinMenuItemsContainer::onKeyDown(uint32_t nChar, uint32_t nFlags) {
             break;
         }
         default:
-            break;
+            return false;
     }
+
+    return true;
 }
 
 void fillMaskRectCenter(CRawGraph *canvas, int x, int y, CSFImage &image, const CColor &clr) {
