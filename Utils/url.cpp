@@ -54,33 +54,39 @@ bool uriIsQuoted(cstr_t str) {
 }
 
 // Convert %20 etc to blank space...
-string uriUnquote(cstr_t str) {
+string uriUnquote(cstr_t str, bool isForm) {
     string out;
 
-    string temp;
-    cstr_t p = str;
+    const char *p, *start;
+    p = start = str;
+
     while (*p) {
-        if (*p == '%' && isHexChar(p[1]) && isHexChar(p[2])) {
+        if (*p == '+') {
+            out.append(start, p);
+
+            if (isForm) {
+                out.append(1, ' ');
+            } else {
+                out.append(1, '+');
+            }
+
+            p++;
+            start = p;
+        } else if (*p == '%' && isHexChar(p[1]) && isHexChar(p[2])) {
+            out.append(start, p);
+
             int a = hexToInt(p[1]);
             int b = hexToInt(p[2]);
-            temp.insert(temp.end(), (char)(uint8_t)(a * 16 + b));
-            p += 2;
+            out.insert(out.end(), (char)(uint8_t)(a * 16 + b));
+
+            p += 3;
+            start = p;
         } else {
-            if (temp.size() > 0) {
-                out.append(temp);
-                temp.clear();
-            }
-            out.insert(out.end(), *p);
+            p++;
         }
-
-        p++;
     }
 
-    if (temp.size() > 0) {
-        out.append(temp);
-        temp.clear();
-    }
-    out.insert(out.end(), *p);
+    out.append(start, p);
 
     return out;
 }
@@ -135,6 +141,34 @@ bool isUnicodeStr(const void *lpData) {
     szBuffer = (uint8_t *)lpData;
 
     return (szBuffer[0] == 0xFF && szBuffer[1] == 0xFE);
+}
+
+VecArgs parseArgs(const string &args) {
+    VecStrings listArgs;
+    VecArgs outArgs;
+
+    strSplit(args.c_str(), '&', listArgs);
+    for (auto &s : listArgs) {
+        string name, value;
+
+        if (!strSplit(s.c_str(), '=', name, value)) {
+            name = s;
+        }
+
+        outArgs.push_back({name, value});
+    }
+
+    return outArgs;
+}
+
+string *getArgsValue(VecArgs &args, const string &name) {
+    for (auto &arg : args) {
+        if (name.size() == arg.name.size() && strcasecmp(name.c_str(), arg.name.c_str()) == 0) {
+            return &arg.value;
+        }
+    }
+
+    return NULL;
 }
 
 #if UNIT_TEST

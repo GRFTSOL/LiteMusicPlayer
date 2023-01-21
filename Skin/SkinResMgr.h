@@ -51,7 +51,7 @@ public:
 
     void getAdjustHueParam(float &hue, float &saturation, float &luminance);
 
-#ifdef _DEBUG
+#ifdef DEBUG
     void dbgOutLoadedImages();
 #endif
 protected:

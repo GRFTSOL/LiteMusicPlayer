@@ -161,7 +161,7 @@ void CSkinResMgr::getAdjustHueParam(float &hue, float &saturation, float &lumina
     luminance = m_luminance;
 }
 
-#ifdef _DEBUG
+#ifdef DEBUG
 void CSkinResMgr::dbgOutLoadedImages() {
     map<string, ResourceRef>::iterator it;
 
@@ -173,7 +173,7 @@ void CSkinResMgr::dbgOutLoadedImages() {
 
     // 释放所有未释放的资源
     for (it = m_mapBitmap.begin(); it != m_mapBitmap.end(); it++) {
-        DBG_LOG2("    FastBmp: %d : %s", (*it).second.nCount, (*it).first.c_str());
+        DBG_LOG2("    FastBmp: %d : %s", (*it).second.image.use_count(), (*it).first.c_str());
     }
 }
 #endif

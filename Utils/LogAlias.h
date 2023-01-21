@@ -32,7 +32,7 @@ extern class CLog g_log;
 #define ERR_LOGDUMPS(sz, len)            \
     g_log.logDumpStr(LOG_LVL_ERROR, __FILE__, __LINE__, sz, len)
 
-#ifdef _DEBUG
+#ifdef DEBUG
 #define DBG_LOG0(szMessage)            \
     g_log.writeLog(LOG_LVL_DEBUG, __FILE__, __LINE__, szMessage)
 

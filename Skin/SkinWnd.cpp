@@ -662,7 +662,7 @@ bool CSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags) {
 #ifdef DEBUG
     {
         // dump UIObject
-        if (isModifierKeyPressed(MK_CONTROL, nFlags)) {
+        if (isModifierKeyPressed(MK_ALT, nFlags)) {
             if (nChar == VK_F1) {
                 int nDeep = 0;
                 m_rootConainter.dumpUIObject(nDeep, nullptr);

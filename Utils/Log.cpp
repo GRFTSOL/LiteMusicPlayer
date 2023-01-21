@@ -182,12 +182,12 @@ void CLog::logDumpStr(uint8_t byLevel, cstr_t szFile, int nLine, cstr_t szStr, i
 }
 
 void CLog::writeLog( uint8_t byLevel, cstr_t szFile, int nLine, cstr_t szFormat, ...) {
-#ifndef _DEBUG
+#ifndef DEBUG
     // 将发行版本中的调试信息去掉
     if (byLevel == LOG_LVL_DEBUG) {
         return;
     }
-#endif    // _DEBUG
+#endif    // DEBUG
 
     szFile = ignoreRootDir(szFile, m_srcRootDir.c_str());
 
