@@ -770,6 +770,16 @@ string CPlayer::getMediaKey() {
     return g_LyricSearch.getAssociateFileKeyword(m_szSrcMedia, m_szFullTitle);
 }
 
+int CPlayer::getMediaID() {
+    if (m_spPlayer) {
+        CMPAutoPtr<IMedia> media;
+        m_spPlayer->getCurrentMedia(&media);
+        return media->getID();
+    } else {
+        return -1;
+    }
+}
+
 MLRESULT CPlayer::getCurrentMedia(IMedia **ppMedia) {
     if (m_spPlayer) {
         return m_spPlayer->getCurrentMedia(ppMedia);

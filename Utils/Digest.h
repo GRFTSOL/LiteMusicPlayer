@@ -12,3 +12,8 @@ string md5ToString16(cstr_t szSource);
 inline void md5ToBinary(cstr_t str, unsigned char digest[]) {
     md5ToBinary(str, (int)strlen(str) * sizeof(char), digest);
 }
+
+// zlib 中的 crc32
+extern "C" unsigned long crc32(unsigned long crc,
+                    const unsigned char *buf,
+                    unsigned int len);

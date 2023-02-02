@@ -22,11 +22,13 @@
 @implementation _PlayerEventDispatcherInternal
 
 -(void)StartLyrDrawUpdate {
-    timer = [NSTimer scheduledTimerWithTimeInterval:((double)40) / 1000
-        target:self
-        selector:@selector(onTimer)
-        userInfo:nil
-        repeats:YES];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        timer = [NSTimer scheduledTimerWithTimeInterval:((double)40) / 1000
+            target:self
+            selector:@selector(onTimer)
+            userInfo:nil
+            repeats:YES];
+    });
 }
 
 -(void)StopLyrDrawUpdate {

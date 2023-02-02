@@ -10,6 +10,7 @@
 #include "LyricShowObj.h"
 #include "../version.h"
 #include "../LyricsLib/LyricsKeywordFilter.h"
+#include "../LocalServer/LocalServer.hpp"
 #include "utils/unittest.h"
 
 #ifdef _LINUX_GTK2
@@ -170,6 +171,8 @@ bool CMPlayerAppBase::init() {
     g_lyrOutPlguinMgr.init();
 
     // onMediaChanged(true);
+
+    LocalServer::getInstance()->start();
 
     getInstance()->setRunningFlag();
 

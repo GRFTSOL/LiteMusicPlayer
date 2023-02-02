@@ -12,13 +12,14 @@
 #include "Utils/Utils.h"
 #include "Http/Server.hpp"
 #include "WebSocket/Server.hpp"
+#include "PlayerEventSender.hpp"
 
 
 class LocalServer {
 public:
     static LocalServer *getInstance();
 
-    LocalServer(cstr_t address, cstr_t httpPort, cstr_t webSocketPort, cstr_t docRoot);
+    LocalServer(cstr_t address, cstr_t httpPort, cstr_t webSocketPort, cstr_t docRoot, const mbedtls_pk_context &rsaKey, const std::string &publicKey);
 
     void start();
     void stop();
@@ -31,6 +32,8 @@ protected:
 
     HttpServer::Server          m_httpServer;
     WebSocket::Server           m_webSocketServer;
+
+    PlayerEventSenderPtr        m_playerEventSender;
 
     CThread                     m_threadHttpServer;
     CThread                     m_threadWebSocketServer;

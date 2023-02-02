@@ -7,7 +7,6 @@
 #import <Cocoa/Cocoa.h>
 #import "../MPlayerUI/mac/MPlayerApp.h"
 #include "utils/unittest.h"
-#include "../LocalServer/LocalServer.hpp"
 
 
 int main(int argc, const char *argv[])
@@ -17,8 +16,6 @@ int main(int argc, const char *argv[])
 //    InitBaseFrameWork(argc, argv, "MiniLyrics.log", "MiniLyrics.ini", SZ_SECT_UI);
     initBaseFramework(argc, (const char **)argv, "MP3Player.log",
         "/Users/henry_xiao/ProjectsPrivate/Mp3Player/build/Debug/MP3Player.ini", "MP3Player");
-
-    LocalServer::getInstance()->start();
 
     return NSApplicationMain(argc, (const char **)argv);
 }

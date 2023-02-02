@@ -94,6 +94,7 @@ public:
     void getSrcMedia(char * lpszSourceMedia, int nBufSize)
         { strcpy_safe(lpszSourceMedia, nBufSize, m_szSrcMedia); }
     string getMediaKey();
+    int getMediaID();
 
     MLRESULT getCurrentMedia(IMedia **ppMedia);
     MLRESULT getCurrentPlaylist(IPlaylist **ppPlaylist);
