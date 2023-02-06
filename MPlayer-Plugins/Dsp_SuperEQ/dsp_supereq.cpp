@@ -42,31 +42,13 @@ DWORD CALLBACK ThreadVisProc(LPVOID lpData)
 
 CDspSuperEQ::CDspSuperEQ()
 {
-	m_pPlayer = NULL;
 	m_nLastSRate = 0;
 	m_nLastChannel = 0;
 	m_nLastBps = 0;
-	m_pPlayer = 0;
-}
-
-
-CDspSuperEQ::~CDspSuperEQ()
-{
-}
-
-CDspSuperEQ * CDspSuperEQ::GetInstance()
-{
-	static CDspSuperEQ instance;
-	return &instance;
-}
-
-MLRESULT CDspSuperEQ::Init(IMPlayer *pPlayer)
-{
-	m_pPlayer = pPlayer;
 
 	equ_init(14);
 
-	for(int i=0;i<=18;i++)
+	for(int i = 0; i <= 18; i++)
 	{
 		if (lslpos[i] < -20 ) lslpos[i] = -20;
 		if (lslpos[i] > 20) lslpos[i] = 20;
@@ -103,22 +85,19 @@ MLRESULT CDspSuperEQ::Init(IMPlayer *pPlayer)
 	CreateWnd();
 
 	CreateThread(NULL, 0, ThreadVisProc, this, 0, NULL);
-
-	return ERR_OK;
 }
 
 
-MLRESULT CDspSuperEQ::Quit()
+CDspSuperEQ::~CDspSuperEQ()
 {
-	ASSERT(m_pPlayer);
-
-	m_pPlayer.Release();
-	m_pPlayer = NULL;
 	equ_quit();
-
-	return ERR_OK;
 }
 
+CDspSuperEQ *CDspSuperEQ::GetInstance()
+{
+	static CDspSuperEQ instance;
+	return &instance;
+}
 
 void CDspSuperEQ::Process(IFBuffer *pBuf, int nBps, int nChannels, int nSampleRate)
 {

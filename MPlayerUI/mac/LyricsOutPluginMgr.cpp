@@ -87,7 +87,7 @@ int CLyricsOutPluginMgr::getPlayPos() {
 
 bool CLyricsOutPluginMgr::getMediaFile(char szFile[], int nBuffLen) {
     emptyStr(szFile);
-    strcpy_safe(szFile, nBuffLen, g_Player.getSrcMedia());
+    strcpy_safe(szFile, nBuffLen, g_player.getSrcMedia());
     return !isEmptyString(szFile);
 }
 

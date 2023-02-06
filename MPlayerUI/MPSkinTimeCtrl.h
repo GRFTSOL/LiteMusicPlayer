@@ -7,7 +7,7 @@
 #include "SkinPicText.h"
 
 
-string formatTime(int nTimeSec);
+string formatDuration(int nTimeSec);
 
 template<class _CSkinText>
 class CMPSkinTimeCtrl : public _CSkinText {
@@ -45,10 +45,10 @@ public:
 protected:
 
     void resetTimeText() {
-        int nTime = g_Player.getPlayPos() + 500;
+        int nTime = g_player.getPlayPos() + 500;
         nTime /= 1000;
         if (!m_bShowElapsedTime) {
-            nTime = g_Player.getMediaLength() / 1000 - nTime;
+            nTime = g_player.getMediaLength() / 1000 - nTime;
         }
 
         if (nTime != m_nTimeOld) {
@@ -60,7 +60,7 @@ protected:
                 strText = "-";
             }
 
-            strText += formatTime(nTime);
+            strText += formatDuration(nTime);
             _CSkinText::setText(strText.c_str());
 
             _CSkinText::invalidate();

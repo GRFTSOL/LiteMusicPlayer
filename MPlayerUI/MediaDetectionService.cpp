@@ -31,7 +31,7 @@ void listMedia(cstr_t szDir, vector<string> &vFiles) {
                 listMedia(strFile.c_str(), vFiles);
             }
         } else {
-            if (g_Player.isExtAudioFile(fileGetExt(find.getCurName()))) {
+            if (g_player.isExtAudioFile(fileGetExt(find.getCurName()))) {
                 strFile = strDir + find.getCurName();
                 vFiles.push_back(strFile);
             }
@@ -48,7 +48,6 @@ void CMediaDetectionService::addMediaInDir(cstr_t szDir) {
 }
 
 void CMediaDetectionService::addMedia(vector<string> &vFiles) {
-    CMPAutoPtr<IMediaLibrary> pMediaLib;
     int nRet;
     //char                        szMsg[256];
     int n = 0;
@@ -58,16 +57,13 @@ void CMediaDetectionService::addMedia(vector<string> &vFiles) {
     //     setMsg1(szMsg);
     //     setMsg2(_TLT("Adding files..."));
 
-    if (g_Player.getMediaLibrary(&pMediaLib) == ERR_OK) {
-        for (int i = 0; i < (int)vFiles.size(); i++) {
-            CMPAutoPtr<IMedia> pMedia;
+    auto mediaLib = g_player.getMediaLibrary();
 
-            if (pMediaLib->getMediaByUrl(vFiles[i].c_str(), &pMedia) == ERR_OK) {
-                continue;
-            }
-
-            nRet = pMediaLib->add(vFiles[i].c_str(), &pMedia);
-            if (nRet == ERR_OK) {
+    for (int i = 0; i < (int)vFiles.size(); i++) {
+        auto media = mediaLib->getMediaByUrl(vFiles[i].c_str());
+        if (!media) {
+            media = mediaLib->add(vFiles[i].c_str());
+            if (media) {
                 n++;
                 //                 sprintf(szMsg, _TLT("%d files added"), n);
                 //                 setMsg1(szMsg);

@@ -17,14 +17,8 @@
 #define DT_REMOTE           16
 
 unsigned int GetNumberOfDisk(unsigned int type);
-CXStr getLetterOfDisk(unsigned int type, unsigned int index);
 
 void travelDir(char* dir);
-
-//////////////////////////////////////////////////////////////////////////
-// check internet resource
-IMedia* CheckSignalUrl(char* url);
-
 
 
 #endif // WALLPAPER_UTIL_H

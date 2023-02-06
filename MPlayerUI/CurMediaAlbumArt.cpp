@@ -44,7 +44,7 @@ bool getImageFileWithName(cstr_t szName, VecStrings &vPicFiles)
 
 bool getCurrentMediaAlbumArtInSongDir(VecStrings &vPicFiles) {
     string strFile;
-    cstr_t szAlbumName = g_Player.getAlbum(), szSongFile = g_Player.getSrcMedia();
+    cstr_t szAlbumName = g_player.getAlbum(), szSongFile = g_player.getSrcMedia();
     VecStrings vOtherPicFiles;
     int nFileCount = 0;
 
@@ -88,12 +88,12 @@ bool getCurrentMediaAlbumArtInSongDir(VecStrings &vPicFiles) {
         // artist - album.jpg
         //
         string strArAl;
-        strArAl = g_Player.getArtist();
+        strArAl = g_player.getArtist();
         if (!isEmptyString(szAlbumName)) {
-            strArAl = formatMediaTitle(g_Player.getArtist(), szAlbumName);
+            strArAl = formatMediaTitle(g_player.getArtist(), szAlbumName);
         }
         if (strArAl.empty()) {
-            strArAl = fileGetTitle(g_Player.getSrcMedia());
+            strArAl = fileGetTitle(g_player.getSrcMedia());
         }
         if (strcasecmp(strFileTitle.c_str(), strArAl.c_str()) == 0) {
             vPicFiles.push_back(strFile);
@@ -133,7 +133,7 @@ int CCurMediaAlbumArt::load() {
     close();
 
     m_bLoaded = true;
-    strSongFile = g_Player.getSrcMedia();
+    strSongFile = g_player.getSrcMedia();
 
     // load id3v2 pictures...
     CID3v2IF id3v2(ED_SYSDEF);

@@ -27,25 +27,18 @@
 // #include "DspDemo.h"
 #include "MORaw.h"
 #include "../MPlayer-Plugins/Dsp_SuperEQ/dsp_supereq.h"
-
-
 #endif // #ifdef _MAC_OS
+
 
 #define SIZE_INC (1024 * 4)
 
 
-// MLRESULT GetPlayerInstance(IMPlayer **ppPlayer);
-// {
-//     return CMPlayer::getInstance(ppPlayer);
-// }
-
 //////////////////////////////////////////////////////////////////////////
 // CFBuffer
 
-CFBuffer::CFBuffer(CMemAllocator *pMemAllocator, uint32_t nCapacity) {
+CFBuffer::CFBuffer(uint32_t nCapacity) {
     OBJ_REFERENCE_INIT
     m_buf = nullptr;
-    m_pMemAllocator = pMemAllocator;
     m_nCapacity = nCapacity;
     m_nSize = 0;
 
@@ -53,16 +46,12 @@ CFBuffer::CFBuffer(CMemAllocator *pMemAllocator, uint32_t nCapacity) {
 
     m_nCapacity = nCapacity;
     m_nSize = 0;
-
-    m_pMemAllocator->addRef();
 }
 
 CFBuffer::~CFBuffer() {
     if (m_buf) {
         free(m_buf);
     }
-
-    m_pMemAllocator->release();
 }
 
 void CFBuffer::addRef() {
@@ -71,7 +60,7 @@ void CFBuffer::addRef() {
 
 void CFBuffer::release() {
     if (--m_nReference <= 0) {
-        m_pMemAllocator->onRelease(this);
+        delete this;
     }
 }
 
@@ -95,7 +84,7 @@ void CFBuffer::resize(uint32_t nSize) {
     m_nSize = nSize;
 }
 
-MLRESULT CFBuffer::reserve(uint32_t nCapacity) {
+ResultCode CFBuffer::reserve(uint32_t nCapacity) {
     // assert(m_nRef == 1);
     if (nCapacity > m_nCapacity) {
         m_buf = (char *)realloc(m_buf, nCapacity);
@@ -108,60 +97,6 @@ MLRESULT CFBuffer::reserve(uint32_t nCapacity) {
     }
 
     return ERR_OK;
-}
-
-CMemAllocator::CMemAllocator() {
-    OBJ_REFERENCE_INIT;
-}
-
-CMemAllocator::~CMemAllocator() {
-    assert(m_listFree.size() == 0);
-}
-
-void CMemAllocator::quit() {
-    LIST_BUF::iterator it;
-
-    for (it = m_listFree.begin(); it != m_listFree.end(); ++it) {
-        CFBuffer *pBuffer = (CFBuffer*)(IFBuffer*)(*it);
-
-        delete pBuffer;
-        // pBuffer->release();
-    }
-    m_listFree.clear();
-}
-
-IFBuffer *CMemAllocator::allocFBuffer(uint32_t nCapacity) {
-    LIST_BUF::iterator it;
-    RMutexAutolock autolock(m_mutex);
-
-    for (it = m_listFree.begin(); it != m_listFree.end(); ++it) {
-        IFBuffer *pBuffer = *it;
-        if (pBuffer->capacity() >= nCapacity) {
-            pBuffer->addRef();
-            m_listFree.erase(it);
-            return pBuffer;
-        }
-    }
-
-    CFBuffer *pBuffer;
-    pBuffer = new CFBuffer(this, nCapacity);
-    pBuffer->addRef();
-
-    static int nCount = 0;
-    nCount++;
-    DBG_LOG1("mallocated mem count: %d", nCount);
-
-    return pBuffer;
-}
-
-IString *CMemAllocator::allocStr() {
-    return new CXStr();
-}
-
-void CMemAllocator::onRelease(IFBuffer *pBuf) {
-    pBuf->resize(0);
-    RMutexAutolock autolock(m_mutex);
-    m_listFree.push_front(pBuf);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -180,15 +115,15 @@ cstr_t CMOAgent::getDescription() {
     }
 }
 
-MLRESULT CMOAgent::init(IMPlayer *pPlayer) {
+ResultCode CMOAgent::init(IMPlayer *pPlayer) {
     return ERR_OK;
 }
 
-MLRESULT CMOAgent::quit() {
+ResultCode CMOAgent::quit() {
     return ERR_OK;
 }
 
-MLRESULT CMOAgent::open(int nSampleRate, int nNumChannels, int nBitsPerSamp) {
+ResultCode CMOAgent::open(int nSampleRate, int nNumChannels, int nBitsPerSamp) {
     if (m_pMediaOutput) {
         return m_pMediaOutput->open(nSampleRate, nNumChannels, nBitsPerSamp);
     } else {
@@ -196,7 +131,7 @@ MLRESULT CMOAgent::open(int nSampleRate, int nNumChannels, int nBitsPerSamp) {
     }
 }
 
-MLRESULT CMOAgent::waitForWrite() {
+ResultCode CMOAgent::waitForWrite() {
     if (m_pMediaOutput) {
         return m_pMediaOutput->waitForWrite();
     } else {
@@ -204,7 +139,7 @@ MLRESULT CMOAgent::waitForWrite() {
     }
 }
 
-MLRESULT CMOAgent::write(IFBuffer *pBuf) {
+ResultCode CMOAgent::write(IFBuffer *pBuf) {
     if (m_pMediaOutput) {
         return m_pMediaOutput->write(pBuf);
     } else {
@@ -212,7 +147,7 @@ MLRESULT CMOAgent::write(IFBuffer *pBuf) {
     }
 }
 
-MLRESULT CMOAgent::flush() {
+ResultCode CMOAgent::flush() {
     if (m_pMediaOutput) {
         return m_pMediaOutput->flush();
     } else {
@@ -220,7 +155,7 @@ MLRESULT CMOAgent::flush() {
     }
 }
 
-MLRESULT CMOAgent::pause(bool bPause) {
+ResultCode CMOAgent::pause(bool bPause) {
     if (m_pMediaOutput) {
         return m_pMediaOutput->pause(bPause);
     } else {
@@ -236,7 +171,7 @@ bool CMOAgent::isPlaying() {
     }
 }
 
-MLRESULT CMOAgent::stop() {
+ResultCode CMOAgent::stop() {
     if (m_pMediaOutput) {
         return m_pMediaOutput->stop();
     } else {
@@ -261,161 +196,11 @@ uint32_t CMOAgent::getPos() {
 }
 
 // volume
-MLRESULT CMOAgent::setVolume(int volume, int nBanlance) {
+ResultCode CMOAgent::setVolume(int volume, int nBanlance) {
     if (m_pMediaOutput) {
         return m_pMediaOutput->setVolume(volume, nBanlance);
     } else {
         return ERR_NO_DEVICE;
-    }
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-MLRESULT CMPluginManagerAgent::detectPlugins() {
-    if (m_pluginMgr) {
-        m_pluginMgr->detectPlugins();
-    }
-
-    //
-    // register internal plugins
-    //
-    IMediaDecode *pDecoder;
-
-#ifdef _MAC_OS
-    pDecoder = new CMDAVPlayer;
-    onInternalDecoderRegister(pDecoder);
-    pDecoder->release();
-#else
-#ifdef _MPLAYER
-    IMPlayer *player = nullptr;
-    CMPlayer::getInstance(&player);
-
-#ifdef _WIN32
-    IVis *pVis = new CVISDemo();
-    pVis->init(player);
-    player->registerVis(pVis);
-#endif
-
-    pDecoder = new CMDLibmad;
-    onInternalDecoderRegister(pDecoder);
-    pDecoder->release();
-
-    pDecoder = new CMDWave;
-    onInternalDecoderRegister(pDecoder);
-    pDecoder->release();
-
-    pDecoder = new CMDRow;
-    onInternalDecoderRegister(pDecoder);
-    pDecoder->release();
-#else
-    pDecoder = new CMDWmpCore;
-    onInternalDecoderRegister(pDecoder);
-    pDecoder->release();
-#endif
-
-#endif // #ifndef _MAC_OS
-
-    return ERR_OK;
-}
-
-
-MLRESULT CMPluginManagerAgent::newInput(cstr_t szMediaUrl, IMediaInput **ppInput) {
-    if (m_pluginMgr && m_pluginMgr->newInput(szMediaUrl, ppInput) == ERR_OK) {
-        return ERR_OK;
-    }
-
-    MLRESULT nRet;
-
-    *ppInput = new CMILocalFile;
-
-    nRet = (*ppInput)->open(szMediaUrl);
-    if (nRet != ERR_OK) {
-        delete *ppInput;
-        *ppInput = nullptr;
-        return nRet;
-    }
-
-    (*ppInput)->addRef();
-
-    return ERR_OK;
-}
-
-
-MLRESULT CMPluginManagerAgent::newDecoder(IMediaInput *pInput, IMediaDecode **ppDecoder) {
-    assert(pInput);
-
-    *ppDecoder = nullptr;
-
-#ifndef _MAC_OS
-    cstr_t szMediaUrl = pInput->getSource();
-
-#ifdef _MPLAYER
-    if (fileIsExtSame(szMediaUrl, ".mp3")) {
-        *ppDecoder = new CMDLibmad;
-    } else if (fileIsExtSame(szMediaUrl, ".wav")) {
-        *ppDecoder = new CMDWave;
-    } else if (fileIsExtSame(szMediaUrl, ".raw")) {
-        *ppDecoder = new CMDRow;
-    } else if (m_pluginMgr) {
-        return m_pluginMgr->newDecoder(pInput, ppDecoder);
-    }
-#else
-    if (fileIsExtSame(szMediaUrl, ".mp3")) {
-        *ppDecoder = new CMDLibmad;
-    }
-#endif
-
-#endif // #ifndef _MAC_OS
-
-    if (*ppDecoder) {
-        (*ppDecoder)->addRef();
-        return ERR_OK;
-    } else {
-        return ERR_NOT_SUPPORT_FILE_FORMAT;
-    }
-}
-
-
-MLRESULT CMPluginManagerAgent::newOutput(IMediaOutput **ppOutput) {
-    if (m_pluginMgr && m_pluginMgr->newOutput(ppOutput) == ERR_OK) {
-        return ERR_OK;
-    }
-
-#ifndef _MAC_OS
-    *ppOutput = new CMOSoundCard;
-#endif // #ifndef _MAC_OS
-
-    return ERR_OK;
-}
-
-
-MLRESULT CMPluginManagerAgent::getActiveDSP(IDSP **ppDSP) {
-    MLRESULT mlRes = ERR_NOT_SUPPORT;
-    if (m_pluginMgr) {
-        mlRes = m_pluginMgr->getActiveDSP(ppDSP);
-    }
-
-    if (mlRes == ERR_NOT_SUPPORT) {
-#ifdef _MPLAYER
-        *ppDSP = CDspSuperEQ::getInstance();
-        return ERR_OK;
-#endif
-
-        //*ppDSP = new CDspDemo;
-        //(*ppDSP)->addRef();
-
-        return ERR_FALSE;
-    }
-
-    return mlRes;
-}
-
-
-MLRESULT CMPluginManagerAgent::getActiveVis(IVector *pvVis) {
-    if (m_pluginMgr) {
-        return m_pluginMgr->getActiveVis(pvVis);
-    } else {
-        return ERR_FALSE;
     }
 }
 
@@ -426,10 +211,36 @@ CMPlayer *CMPlayer::m_spPlayer = nullptr;
 CMPlayer::CMPlayer() {
     OBJ_REFERENCE_INIT;
 
-    m_state = PS_STOPED;
+    m_state = PS_STOPPED;
+
+    m_pluginMgr.detectPlugins();
+
+    //
+    // set DSP
+    //
+    {
+        RMutexAutolock lock(m_mutexDSP);
+        if (m_pDsp) {
+            m_pDsp.release();
+        }
+        if (m_pluginMgr.getActiveDSP(&m_pDsp) == ERR_OK) {
+            m_pDsp->init(this);
+        }
+    }
+
+    //
+    // set Vis
+    //
+    auto vVis = m_pluginMgr.getActiveVis();
+    for (int i = 0; i < (int)vVis.size(); i++) {
+        IVisualizer *pVis = vVis.at(i);
+
+        pVis->init(this);
+        registerVis(pVis);
+    }
 
 #ifdef _MAC_OS
-    m_pMDAgent = new CMDAVPlayer();
+    m_pMDAgent = new CoreAVPlayer();
 #else // #ifdef _MAC_OS
 
 #ifdef _MPLAYER
@@ -443,27 +254,7 @@ CMPlayer::CMPlayer() {
     m_pMOAgent = new CMOAgent;
     m_pMOAgent->init(this);
 
-    m_pMemAllocator = new CMemAllocator;
-
-    m_pMediaLib = new CMediaLibrary;
-    m_pMediaLib->init(this);
-
-    m_bShuffle = false;
-    m_bMute = false;
-    m_loopMode = MP_LOOP_OFF;
-    m_volume = -1;
-    m_balance = 0;
-
     memset(&m_Equalizer, 0, sizeof(m_Equalizer));
-
-    m_currentPlaylist = new CPlaylist(this);
-    m_currentPlaylist->addRef();
-
-    m_nCurrentMedia = 0;
-    m_pCurrentMedia = nullptr;
-    m_bCurMediaPlayed = false;
-
-    m_bAutoAddToMediaLib = true;
 
     m_nBufferedVisMs = 0;
     m_nMODelay = 1000;
@@ -482,7 +273,7 @@ CMPlayer::~CMPlayer() {
         V_VIS::iterator it, itEnd;
         itEnd = m_vVis.end();
         for (it = m_vVis.begin(); it != m_vVis.end(); ++it) {
-            IVis *pVis = *it;
+            IVisualizer *pVis = *it;
             pVis->quit();
             pVis->release();
         }
@@ -499,144 +290,32 @@ CMPlayer::~CMPlayer() {
     m_pMDAgent.release();
 
     m_pMOAgent.release();
-
-    if (m_pCurrentMedia) {
-        m_pCurrentMedia->release();
-    }
-
-    if (m_currentPlaylist) {
-        m_currentPlaylist->release();
-    }
-
-    if (m_pMediaLib) {
-        m_pMediaLib->close();
-        m_pMediaLib.release();
-    }
-
-    if (m_pMemAllocator) {
-        m_pMemAllocator->quit();
-        m_pMemAllocator.release();
-    }
-}
-
-MLRESULT CMPlayer::setPluginManager(IMPluginManager *pPluginMgr) {
-    if (m_pluginMgrAgent.m_pluginMgr) {
-        m_pluginMgrAgent.m_pluginMgr.release();
-    }
-
-    // stop and unregister all Vis
-    stopVis();
-
-    {
-        RMutexAutolock lock(m_mutexDSP);
-        V_VIS::iterator it, itEnd;
-        itEnd = m_vVis.end();
-        for (it = m_vVis.begin(); it != m_vVis.end(); ++it) {
-            IVis *pVis = *it;
-            pVis->quit();
-            pVis->release();
-        }
-    }
-
-    m_pluginMgrAgent.m_pluginMgr = pPluginMgr;
-    m_pluginMgrAgent.detectPlugins();
-
-    //
-    // set DSP
-    //
-    {
-        RMutexAutolock lock(m_mutexDSP);
-        if (m_pDsp) {
-            m_pDsp.release();
-        }
-        if (m_pluginMgrAgent.getActiveDSP(&m_pDsp) == ERR_OK) {
-            m_pDsp->init(this);
-        }
-    }
-
-    //
-    // set Vis
-    //
-
-    // register new vis
-    CVector vVis;
-    m_pluginMgrAgent.getActiveVis(&vVis);
-    for (int i = 0; i < (int)vVis.size(); i++) {
-        IVis *pVis = (IVis*)vVis.at(i);
-
-        pVis->init(this);
-        registerVis(pVis);
-    }
-
-    return ERR_OK;
-}
-
-MLRESULT CMPlayer::queryInterface(MPInterfaceType interfaceType, void **lpInterface) {
-    switch (interfaceType) {
-    case MPIT_OUTPUT:
-        *lpInterface = (IMediaOutput*)m_pMOAgent;
-        m_pMOAgent->addRef();
-        break;
-    case MPIT_DECODE:
-        *lpInterface = (IMediaDecode*)m_pMDAgent;
-        m_pMDAgent->addRef();
-        break;
-    case MPIT_DSP:
-        {
-            RMutexAutolock autolock(m_mutexDSP);
-            if (m_pDsp) {
-                *lpInterface = m_pDsp;
-                m_pDsp->addRef();
-            } else {
-                return ERR_NOT_FOUND;
-            }
-        }
-        break;
-    case MPIT_MEMALLOCATOR:
-        *lpInterface = (IMemAllocator*)m_pMemAllocator;
-        m_pMemAllocator->addRef();
-        break;
-    case MPIT_MEDIA_LIB:
-        *lpInterface = (IMediaLibrary*)m_pMediaLib;
-        m_pMediaLib->addRef();
-        break;
-    default:
-        return ERR_NOT_FOUND;
-        break;
-    }
-
-    return ERR_OK;
 }
 
 //
 // Player control
 //
 
-MLRESULT CMPlayer::play() {
+ResultCode CMPlayer::play() {
     if (m_state == PS_PLAYING) {
         return seek(0);
-    } else if (m_state == PS_STOPED) {
-        if (m_pCurrentMedia) {
+    } else if (m_state == PS_STOPPED) {
+        if (m_currentMedia) {
             int nRet;
-            m_bAutoPlayNext = true;
-            m_bCurMediaPlayed = true;
-            nRet = m_pMDAgent->doDecode(m_pCurrentMedia);
+            m_isAutoPlayNext = true;
+            m_isCurMediaPlayed = true;
+            nRet = m_pMDAgent->doDecode(m_currentMedia);
             if (nRet == ERR_OK) {
-                // set the play time
-                m_pCurrentMedia->setAttribute(MA_TIME_PLAYED, time(nullptr));
-
-                if (m_pCurrentMedia->getID() == MEDIA_ID_INVALID && m_spPlayer->isAutoAddToMediaLib()) {
-                    m_spPlayer->m_pMediaLib->add(m_pCurrentMedia);
-                }
-
-                // If media info in media library isn't up to date,
-                // update to media library.
-                if (m_pCurrentMedia->getID() != MEDIA_ID_INVALID && !m_pCurrentMedia->isInfoUpdatedToMediaLib()) {
-                    m_spPlayer->m_pMediaLib->updateMediaInfo(m_pCurrentMedia);
-                }
-
                 m_state = PS_PLAYING;
                 notifyPlayStateChanged();
+
+                if (m_pPlayer->m_volume != -1) {
+                    if (m_pPlayer->m_isMute) {
+                        m_pMediaDecode->setVolume(0, 0);
+                    } else {
+                        m_pMediaDecode->setVolume(m_pPlayer->m_volume, m_pPlayer->m_balance);
+                    }
+                }
             }
 
             return nRet;
@@ -649,8 +328,8 @@ MLRESULT CMPlayer::play() {
     }
 }
 
-MLRESULT CMPlayer::pause() {
-    MLRESULT ret;
+ResultCode CMPlayer::pause() {
+    ResultCode ret;
     if (m_state != PS_PLAYING) {
         return ERR_OK;
     }
@@ -664,8 +343,8 @@ MLRESULT CMPlayer::pause() {
     return ret;
 }
 
-MLRESULT CMPlayer::unpause() {
-    MLRESULT ret;
+ResultCode CMPlayer::unpause() {
+    ResultCode ret;
     if (m_state != PS_PAUSED) {
         return ERR_OK;
     }
@@ -679,240 +358,25 @@ MLRESULT CMPlayer::unpause() {
     return ret;
 }
 
-MLRESULT CMPlayer::stop() {
-    m_bAutoPlayNext = false;
-
-    return doStop();
-}
-
-MLRESULT CMPlayer::prev() {
-    int nOld = m_nCurrentMedia;
-
-    {
-        RMutexAutolock autolock(m_mutexDataAccess);
-
-        if (m_bShuffle) {
-            if (m_nCurrentShuffleMedia <= 1) {
-                // in shuffle mode, only can back to 0
-                return ERR_END_OF_PLAYLIST;
-            }
-
-            assert(m_vShuffleMedia.size() == m_currentPlaylist->getCount());
-            m_nCurrentShuffleMedia--;
-            m_nCurrentMedia = m_vShuffleMedia[m_nCurrentShuffleMedia - 1];
-            // m_nCurrentMedia = rand() % m_currentPlaylist->getCount();
-        } else {
-            if (m_nCurrentMedia > 0) {
-                m_nCurrentMedia--;
-            } else if (m_loopMode == MP_LOOP_ALL) {
-                m_nCurrentMedia = m_currentPlaylist->getCount() - 1;
-            }
-        }
+ResultCode CMPlayer::stop() {
+    if (m_state == PS_STOPPED) {
+        return ERR_OK;
     }
 
-    if (nOld != m_nCurrentMedia) {
-        // Notify changed
-        currentMediaChanged();
-    }
-
-    return ERR_OK;
+    // use a temp MediaDecode with addRef for thread safe
+    return m_pMDAgent->stop();
 }
 
-MLRESULT CMPlayer::next() {
-    if (m_state != PS_STOPED) {
-        // No rating consideration will be done at all if the song is skipped within these seconds.
-        if (getPos() < 20 * 1000) {
-            m_pMediaLib->markPlaySkipped(m_pCurrentMedia);
-        }
-    }
-
-    return doNext(true);
-}
-
-MLRESULT CMPlayer::seek(uint32_t dwPos) {
+ResultCode CMPlayer::seek(uint32_t dwPos) {
     if (m_pMDAgent) {
-        MLRESULT nRet;
+        ResultCode nRet;
         if ((int)dwPos < -1) {
             dwPos = 0;
         }
         nRet = m_pMDAgent->seek(dwPos);
-        if (nRet == ERR_OK) {
-            notifySeek();
-        }
-
         return nRet;
     } else {
         return ERR_PLAYER_INVALID_STATE;
-    }
-}
-
-MLRESULT CMPlayer::newMedia(IMedia **ppMedia, cstr_t szUrl) {
-    assert(ppMedia);
-
-    int nRet;
-
-    nRet = m_pMediaLib->addFast(szUrl, ppMedia);
-    if (nRet != ERR_OK) {
-        *ppMedia = new CMedia;
-        if (*ppMedia == nullptr) {
-            return ERR_NO_MEM;
-        }
-
-        (*ppMedia)->addRef();
-        (*ppMedia)->setSourceUrl(szUrl);
-    }
-
-    return ERR_OK;
-}
-
-MLRESULT CMPlayer::newPlaylist(IPlaylist **ppPlaylist) {
-    *ppPlaylist = new CPlaylist(this);
-    if (!*ppPlaylist) {
-        return ERR_NO_MEM;
-    }
-
-    (*ppPlaylist)->addRef();
-
-    return ERR_OK;
-}
-
-MLRESULT CMPlayer::getMediaLibrary(IMediaLibrary **ppMediaLib) {
-    assert(m_pMediaLib);
-    *ppMediaLib = m_pMediaLib;
-    m_pMediaLib->addRef();
-
-    return ERR_OK;
-}
-
-MLRESULT CMPlayer::getCurrentPlaylist(IPlaylist **ppPlaylist) {
-    RMutexAutolock autolock(m_mutexDataAccess);
-
-    m_currentPlaylist->addRef();
-    *ppPlaylist = m_currentPlaylist;
-
-    return ERR_OK;
-}
-
-MLRESULT CMPlayer::getCurrentMedia(IMedia **ppMedia) {
-    if (m_pCurrentMedia) {
-        m_pCurrentMedia->addRef();
-        *ppMedia = m_pCurrentMedia;
-
-        return ERR_OK;
-    } else {
-        return ERR_NOT_FOUND;
-    }
-    // return m_currentPlaylist->getItem(m_nCurrentMedia, ppMedia);
-}
-
-int CMPlayer::getCurrentMediaInPlaylist() {
-    return m_nCurrentMedia;
-}
-
-MLRESULT CMPlayer::setCurrentMediaInPlaylist(int nIndex) {
-    RMutexAutolock autolock(m_mutexDataAccess);
-
-    if (nIndex >= 0 && nIndex < (int)m_currentPlaylist->getCount()) {
-        m_nCurrentMedia = nIndex;
-        autolock.unlock();
-        currentMediaChanged();
-        return ERR_OK;
-    } else {
-        return ERR_NOT_FOUND;
-    }
-}
-
-MLRESULT CMPlayer::setCurrentPlaylist(IPlaylist *pPlaylist) {
-    {
-        RMutexAutolock autolock(m_mutexDataAccess);
-        if (m_currentPlaylist) {
-            m_currentPlaylist->release();
-        }
-        m_currentPlaylist = (CPlaylist *)pPlaylist;
-        m_currentPlaylist->addRef();
-        m_nCurrentMedia = 0;
-    }
-
-    generateShuffleMediaQueue();
-
-    notifyCurrentPlaylistChanged(IMPEvent::PCA_FULL_UPDATE, 0, 0);
-
-    currentMediaChanged();
-
-    return ERR_OK;
-}
-
-MLRESULT CMPlayer::setCurrentMedia(IMedia *pMedia) {
-    MLRESULT nRet;
-
-    if (m_state != PS_STOPED) {
-        nRet = doStop();
-        if (nRet != ERR_OK && m_state != PS_STOPED) {
-            return nRet;
-        }
-    }
-
-    {
-        RMutexAutolock autolock(m_mutexDataAccess);
-        if (m_currentPlaylist) {
-            m_currentPlaylist->release();
-        }
-
-        m_currentPlaylist = new CPlaylist(this);
-        m_currentPlaylist->addRef();
-        nRet = m_currentPlaylist->insertItem(-1, pMedia);
-        if (nRet != ERR_OK) {
-            return nRet;
-        }
-    }
-
-    m_nCurrentMedia = 0;
-
-    generateShuffleMediaQueue();
-    notifyCurrentPlaylistChanged(IMPEvent::PCA_FULL_UPDATE, 0, 0);
-
-    currentMediaChanged();
-
-    return play();
-}
-
-MLRESULT CMPlayer::setCurrentMedia(cstr_t szSourceMedia) {
-    MLRESULT nRet;
-    CMPAutoPtr<IMedia> pMedia;
-
-    nRet = newMedia(&pMedia, szSourceMedia);
-    if (nRet != ERR_OK) {
-        return nRet;
-    }
-
-    nRet = setCurrentMedia(pMedia);
-    if (m_state != PS_PLAYING) {
-        play();
-    }
-
-    return nRet;
-}
-
-//
-// Current playing Media state
-//
-uint32_t CMPlayer::getLength() {
-    RMutexAutolock autolock(m_mutexDataAccess);
-
-    if (m_pMDAgent) {
-        return m_pMDAgent->getLength();
-    } else {
-        IMedia *pMedia;
-        if (m_currentPlaylist->getItem(m_nCurrentMedia, &pMedia) == ERR_OK) {
-            int64_t value = 0;
-            if (pMedia->getAttribute(MA_DURATION, &value) == ERR_OK) {
-                return (uint32_t)value;
-            } else {
-                return 0;
-            }
-        } else {
-            return 0;
-        }
     }
 }
 
@@ -926,7 +390,7 @@ uint32_t CMPlayer::getPos() {
     }
 }
 
-PLAYER_STATE CMPlayer::getState() {
+PlayerState CMPlayer::getState() {
     return m_state;
 }
 
@@ -944,47 +408,13 @@ void CMPlayer::outputWrite(IFBuffer *pBuf, int nBps, int nChannels, int nSampleR
 
     m_pMOAgent->write(pBuf);
 }
-//
-// Player settings
-//
-void CMPlayer::setShuffle(bool bShuffle) {
-    m_bShuffle = bShuffle;
-    notifySettingsChanged(IMPEvent::MPS_SHUFFLE, m_bShuffle);
-}
-
-void CMPlayer::setLoop(MP_LOOP_MODE loopMode) {
-    m_loopMode = loopMode;
-    notifySettingsChanged(IMPEvent::MPS_LOOP, loopMode);
-}
-
-bool CMPlayer::getShuffle() {
-    return m_bShuffle;
-}
-
-MP_LOOP_MODE CMPlayer::getLoop() {
-    return m_loopMode;
-}
-
-void CMPlayer::setMute(bool bMute) {
-    m_bMute = bMute;
-
-    if (m_pMDAgent) {
-        if (bMute) {
-            m_pMDAgent->setVolume(0, 0);
-        } else if (m_volume != -1) {
-            m_pMDAgent->setVolume(m_volume, m_balance);
-        }
-    }
-
-    notifySettingsChanged(IMPEvent::MPS_MUTE, m_bMute);
-}
 
 bool CMPlayer::getMute() {
-    return m_bMute;
+    return m_isMute;
 }
 
 // 0 ~ 100
-MLRESULT CMPlayer::setVolume(int volume) {
+ResultCode CMPlayer::setVolume(int volume) {
     assert(volume >= 0 && volume <= 100);
     if (volume < 0) {
         volume = 0;
@@ -992,7 +422,6 @@ MLRESULT CMPlayer::setVolume(int volume) {
         volume = 100;
     }
     m_volume = volume;
-    notifySettingsChanged(IMPEvent::MPS_VOLUME, m_volume);
     if (m_pMDAgent) {
         return m_pMDAgent->setVolume(volume, m_balance);
     } else {
@@ -1005,7 +434,7 @@ int CMPlayer::getVolume() {
 }
 
 // -100 ~ 100
-MLRESULT CMPlayer::setBalance(int balance) {
+ResultCode CMPlayer::setBalance(int balance) {
     assert(balance >= -100 && balance <= 100);
     if (balance < -100) {
         balance = -100;
@@ -1025,87 +454,31 @@ int CMPlayer::getBalance() {
     return m_balance;
 }
 
-MLRESULT CMPlayer::setEQ(const EQualizer *eq) {
+ResultCode CMPlayer::setEQ(const EQualizer *eq) {
     m_Equalizer = *eq;
     notifyEQSettingsChanged(&m_Equalizer);
     return ERR_OK;
 }
 
-MLRESULT CMPlayer::getEQ(EQualizer *eq) {
+ResultCode CMPlayer::getEQ(EQualizer *eq) {
     *eq = m_Equalizer;
     return ERR_OK;
 }
 
-//
-// Event tracer
-//
-void CMPlayer::registerEvent(IMPEvent *pEventHandler) {
-    RMutexAutolock autolock(m_mutexEventHandler);
+void CMPlayer::notifyEod(IMediaDecoder *pDecoder, ResultCode nError) {
+    bool bSendNotify = m_state != PS_STOPPED;
 
-    pEventHandler->addRef();
-    m_listEventHandler.push_back(pEventHandler);
-}
-
-void CMPlayer::unregisterEvent(IMPEvent *pEventHandler) {
-    RMutexAutolock autolock(m_mutexEventHandler);
-
-    list<IMPEvent *>::iterator it, itEnd;
-    itEnd = m_listEventHandler.end();
-    for (it = m_listEventHandler.begin(); it != itEnd; ++it) {
-        if (pEventHandler == *it) {
-            m_listEventHandler.erase(it);
-            pEventHandler->release();
-            return;
-        }
-    }
-}
-
-void CMPlayer::notifyEod(IMediaDecode *pDecoder, MLRESULT nError) {
-    bool bSendNotify = m_state != PS_STOPED;
-
-    m_state = PS_STOPED;
+    m_state = PS_STOPPED;
 
     m_pMDAgent->notifyEod(pDecoder, nError);
-
-    if (m_bAutoPlayNext) {
-        if (m_loopMode == MP_LOOP_TRACK) {
-            play();
-            return;
-        }
-
-        MLRESULT nRet;
-        nRet = doNext();
-        if (nRet == ERR_OK) {
-            nRet = play();
-            if (nRet == ERR_MI_OPEN_SRC && nError == ERR_OK) {
-                // if (ERR_OPEN_FILE && last_file_can be played)
-                //        try the other medias.
-                int i, nTryMax;
-                nTryMax = m_currentPlaylist->getCount();
-                for (i = 1; m_bAutoPlayNext && i < nTryMax
-                    && nRet == ERR_MI_OPEN_SRC && doNext() == ERR_OK; i++) {
-                    nRet = play();
-                    Sleep(500);
-                }
-            }
-        } else {
-            if (m_bCurMediaPlayed) {
-                m_pMediaLib->markPlayFinished(m_pCurrentMedia);
-            }
-        }
-    }
-
-    if (bSendNotify) {
-        notifyPlayStateChanged();
-    }
 }
 
 
-MLRESULT CMPlayer::makeOutputReadyForDecode() {
-    MLRESULT nRet;
+ResultCode CMPlayer::makeOutputReadyForDecode() {
+    ResultCode nRet;
 
     if (!m_pMOAgent->m_pMediaOutput) {
-        nRet = m_pluginMgrAgent.newOutput(&(m_pMOAgent->m_pMediaOutput));
+        nRet = m_pluginMgr.newOutput(&(m_pMOAgent->m_pMediaOutput));
         if (nRet != ERR_OK) {
             return nRet;
         }
@@ -1116,46 +489,8 @@ MLRESULT CMPlayer::makeOutputReadyForDecode() {
     return ERR_OK;
 }
 
-MLRESULT CMPlayer::loadMediaTagInfo(IMedia *pMedia, bool bForceReload) {
-    MLRESULT nRet;
-    CXStr url;
-
-    nRet = pMedia->getSourceUrl(&url);
-    if (nRet != ERR_OK) {
-        return ERR_OK;
-    }
-
-    CMPAutoPtr<IMediaInput> pInput;
-
-    nRet = m_pluginMgrAgent.newInput(url.c_str(), &pInput);
-    if (nRet != ERR_OK) {
-        return nRet;
-    }
-
-    nRet = m_pMDAgent->getMediaInfo(this, pInput, pMedia);
-    if (nRet != ERR_OK) {
-        return nRet;
-    }
-
-    CXStr artist, title;
-
-    pMedia->getArtist(&artist);
-    pMedia->getArtist(&title);
-
-    // get artist, title from song file name.
-    if (artist.size() == 0 && title.size() == 0) {
-        string strArtist, strTitle;
-        analyseLyricsFileNameEx(strArtist, strTitle, url.c_str());
-
-        pMedia->setAttribute(MA_ARTIST, strArtist.c_str());
-        pMedia->setAttribute(MA_TITLE, strTitle.c_str());
-    }
-
-    return ERR_OK;
-}
-
 // Vis:
-MLRESULT CMPlayer::registerVis(IVis *pVis) {
+ResultCode CMPlayer::registerVis(IVisualizer *pVis) {
     RMutexAutolock autolock(m_mutexVisdataAccess);
     V_VIS::iterator it, itEnd;
 
@@ -1177,7 +512,7 @@ MLRESULT CMPlayer::registerVis(IVis *pVis) {
     return ERR_OK;
 }
 
-MLRESULT CMPlayer::unregisterVis(IVis *pVis) {
+ResultCode CMPlayer::unregisterVis(IVisualizer *pVis) {
     RMutexAutolock autolock(m_mutexVisdataAccess);
     V_VIS::iterator it, itEnd;
 
@@ -1199,155 +534,15 @@ MLRESULT CMPlayer::unregisterVis(IVis *pVis) {
 }
 
 // Dsp:
-MLRESULT CMPlayer::registerDsp(IDSP *pVis) {
+ResultCode CMPlayer::registerDsp(IDSP *pVis) {
     return ERR_OK;
 }
 
-MLRESULT CMPlayer::unregisterDsp(IDSP *pVis) {
+ResultCode CMPlayer::unregisterDsp(IDSP *pVis) {
     return ERR_OK;
 }
 
-MLRESULT CMPlayer::doStop() {
-    if (m_state == PS_STOPED) {
-        return ERR_OK;
-    }
-
-    // use a temp MediaDecode with addRef for thread safe
-    return m_pMDAgent->stop();
-}
-
-MLRESULT CMPlayer::doNext(bool bLoop) {
-    RMutexAutolock autolock(m_mutexDataAccess);
-
-    if (m_currentPlaylist->getCount() == 0) {
-        return ERR_EMPTY_PLAYLIST;
-    }
-
-    int nOld = m_nCurrentMedia;
-
-    if (m_bShuffle) {
-        if (m_nCurrentShuffleMedia >= (int)m_vShuffleMedia.size() - 1) {
-            if (m_loopMode != MP_LOOP_ALL && !bLoop) {
-                return ERR_END_OF_PLAYLIST;
-            }
-
-            // all media has been played, regenerate radom playlist.
-            generateShuffleMediaQueue();
-        }
-
-        assert(m_vShuffleMedia.size() == m_currentPlaylist->getCount());
-        m_nCurrentMedia = m_vShuffleMedia[m_nCurrentShuffleMedia];
-        m_nCurrentShuffleMedia++;
-        // m_nCurrentMedia = rand() % m_currentPlaylist->getCount();
-    } else {
-        if (m_nCurrentMedia < (int)m_currentPlaylist->getCount() - 1) {
-            m_nCurrentMedia++;
-        } else if (m_loopMode != MP_LOOP_ALL && !bLoop) {
-            return ERR_END_OF_PLAYLIST;
-        } else {
-            m_nCurrentMedia = 0;
-        }
-    }
-
-    autolock.unlock();
-
-    if (nOld != m_nCurrentMedia) {
-        // Notify changed
-        currentMediaChanged();
-    }
-    return ERR_OK;
-}
-
-static bool isBasicMediaInfoSame(IMedia *pMedia1, IMedia *pMedia2) {
-    static MediaAttribute vStrAttrCheck[] = { MA_ARTIST, MA_ALBUM, MA_TITLE, MA_GENRE, MA_COMMENT };
-    static MediaAttribute vIntAttrCheck[] = { MA_TRACK_NUMB, MA_YEAR, MA_BITRATE, MA_DURATION, MA_FILESIZE };
-
-    int i;
-    CXStr str1, str2;
-
-    for (i = 0; i < CountOf(vStrAttrCheck); i++) {
-        str1.clear();
-        str2.clear();
-        pMedia1->getAttribute(vStrAttrCheck[i], &str1);
-        pMedia2->getAttribute(vStrAttrCheck[i], &str2);
-        if (strcmp(str1.c_str(), str2.c_str()) != 0) {
-            return false;
-        }
-    }
-
-    for (i = 0; i < CountOf(vIntAttrCheck); i++) {
-        int64_t n1 = 0, n2 = 0;
-        pMedia1->getAttribute(vIntAttrCheck[i], &n1);
-        pMedia2->getAttribute(vIntAttrCheck[i], &n2);
-        if (n1 != n2) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-void CMPlayer::currentMediaChanged() {
-    list<IMPEvent *>::iterator it, itEnd;
-    MLRESULT nRet;
-    bool bPlay = false;
-
-    if (m_state != PS_STOPED) {
-        if (m_state == PS_PLAYING) {
-            bPlay = true;
-        }
-        m_bAutoPlayNext = false;
-        nRet = doStop();
-        if (nRet != ERR_OK && m_state != PS_STOPED) {
-            return;
-        }
-    }
-
-    {
-        RMutexAutolock autolock(m_mutexDataAccess);
-
-        if (m_pCurrentMedia) {
-            if (m_bAutoPlayNext && m_bCurMediaPlayed) {
-                m_pMediaLib->markPlayFinished(m_pCurrentMedia);
-            }
-
-            m_pCurrentMedia->release();
-            m_pCurrentMedia = nullptr;
-            m_bCurMediaPlayed = false;
-        }
-
-        if (m_currentPlaylist->getCount() > 0) {
-            nRet = m_currentPlaylist->getItem(m_nCurrentMedia, &m_pCurrentMedia);
-            if (nRet == ERR_OK) {
-                nRet = loadMediaTagInfo(m_pCurrentMedia, false);
-                if (nRet == ERR_OK) {
-                    // update media info to media library, if changed.
-                    CMPAutoPtr<IMedia> mediaOld;
-                    CXStr url;
-                    m_pCurrentMedia->getSourceUrl(&url);
-                    if (m_pMediaLib->getMediaByUrl(url.c_str(), &mediaOld) == ERR_OK
-                        && !isBasicMediaInfoSame(mediaOld, m_pCurrentMedia)) {
-                        m_pMediaLib->updateMediaInfo(m_pCurrentMedia);
-                    }
-                }
-            }
-        }
-    }
-
-    m_mutexEventHandler.lock();
-    itEnd = m_listEventHandler.end();
-    for (it = m_listEventHandler.begin(); it != itEnd; ++it) {
-        IMPEvent *pEventHandler = *it;
-        pEventHandler->onCurrentMediaChanged();
-    }
-    m_mutexEventHandler.unlock();
-
-    if (bPlay) {
-        play();
-    }
-}
-
-MLRESULT CMPlayer::getInstance(IMPlayer **ppPlayer) {
+ResultCode CMPlayer::getInstance(IMPlayer **ppPlayer) {
     if (!m_spPlayer) {
         m_spPlayer = new CMPlayer;
     }
@@ -1358,7 +553,7 @@ MLRESULT CMPlayer::getInstance(IMPlayer **ppPlayer) {
     return ERR_OK;
 }
 
-MLRESULT CMPlayer::quitInstance(IMPlayer **ppPlayer) {
+ResultCode CMPlayer::quitInstance(IMPlayer **ppPlayer) {
     *ppPlayer = nullptr;
 
     if (m_spPlayer) {
@@ -1369,144 +564,7 @@ MLRESULT CMPlayer::quitInstance(IMPlayer **ppPlayer) {
     return ERR_OK;
 }
 
-void CMPlayer::notifyPlaylistChanged(CPlaylist *playlist, IMPEvent::MP_PLAYLIST_CHANGE_ACTION action, int nIndex, int nIndexOld) {
-    if (m_currentPlaylist == playlist) {
-        // first notify the message
-        notifyCurrentPlaylistChanged(action, nIndex, nIndexOld);
-
-        //
-        // is current media changed?
-        //
-        CMPAutoPtr<IMedia> pMedia;
-        int nNewCurrentIndex;
-        RMutexAutolock autolock(m_mutexDataAccess);
-
-        if (m_nCurrentMedia >= (int)m_currentPlaylist->getCount()) {
-            m_nCurrentMedia = 0;
-        }
-
-        generateShuffleMediaQueue();
-
-        if (m_currentPlaylist->getCount() == 0) {
-            autolock.unlock();
-            if (m_pCurrentMedia) {
-                currentMediaChanged();
-            }
-            return;
-        }
-
-        // is current media?
-        if (m_currentPlaylist->getItem(m_nCurrentMedia, &pMedia) == ERR_OK) {
-            if (m_pCurrentMedia == pMedia) {
-                return;
-            }
-        }
-
-        // get new index of current media.
-        if (m_currentPlaylist->getItemIndex(m_pCurrentMedia, nNewCurrentIndex) == ERR_OK) {
-            m_nCurrentMedia = nNewCurrentIndex;
-
-            // unlock before notify
-            autolock.unlock();
-
-            list<IMPEvent *>::iterator it, itEnd;
-
-            RMutexAutolock lock(m_mutexEventHandler);
-            itEnd = m_listEventHandler.end();
-            for (it = m_listEventHandler.begin(); it != itEnd; ++it) {
-                IMPEvent *pEventHandler = *it;
-                pEventHandler->onCurrentMediaChanged();
-            }
-            return;
-        }
-
-        // unlock before currentMediaChanged
-        autolock.unlock();
-
-        currentMediaChanged();
-    }
-}
-
-void CMPlayer::notifyPlayStateChanged() {
-    list<IMPEvent *>::iterator it, itEnd;
-
-    RMutexAutolock lock(m_mutexEventHandler);
-
-    itEnd = m_listEventHandler.end();
-    for (it = m_listEventHandler.begin(); it != itEnd; ++it) {
-        IMPEvent *pEventHandler = *it;
-        pEventHandler->onStateChanged(m_state);
-    }
-}
-
-void CMPlayer::notifyCurrentPlaylistChanged(IMPEvent::MP_PLAYLIST_CHANGE_ACTION action, int nIndex, int nIndexOld) {
-    list<IMPEvent *>::iterator it, itEnd;
-
-    // notify current playlist changed
-    RMutexAutolock lock(m_mutexEventHandler);
-
-    itEnd = m_listEventHandler.end();
-    for (it = m_listEventHandler.begin(); it != itEnd; ++it) {
-        IMPEvent *pEventHandler = *it;
-        pEventHandler->onCurrentPlaylistChanged(action, nIndex, nIndexOld);
-    }
-}
-
-void CMPlayer::notifySettingsChanged(IMPEvent::MP_SETTING_TYPE settingType, int value) {
-    list<IMPEvent *>::iterator it, itEnd;
-
-    RMutexAutolock lock(m_mutexEventHandler);
-
-    itEnd = m_listEventHandler.end();
-    for (it = m_listEventHandler.begin(); it != itEnd; ++it) {
-        IMPEvent *pEventHandler = *it;
-        pEventHandler->onSettingChanged(settingType, value);
-    }
-}
-
-void CMPlayer::notifyEQSettingsChanged(const EQualizer *peq) {
-    list<IMPEvent *>::iterator it, itEnd;
-
-    RMutexAutolock lock(m_mutexEventHandler);
-
-    itEnd = m_listEventHandler.end();
-    for (it = m_listEventHandler.begin(); it != itEnd; ++it) {
-        IMPEvent *pEventHandler = *it;
-        pEventHandler->onEQSettingChanged(peq);
-    }
-}
-
-void CMPlayer::notifySeek() {
-    list<IMPEvent *>::iterator it, itEnd;
-
-    // notify current playlist changed
-    RMutexAutolock lock(m_mutexEventHandler);
-    itEnd = m_listEventHandler.end();
-    for (it = m_listEventHandler.begin(); it != itEnd; ++it) {
-        IMPEvent *pEventHandler = *it;
-        pEventHandler->onSeek();
-    }
-}
-
-// For internal using, do NOT lock.
-void CMPlayer::generateShuffleMediaQueue() {
-    VecInts vMediaSequence;
-    auto nCount = m_currentPlaylist->getCount();
-    m_nCurrentShuffleMedia = 0;
-
-    for (int i = 0; i < nCount; i++) {
-        vMediaSequence.push_back(i);
-    }
-
-    m_vShuffleMedia.clear();
-    for (int i = 0; i < nCount; i++) {
-        int nNext = rand() % vMediaSequence.size();
-        m_vShuffleMedia.push_back(vMediaSequence[nNext]);
-        vMediaSequence.erase(vMediaSequence.begin() + nNext);
-    }
-}
-
-MLRESULT CMPlayer::startVis() {
+ResultCode CMPlayer::startVis() {
     assert(m_threadVis == nullptr);
 
     m_bQuitVis = false;
@@ -1514,7 +572,7 @@ MLRESULT CMPlayer::startVis() {
     return ERR_OK;
 }
 
-MLRESULT CMPlayer::stopVis() {
+ResultCode CMPlayer::stopVis() {
     if (m_threadVis == nullptr) {
         return ERR_OK;
     }
@@ -1631,7 +689,7 @@ void CMPlayer::threadVis() {
 
         if (m_state == PS_PLAYING) {
             calcVisParam(param);
-        } else if (m_state == PS_STOPED) {
+        } else if (m_state == PS_STOPPED) {
             memset(param.spectrumData, 0, sizeof(param.spectrumData));
             memset(param.waveformData, 0, sizeof(param.waveformData));
         }
@@ -1642,7 +700,7 @@ void CMPlayer::threadVis() {
         RMutexAutolock lock(m_mutexVisdataAccess);
         itEnd = m_vVis.end();
         for (it = m_vVis.begin(); it != m_vVis.end(); ++it) {
-            IVis *pVis = *it;
+            IVisualizer *pVis = *it;
             pVis->render(&param);
         }
     }

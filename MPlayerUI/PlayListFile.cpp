@@ -11,18 +11,15 @@ void removeReturn(char * str) {
     }
 }
 
-bool loadPlaylist(IMPlayer *player, IPlaylist *playList, cstr_t szFile) {
-    assert(player);
-    assert(playList);
-
+PlaylistPtr loadPlaylist(cstr_t szFile) {
     if (fileIsExtSame(szFile, ".m3u")) {
-        return loadM3uPlaylist(player, playList, szFile);
+        return loadM3uPlaylist(szFile);
     } else if (fileIsExtSame(szFile, ".pls")) {
-        return loadPlsPlaylist(player, playList, szFile);
+        return loadPlsPlaylist(szFile);
     } else if (fileIsExtSame(szFile, ".wpl")) {
-        return loadWplPlaylist(player, playList, szFile);
+        return loadWplPlaylist(szFile);
     } else {
-        return false;
+        return nullptr;
     }
 }
 
@@ -35,9 +32,8 @@ bool loadPlaylist(IMPlayer *player, IPlaylist *playList, cstr_t szFile) {
 // G:\mp3\Britney Spears04\02.(You Drive Me ) Crazy.MP3
 // \mp3\Britney Spears04\02.(You Drive Me ) Crazy.MP3
 // 02.(You Drive Me ) Crazy.MP3
-bool appendMediaToList(IMPlayer *player, IPlaylist *playList, cstr_t szFileName, cstr_t szBasePath) {
-    MLRESULT nRet;
-    CMPAutoPtr<IMedia> media;
+bool appendMediaToList(Playlist *playList, cstr_t szFileName, cstr_t szBasePath) {
+    ResultCode nRet;
     string strFile;
 
     if (szBasePath[1] == ':') {
@@ -61,21 +57,15 @@ bool appendMediaToList(IMPlayer *player, IPlaylist *playList, cstr_t szFileName,
         strFile = szFileName;
     }
 
-    if (player->newMedia(&media, strFile.c_str()) == ERR_OK) {
-        nRet = playList->insertItem(-1, media);
-        if (nRet != ERR_OK) {
-            ERR_LOG0("playList->insertItem FAILED!");
-            return false;
-        }
-    } else {
-        ERR_LOG0("playList->newMedia FAILED!");
-        return false;
+    auto media = g_player.newMedia(strFile.c_str());
+    if (media) {
+        playList->insertItem(-1, media);
     }
 
     return true;
 };
 
-bool savePlaylistAsM3u(IPlaylist    *playList, cstr_t szFile) {
+bool savePlaylistAsM3u(Playlist *playList, cstr_t szFile) {
     // M3U
     // #EXTM3U
     // #EXTINF:211,Britney Spears - ...Baby One More Time
@@ -93,26 +83,20 @@ bool savePlaylistAsM3u(IPlaylist    *playList, cstr_t szFile) {
 
     //
     for (int i = 0; i < nCount; i++) {
-        CMPAutoPtr<IMedia> media;
-        auto nRet = playList->getItem(i, &media);
-        if (nRet == ERR_OK) {
-            CXStr strUrl;
-            nRet = media->getSourceUrl(&strUrl);
-            if (nRet == ERR_OK) {
-                int nDuration = media->getDuration();
-                string strFullTitle = g_Player.formatMediaTitle(media);
+        auto media = playList->getItem(i);
+        if (media) {
+            string strFullTitle = g_player.formatMediaTitle(media.get());
 
-                // #EXTINF:211,Britney Spears - ...Baby One More Time
-                // G:\mp3\Britney Spears04\01.Baby One More Time.MP3
-                if (nDuration == MEDIA_LENGTH_INVALID) {
-                    fprintf(fp, "#EXTINF:%s\n", strFullTitle.c_str());
-                } else {
-                    fprintf(fp, "#EXTINF:%d,%s\n", nDuration, strFullTitle.c_str());
-                }
-
-                fprintf(fp, "%s", strUrl.c_str());
-                fprintf(fp, "\n");
+            // #EXTINF:211,Britney Spears - ...Baby One More Time
+            // G:\mp3\Britney Spears04\01.Baby One More Time.MP3
+            if (media->duration == MEDIA_LENGTH_INVALID) {
+                fprintf(fp, "#EXTINF:%s\n", strFullTitle.c_str());
+            } else {
+                fprintf(fp, "#EXTINF:%d,%s\n", media->duration, strFullTitle.c_str());
             }
+
+            fprintf(fp, "%s", media->url.c_str());
+            fprintf(fp, "\n");
         }
     }
 
@@ -121,7 +105,7 @@ bool savePlaylistAsM3u(IPlaylist    *playList, cstr_t szFile) {
     return true;
 }
 
-bool loadM3uPlaylist(IMPlayer *player, IPlaylist *playList, cstr_t szFile) {
+PlaylistPtr loadM3uPlaylist(cstr_t szFile) {
     char szBuff[MAX_PATH * 2];
     FILE *fp;
     string strFile;
@@ -129,18 +113,22 @@ bool loadM3uPlaylist(IMPlayer *player, IPlaylist *playList, cstr_t szFile) {
 
     fp = fopen(szFile, "r");
     if (!fp) {
-        return false;
+        return nullptr;
     }
 
     string strPath = fileGetPath(szFile);
 
     // #EXTM3U
     if (!fgets(szBuff, CountOf(szBuff), fp)) {
-        return false;
+        fclose(fp);
+        return nullptr;
     }
     if (strncasecmp(szBuff, EXTM3U, strlen(EXTM3U)) != 0) {
-        return false;
+        fclose(fp);
+        return nullptr;
     }
+
+    PlaylistPtr playlist = g_player.newPlaylist();
 
     while (fgets(szBuff, CountOf(szBuff), fp)) {
         removeReturn(szBuff);
@@ -167,24 +155,25 @@ bool loadM3uPlaylist(IMPlayer *player, IPlaylist *playList, cstr_t szFile) {
             continue;
         }
 
-        appendMediaToList(player, playList, szBuff, strPath.c_str());
+        appendMediaToList(playlist.get(), szBuff, strPath.c_str());
     }
     fclose(fp);
 
-    return true;
+    return playlist;
 }
 
-bool loadPlsPlaylist(IMPlayer *player, IPlaylist *playList, cstr_t szFile) {
+PlaylistPtr loadPlsPlaylist(cstr_t szFile) {
     CProfile file;
-    int n;
-    char szkey[256];
 
     string strPath = fileGetPath(szFile);
 
     file.init(szFile, "playlist");
-    n = file.getInt("NumberOfEntries", 0);
+    int n = file.getInt("NumberOfEntries", 0);
+
+    auto playlist = g_player.newPlaylist();
 
     for (int i = 1; i < n; i++) {
+        char szkey[256];
         sprintf(szkey, "File%d", i);
 
         string strFile;
@@ -193,24 +182,24 @@ bool loadPlsPlaylist(IMPlayer *player, IPlaylist *playList, cstr_t szFile) {
             continue;
         }
 
-        appendMediaToList(player, playList, strFile.c_str(), strPath.c_str());
+        appendMediaToList(playlist.get(), strFile.c_str(), strPath.c_str());
     }
 
-    return true;
+    return playlist;
 }
 
-bool loadWplPlaylist(IMPlayer *player, IPlaylist    *playList, cstr_t szFile) {
+PlaylistPtr loadWplPlaylist(cstr_t szFile) {
     string buffer;
 
     string strPath = fileGetPath(szFile);
 
     if (!readFile(szFile, buffer)) {
-        return false;
+        return nullptr;
     }
 
     if (strncmp(buffer.c_str(), WPL_HEADER, strlen(WPL_HEADER)) != 0) {
         ERR_LOG1("Unknown wmp file format(header): %s", szFile);
-        return false;
+        return nullptr;
     }
 
     buffer.replace(0, strlen(WPL_HEADER), XML_HEADER, strlen(XML_HEADER));
@@ -219,7 +208,7 @@ bool loadWplPlaylist(IMPlayer *player, IPlaylist    *playList, cstr_t szFile) {
 
     if (!xml.parseData(buffer.data(), buffer.size())) {
         ERR_LOG1("Unknown wmp file format(parse): %s", szFile);
-        return false;
+        return nullptr;
     }
     //     <smil>
     //         <body>
@@ -233,20 +222,22 @@ bool loadWplPlaylist(IMPlayer *player, IPlaylist    *playList, cstr_t szFile) {
     pNode = xml.m_pRoot;
     if (strcmp(pNode->name.c_str(), "smil") != 0) {
         ERR_LOG1("Unknown wmp file format(field: smil): %s", szFile);
-        return false;
+        return nullptr;
     }
 
     pNode = pNode->getChild("body");
     if (!pNode) {
         ERR_LOG1("Unknown wmp file format(field: body): %s", szFile);
-        return false;
+        return nullptr;
     }
 
     pNode = pNode->getChild("seq");
     if (!pNode) {
         ERR_LOG1("Unknown wmp file format(field: seq): %s", szFile);
-        return false;
+        return nullptr;
     }
+
+    auto playlist = g_player.newPlaylist();
 
     SXNode::iterator it = pNode->listChildren.begin();
     for (; it != pNode->listChildren.end(); ++it) {
@@ -254,10 +245,10 @@ bool loadWplPlaylist(IMPlayer *player, IPlaylist    *playList, cstr_t szFile) {
         if (strcmp(pNodeMedia->name.c_str(), "media") == 0) {
             cstr_t szFile = pNodeMedia->getPropertySafe("src");
             if (szFile && !isEmptyString(szFile)) {
-                appendMediaToList(player, playList, szFile, strPath.c_str());
+                appendMediaToList(playlist.get(), szFile, strPath.c_str());
             }
         }
     }
 
-    return true;
+    return playlist;
 }

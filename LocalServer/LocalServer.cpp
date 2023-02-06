@@ -11,7 +11,7 @@
 #include "WebSocketHandlers/PlayerRemoteCtrlHandler.hpp"
 #include "GenRsaKey.hpp"
 #include "../Skin/SkinTypes.h"
-#include "../MPlayerUI/Player.h"
+#include "../MPlayer/Player.h"
 
 
 using namespace WebSocketHandlers;

@@ -18,9 +18,6 @@ public:
 	virtual void AddRef() {};
 	virtual void Release() {};
 
-	virtual MLRESULT Init(IMPlayer *pPlayer);
-	virtual MLRESULT Quit();
-
 	virtual void Process(IFBuffer *pBuf, int nBps, int nChannels, int nSampleRate);
 
 	bool CreateWnd();
@@ -34,9 +31,8 @@ protected:
 	int						m_nLastSRate;
 	int						m_nLastChannel;
 	int						m_nLastBps;
-	CMPAutoPtr<IMPlayer>	m_pPlayer;
 
-	HWND			m_hWnd;
+	HWND					m_hWnd;
 
 };
 

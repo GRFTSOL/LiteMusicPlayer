@@ -24,7 +24,7 @@ struct MPEG_AUDIO_INFO {
     uint32_t                    nFirstFramePos;
 };
 
-class CMDLibmad : public IMediaDecode {
+class CMDLibmad : public IMediaDecoder {
 OBJ_REFERENCE_DECL
 public:
     CMDLibmad();
@@ -36,7 +36,7 @@ public:
 
     virtual cstr_t getDescription();
     virtual cstr_t getFileExtentions();
-    virtual MLRESULT getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia);
+    virtual ResultCode getMediaInfo(IMediaInput *pInput, IMediaInfo *pMedia);
 
     //
     // decode media file related methods
@@ -45,21 +45,21 @@ public:
     virtual bool isSeekable();
     virtual bool isUseOutputPlug();
 
-    virtual MLRESULT play(IMPlayer *pPlayer, IMediaInput *pInput);
-    virtual MLRESULT pause();
-    virtual MLRESULT unpause();
-    virtual MLRESULT stop();
+    virtual ResultCode play(IMPlayer *pPlayer, IMediaInput *pInput);
+    virtual ResultCode pause();
+    virtual ResultCode unpause();
+    virtual ResultCode stop();
 
     // time length
     virtual uint32_t getLength();
-    virtual MLRESULT seek(uint32_t dwPos);
+    virtual ResultCode seek(uint32_t dwPos);
     virtual uint32_t getPos();
 
     // volume
-    virtual MLRESULT setVolume(int volume, int nBanlance);
+    virtual ResultCode setVolume(int volume, int nBanlance);
 
 protected:
-    MLRESULT getHeadInfo(IMediaInput *pInput);
+    ResultCode getHeadInfo(IMediaInput *pInput);
 
     static void decodeThread(void *lpParam);
     int mad_decoder_run(struct mad_decoder *decoder);
@@ -72,9 +72,7 @@ protected:
 public:
     IMediaOutput                *m_pOutput;
     IMediaInput                 *m_pInput;
-    IMPlayer                    *m_pPlayer;
-    IMemAllocator               *m_pMemAllocator;
-    PLAYER_STATE                m_state;
+    PlayerState                 m_state;
     bool                        m_bPaused;
     bool                        m_bKillThread;
     int32_t                     m_nSeekPos;

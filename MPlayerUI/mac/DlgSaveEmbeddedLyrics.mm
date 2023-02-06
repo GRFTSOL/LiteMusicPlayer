@@ -28,7 +28,7 @@ int CDlgSaveEmbeddedLyrics::doModal(Window *pWnd) {
     m_pParentWnd = pWnd;
 
     // Get current media and lyrics information
-    m_strMediaUrl = g_Player.getSrcMedia();
+    m_strMediaUrl = g_player.getSrcMedia();
 
     if (m_strMediaUrl.empty() || !isFileExist(m_strMediaUrl.c_str())) {
         pWnd->messageOut(_TL("Can't locate the song file path."));

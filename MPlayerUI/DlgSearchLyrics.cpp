@@ -21,8 +21,8 @@ bool isHttpUrl(cstr_t szUrl) {
     return strncasecmp(szUrl, SZ_HTTP_HEADER, strlen(SZ_HTTP_HEADER)) == 0;
 }
 
-void updateLyrResultArtistTitle(V_LRCSEARCHRESULT &vResultsLocal) {
-    V_LRCSEARCHRESULT::iterator it;
+void updateLyrResultArtistTitle(ListLyrSearchResults &vResultsLocal) {
+    ListLyrSearchResults::iterator it;
 
     for (it = vResultsLocal.begin(); it != vResultsLocal.end(); ++it) {
         LrcSearchResult &result = *it;
@@ -89,7 +89,7 @@ public:
     }
 
 public:
-    V_LRCSEARCHRESULT           *m_pvSearchResult;
+    ListLyrSearchResults           *m_pvSearchResult;
     string                      m_strMsg;
     int                         m_nCurPage, m_nPageCount;
     int                         m_nResult;
@@ -694,11 +694,11 @@ protected:
     void updateSearchResultToListCtrl() {
         m_pLyricsList->deleteAllItems(false);
 
-        for (V_LRCSEARCHRESULT::iterator it = m_vResultsLocal.begin(); it != m_vResultsLocal.end(); it++) {
+        for (ListLyrSearchResults::iterator it = m_vResultsLocal.begin(); it != m_vResultsLocal.end(); it++) {
             appendItemInResultsList(*it, false);
         }
 
-        for (V_LRCSEARCHRESULT::iterator it = m_vResultsInet.begin(); it != m_vResultsInet.end(); it++) {
+        for (ListLyrSearchResults::iterator it = m_vResultsInet.begin(); it != m_vResultsInet.end(); it++) {
             appendItemInResultsList(*it, true);
         }
 
@@ -813,14 +813,14 @@ protected:
     int                         CID_PREV_PAGE, CID_NEXT_PAGE, CID_GOOGLE, CID_MORE;
     int                         CID_E_ARTIST, CID_E_TITLE, CID_OPEN, CID_SEARCH, CID_L_LYRICS;
 
-    V_LRCSEARCHRESULT           m_vResultsLocal;
-    V_LRCSEARCHRESULT           m_vResultsInet;
+    ListLyrSearchResults           m_vResultsLocal;
+    ListLyrSearchResults           m_vResultsInet;
 
     string                      m_strArtistLastSearch, m_strTitleLastSearch;
     int                         m_nCurPage, m_nPageCount;
 
     // cache returned result.
-    vector<V_LRCSEARCHRESULT>   m_vCachePages;
+    vector<ListLyrSearchResults>   m_vCachePages;
 
     string                      m_strSongFile, m_strMediaKey, m_strArtist, m_strTitle;
 
@@ -844,11 +844,11 @@ void showSearchLyricsDialog(CSkinWnd *pParent) {
     SkinWndStartupInfo skinWndStartupInfo(_SZ_SKINWND_CLASS_NAME, _SZ_SKINWND_CLASS_NAME,
         "openLyrics.xml", pParent);
 
-    skinWndStartupInfo.mapExchangePool[SZ_EX_POOL_ARTIST] = g_Player.getArtist();
-    skinWndStartupInfo.mapExchangePool[SZ_EX_POOL_TITLE] = g_Player.getTitle();
-    skinWndStartupInfo.mapExchangePool[SZ_EX_POOL_MEDIA_URL] = g_Player.getSrcMedia();
-    skinWndStartupInfo.mapExchangePool[SZ_EX_POOL_ALBUM] = g_Player.getAlbum();
-    skinWndStartupInfo.mapExchangePool[SZ_EX_POOL_MEDIA_KEY] = g_Player.getMediaKey();
+    skinWndStartupInfo.mapExchangePool[SZ_EX_POOL_ARTIST] = g_player.getArtist();
+    skinWndStartupInfo.mapExchangePool[SZ_EX_POOL_TITLE] = g_player.getTitle();
+    skinWndStartupInfo.mapExchangePool[SZ_EX_POOL_MEDIA_URL] = g_player.getSrcMedia();
+    skinWndStartupInfo.mapExchangePool[SZ_EX_POOL_ALBUM] = g_player.getAlbum();
+    skinWndStartupInfo.mapExchangePool[SZ_EX_POOL_MEDIA_KEY] = g_player.getMediaKey();
 
     CSkinApp::getInstance()->getSkinFactory()->activeOrCreateSkinWnd(skinWndStartupInfo);
 }

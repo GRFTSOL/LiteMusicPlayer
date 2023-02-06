@@ -43,41 +43,37 @@ bool CMPCmdHandlerOfMediaGuide::onCommand(int nId) {
         {
             CSkinListCtrl *pMediaList = (CSkinListCtrl*)m_pSkinWnd->getUIObjectById(CMD_MG_MEDIA_LIST, CSkinListCtrl::className());
 
-            CMPAutoPtr<IPlaylist> playlist;
-            CMPAutoPtr<IPlaylist> curPl;
-
-            if (m_mediaTree.getCurNodePlaylist(&playlist) &&
-                g_Player.getIMPlayer()->getCurrentPlaylist(&curPl) == ERR_OK) {
+            auto playlist = m_mediaTree.getCurNodePlaylist();
+            if (playlist) {
+                auto curPl = g_player.getCurrentPlaylist();
                 int nSel = -1;
                 while (1) {
                     nSel = pMediaList->getNextSelectedItem(nSel);
                     if (nSel == -1) {
                         break;
                     }
-                    CMPAutoPtr<IMedia> media;
-                    if (playlist->getItem(nSel, &media) == ERR_OK) {
+                    auto media = playlist->getItem(nSel);
+                    if (media) {
                         curPl->insertItem(-1, media);
                     }
                 }
-                g_Player.saveCurrentPlaylist();
+                g_player.saveCurrentPlaylist();
             }
         }
         break;
     case IDC_QUEUE_UP_ALL:
         {
-            CMPAutoPtr<IPlaylist> playlist;
-            CMPAutoPtr<IPlaylist> curPl;
-
-            if (m_mediaTree.getCurNodePlaylist(&playlist) &&
-                g_Player.getIMPlayer()->getCurrentPlaylist(&curPl) == ERR_OK) {
+            auto playlist = m_mediaTree.getCurNodePlaylist();
+            if (playlist) {
+                auto curPl = g_player.getCurrentPlaylist();
                 int nCount = playlist->getCount();
                 for (int i = 0; i < nCount; i++) {
-                    CMPAutoPtr<IMedia> media;
-                    if (playlist->getItem(i, &media) == ERR_OK) {
+                    auto media = playlist->getItem(i);
+                    if (media) {
                         curPl->insertItem(-1, media);
                     }
                 }
-                g_Player.saveCurrentPlaylist();
+                g_player.saveCurrentPlaylist();
             }
         }
         break;
@@ -110,24 +106,20 @@ bool CMPCmdHandlerOfMediaGuide::onCommand(int nId) {
                     return true;
                 }
 
-                CMPAutoPtr<IPlaylist> playlist;
-
-                if (m_mediaTree.getCurNodePlaylist(&playlist)) {
+            auto playlist = m_mediaTree.getCurNodePlaylist();
+            if (playlist) {
                     vector<int> vIndex;
                     while (nSel != -1) {
                         vIndex.push_back(nSel);
                         nSel = pMediaList->getNextSelectedItem(nSel);
                     }
                     for (int i = (int)vIndex.size() - 1; i >= 0; i--) {
-                        CMPAutoPtr<IMedia> media;
 
                         nSel = vIndex[i];
-                        if (playlist->getItem(nSel, &media) == ERR_OK) {
-                            CMPAutoPtr<IMediaLibrary> mediaLib;
-
-                            if (g_Player.getIMPlayer()->getMediaLibrary(&mediaLib) == ERR_OK) {
-                                mediaLib->remove(&media, false);
-                            }
+                        auto media = playlist->getItem(nSel);
+                        if (media) {
+                            auto mediaLib = g_player.getMediaLibrary();
+                            mediaLib->remove(media.get(), false);
 
                             playlist->removeItem(nSel);
                             pMediaList->deleteItem(nSel, true);
@@ -178,14 +170,14 @@ bool CMPCmdHandlerOfMediaGuide::onUIObjNotify(IUIObjNotify *pNotify) {
             if (pListCtrlNotify->cmd == CSkinListCtrlEventNotify::C_DBL_CLICK ||
                 pListCtrlNotify->cmd == CSkinListCtrlEventNotify::C_ENTER) {
                 if (pNode->m_playlist.p) {
-                    g_Player.getIMPlayer()->setCurrentPlaylist(pNode->m_playlist);
-                    g_Player.getIMPlayer()->setCurrentMediaInPlaylist(nSel);
-                    g_Player.play();
-                    g_Player.saveCurrentPlaylist();
+                    g_player.setCurrentPlaylist(pNode->m_playlist);
+                    g_player.setCurrentMediaInPlaylist(nSel);
+                    g_player.play();
+                    g_player.saveCurrentPlaylist();
                     return true;
                 }
                 if (pNode->nodeType == MGNT_NOW_PLAYING) {
-                    g_Player.getIMPlayer()->setCurrentMediaInPlaylist(nSel);
+                    g_player.setCurrentMediaInPlaylist(nSel);
                 }
             }
         }
@@ -263,9 +255,9 @@ void CMPCmdHandlerOfMediaGuide::updateMediaList() {
     string str;
 
     for (int i = 0; i < nCount; i++) {
-        CMPAutoPtr<IMedia> media;
-        if (pNode->m_playlist->getItem(i, &media) == ERR_OK) {
-            g_Player.formatMediaTitle(media, str);
+        auto media = pNode->m_playlist->getItem(i);
+        if (media) {
+            str = g_player.formatMediaTitle(media.get());
 
             plistCtrl->insertItem(plistCtrl->getItemCount(),
                 str.c_str(), II_MUSIC);

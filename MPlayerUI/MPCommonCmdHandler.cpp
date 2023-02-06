@@ -95,7 +95,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
     switch (nID) {
     case CMD_NO_SUITTABLE_LYRICS:
     case CMD_INSTRUMENTAL_MUSIC:
-        if (g_LyricSearch.associateLyrics(g_Player.getMediaKey().c_str(), NONE_LYRCS)) {
+        if (g_LyricSearch.associateLyrics(g_player.getMediaKey().c_str(), NONE_LYRCS)) {
             CMPlayerAppBase::getInstance()->dispatchResearchLyrics();
         }
         break;
@@ -229,15 +229,15 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
         break;
     case CMD_BR_ALBUM_ART:
         {
-            string strAlbumArtFileName = fileGetPath(g_Player.getSrcMedia());
+            string strAlbumArtFileName = fileGetPath(g_player.getSrcMedia());
             if (!isDirExist(strAlbumArtFileName.c_str())) {
                 break;
             }
 
-            if (isEmptyString(g_Player.getAlbum())) {
+            if (isEmptyString(g_player.getAlbum())) {
                 strAlbumArtFileName += "Folder";
             } else {
-                strAlbumArtFileName += g_Player.getAlbum();
+                strAlbumArtFileName += g_player.getAlbum();
             }
 
             CFileDlgExtFilter strFileExt;
@@ -312,28 +312,28 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
         }
         break;
     case CMD_PAUSE:
-        g_Player.pause();
+        g_player.pause();
         break;
     case CMD_PLAY:
-        g_Player.play();
+        g_player.play();
         break;
     case CMD_PLAYPAUSE:
-        g_Player.playPause();
+        g_player.playPause();
         break;
     case CMD_STOP:
-        g_Player.stop();
+        g_player.stop();
         break;
     case CMD_NEXT:
-        g_Player.next();
+        g_player.next();
         break;
     case CMD_PREVIOUS:
-        g_Player.prev();
+        g_player.prev();
         break;
     case CMD_SEEK:
         {
             CSkinSeekCtrl *pCtrl = (CSkinSeekCtrl*)m_pSkinWnd->getUIObjectById(CMD_SEEK, CSkinSeekCtrl::className());
             if (pCtrl) {
-                g_Player.seekTo(pCtrl->getScrollPos());
+                g_player.seekTo(pCtrl->getScrollPos());
             }
         }
         break;
@@ -341,85 +341,85 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
         {
             int dwCurPos;
 
-            dwCurPos = g_Player.getPlayPos();
+            dwCurPos = g_player.getPlayPos();
             dwCurPos -= 2000;
             if (dwCurPos < 0) {
                 dwCurPos = 0;
             }
             dwCurPos -= dwCurPos % 1000;
-            g_Player.seekTo(dwCurPos);
+            g_player.seekTo(dwCurPos);
         }
         break;
     case CMD_FORWARD:
         {
             int dwCurPos;
 
-            dwCurPos = g_Player.getPlayPos();
+            dwCurPos = g_player.getPlayPos();
             dwCurPos += 2000;
             if (dwCurPos < 0) {
                 dwCurPos = 0;
             }
             dwCurPos -= dwCurPos % 1000;
-            g_Player.seekTo(dwCurPos);
+            g_player.seekTo(dwCurPos);
         }
         break;
     case CMD_VOL_INC:
         {
-            int vol = g_Player.getVolume();
+            int vol = g_player.getVolume();
             if (vol < MP_VOLUME_MAX) {
                 vol += 5;
                 vol -= vol % 5;
                 if (vol > MP_VOLUME_MAX) {
                     vol = MP_VOLUME_MAX;
                 }
-                g_Player.setVolume(vol);
+                g_player.setVolume(vol);
                 CMPlayerAppBase::getInstance()->dispatchInfoText(stringPrintf("%s %d%%", _TLT("set Volume"), vol).c_str());
             }
         }
         break;
     case CMD_VOL_DEC:
         {
-            int vol = g_Player.getVolume();
+            int vol = g_player.getVolume();
             if (vol > 0) {
                 vol -= 5;
                 vol -= vol % 5;
                 if (vol < 0) {
                     vol = 0;
                 }
-                g_Player.setVolume(vol);
+                g_player.setVolume(vol);
                 CMPlayerAppBase::getInstance()->dispatchInfoText(stringPrintf("%s %d%%", _TLT("set Volume"), vol).c_str());
             }
         }
         break;
     case CMD_MUTE:
         {
-            bool bMute = !g_Player.isMute();
-            g_Player.setMute(bMute);
+            bool bMute = !g_player.isMute();
+            g_player.setMute(bMute);
             CMPlayerAppBase::getInstance()->dispatchInfoText(_TL(bMute ? "Mute On" : "Mute Off"));
         }
         break;
     case CMD_SHUFFLE:
         {
-            bool bShuffle = !g_Player.isShuffle();
-            g_Player.setShuffle(bShuffle);
+            bool bShuffle = !g_player.isShuffle();
+            g_player.setShuffle(bShuffle);
             CMPlayerAppBase::getInstance()->dispatchInfoText(_TL(bShuffle ? "Shuffle On" : "Shuffle Off"));
         }
         break;
     case CMD_LOOP_OFF:
-        g_Player.setLoop(MP_LOOP_OFF);
+        g_player.setLoop(MP_LOOP_OFF);
         break;
     case CMD_LOOP_ALL:
-        g_Player.setLoop(MP_LOOP_ALL);
+        g_player.setLoop(MP_LOOP_ALL);
         break;
     case CMD_LOOP_TRACK:
-        g_Player.setLoop(MP_LOOP_TRACK);
+        g_player.setLoop(MP_LOOP_TRACK);
         break;
     case CMD_LOOP:
         {
-            g_Player.setToNextLoopMode();
+            g_player.setToNextLoopMode();
 
             string str;
-            MP_LOOP_MODE loopMode = g_Player.getLoop();
+            LoopMode loopMode = g_player.getLoop();
             if (loopMode == MP_LOOP_OFF) {
                 str = "Repeat Off";
             } else if (loopMode == MP_LOOP_TRACK) {
@@ -436,15 +436,10 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             CSkinRateCtrl *pRateCtrl;
             pRateCtrl = (CSkinRateCtrl*)m_pSkinWnd->getUIObjectById(CMD_RATE, CSkinRateCtrl::className());
             if (pRateCtrl) {
-                CMPAutoPtr<IMediaLibrary> pMediaLib;
-                CMPAutoPtr<IMedia> pMedia;
-
-                if (g_Player.getMediaLibrary(&pMediaLib) != ERR_OK) {
-                    break;
-                }
-
-                if (g_Player.getCurrentMedia(&pMedia) == ERR_OK) {
-                    pMediaLib->rate(pMedia, pRateCtrl->getRating());
+                auto mediaLib = g_player.getMediaLibrary();
+                auto media = g_player.getCurrentMedia();
+                if (media) {
+                    mediaLib->rate(media.get(), pRateCtrl->getRating());
                 }
             }
         }
@@ -490,7 +485,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
         //
         // 歌词下载
         //
-        if (!g_Player.isMediaOpened()) {
+        if (!g_player.isMediaOpened()) {
             m_pSkinWnd->messageOut(_TLT("No media was opened."));
             break;
         }
@@ -660,7 +655,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
                     }
                 }
 
-                g_Player.seekTo(vLyrics[nCurLine]->nBegTime);
+                g_player.seekTo(vLyrics[nCurLine]->nBegTime);
             }
         }
         break;
@@ -713,10 +708,10 @@ bool CMPCommonCmdHandler::onUIObjNotify(IUIObjNotify *pNotify) {
             CSkinSeekCtrlEventNotify *pListCtrlNotify = (CSkinSeekCtrlEventNotify *)pNotify;
             if (pListCtrlNotify->cmd == CSkinSeekCtrlEventNotify::C_BEG_DRAG) {
                 // Use seek time instead of playing time.
-                g_Player.setUseSeekTimeAsPlayingTime(true);
+                g_player.setUseSeekTimeAsPlayingTime(true);
             } else if (pListCtrlNotify->cmd == CSkinSeekCtrlEventNotify::C_END_DRAG) {
                 // Use seek time instead of playing time.
-                g_Player.setUseSeekTimeAsPlayingTime(false);
+                g_player.setUseSeekTimeAsPlayingTime(false);
             }
         }
     } else {

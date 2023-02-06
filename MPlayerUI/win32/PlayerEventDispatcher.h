@@ -36,12 +36,12 @@ public:
             string strCurrentPlaylist;
 
             strCurrentPlaylist = g_profile.getString("Latest Playlist", "");
-            if (!g_Player.loadPlaylist(strCurrentPlaylist.c_str(), true)) {
-                g_Player.newCurrentPlaylist();
+            if (!g_player.loadPlaylist(strCurrentPlaylist.c_str(), true)) {
+                g_player.newCurrentPlaylist();
             }
 
             int nNowPlaying = g_profile.getInt(SZ_SECT_PLAYER, "NowPlayingIdx", 0);
-            g_Player.setCurrentMediaInPlaylist(nNowPlaying);
+            g_player.setCurrentMediaInPlaylist(nNowPlaying);
         } else {
             // excute cmdline
             sendCommandLine(CMPlayerAppBase::getMainWnd()->getHandle(), szCmdLine);
@@ -49,8 +49,6 @@ public:
     }
 
     void quit() {
-        m_playerSmoothTimer.stop();
-
         m_volMaster.quit();
 
         destroy();
@@ -65,23 +63,13 @@ public:
     }
 
     void setLyrDrawUpdateFast(bool bFast) {
-        if (g_Player.getIMPlayer() != nullptr) {
-            if (bFast) {
-                m_nTimeOutUpdateLyr = 20;
-            } else {
-                m_nTimeOutUpdateLyr = 40;
-            }
-
-            startLyrDrawUpdate();
+        if (bFast) {
+            m_nTimeOutUpdateLyr = 20;
         } else {
-            if (bFast) {
-                if (!m_playerSmoothTimer.isRunning()) {
-                    m_playerSmoothTimer.start();
-                }
-            } else {
-                m_playerSmoothTimer.stop();
-            }
+            m_nTimeOutUpdateLyr = 40;
         }
+
+        startLyrDrawUpdate();
     }
 
     void startLyrDrawUpdate()
@@ -108,11 +96,11 @@ public:
     void onTimer(uint32_t nIDEvent) {
         assert(nIDEvent == TIMER_LYR_DRAW_UPDATE);
 
-        if (g_Player.isUseSeekTimeAsPlayingTime()) {
+        if (g_player.isUseSeekTimeAsPlayingTime()) {
             return;
         }
 
-        int nPlayPos = g_Player.getPlayPos();
+        int nPlayPos = g_player.getPlayPos();
         g_LyricData.SetPlayElapsedTime(nPlayPos);
 
         CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
@@ -143,7 +131,7 @@ public:
             CEventPlayerSettingChanged *pEvent = new CEventPlayerSettingChanged();
             pEvent->eventType = ET_PLAYER_SETTING_CHANGED;
             pEvent->settingType = IMPEvent::MPS_VOLUME;
-            pEvent->value = g_Player.getVolume();
+            pEvent->value = g_player.getVolume();
 
             CMPlayerApp::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
         }
@@ -152,12 +140,9 @@ public:
         return Window::wndProc(message, wParam, lParam);
     }
 
-    CPlayerSmoothTimer &getSmoothTimer() { return m_playerSmoothTimer; }
-
 protected:
     int                         m_nTimeOutUpdateLyr;
     CVolumeOutMaster            m_volMaster;
-    CPlayerSmoothTimer          m_playerSmoothTimer;
 
 };
 

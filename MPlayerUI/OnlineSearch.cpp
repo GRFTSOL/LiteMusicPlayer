@@ -42,7 +42,7 @@ CREATE INDEX IF NOT EXISTS SR_modify_time on SearchResults (modify_time);
 
 #define SQL_DEL_SEARCHRESULT "delete from SearchResults where song_file=?"
 
-void retLyrInfoListToVResult(CLyricsSearchParameter &searchParam, RetLyrInfoList &filelist, V_LRCSEARCHRESULT &vResult) {
+void retLyrInfoListToVResult(CLyricsSearchParameter &searchParam, RetLyrInfoList &filelist, ListLyrSearchResults &vResult) {
     for (RetLyrInfoList::iterator it = filelist.begin(); it != filelist.end(); it++) {
         RetLyrInfo &file = *it;
         LrcSearchResult item;
@@ -311,7 +311,7 @@ void CLyrSearchResultCacheDB::close() {
     m_db.close();
 }
 
-bool CLyrSearchResultCacheDB::searchCache(cstr_t szFileAssociateKeyword, cstr_t szArtist, cstr_t szTitle, V_LRCSEARCHRESULT *pvResult, uint32_t *pdwSearchTime) {
+bool CLyrSearchResultCacheDB::searchCache(cstr_t szFileAssociateKeyword, cstr_t szArtist, cstr_t szTitle, ListLyrSearchResults *pvResult, uint32_t *pdwSearchTime) {
     int nRet;
     CSqlite3Stmt sqlQuery;
 
@@ -390,7 +390,7 @@ bool CLyrSearchResultCacheDB::updateSearchLrcInfo(cstr_t szFileAssociateKeyword,
 
 CLyrSearchResultCacheMemDB::LIST_ITEMS CLyrSearchResultCacheMemDB::m_listResults;
 
-bool CLyrSearchResultCacheMemDB::searchCache(cstr_t szFileAssociateKeyword, cstr_t szArtist, cstr_t szTitle, V_LRCSEARCHRESULT *pvResult, uint32_t *pdwSearchTime) {
+bool CLyrSearchResultCacheMemDB::searchCache(cstr_t szFileAssociateKeyword, cstr_t szArtist, cstr_t szTitle, ListLyrSearchResults *pvResult, uint32_t *pdwSearchTime) {
     CLyricsSearchParameter searchParam(szFileAssociateKeyword, szArtist, szTitle);
 
     for (LIST_ITEMS::iterator it = m_listResults.begin(); it != m_listResults.end(); ++it) {
@@ -470,13 +470,13 @@ void COnlineSearch::quit() {
     m_dbSearchResultMem.close();
 }
 
-bool COnlineSearch::searchCacheForCur(V_LRCSEARCHRESULT *pvResult, uint32_t *pdwSearchTime) {
-    string strAssociateMediaKey = g_Player.getMediaKey();
+bool COnlineSearch::searchCacheForCur(ListLyrSearchResults *pvResult, uint32_t *pdwSearchTime) {
+    string strAssociateMediaKey = g_player.getMediaKey();
 
     MutexAutolock autolock(m_mutexDB);
 
     if (m_dbSearchResultMem.searchCache(strAssociateMediaKey.c_str(),
-        g_Player.getArtist(), g_Player.getTitle(), pvResult, pdwSearchTime)) {
+        g_player.getArtist(), g_player.getTitle(), pvResult, pdwSearchTime)) {
         return true;
     }
 
@@ -486,7 +486,7 @@ bool COnlineSearch::searchCacheForCur(V_LRCSEARCHRESULT *pvResult, uint32_t *pdw
 
     if (m_dbSearchResult.isOpened()) {
         return m_dbSearchResult.searchCache(strAssociateMediaKey.c_str(),
-            g_Player.getArtist(), g_Player.getTitle(), pvResult, pdwSearchTime);
+            g_player.getArtist(), g_player.getTitle(), pvResult, pdwSearchTime);
     }
 
     return false;
@@ -553,7 +553,7 @@ bool COnlineSearch::addSearchJob(bool bOnlyMatched, cstr_t szMediaKey, cstr_t sz
     COnlineSearchThreadParam *pParam = new COnlineSearchThreadParam;
     pParam->strArtist = szArtist;
     pParam->strTitle = szTitle;
-    pParam->strAssociateMediaKey = g_Player.getMediaKey();
+    pParam->strAssociateMediaKey = g_player.getMediaKey();
     pParam->pOnlineSearch = this;
     pParam->bOnlyMatched = bOnlyMatched;
 
@@ -579,8 +579,8 @@ bool isTextWidthExceed(cstr_t sztext, int nWidth) {
 }
 
 bool COnlineSearch::autoSearch() {
-    string strArtist = g_Player.getArtist();
-    string strTitle = g_Player.getTitle();
+    string strArtist = g_player.getArtist();
+    string strTitle = g_player.getTitle();
 
     // Won't search is title is too short, or artist is empty.
     if (strTitle.size() < 2 && strArtist.size() == 0) {
@@ -594,13 +594,13 @@ bool COnlineSearch::autoSearch() {
     string str;
     str = _TLT("Searching lyrics");
     str += ": ";
-    str += g_Player.getFullTitle();
+    str += g_player.getFullTitle();
     CMPlayerAppBase::getInstance()->dispatchLongErrorText(str.c_str());
 
-    return addSearchJob(true, g_Player.getMediaKey().c_str(), strArtist.c_str(), strTitle.c_str());
+    return addSearchJob(true, g_player.getMediaKey().c_str(), strArtist.c_str(), strTitle.c_str());
 }
 
-int COnlineSearch::searchOnline(CMLClientSession &session, cstr_t szArtist, cstr_t szTitle, cstr_t szMediaKey, V_LRCSEARCHRESULT &vResult, string &strMsg, int &nCurPage, int &nPageCount) {
+int COnlineSearch::searchOnline(CMLClientSession &session, cstr_t szArtist, cstr_t szTitle, cstr_t szMediaKey, ListLyrSearchResults &vResult, string &strMsg, int &nCurPage, int &nPageCount) {
     int nRet;
 
     string strAssociateMediaKey = szMediaKey;

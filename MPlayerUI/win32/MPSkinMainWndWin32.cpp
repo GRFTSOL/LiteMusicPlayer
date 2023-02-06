@@ -48,8 +48,8 @@ void CMPSkinMainWnd::onEvent(const IEvent *pEvent) {
         // update main window caption
         char szCaption[512];
 
-        if (g_Player.isMediaOpened()) {
-            snprintf(szCaption, CountOf(szCaption), "%s - %s", g_Player.getFullTitle(), SZ_APP_NAME);
+        if (g_player.isMediaOpened()) {
+            snprintf(szCaption, CountOf(szCaption), "%s - %s", g_player.getFullTitle(), SZ_APP_NAME);
         } else {
             strcpy_safe(szCaption, CountOf(szCaption), getAppNameLong().c_str());
         }
@@ -96,22 +96,22 @@ void CMPSkinMainWnd::onCopyData(WPARAM wParam, PCOPYDATASTRUCT pCopyData) {
 
     if (vCmdLine.size() == 1 && fileIsExtSame(vCmdLine[0].c_str(), ".m3u")) {
         // open playlist
-        g_Player.saveCurrentPlaylist();
+        g_player.saveCurrentPlaylist();
 
-        g_Player.m_strCurrentPlaylist = vCmdLine[0];
-        g_Player.setPlaylistModified(false);
+        g_player.m_currentPlaylistFn = vCmdLine[0];
+        g_player.setPlaylistModified(false);
     } else {
-        getDefaultPlaylistName(g_Player.m_strCurrentPlaylist);
-        g_Player.setPlaylistModified(true);
+        getDefaultPlaylistName(g_player.m_currentPlaylistFn);
+        g_player.setPlaylistModified(true);
     }
 
-    g_Player.clearPlaylist();
+    g_player.clearPlaylist();
 
     for (i = 0; i < (int)vCmdLine.size(); i++) {
-        g_Player.addToPlaylist(vCmdLine[i].c_str());
+        g_player.addToPlaylist(vCmdLine[i].c_str());
     }
 
-    g_Player.play();
+    g_player.play();
 #endif
 }
 

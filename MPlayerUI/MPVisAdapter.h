@@ -4,14 +4,14 @@
 #define MPlayerUI_MPVisAdapter_h
 
 
-class CMPVisAdapter : public IVis {
+class CMPVisAdapter : public IVisualizer {
     OBJ_REFERENCE_DECL
 public:
     CMPVisAdapter();
     virtual ~CMPVisAdapter();
 
-    virtual MLRESULT init(IMPlayer *pPlayer);
-    virtual MLRESULT quit();
+    virtual ResultCode init(IMPlayer *pPlayer);
+    virtual ResultCode quit();
 
     virtual int render(VisParam *visParam);
 

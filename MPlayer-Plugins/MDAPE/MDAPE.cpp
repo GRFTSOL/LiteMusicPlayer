@@ -110,7 +110,7 @@ CMDAPE::CMDAPE()
 	m_bKillThread = false;
 	m_nSeekPos = 0;
 	m_bSeekFlag = false;
-	m_state = PS_STOPED;
+	m_state = PS_STOPPED;
 
 	m_lpAPEDecoder = NULL;
 }
@@ -138,7 +138,7 @@ cstr_t CMDAPE::getFileExtentions()
 	return _T(".ape\0APE Files\0");
 }
 
-MLRESULT CMDAPE::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia)
+ResultCode CMDAPE::getMediaInfo(IMediaInput *pInput, IMediaInfo *pMedia)
 {
 	int				nErrCode;
 	IAPEDecompress	*apeDecompress;
@@ -221,14 +221,14 @@ bool CMDAPE::isUseOutputPlug()
 	return true;
 }
 
-MLRESULT CMDAPE::play(IMPlayer *pPlayer, IMediaInput *pInput)
+ResultCode CMDAPE::play(IMPlayer *pPlayer, IMediaInput *pInput)
 {
-	MLRESULT		nRet;
+	ResultCode		nRet;
 	IAPEDecompress	*apeDecompress = NULL;
 	APE_Decoder		*pAPEDecoder = NULL;
 	int				nErrCode;
 
-	m_state = PS_STOPED;
+	m_state = PS_STOPPED;
 	m_bPaused = false;
 	m_nSeekPos = 0;
 	m_bSeekFlag = false;
@@ -313,7 +313,7 @@ R_FAILED:
 	return nRet;
 }
 
-MLRESULT CMDAPE::pause()
+ResultCode CMDAPE::pause()
 {
 	if (m_state != PS_PLAYING)
 		return ERR_PLAYER_INVALID_STATE;
@@ -322,7 +322,7 @@ MLRESULT CMDAPE::pause()
 	return m_pOutput->pause(true);
 }
 
-MLRESULT CMDAPE::unpause()
+ResultCode CMDAPE::unpause()
 {
 	if (m_state != PS_PAUSED)
 		return ERR_PLAYER_INVALID_STATE;
@@ -336,7 +336,7 @@ bool CMDAPE::IsPaused()
 	return m_state == PS_PAUSED;
 }
 
-MLRESULT CMDAPE::stop()
+ResultCode CMDAPE::stop()
 {
 	m_bKillThread = true;
 
@@ -356,7 +356,7 @@ uint32 CMDAPE::getLength()
 	return m_audioInfo.nMediaLength;
 }
 
-MLRESULT CMDAPE::Seek(uint32 dwPos)
+ResultCode CMDAPE::Seek(uint32 dwPos)
 {
 	m_bSeekFlag = true;
 	m_nSeekPos = dwPos;
@@ -376,7 +376,7 @@ uint32 CMDAPE::GetPos()
 		return m_nSeekPos;
 }
 
-MLRESULT CMDAPE::setVolume(int volume, int nBanlance)
+ResultCode CMDAPE::setVolume(int volume, int nBanlance)
 {
 	if (!m_pOutput)
 		return ERR_PLAYER_INVALID_STATE;
@@ -461,7 +461,7 @@ void CMDAPE::DecodeThreadProc()
 	delete pAPEDecoder;
 	m_lpAPEDecoder = NULL;
 
-	m_state = PS_STOPED;
+	m_state = PS_STOPPED;
 
 	m_pOutput->stop();
 	m_pOutput->Release();
@@ -498,7 +498,7 @@ bool CMDAPE::OutputWrite(IFBuffer *pBuf, int nBps, int nChannels, int nSampleRat
 
 #ifdef _WIN32_WCE
 
-IMediaDecode *MPlayerGetMDAPE()
+IMediaDecoder *MPlayerGetMDAPE()
 {
 	return new CMDAPE;
 }
@@ -512,23 +512,22 @@ IMediaDecode *MPlayerGetMDAPE()
 // nIndex = 0, return its interface type, and description, and lpInterface.
 // lpInterface can be NULL.
 //
-extern "C" __declspec(dllexport) MLRESULT ZikiPlayerQueryPluginIF(
-	int nIndex,
-	MPInterfaceType *pInterfaceType,
-	IString *strDescription,
-	LPVOID *lpInterface
+extern "C" __declspec(dllexport) ResultCode DHPlayerQueryPluginIF(
+	int index,
+	MPInterfaceType *interfaceType,
+	const char **description,
+	LPVOID *interfacePtr
 )
 {
-	if (nIndex == 0)
+	if (index == 0)
 	{
-		*pInterfaceType = MPIT_DECODE;
-		if (strDescription)
-			strDescription->copy(SZ_DECODER_DESC);
-		if (lpInterface)
-		{
-			IMediaDecode	*pDecoder = new CMDAPE;
+		*interfaceType = MPIT_DECODE;
+		if (description)
+			*description = SZ_DECODER_DESC;
+		if (interfacePtr) {
+			IMediaDecoder *pDecoder = new CMDAPE;
 			pDecoder->AddRef();
-			*lpInterface = pDecoder;
+			*interfacePtr = pDecoder;
 		}
 
 		return ERR_OK;

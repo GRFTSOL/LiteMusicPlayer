@@ -4,12 +4,11 @@
 #define MPlayerUI_MPEventsDispatcher_h
 
 
-#include "../MPlayerEngine/IMPlayer.h"
+#include "../MPlayerEngine/IPlayerCore.hpp"
 #include "../Skin/Skin.h"
+#include "../MPlayer/Player.h"
 #include "MPlayerAppBase.h"
 
-
-class CMPVisAdapter;
 
 // section name
 #define SZ_SECT_LYR_DISPLAY "LyrDispaly"
@@ -54,16 +53,16 @@ enum MLEventType {
 };
 
 struct CEventPlayerStatusChanged : public IEvent {
-    PLAYER_STATE                status;
+    PlayerState                 status;
 };
 
 struct CEventPlayerSettingChanged : public IEvent {
-    IMPEvent::MP_SETTING_TYPE   settingType;
+    IMPEvent::SettingType   settingType;
     int                         value;
 };
 
 struct CEventPlaylistChanged : public IEvent {
-    IMPEvent::MP_PLAYLIST_CHANGE_ACTION action;
+    IMPEvent::PlaylistChangeAction action;
     int                                 nIndex, nIndexOld;
 };
 
@@ -111,22 +110,6 @@ public:
 
 protected:
     CSkinWnd                    *m_pSkinWnd;
-
-};
-
-class CMPEventsDispatcher : public CEventsDispatcher {
-public:
-    CMPEventsDispatcher();
-
-    virtual void quit();
-
-    virtual void registerHandler(EventType eventType, IEventHandler *pHandler);
-    virtual void unRegisterHandler(EventType eventType, IEventHandler *pHandler);
-
-protected:
-#ifdef _MPLAYER
-    CMPVisAdapter               *m_pVisAdapter;
-#endif
 
 };
 

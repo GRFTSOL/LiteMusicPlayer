@@ -32,7 +32,7 @@ CMDWMA::CMDWMA()
 	m_bKillThread = false;
 	m_nSeekPos = 0;
 	m_bSeekFlag = false;
-	m_state = PS_STOPED;
+	m_state = PS_STOPPED;
 
     avcodec_init();
     avcodec_register_all();
@@ -66,7 +66,7 @@ cstr_t CMDWMA::getFileExtentions()
 	return _T(".wma\0wma files\0");
 }
 
-MLRESULT CMDWMA::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia)
+ResultCode CMDWMA::getMediaInfo(IMediaInput *pInput, IMediaInfo *pMedia)
 {
 	pInput->Seek(0, SEEK_SET);
 	pInput->GetSize(m_audioInfo.nMediaFileSize);
@@ -116,12 +116,12 @@ bool CMDWMA::isUseOutputPlug()
 	return true;
 }
 
-MLRESULT CMDWMA::play(IMPlayer *pPlayer, IMediaInput *pInput)
+ResultCode CMDWMA::play(IMPlayer *pPlayer, IMediaInput *pInput)
 {
-	MLRESULT		nRet;
+	ResultCode		nRet;
 	stringex	strFileName;
 
-	m_state = PS_STOPED;
+	m_state = PS_STOPPED;
 	m_bPaused = false;
 	m_nSeekPos = 0;
 	m_bSeekFlag = false;
@@ -207,7 +207,7 @@ R_FAILED:
 	return nRet;
 }
 
-MLRESULT CMDWMA::pause()
+ResultCode CMDWMA::pause()
 {
 	if (m_state != PS_PLAYING)
 		return ERR_PLAYER_INVALID_STATE;
@@ -216,7 +216,7 @@ MLRESULT CMDWMA::pause()
 	return m_pOutput->pause(true);
 }
 
-MLRESULT CMDWMA::unpause()
+ResultCode CMDWMA::unpause()
 {
 	if (m_state != PS_PAUSED)
 		return ERR_PLAYER_INVALID_STATE;
@@ -230,7 +230,7 @@ bool CMDWMA::IsPaused()
 	return m_state == PS_PAUSED;
 }
 
-MLRESULT CMDWMA::stop()
+ResultCode CMDWMA::stop()
 {
 	m_bKillThread = true;
 
@@ -250,7 +250,7 @@ uint32 CMDWMA::getLength()
 	return m_audioInfo.nMediaLength;
 }
 
-MLRESULT CMDWMA::Seek(uint32 dwPos)
+ResultCode CMDWMA::Seek(uint32 dwPos)
 {
 	m_bSeekFlag = true;
 	m_nSeekPos = dwPos;
@@ -270,7 +270,7 @@ uint32 CMDWMA::GetPos()
 		return m_nSeekPos;
 }
 
-MLRESULT CMDWMA::setVolume(int volume, int nBanlance)
+ResultCode CMDWMA::setVolume(int volume, int nBanlance)
 {
 	if (!m_pOutput)
 		return ERR_PLAYER_INVALID_STATE;
@@ -299,7 +299,7 @@ void CMDWMA::DecodeThreadProc()
 		Sleep(10);
 	}
 
-	m_state = PS_STOPED;
+	m_state = PS_STOPPED;
 
 	m_pOutput->stop();
 	m_pOutput->Release();
@@ -444,7 +444,7 @@ void CMDWMA::WMADecode()
 
 #ifdef _WIN32_WCE
 
-IMediaDecode *MPlayerGetMDWMA()
+IMediaDecoder *MPlayerGetMDWMA()
 {
 	return new CMDWMA;
 }
@@ -458,23 +458,21 @@ IMediaDecode *MPlayerGetMDWMA()
 // nIndex = 0, return its interface type, and description, and lpInterface.
 // lpInterface can be NULL.
 //
-extern "C" __declspec(dllexport) MLRESULT ZikiPlayerQueryPluginIF(
-	int nIndex,
-	MPInterfaceType *pInterfaceType,
-	IString *strDescription,
-	LPVOID *lpInterface
+extern "C" __declspec(dllexport) ResultCode DHPlayerQueryPluginIF(
+	int index,
+	MPInterfaceType *interfaceType,
+	const char **description,
+	LPVOID *interfacePtr
 	)
 {
-	if (nIndex == 0)
-	{
-		*pInterfaceType = MPIT_DECODE;
-		if (strDescription)
-			strDescription->copy(SZ_DECODER_DESC);
-		if (lpInterface)
-		{
-			IMediaDecode	*pDecoder = new CMDWMA;
+	if (index == 0) {
+		*interfaceType = MPIT_DECODE;
+		if (description)
+			description = SZ_DECODER_DESC;
+		if (interfacePtr) {
+			IMediaDecoder	*pDecoder = new CMDWMA;
 			pDecoder->AddRef();
-			*lpInterface = pDecoder;
+			*interfacePtr = pDecoder;
 		}
 
 		return ERR_OK;

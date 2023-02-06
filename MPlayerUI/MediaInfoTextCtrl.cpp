@@ -168,7 +168,7 @@ void CMediaInfoTextCtrl::updateShowTrackInfo() {
 string CMediaInfoTextCtrl::getMediaAttrInfo(MediaAttribute infoType) {
     string strValue;
 
-    g_Player.getCurMediaAttribute(infoType, strValue);
+    g_player.getCurMediaAttribute(infoType, strValue);
     if (infoType == MA_CHANNELS) {
         // Channel info should be deal specially
         int nChannels = atoi(strValue.c_str());

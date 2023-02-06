@@ -17,7 +17,7 @@ public:
     virtual cstr_t getDescription();
 
     virtual cstr_t getFileExtentions();
-    virtual MLRESULT getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia);
+    virtual ResultCode getMediaInfo(IMediaInput *pInput, IMediaInfo *pMedia);
 
     //
     // decode media file related methods
@@ -30,26 +30,26 @@ public:
     // ERR_DECODER_INNER_ERROR: inner error occurs at decoder
     // ERR_DECODER_UNSUPPORTED_FEATURE:
     // ERR_DECODER_INIT_FAILED:
-    virtual MLRESULT play(IMPlayer *pPlayer, IMediaInput *pInput);
-    virtual MLRESULT pause();
-    virtual MLRESULT unpause();
-    virtual MLRESULT stop();
+    virtual ResultCode play(IMPlayer *pPlayer, IMediaInput *pInput);
+    virtual ResultCode pause();
+    virtual ResultCode unpause();
+    virtual ResultCode stop();
 
     // media length, pos related functions, unit: ms
     virtual uint32_t getLength();
-    virtual MLRESULT seek(uint32_t nPos);
+    virtual ResultCode seek(uint32_t nPos);
     virtual uint32_t getPos();
 
     // volume
-    virtual MLRESULT setVolume(int volume, int nBanlance);
+    virtual ResultCode setVolume(int volume, int nBanlance);
 
 protected:
     bool init();
 
-    virtual MLRESULT init(CMPlayer *pPlayer) { return CMDAgent::init(pPlayer); }
-    virtual MLRESULT doDecode(IMedia *pMedia);
+    virtual ResultCode init(CMPlayer *pPlayer) { return CMDAgent::init(pPlayer); }
+    virtual ResultCode doDecode(cstr_t mediaUrl);
 
-    virtual void notifyEod(IMediaDecode *pDecoder, MLRESULT nError) { }
+    virtual void notifyEod(IMediaDecoder *pDecoder, ResultCode nError) { }
 
     bool isOK();
 

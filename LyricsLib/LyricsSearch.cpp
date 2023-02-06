@@ -139,20 +139,20 @@ bool operator<(const LrcSearchResult &l1, const LrcSearchResult &l2) {
 }
 
 //////////////////////////////////////////////////////////////////////
-// V_LRCSEARCHRESULT
+// ListLyrSearchResults
 //////////////////////////////////////////////////////////////////////
-bool V_LRCSEARCHRESULT::addResult(const LrcSearchResult &Result) {
+bool ListLyrSearchResults::addResult(const LrcSearchResult &result) {
     for (iterator it = begin(); it != end(); it++) {
-        if (strcasecmp((*it).strUrl.c_str(), Result.strUrl.c_str()) == 0) {
+        if (strcasecmp((*it).strUrl.c_str(), result.strUrl.c_str()) == 0) {
             return true;
         }
     }
 
-    push_back(Result);
+    push_back(result);
     return true;
 }
 
-bool V_LRCSEARCHRESULT::isAllTxtLyrics() const {
+bool ListLyrSearchResults::isAllTxtLyrics() const {
     for (const_iterator it = begin(); it != end(); ++it) {
         const LrcSearchResult &result = *it;
         if (!fileIsExtSame(result.strUrl.c_str(), ".txt")) {
@@ -162,7 +162,7 @@ bool V_LRCSEARCHRESULT::isAllTxtLyrics() const {
     return true;
 }
 
-V_LRCSEARCHRESULT::iterator V_LRCSEARCHRESULT::getTheBestMatchLyrics(bool bCheckExist) {
+ListLyrSearchResults::iterator ListLyrSearchResults::getTheBestMatchLyrics(bool bCheckExist) {
     float nValueMax = 0;
     iterator itMax = begin();
     for (iterator it = begin(); it != end(); it++) {
@@ -184,7 +184,7 @@ V_LRCSEARCHRESULT::iterator V_LRCSEARCHRESULT::getTheBestMatchLyrics(bool bCheck
     return itMax;
 }
 
-void V_LRCSEARCHRESULT::updateLyricsName() {
+void ListLyrSearchResults::updateLyricsName() {
     for (iterator it = begin(); it != end(); it++) {
         LrcSearchResult &result = *it;
 
@@ -194,7 +194,7 @@ void V_LRCSEARCHRESULT::updateLyricsName() {
     }
 }
 
-LrcSearchResult *V_LRCSEARCHRESULT::searchByUrl(cstr_t szUrl) {
+LrcSearchResult *ListLyrSearchResults::searchByUrl(cstr_t szUrl) {
     for (iterator it = begin(); it != end(); it++) {
         LrcSearchResult &result = *it;
 
@@ -205,7 +205,7 @@ LrcSearchResult *V_LRCSEARCHRESULT::searchByUrl(cstr_t szUrl) {
     return nullptr;
 }
 
-LrcSearchResult *V_LRCSEARCHRESULT::getByOrder(int n) {
+LrcSearchResult *ListLyrSearchResults::getByOrder(int n) {
     for (iterator it = begin(); it != end(); it++, n--) {
         if (n == 0) {
             return &(*it);
@@ -214,7 +214,7 @@ LrcSearchResult *V_LRCSEARCHRESULT::getByOrder(int n) {
     return nullptr;
 }
 
-void V_LRCSEARCHRESULT::deleteByOrder(int n) {
+void ListLyrSearchResults::deleteByOrder(int n) {
     for (iterator it = begin(); it != end(); it++, n--) {
         if (n == 0) {
             erase(it);
@@ -232,7 +232,7 @@ bool isSupportedOpenFileType(MLFileType fileType) {
 // * Name is same as song file name.
 // * Title & artist are match.
 //
-void searchMatchLyricsInDir(cstr_t szDir, CLyricsSearchParameter &searchParam, V_LRCSEARCHRESULT &vLyrics, bool bIncludeSub) {
+void searchMatchLyricsInDir(cstr_t szDir, CLyricsSearchParameter &searchParam, ListLyrSearchResults &vLyrics, bool bIncludeSub) {
     if (isEmptyString(szDir)) {
         return;
     }
@@ -284,7 +284,7 @@ void searchMatchLyricsInDir(cstr_t szDir, CLyricsSearchParameter &searchParam, V
 
 string removePrefixOfAcckey(cstr_t szStr);
 
-int searchEmbeddedLyrics(cstr_t szSongFile, V_LRCSEARCHRESULT &vLyrics, bool bOnlyListAvailable) {
+int searchEmbeddedLyrics(cstr_t szSongFile, ListLyrSearchResults &vLyrics, bool bOnlyListAvailable) {
     VecStrings vLyricsNames;
     int nRet = MediaTags::getEmbeddedLyrics(szSongFile, vLyricsNames);
     if (nRet != ERR_OK) {

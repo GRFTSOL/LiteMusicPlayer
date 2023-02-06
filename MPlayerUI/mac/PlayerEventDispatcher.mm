@@ -39,11 +39,11 @@
 }
 
 -(void)onTimer {
-    if (g_Player.isUseSeekTimeAsPlayingTime()) {
+    if (g_player.isUseSeekTimeAsPlayingTime()) {
         return;
     }
 
-    int nPlayPos = g_Player.getPlayPos();
+    int nPlayPos = g_player.getPlayPos();
     g_LyricData.SetPlayElapsedTime(nPlayPos);
 
     CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);

@@ -10,7 +10,7 @@
 #endif // _MSC_VER > 1000
 
 #include "../MPShared/SkinScrollText.h"
-#include "../MPlayerEngine/IMPlayer.h"
+#include "../MPlayerEngine/IPlayerCore.h"
 
 class CMediaInfoTextCtrl : public CSkinScrollText
 {

@@ -45,7 +45,6 @@ class CMLClientSession;
 class CPreferenceDlg;
 class CDownloadTask;
 class CMPlayerApp;
-class CMPEventsDispatcher;
 class CMLData;
 
 
@@ -102,7 +101,6 @@ public:
     virtual void postQuitMessage() override;
 
 protected:
-    virtual CEventsDispatcher *newEventPatcher() override;
     virtual CSkinFactory *newSkinFactory() override;
 
 public:

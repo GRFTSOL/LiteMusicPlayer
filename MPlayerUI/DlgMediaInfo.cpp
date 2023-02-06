@@ -278,9 +278,8 @@ protected:
 
 //////////////////////////////////////////////////////////////////////////
 
-CDlgMediaInfo::CDlgMediaInfo(IMedia *pMedia) : CMPSkinWnd() {
+CDlgMediaInfo::CDlgMediaInfo(const MediaPtr &media) : CMPSkinWnd(), m_media(media) {
     m_pOldPage = nullptr;
-    m_pMedia = pMedia;
 
     m_vInfoPages.push_back(new CDlgMediaInfoPageBasic());
     m_vInfoPages.push_back(new CDlgMediaInfoPageDetail());
@@ -319,9 +318,7 @@ bool CDlgMediaInfo::onCustomCommand(int nId) {
 }
 
 void CDlgMediaInfo::onDestroy() {
-    if (m_pMedia) {
-        m_pMedia.release();
-    }
+    m_media = nullptr;
 
     CMPSkinWnd::onDestroy();
 }
@@ -444,44 +441,36 @@ void CDlgMediaInfo::reloadMediaInfo() {
     //
     // get Media file name and info
     //
-    CXStr strMedia;
-    MLRESULT nRet;
-
     clear();
 
-    if (!m_pMedia) {
+    if (!m_media) {
         return;
     }
 
     m_nSupportedMediaTagType = 0;
-    nRet = m_pMedia->getSourceUrl(&strMedia);
-    if (nRet != ERR_OK) {
-        return;
-    }
-
-    m_strMediaFile = strMedia.c_str();
+    m_strMediaFile = m_media->url;
     m_nSupportedMediaTagType = getSupportedMTTByExt(m_strMediaFile.c_str());
 
     // load id3v1 tag
     BasicMediaTags tags;
     if (m_nSupportedMediaTagType & MTT_ID3V1) {
         CID3v1 id3v1;
-        nRet = id3v1.getTag(m_strMediaFile.c_str(), tags);
+        id3v1.getTag(m_strMediaFile.c_str(), tags);
     }
 
     // load id3v2 tag
     if (m_nSupportedMediaTagType & MTT_ID3V2) {
         CID3v2IF id3v2(m_nEncodingOfConvertAnsi);
 
-        nRet = id3v2.open(m_strMediaFile.c_str(), false, false);
-        if (nRet == ERR_OK) {
+        int ret = id3v2.open(m_strMediaFile.c_str(), false, false);
+        if (ret == ERR_OK) {
             // ID3v2 general tags
-            nRet = id3v2.getTags(tags);
+            ret = id3v2.getTags(tags);
 
             // Id3v2 lyrics
             ID3v2UnsynchLyrics lyrics;
-            nRet = id3v2.getUnsyncLyrics(lyrics);
-            if (nRet == ERR_OK) {
+            ret = id3v2.getUnsyncLyrics(lyrics);
+            if (ret == ERR_OK) {
                 m_strLyrics = lyrics.m_strLyrics.c_str();
             }
 
@@ -498,11 +487,11 @@ void CDlgMediaInfo::reloadMediaInfo() {
     m_comment = tags.comments;
 }
 
-void showMediaInfoDialog(CSkinWnd *pParent, IMedia *pMedia) {
+void showMediaInfoDialog(CSkinWnd *pParent, const MediaPtr &media) {
     SkinWndStartupInfo skinWndStartupInfo(_SZ_SKINWND_CLASS_NAME, _SZ_SKINWND_CLASS_NAME,
         "MediaInfo.xml", pParent);
 
-    CDlgMediaInfo *pWndMediaInfo = new CDlgMediaInfo(pMedia);
+    CDlgMediaInfo *pWndMediaInfo = new CDlgMediaInfo(media);
     skinWndStartupInfo.pSkinWnd = pWndMediaInfo;
 
     CSkinApp::getInstance()->getSkinFactory()->activeOrCreateSkinWnd(skinWndStartupInfo);

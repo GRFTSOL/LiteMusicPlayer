@@ -26,11 +26,11 @@ cstr_t CMDAgent::getFileExtentions() {
     }
 }
 
-MLRESULT CMDAgent::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia) {
-    MLRESULT nRet;
+ResultCode CMDAgent::getMediaInfo(IMediaInput *pInput, IMediaInfo *pMedia) {
+    ResultCode nRet;
 
-    CMPAutoPtr<IMediaDecode> pDecode;
-    nRet = m_pPlayer->m_pluginMgrAgent.newDecoder(pInput, &pDecode);
+    CMPAutoPtr<IMediaDecoder> pDecode;
+    nRet = m_pPlayer->m_pluginMgr.newDecoder(pInput, &pDecode);
     if (nRet != ERR_OK) {
         return nRet;
     }
@@ -68,7 +68,7 @@ bool CMDAgent::isUseOutputPlug() {
 //  ERR_DECODER_INNER_ERROR:    inner error occurs at decoder
 //  ERR_DECODER_UNSUPPORTED_FEATURE:
 //  ERR_DECODER_INIT_FAILED:
-MLRESULT CMDAgent::play(IMPlayer *pPlayer, IMediaInput *pInput) {
+ResultCode CMDAgent::play(IMPlayer *pPlayer, IMediaInput *pInput) {
     if (m_pMediaDecode.p) {
         return m_pMediaDecode->play(pPlayer, pInput);
     } else {
@@ -76,7 +76,7 @@ MLRESULT CMDAgent::play(IMPlayer *pPlayer, IMediaInput *pInput) {
     }
 }
 
-MLRESULT CMDAgent::pause() {
+ResultCode CMDAgent::pause() {
     if (m_pMediaDecode.p) {
         return m_pMediaDecode->pause();
     } else {
@@ -84,7 +84,7 @@ MLRESULT CMDAgent::pause() {
     }
 }
 
-MLRESULT CMDAgent::unpause() {
+ResultCode CMDAgent::unpause() {
     if (m_pMediaDecode.p) {
         return m_pMediaDecode->unpause();
     } else {
@@ -92,10 +92,10 @@ MLRESULT CMDAgent::unpause() {
     }
 }
 
-MLRESULT CMDAgent::stop() {
-    MLRESULT nRet;
+ResultCode CMDAgent::stop() {
+    ResultCode nRet;
 
-    IMediaDecode *pMediaDecode = m_pMediaDecode;
+    IMediaDecoder *pMediaDecode = m_pMediaDecode;
     pMediaDecode->addRef();
     nRet = pMediaDecode->stop();
     pMediaDecode->release();
@@ -111,7 +111,7 @@ uint32_t CMDAgent::getLength() {
     }
 }
 
-MLRESULT CMDAgent::seek(uint32_t nPos) {
+ResultCode CMDAgent::seek(uint32_t nPos) {
     if (m_pMediaDecode.p) {
         return m_pMediaDecode->seek(nPos);
     } else {
@@ -128,7 +128,7 @@ uint32_t CMDAgent::getPos() {
 }
 
 // volume
-MLRESULT CMDAgent::setVolume(int volume, int nBanlance) {
+ResultCode CMDAgent::setVolume(int volume, int nBanlance) {
     if (m_pMediaDecode.p) {
         return m_pMediaDecode->setVolume(volume, nBanlance);
     } else {
@@ -136,28 +136,22 @@ MLRESULT CMDAgent::setVolume(int volume, int nBanlance) {
     }
 }
 
-MLRESULT CMDAgent::init(CMPlayer *pPlayer) {
+ResultCode CMDAgent::init(CMPlayer *pPlayer) {
     m_pPlayer = pPlayer;
     return ERR_OK;
 }
 
-MLRESULT CMDAgent::doDecode(IMedia *pMedia) {
-    MLRESULT nRet;
-    CXStr strMedia;
-    CMPAutoPtr<IMediaDecode> pDecoder;
+ResultCode CMDAgent::doDecode(cstr_t mediaUrl) {
+    ResultCode nRet;
+    CMPAutoPtr<IMediaDecoder> pDecoder;
     CMPAutoPtr<IMediaInput> pInput;
 
-    nRet = pMedia->getSourceUrl(&strMedia);
+    nRet = m_pPlayer->m_pluginMgr.newInput(mediaUrl, &pInput);
     if (nRet != ERR_OK) {
         return nRet;
     }
 
-    nRet = m_pPlayer->m_pluginMgrAgent.newInput(strMedia.c_str(), &pInput);
-    if (nRet != ERR_OK) {
-        return nRet;
-    }
-
-    nRet = m_pPlayer->m_pluginMgrAgent.newDecoder(pInput, &pDecoder);
+    nRet = m_pPlayer->m_pluginMgr.newDecoder(pInput, &pDecoder);
     if (nRet != ERR_OK) {
         return nRet;
     }
@@ -169,21 +163,21 @@ MLRESULT CMDAgent::doDecode(IMedia *pMedia) {
 
     m_pMediaInput = pInput;
     m_pMediaDecode = pDecoder;
-    m_pMedia = pMedia;
+    m_mediaUrl = mediaUrl;
 
-    m_pMediaDecode->getMediaInfo(m_pPlayer, m_pMediaInput, m_pMedia);
+    m_pMediaDecode->getMediaInfo(m_pMediaInput, m_pMedia);
 
     nRet = m_pMediaDecode->play(m_pPlayer, m_pMediaInput);
     if (nRet != ERR_OK) {
-        if (nRet == ERR_MI_NOT_FOUND && pMedia->getID() != MEDIA_ID_INVALID) {
+        if (nRet == ERR_MI_NOT_FOUND && pMedia->ID != MEDIA_ID_INVALID) {
             // the source can't be opened, set it as deleted.
-            m_pPlayer->m_pMediaLib->setDeleted(&pMedia);
+            m_pPlayer->m_mediaLib->setDeleted(&pMedia);
         }
         goto R_FAILED;
     }
 
     if (m_pPlayer->m_volume != -1) {
-        if (m_pPlayer->m_bMute) {
+        if (m_pPlayer->m_isMute) {
             m_pMediaDecode->setVolume(0, 0);
         } else {
             m_pMediaDecode->setVolume(m_pPlayer->m_volume, m_pPlayer->m_balance);
@@ -198,7 +192,7 @@ R_FAILED:
     return nRet;
 }
 
-void CMDAgent::notifyEod(IMediaDecode *pDecoder, MLRESULT nError) {
+void CMDAgent::notifyEod(IMediaDecoder *pDecoder, ResultCode nError) {
     if (m_pMediaDecode.p == pDecoder) {
         m_pMediaDecode.release();
     }

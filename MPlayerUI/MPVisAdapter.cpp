@@ -10,11 +10,11 @@ CMPVisAdapter::~CMPVisAdapter() {
 
 }
 
-MLRESULT CMPVisAdapter::init(IMPlayer *pPlayer) {
+ResultCode CMPVisAdapter::init(IMPlayer *pPlayer) {
     return ERR_OK;
 }
 
-MLRESULT CMPVisAdapter::quit() {
+ResultCode CMPVisAdapter::quit() {
     return ERR_OK;
 }
 

@@ -71,8 +71,8 @@ void CEventsDispatcherBase::registerHandler(EventType eventType, IEventHandler *
         m_vListEventHandler.resize(eventType + 1);
     }
 
-    LIST_EVENTHANDLER &listHandler = m_vListEventHandler[eventType];
-    LIST_EVENTHANDLER::iterator it, itEnd;
+    ListEventHandlers &listHandler = m_vListEventHandler[eventType];
+    ListEventHandlers::iterator it, itEnd;
 
     itEnd = listHandler.end();
     for (it = listHandler.begin(); it != itEnd; ++it) {
@@ -90,8 +90,8 @@ void CEventsDispatcherBase::unRegisterHandler(EventType eventType, IEventHandler
     }
 
     MutexAutolock autoLock(m_mutex);
-    LIST_EVENTHANDLER &listHandler = m_vListEventHandler[eventType];
-    LIST_EVENTHANDLER::iterator it, itEnd;
+    ListEventHandlers &listHandler = m_vListEventHandler[eventType];
+    ListEventHandlers::iterator it, itEnd;
 
     itEnd = listHandler.end();
     for (it = listHandler.begin(); it != itEnd; ++it) {
@@ -106,8 +106,8 @@ void CEventsDispatcherBase::unRegisterHandler(IEventHandler *pHandler) {
     MutexAutolock autoLock(m_mutex);
 
     for (size_t i = 0; i < m_vListEventHandler.size(); i++) {
-        LIST_EVENTHANDLER &listHandler = m_vListEventHandler[i];
-        LIST_EVENTHANDLER::iterator it, itEnd;
+        ListEventHandlers &listHandler = m_vListEventHandler[i];
+        ListEventHandlers::iterator it, itEnd;
 
         itEnd = listHandler.end();
         for (it = listHandler.begin(); it != itEnd; ++it) {
@@ -130,10 +130,10 @@ void CEventsDispatcherBase::dispatchSyncEvent(IEvent *pEvent) {
     }
 
     m_mutex.lock();
-    LIST_EVENTHANDLER listHandler = m_vListEventHandler[eventType];
+    ListEventHandlers listHandler = m_vListEventHandler[eventType];
     m_mutex.unlock();
 
-    for (LIST_EVENTHANDLER::iterator it = listHandler.begin(); it != listHandler.end(); ++it) {
+    for (ListEventHandlers::iterator it = listHandler.begin(); it != listHandler.end(); ++it) {
         IEventHandler *pHandler = *it;
         pHandler->onEvent(pEvent);
     }

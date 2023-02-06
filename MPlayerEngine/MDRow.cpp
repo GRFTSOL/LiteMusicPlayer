@@ -22,7 +22,7 @@ CMDRow::CMDRow() {
     m_bKillThread = false;
     m_nSeekPos = 0;
     m_bSeekFlag = false;
-    m_state = PS_STOPED;
+    m_state = PS_STOPPED;
 }
 
 CMDRow::~CMDRow() {
@@ -40,7 +40,7 @@ cstr_t CMDRow::getFileExtentions() {
     return ".raw|raw files";
 }
 
-MLRESULT CMDRow::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia) {
+ResultCode CMDRow::getMediaInfo(IMediaInput *pInput, IMediaInfo *pMedia) {
     uint32_t nFileSize;
     pInput->getSize(nFileSize);
 
@@ -63,18 +63,18 @@ bool CMDRow::isUseOutputPlug() {
     return true;
 }
 
-MLRESULT CMDRow::play(IMPlayer *pPlayer, IMediaInput *pInput) {
+ResultCode CMDRow::play(IMPlayer *pPlayer, IMediaInput *pInput) {
     assert(pPlayer && pInput);
     if (!pPlayer || !pInput) {
         return ERR_INVALID_HANDLE;
     }
 
-    MLRESULT nRet;
+    ResultCode nRet;
     uint32_t nFileSize;
 
     stop();
 
-    m_state = PS_STOPED;
+    m_state = PS_STOPPED;
     m_bPaused = false;
     m_nSeekPos = 0;
     m_bSeekFlag = false;
@@ -132,17 +132,17 @@ R_FAILED:
     return nRet;
 }
 
-MLRESULT CMDRow::pause() {
+ResultCode CMDRow::pause() {
     m_state = PS_PAUSED;
     return m_pOutput->pause(true);
 }
 
-MLRESULT CMDRow::unpause() {
+ResultCode CMDRow::unpause() {
     m_state = PS_PLAYING;
     return m_pOutput->pause(false);
 }
 
-MLRESULT CMDRow::stop() {
+ResultCode CMDRow::stop() {
     m_bKillThread = true;
 
     if (m_state == PS_PAUSED) {
@@ -158,7 +158,7 @@ uint32_t CMDRow::getLength() {
     return m_nLengthMs;
 }
 
-MLRESULT CMDRow::seek(uint32_t dwPos) {
+ResultCode CMDRow::seek(uint32_t dwPos) {
     m_bSeekFlag = true;
     m_nSeekPos = dwPos;
 
@@ -175,7 +175,7 @@ uint32_t CMDRow::getPos() {
     }
 }
 
-MLRESULT CMDRow::setVolume(int volume, int nBanlance) {
+ResultCode CMDRow::setVolume(int volume, int nBanlance) {
     return m_pOutput->setVolume(volume, nBanlance);
 }
 
@@ -228,7 +228,7 @@ void CMDRow::decodeThreadProc() {
         sleep(10);
     }
 
-    m_state = PS_STOPED;
+    m_state = PS_STOPPED;
 
     m_pOutput->stop();
     m_pOutput->release();

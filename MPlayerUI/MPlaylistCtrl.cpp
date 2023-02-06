@@ -100,8 +100,8 @@ static uint32_t searchWithKeyword(cstr_t keyword, cstr_t text, CSkinListCtrl::Ve
     return 0;
 }
 
-bool deleteSelectedItemsInPlaylist(IPlaylist *playlist, vector<int> &vSelIndex) {
-    MLRESULT nRet = ERR_OK;
+bool deleteSelectedItemsInPlaylist(Playlist *playlist, vector<int> &vSelIndex) {
+    ResultCode nRet = ERR_OK;
     long n;
     long count = 0;
 
@@ -119,20 +119,13 @@ bool deleteSelectedItemsInPlaylist(IPlaylist *playlist, vector<int> &vSelIndex) 
 
     for (n = 0; n < (long)vSelIndex.size(); n++) {
         assert(vSelIndex[n] < count && vSelIndex[n] >= 0);
-        nRet = playlist->removeItem(vSelIndex[n]);
-        if (nRet != ERR_OK) {
-            break;
-        }
+        playlist->removeItem(vSelIndex[n]);
     }
 
     return nRet == ERR_OK;
 }
 
-bool offsetAllSelectedRowInPlaylist(IPlaylist *playlist, vector<int> &vSelIndex, bool bDown) {
-    MLRESULT nRet = ERR_OK;
-    long n;
-    long count = 0;
-
+bool offsetAllSelectedRowInPlaylist(Playlist *playlist, vector<int> &vSelIndex, bool bDown) {
     assert(vSelIndex.size() > 0);
     if (vSelIndex.size() == 0) {
         return false;
@@ -140,30 +133,24 @@ bool offsetAllSelectedRowInPlaylist(IPlaylist *playlist, vector<int> &vSelIndex,
 
     sort(vSelIndex.begin(), vSelIndex.end());
 
-    count = playlist->getCount();
+    auto count = playlist->getCount();
     if (count == 0) {
         return false;
     }
 
     if (bDown) {
-        for (n = (long)vSelIndex.size() - 1; n >= 0; n--) {
+        for (int n = (int)vSelIndex.size() - 1; n >= 0; n--) {
             assert(vSelIndex[n] < count && vSelIndex[n] >= 0);
-            nRet = playlist->moveItem(vSelIndex[n], vSelIndex[n] + 1);
-            if (nRet != ERR_OK) {
-                break;
-            }
+            playlist->moveItem(vSelIndex[n], vSelIndex[n] + 1);
         }
     } else {
-        for (n = 0; n < (long)vSelIndex.size(); n++) {
+        for (int n = 0; n < (int)vSelIndex.size(); n++) {
             assert(vSelIndex[n] < count && vSelIndex[n] >= 0);
-            nRet = playlist->moveItem(vSelIndex[n], vSelIndex[n] - 1);
-            if (nRet != ERR_OK) {
-                break;
-            }
+            playlist->moveItem(vSelIndex[n], vSelIndex[n] - 1);
         }
     }
 
-    return nRet == ERR_OK;
+    return true;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -242,13 +229,13 @@ void CMPlaylistCtrl::onEvent(const IEvent *pEvent) {
             makeSureRowVisible(m_nowPlayingRow);
         }
 
-        CMPAutoPtr<IMedia> media;
-        int row = g_Player.getCurrentMediaIndex();
-        if (g_Player.getCurrentMedia(&media) == ERR_OK && row < getRowCount()) {
-            string strTitle = g_Player.formatMediaTitle(media);
+        int row = g_player.getCurrentMediaIndex();
+        auto media = g_player.getCurrentMedia();
+        if (media && row < getRowCount()) {
+            string strTitle = g_player.formatMediaTitle(media.get());
             setItemText(row, 1, strTitle.c_str());
 
-            setItemMediaDuration(row, (media->getDuration() + 500) / 1000); // ms
+            setItemMediaDuration(row, (media->duration + 500) / 1000); // ms
         }
 
         invalidate();
@@ -257,11 +244,11 @@ void CMPlaylistCtrl::onEvent(const IEvent *pEvent) {
 
 bool CMPlaylistCtrl::onCommand(int nId) {
     if (nId == IDC_SHOW_IN_FINDER) {
-        CMPAutoPtr<IPlaylist> playlist;
+        PlaylistPtr playlist;
         if (m_searchResults) {
             playlist = m_searchResults;
         } else {
-            g_Player.getCurrentPlaylist(&playlist);
+            playlist = g_player.getCurrentPlaylist();
         }
 
         VecStrings files;
@@ -269,11 +256,9 @@ bool CMPlaylistCtrl::onCommand(int nId) {
         while (true) {
             i = getNextSelectedItem(i);
             if (i >= 0 && i < (int)playlist->getCount()) {
-                CMPAutoPtr<IMedia> media;
-                if (playlist->getItem(i, &media) == ERR_OK) {
-                    CXStr url;
-                    media->getSourceUrl(&url);
-                    files.push_back(url.c_str());
+                auto media = playlist->getItem(i);
+                if (media) {
+                    files.push_back(media->url);
                 }
             } else {
                 break;
@@ -303,7 +288,7 @@ bool CMPlaylistCtrl::onHandleKeyDown(uint32_t code, uint32_t flags) {
             m_editorSearch->setText("");
         }
 
-        m_searchResults.release();
+        m_searchResults = nullptr;
         m_categoriesResults.clear();
         updatePlaylist(true);
     } else if (code == VK_DELETE) {
@@ -364,19 +349,16 @@ void CMPlaylistCtrl::deleteSelectedItems() {
         return;
     }
 
-    CMPAutoPtr<IPlaylist> playlist;
-
-    if (g_Player.getCurrentPlaylist(&playlist) == ERR_OK) {
-        if (deleteSelectedItemsInPlaylist(playlist, vSelItems)) {
-            nItem = vSelItems[0];
-            if (nItem >= getItemCount()) {
-                nItem = getItemCount() - 1;
-            }
-            if (nItem >= 0) {
-                setItemSelectionState(nItem, true);
-            }
-            g_Player.setPlaylistModified(true);
+    auto playlist = g_player.getCurrentPlaylist();
+    if (deleteSelectedItemsInPlaylist(playlist.get(), vSelItems)) {
+        nItem = vSelItems[0];
+        if (nItem >= getItemCount()) {
+            nItem = getItemCount() - 1;
         }
+        if (nItem >= 0) {
+            setItemSelectionState(nItem, true);
+        }
+        g_player.setPlaylistModified(true);
     }
 }
 
@@ -392,13 +374,10 @@ void CMPlaylistCtrl::offsetAllSelectedItems(bool bMoveDown) {
         vSelItems.push_back(nItem);
     }
 
-    CMPAutoPtr<IPlaylist> playlist;
-
-    if (g_Player.getCurrentPlaylist(&playlist) == ERR_OK) {
-        if (offsetAllSelectedRowInPlaylist(playlist, vSelItems, bMoveDown)) {
-            // UpdateButtonState();
-            g_Player.setPlaylistModified(true);
-        }
+    auto playlist = g_player.getCurrentPlaylist();
+    if (offsetAllSelectedRowInPlaylist(playlist.get(), vSelItems, bMoveDown)) {
+        // UpdateButtonState();
+        g_player.setPlaylistModified(true);
     }
 }
 
@@ -436,16 +415,15 @@ void CMPlaylistCtrl::onEditorKillFocus() {
     }
 }
 
-void CMPlaylistCtrl::insertMedia(CMPAutoPtr<IPlaylist> &playlist, int index, bool redraw) {
-    CMPAutoPtr<IMedia> media;
-
-    if (playlist->getItem(index, &media) == ERR_OK) {
+void CMPlaylistCtrl::insertMedia(const PlaylistPtr &playlist, int index, bool redraw) {
+    auto media = playlist->getItem(index);
+    if (media) {
         insertItem(index, itos(index + 1).c_str(), 0, 0, false);
 
-        string strTitle = g_Player.formatMediaTitle(media);
+        string strTitle = g_player.formatMediaTitle(media.get());
         setItemText(index, 1, strTitle.c_str(), false);
 
-        setItemMediaDuration(index, (media->getDuration() + 500) / 1000); // ms
+        setItemMediaDuration(index, (media->duration + 500) / 1000); // ms
     }
 
     if (redraw) {
@@ -453,15 +431,15 @@ void CMPlaylistCtrl::insertMedia(CMPAutoPtr<IPlaylist> &playlist, int index, boo
     }
 }
 
-void CMPlaylistCtrl::appendMedia(CMPAutoPtr<IMedia> &media, const CSkinListCtrl::VecTextColor &vItemClrs) {
+void CMPlaylistCtrl::appendMedia(const MediaPtr &media, const CSkinListCtrl::VecTextColor &vItemClrs) {
     auto index = getRowCount();
 
     insertItem(index, itos(index + 1).c_str(), 0, 0, false);
 
-    string strTitle = g_Player.formatMediaTitle(media);
+    string strTitle = g_player.formatMediaTitle(media.get());
     setItemTextEx(index, 1, strTitle.c_str(), vItemClrs);
 
-    setItemMediaDuration(index, (media->getDuration() + 500) / 1000); // ms
+    setItemMediaDuration(index, (media->duration + 500) / 1000); // ms
 }
 
 void CMPlaylistCtrl::updateMediaIndex() {
@@ -479,11 +457,7 @@ void CMPlaylistCtrl::onCurrentPlaylistEvent(CEventPlaylistChanged *pEventPlaylis
     } else if (pEventPlaylistChanged->action == IMPEvent::PCA_CLEAR) {
         deleteAllItems();
     } else if (pEventPlaylistChanged->action == IMPEvent::PCA_INSERT) {
-        CMPAutoPtr<IPlaylist> playlist;
-        if (g_Player.getCurrentPlaylist(&playlist) != ERR_OK) {
-            return;
-        }
-
+        auto playlist = g_player.getCurrentPlaylist();
         insertMedia(playlist, pEventPlaylistChanged->nIndex, false);
         updateMediaIndex();
     } else if (pEventPlaylistChanged->action == IMPEvent::PCA_MOVE) {
@@ -532,7 +506,7 @@ void CMPlaylistCtrl::playItem(int index) {
     if (!m_searchResults) {
         // 点击播放列表
         if (index != -1) {
-            g_Player.playMedia(index);
+            g_player.playMedia(index);
         }
         return;
     }
@@ -541,26 +515,23 @@ void CMPlaylistCtrl::playItem(int index) {
     // 点击的是搜索结果，播放选中的结果
     //
 
-    CMPAutoPtr<IMediaLibrary> mediaLib;
-    g_Player.getMediaLibrary(&mediaLib);
+    auto mediaLib = g_player.getMediaLibrary();
 
     if (index < 0) {
         // 未选中，则播放所有的搜索结果
         set<int> ids;
-        CMPAutoPtr<IPlaylist> playlist;
-        g_Player.newPlaylist(&playlist);
+        auto playlist = g_player.newPlaylist();
 
         // 添加 categories 中的结果
         for (auto &category : m_categoriesResults) {
-            CMPAutoPtr<IPlaylist> tmp;
-            if (mediaLib->getMediaCategory(category, &tmp) == ERR_OK) {
+            PlaylistPtr tmp = mediaLib->getMediaCategory(category);
+            if (tmp) {
                 int count = tmp->getCount();
                 for (int i = 0; i < count; i++) {
-                    CMPAutoPtr<IMedia> m;
-                    if (tmp->getItem(i, &m) == ERR_OK) {
-                        auto id = m->getID();
-                        if (ids.find(id) == ids.end()) {
-                            ids.insert(id);
+                    auto m = tmp->getItem(i);
+                    if (m) {
+                        if (ids.find(m->ID) == ids.end()) {
+                            ids.insert(m->ID);
                             playlist->insertItem(-1, m);
                         }
                     }
@@ -571,49 +542,46 @@ void CMPlaylistCtrl::playItem(int index) {
         // 添加单独的歌曲
         int count = m_searchResults->getCount();
         for (int i = 0; i < count; i++) {
-            CMPAutoPtr<IMedia> m;
-            if (m_searchResults->getItem(i, &m) == ERR_OK) {
-                auto id = m->getID();
-                if (ids.find(id) == ids.end()) {
-                    ids.insert(id);
+            auto m = m_searchResults->getItem(i);
+            if (m) {
+                if (ids.find(m->ID) == ids.end()) {
+                    ids.insert(m->ID);
                     playlist->insertItem(-1, m);
                 }
             }
         }
 
-        g_Player.setCurrentPlaylist(playlist);
-        g_Player.setCurrentMediaInPlaylist(0);
-        g_Player.play();
+        g_player.setCurrentPlaylist(playlist);
+        g_player.setCurrentMediaInPlaylist(0);
+        g_player.play();
         return;
     }
 
     if (index < (int)m_categoriesResults.size()) {
         // 选中的结果在 categories 中
-        CMPAutoPtr<IPlaylist> playlist;
-        if (mediaLib->getMediaCategory(m_categoriesResults[index], &playlist) == ERR_OK) {
-            g_Player.setCurrentPlaylist(playlist);
-            g_Player.setCurrentMediaInPlaylist(0);
-            g_Player.play();
+        auto playlist = mediaLib->getMediaCategory(m_categoriesResults[index]);
+        if (playlist) {
+            g_player.setCurrentPlaylist(playlist);
+            g_player.setCurrentMediaInPlaylist(0);
+            g_player.play();
         }
     } else {
         // 选中的结果在剩余的歌曲中，播放所有的歌曲
         index -= (int)m_categoriesResults.size();
 
-        g_Player.setCurrentPlaylist(m_searchResults);
-        g_Player.setCurrentMediaInPlaylist(index);
-        g_Player.play();
+        g_player.setCurrentPlaylist(m_searchResults);
+        g_player.setCurrentMediaInPlaylist(index);
+        g_player.play();
     }
 }
 
 void CMPlaylistCtrl::updatePlaylist(bool isRedraw) {
-    CMPAutoPtr<IPlaylist> playlist;
+    PlaylistPtr playlist;
 
     if (m_searchResults) {
         playlist = m_searchResults;
     } else {
-        if (g_Player.getCurrentPlaylist(&playlist) != ERR_OK) {
-            return;
-        }
+        playlist = g_player.getCurrentPlaylist();
     }
 
     deleteAllItems(false);
@@ -634,14 +602,14 @@ void CMPlaylistCtrl::setNowPlaying() {
     m_nowPlayingRow = -1;
 
     if (m_searchResults) {
-        CMPAutoPtr<IMedia> media;
-        if (g_Player.getCurrentMedia(&media) == ERR_OK) {
-            auto id = media->getID();
+        auto media = g_player.getCurrentMedia();
+        if (media) {
+            auto id = media->ID;
             uint32_t count = m_searchResults->getCount();
             for (uint32_t i = 0; i < count; i++) {
-                CMPAutoPtr<IMedia> m;
-                if (m_searchResults->getItem(i, &m) == ERR_OK) {
-                    if (m->getID() == id) {
+                auto m = m_searchResults->getItem(i);
+                if (m) {
+                    if (m->ID == id) {
                         m_nowPlayingRow = i;
                         break;
                     }
@@ -649,14 +617,14 @@ void CMPlaylistCtrl::setNowPlaying() {
             }
         }
     } else {
-        m_nowPlayingRow = g_Player.getCurrentMediaIndex();
+        m_nowPlayingRow = g_player.getCurrentMediaIndex();
     }
 }
 
 void CMPlaylistCtrl::doSearch(cstr_t keyword) {
     // clear old results
     if (m_searchResults) {
-        m_searchResults.release();
+        m_searchResults = nullptr;
     }
     m_categoriesResults.clear();
     deleteAllItems(false);
@@ -666,9 +634,7 @@ void CMPlaylistCtrl::doSearch(cstr_t keyword) {
         return;
     }
 
-    if (g_Player.newPlaylist(&m_searchResults) != ERR_OK) {
-        return;
-    }
+    m_searchResults = g_player.newPlaylist();
 
     CSkinListCtrl::VecTextColor vItemClrs;
     VecStrings vKeywords;
@@ -676,9 +642,7 @@ void CMPlaylistCtrl::doSearch(cstr_t keyword) {
 
     VecMediaCategories allCategories;
 
-    CMPAutoPtr<IMediaLibrary> mediaLib;
-    g_Player.getMediaLibrary(&mediaLib);
-
+    auto mediaLib = g_player.getMediaLibrary();
     mediaLib->getMediaCategories(allCategories);
 
     //
@@ -717,13 +681,12 @@ void CMPlaylistCtrl::doSearch(cstr_t keyword) {
     //
     // search playlist with @keyword
     //
-    CMPAutoPtr<IPlaylist> playlist(mediaLib->getAll());
+    auto playlist = mediaLib->getAll();
     int count = playlist->getCount();
     for (uint32_t i = 0; i < count; i++) {
-        CMPAutoPtr<IMedia> media;
-        auto ret = playlist->getItem(i, &media);
-        if (ret == ERR_OK) {
-            string title = CPlayer::formatMediaTitle(media);
+        auto media = playlist->getItem(i);
+        if (media) {
+            string title = CPlayer::formatMediaTitle(media.get());
 
             auto matchValue = searchWithKeyword(keyword, title.c_str(), vItemClrs);
             if (matchValue <= 0) {

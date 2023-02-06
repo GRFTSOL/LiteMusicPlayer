@@ -10,10 +10,10 @@ public:
     CMILocalFile();
     virtual ~CMILocalFile();
 
-    virtual MLRESULT open(cstr_t szSourceMedia);
+    virtual ResultCode open(cstr_t szSourceMedia);
     virtual uint32_t read(void *lpBuffer, uint32_t dwSize);
-    virtual MLRESULT seek(uint32_t dwOffset, int nOrigin = SEEK_SET);
-    virtual MLRESULT getSize(uint32_t &dwSize);
+    virtual ResultCode seek(uint32_t dwOffset, int nOrigin = SEEK_SET);
+    virtual ResultCode getSize(uint32_t &dwSize);
     virtual uint32_t getPos();
 
     virtual bool isEOF();

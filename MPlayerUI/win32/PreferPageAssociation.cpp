@@ -52,10 +52,10 @@ bool CPreferPageAssociation::onInitDialog() {
     m_listCtrl.InsertColumn(0, _TLT("File Types"), LVCFMT_LEFT, 150);
 
     vector<string> vExt;
-    g_Player.getSupportedExtentions(vExt);
+    g_player.getSupportedExtentions(vExt);
     for (int i = 0; i < (int)vExt.size(); i++) {
         int n = m_listCtrl.insertItem(m_listCtrl.getItemCount(), vExt[i].c_str());
-        if (g_Player.isExtAudioFile(vExt[i].c_str())) {
+        if (g_player.isExtAudioFile(vExt[i].c_str())) {
             m_listCtrl.setCheck(n, isAssociatedFile(vExt[i].c_str(), KEY_AUDIOFILE));
         } else {
             m_listCtrl.setCheck(n, isAssociatedFile(vExt[i].c_str(), KEY_PLAYLIST));
@@ -74,7 +74,7 @@ void CPreferPageAssociation::onDestroy() {
         bool bPlaylist;
         bool bAssociated;
 
-        bPlaylist = g_Player.isExtPlaylistFile(szExt);
+        bPlaylist = g_player.isExtPlaylistFile(szExt);
         if (bPlaylist) {
             bAssociated = isAssociatedFile(szExt, KEY_PLAYLIST);
         } else {

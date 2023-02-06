@@ -27,7 +27,6 @@
 
 #ifdef _MPLAYER
 #include "SkinTreeCtrl.h"
-#include "MPSkinVis.h"
 #endif
 
 #ifdef _WIN32
@@ -68,7 +67,6 @@ int CMPSkinFactory::init() {
     AddUIObjNewer(CSkinFilterCtrl);
 #ifdef _MPLAYER
     AddUIObjNewer(CSkinTreeCtrl);
-    AddUIObjNewer(CMPSkinVis);
 #endif
     AddUIObjNewer(CMPSkinMediaNumInfoCtrl);
     AddUIObjNewer(CMediaInfoTextCtrl);

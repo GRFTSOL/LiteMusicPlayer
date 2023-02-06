@@ -23,30 +23,30 @@ public:
 
     cstr_t getDescription();
 
-    virtual MLRESULT init(IMPlayer *pPlayer) { return ERR_OK; }
-    virtual MLRESULT quit() { return ERR_OK; }
+    virtual ResultCode init(IMPlayer *pPlayer) { return ERR_OK; }
+    virtual ResultCode quit() { return ERR_OK; }
 
-    virtual MLRESULT open(int nSampleRate, int nNumChannels, int nBitsPerSamp);
+    virtual ResultCode open(int nSampleRate, int nNumChannels, int nBitsPerSamp);
 
-    virtual MLRESULT waitForWrite();
+    virtual ResultCode waitForWrite();
 
-    virtual MLRESULT write(IFBuffer *pBuf);
-    virtual MLRESULT flush();
+    virtual ResultCode write(IFBuffer *pBuf);
+    virtual ResultCode flush();
 
-    virtual MLRESULT pause(bool bPause);
+    virtual ResultCode pause(bool bPause);
     virtual bool isPlaying();
-    virtual MLRESULT stop();
+    virtual ResultCode stop();
 
     virtual bool isOpened();
 
     // volume
-    MLRESULT setVolume(int volume, int nBanlance);
+    ResultCode setVolume(int volume, int nBanlance);
 
     virtual uint32_t getPos();
 
 protected:
-    MLRESULT doOpen();
-    MLRESULT doStop();
+    ResultCode doOpen();
+    ResultCode doStop();
 
     void fadeInSoundData(char *buf, int nLen);
     void fadeOutSoundData(char *buf, int nLen);

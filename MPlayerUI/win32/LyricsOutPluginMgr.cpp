@@ -302,13 +302,13 @@ void CLyricsOutPluginMgr::onSongChanged() {
     m_nCurLine = -1;
 
     int nDuration;
-    nDuration = g_Player.getMediaLength();
+    nDuration = g_player.getMediaLength();
 
     itEnd = m_vPlugins.end();
     for (it = m_vPlugins.begin(); it != itEnd; ++it) {
         Plugins &plugin = *it;
         if (plugin.bInitOK) {
-            plugin.plyricsOut->onSongChanged(g_Player.getArtist(), g_Player.getTitle(), nDuration);
+            plugin.plyricsOut->onSongChanged(g_player.getArtist(), g_player.getTitle(), nDuration);
         }
     }
 }
@@ -360,7 +360,7 @@ int CLyricsOutPluginMgr::getPlayPos() {
 
 bool CLyricsOutPluginMgr::getMediaFile(char szFile[], int nBuffLen) {
     emptyStr(szFile);
-    strcpy_safe(szFile, nBuffLen, g_Player.getSrcMedia());
+    strcpy_safe(szFile, nBuffLen, g_player.getSrcMedia());
     return !isEmptyString(szFile);
 }
 

@@ -77,7 +77,7 @@ cstr_t CMOSoundCard::getDescription() {
     return "MPlayer soundcard output 1.0";
 }
 
-MLRESULT CMOSoundCard::open(int nSampleRate, int nNumChannels, int nBitsPerSamp) {
+ResultCode CMOSoundCard::open(int nSampleRate, int nNumChannels, int nBitsPerSamp) {
     DBG_LOG1("open: %d", m_nBuffered);
 
     m_fadeMode = FADE_NONE;
@@ -108,7 +108,7 @@ WAVEHDR* CMOSoundCard::NewWaveHdr() {
     return waveHdr;
 }
 
-MLRESULT CMOSoundCard::waitForWrite() {
+ResultCode CMOSoundCard::waitForWrite() {
     if (!m_eventCanWrite.acquire()) {
         return ERR_FALSE;
     }
@@ -118,7 +118,7 @@ MLRESULT CMOSoundCard::waitForWrite() {
     return ERR_OK;
 }
 
-MLRESULT CMOSoundCard::write(IFBuffer *pBuf) {
+ResultCode CMOSoundCard::write(IFBuffer *pBuf) {
     assert(m_hwo);
 
     WAVEHDR *pWaveHdr;
@@ -193,7 +193,7 @@ MLRESULT CMOSoundCard::write(IFBuffer *pBuf) {
     return ERR_OK;
 }
 
-MLRESULT CMOSoundCard::flush() {
+ResultCode CMOSoundCard::flush() {
     LIST_WAVHDR::iterator it, itEnd;
 
     m_mutex.acquire();
@@ -215,7 +215,7 @@ MLRESULT CMOSoundCard::flush() {
     return ERR_OK;
 }
 
-MLRESULT CMOSoundCard::pause(bool bPause) {
+ResultCode CMOSoundCard::pause(bool bPause) {
     assert(m_hwo);
 
     if (bPause) {
@@ -304,7 +304,7 @@ bool CMOSoundCard::isPlaying() {
     }
 }
 
-MLRESULT CMOSoundCard::stop() {
+ResultCode CMOSoundCard::stop() {
     LIST_WAVHDR::iterator it, itEnd;
 
     m_fadeMode = FADE_NONE;
@@ -338,7 +338,7 @@ bool CMOSoundCard::isOpened() {
 }
 
 // volume
-MLRESULT CMOSoundCard::setVolume(int volume, int nBanlance) {
+ResultCode CMOSoundCard::setVolume(int volume, int nBanlance) {
     assert(nBanlance >= -100 && nBanlance <= 100);
     MMRESULT ret;
     int nLeft, nRight;
@@ -383,7 +383,7 @@ uint32_t CMOSoundCard::getPos() {
 }
 
 
-MLRESULT CMOSoundCard::doOpen() {
+ResultCode CMOSoundCard::doOpen() {
     MMRESULT mmresult = 0;
 
     m_iBytesPerSample = m_nChannels * (m_nBitsPerSamp / 8);
@@ -422,7 +422,7 @@ MLRESULT CMOSoundCard::doOpen() {
 }
 
 
-MLRESULT CMOSoundCard::doStop() {
+ResultCode CMOSoundCard::doStop() {
     if (m_hwo) {
         waveOutReset(m_hwo);
     }

@@ -7,15 +7,15 @@
 #include "IMPlayer.h"
 
 
-class CVISDemo : public IVis {
+class CVISDemo : public IVisualizer {
 OBJ_REFERENCE_DECL
 
 public:
     CVISDemo();
     virtual ~CVISDemo();
 
-    virtual MLRESULT init(IMPlayer *pPlayer);
-    virtual MLRESULT quit();
+    virtual ResultCode init(IMPlayer *pPlayer);
+    virtual ResultCode quit();
 
     virtual int render(VisParam *visParam);
     int render2(VisParam *visParam);

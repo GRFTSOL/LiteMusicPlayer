@@ -42,8 +42,6 @@ void CUpdateLibraryObj::setMsg2(cstr_t szMsg) {
 //////////////////////////////////////////////////////////////////////////
 
 void CAddMediaObj::doUpdating() {
-    CMPAutoPtr<IMediaLibrary> pMediaLib;
-    int nRet;
     char szMsg[256];
     int n = 0;
 
@@ -58,16 +56,12 @@ void CAddMediaObj::doUpdating() {
     setMsg1(szMsg);
     setMsg2(_TLT("Adding files..."));
 
-    if (g_Player.getMediaLibrary(&pMediaLib) == ERR_OK) {
-        for (int i = 0; i < (int)m_vFiles.size(); i++) {
-            CMPAutoPtr<IMedia> pMedia;
-
-            if (pMediaLib->getMediaByUrl(m_vFiles[i].c_str(), &pMedia) == ERR_OK) {
-                continue;
-            }
-
-            nRet = pMediaLib->add(m_vFiles[i].c_str(), &pMedia);
-            if (nRet == ERR_OK) {
+    auto mediaLib = g_player.getMediaLibrary();
+    for (int i = 0; i < (int)m_vFiles.size(); i++) {
+        auto media = mediaLib->getMediaByUrl(m_vFiles[i].c_str());
+        if (!media) {
+            media = mediaLib->add(m_vFiles[i].c_str());
+            if (media) {
                 n++;
                 sprintf(szMsg, _TLT("%d files added"), n);
                 setMsg1(szMsg);
@@ -99,7 +93,7 @@ void CAddMediaObj::listMedia(cstr_t szDir) {
                 listMedia(strFile.c_str());
             }
         } else {
-            if (g_Player.isExtAudioFile(fileGetExt(find.getCurName()))) {
+            if (g_player.isExtAudioFile(fileGetExt(find.getCurName()))) {
                 strFile = strDir + find.getCurName();
                 m_vFiles.push_back(strFile);
                 sprintf(szMsg, _TLT("%d files found"), m_vFiles.size());

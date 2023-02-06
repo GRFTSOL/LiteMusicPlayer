@@ -89,6 +89,8 @@ enum Error {
     ERR_MAX                     = 4000,
 };
 
+typedef int ResultCode;
+
 void setCustomErrorDesc(cstr_t szErrorDesc);
 
 //////////////////////////////////////////////////////////////////////////

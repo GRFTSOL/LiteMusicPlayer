@@ -10,8 +10,7 @@
 
 
 void writeAllMediaLibrary(RapidjsonWriter &writer) {
-    CMPAutoPtr<IMediaLibrary> lib;
-    g_Player.getMediaLibrary(&lib);
+    auto lib = g_player.getMediaLibrary();
 
     writer.StartObject();
     writer.Key("type");
@@ -23,19 +22,18 @@ void writeAllMediaLibrary(RapidjsonWriter &writer) {
     auto playlist = lib->getAll();
     int count = playlist->getCount();
     for (int i = 0; i < count; i++) {
-        CMPAutoPtr<IMedia> media;
-        if (playlist->getItem(i, &media) == ERR_OK) {
+        auto media = playlist->getItem(i);
+        if (media) {
             writer.StartObject();
-            CXStr str;
 
-            writer.Key("id"); writer.Int(media->getID());
-            media->getArtist(&str); writer.Key("artist"); writer.String(str.c_str());
-            media->getAlbum(&str); writer.Key("album"); writer.String(str.c_str());
-            media->getTitle(&str); writer.Key("title"); writer.String(str.c_str());
-            media->getSourceUrl(&str); writer.Key("file"); writer.String(str.c_str());
-            writer.Key("duration"); writer.Int(media->getDuration());
-            media->getAttribute(MA_GENRE, &str); writer.Key("genre"); writer.String(str.c_str());
-            media->getAttribute(MA_YEAR, &str); writer.Key("year"); writer.String(str.c_str());
+            writer.Key("id"); writer.Int(media->ID);
+            writer.Key("artist"); writer.String(media->artist.c_str());
+            writer.Key("album"); writer.String(media->album.c_str());
+            writer.Key("title"); writer.String(media->title.c_str());
+            writer.Key("file"); writer.String(media->url.c_str());
+            writer.Key("duration"); writer.Int(media->duration);
+            writer.Key("genre"); writer.String(media->genre.c_str());
+            writer.Key("year"); writer.Int(media->year);
 
             writer.EndObject();
         }
@@ -55,7 +53,7 @@ cstr_t loopModeToString(int loop) {
     return "";
 }
 
-MP_LOOP_MODE loopModeFromString(cstr_t loop) {
+LoopMode loopModeFromString(cstr_t loop) {
     if (strcmp(loop, "off") == 0) return MP_LOOP_OFF;
     else if (strcmp(loop, "all") == 0) return MP_LOOP_ALL;
     else if (strcmp(loop, "one") == 0) return MP_LOOP_TRACK;
@@ -80,8 +78,8 @@ PlayerEventSender::PlayerEventSender(WebSocket::Server *server) : m_server(serve
 
 void writePlayerStatus(RapidjsonWriter &writer) {
     writer.Key("status");
-    switch (g_Player.getPlayerState()) {
-        case PS_STOPED: writer.String("stopped"); break;
+    switch (g_player.getPlayerState()) {
+        case PS_STOPPED: writer.String("stopped"); break;
         case PS_PAUSED: writer.String("paused"); break;
         case PS_PLAYING: writer.String("playing"); break;
         default: assert(0); writer.String("stopped"); break;
@@ -90,30 +88,32 @@ void writePlayerStatus(RapidjsonWriter &writer) {
 
 void writePlayerPosition(RapidjsonWriter &writer) {
     writer.Key("position");
-    writer.Int(g_Player.getPlayPos());
+    writer.Int(g_player.getPlayPos());
+}
+
+void writeMedia(RapidjsonWriter &writer, Media *media) {
+    writer.StartObject();
+    writer.Key("id"); writer.Int(media->ID);
+    writer.Key("artist"); writer.String(media->artist.c_str());
+    writer.Key("album"); writer.String(media->album.c_str());
+    writer.Key("title"); writer.String(media->title.c_str());
+    writer.Key("file"); writer.String(media->url.c_str());
+    writer.Key("duration"); writer.Int(media->duration);
+    writer.EndObject();
 }
 
 void writeCurPlaylist(RapidjsonWriter &writer) {
     writer.Key("cur_playlist");
 
-    CMPAutoPtr<IPlaylist> playlist;
-    g_Player.getCurrentPlaylist(&playlist);
+    auto playlist = g_player.getCurrentPlaylist();
 
     writer.StartArray();
     int count = playlist->getCount();
     for (int i = 0; i < count; i++) {
-        CMPAutoPtr<IMedia> media;
-        CXStr str;
-
-        playlist->getItem(i, &media);
-        writer.StartObject();
-        writer.Key("id"); writer.Int(media->getID());
-        media->getArtist(&str); writer.Key("artist"); writer.String(str.c_str());
-        media->getAlbum(&str); writer.Key("album"); writer.String(str.c_str());
-        media->getTitle(&str); writer.Key("title"); writer.String(str.c_str());
-        media->getSourceUrl(&str); writer.Key("file"); writer.String(str.c_str());
-        writer.Key("duration"); writer.Int(media->getDuration());
-        writer.EndObject();
+        auto media = playlist->getItem(i);
+        if (media) {
+            writeMedia(writer, media.get());
+        }
     }
     writer.EndArray();
 }
@@ -121,24 +121,22 @@ void writeCurPlaylist(RapidjsonWriter &writer) {
 void writeCurMedia(RapidjsonWriter &writer) {
     writer.Key("cur_media");
 
-    writer.StartObject();
-    writer.Key("id"); writer.Int(g_Player.getMediaID());
-    writer.Key("artist"); writer.String(g_Player.getArtist());
-    writer.Key("album"); writer.String(g_Player.getAlbum());
-    writer.Key("title"); writer.String(g_Player.getTitle());
-    writer.Key("file"); writer.String(g_Player.getSrcMedia());
-    writer.Key("duration"); writer.Int(g_Player.getMediaLength());
-    writer.EndObject();
+    auto media = g_player.getCurrentMedia();
+    if (media) {
+        writeMedia(writer, media.get());
+    } else {
+        writer.Null();
+    }
 }
 
 void writePlayerSettings(RapidjsonWriter &writer) {
     writer.Key("settings");
 
     writer.StartObject();
-    writer.Key("shuffle"); writer.Bool(g_Player.isShuffle());
-    writer.Key("loop"); writer.String(loopModeToString(g_Player.getLoop()));
-    writer.Key("mute"); writer.Bool(g_Player.isMute());
-    writer.Key("volume"); writer.Int(g_Player.getVolume());
+    writer.Key("shuffle"); writer.Bool(g_player.isShuffle());
+    writer.Key("loop"); writer.String(loopModeToString(g_player.getLoop()));
+    writer.Key("mute"); writer.Bool(g_player.isMute());
+    writer.Key("volume"); writer.Int(g_player.getVolume());
 
     writer.EndObject();
 }

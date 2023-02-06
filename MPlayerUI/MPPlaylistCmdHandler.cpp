@@ -18,14 +18,14 @@ bool CMPPlaylistCmdHandler::onCommand(int nId) {
     switch (nId) {
     case IDC_OPEN_PL:
         {
-            CFileOpenDlg dlg("open Playlist", g_Player.getCurrentPlaylistFile().c_str(), "M3u file\0*.m3u\0All Files\0*.*\0\0", 0);
+            CFileOpenDlg dlg("open Playlist", g_player.getCurrentPlaylistFile().c_str(), "M3u file\0*.m3u\0All Files\0*.*\0\0", 0);
             if (dlg.doModal(m_pSkinWnd) == IDOK) {
-                g_Player.loadPlaylist(dlg.getOpenFile(), true);
+                g_player.loadPlaylist(dlg.getOpenFile(), true);
             }
         }
         break;
     case IDC_CLEAR:
-        g_Player.clearPlaylist();
+        g_player.clearPlaylist();
         break;
     default:
         return false;
@@ -38,14 +38,14 @@ bool CMPPlaylistCmdHandler::onCustomCommand(int nID) {
     switch (nID) {
     case CMD_PL_SAVE:
         {
-            CFileSaveDlg dlg("save Playlist", g_Player.getCurrentPlaylistFile().c_str(), "M3u file\0*.m3u\0All Files\0*.*\0\0", 0);
+            CFileSaveDlg dlg("save Playlist", g_player.getCurrentPlaylistFile().c_str(), "M3u file\0*.m3u\0All Files\0*.*\0\0", 0);
             if (dlg.doModal(m_pSkinWnd) == IDOK) {
                 if (isEmptyString(fileGetExt(dlg.getSaveFile()))) {
                     string file = dlg.getSaveFile();
                     fileSetExt(file, dlg.getSelectedExt());
-                    g_Player.saveCurrentPlaylistAs(file.c_str());
+                    g_player.saveCurrentPlaylistAs(file.c_str());
                 } else {
-                    g_Player.saveCurrentPlaylistAs(dlg.getSaveFile());
+                    g_player.saveCurrentPlaylistAs(dlg.getSaveFile());
                 }
             }
         }
@@ -72,9 +72,7 @@ bool CMPPlaylistCmdHandler::onCustomCommand(int nID) {
         break;
     case CMD_PL_PROPERTY:
         {
-            CMPAutoPtr<IPlaylist> playlist;
-            CMPAutoPtr<IMedia> media;
-
+            MediaPtr media;
             CMPlaylistCtrl *plCtrl = (CMPlaylistCtrl*)m_pSkinWnd->getUIObjectByClassName(CMPlaylistCtrl::className());
             if (plCtrl && plCtrl->isVisible() && plCtrl->isParentVisible()) {
                 int nSel;
@@ -83,17 +81,10 @@ bool CMPPlaylistCmdHandler::onCustomCommand(int nID) {
                     break;
                 }
 
-                if (g_Player.getCurrentPlaylist(&playlist) != ERR_OK) {
-                    break;
-                }
-
-                if (playlist->getItem(nSel, &media) != ERR_OK) {
-                    break;
-                }
+                auto playlist = g_player.getCurrentPlaylist();
+                media = playlist->getItem(nSel);
             } else {
-                if (g_Player.getCurrentMedia(&media) != ERR_OK) {
-                    break;
-                }
+                media = g_player.getCurrentMedia();
             }
 
             showMediaInfoDialog(m_pSkinWnd, media);

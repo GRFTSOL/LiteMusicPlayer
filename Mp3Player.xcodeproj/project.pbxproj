@@ -100,7 +100,6 @@
 		0EB70FB02776C8B2006929F1 /* libMPlayerLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EB70F9A2776B971006929F1 /* libMPlayerLib.a */; };
 		0EB7107627773BB6006929F1 /* MPCommonCmdHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70FB827773BAE006929F1 /* MPCommonCmdHandler.cpp */; };
 		0EB7107727773BB6006929F1 /* DownloadMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70FB927773BAE006929F1 /* DownloadMgr.cpp */; };
-		0EB7107827773BB6006929F1 /* MPSkinVis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70FBB27773BAE006929F1 /* MPSkinVis.cpp */; };
 		0EB7107A27773BB6006929F1 /* LyrDisplayClrListWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70FC127773BAE006929F1 /* LyrDisplayClrListWnd.cpp */; };
 		0EB7107B27773BB6006929F1 /* DlgUpload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70FC227773BAF006929F1 /* DlgUpload.cpp */; };
 		0EB7107D27773BB6006929F1 /* SkinRateCtrl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70FC527773BAF006929F1 /* SkinRateCtrl.cpp */; };
@@ -136,7 +135,6 @@
 		0EB7109E27773BB6006929F1 /* SkinPicText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70FFD27773BB1006929F1 /* SkinPicText.cpp */; };
 		0EB710A027773BB6006929F1 /* MPlaylistCtrl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7100227773BB1006929F1 /* MPlaylistCtrl.cpp */; };
 		0EB710A227773BB6006929F1 /* LyricShowSingleRowObj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7100827773BB1006929F1 /* LyricShowSingleRowObj.cpp */; };
-		0EB710A327773BB6006929F1 /* MPVisAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7100A27773BB2006929F1 /* MPVisAdapter.cpp */; };
 		0EB710A427773BB6006929F1 /* ErrorResolveDlg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7100C27773BB2006929F1 /* ErrorResolveDlg.cpp */; };
 		0EB710A527773BB6006929F1 /* MLCmd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7101227773BB2006929F1 /* MLCmd.cpp */; };
 		0EB710A627773BB6006929F1 /* PreferPageAdvanced.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7101527773BB2006929F1 /* PreferPageAdvanced.cpp */; };
@@ -145,7 +143,6 @@
 		0EB710A927773BB6006929F1 /* MPlayerAppBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7101927773BB2006929F1 /* MPlayerAppBase.cpp */; };
 		0EB710AA27773BB6006929F1 /* Helper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7101A27773BB2006929F1 /* Helper.cpp */; };
 		0EB710AB27773BB6006929F1 /* SkinImageListCtrl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7101C27773BB3006929F1 /* SkinImageListCtrl.cpp */; };
-		0EB710AD27773BB6006929F1 /* MPluginManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7101E27773BB3006929F1 /* MPluginManager.cpp */; };
 		0EB710AE27773BB6006929F1 /* LyricShowMultiRowObj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7101F27773BB3006929F1 /* LyricShowMultiRowObj.cpp */; };
 		0EB710B027773BB6006929F1 /* MPFloatingLyrWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7102327773BB3006929F1 /* MPFloatingLyrWnd.cpp */; };
 		0EB710B127773BB6006929F1 /* LyricShowObj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7102427773BB3006929F1 /* LyricShowObj.cpp */; };
@@ -308,6 +305,9 @@
 		C04DC0312983DF3A00A0FCB1 /* PlayerRemoteCtrlHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C04DC02F2983DF3A00A0FCB1 /* PlayerRemoteCtrlHandler.cpp */; };
 		C04DC0342983DFEF00A0FCB1 /* rapidjson.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C04DC0322983DFEF00A0FCB1 /* rapidjson.cpp */; };
 		C04DC037298618E200A0FCB1 /* PlayerEventSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C04DC035298618E200A0FCB1 /* PlayerEventSender.cpp */; };
+		C04DC03C298D619300A0FCB1 /* MediaLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C04DC03A298D619300A0FCB1 /* MediaLibrary.cpp */; };
+		C04DC03F298D624800A0FCB1 /* Playlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C04DC03E298D624800A0FCB1 /* Playlist.cpp */; };
+		C04DC042298D63AE00A0FCB1 /* Media.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C04DC041298D63AE00A0FCB1 /* Media.cpp */; };
 		C052876F2964FE50009BD885 /* FontInfoEx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C052876E2964FE50009BD885 /* FontInfoEx.cpp */; };
 		C05287722965A90E009BD885 /* RawGlyphSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05287702965A90E009BD885 /* RawGlyphSet.cpp */; };
 		C05D73DF2951594000294F50 /* libTinyJsLib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C05D73DE2951592E00294F50 /* libTinyJsLib.dylib */; };
@@ -646,7 +646,6 @@
 		0EB70F9D2776C88F006929F1 /* MLProtocol.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MLProtocol.xcodeproj; path = MLProtocol/MLProtocol.xcodeproj; sourceTree = "<group>"; };
 		0EB70FB827773BAE006929F1 /* MPCommonCmdHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MPCommonCmdHandler.cpp; path = MPlayerUI/MPCommonCmdHandler.cpp; sourceTree = "<group>"; };
 		0EB70FB927773BAE006929F1 /* DownloadMgr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DownloadMgr.cpp; path = MPlayerUI/DownloadMgr.cpp; sourceTree = "<group>"; };
-		0EB70FBB27773BAE006929F1 /* MPSkinVis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MPSkinVis.cpp; path = MPlayerUI/MPSkinVis.cpp; sourceTree = "<group>"; };
 		0EB70FBD27773BAE006929F1 /* LyricShowTxtContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LyricShowTxtContainer.h; path = MPlayerUI/LyricShowTxtContainer.h; sourceTree = "<group>"; };
 		0EB70FBE27773BAE006929F1 /* MPEventsDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPEventsDispatcher.h; path = MPlayerUI/MPEventsDispatcher.h; sourceTree = "<group>"; };
 		0EB70FBF27773BAE006929F1 /* PreferPageAssociation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferPageAssociation.h; path = MPlayerUI/PreferPageAssociation.h; sourceTree = "<group>"; };
@@ -689,7 +688,7 @@
 		0EB70FEB27773BB0006929F1 /* MPSkinMainWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MPSkinMainWnd.cpp; path = MPlayerUI/MPSkinMainWnd.cpp; sourceTree = "<group>"; };
 		0EB70FEC27773BB0006929F1 /* MPSkinMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MPSkinMenu.cpp; path = MPlayerUI/MPSkinMenu.cpp; sourceTree = "<group>"; };
 		0EB70FED27773BB0006929F1 /* PreferenceDlg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PreferenceDlg.cpp; path = MPlayerUI/PreferenceDlg.cpp; sourceTree = "<group>"; };
-		0EB70FEE27773BB0006929F1 /* Player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Player.cpp; path = MPlayerUI/Player.cpp; sourceTree = "<group>"; };
+		0EB70FEE27773BB0006929F1 /* Player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Player.cpp; sourceTree = "<group>"; };
 		0EB70FEF27773BB0006929F1 /* PreferenceDlg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferenceDlg.h; path = MPlayerUI/PreferenceDlg.h; sourceTree = "<group>"; };
 		0EB70FF027773BB0006929F1 /* MPSkinInfoTextCtrl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPSkinInfoTextCtrl.h; path = MPlayerUI/MPSkinInfoTextCtrl.h; sourceTree = "<group>"; };
 		0EB70FF127773BB0006929F1 /* MPSkinTimeCtrl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MPSkinTimeCtrl.cpp; path = MPlayerUI/MPSkinTimeCtrl.cpp; sourceTree = "<group>"; };
@@ -715,10 +714,8 @@
 		0EB7100727773BB1006929F1 /* LyrDisplayClrListWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LyrDisplayClrListWnd.h; path = MPlayerUI/LyrDisplayClrListWnd.h; sourceTree = "<group>"; };
 		0EB7100827773BB1006929F1 /* LyricShowSingleRowObj.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LyricShowSingleRowObj.cpp; path = MPlayerUI/LyricShowSingleRowObj.cpp; sourceTree = "<group>"; };
 		0EB7100927773BB1006929F1 /* MLCmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MLCmd.h; path = MPlayerUI/MLCmd.h; sourceTree = "<group>"; };
-		0EB7100A27773BB2006929F1 /* MPVisAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MPVisAdapter.cpp; path = MPlayerUI/MPVisAdapter.cpp; sourceTree = "<group>"; };
 		0EB7100B27773BB2006929F1 /* Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Helper.h; path = MPlayerUI/Helper.h; sourceTree = "<group>"; };
 		0EB7100C27773BB2006929F1 /* ErrorResolveDlg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ErrorResolveDlg.cpp; path = MPlayerUI/ErrorResolveDlg.cpp; sourceTree = "<group>"; };
-		0EB7100D27773BB2006929F1 /* MPVisAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPVisAdapter.h; path = MPlayerUI/MPVisAdapter.h; sourceTree = "<group>"; };
 		0EB7100E27773BB2006929F1 /* MediaDetectionService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaDetectionService.h; path = MPlayerUI/MediaDetectionService.h; sourceTree = "<group>"; };
 		0EB7100F27773BB2006929F1 /* LyricShowVobSub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LyricShowVobSub.h; path = MPlayerUI/LyricShowVobSub.h; sourceTree = "<group>"; };
 		0EB7101027773BB2006929F1 /* MPMediaTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPMediaTree.h; path = MPlayerUI/MPMediaTree.h; sourceTree = "<group>"; };
@@ -732,7 +729,6 @@
 		0EB7101A27773BB2006929F1 /* Helper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Helper.cpp; path = MPlayerUI/Helper.cpp; sourceTree = "<group>"; };
 		0EB7101B27773BB2006929F1 /* MPSkinInfoTextCtrlEx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPSkinInfoTextCtrlEx.h; path = MPlayerUI/MPSkinInfoTextCtrlEx.h; sourceTree = "<group>"; };
 		0EB7101C27773BB3006929F1 /* SkinImageListCtrl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkinImageListCtrl.cpp; path = MPlayerUI/SkinImageListCtrl.cpp; sourceTree = "<group>"; };
-		0EB7101E27773BB3006929F1 /* MPluginManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MPluginManager.cpp; path = MPlayerUI/MPluginManager.cpp; sourceTree = "<group>"; };
 		0EB7101F27773BB3006929F1 /* LyricShowMultiRowObj.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LyricShowMultiRowObj.cpp; path = MPlayerUI/LyricShowMultiRowObj.cpp; sourceTree = "<group>"; };
 		0EB7102227773BB3006929F1 /* SkinTreeCtrl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkinTreeCtrl.h; path = MPlayerUI/SkinTreeCtrl.h; sourceTree = "<group>"; };
 		0EB7102327773BB3006929F1 /* MPFloatingLyrWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MPFloatingLyrWnd.cpp; path = MPlayerUI/MPFloatingLyrWnd.cpp; sourceTree = "<group>"; };
@@ -780,11 +776,9 @@
 		0EB7105C27773BB5006929F1 /* LyricShowMultiRowObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LyricShowMultiRowObj.h; path = MPlayerUI/LyricShowMultiRowObj.h; sourceTree = "<group>"; };
 		0EB7105D27773BB5006929F1 /* MPSkinMainWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPSkinMainWnd.h; path = MPlayerUI/MPSkinMainWnd.h; sourceTree = "<group>"; };
 		0EB7105E27773BB5006929F1 /* MLClientSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MLClientSession.h; path = MPlayerUI/MLClientSession.h; sourceTree = "<group>"; };
-		0EB7105F27773BB5006929F1 /* MPluginManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPluginManager.h; path = MPlayerUI/MPluginManager.h; sourceTree = "<group>"; };
 		0EB7106027773BB5006929F1 /* DlgSearchLyrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgSearchLyrics.h; path = MPlayerUI/DlgSearchLyrics.h; sourceTree = "<group>"; };
-		0EB7106127773BB5006929F1 /* Player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Player.h; path = MPlayerUI/Player.h; sourceTree = "<group>"; };
+		0EB7106127773BB5006929F1 /* Player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Player.h; sourceTree = "<group>"; };
 		0EB7106227773BB5006929F1 /* SkinImageListCtrl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkinImageListCtrl.h; path = MPlayerUI/SkinImageListCtrl.h; sourceTree = "<group>"; };
-		0EB7106327773BB5006929F1 /* MPSkinVis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPSkinVis.h; path = MPlayerUI/MPSkinVis.h; sourceTree = "<group>"; };
 		0EB7106427773BB5006929F1 /* MPEventsDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MPEventsDispatcher.cpp; path = MPlayerUI/MPEventsDispatcher.cpp; sourceTree = "<group>"; };
 		0EB7106527773BB5006929F1 /* LyricsLocalSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LyricsLocalSearch.h; path = MPlayerUI/LyricsLocalSearch.h; sourceTree = "<group>"; };
 		0EB7106627773BB5006929F1 /* MPlayerAppBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPlayerAppBase.h; path = MPlayerUI/MPlayerAppBase.h; sourceTree = "<group>"; };
@@ -1009,6 +1003,12 @@
 		C04DC035298618E200A0FCB1 /* PlayerEventSender.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PlayerEventSender.cpp; sourceTree = "<group>"; };
 		C04DC036298618E200A0FCB1 /* PlayerEventSender.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PlayerEventSender.hpp; sourceTree = "<group>"; };
 		C04DC038298B6D8000A0FCB1 /* GenRsaKey.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GenRsaKey.hpp; sourceTree = "<group>"; };
+		C04DC03A298D619300A0FCB1 /* MediaLibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaLibrary.cpp; sourceTree = "<group>"; };
+		C04DC03B298D619300A0FCB1 /* MediaLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaLibrary.h; sourceTree = "<group>"; };
+		C04DC03D298D624800A0FCB1 /* Playlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Playlist.h; sourceTree = "<group>"; };
+		C04DC03E298D624800A0FCB1 /* Playlist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Playlist.cpp; sourceTree = "<group>"; };
+		C04DC040298D63AE00A0FCB1 /* Media.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Media.h; sourceTree = "<group>"; };
+		C04DC041298D63AE00A0FCB1 /* Media.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Media.cpp; sourceTree = "<group>"; };
 		C052876E2964FE50009BD885 /* FontInfoEx.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FontInfoEx.cpp; path = GfxRaw/FontInfoEx.cpp; sourceTree = "<group>"; };
 		C05287702965A90E009BD885 /* RawGlyphSet.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RawGlyphSet.cpp; path = GfxRaw/RawGlyphSet.cpp; sourceTree = "<group>"; };
 		C05287712965A90E009BD885 /* RawGlyphSet.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = RawGlyphSet.hpp; path = GfxRaw/RawGlyphSet.hpp; sourceTree = "<group>"; };
@@ -1053,6 +1053,7 @@
 		0E56B8DA273CD7B200032A3E = {
 			isa = PBXGroup;
 			children = (
+				C04DC039298D614B00A0FCB1 /* MPlayer */,
 				C04DBF23297EB34100A0FCB1 /* mbedtls */,
 				C04DBAFF297A83FA00A0FCB1 /* LocalServer */,
 				C0E6A46227A3CEBB009FA5AF /* rapidjson */,
@@ -1490,8 +1491,6 @@
 				0EB7106627773BB5006929F1 /* MPlayerAppBase.h */,
 				0EB7100227773BB1006929F1 /* MPlaylistCtrl.cpp */,
 				0EB7105627773BB4006929F1 /* MPlaylistCtrl.h */,
-				0EB7101E27773BB3006929F1 /* MPluginManager.cpp */,
-				0EB7105F27773BB5006929F1 /* MPluginManager.h */,
 				0EB7105B27773BB4006929F1 /* MPMediaLibCmdHandler.cpp */,
 				0EB7106C27773BB6006929F1 /* MPMediaLibCmdHandler.h */,
 				0EB70FE627773BB0006929F1 /* MPMediaTree.cpp */,
@@ -1512,16 +1511,10 @@
 				0EB7100027773BB1006929F1 /* MPSkinMenu.h */,
 				0EB70FF127773BB0006929F1 /* MPSkinTimeCtrl.cpp */,
 				0EB7106A27773BB5006929F1 /* MPSkinTimeCtrl.h */,
-				0EB70FBB27773BAE006929F1 /* MPSkinVis.cpp */,
-				0EB7106327773BB5006929F1 /* MPSkinVis.h */,
 				0EB70FDD27773BB0006929F1 /* MPSkinWnd.cpp */,
 				0EB7105827773BB4006929F1 /* MPSkinWnd.h */,
-				0EB7100A27773BB2006929F1 /* MPVisAdapter.cpp */,
-				0EB7100D27773BB2006929F1 /* MPVisAdapter.h */,
 				0EB7107027773BB6006929F1 /* OnlineSearch.cpp */,
 				0EB70FF927773BB1006929F1 /* OnlineSearch.h */,
-				0EB70FEE27773BB0006929F1 /* Player.cpp */,
-				0EB7106127773BB5006929F1 /* Player.h */,
 				0EB7102A27773BB3006929F1 /* PlayListFile.cpp */,
 				0EB70FE527773BB0006929F1 /* PlayListFile.h */,
 				0EB70FED27773BB0006929F1 /* PreferenceDlg.cpp */,
@@ -1838,6 +1831,21 @@
 			path = WebSocketHandlers;
 			sourceTree = "<group>";
 		};
+		C04DC039298D614B00A0FCB1 /* MPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				C04DC03A298D619300A0FCB1 /* MediaLibrary.cpp */,
+				C04DC03B298D619300A0FCB1 /* MediaLibrary.h */,
+				C04DC041298D63AE00A0FCB1 /* Media.cpp */,
+				C04DC040298D63AE00A0FCB1 /* Media.h */,
+				0EB70FEE27773BB0006929F1 /* Player.cpp */,
+				0EB7106127773BB5006929F1 /* Player.h */,
+				C04DC03E298D624800A0FCB1 /* Playlist.cpp */,
+				C04DC03D298D624800A0FCB1 /* Playlist.h */,
+			);
+			path = MPlayer;
+			sourceTree = "<group>";
+		};
 		C05D73D62951592D00294F50 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -2028,10 +2036,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C04DC042298D63AE00A0FCB1 /* Media.cpp in Sources */,
 				0E56BC032745E53E00032A3E /* SkinFadeArea.cpp in Sources */,
 				0EB70F5827759DE2006929F1 /* SkinEditCtrl.cpp in Sources */,
 				0EB710FE277C0F5A006929F1 /* Digest.cpp in Sources */,
-				0EB7107827773BB6006929F1 /* MPSkinVis.cpp in Sources */,
 				0E56BD24274D38CC00032A3E /* Error.cpp in Sources */,
 				0E56BC142745E53E00032A3E /* EventsDispatcherBase.cpp in Sources */,
 				C05D73EE2952B72A00294F50 /* SkinJsAPI.cpp in Sources */,
@@ -2066,6 +2074,7 @@
 				0EB7109527773BB6006929F1 /* MPSkinMenu.cpp in Sources */,
 				C04DBFEE297ECDA100A0FCB1 /* x509_create.c in Sources */,
 				C04DC01A297ECDA100A0FCB1 /* pkwrite.c in Sources */,
+				C04DC03C298D619300A0FCB1 /* MediaLibrary.cpp in Sources */,
 				0EB7107B27773BB6006929F1 /* DlgUpload.cpp in Sources */,
 				0EB70F7427759E23006929F1 /* FileSaveDlg.mm in Sources */,
 				0EB710A927773BB6006929F1 /* MPlayerAppBase.cpp in Sources */,
@@ -2141,7 +2150,6 @@
 				0EB710B827773BB6006929F1 /* MPSkinInfoTextCtrl.cpp in Sources */,
 				0EB7107E27773BB6006929F1 /* LyricsLocalSearch.cpp in Sources */,
 				0EB710B927773BB6006929F1 /* DlgSearchLyrics.cpp in Sources */,
-				0EB710AD27773BB6006929F1 /* MPluginManager.cpp in Sources */,
 				0EB7109227773BB6006929F1 /* SkinScrollText.cpp in Sources */,
 				0E56BC7B274CAB4E00032A3E /* App.mm in Sources */,
 				C04DBFFC297ECDA100A0FCB1 /* ssl_tls12_client.c in Sources */,
@@ -2235,7 +2243,6 @@
 				C04DBF7F297EB36200A0FCB1 /* bignum.c in Sources */,
 				C04DBF5E297EB36200A0FCB1 /* bignum_mod_raw.c in Sources */,
 				0E56BBE72745E53D00032A3E /* SkinResMgr.cpp in Sources */,
-				0EB710A327773BB6006929F1 /* MPVisAdapter.cpp in Sources */,
 				C04DC00E297ECDA100A0FCB1 /* ssl_cache.c in Sources */,
 				C04DBFEF297ECDA100A0FCB1 /* ssl_ciphersuites.c in Sources */,
 				C04DBFF1297ECDA100A0FCB1 /* x509_csr.c in Sources */,
@@ -2258,6 +2265,7 @@
 				0EB7108127773BB6006929F1 /* LyricShowVobSub.cpp in Sources */,
 				0EB7108B27773BB6006929F1 /* MPPlaylistCmdHandler.cpp in Sources */,
 				0EB7108827773BB6006929F1 /* DlgMediaInfo.cpp in Sources */,
+				C04DC03F298D624800A0FCB1 /* Playlist.cpp in Sources */,
 				0EB710C327773BB6006929F1 /* DlgSaveLyrPrompt.cpp in Sources */,
 				0EB710F7277AFFA1006929F1 /* MLProfile.cpp in Sources */,
 				0EB710A427773BB6006929F1 /* ErrorResolveDlg.cpp in Sources */,

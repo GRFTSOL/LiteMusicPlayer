@@ -12,7 +12,7 @@ CMILocalFile::~CMILocalFile() {
     close();
 }
 
-MLRESULT CMILocalFile::open(cstr_t szSourceMedia) {
+ResultCode CMILocalFile::open(cstr_t szSourceMedia) {
     m_fp = fopen(szSourceMedia, "rb");
     if (m_fp == nullptr) {
         if (!isFileExist(szSourceMedia)) {
@@ -30,7 +30,7 @@ uint32_t CMILocalFile::read(void *lpBuffer, uint32_t dwSize) {
     return (uint32_t)fread(lpBuffer, 1, dwSize, m_fp);
 }
 
-MLRESULT CMILocalFile::seek(uint32_t dwOffset, int nOrigin) {
+ResultCode CMILocalFile::seek(uint32_t dwOffset, int nOrigin) {
     if (fseek(m_fp, dwOffset, nOrigin) == 0) {
         return ERR_OK;
     } else {
@@ -38,7 +38,7 @@ MLRESULT CMILocalFile::seek(uint32_t dwOffset, int nOrigin) {
     }
 }
 
-MLRESULT CMILocalFile::getSize(uint32_t &dwSize) {
+ResultCode CMILocalFile::getSize(uint32_t &dwSize) {
     auto dwPos = (uint32_t)ftell(m_fp);
     if (fseek(m_fp, 0, SEEK_END) == 0) {
         dwSize = (uint32_t)ftell(m_fp);

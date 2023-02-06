@@ -36,7 +36,7 @@ public:
     string                      m_strLyrFileName;
     string                      buffContent;
 
-    MLRESULT                    m_errResult;
+    ResultCode                    m_errResult;
     int                         m_nHttpRetCode;
 
 };

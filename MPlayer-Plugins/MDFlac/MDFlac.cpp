@@ -54,7 +54,7 @@ CMDFlac::CMDFlac()
 	m_bKillThread = false;
 	m_nSeekPos = 0;
 	m_bSeekFlag = false;
-	m_state = PS_STOPED;
+	m_state = PS_STOPPED;
 
 	m_nBytesPerSample = 0;
 
@@ -109,7 +109,7 @@ void FP_tags_get_tag_ucs2(const FLAC__StreamMetadata *tags, const char *name, ws
 //                                 pMedia->setAttribute(MName, szValue); \
 //                                 free(szValue)
 
-MLRESULT CMDFlac::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia)
+ResultCode CMDFlac::getMediaInfo(IMediaInput *pInput, IMediaInfo *pMedia)
 {
 	FLAC__StreamMetadata *streaminfo;
 	FLAC__StreamMetadata *tags = NULL;
@@ -167,12 +167,12 @@ bool CMDFlac::isUseOutputPlug()
 	return true;
 }
 
-MLRESULT CMDFlac::play(IMPlayer *pPlayer, IMediaInput *pInput)
+ResultCode CMDFlac::play(IMPlayer *pPlayer, IMediaInput *pInput)
 {
-	MLRESULT		nRet;
+	ResultCode		nRet;
 	stringex	strFile;
 
-	m_state = PS_STOPED;
+	m_state = PS_STOPPED;
 	m_bPaused = false;
 	m_nSeekPos = 0;
 	m_bSeekFlag = false;
@@ -237,7 +237,7 @@ R_FAILED:
 	return nRet;
 }
 
-MLRESULT CMDFlac::pause()
+ResultCode CMDFlac::pause()
 {
 	if (m_state != PS_PLAYING)
 		return ERR_PLAYER_INVALID_STATE;
@@ -246,7 +246,7 @@ MLRESULT CMDFlac::pause()
 	return m_pOutput->pause(true);
 }
 
-MLRESULT CMDFlac::unpause()
+ResultCode CMDFlac::unpause()
 {
 	if (m_state != PS_PAUSED)
 		return ERR_PLAYER_INVALID_STATE;
@@ -260,7 +260,7 @@ bool CMDFlac::IsPaused()
 	return m_state == PS_PAUSED;
 }
 
-MLRESULT CMDFlac::stop()
+ResultCode CMDFlac::stop()
 {
 	m_bKillThread = true;
 
@@ -280,7 +280,7 @@ uint32 CMDFlac::getLength()
 	return m_audioInfo.nMediaLength;
 }
 
-MLRESULT CMDFlac::Seek(uint32 dwPos)
+ResultCode CMDFlac::Seek(uint32 dwPos)
 {
 	m_bSeekFlag = true;
 	m_nSeekPos = dwPos;
@@ -300,7 +300,7 @@ uint32 CMDFlac::GetPos()
 		return m_nSeekPos;
 }
 
-MLRESULT CMDFlac::setVolume(int volume, int nBanlance)
+ResultCode CMDFlac::setVolume(int volume, int nBanlance)
 {
 	if (!m_pOutput)
 		return ERR_PLAYER_INVALID_STATE;
@@ -351,7 +351,7 @@ void CMDFlac::DecodeThreadProc()
 		Sleep(10);
 	}
 
-	m_state = PS_STOPED;
+	m_state = PS_STOPPED;
 
 	m_pOutput->stop();
 	m_pOutput->Release();
@@ -389,7 +389,7 @@ bool CMDFlac::OutputWrite(IFBuffer *pBuf, int nBps, int nChannels, int nSampleRa
 
 #ifdef _WIN32_WCE
 
-IMediaDecode *MPlayerGetMDFlac()
+IMediaDecoder *MPlayerGetMDFlac()
 {
 	return new CMDFlac;
 }
@@ -403,23 +403,22 @@ IMediaDecode *MPlayerGetMDFlac()
 // nIndex = 0, return its interface type, and description, and lpInterface.
 // lpInterface can be NULL.
 //
-extern "C" __declspec(dllexport) MLRESULT ZikiPlayerQueryPluginIF(
-	int nIndex,
-	MPInterfaceType *pInterfaceType,
-	IString *strDescription,
-	LPVOID *lpInterface
+extern "C" __declspec(dllexport) ResultCode DHPlayerQueryPluginIF(
+	int index,
+	MPInterfaceType *interfaceType,
+	const char **description,
+	LPVOID *interfacePtr
 	)
 {
-	if (nIndex == 0)
+	if (index == 0)
 	{
-		*pInterfaceType = MPIT_DECODE;
-		if (strDescription)
-			strDescription->copy(SZ_DECODER_DESC);
-		if (lpInterface)
-		{
-			IMediaDecode	*pDecoder = new CMDFlac;
+		*interfaceType = MPIT_DECODE;
+		if (description)
+			description = SZ_DECODER_DESC;
+		if (interfacePtr) {
+			IMediaDecoder *pDecoder = new CMDFlac;
 			pDecoder->AddRef();
-			*lpInterface = pDecoder;
+			*interfacePtr = pDecoder;
 		}
 
 		return ERR_OK;

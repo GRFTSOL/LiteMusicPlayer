@@ -10,13 +10,13 @@ CDspDemo::~CDspDemo() {
 
 }
 
-MLRESULT CDspDemo::init(IMPlayer *pPlayer) {
+ResultCode CDspDemo::init(IMPlayer *pPlayer) {
     m_pPlayer = pPlayer;
 
     return ERR_OK;
 }
 
-MLRESULT CDspDemo::quit() {
+ResultCode CDspDemo::quit() {
     assert(m_pPlayer);
     m_pPlayer.release();
 

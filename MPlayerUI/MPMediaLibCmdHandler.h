@@ -52,7 +52,7 @@ public:
         uint8_t                     nImageIndex;
         bool                        bUptodate;
         FolderType                  folderType;
-        CMPAutoPtr<IPlaylist>       playlist;
+        PlaylistPtr                 playlist;
         cstr_t getValue() const {
             if (folderType == FT_ARTIST_UNKNOWN
                 || folderType == FT_ARTIST_ALBUM_UNKNOWN
@@ -75,7 +75,7 @@ public:
 
     bool enumChildren(V_ITEMS &vItems);
 
-    bool getChildPlaylist(int nIndex, IPlaylist **playlist);
+    PlaylistPtr getChildPlaylist(int nIndex);
 
     bool chToChild(int nIndex);
     bool chToParent();
@@ -87,7 +87,7 @@ public:
     Item getChildData(int n);
 
     bool isCurNodePlaylist();
-    bool getCurNodePlaylist(IPlaylist **playlist);
+    PlaylistPtr getCurNodePlaylist();
 
     bool isCurNodePlaylistFile();
     bool getCurNodePlaylistFile(int nChildPos, string &strPlaylistFile);
@@ -95,10 +95,10 @@ public:
     void eraseChild(int nIndex) { m_tree.eraseChild(nIndex); }
 
 protected:
-    void addPlaylistToTree(IPlaylist *playlist);
+    void addPlaylistToTree(const PlaylistPtr &playlist);
 
 protected:
-    CMPAutoPtr<IMediaLibrary>   m_mediaLib;
+    CMediaLibrary               *m_mediaLib;
     CTree<Item>                 m_tree;
 
 };

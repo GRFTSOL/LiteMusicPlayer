@@ -40,8 +40,8 @@ public:
     virtual void onEditorKillFocus() override;
 
 protected:
-    void insertMedia(CMPAutoPtr<IPlaylist> &playlist, int index, bool redraw = false);
-    void appendMedia(CMPAutoPtr<IMedia> &media, const CSkinListCtrl::VecTextColor &vItemClrs);
+    void insertMedia(const PlaylistPtr &playlist, int index, bool redraw = false);
+    void appendMedia(const MediaPtr &media, const CSkinListCtrl::VecTextColor &vItemClrs);
     void updateMediaIndex();
 
     void onCurrentPlaylistEvent(CEventPlaylistChanged *pEventPlaylistChanged = nullptr);
@@ -59,7 +59,7 @@ protected:
     CSkinEditCtrl               *m_editorSearch;
     int                         m_timerIdBeginSearch;
 
-    CMPAutoPtr<IPlaylist>       m_searchResults;
+    PlaylistPtr                 m_searchResults;
     VecMediaCategories          m_categoriesResults;
 
 };

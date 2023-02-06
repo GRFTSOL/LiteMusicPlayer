@@ -7,10 +7,10 @@
 
 #include "PlayerRemoteCtrlHandler.hpp"
 #include "Utils/Utils.h"
-#include "MPlayerUI/Player.h"
+#include "MPlayer/Player.h"
 
 
-MP_LOOP_MODE loopModeFromString(cstr_t loop);
+LoopMode loopModeFromString(cstr_t loop);
 
 namespace WebSocketHandlers {
 
@@ -27,34 +27,34 @@ void PlayerRemoteCtrlHandler::onMessage(Server *server, const websocketpp::conne
     string cmd = getMemberString(message, "cmd");
     if (!cmd.empty()) {
         if (cmd == "play_pause") {
-            g_Player.playPause();
+            g_player.playPause();
         } else if (cmd == "prev") {
-            g_Player.prev();
+            g_player.prev();
         } else if (cmd == "next") {
-            g_Player.next();
+            g_player.next();
         } else if (cmd == "position") {
             int parameter = getMemberInt(message, "parameter", -1);
             if (parameter >= 0) {
-                g_Player.seekTo(parameter);
+                g_player.seekTo(parameter);
             }
         } else if (cmd == "settings.volume") {
             int parameter = getMemberInt(message, "parameter", -1);
             if (parameter >= 0 && parameter <= 100) {
-                g_Player.setVolume(parameter);
+                g_player.setVolume(parameter);
             }
         } else if (cmd == "settings.shuffle") {
             int parameter = getMemberInt(message, "parameter", -1);
             if (parameter != -1) {
-                g_Player.setShuffle(parameter != 0);
+                g_player.setShuffle(parameter != 0);
             }
         } else if (cmd == "settings.mute") {
             int parameter = getMemberInt(message, "parameter", -1);
             if (parameter != -1) {
-                g_Player.setMute(parameter != 0);
+                g_player.setMute(parameter != 0);
             }
         } else if (cmd == "settings.loop") {
             string parameter = getMemberString(message, "parameter");
-            g_Player.setLoop(loopModeFromString(parameter.c_str()));
+            g_player.setLoop(loopModeFromString(parameter.c_str()));
         }
     }
 

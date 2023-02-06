@@ -60,11 +60,10 @@ void CMediaLibTreeProvider::init() {
     item.nImageIndex = II_NOW_PLAYING;
     m_tree.addChild(item);
 
-    g_Player.getMediaLibrary(&m_mediaLib);
+    m_mediaLib = g_player.getMediaLibrary();
 }
 
 void CMediaLibTreeProvider::close() {
-    m_mediaLib.release();
     m_tree.clear();
 }
 
@@ -91,8 +90,8 @@ bool CMediaLibTreeProvider::chToChild(int nIndex) {
         return true;
     }
 
-    CMPAutoPtr<IPlaylist> playlist;
-    MLRESULT nRet = ERR_OK;
+    PlaylistPtr playlist;
+    ResultCode nRet = ERR_OK;
 
     item.bUptodate = true;
 
@@ -112,62 +111,50 @@ bool CMediaLibTreeProvider::chToChild(int nIndex) {
             m_tree.addChild(newitem);
         }
     } else if (item.folderType == FT_PLAYLIST_FILE) {
-        g_Player.clearPlaylist();
-        g_Player.addToPlaylist(item.name.c_str());
-        g_Player.saveCurrentPlaylist();
+        g_player.clearPlaylist();
+        g_player.addToPlaylist(item.name.c_str());
+        g_player.saveCurrentPlaylist();
     } else if (item.folderType == FT_ALL_SONGS_BY_ARTIST) {
-        nRet = m_mediaLib->getAll(&playlist, MLOB_ARTIST, -1);
+        playlist = m_mediaLib->getAll(MLOB_ARTIST, -1);
     } else if (item.folderType == FT_ALL_ARTIST) {
-        CMPAutoPtr<IVString> pvStr;
-        MLRESULT nRet;
         Item newitem;
 
         newitem.bUptodate = false;
         newitem.folderType = FT_ARTIST;
         newitem.nImageIndex = II_ARTIST;
 
-        nRet = m_mediaLib->getAllArtist(&pvStr);
-        if (nRet == ERR_OK) {
-            int nCount = (int)pvStr->size();
-            for (int i = 0; i < nCount; i++) {
-                newitem.name = pvStr->at(i);
-                if (newitem.name.empty()) {
-                    newitem.name = "Unknown artist";
-                    newitem.folderType = FT_ARTIST_UNKNOWN;
-                    m_tree.addChild(newitem);
-                    newitem.folderType = FT_ARTIST;
-                    continue;
-                }
+        VecStrings results = m_mediaLib->getAllArtist();
+        for (auto &name : results) {
+            newitem.name = name;
+            if (newitem.name.empty()) {
+                newitem.name = "Unknown artist";
+                newitem.folderType = FT_ARTIST_UNKNOWN;
                 m_tree.addChild(newitem);
+                newitem.folderType = FT_ARTIST;
+                continue;
             }
+            m_tree.addChild(newitem);
         }
     } else if (item.folderType == FT_ALL_ALBUM) {
-        CMPAutoPtr<IVString> pvStr;
-        MLRESULT nRet;
         Item newitem;
 
         newitem.bUptodate = false;
         newitem.folderType = FT_ALBUM;
         newitem.nImageIndex = II_ALBUM;
 
-        nRet = m_mediaLib->getAllAlbum(&pvStr);
-        if (nRet == ERR_OK) {
-            int nCount = (int)pvStr->size();
-            for (int i = 0; i < nCount; i++) {
-                newitem.name = pvStr->at(i);
-                if (newitem.name.empty()) {
-                    newitem.name = "Unknown Album";
-                    newitem.folderType = FT_ALBUM_UNKNOWN;
-                    m_tree.addChild(newitem);
-                    newitem.folderType = FT_ALBUM;
-                    continue;
-                }
+        VecStrings results = m_mediaLib->getAllAlbum();
+        for (auto &name : results) {
+            newitem.name = name;
+            if (newitem.name.empty()) {
+                newitem.name = "Unknown Album";
+                newitem.folderType = FT_ALBUM_UNKNOWN;
                 m_tree.addChild(newitem);
+                newitem.folderType = FT_ALBUM;
+                continue;
             }
+            m_tree.addChild(newitem);
         }
     } else if ((item.folderType == FT_ARTIST || item.folderType == FT_ARTIST_UNKNOWN)) {
-        CMPAutoPtr<IVString> pvStr;
-        MLRESULT nRet;
         Item newitem;
 
         newitem.bUptodate = false;
@@ -186,20 +173,17 @@ bool CMediaLibTreeProvider::chToChild(int nIndex) {
         newitem.nImageIndex = II_ALBUM;
         newitem.folderType = FT_ARTIST_ALBUM;
 
-        nRet = m_mediaLib->getAlbumOfArtist(item.getValue(), &pvStr);
-        if (nRet == ERR_OK) {
-            int nCount = (int)pvStr->size();
-            for (int i = 0; i < nCount; i++) {
-                newitem.name = pvStr->at(i);
-                if (newitem.name.empty()) {
-                    newitem.name = "Unknown album";
-                    newitem.folderType = FT_ARTIST_ALBUM_UNKNOWN;
-                    m_tree.addChild(newitem);
-                    newitem.folderType = FT_ARTIST_ALBUM;
-                    continue;
-                }
+        VecStrings results = m_mediaLib->getAlbumOfArtist(item.getValue());
+        for (auto &name : results) {
+            newitem.name = name;
+            if (newitem.name.empty()) {
+                newitem.name = "Unknown album";
+                newitem.folderType = FT_ARTIST_ALBUM_UNKNOWN;
                 m_tree.addChild(newitem);
+                newitem.folderType = FT_ARTIST_ALBUM;
+                continue;
             }
+            m_tree.addChild(newitem);
         }
         item.bUptodate = true;
     } else if (item.folderType == FT_ARTIST_ALBUM ||
@@ -209,32 +193,32 @@ bool CMediaLibTreeProvider::chToChild(int nIndex) {
         Item &itemArtist = m_tree.getParentNodeData();
 
         if (item.folderType == FT_ARTIST_ALL_MUSIC) {
-            nRet = m_mediaLib->getByArtist(itemArtist.getValue(), &playlist, MLOB_NONE, -1);
+            playlist = m_mediaLib->getByArtist(itemArtist.getValue(), MLOB_NONE, -1);
         } else if (item.folderType == FT_ARTIST_TOP_RATING) {
-            nRet = m_mediaLib->getByArtist(itemArtist.getValue(), &playlist, MLOB_RATING, -1);
-            if (nRet == ERR_OK && playlist) {
-                g_Player.filterLowRatingMedia(playlist);
+            playlist = m_mediaLib->getByArtist(itemArtist.getValue(), MLOB_RATING, -1);
+            if (playlist) {
+                g_player.filterLowRatingMedia(playlist.get());
             }
         } else {
-            nRet = m_mediaLib->getByAlbum(itemArtist.getValue(), item.getValue(), &playlist, MLOB_NONE, -1);
+            playlist = m_mediaLib->getByAlbum(itemArtist.getValue(), item.getValue(), MLOB_NONE, -1);
         }
     } else if (item.folderType == FT_ALBUM_UNKNOWN ||
         item.folderType == FT_ALBUM) {
-        nRet = m_mediaLib->getByAlbum(item.getValue(), &playlist, MLOB_NONE, -1);
+        playlist = m_mediaLib->getByAlbum(item.getValue(), MLOB_NONE, -1);
     } else if (item.folderType == FT_TOP_RATING) {
-        nRet = m_mediaLib->getTopRating(16, &playlist);
-        if (nRet == ERR_OK && playlist) {
-            g_Player.filterLowRatingMedia(playlist);
+        playlist = m_mediaLib->getTopRating(16);
+        if (playlist) {
+            g_player.filterLowRatingMedia(playlist.get());
         }
     } else if (item.folderType == FT_TOP_PLAYED) {
-        nRet = m_mediaLib->getTopPlayed(16, &playlist);
+        playlist = m_mediaLib->getTopPlayed(16);
     } else if (item.folderType == FT_RECENT_ADDED) {
-        nRet = m_mediaLib->getRecentAdded(16, &playlist);
+        playlist = m_mediaLib->getRecentAdded(16);
     } else if (item.folderType == FT_RECENT_PLAYED) {
-        nRet = m_mediaLib->getRecentPlayed(16, &playlist);
+        playlist = m_mediaLib->getRecentPlayed(16);
     }
 
-    if (nRet == ERR_OK && playlist.p) {
+    if (playlist) {
         addPlaylistToTree(playlist);
         item.playlist = playlist;
     }
@@ -275,7 +259,7 @@ bool CMediaLibTreeProvider::getPath(V_ITEMS &vPath) {
     m_tree.getPath(vPath);
 
     for (int i = 0; i < (int)vPath.size(); i++) {
-        vPath[i].playlist.release();
+        vPath[i].playlist = nullptr;
     }
 
     return true;
@@ -286,19 +270,12 @@ CMediaLibTreeProvider::Item CMediaLibTreeProvider::getChildData(int n) {
 }
 
 bool CMediaLibTreeProvider::isCurNodePlaylist() {
-    return m_tree.getCurNodeData().playlist.p != nullptr;
+    return m_tree.getCurNodeData().playlist != nullptr;
 }
 
-bool CMediaLibTreeProvider::getCurNodePlaylist(IPlaylist **playlist) {
+PlaylistPtr CMediaLibTreeProvider::getCurNodePlaylist() {
     Item &item = m_tree.getCurNodeData();
-    if (item.playlist.p) {
-        *playlist = item.playlist;
-        (*playlist)->addRef();
-
-        return true;
-    }
-
-    return false;
+    return item.playlist;
 }
 
 bool CMediaLibTreeProvider::isCurNodePlaylistFile() {
@@ -320,7 +297,7 @@ bool CMediaLibTreeProvider::getCurNodePlaylistFile(int nChildPos, string &strPla
     return true;
 }
 
-void CMediaLibTreeProvider::addPlaylistToTree(IPlaylist *playlist) {
+void CMediaLibTreeProvider::addPlaylistToTree(const PlaylistPtr &playlist) {
     Item newitem;
 
     newitem.bUptodate = true;
@@ -329,9 +306,9 @@ void CMediaLibTreeProvider::addPlaylistToTree(IPlaylist *playlist) {
 
     int nCount = playlist->getCount();
     for (int i = 0; i < nCount; i++) {
-        CMPAutoPtr<IMedia> pMedia;
-        if (playlist->getItem(i, &pMedia) == ERR_OK) {
-            newitem.name = g_Player.formatMediaTitle(pMedia);
+        auto media = playlist->getItem(i);
+        if (media) {
+            newitem.name = g_player.formatMediaTitle(media.get());
             m_tree.addChild(newitem);
         }
     }
@@ -376,14 +353,12 @@ bool CMPMediaLibCmdHandler::onCommand(int nId) {
                 break;
             }
 
-            CMPAutoPtr<IPlaylist> playlist;
-            if (m_mediaLibTree.getCurNodePlaylist(&playlist)) {
-                CMPAutoPtr<IMedia> media;
-                if (playlist->getItem(nSel, &media) == ERR_OK) {
-                    CMPAutoPtr<IPlaylist> curPl;
-                    if (g_Player.getCurrentPlaylist(&curPl) == ERR_OK) {
-                        curPl->insertItem(-1, media);
-                    }
+            auto playlist = m_mediaLibTree.getCurNodePlaylist();
+            if (playlist) {
+                auto media = playlist->getItem(nSel);
+                if (media) {
+                    auto curPl = g_player.getCurrentPlaylist();
+                    curPl->insertItem(-1, media);
                 }
             }
         }
@@ -411,22 +386,19 @@ bool CMPMediaLibCmdHandler::onCommand(int nId) {
                     return true;
                 }
 
-                CMPAutoPtr<IPlaylist> playlist;
-
-                if (m_mediaLibTree.getCurNodePlaylist(&playlist)) {
+                auto playlist = m_mediaLibTree.getCurNodePlaylist();
+                if (playlist) {
                     vector<int> vIndex;
-                    CMPAutoPtr<IMedia> media;
                     while (nSel != -1) {
                         vIndex.push_back(nSel);
                         nSel = pMediaList->getNextSelectedItem(nSel);
                     }
                     for (int i = (int)vIndex.size() - 1; i >= 0; i--) {
                         nSel = vIndex[i];
-                        if (playlist->getItem(nSel, &media) == ERR_OK) {
-                            CMPAutoPtr<IMediaLibrary> mediaLib;
-                            if (g_Player.getMediaLibrary(&mediaLib) == ERR_OK) {
-                                mediaLib->remove(&(media.p), false);
-                            }
+                        auto media = playlist->getItem(nSel);
+                        if (media) {
+                            auto mediaLib = g_player.getMediaLibrary();
+                            mediaLib->remove(media.get(), false);
                             playlist->removeItem(nSel);
                             pMediaList->deleteItem(nSel, true);
                             m_mediaLibTree.eraseChild(nSel);
@@ -474,11 +446,11 @@ bool CMPMediaLibCmdHandler::onUIObjNotify(IUIObjNotify *pNotify) {
                 if (m_mediaLibTree.isCurNodePlaylist()) {
                     if (pListCtrlNotify->cmd != CSkinListCtrlEventNotify::C_CLICK) {
                         // play current music...
-                        CMPAutoPtr<IPlaylist> playlist;
-                        if (m_mediaLibTree.getCurNodePlaylist(&playlist)) {
-                            g_Player.setCurrentPlaylist(playlist);
-                            g_Player.setCurrentMediaInPlaylist(nSel);
-                            g_Player.play();
+                        auto playlist = m_mediaLibTree.getCurNodePlaylist();
+                        if (playlist) {
+                            g_player.setCurrentPlaylist(playlist);
+                            g_player.setCurrentMediaInPlaylist(nSel);
+                            g_player.play();
                         }
                     }
                 } else if (m_mediaLibTree.isCurNodePlaylistFile()) {
@@ -486,10 +458,10 @@ bool CMPMediaLibCmdHandler::onUIObjNotify(IUIObjNotify *pNotify) {
                         // play selected playlist
                         string strFile;
                         if (m_mediaLibTree.getCurNodePlaylistFile(nSel, strFile)) {
-                            g_Player.clearPlaylist();
-                            g_Player.addToPlaylist(strFile.c_str());
-                            g_Player.saveCurrentPlaylist();
-                            g_Player.play();
+                            g_player.clearPlaylist();
+                            g_player.addToPlaylist(strFile.c_str());
+                            g_player.saveCurrentPlaylist();
+                            g_player.play();
                         }
                     }
                 } else {

@@ -89,7 +89,7 @@ void CLyricsLocalSearch::saveLyricFolderCfg() {
     g_profile.writeString(SZ_SECT_SEARCH_FOLDER, szKeyName, "");
 }
 
-void CLyricsLocalSearch::searchAllMatchLyrics(cstr_t szSongFile, cstr_t szArtist, cstr_t szTitle, V_LRCSEARCHRESULT &vLyrics) {
+void CLyricsLocalSearch::searchAllMatchLyrics(cstr_t szSongFile, cstr_t szArtist, cstr_t szTitle, ListLyrSearchResults &vLyrics) {
     CLyricsSearchParameter searchParam(szSongFile, szArtist, szTitle);
     searchLyrics(searchParam, vLyrics);
     //
@@ -108,10 +108,10 @@ void CLyricsLocalSearch::searchAllMatchLyrics(cstr_t szSongFile, cstr_t szArtist
 }
 
 // search lyrics by artist and title.
-void CLyricsLocalSearch::searchLyrics(CLyricsSearchParameter &searchParam, V_LRCSEARCHRESULT &vLyrics) {
+void CLyricsLocalSearch::searchLyrics(CLyricsSearchParameter &searchParam, ListLyrSearchResults &vLyrics) {
     searchEmbeddedLyrics(searchParam.szSongFile, vLyrics, searchParam.bOnlySearchBestMatch);
     if (searchParam.bOnlySearchBestMatch) {
-        V_LRCSEARCHRESULT::iterator it = vLyrics.getTheBestMatchLyrics();
+        ListLyrSearchResults::iterator it = vLyrics.getTheBestMatchLyrics();
         if (it != vLyrics.end()) {
             LrcSearchResult &result = *it;
             if (result.nMatchValue >= MATCH_VALUE_EMBEDDED_LRC) {
@@ -158,7 +158,7 @@ void CLyricsLocalSearch::searchLyrics(CLyricsSearchParameter &searchParam, V_LRC
     }
 
     // Finally use the best match lyrics in vLyrics.
-    V_LRCSEARCHRESULT::iterator it = vLyrics.getTheBestMatchLyrics();
+    ListLyrSearchResults::iterator it = vLyrics.getTheBestMatchLyrics();
     if (it != vLyrics.end()) {
         LrcSearchResult &result = *it;
         if (result.nMatchValue >= MATCH_VALUE_OK) {
@@ -497,7 +497,7 @@ bool CLyricsLocalSearch::getBestMatchLyrics(cstr_t szSongFile, cstr_t szArtist, 
         return true;
     }
 
-    V_LRCSEARCHRESULT vLyrics;
+    ListLyrSearchResults vLyrics;
     CLyricsSearchParameter searchParam(szSongFile, szArtist, szTitle, true);
     searchLyrics(searchParam, vLyrics);
     strLyrFile = searchParam.strBestMatchLyrics;

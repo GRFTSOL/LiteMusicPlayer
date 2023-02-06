@@ -11,29 +11,29 @@ struct DecoderInfo {
 };
 
 typedef list<DecoderInfo> ListDecodersInfo;
+typedef vector<IVisualizer *> VecVisualizers;
 
-class CMPluginManager : public IMPluginManager {
-    OBJ_REFERENCE_DECL
+class PluginManager {
 public:
-    CMPluginManager(void);
-    virtual ~CMPluginManager(void);
+    PluginManager(void);
+    virtual ~PluginManager(void);
 
-    virtual MLRESULT detectPlugins();
+    virtual ResultCode detectPlugins();
 
-    virtual MLRESULT onInternalDecoderRegister(IMediaDecode *pDecoder);
+    virtual ResultCode onInternalDecoderRegister(IMediaDecoder *pDecoder);
 
-    virtual MLRESULT newInput(cstr_t szMediaUrl, IMediaInput **ppInput);
-    virtual MLRESULT newDecoder(IMediaInput *pInput, IMediaDecode **ppDecoder);
-    virtual MLRESULT newOutput(IMediaOutput **ppOutput);
+    virtual ResultCode newInput(cstr_t szMediaUrl, IMediaInput **ppInput);
+    virtual ResultCode newDecoder(IMediaInput *pInput, IMediaDecoder **ppDecoder);
+    virtual ResultCode newOutput(IMediaOutput **ppOutput);
 
-    virtual MLRESULT getActiveDSP(IDSP **ppDSP);
-    virtual MLRESULT getActiveVis(IVector *pvVis);
+    virtual ResultCode getActiveDSP(IDSP **ppDSP);
+    virtual VecVisualizers getActiveVis();
 
 public:
     const ListDecodersInfo &getDecodersInfo() const { return m_listDecoders; }
 
     // decoders
-    MLRESULT registerDecoder(IMediaDecode *pDecoder, cstr_t szModuleFileName, int nIFIndex);
+    ResultCode registerDecoder(IMediaDecoder *pDecoder, cstr_t szModuleFileName, int nIFIndex);
     void unregisterDecoder(cstr_t szModuleFileName);
 
 protected:

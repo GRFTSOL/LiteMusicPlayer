@@ -1,7 +1,7 @@
 #pragma once
 
 
-void showMediaInfoDialog(CSkinWnd *pParent, IMedia *pMedia);
+void showMediaInfoDialog(CSkinWnd *pParent, const MediaPtr &media);
 
 class CDlgMediaInfoPage;
 
@@ -20,7 +20,7 @@ uint32_t getSupportedMTTByExt(cstr_t szMedia);
 
 class CDlgMediaInfo : public CMPSkinWnd {
 public:
-    CDlgMediaInfo(IMedia *pMedia);
+    CDlgMediaInfo(const MediaPtr &media);
     ~CDlgMediaInfo(void);
 
     void onSkinLoaded() override;
@@ -59,7 +59,7 @@ protected:
 
 
 protected:
-    CMPAutoPtr<IMedia>          m_pMedia;
+    MediaPtr                    m_media;
 
     string                      m_strMediaFile;
     bool                        m_bReadOnly;

@@ -131,8 +131,7 @@ static enum mad_flow decode_output(void *data, struct mad_header const *header,
 {
     CMDLibmad        *pmdMad = (CMDLibmad *)data;
     IMediaOutput    *pOutput = pmdMad->m_pOutput;
-    IMemAllocator    *pMemAllocator = pmdMad->m_pMemAllocator;
-    MLRESULT        nRet;
+    ResultCode        nRet;
 
     mad_fixed_t const *ch1, *ch2;
 
@@ -210,7 +209,7 @@ CMDLibmad::CMDLibmad() {
     m_bKillThread = false;
     m_nSeekPos = 0;
     m_bSeekFlag = false;
-    m_state = PS_STOPED;
+    m_state = PS_STOPPED;
     m_bufInput.reserve(INPUT_BUFF_SIZE);
 
     m_pnToc = nullptr;
@@ -240,8 +239,8 @@ cstr_t CMDLibmad::getFileExtentions() {
     return ".mp3|mp3 files";
 }
 
-MLRESULT CMDLibmad::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia) {
-    MLRESULT nRet;
+ResultCode CMDLibmad::getMediaInfo(IMediaInput *pInput, IMediaInfo *pMedia) {
+    ResultCode nRet;
 
     nRet = getHeadInfo(pInput);
     if (nRet != ERR_OK) {
@@ -314,10 +313,10 @@ bool CMDLibmad::isUseOutputPlug() {
     return true;
 }
 
-MLRESULT CMDLibmad::play(IMPlayer *pPlayer, IMediaInput *pInput) {
-    MLRESULT nRet;
+ResultCode CMDLibmad::play(IMPlayer *pPlayer, IMediaInput *pInput) {
+    ResultCode nRet;
 
-    m_state = PS_STOPED;
+    m_state = PS_STOPPED;
     m_bPaused = false;
     m_nSeekPos = 0;
     m_bSeekFlag = false;
@@ -373,7 +372,7 @@ R_FAILED:
     return nRet;
 }
 
-MLRESULT CMDLibmad::pause() {
+ResultCode CMDLibmad::pause() {
     if (m_state != PS_PLAYING) {
         return ERR_PLAYER_INVALID_STATE;
     }
@@ -382,7 +381,7 @@ MLRESULT CMDLibmad::pause() {
     return m_pOutput->pause(true);
 }
 
-MLRESULT CMDLibmad::unpause() {
+ResultCode CMDLibmad::unpause() {
     if (m_state != PS_PAUSED) {
         return ERR_PLAYER_INVALID_STATE;
     }
@@ -391,7 +390,7 @@ MLRESULT CMDLibmad::unpause() {
     return m_pOutput->pause(false);
 }
 
-MLRESULT CMDLibmad::stop() {
+ResultCode CMDLibmad::stop() {
     m_bKillThread = true;
 
     if (m_state == PS_PAUSED) {
@@ -408,7 +407,7 @@ uint32_t CMDLibmad::getLength() {
     return m_audioInfo.nMediaLength;
 }
 
-MLRESULT CMDLibmad::seek(uint32_t dwPos) {
+ResultCode CMDLibmad::seek(uint32_t dwPos) {
     m_bSeekFlag = true;
     m_nSeekPos = dwPos;
 
@@ -428,7 +427,7 @@ uint32_t CMDLibmad::getPos() {
     }
 }
 
-MLRESULT CMDLibmad::setVolume(int volume, int nBanlance) {
+ResultCode CMDLibmad::setVolume(int volume, int nBanlance) {
     if (!m_pOutput) {
         return ERR_PLAYER_INVALID_STATE;
     }
@@ -464,7 +463,7 @@ uint32_t CMDLibmad::decodeThreadProc() {
         sleep(10);
     }
 
-    m_state = PS_STOPED;
+    m_state = PS_STOPPED;
 
     m_pOutput->stop();
     m_pOutput->release();
@@ -1110,7 +1109,7 @@ bool CMDLibmad::outputWrite(IFBuffer *pBuf, int nChannels, int nSampleRate)
     return true;
 }*/
 
-MLRESULT CMDLibmad::getHeadInfo(IMediaInput *pInput) {
+ResultCode CMDLibmad::getHeadInfo(IMediaInput *pInput) {
     m_bufInput.clear();
 
     int result = -1;

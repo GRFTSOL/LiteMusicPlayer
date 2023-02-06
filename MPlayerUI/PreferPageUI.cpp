@@ -225,7 +225,7 @@ public:
 #ifdef _MINILYRICS_WIN32
         m_strEmbeddedSkinName = "";
         if (CMPlayerAppBase::getInstance()->isSupportEmbedded()) {
-            m_strEmbeddedSkinName = string("<< ") + g_Player.getEmbeddedSkinName() + " >>";
+            m_strEmbeddedSkinName = string("<< ") + g_player.getEmbeddedSkinName() + " >>";
             m_pSkinList->insertItem(m_pSkinList->getItemCount(), m_strEmbeddedSkinName.c_str());
 
             if (CMPlayerAppBase::getInstance()->isEmbeddedMode()) {

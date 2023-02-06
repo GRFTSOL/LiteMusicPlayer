@@ -1,9 +1,6 @@
 #pragma once
 
 
-///////////////////////////////////////////////////////////////////////////////
-// create window to get playback pos of player timely.
-
 class CPlayerEventDispatcher {
 public:
     CPlayerEventDispatcher();
@@ -13,13 +10,6 @@ public:
     }
 
     void quit() {
-    }
-
-    int getMasterVolume() {
-        return 0;
-    }
-
-    void setMasterVolume(int volume) {
     }
 
     void setLyrDrawUpdateFast(bool bFast) {
@@ -38,7 +28,7 @@ public:
 
 protected:
     int                         m_nTimeOutUpdateLyr;
-    void                        *        m_pInternal;
+    void                        *m_pInternal;
 
 };
 

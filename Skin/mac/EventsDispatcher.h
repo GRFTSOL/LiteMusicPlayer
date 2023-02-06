@@ -1,6 +1,5 @@
 #pragma once
 
-struct    _EVENT_DISPATCHER;
 
 class CEventsDispatcher : public CEventsDispatcherBase {
 public:

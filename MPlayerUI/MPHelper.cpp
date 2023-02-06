@@ -11,7 +11,7 @@ void getDefaultPlaylistName(string &strPlaylistFile) {
 
 bool onSongOpenFileCmd(Window *pWndParent, bool bOpen) {
     string strExtentions;
-    g_Player.getFileOpenDlgExtention(strExtentions);
+    g_player.getFileOpenDlgExtention(strExtentions);
     CFileOpenDlg dlg("add Music File", "", strExtentions.c_str(), 0, true);
 
     if (dlg.doModal(pWndParent) == IDOK) {
@@ -21,17 +21,17 @@ bool onSongOpenFileCmd(Window *pWndParent, bool bOpen) {
         dlg.getOpenFile(vFiles);
 
         if (bOpen) {
-            g_Player.newCurrentPlaylist();
+            g_player.newCurrentPlaylist();
         } else {
-            g_Player.setPlaylistModified(true);
+            g_player.setPlaylistModified(true);
         }
 
         for (int i = 0; i < (int)vFiles.size(); i++) {
-            g_Player.addToPlaylist(vFiles[i].c_str());
+            g_player.addToPlaylist(vFiles[i].c_str());
         }
-        g_Player.saveCurrentPlaylist();
+        g_player.saveCurrentPlaylist();
         if (bOpen) {
-            g_Player.play();
+            g_player.play();
         }
 
         return true;
@@ -51,15 +51,15 @@ bool onSongOpenDirCmd(Window *pWndParent, bool bOpen) {
         g_profile.writeString("Last open Dir", strFolder.c_str());
 
         if (bOpen) {
-            g_Player.clearPlaylist();
+            g_player.clearPlaylist();
         } else {
-            g_Player.setPlaylistModified(true);
+            g_player.setPlaylistModified(true);
         }
 
-        g_Player.addDirToPlaylist(strFolder.c_str(), true);
-        g_Player.saveCurrentPlaylist();
+        g_player.addDirToPlaylist(strFolder.c_str(), true);
+        g_player.saveCurrentPlaylist();
         if (bOpen) {
-            g_Player.play();
+            g_player.play();
         }
 
         return true;
@@ -89,7 +89,7 @@ bool onCmdSongAddDirToMediaLib(Window *pWndParent) {
 
 bool onCmdSongAddFilesToMediaLib(Window *pWndParent) {
     string strExtentions;
-    g_Player.getFileOpenDlgExtention(strExtentions);
+    g_player.getFileOpenDlgExtention(strExtentions);
     CFileOpenDlg dlg("add Music File", "", strExtentions.c_str(), 0, true);
 
     if (dlg.doModal(pWndParent) == IDOK) {

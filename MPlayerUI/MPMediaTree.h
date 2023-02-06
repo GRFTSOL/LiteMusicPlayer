@@ -46,7 +46,7 @@ public:
 public:
     uint8_t                     folderType;
     uint8_t                     nodeType;
-    CMPAutoPtr<IPlaylist>       m_playlist;
+    PlaylistPtr                 m_playlist;
 
 };
 
@@ -175,7 +175,7 @@ public:
 
     void close();
 
-    bool getCurNodePlaylist(IPlaylist **playlist);
+    PlaylistPtr getCurNodePlaylist();
 
 public:
 

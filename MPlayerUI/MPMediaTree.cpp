@@ -25,66 +25,48 @@ public:
 };
 
 void CMPMTNMediaLibrary::onUpdate() {
-    CMPAutoPtr<IMediaLibrary> mediaLib;
+    auto mediaLib = g_player.getMediaLibrary();
 
-    if (g_Player.getMediaLibrary(&mediaLib) != ERR_OK) {
-        return;
-    }
-
-    m_playlist.release();
+    m_playlist = nullptr;
 
     if (folderType == FT_ALL_SONGS_BY_ARTIST) {
-        mediaLib->getAll(&m_playlist, MLOB_ARTIST, -1);
+        m_playlist = mediaLib->getAll(MLOB_ARTIST, -1);
     } else if (folderType == FT_ALL_ARTIST) {
-        CMPAutoPtr<IVString> pvStr;
-        MLRESULT nRet;
-
-        nRet = mediaLib->getAllArtist(&pvStr);
-        if (nRet == ERR_OK) {
-            int nCount = (int)pvStr->size();
-            for (int i = 0; i < nCount; i++) {
-                if (isEmptyString(pvStr->at(i))) {
-                    addNewNode("Unknown artist", FT_ARTIST_UNKNOWN, II_ARTIST, false);
-                } else {
-                    addNewNode(pvStr->at(i), FT_ARTIST, II_ARTIST, false);
-                }
+        VecStrings results = mediaLib->getAllArtist();
+        for (auto &name : results) {
+            if (name.empty()) {
+                addNewNode("Unknown artist", FT_ARTIST_UNKNOWN, II_ARTIST, false);
+            } else {
+                addNewNode(name.c_str(), FT_ARTIST, II_ARTIST, false);
             }
         }
     } else if (folderType == FT_ALL_ALBUM) {
-        CMPAutoPtr<IVString> pvStr;
-        MLRESULT nRet;
-
-        nRet = mediaLib->getAllAlbum(&pvStr);
-        if (nRet == ERR_OK) {
-            int nCount = (int)pvStr->size();
-            for (int i = 0; i < nCount; i++) {
-                if (isEmptyString(pvStr->at(i))) {
-                    addNewNode("Unknown Album", FT_ALBUM_UNKNOWN, II_ALBUM, false);
-                } else {
-                    addNewNode(pvStr->at(i), FT_ALBUM, II_ALBUM, false);
-                }
+        VecStrings results = mediaLib->getAllAlbum();
+        for (auto &name : results) {
+            if (name.empty()) {
+                addNewNode("Unknown Album", FT_ALBUM_UNKNOWN, II_ALBUM, false);
+            } else {
+                addNewNode(name.c_str(), FT_ALBUM, II_ALBUM, false);
             }
         }
     } else if (folderType == FT_ARTIST ||
         folderType == FT_ARTIST_UNKNOWN) {
-        CMPAutoPtr<IVString> pvStr;
-
         addNewNode("Top rated songs by artist", FT_ARTIST_TOP_RATING, II_MUSIC, false);
 
+        VecStrings results;
         if (folderType == FT_ARTIST_UNKNOWN) {
-            mediaLib->getByArtist("", &m_playlist, MLOB_NONE, -1);
-            mediaLib->getAlbumOfArtist("", &pvStr);
+            m_playlist = mediaLib->getByArtist("", MLOB_NONE, -1);
+            results = mediaLib->getAlbumOfArtist("");
         } else {
-            mediaLib->getByArtist(m_strName.c_str(), &m_playlist, MLOB_NONE, -1);
-            mediaLib->getAlbumOfArtist(m_strName.c_str(), &pvStr);
+            m_playlist = mediaLib->getByArtist(m_strName.c_str(), MLOB_NONE, -1);
+            results = mediaLib->getAlbumOfArtist(m_strName.c_str());
         }
 
-        int nCount = (int)pvStr->size();
-        for (int i = 0; i < nCount; i++) {
-            if (isEmptyString(pvStr->at(i))) {
+        for (auto &name : results) {
+            if (name.empty()) {
                 addNewNode("Unknown album", FT_ARTIST_ALBUM_UNKNOWN, II_ALBUM, false);
             } else {
-                addNewNode(pvStr->at(i), FT_ARTIST_ALBUM, II_ALBUM, false);
+                addNewNode(name.c_str(), FT_ARTIST_ALBUM, II_ALBUM, false);
             }
         }
     } else if (folderType == FT_ARTIST_ALBUM ||
@@ -102,92 +84,85 @@ void CMPMTNMediaLibrary::onUpdate() {
         }
 
         if (folderType == FT_ARTIST_ALL_MUSIC) {
-            mediaLib->getByArtist(strArtist.c_str(), &m_playlist, MLOB_NONE, -1);
+            m_playlist = mediaLib->getByArtist(strArtist.c_str(), MLOB_NONE, -1);
         } else if (folderType == FT_ARTIST_TOP_RATING) {
-            MLRESULT nRet = mediaLib->getByArtist(strArtist.c_str(), &m_playlist, MLOB_RATING, -1);
-            if (nRet == ERR_OK && m_playlist) {
-                g_Player.filterLowRatingMedia(m_playlist);
+            m_playlist = mediaLib->getByArtist(strArtist.c_str(), MLOB_RATING, -1);
+            if (m_playlist) {
+                g_player.filterLowRatingMedia(m_playlist.get());
             }
         } else {
-            mediaLib->getByAlbum(strArtist.c_str(),
+            m_playlist = mediaLib->getByAlbum(strArtist.c_str(),
                 folderType == FT_ARTIST_ALBUM_UNKNOWN ? "" : m_strName.c_str(),
-                &m_playlist, MLOB_NONE, -1);
+                MLOB_NONE, -1);
         }
     } else if (folderType == FT_ALBUM_UNKNOWN ||
         folderType == FT_ALBUM) {
-        mediaLib->getByAlbum(
-            folderType == FT_ALBUM_UNKNOWN ? "" : m_strName.c_str(), &m_playlist, MLOB_NONE, -1);
+        m_playlist = mediaLib->getByAlbum(
+            folderType == FT_ALBUM_UNKNOWN ? "" : m_strName.c_str(), MLOB_NONE, -1);
     }
     //////////////////////////////////////////////////////////////////////////
     // Genre
     else if (folderType == FT_ALL_GENRE) {
-        CMPAutoPtr<IVString> pvStr;
-        MLRESULT nRet;
-
-        nRet = mediaLib->getAllGenre(&pvStr);
-        if (nRet == ERR_OK) {
-            int nCount = (int)pvStr->size();
-            for (int i = 0; i < nCount; i++) {
-                if (isEmptyString(pvStr->at(i))) {
-                    addNewNode("Unknown Genre", FT_GENRE_UNKNOWN, II_GENRE, false);
-                } else {
-                    addNewNode(pvStr->at(i), FT_GENRE, II_GENRE, false);
-                }
+        VecStrings results = mediaLib->getAllGenre();
+        for (auto &name : results) {
+            if (name.empty()) {
+                addNewNode("Unknown Genre", FT_GENRE_UNKNOWN, II_GENRE, false);
+            } else {
+                addNewNode(name.c_str(), FT_GENRE, II_GENRE, false);
             }
         }
     } else if (folderType == FT_GENRE_UNKNOWN ||
         folderType == FT_GENRE) {
-        mediaLib->getByGenre(
-            folderType == FT_GENRE_UNKNOWN ? "" : m_strName.c_str(), &m_playlist, MLOB_NONE, -1);
-    }
-    // Year
-    else if (folderType == FT_ALL_YEAR) {
-        // 对year 进行分类，每10年为一个子节点
-        CMPAutoPtr<IVInt> pvInt;
-        MLRESULT nRet;
-        CSortVInt vTenYear;
-        int i;
-        char szName[256];
-
-        nRet = mediaLib->getAllYear(&pvInt);
-        if (nRet == ERR_OK) {
-            int nCount = (int)pvInt->size();
-            for (i = 0; i < nCount; i++) {
-                vTenYear.add(pvInt->at(i) / 10);
-                //                 if (pvInt->at(i) == 0)
-                //                     addNewNode("Unknown Genre", FT_GENRE_UNKNOWN, II_ALBUM, false);
-                //                 else
-                //                     addNewNode(pvStr->at(i), FT_GENRE, II_ALBUM, false);
-            }
-        }
-
-        for (i = 0; i < (int)vTenYear.size(); i++) {
-            CMPMTNMediaLibrary *pNewNode;
-            int nDecadeYear = vTenYear[i];
-
-            if (nDecadeYear == 0) {
-                addNewNode("Unknown", FT_YEAR, II_YEAR, false);
-                continue;
-            }
-
-            pNewNode = new CMPMTNMediaLibrary;
-            pNewNode->setUpdated(true);
-            pNewNode->folderType = FT_NOT_SET;
-            pNewNode->m_nImageIndex = II_YEAR;
-            sprintf(szName, "%d's", nDecadeYear * 10);
-            pNewNode->m_strName = szName;
-            addChildBack(pNewNode);
-            for (int k = 0; k < (int)pvInt->size(); k++) {
-                if (vTenYear[i] == pvInt->at(k) / 10) {
-                    sprintf(szName, "%d", pvInt->at(k));
-                    pNewNode->addNewNode(szName, FT_YEAR, II_YEAR, false);
-                }
-            }
-        }
+        m_playlist = mediaLib->getByGenre(
+            folderType == FT_GENRE_UNKNOWN ? "" : m_strName.c_str(), MLOB_NONE, -1);
+    } else if (folderType == FT_ALL_YEAR) {
+        // Year
+//        // 对year 进行分类，每10年为一个子节点
+//        CMPAutoPtr<IVInt> pvInt;
+//        ResultCode nRet;
+//        CSortVInt vTenYear;
+//        int i;
+//        char szName[256];
+//
+//        nRet = mediaLib->getAllYear(&pvInt);
+//        if (nRet == ERR_OK) {
+//            int nCount = (int)pvInt->size();
+//            for (i = 0; i < nCount; i++) {
+//                vTenYear.add(pvInt->at(i) / 10);
+//                //                 if (pvInt->at(i) == 0)
+//                //                     addNewNode("Unknown Genre", FT_GENRE_UNKNOWN, II_ALBUM, false);
+//                //                 else
+//                //                     addNewNode(pvStr->at(i), FT_GENRE, II_ALBUM, false);
+//            }
+//        }
+//
+//        for (i = 0; i < (int)vTenYear.size(); i++) {
+//            CMPMTNMediaLibrary *pNewNode;
+//            int nDecadeYear = vTenYear[i];
+//
+//            if (nDecadeYear == 0) {
+//                addNewNode("Unknown", FT_YEAR, II_YEAR, false);
+//                continue;
+//            }
+//
+//            pNewNode = new CMPMTNMediaLibrary;
+//            pNewNode->setUpdated(true);
+//            pNewNode->folderType = FT_NOT_SET;
+//            pNewNode->m_nImageIndex = II_YEAR;
+//            sprintf(szName, "%d's", nDecadeYear * 10);
+//            pNewNode->m_strName = szName;
+//            addChildBack(pNewNode);
+//            for (int k = 0; k < (int)pvInt->size(); k++) {
+//                if (vTenYear[i] == pvInt->at(k) / 10) {
+//                    sprintf(szName, "%d", pvInt->at(k));
+//                    pNewNode->addNewNode(szName, FT_YEAR, II_YEAR, false);
+//                }
+//            }
+//        }
     } else if (folderType == FT_YEAR) {
         int nYear;
         nYear = atoi(m_strName.c_str());
-        mediaLib->getByYear(nYear, &m_playlist, MLOB_NONE, -1);
+        m_playlist = mediaLib->getByYear(nYear, MLOB_NONE, -1);
     }
     // rating
     else if (folderType == FT_ALL_RATING) {
@@ -200,21 +175,18 @@ void CMPMTNMediaLibrary::onUpdate() {
             name.resize(i + 1);
             addNewNode(name.c_str(), FT_RATING_1 + i, II_RATING, false);
         }
-        //        mediaLib->getTopRating(16, &m_playlist);
-        //        if (nRet == ERR_OK && m_playlist)
-        //            g_Player.filterLowRatingMedia(m_playlist);
     } else if (folderType == FT_NOT_RATED || folderType == FT_RATING_1 ||
         folderType == FT_RATING_2 || folderType == FT_RATING_3 ||
         folderType == FT_RATING_4 || folderType == FT_RATING_5) {
-        mediaLib->getByRating(folderType - FT_NOT_RATED, &m_playlist, MLOB_RATING, -1);
+        m_playlist = mediaLib->getByRating(folderType - FT_NOT_RATED, MLOB_RATING, -1);
     } else if (folderType == FT_TOP_PLAYED) {
-        mediaLib->getTopPlayed(50, &m_playlist);
+        m_playlist = mediaLib->getTopPlayed(50);
         setUpdated(false);
     } else if (folderType == FT_RECENT_ADDED) {
-        mediaLib->getRecentAdded(32, &m_playlist);
+        m_playlist = mediaLib->getRecentAdded(32);
         setUpdated(false);
     } else if (folderType == FT_RECENT_PLAYED) {
-        mediaLib->getRecentPlayed(32, &m_playlist);
+        m_playlist = mediaLib->getRecentPlayed(32);
         setUpdated(false);
     }
 }
@@ -264,15 +236,13 @@ void CMPMTNDiskDevice::onUpdate() {
                     }
                 } else {
                     // Is file an audio media?
-                    if (g_Player.isExtAudioFile(fileGetExt(finder.getCurName()))) {
+                    if (g_player.isExtAudioFile(fileGetExt(finder.getCurName()))) {
                         if (!m_playlist) {
-                            if (g_Player.newPlaylist(&m_playlist) != ERR_OK) {
-                                return;
-                            }
+                            m_playlist = g_player.newPlaylist();
                         }
                         strFile = m_strDir + finder.getCurName();
-                        CMPAutoPtr<IMedia> media;
-                        if (g_Player.newMedia(&media, strFile.c_str()) == ERR_OK) {
+                        auto media = g_player.newMedia(strFile.c_str());
+                        if (media) {
                             m_playlist->insertItem(-1, media);
                         }
                     }
@@ -299,11 +269,7 @@ void CMPMTNPlaylists::onUpdate() {
             addChildBack(playlistNode);
         }
     } else if (folderType == FT_PLAYLIST_FILE) {
-        //
-        if (g_Player.newPlaylist(&m_playlist) != ERR_OK) {
-            return;
-        }
-        loadPlaylist(g_Player.getIMPlayer(), m_playlist, m_strPlaylistFile.c_str());
+        m_playlist = loadPlaylist(m_strPlaylistFile.c_str());
     }
 }
 
@@ -358,20 +324,11 @@ void CMPMediaTree::close() {
 
 }
 
-bool CMPMediaTree::getCurNodePlaylist(IPlaylist **playlist) {
-    IMPMediaTreeNode *pNode;
-
-    pNode = (IMPMediaTreeNode *)getSelNode();
+PlaylistPtr CMPMediaTree::getCurNodePlaylist() {
+    auto pNode = (IMPMediaTreeNode *)getSelNode();
     if (!pNode) {
-        return false;
+        return nullptr;
     }
 
-    if (pNode->m_playlist.p) {
-        *playlist = pNode->m_playlist;
-        (*playlist)->addRef();
-
-        return true;
-    }
-
-    return false;
+    return pNode->m_playlist;
 }

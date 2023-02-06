@@ -134,7 +134,7 @@ bool CMPlayerAppBase::init() {
 
     registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_LYRICS_SEARCH_END, ET_DOWNLOAD_END, ET_LYRICS_RESEARCH);
 
-    g_Player.onInit();
+    g_player.onInit();
 
     // create main skin window.
     int nRet = loadDefaultSkin(SZ_DEFSKIN);
@@ -200,7 +200,7 @@ void CMPlayerAppBase::quit() {
 
     g_wndFloatingLyr.destroy();
     m_pSkinFactory->quit();
-    g_Player.onQuit();
+    g_player.onQuit();
 
     g_LyricData.close();
 
@@ -239,10 +239,6 @@ void CMPlayerAppBase::postQuitMessage() {
     CSkinApp::postQuitMessage();
 }
 
-CEventsDispatcher *CMPlayerAppBase::newEventPatcher() {
-    return new CMPEventsDispatcher();
-}
-
 CSkinFactory *CMPlayerAppBase::newSkinFactory() {
     return new CMPSkinFactory(this, g_uidDefinition);
 }
@@ -256,12 +252,12 @@ void CMPlayerAppBase::onMediaChanged(bool bAutoDownloadIfNotExist) {
     // auto save embedded lyrics
     g_autoProcessEmbeddedLyrics.onSongChanged();
 
-    g_LyricData.newLyrics(g_Player.getMediaKey().c_str(), g_Player.getMediaLength());
+    g_LyricData.newLyrics(g_player.getMediaKey().c_str(), g_player.getMediaLength());
 
     //
     // 没有歌曲信息
     //
-    if (!g_Player.isMediaOpened()) {
+    if (!g_player.isMediaOpened()) {
         dispatchLyricsChangedSyncEvent();
         return;
     }
@@ -269,12 +265,12 @@ void CMPlayerAppBase::onMediaChanged(bool bAutoDownloadIfNotExist) {
     bool bAssociateNone = false;
     int nRet;
 
-    string strAssociateMediaKey = g_Player.getMediaKey();
+    string strAssociateMediaKey = g_player.getMediaKey();
     if (g_LyricSearch.isAssociatedWithNoneLyrics(strAssociateMediaKey.c_str())) {
         bAssociateNone = true;
     } else {
         string strLyricsFile;
-        if (g_LyricSearch.getBestMatchLyrics(g_Player.getSrcMedia(), g_Player.getArtist(), g_Player.getTitle(), strLyricsFile)) {
+        if (g_LyricSearch.getBestMatchLyrics(g_player.getSrcMedia(), g_player.getArtist(), g_player.getTitle(), strLyricsFile)) {
             nRet = openLyrics(strAssociateMediaKey.c_str(), strLyricsFile.c_str());
             if (nRet != ERR_OK) {
                 dispatchLongErrorText(ERROR2STR_LOCAL(nRet));
@@ -290,14 +286,14 @@ void CMPlayerAppBase::onMediaChanged(bool bAutoDownloadIfNotExist) {
     } else {
         // add Media Info:
         VecStrings vMediaInfo;
-        if (!isEmptyString(g_Player.getArtist())) {
-            vMediaInfo.push_back(string(_TLT("Artist:")) + " " + g_Player.getArtist());
+        if (!isEmptyString(g_player.getArtist())) {
+            vMediaInfo.push_back(string(_TLT("Artist:")) + " " + g_player.getArtist());
         }
-        if (!isEmptyString(g_Player.getTitle())) {
-            vMediaInfo.push_back(string(_TLT("Title:")) + " " + g_Player.getTitle());
+        if (!isEmptyString(g_player.getTitle())) {
+            vMediaInfo.push_back(string(_TLT("Title:")) + " " + g_player.getTitle());
         }
-        if (!isEmptyString(g_Player.getAlbum())) {
-            vMediaInfo.push_back(string(_TLT("Album:")) + " " + g_Player.getAlbum());
+        if (!isEmptyString(g_player.getAlbum())) {
+            vMediaInfo.push_back(string(_TLT("Album:")) + " " + g_player.getAlbum());
         }
         g_LyricData.addTextInLyrics(vMediaInfo);
 
@@ -321,7 +317,7 @@ void CMPlayerAppBase::onLanguageChanged() {
 
 void CMPlayerAppBase::onOnlineSearchEnd() {
     // If lyrics already associated, do not download auto.
-    if (g_LyricSearch.isAssociatedLyrics(g_Player.getMediaKey().c_str())) {
+    if (g_LyricSearch.isAssociatedLyrics(g_player.getMediaKey().c_str())) {
         return;
     }
 
@@ -417,7 +413,7 @@ void CMPlayerAppBase::newLyrics() {
         return;
     }
 
-    g_LyricData.newLyrics(g_Player.getMediaKey().c_str(), g_Player.getMediaLength());
+    g_LyricData.newLyrics(g_player.getMediaKey().c_str(), g_player.getMediaLength());
 
     dispatchLyricsChangedSyncEvent();
 }
@@ -425,7 +421,7 @@ void CMPlayerAppBase::newLyrics() {
 int CMPlayerAppBase::openLyrics(cstr_t szAssociateKeyword, cstr_t szLrcSource) {
     int nRet;
 
-    nRet = g_LyricData.openLyrics(szAssociateKeyword, g_Player.getMediaLength(), szLrcSource);
+    nRet = g_LyricData.openLyrics(szAssociateKeyword, g_player.getMediaLength(), szLrcSource);
     if (nRet != ERR_OK) {
         return nRet;
     }

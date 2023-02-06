@@ -11,7 +11,7 @@ public:
 
     virtual bool isOpened() = 0;
 
-    virtual bool searchCache(cstr_t szFileAssociateKeyword, cstr_t szArtist, cstr_t szTitle, V_LRCSEARCHRESULT *pvResult, uint32_t *pdwSearchTime) = 0;
+    virtual bool searchCache(cstr_t szFileAssociateKeyword, cstr_t szArtist, cstr_t szTitle, ListLyrSearchResults *pvResult, uint32_t *pdwSearchTime) = 0;
     virtual bool updateSearchLrcInfo(cstr_t szFileAssociateKeyword, MLMsgRetSearch &retSearch) = 0;
 
 protected:
@@ -31,7 +31,7 @@ public:
 
     virtual bool isOpened() { return m_db.m_db != nullptr; }
 
-    virtual bool searchCache(cstr_t szFileAssociateKeyword, cstr_t szArtist, cstr_t szTitle, V_LRCSEARCHRESULT *pvResult, uint32_t *pdwSearchTime);
+    virtual bool searchCache(cstr_t szFileAssociateKeyword, cstr_t szArtist, cstr_t szTitle, ListLyrSearchResults *pvResult, uint32_t *pdwSearchTime);
     virtual bool updateSearchLrcInfo(cstr_t szFileAssociateKeyword, MLMsgRetSearch &retSearch);
 
 protected:
@@ -47,7 +47,7 @@ public:
 
     virtual bool isOpened() { return true; }
 
-    virtual bool searchCache(cstr_t szFileAssociateKeyword, cstr_t szArtist, cstr_t szTitle, V_LRCSEARCHRESULT *pvResult, uint32_t *pdwSearchTime);
+    virtual bool searchCache(cstr_t szFileAssociateKeyword, cstr_t szArtist, cstr_t szTitle, ListLyrSearchResults *pvResult, uint32_t *pdwSearchTime);
     virtual bool updateSearchLrcInfo(cstr_t szFileAssociateKeyword, MLMsgRetSearch &retSearch);
 
     static void free();
@@ -92,11 +92,11 @@ public:
     bool init();
     void quit();
 
-    bool searchCacheForCur(V_LRCSEARCHRESULT *pvResult = nullptr, uint32_t *pdwSearchTime = nullptr);
+    bool searchCacheForCur(ListLyrSearchResults *pvResult = nullptr, uint32_t *pdwSearchTime = nullptr);
 
     bool autoSearch();
 
-    int searchOnline(CMLClientSession &session, cstr_t szArtist, cstr_t szTitle, cstr_t szMediaKey, V_LRCSEARCHRESULT &vResult, string &strMsg, int &nCurPage, int &nPageCount);
+    int searchOnline(CMLClientSession &session, cstr_t szArtist, cstr_t szTitle, cstr_t szMediaKey, ListLyrSearchResults &vResult, string &strMsg, int &nCurPage, int &nPageCount);
     int batchSearch(CMLClientSession &session, MLListSearchItems &listSearch, uint32_t nLyrSaveFlag, string &strMsg, INotifyEvent *pNotify);
 
     int batchSearch(CMLClientSession &session, MLListSearchItems &listSearch, MLMsgRetBatchSearch &retLyrics);

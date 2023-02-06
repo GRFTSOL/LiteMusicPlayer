@@ -135,8 +135,8 @@ class CPlayerShuffleEventHandler : public IEventHandler {
 public:
     CPlayerShuffleEventHandler(CSkinNStatusButton *pShuffle) {
         m_pShuffle = pShuffle;
-        if (g_Player.isShuffle() != tobool(m_pShuffle->getStatus())) {
-            pShuffle->setStatus(g_Player.isShuffle() ? 1 : 0);
+        if (g_player.isShuffle() != tobool(m_pShuffle->getStatus())) {
+            pShuffle->setStatus(g_player.isShuffle() ? 1 : 0);
         }
         registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_SETTING_CHANGED);
     }
@@ -146,7 +146,7 @@ public:
             CEventPlayerSettingChanged *pSettingEvt = (CEventPlayerSettingChanged *)pEvent;
             if (pSettingEvt->settingType == IMPEvent::MPS_SHUFFLE) {
                 if (tobool(pSettingEvt->value) != tobool(m_pShuffle->getStatus())) {
-                    m_pShuffle->setStatus(g_Player.isShuffle() ? 1 : 0);
+                    m_pShuffle->setStatus(g_player.isShuffle() ? 1 : 0);
                 }
             }
         }
@@ -161,8 +161,8 @@ class CPlayerLoopEventHandler : public IEventHandler {
 public:
     CPlayerLoopEventHandler(CSkinNStatusButton *pLoopBt) {
         m_pLoop = pLoopBt;
-        if ((int)g_Player.getLoop() != pLoopBt->getStatus()) {
-            m_pLoop->setStatus(g_Player.getLoop());
+        if ((int)g_player.getLoop() != pLoopBt->getStatus()) {
+            m_pLoop->setStatus(g_player.getLoop());
         }
         registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_SETTING_CHANGED);
     }
@@ -188,7 +188,7 @@ class CPlayerVolumeEventHandler : public IEventHandler {
 public:
     CPlayerVolumeEventHandler(CSkinSeekCtrl *pVolume) {
         m_pVolume = pVolume;
-        m_pVolume->setScrollInfo(0, MP_VOLUME_MAX, 0, g_Player.getVolume());
+        m_pVolume->setScrollInfo(0, MP_VOLUME_MAX, 0, g_player.getVolume());
         registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_SETTING_CHANGED);
     }
 
@@ -212,17 +212,17 @@ class CPlayerSeekEventHandler : public IEventHandler {
 public:
     CPlayerSeekEventHandler(CSkinSeekCtrl *pSeekCtrl) {
         m_pSeekCtrl = pSeekCtrl;
-        pSeekCtrl->setScrollInfo(0, g_Player.getMediaLength(), 0, 0);
+        pSeekCtrl->setScrollInfo(0, g_player.getMediaLength(), 0, 0);
         registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_POS_UPDATE, ET_PLAYER_STATUS_CHANGED);
     }
 
     virtual void onEvent(const IEvent *pEvent) {
         if (pEvent->eventType == ET_PLAYER_POS_UPDATE || pEvent->eventType == ET_PLAYER_SEEK) {
-            m_pSeekCtrl->setScrollPos(g_Player.getPlayPos());
+            m_pSeekCtrl->setScrollPos(g_player.getPlayPos());
         } else if (pEvent->eventType == ET_PLAYER_CUR_MEDIA_CHANGED) {
-            m_pSeekCtrl->setScrollInfo(0, g_Player.getMediaLength(), 0, 0);
+            m_pSeekCtrl->setScrollInfo(0, g_player.getMediaLength(), 0, 0);
         } else if (pEvent->eventType == ET_PLAYER_STATUS_CHANGED) {
-            if (g_Player.getPlayerState() == PS_STOPED) {
+            if (g_player.getPlayerState() == PS_STOPPED) {
                 m_pSeekCtrl->setScrollPos(0);
             }
         }
@@ -238,7 +238,7 @@ public:
     CPlayerPlayPauseBtHandler(CSkinNStatusButton *pButton) {
         int bCheck;
 
-        bCheck = g_Player.getPlayerState() == PS_PLAYING;
+        bCheck = g_player.getPlayerState() == PS_PLAYING;
 
         m_pButtn = pButton;
         if (m_pButtn->getStatus() != bCheck) {
@@ -251,7 +251,7 @@ public:
         if (pEvent->eventType == ET_PLAYER_STATUS_CHANGED) {
             int bCheck;
 
-            bCheck = g_Player.getPlayerState() == PS_PLAYING;
+            bCheck = g_player.getPlayerState() == PS_PLAYING;
             if (m_pButtn->getStatus() != bCheck) {
                 m_pButtn->setStatus(bCheck);
             }
@@ -268,7 +268,7 @@ public:
     CPlayerPlayPauseToolbarHandler(CSkinToolbar *pToolbar) {
         bool bCheck;
 
-        bCheck = g_Player.getPlayerState() == PS_PLAYING;
+        bCheck = g_player.getPlayerState() == PS_PLAYING;
 
         m_pToolbar = pToolbar;
         if (m_pToolbar->isCheck(CMD_PLAYPAUSE) != bCheck) {
@@ -281,7 +281,7 @@ public:
         if (pEvent->eventType == ET_PLAYER_STATUS_CHANGED) {
             bool bCheck;
 
-            bCheck = g_Player.getPlayerState() == PS_PLAYING;
+            bCheck = g_player.getPlayerState() == PS_PLAYING;
             if (m_pToolbar->isCheck(CMD_PLAYPAUSE) != bCheck) {
                 m_pToolbar->setCheck(CMD_PLAYPAUSE, bCheck);
             }
@@ -298,12 +298,12 @@ public:
     CPlayerShuffleRepeatToolbarHandler(CSkinToolbar *pToolbar) {
         m_pToolbar = pToolbar;
 
-        if (g_Player.isShuffle() != tobool(pToolbar->getBtStatus(CMD_SHUFFLE))) {
-            pToolbar->setBtStatus(CMD_SHUFFLE, g_Player.isShuffle() ? 1 : 0, false);
+        if (g_player.isShuffle() != tobool(pToolbar->getBtStatus(CMD_SHUFFLE))) {
+            pToolbar->setBtStatus(CMD_SHUFFLE, g_player.isShuffle() ? 1 : 0, false);
         }
 
-        if (g_Player.getLoop() != m_pToolbar->getBtStatus(CMD_LOOP)) {
-            m_pToolbar->setBtStatus(CMD_LOOP, g_Player.getLoop(), false);
+        if (g_player.getLoop() != m_pToolbar->getBtStatus(CMD_LOOP)) {
+            m_pToolbar->setBtStatus(CMD_LOOP, g_player.getLoop(), false);
         }
 
         registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_SETTING_CHANGED);
@@ -314,11 +314,11 @@ public:
             CEventPlayerSettingChanged *pSettingEvt = (CEventPlayerSettingChanged *)pEvent;
             if (pSettingEvt->settingType == IMPEvent::MPS_SHUFFLE) {
                 if (pSettingEvt->value != m_pToolbar->getBtStatus(CMD_SHUFFLE)) {
-                    m_pToolbar->setBtStatus(CMD_SHUFFLE, g_Player.isShuffle() ? 1 : 0, true);
+                    m_pToolbar->setBtStatus(CMD_SHUFFLE, g_player.isShuffle() ? 1 : 0, true);
                 }
             } else if (pSettingEvt->settingType == IMPEvent::MPS_LOOP) {
                 if (pSettingEvt->value != m_pToolbar->getBtStatus(CMD_LOOP)) {
-                    m_pToolbar->setBtStatus(CMD_LOOP, g_Player.getLoop(), true);
+                    m_pToolbar->setBtStatus(CMD_LOOP, g_player.getLoop(), true);
                 }
             }
         }
@@ -339,10 +339,10 @@ class CMediaStereoStatusEventHandler : public IEventHandler {
 public:
     CMediaStereoStatusEventHandler(CUIObject *pCtrl) {
         m_pStereoStatusCtrl = pCtrl;
-        CMPAutoPtr<IMedia> pMedia;
-        if (g_Player.getCurrentMedia(&pMedia) == ERR_OK) {
+        auto media = g_player.getCurrentMedia();
+        if (media) {
             int nChannels;
-            pMedia->getAttribute(MA_CHANNELS, &nChannels);
+            media->getAttribute(MA_CHANNELS, &nChannels);
             if (nChannels >= 2) {
                 m_pStereoStatusCtrl->setPropertyInt("CurStatus", 1);
             } else {
@@ -354,10 +354,10 @@ public:
 
     virtual void onEvent(const IEvent *pEvent) {
         if (pEvent->eventType == ET_PLAYER_CUR_MEDIA_CHANGED) {
-            CMPAutoPtr<IMedia> pMedia;
-            if (g_Player.getCurrentMedia(&pMedia) == ERR_OK) {
+            auto media = g_player.getCurrentMedia();
+            if (media) {
                 int nChannels;
-                pMedia->getAttribute(MA_CHANNELS, &nChannels);
+                media->getAttribute(MA_CHANNELS, &nChannels);
                 if (nChannels >= 2) {
                     m_pStereoStatusCtrl->setPropertyInt("CurStatus", 1);
                 } else {
@@ -376,10 +376,10 @@ class CPlayerMediaChangedRateEventHandler : public IEventHandler {
 public:
     CPlayerMediaChangedRateEventHandler(CSkinRateCtrl *pRateCtrl) {
         m_pRateCtrl = pRateCtrl;
-        CMPAutoPtr<IMedia> pMedia;
-        if (g_Player.getCurrentMedia(&pMedia) == ERR_OK) {
+        auto media = g_player.getCurrentMedia();
+        if (media) {
             int nRating = 0;
-            pMedia->getAttribute(MA_RATING, &nRating);
+            media->getAttribute(MA_RATING, &nRating);
             m_pRateCtrl->setRating(nRating);
         }
         registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_CUR_MEDIA_INFO_CHANGED);
@@ -387,10 +387,10 @@ public:
 
     virtual void onEvent(const IEvent *pEvent) {
         if (pEvent->eventType == ET_PLAYER_CUR_MEDIA_CHANGED || pEvent->eventType == ET_PLAYER_CUR_MEDIA_INFO_CHANGED) {
-            CMPAutoPtr<IMedia> pMedia;
-            if (g_Player.getCurrentMedia(&pMedia) == ERR_OK) {
+            auto media = g_player.getCurrentMedia();
+            if (media) {
                 int nRating = 0;
-                pMedia->getAttribute(MA_RATING, &nRating);
+                media->getAttribute(MA_RATING, &nRating);
                 m_pRateCtrl->setRating(nRating);
             }
         }
@@ -554,14 +554,14 @@ bool CMPSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags) {
     }
 
     if (nChar == VK_SPACE) {
-        g_Player.playPause();
+        g_player.playPause();
         return true;
     } else if (nFlags == MK_COMMAND) {
         if (nChar == VK_LEFT) {
-            g_Player.prev();
+            g_player.prev();
             return true;
         } else if (nChar == VK_RIGHT) {
-            g_Player.next();
+            g_player.next();
             return true;
         }
     }
@@ -602,8 +602,8 @@ void CMPSkinWnd::onSizeModeChanged(WndSizeMode sizeMode) {
 void CMPSkinWnd::onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) {
     if (pScrollBar->getID() == CMD_VOLUME) {
         // set volume
-        g_Player.setVolume(pScrollBar->getScrollPos());
-        long vol = g_Player.getVolume();
+        g_player.setVolume(pScrollBar->getScrollPos());
+        long vol = g_player.getVolume();
 
         CMPlayerAppBase::getInstance()->dispatchInfoText(stringPrintf("%s %d%%", _TLT("set Volume"), vol).c_str());
     } else if (pScrollBar->getID() == CMD_SEEK) {
@@ -611,7 +611,7 @@ void CMPSkinWnd::onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) {
         char szPos[256], szLength[256];
 
         nPos = pScrollBar->getScrollPos();
-        nMediaLength = g_Player.getMediaLength();
+        nMediaLength = g_player.getMediaLength();
         if (nMediaLength != 0) {
             nPercent = nPos * 100 / nMediaLength;
             formatPlayTime(nPos, szPos);
@@ -621,7 +621,7 @@ void CMPSkinWnd::onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) {
         }
 
         // seek lyrics too...
-        g_Player.uISeekbarOnSeek(nPos);
+        g_player.onUISeekbarSeek(nPos);
     }
 }
 
@@ -883,7 +883,7 @@ void CMPSkinWnd::onDropFiles(HDROP hDrop) {
         DragQueryFile(hDrop, 0, szFile, CountOf(szFile));
         if (fileIsExtSame(szFile, ".lrc") || fileIsExtSame(szFile, ".txt")
             || fileIsExtSame(szFile, ".srt")) {
-            g_LyricSearch.associateLyrics(g_Player.getMediaKey().c_str(), szFile);
+            g_LyricSearch.associateLyrics(g_player.getMediaKey().c_str(), szFile);
             CMPlayerAppBase::getInstance()->dispatchResearchLyrics();
 
             DragFinish(hDrop);
@@ -891,19 +891,19 @@ void CMPSkinWnd::onDropFiles(HDROP hDrop) {
         }
     }
 
-    g_Player.clearPlaylist();
+    g_player.clearPlaylist();
 
     for (int i = 0; i < n; ++i) {
         DragQueryFile(hDrop, i, szFile, CountOf(szFile));
 
         if (isDirExist(szFile)) {
-            g_Player.addDirToPlaylist(szFile);
+            g_player.addDirToPlaylist(szFile);
         } else {
-            g_Player.addToPlaylist(szFile);
+            g_player.addToPlaylist(szFile);
         }
     }
 
-    g_Player.play();
+    g_player.play();
 
     DragFinish(hDrop);
 }

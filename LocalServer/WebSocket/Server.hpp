@@ -87,6 +87,10 @@ enum Permissions {
 struct ClientInfo {
     uint32_t                    id;
     uint32_t                    permissions = P_ALL;
+
+    // 在执行关键命令时需要 client 传递的 cmdID 必须大于此值，防止重放攻击.
+    uint32_t                    nextCmdId = 0;
+
     std::string                 latestIp;
     std::string                 latestClientName;
     std::string                 aesKey;

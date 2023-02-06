@@ -4,14 +4,13 @@
 @interface _MDAVPlayer : NSObject 
 {
     AVPlayer *mPlayer;
-    class CMDAVPlayer    *mMDAVPlayer;
+    class CoreAVPlayer    *mCoreAVPlayer;
 }
 
 @end
 
-#import "IMPlayer.h"
-#import "MDAVPlayer.h"
-#import "MPlayer.h"
+#import "CoreAVPlayer.h"
+#import "../IPlayerCore.hpp"
 #import "../../MediaTags/MediaTags.h"
 
 
@@ -21,11 +20,11 @@ static void *AVSPPlayerRateContext = &AVSPPlayerRateContext;
 
 @implementation _MDAVPlayer
 
-- (id)init:(CMDAVPlayer *)player {
+- (id)init:(CoreAVPlayer *)player {
     self = [super init];
     if (self) {
         mPlayer = [[AVPlayer alloc] init];
-        mMDAVPlayer = player;
+        mCoreAVPlayer = player;
 
         [self addObserver:self forKeyPath:@"player.rate" options:NSKeyValueObservingOptionNew context:AVSPPlayerRateContext];
         [self addObserver:self forKeyPath:@"player.currentItem.status" options:NSKeyValueObservingOptionNew context:AVSPPlayerItemStatusContext];
@@ -64,7 +63,7 @@ static void *AVSPPlayerRateContext = &AVSPPlayerRateContext;
     [mPlayer pause];
     [mPlayer seekToTime:CMTimeMake(0, 1)];
 
-    mMDAVPlayer->getMPlayer()->notifyEod(mMDAVPlayer, ERR_OK);
+    mCoreAVPlayer->notifyEndOfPlaying();
 }
 
 - (AVPlayer *)player {
@@ -87,9 +86,7 @@ static void *AVSPPlayerRateContext = &AVSPPlayerRateContext;
         }
 
         if (!enable) {
-            if (mMDAVPlayer->getMPlayer()) {
-                mMDAVPlayer->getMPlayer()->notifyEod(mMDAVPlayer, ERR_OK);
-            }
+            mCoreAVPlayer->notifyEndOfPlaying();
         }
     } else if (context == AVSPPlayerRateContext) {
         float rate = [[change objectForKey:NSKeyValueChangeNewKey] floatValue];
@@ -98,9 +95,7 @@ static void *AVSPPlayerRateContext = &AVSPPlayerRateContext;
             CMTime length = [[mPlayer currentItem] duration];
             if (pos.value * 1.f / pos.timescale + 1 >= length.value * 1.f / length.timescale) {
                 // + 0.5 是因为结束时，pos 比 length 小.
-                if (mMDAVPlayer->getMPlayer()) {
-                    mMDAVPlayer->getMPlayer()->notifyEod(mMDAVPlayer, ERR_OK);
-                }
+                mCoreAVPlayer->notifyEndOfPlaying();
             }
         }
         //        if (rate != 1.f)
@@ -126,30 +121,32 @@ static void *AVSPPlayerRateContext = &AVSPPlayerRateContext;
 
 //////////////////////////////////////////////////////////////////////////
 
-CMDAVPlayer::CMDAVPlayer(void) {
-    OBJ_REFERENCE_INIT;
-
-    init();
+CoreAVPlayer::CoreAVPlayer(void) {
+    m_player = [[_MDAVPlayer alloc] init:this];
+    m_state = PS_STOPPED;
 }
 
-CMDAVPlayer::~CMDAVPlayer(void) {
+CoreAVPlayer::~CoreAVPlayer(void) {
 }
 
-cstr_t CMDAVPlayer::getDescription() {
-    return "AVPlayer";
+// 实现的说明
+const char *CoreAVPlayer::getDescription() {
+    return "Mac OS System AVPlayer Implementation";
 }
 
-cstr_t CMDAVPlayer::getFileExtentions() {
+// 支持的文件扩展名
+const char *CoreAVPlayer::getFileExtentions()  {
     return ".mp3|MP3 files|.mp4|MP4 files|.wma|WMA files|.mp2|MP2 files|.m4a|M4A files|.flac|FLAC files|.aac|AAC files";
 }
 
-MLRESULT CMDAVPlayer::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia) {
+// 获取媒体的标签
+bool CoreAVPlayer::getMediaInfo(const char *mediaUrl, IMediaInfo *pMedia)  {
     if (!isOK()) {
-        return ERR_DECODER_INIT_FAILED;
+        return false;
     }
 
     BasicMediaTags tags;
-    int ret = MediaTags::getTagFast(pInput->getSource(), tags);
+    int ret = MediaTags::getTagFast(mediaUrl, tags);
     if (ret != ERR_OK) {
         return ret;
     }
@@ -162,9 +159,9 @@ MLRESULT CMDAVPlayer::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedi
     pMedia->setAttribute(MA_TRACK_NUMB, atoi(tags.trackNo.c_str()));
 
     if (tags.mediaLength == 0) {
-        AVURLAsset *asset = [AVURLAsset assetWithURL:[NSURL fileURLWithPath:[NSString stringWithUTF8String: pInput->getSource()]]];
+        AVURLAsset *asset = [AVURLAsset assetWithURL:[NSURL fileURLWithPath:[NSString stringWithUTF8String: mediaUrl]]];
         if (![asset isPlayable] || [asset hasProtectedContent]) {
-            return ERR_NOT_SUPPORT;
+            return false;
         }
 
         CMTime duration = [asset duration];
@@ -174,62 +171,78 @@ MLRESULT CMDAVPlayer::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedi
     }
     pMedia->setAttribute(MA_DURATION, tags.mediaLength);
 
-    return ERR_OK;
-}
-
-//
-// decode media file related methods
-//
-
-bool CMDAVPlayer::isSeekable() {
     return true;
 }
 
-bool CMDAVPlayer::isUseOutputPlug() {
-    return false;
-}
-
-MLRESULT CMDAVPlayer::play(IMPlayer *pPlayer, IMediaInput *pInput) {
+//
+// Player control
+//
+bool CoreAVPlayer::play(const char *mediaUrl, IMediaInfo *mediaTagsOut)  {
     if (!isOK()) {
-        return ERR_DECODER_INIT_FAILED;
+        return false;
     }
 
-    [(_MDAVPlayer*)m_player play: [NSString stringWithUTF8String:pInput->getSource()]];
+    m_state = PS_PLAYING;
 
-    return ERR_OK;
+    [(_MDAVPlayer*)m_player play: [NSString stringWithUTF8String:mediaUrl]];
+
+    getMediaInfo(mediaUrl, mediaTagsOut);
+
+    return true;
 }
 
-MLRESULT CMDAVPlayer::pause() {
+bool CoreAVPlayer::pause()  {
     if (!isOK()) {
-        return ERR_DECODER_INIT_FAILED;
+        return false;
     }
 
+    m_state = PS_PAUSED;
     [(_MDAVPlayer*)m_player pause];
 
-    return ERR_OK;
+    return true;
 }
 
-MLRESULT CMDAVPlayer::unpause() {
+bool CoreAVPlayer::unpause()  {
     if (!isOK()) {
-        return ERR_DECODER_INIT_FAILED;
+        return false;
     }
 
+    m_state = PS_PLAYING;
     [(_MDAVPlayer*)m_player unpause];
 
-    return ERR_OK;
+    return true;
 }
 
-MLRESULT CMDAVPlayer::stop() {
+bool CoreAVPlayer::stop()  {
     if (!isOK()) {
-        return ERR_DECODER_INIT_FAILED;
+        return false;
     }
 
     [(_MDAVPlayer*)m_player stop];
 
-    return ERR_OK;
+    return true;
 }
 
-uint32_t CMDAVPlayer::getLength() {
+
+bool CoreAVPlayer::isSeekable()  {
+    return true;
+}
+
+bool CoreAVPlayer::seek(int pos)  {
+    if (!isOK()) {
+        return false;
+    }
+
+    [[(_MDAVPlayer*)m_player player] seekToTime:CMTimeMake(pos, 1000)];
+
+    return true;
+}
+
+
+//
+// Current playing Media state
+//
+uint32_t CoreAVPlayer::getDuration() {
     if (!isOK()) {
         return 0;
     }
@@ -243,17 +256,7 @@ uint32_t CMDAVPlayer::getLength() {
     return (uint32_t)(duration.value * 1000 / duration.timescale);
 }
 
-MLRESULT CMDAVPlayer::seek(uint32_t nPos) {
-    if (!isOK()) {
-        return ERR_DECODER_INIT_FAILED;
-    }
-
-    [[(_MDAVPlayer*)m_player player] seekToTime:CMTimeMake(nPos, 1000)];
-
-    return ERR_OK;
-}
-
-uint32_t CMDAVPlayer::getPos() {
+uint32_t CoreAVPlayer::getPos() {
     if (!isOK()) {
         return 0;
     }
@@ -266,66 +269,57 @@ uint32_t CMDAVPlayer::getPos() {
     return (uint32_t)(time.value * 1000 / time.timescale);
 }
 
-MLRESULT CMDAVPlayer::setVolume(int volume, int nBanlance) {
+PlayerState CoreAVPlayer::getState() {
+    return m_state;
+}
+
+//
+// Player settings
+//
+// 0 ~ 100
+bool CoreAVPlayer::setVolume(int volume) {
     if (!isOK()) {
-        return ERR_DECODER_INIT_FAILED;
+        return false;
     }
 
     [[(_MDAVPlayer*)m_player player] setVolume:volume / 100.0f];
 
-    return ERR_OK;
-}
-
-bool CMDAVPlayer::init() {
-    m_player = [[_MDAVPlayer alloc] init:this];
-
     return true;
 }
 
-MLRESULT CMDAVPlayer::doDecode(IMedia *pMedia) {
+int CoreAVPlayer::getVolume() {
     if (!isOK()) {
-        return ERR_DECODER_INIT_FAILED;
+        return false;
     }
 
-    MLRESULT nRet;
-    CXStr strMedia;
-    CMPAutoPtr<IMediaInput> pInput;
-
-    nRet = pMedia->getSourceUrl(&strMedia);
-    if (nRet != ERR_OK) {
-        return nRet;
-    }
-
-    nRet = m_pPlayer->m_pluginMgrAgent.newInput(strMedia.c_str(), &pInput);
-    if (nRet != ERR_OK) {
-        return nRet;
-    }
-
-    getMediaInfo(m_pPlayer, pInput, pMedia);
-
-    nRet = play(m_pPlayer, pInput);
-    if (nRet != ERR_OK) {
-        if (nRet == ERR_MI_NOT_FOUND && pMedia->getID() != MEDIA_ID_INVALID) {
-            // the source can't be opened, set it as deleted.
-            m_pPlayer->m_pMediaLib->setDeleted(&pMedia);
-        }
-        goto R_FAILED;
-    }
-
-    if (m_pPlayer->m_volume != -1) {
-        if (m_pPlayer->m_bMute) {
-            setVolume(0, 0);
-        } else {
-            setVolume(m_pPlayer->m_volume, m_pPlayer->m_balance);
-        }
-    }
-
-    return ERR_OK;
-
-R_FAILED:
-    return nRet;
+    return (int)[[(_MDAVPlayer*)m_player player] volume];
 }
 
-bool CMDAVPlayer::isOK() {
+// -100 ~ 100
+bool CoreAVPlayer::setBalance(int balance) {
+    return false;
+}
+
+int CoreAVPlayer::getBalance() {
+    return 0;
+}
+
+bool CoreAVPlayer::setEQ(const EQualizer *eq) {
+    return false;
+}
+
+bool CoreAVPlayer::getEQ(EQualizer *eq) {
+    return false;
+}
+
+bool CoreAVPlayer::isOK() {
     return m_player != nullptr && [(_MDAVPlayer*)m_player player] != nil;
+}
+
+void CoreAVPlayer::notifyEndOfPlaying() {
+    m_state = PS_STOPPED;
+
+    if (m_callback) {
+        m_callback->onEndOfPlaying();
+    }
 }

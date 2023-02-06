@@ -77,8 +77,8 @@ void CMLTrayIcon::updateShowIconPos() {
 
     showIconOn = (SHOW_ICON_ON)g_profile.getInt(SZ_SECT_UI, "ShowIconOn", SHOW_ICON_ON_TASKBAR);
 
-    if (!isEmptyString(g_Player.getFullTitle())) {
-        strCaption = g_Player.getFullTitle();
+    if (!isEmptyString(g_player.getFullTitle())) {
+        strCaption = g_player.getFullTitle();
         strCaption += " - ";
         strCaption += SZ_APP_NAME;
     } else {

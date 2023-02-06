@@ -12,7 +12,7 @@
 #include "../../base/base.h"
 #include "../../MPlayerEngine/IMPlayer.h"
 
-class CMDWMA : public IMediaDecode  
+class CMDWMA : public IMediaDecoder  
 {
 OBJ_REFERENCE_DECL
 public:
@@ -25,7 +25,7 @@ public:
 
 	virtual cstr_t getDescription();
 	virtual cstr_t getFileExtentions();	// get supported file's extentions.
-	virtual MLRESULT getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia);
+	virtual ResultCode getMediaInfo(IMediaInput *pInput, IMediaInfo *pMedia);
 
 	//
 	// decode media file related methods
@@ -34,19 +34,19 @@ public:
 	virtual bool isSeekable();
 	virtual bool isUseOutputPlug();
 
-	virtual MLRESULT play(IMPlayer *pPlayer, IMediaInput *pInput);
-	virtual MLRESULT pause();
-	virtual MLRESULT unpause();
+	virtual ResultCode play(IMPlayer *pPlayer, IMediaInput *pInput);
+	virtual ResultCode pause();
+	virtual ResultCode unpause();
 	virtual bool IsPaused();
-	virtual MLRESULT stop();
+	virtual ResultCode stop();
 
 	// time length
 	virtual uint32 getLength();
-	virtual MLRESULT Seek(uint32 dwPos);
+	virtual ResultCode Seek(uint32 dwPos);
 	virtual uint32 GetPos();
 
 	// volume
-	virtual MLRESULT setVolume(int volume, int nBanlance);
+	virtual ResultCode setVolume(int volume, int nBanlance);
 
 	struct AUDIO_INFO
 	{
@@ -74,9 +74,7 @@ protected:
 protected:
 	IMediaOutput	*m_pOutput;
 	IMediaInput		*m_pInput;
-	IMPlayer		*m_pPlayer;
-	IMemAllocator	*m_pMemAllocator;
-	PLAYER_STATE	m_state;
+	PlayerState	m_state;
 	bool			m_bPaused;
 	bool			m_bKillThread;
 	int32			m_nSeekPos;

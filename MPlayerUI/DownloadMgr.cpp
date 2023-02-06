@@ -90,7 +90,7 @@ void CDownloadMgr::onSongChanged() {
         // For text lyrics and not associated by user, continue to search for LRC lyrics.
         if (!(g_profile.getBool(SZ_SECT_LYR_DL, "DownLrcEvenIfHasTxt", true)
             && g_LyricData.getLyrContentType() == LCT_TXT
-            && !g_LyricSearch.isAssociatedLyrics(g_Player.getMediaKey().c_str()))) {
+            && !g_LyricSearch.isAssociatedLyrics(g_player.getMediaKey().c_str()))) {
             return;
         }
     }
@@ -101,7 +101,7 @@ void CDownloadMgr::onSongChanged() {
 }
 
 bool CDownloadMgr::searchInCacheResult(bool bShowInfoText) {
-    V_LRCSEARCHRESULT vLrcSearchResult;
+    ListLyrSearchResults vLrcSearchResult;
 
     if (!g_OnlineSearch.searchCacheForCur(&vLrcSearchResult)) {
         static int nFailedCount = 0;
@@ -135,7 +135,7 @@ bool CDownloadMgr::searchInCacheResult(bool bShowInfoText) {
 
     float nValueMax = 0;
     bool bUserSelDown;
-    V_LRCSEARCHRESULT::iterator itBest;
+    ListLyrSearchResults::iterator itBest;
 
     bUserSelDown = g_profile.getBool(SZ_SECT_LYR_DL, "DownLrcUserSelect", false);
 
@@ -167,8 +167,8 @@ bool CDownloadMgr::searchInCacheResult(bool bShowInfoText) {
             str += result.strSaveFileName.c_str();
             CMPlayerAppBase::getInstance()->dispatchLongErrorText(str.c_str());
 
-            downloadLyrics(g_Player.getMediaKey().c_str(),
-                g_Player.getSrcMedia(), result.strUrl.c_str(), result.strSaveFileName.c_str());
+            downloadLyrics(g_player.getMediaKey().c_str(),
+                g_player.getSrcMedia(), result.strUrl.c_str(), result.strSaveFileName.c_str());
             return true;
         }
     }

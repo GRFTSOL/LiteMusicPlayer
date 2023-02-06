@@ -14,8 +14,8 @@ public:
     CDspDemo();
     virtual ~CDspDemo();
 
-    virtual MLRESULT init(IMPlayer *pPlayer);
-    virtual MLRESULT quit();
+    virtual ResultCode init(IMPlayer *pPlayer);
+    virtual ResultCode quit();
 
     virtual void process(IFBuffer *pBuf, int nBps, int nChannels, int nSampleRate);
     virtual void processEcho(IFBuffer *pBuf, int nBps, int nChannels, int nSampleRate);

@@ -1,9 +1,9 @@
 #pragma once
 
-bool savePlaylistAsM3u(IPlaylist *playList, cstr_t szFile);
+bool savePlaylistAsM3u(Playlist *playList, cstr_t szFile);
 
-bool loadPlaylist(IMPlayer *player, IPlaylist *playList, cstr_t szFile);
+PlaylistPtr loadPlaylist(cstr_t szFile);
 
-bool loadM3uPlaylist(IMPlayer *player, IPlaylist *playList, cstr_t szFile);
-bool loadPlsPlaylist(IMPlayer *player, IPlaylist *playList, cstr_t szFile);
-bool loadWplPlaylist(IMPlayer *player, IPlaylist *playList, cstr_t szFile);
+PlaylistPtr loadM3uPlaylist(cstr_t szFile);
+PlaylistPtr loadPlsPlaylist(cstr_t szFile);
+PlaylistPtr loadWplPlaylist(cstr_t szFile);

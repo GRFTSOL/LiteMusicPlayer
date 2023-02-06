@@ -125,5 +125,5 @@ void CMPSkinInfoTextCtrl::draw(CRawGraph *canvas) {
 void CMPSkinInfoTextCtrl::updateShowDefaultInfo() {
     // Hide itself.
     setVisible(false, true);
-    // setText(g_Player.getFullTitle());
+    // setText(g_player.getFullTitle());
 }

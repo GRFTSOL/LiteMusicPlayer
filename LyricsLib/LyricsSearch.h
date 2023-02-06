@@ -68,9 +68,9 @@ struct LrcSearchResult {
 bool operator<=(const LrcSearchResult &l1, const LrcSearchResult &l2);
 bool operator<(const LrcSearchResult &l1, const LrcSearchResult &l2);
 
-class V_LRCSEARCHRESULT : public list<LrcSearchResult> {
+class ListLyrSearchResults : public list<LrcSearchResult> {
 public:
-    bool addResult(const LrcSearchResult &Result);
+    bool addResult(const LrcSearchResult &result);
     iterator getTheBestMatchLyrics(bool bCheckExist = false);
 
     bool isAllTxtLyrics() const;
@@ -84,7 +84,7 @@ public:
 
 };
 
-void searchMatchLyricsInDir(cstr_t szDir, CLyricsSearchParameter &searchParam, V_LRCSEARCHRESULT &vLyrics, bool bIncludeSub);
+void searchMatchLyricsInDir(cstr_t szDir, CLyricsSearchParameter &searchParam, ListLyrSearchResults &vLyrics, bool bIncludeSub);
 
-int searchEmbeddedLyrics(cstr_t szSongFile, V_LRCSEARCHRESULT &vLyrics, bool bOnlyListAvailable = false);
+int searchEmbeddedLyrics(cstr_t szSongFile, ListLyrSearchResults &vLyrics, bool bOnlyListAvailable = false);
 int searchEmbeddedLyrics(cstr_t szSongFile, uint32_t &lrcSourceType);

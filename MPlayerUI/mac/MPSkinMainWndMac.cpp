@@ -36,8 +36,8 @@ void CMPSkinMainWnd::onEvent(const IEvent *pEvent) {
         // update main window caption
         char szCaption[512];
 
-        if (g_Player.isMediaOpened()) {
-            snprintf(szCaption, CountOf(szCaption), "%s - %s", g_Player.getFullTitle(), SZ_APP_NAME);
+        if (g_player.isMediaOpened()) {
+            snprintf(szCaption, CountOf(szCaption), "%s - %s", g_player.getFullTitle(), SZ_APP_NAME);
         } else {
             strcpy_safe(szCaption, CountOf(szCaption), getAppNameLong().c_str());
         }

@@ -10,7 +10,7 @@ CVISDemo::~CVISDemo() {
 
 }
 
-MLRESULT CVISDemo::init(IMPlayer *pPlayer) {
+ResultCode CVISDemo::init(IMPlayer *pPlayer) {
     m_pPlayer = pPlayer;
     m_pPlayer->addRef();
 
@@ -19,7 +19,7 @@ MLRESULT CVISDemo::init(IMPlayer *pPlayer) {
     return ERR_OK;
 }
 
-MLRESULT CVISDemo::quit() {
+ResultCode CVISDemo::quit() {
     assert(m_pPlayer);
     m_pPlayer->release();
 

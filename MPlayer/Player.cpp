@@ -1,0 +1,1052 @@
+#include "MPlayerAppBase.h"
+#include "Player.h"
+#include "PlayListFile.h"
+#include "OnlineSearch.h"
+#include "../LyricsLib/HelperFun.h"
+#include "../LyricsLib/MLLib.h"
+
+
+#ifdef _WIN32
+#include "../MPlayerUI/MPMsg.h"
+#include "../MPlayerUI/win32/PlayerEventDispatcher.h"
+#endif
+
+#ifdef _MAC_OS
+#include "../MPlayerEngine/mac/CoreAVPlayer.h"
+#include "../MPlayerUI/mac/PlayerEventDispatcher.h"
+#endif
+
+
+CPlayer g_player;
+CPlayerEventDispatcher g_playerEventDispatcher;
+
+
+void formatFullTitle(cstr_t szArtist, cstr_t szTitle, cstr_t szUri, string &strFullTitle) {
+    strFullTitle = formatMediaTitle(szArtist, szTitle);
+    if (strFullTitle.empty()) {
+        strFullTitle = urlGetTitle(szUri);
+    }
+}
+
+string formatDuration(int nTimeSec) {
+    char szTime[64];
+    int nHour, nMinute, nSec;
+
+    nSec = nTimeSec % 60;
+    nMinute = nTimeSec / 60;
+    nHour = nMinute / 60;
+    nMinute = nMinute % 60;
+    if (nHour > 0) {
+        snprintf(szTime, CountOf(szTime), "%02d:%02d:%02d", nHour, nMinute, nSec);
+    } else {
+        snprintf(szTime, CountOf(szTime), "%02d:%02d", nMinute, nSec);
+    }
+
+    return szTime;
+}
+
+void appendPlaylist(const PlaylistPtr &src, const PlaylistPtr &dst) {
+    int nCount = src->getCount();
+    for (int i = 0; i < nCount; i++) {
+        auto media = src->getItem(i);
+        if (media) {
+            dst->insertItem(-1, media);
+        }
+    }
+}
+
+CPlayer::CPlayer() {
+    emptyStr(m_szFullTitle);
+    emptyStr(m_szArtist);
+    emptyStr(m_szTitle);
+    emptyStr(m_szSrcMedia);
+
+    m_isUseSeekTimeAsPlayingTime = false;
+    m_mediaLength = 0;
+    m_state = PS_STOPPED;
+    m_mediaLib = nullptr;
+
+    m_currentPlaylist = newPlaylist();
+}
+
+CPlayer::~CPlayer() {
+    if (m_mediaLib) {
+        delete m_mediaLib;
+    }
+}
+
+void CPlayer::onEndOfPlaying() {
+    if (m_isAutoPlayNext) {
+        if (m_currentMedia) {
+            m_mediaLib->markPlayFinished(m_currentMedia.get());
+        }
+
+        if (m_loopMode == MP_LOOP_TRACK) {
+            play();
+            return;
+        }
+
+        auto ret = doNext(false);
+        if (ret == ERR_OK) {
+            play();
+        }
+    }
+
+    m_state = m_playerCore->getState();
+
+    notifyPlayStateChanged();
+}
+
+void CPlayer::onErrorOccured(const char *errorCode) {
+    // TODO: 如果当前播放的歌曲出现错误，自动切换到下一首
+}
+
+void CPlayer::onInit() {
+    // open title filters
+    string strFilter;
+    if (readFileByBom(getTitleFilterFile().c_str(), strFilter)) {
+        strSplit(strFilter.c_str(), '\n', m_vTitleFilters);
+        for (size_t i = 0; i < m_vTitleFilters.size();) {
+            if (m_vTitleFilters[i].empty() || startsWith(m_vTitleFilters[i].c_str(), ";")) {
+                m_vTitleFilters.erase(m_vTitleFilters.begin() + i);
+            } else {
+                i++;
+            }
+        }
+        trimStr(m_vTitleFilters, '\r');
+        trimStr(m_vTitleFilters, ' ');
+    }
+
+#ifdef _MAC_OS
+    m_playerCore = new CoreAVPlayer();
+#else
+    if (CMPlayer::getInstance(&m_playerCore) != ERR_OK) {
+        return;
+    }
+#endif
+    m_playerCore->setCallback(this);
+
+    m_mediaLib = new CMediaLibrary;
+    m_mediaLib->init();
+
+    // get loop mode
+    auto szValue = g_profile.getString(SZ_SECT_PLAYER, "repeat", "off");
+    if (strcasecmp(szValue, "all") == 0) {
+        m_loopMode = MP_LOOP_ALL;
+    } else if (strcasecmp(szValue, "track") == 0) {
+        m_loopMode = MP_LOOP_TRACK;
+    } else {
+        m_loopMode = MP_LOOP_OFF;
+    }
+
+    // shuffle
+    m_isShuffle = isTRUE(g_profile.getString(SZ_SECT_PLAYER, "shuffle", SZ_FALSE));
+
+    // mute
+    m_isMute = isTRUE(g_profile.getString(SZ_SECT_PLAYER, "mute", SZ_FALSE));
+
+    // volume
+    m_volume = g_profile.getInt(SZ_SECT_PLAYER, "volume", 30);
+
+
+    // Load current playlist
+    string playlist = g_profile.getString("LatestPlaylist", "");
+    if (!playlist.empty()) {
+        loadPlaylist(playlist.c_str());
+    }
+
+    // current playing music
+    setCurrentMediaInPlaylist(g_profile.getInt(SZ_SECT_PLAYER, "NowPlayingIdx", 0));
+
+    g_playerEventDispatcher.init();
+
+    if (g_profile.getBool("StartPlayAtStartup", false)) {
+        play();
+    }
+}
+
+void CPlayer::onQuit() {
+    g_playerEventDispatcher.quit();
+
+    saveCurrentPlaylist();
+
+    // save latest playing song file
+    g_profile.writeInt(SZ_SECT_PLAYER, "NowPlayingIdx", m_idxCurrentMedia);
+
+    assert(m_playerCore);
+    m_playerCore->stop();
+    delete m_playerCore;
+}
+
+// control player
+void CPlayer::play() {
+    if (m_state == PS_PLAYING) {
+        seekTo(0);
+    } else if (m_state == PS_STOPPED) {
+        if (m_currentMedia) {
+            m_state = PS_PLAYING;
+
+            m_isAutoPlayNext = true;
+            m_isCurMediaPlayed = true;
+
+            m_playerCore->play(m_currentMedia->url.c_str(), m_currentMedia.get());
+
+            notifyPlayStateChanged();
+
+            // TODO: 标记/删除不存在的文件...
+            // if (ret == ERR_MI_NOT_FOUND && media->ID != MEDIA_ID_INVALID) {
+            //     // the source can't be opened, set it as deleted.
+            //     m_mediaLib->setDeleted(&media);
+            // }
+
+            // set the play time
+            m_currentMedia->timePlayed = time(nullptr);
+
+            if (m_currentMedia->ID == MEDIA_ID_INVALID && m_isAutoAddToMediaLib) {
+                m_mediaLib->add(m_currentMedia);
+            }
+
+            // If media info in media library isn't up to date,
+            // update to media library.
+            if (m_currentMedia->ID != MEDIA_ID_INVALID && !m_currentMedia->infoUpdated) {
+                m_mediaLib->updateMediaInfo(m_currentMedia.get());
+            }
+        }
+    } else {
+        // paused
+        m_state = PS_PLAYING;
+        m_playerCore->unpause();
+        notifyPlayStateChanged();
+    }
+}
+
+void CPlayer::pause() {
+    if (m_state == PS_PLAYING) {
+        m_state = PS_PAUSED;
+        m_playerCore->pause();
+        notifyPlayStateChanged();
+    }
+}
+
+void CPlayer::playPause() {
+    if (m_state == PS_PLAYING) {
+        pause();
+    } else {
+        play();
+    }
+}
+
+void CPlayer::stop() {
+    if (m_state != PS_STOPPED) {
+        m_state = PS_STOPPED;
+        m_isAutoPlayNext = false;
+        m_playerCore->stop();
+        notifyPlayStateChanged();
+    }
+}
+
+void CPlayer::prev() {
+    int nOld = m_idxCurrentMedia;
+
+    {
+        RMutexAutolock autolock(m_mutexDataAccess);
+
+        if (m_isShuffle) {
+            if (m_idxCurrentShuffleMedia <= 1) {
+                // in shuffle mode, only can back to 0
+                return;
+            }
+
+            assert(m_vShuffleMedia.size() == m_currentPlaylist->getCount());
+            m_idxCurrentShuffleMedia--;
+            m_idxCurrentMedia = m_vShuffleMedia[m_idxCurrentShuffleMedia - 1];
+            // m_idxCurrentMedia = rand() % m_currentPlaylist->getCount();
+        } else {
+            if (m_idxCurrentMedia > 0) {
+                m_idxCurrentMedia--;
+            } else if (m_loopMode == MP_LOOP_ALL) {
+                m_idxCurrentMedia = m_currentPlaylist->getCount() - 1;
+            }
+        }
+    }
+
+    if (nOld != m_idxCurrentMedia) {
+        // Notify changed
+        currentMediaChanged();
+    }
+}
+
+void CPlayer::next() {
+    if (m_state != PS_STOPPED) {
+        // No rating consideration will be done at all if the song is skipped within these seconds.
+        if (getPlayPos() < 20 * 1000) {
+            m_mediaLib->markPlaySkipped(m_currentMedia.get());
+        }
+    }
+
+    doNext(true);
+}
+
+void CPlayer::seekTo(uint32_t nMsPos) {
+    m_playerCore->seek(nMsPos);
+
+    notifySeek();
+}
+
+// get player state and song info
+PlayerState CPlayer::getPlayerState() {
+    return m_state;
+}
+
+uint32_t CPlayer::getMediaLength() {
+    return m_mediaLength;
+}
+
+uint32_t CPlayer::getPlayPos() {
+    return m_playerCore->getPos();
+}
+
+void CPlayer::setLyrDrawUpdateFast(bool bFast) {
+    g_playerEventDispatcher.setLyrDrawUpdateFast(bFast);
+}
+
+void CPlayer::setToNextLoopMode() {
+    LoopMode loopMode = m_loopMode;
+
+    if (loopMode == MP_LOOP_OFF) {
+        loopMode = MP_LOOP_ALL;
+    } else if (loopMode == MP_LOOP_ALL) {
+        loopMode = MP_LOOP_TRACK;
+    } else {
+        loopMode = MP_LOOP_OFF;
+    }
+
+    setLoop(loopMode);
+}
+
+void CPlayer::setLoop(LoopMode loopMode) {
+    cstr_t szValue;
+    if (loopMode == MP_LOOP_ALL) {
+        szValue = "all";
+    } else if (loopMode == MP_LOOP_TRACK) {
+        szValue = "track";
+    } else {
+        szValue = "off";
+    }
+
+    g_profile.writeString(SZ_SECT_PLAYER, "repeat", szValue);
+
+    m_loopMode = loopMode;
+    notifySettingsChanged(IMPEvent::MPS_LOOP, loopMode);
+}
+
+void CPlayer::setShuffle(bool value) {
+    g_profile.writeString(SZ_SECT_PLAYER, "shuffle", value ? SZ_TRUE : SZ_FALSE);
+    m_isShuffle = value;
+
+    notifySettingsChanged(IMPEvent::MPS_SHUFFLE, m_isShuffle);
+}
+
+LoopMode CPlayer::getLoop() {
+    return m_loopMode;
+}
+
+bool CPlayer::isShuffle() {
+    return m_isShuffle;
+}
+
+int CPlayer::getVolume() {
+    return m_volume;
+}
+
+void CPlayer::setVolume(int value) {
+    assert(value >= 0 && value <= 100);
+    if (value < 0) {
+        value = 0;
+    } else if (value > 100) {
+        value = 100;
+    }
+
+    g_profile.writeString(SZ_SECT_PLAYER, "mute", SZ_FALSE);
+    g_profile.writeInt(SZ_SECT_PLAYER, "volume", (int)value);
+    m_volume = value;
+    m_isMute = false;
+
+    m_playerCore->setVolume(value);
+
+    notifySettingsChanged(IMPEvent::MPS_VOLUME, m_volume);
+    notifySettingsChanged(IMPEvent::MPS_MUTE, m_isMute);
+}
+
+bool CPlayer::isMute() {
+    return m_isMute;
+}
+
+void CPlayer::setMute(bool value) {
+    g_profile.writeString(SZ_SECT_PLAYER, "mute", value ? SZ_TRUE : SZ_FALSE);
+
+    m_playerCore->setVolume(0);
+
+    m_isMute = value;
+    notifySettingsChanged(IMPEvent::MPS_MUTE, m_isMute);
+}
+
+// -100 ~ 100
+void CPlayer::setBalance(int balance) {
+    assert(balance >= -100 && balance <= 100);
+    if (balance < -100) {
+        balance = -100;
+    } else if (balance > 100) {
+        balance = 100;
+    }
+    m_balance = balance;
+    m_playerCore->setBalance(balance);
+
+    notifySettingsChanged(IMPEvent::MPS_BALANCE, m_balance);
+}
+
+int CPlayer::getBalance() {
+    return m_balance;
+}
+
+void CPlayer::setEQ(const EQualizer *eq) {
+    m_equalizer = *eq;
+    m_playerCore->setEQ(eq);
+    notifyEQSettingsChanged(&m_equalizer);
+}
+
+void CPlayer::getEQ(EQualizer *eq) {
+    *eq = m_equalizer;
+}
+
+void CPlayer::clearPlaylist() {
+    setPlaylistModified(true);
+    m_currentPlaylist->clear();
+}
+
+void CPlayer::newCurrentPlaylist() {
+    clearPlaylist();
+
+    m_currentPlaylistFn = getAppDataDir();
+    m_currentPlaylistFn += "untitled playlist.m3u";
+
+    //    if (!isFileExist(m_currentPlaylistFn.c_str()))
+    //        return;
+    //
+    //    stringPrintf strFile;
+    //    for (int i = 0; i < 100; i++)
+    //    {
+    //        strFile.printf("%suntitled playlist %d.m3u", getAppDataDir().c_str(), i);
+    //
+    //        if (!isFileExist(strFile.c_str()))
+    //        {
+    //            m_currentPlaylistFn = strFile.c_str();
+    //            break;
+    //        }
+    //    }
+}
+
+void CPlayer::addDirToPlaylist(cstr_t szDir, bool bIncSubDir) {
+    FileFind find;
+
+    if (!find.openDir(szDir)) {
+        return;
+    }
+
+    string strDir = szDir;
+    dirStringAddSep(strDir);
+
+    while (find.findNext()) {
+        if (find.isCurDir()) {
+            if (bIncSubDir && strcmp(".", find.getCurName()) != 0 &&
+                strcmp("..", find.getCurName()) != 0) {
+                string strFile = strDir + find.getCurName();
+                addDirToPlaylist(strFile.c_str(), bIncSubDir);
+            }
+        } else {
+            string strFile = strDir + find.getCurName();
+            addToPlaylist(strFile.c_str());
+        }
+    }
+}
+
+void CPlayer::addToPlaylist(cstr_t szMedia) {
+    cstr_t szExt = fileGetExt(szMedia);
+    if (isEmptyString(szExt)) {
+        return;
+    }
+
+    if (isExtPlaylistFile(szExt)) {
+        loadPlaylist(szMedia, false);
+        return;
+    }
+
+    if (!isExtAudioFile(szExt)) {
+        return;
+    }
+
+    // do not add repeated item.
+    if (isMediaInPlaylist(szMedia)) {
+        return;
+    }
+
+    m_currentPlaylist->insertItem(-1, newMedia(szMedia));
+}
+
+bool CPlayer::isMediaInPlaylist(cstr_t szMedia) {
+    auto playlist = m_currentPlaylist;
+    auto nCount = playlist->getCount();
+    for (int i = 0; i < nCount; i++) {
+        auto media = playlist->getItem(i);
+        if (media) {
+            if (strcmp(szMedia, media->url.c_str()) == 0) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+void CPlayer::loadPlaylist(cstr_t szFile, bool bClear) {
+    auto playlist = ::loadPlaylist(szFile);
+
+    if (bClear) {
+        m_currentPlaylistFn = szFile;
+    } else {
+        auto curPlaylist = m_currentPlaylist;
+        appendPlaylist(curPlaylist, playlist);
+    }
+
+    setCurrentPlaylist(playlist);
+}
+
+bool CPlayer::isCurrentMediaFileExist() {
+    if (isEmptyString(m_szSrcMedia) || !isFileExist(m_szSrcMedia)) {
+        return false;
+    }
+    return true;
+}
+
+void CPlayer::playMedia(int index) {
+    m_playerCore->stop();
+    setCurrentMediaInPlaylist(index);
+    m_playerCore->play(m_currentMedia->url.c_str(), m_currentMedia.get());
+}
+
+void CPlayer::getFileOpenDlgExtention(string &strExtentions) const {
+    // static char    szSupportedExtion[] = "All supported file\0*.m3u;*.pls;*.wpl;*.mp3;*.mp2;*.mpa;*.mp4;*.m4a;*.wav;*.ogg;*.wma\0Playlist file\0*.pls;*.wpl;*.m3u\0Mp3 file\0*.mp3;*.mp2;*.mpa\0WMA file\0*.wma\0MP4 file\0*.mp4;*.m4a\0Ogg file\0*.ogg\0Wave file\0*.wav\0All Files\0*.*\0\0";
+    static char szSupportedExtion[] = "All supported file\0*.m3u;*.pls;*.wpl;*.mp3;*.mp2;*.mpa;*.m4a;*.wav;*.ogg;*.wma\0Playlist file\0*.pls;*.wpl;*.m3u\0Mp3 file\0*.mp3;*.mp2;*.mpa\0WMA file\0*.wma\0MP4 file\0*.m4a\0Ogg file\0*.ogg\0Wave file\0*.wav\0All Files\0*.*\0\0";
+    strExtentions.append(szSupportedExtion, CountOf(szSupportedExtion));
+}
+
+void CPlayer::getSupportedExtentions(vector<string> &vExtentions) const {
+    VecStrings exts;
+    strSplit(m_playerCore->getFileExtentions(), '|', exts);
+
+    for (int i = 0; i < (int)exts.size(); i += 2) {
+        auto &ext = exts[i];
+        trimStr(ext);
+        if (!ext.empty()) {
+            vExtentions.push_back(ext);
+        }
+    }
+
+    vExtentions.push_back(".m3u");
+    vExtentions.push_back(".pls");
+    vExtentions.push_back(".wpl");
+}
+
+bool CPlayer::isExtSupported(cstr_t szExt) {
+    return isExtAudioFile(szExt) || isExtPlaylistFile(szExt);
+}
+
+bool CPlayer::isExtAudioFile(cstr_t szExt) {
+    if (m_audioFileExts.empty()) {
+        VecStrings exts;
+        strSplit(m_playerCore->getFileExtentions(), '|', exts);
+
+        for (int i = 0; i < (int)exts.size(); i += 2) {
+            auto &ext = exts[i];
+            trimStr(ext);
+            if (!ext.empty()) {
+                m_audioFileExts.insert(ext);
+            }
+        }
+    }
+
+    string extLowerCase = toLower(szExt);
+    return m_audioFileExts.find(extLowerCase) != m_audioFileExts.end();
+}
+
+bool CPlayer::isExtPlaylistFile(cstr_t szExt) {
+    if (strcasecmp(".m3u", szExt) == 0) {
+        return true;
+    }
+    if (strcasecmp(".wpl", szExt) == 0) {
+        return true;
+    }
+    if (strcasecmp(".pls", szExt) == 0) {
+        return true;
+    }
+
+    return false;
+}
+
+
+void CPlayer::addDirToMediaLib(cstr_t szDir, bool bIncSubDir) {
+    FileFind find;
+
+    if (!find.openDir(szDir)) {
+        return;
+    }
+
+    string strDir = szDir;
+    dirStringAddSep(strDir);
+
+    while (find.findNext()) {
+        if (find.isCurDir()) {
+            if (bIncSubDir && strcmp(".", find.getCurName()) != 0 &&
+                strcmp("..", find.getCurName()) != 0) {
+                string strFile = strDir + find.getCurName();
+                addDirToMediaLib(strFile.c_str(), bIncSubDir);
+            }
+        } else {
+            string strFile = strDir + find.getCurName();
+            addFileToMediaLib(strFile.c_str());
+        }
+    }
+}
+
+void CPlayer::addFileToMediaLib(cstr_t szMedia) {
+    auto szExt = fileGetExt(szMedia);
+    if (isEmptyString(szExt)) {
+        return;
+    }
+
+    if (!isExtAudioFile(szExt)) {
+        return;
+    }
+
+    // do not add repeated item.
+    auto media = m_mediaLib->getMediaByUrl(szMedia);
+    if (media) {
+        return;
+    }
+
+    media = m_mediaLib->add(szMedia);
+    if (media) {
+        m_currentPlaylist->insertItem(-1, media);
+    }
+}
+
+string CPlayer::formatMediaTitle(Media *media) {
+    string strFullTitle = ::formatMediaTitle(media->artist.c_str(), media->title.c_str());
+    if (strFullTitle.empty()) {
+        strFullTitle = fileGetTitle(media->url.c_str());
+    }
+
+    return strFullTitle;
+}
+
+void CPlayer::filterLowRatingMedia(Playlist *playlist) {
+    for (int i = playlist->getCount() - 1; i >= 0; i--) {
+        auto media = playlist->getItem(i);
+        if (media) {
+            if (media->rating < m_ratingFilterMin) {
+                playlist->removeItem(i);
+            }
+        }
+    }
+}
+
+string CPlayer::getMediaKey() {
+    return g_LyricSearch.getAssociateFileKeyword(m_szSrcMedia, m_szFullTitle);
+}
+
+int CPlayer::getMediaID() {
+    if (m_currentMedia) {
+        return m_currentMedia->ID;
+    } else {
+        return MEDIA_ID_INVALID;
+    }
+}
+
+void CPlayer::getCurMediaAttribute(MediaAttribute mediaAttr, string &strValue) {
+    strValue.clear();
+
+    if (mediaAttr == MA_ARTIST) {
+        strValue = m_szArtist;
+    } else if (mediaAttr == MA_ALBUM) {
+        strValue = m_szAlbum;
+    } else if (mediaAttr == MA_TITLE) {
+        strValue = m_szTitle;
+    } else if (mediaAttr == MA_DURATION) {
+        if (m_mediaLength > 0) {
+            strValue = formatDuration(m_mediaLength / 1000);
+        }
+    } else {
+        m_currentMedia->getAttribute(mediaAttr, strValue);
+    }
+}
+
+void CPlayer::saveCurrentPlaylist() {
+    if (!m_isPlaylistModified) {
+        return;
+    }
+
+    if (savePlaylistAsM3u(m_currentPlaylist.get(), m_currentPlaylistFn.c_str())) {
+        setPlaylistModified(false);
+        g_profile.writeString("LatestPlaylist", m_currentPlaylistFn.c_str());
+    }
+}
+
+void CPlayer::saveCurrentPlaylistAs(cstr_t szFile) {
+    m_currentPlaylistFn = szFile;
+    saveCurrentPlaylist();
+}
+
+void CPlayer::onUISeekbarSeek(int nPos) {
+    g_LyricData.SetPlayElapsedTime(nPos);
+
+    CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
+}
+
+string fixFileUri(cstr_t szUri) {
+    static cstr_t SZ_FILE_PREFIX = "file://";
+    static cstr_t SZ_LOCALHOST_MAC = "localhost";
+    size_t nLenPrefix = strlen(SZ_FILE_PREFIX);
+    if (szUri && strncasecmp(szUri, SZ_FILE_PREFIX, nLenPrefix) == 0) {
+        szUri += nLenPrefix;
+
+        if (startsWith(szUri, SZ_LOCALHOST_MAC)) {
+            // For mac: file://localhost/Volumes/
+            szUri += strlen(SZ_LOCALHOST_MAC);
+        } else if (szUri[0] == '/' && szUri[2] == ':') {
+            // Songbird use file:///c:/xx...xxx.mp3 , remove the extra '/'
+        }
+        szUri++;
+
+        string uri = uriUnquote(szUri);
+        strrep(uri, '/', PATH_SEP_CHAR);
+        return uri;
+    } else {
+        return szUri;
+    }
+}
+
+void CPlayer::onMediaChanged() {
+    emptyStr(m_szSrcMedia);
+    emptyStr(m_szFullTitle);
+    emptyStr(m_szArtist);
+    emptyStr(m_szTitle);
+    emptyStr(m_szAlbum);
+    m_mediaLength = 0;
+
+    auto media = m_currentMedia;
+    if (media) {
+        strcpy_safe(m_szSrcMedia, CountOf(m_szSrcMedia), media->url.c_str());
+        strcpy_safe(m_szArtist, CountOf(m_szArtist), media->artist.c_str());
+        strcpy_safe(m_szTitle, CountOf(m_szTitle), media->title.c_str());
+        strcpy_safe(m_szAlbum, CountOf(m_szAlbum), media->album.c_str());
+
+        m_mediaLength = media->duration;
+
+        string strFullTitle;
+        formatFullTitle(m_szArtist, m_szTitle, m_szSrcMedia, strFullTitle);
+        strcpy_safe(m_szFullTitle, CountOf(m_szFullTitle), strFullTitle.c_str());
+    }
+}
+
+string CPlayer::getTitleFilterFile() {
+    return dirStringJoin(getAppDataDir().c_str(), "TitlFilters.txt");
+}
+
+MediaPtr CPlayer::newMedia(cstr_t szUrl) {
+    auto media = m_mediaLib->addFast(szUrl);
+    if (!media) {
+        media = make_shared<Media>();
+        media->url = szUrl;
+    }
+
+    return media;
+}
+
+PlaylistPtr CPlayer::newPlaylist() {
+    return make_shared<Playlist>();
+}
+
+ResultCode CPlayer::setCurrentMediaInPlaylist(int index) {
+    RMutexAutolock autolock(m_mutexDataAccess);
+
+    if (index >= 0 && index < (int)m_currentPlaylist->getCount()) {
+        m_idxCurrentMedia = index;
+        autolock.unlock();
+        currentMediaChanged();
+        return ERR_OK;
+    } else {
+        return ERR_NOT_FOUND;
+    }
+}
+
+void CPlayer::setCurrentPlaylist(const PlaylistPtr &playlist) {
+    m_currentPlaylist = playlist;
+    m_idxCurrentMedia = 0;
+
+    generateShuffleMediaQueue();
+
+    notifyCurrentPlaylistChanged(IMPEvent::PCA_FULL_UPDATE, 0, 0);
+
+    currentMediaChanged();
+}
+
+ResultCode CPlayer::loadMediaTagInfo(Media *media) {
+    m_playerCore->getMediaInfo(media->url.c_str(), media);
+
+    // get artist, title from song file name.
+    if (media->artist.empty() && media->title.empty()) {
+        analyseLyricsFileNameEx(media->artist, media->title, media->url.c_str());
+    }
+
+    return ERR_OK;
+}
+
+void CPlayer::registerVisualizer(IEventHandler *eventHandler) {
+    // eventHandler->registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_VIS_DRAW_UPDATE);
+
+    // class CMPVisAdapter         *m_pVisAdapter;
+
+    // MutexAutolock lock(m_mutex);
+    // ListEventHandlers &listHandler = m_vListEventHandler[eventType];
+
+
+    // // register vis ?
+    // if (listHandler.size() == 1) {
+    //     assert(m_pVisAdapter == nullptr);
+    //     m_pVisAdapter = new CMPVisAdapter;
+    //     m_pVisAdapter->ag_player
+    //     g_player.registerVis(m_pVisAdapter);
+    // }
+}
+
+void CPlayer::unregisterVisualizer(IEventHandler *eventHandler) {
+    // eventHandler->registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_VIS_DRAW_UPDATE);
+
+    // MutexAutolock lock(m_mutex);
+    // ListEventHandlers &listHandler = m_vListEventHandler[eventType];
+
+    // // register vis ?
+    // if (listHandler.size() == 1) {
+    //     assert(m_pVisAdapter == nullptr);
+    //     m_pVisAdapter = new CMPVisAdapter;
+    //     m_pVisAdapter->ag_player
+    //     g_player.registerVis(m_pVisAdapter);
+    // }
+}
+
+void CPlayer::notifyPlaylistChanged(Playlist *playlist, IMPEvent::PlaylistChangeAction action, int nIndex, int nIndexOld) {
+    if (m_currentPlaylist.get() == playlist) {
+        // first notify the message
+        notifyCurrentPlaylistChanged(action, nIndex, nIndexOld);
+
+        //
+        // is current media changed?
+        //
+        RMutexAutolock autolock(m_mutexDataAccess);
+
+        if (m_idxCurrentMedia >= (int)m_currentPlaylist->getCount()) {
+            m_idxCurrentMedia = 0;
+        }
+
+        generateShuffleMediaQueue();
+
+        // is current media?
+        auto media = m_currentPlaylist->getItem(m_idxCurrentMedia);
+        if (media) {
+            if (m_currentMedia == media) {
+                return;
+            }
+        }
+
+        // get new index of current media.
+        int nNewCurrentIndex;
+        if (m_currentPlaylist->getItemIndex(m_currentMedia, nNewCurrentIndex) == ERR_OK) {
+            m_idxCurrentMedia = nNewCurrentIndex;
+        }
+
+        // unlock before currentMediaChanged
+        autolock.unlock();
+
+        currentMediaChanged();
+    }
+}
+
+void CPlayer::notifyPlayStateChanged() {
+    CEventPlayerStatusChanged *pEvent = new CEventPlayerStatusChanged();
+    pEvent->eventType = ET_PLAYER_STATUS_CHANGED;
+    pEvent->status = m_state;
+    CMPlayerAppBase::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
+
+    g_playerEventDispatcher.stopLyrDrawUpdate();
+
+    if (m_state == PS_PLAYING) {
+        g_playerEventDispatcher.startLyrDrawUpdate();
+    }
+}
+
+void CPlayer::notifyCurrentPlaylistChanged(IMPEvent::PlaylistChangeAction action, int nIndex, int nIndexOld) {
+    CEventPlaylistChanged *pEvent = new CEventPlaylistChanged();
+    pEvent->eventType = ET_PLAYER_CUR_PLAYLIST_CHANGED;
+    pEvent->action = action;
+    pEvent->nIndex = nIndex;
+    pEvent->nIndexOld = nIndexOld;
+    CMPlayerAppBase::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
+}
+
+void CPlayer::notifySettingsChanged(IMPEvent::SettingType settingType, int value) {
+    CEventPlayerSettingChanged *pEvent = new CEventPlayerSettingChanged();
+    pEvent->eventType = ET_PLAYER_SETTING_CHANGED;
+    pEvent->settingType = settingType;
+    pEvent->value = value;
+    CMPlayerAppBase::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
+}
+
+void CPlayer::notifyEQSettingsChanged(const EQualizer *eq) {
+    CEventPlayerEQChanged *pEvent = new CEventPlayerEQChanged();
+    pEvent->eventType = ET_PLAYER_EQ_SETTING_CHANGED;
+    pEvent->eqlalizer = *eq;
+    CMPlayerAppBase::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
+}
+
+void CPlayer::notifySeek() {
+    IEvent *pEvent = new IEvent();
+    pEvent->eventType = ET_PLAYER_SEEK;
+    CMPlayerAppBase::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
+}
+
+// For internal using, do NOT lock.
+void CPlayer::generateShuffleMediaQueue() {
+    VecInts vMediaSequence;
+    auto nCount = m_currentPlaylist->getCount();
+    m_idxCurrentShuffleMedia = 0;
+
+    for (int i = 0; i < nCount; i++) {
+        vMediaSequence.push_back(i);
+    }
+
+    m_vShuffleMedia.clear();
+    for (int i = 0; i < nCount; i++) {
+        int nNext = rand() % vMediaSequence.size();
+        m_vShuffleMedia.push_back(vMediaSequence[nNext]);
+        vMediaSequence.erase(vMediaSequence.begin() + nNext);
+    }
+}
+
+static bool isBasicMediaInfoSame(Media *media1, Media *media2) {
+    static MediaAttribute vStrAttrCheck[] = { MA_ARTIST, MA_ALBUM, MA_TITLE, MA_GENRE, MA_COMMENT,
+        MA_TRACK_NUMB, MA_YEAR, MA_BITRATE, MA_DURATION, MA_FILESIZE };
+
+    int i;
+    string str1, str2;
+
+    for (i = 0; i < CountOf(vStrAttrCheck); i++) {
+        str1.clear();
+        str2.clear();
+        media1->getAttribute(vStrAttrCheck[i], str1);
+        media2->getAttribute(vStrAttrCheck[i], str2);
+        if (strcmp(str1.c_str(), str2.c_str()) != 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+void CPlayer::currentMediaChanged() {
+    bool bPlay = false;
+
+    if (m_state != PS_STOPPED) {
+        if (m_state == PS_PLAYING) {
+            bPlay = true;
+        }
+        m_isAutoPlayNext = false;
+        stop();
+    }
+
+    {
+        RMutexAutolock autolock(m_mutexDataAccess);
+
+        if (m_currentMedia) {
+            if (m_isAutoPlayNext && m_isCurMediaPlayed) {
+                m_mediaLib->markPlayFinished(m_currentMedia.get());
+            }
+
+            m_currentMedia = nullptr;
+            m_isCurMediaPlayed = false;
+        }
+
+        if (m_currentPlaylist->getCount() > 0) {
+            m_currentMedia = m_currentPlaylist->getItem(m_idxCurrentMedia);
+            if (m_currentMedia) {
+                loadMediaTagInfo(m_currentMedia.get());
+                // update media info to media library, if changed.
+                auto mediaOld = m_mediaLib->getMediaByUrl(m_currentMedia->url.c_str());
+                if (mediaOld && !isBasicMediaInfoSame(mediaOld.get(), m_currentMedia.get())) {
+                    m_mediaLib->updateMediaInfo(m_currentMedia.get());
+                }
+            }
+        }
+    }
+
+    g_player.onMediaChanged();
+
+    IEvent *pEvent = new IEvent();
+    pEvent->eventType = ET_PLAYER_CUR_MEDIA_CHANGED;
+    CMPlayerAppBase::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
+
+    if (bPlay) {
+        play();
+    }
+}
+
+ResultCode CPlayer::doNext(bool bLoop) {
+    RMutexAutolock autolock(m_mutexDataAccess);
+
+    if (m_currentPlaylist->getCount() == 0) {
+        return ERR_EMPTY_PLAYLIST;
+    }
+
+    int nOld = m_idxCurrentMedia;
+
+    if (m_isShuffle) {
+        if (m_idxCurrentShuffleMedia >= (int)m_vShuffleMedia.size() - 1) {
+            if (m_loopMode != MP_LOOP_ALL && !bLoop) {
+                return ERR_END_OF_PLAYLIST;
+            }
+
+            // all media has been played, regenerate radom playlist.
+            generateShuffleMediaQueue();
+        }
+
+        assert(m_vShuffleMedia.size() == m_currentPlaylist->getCount());
+        m_idxCurrentMedia = m_vShuffleMedia[m_idxCurrentShuffleMedia];
+        m_idxCurrentShuffleMedia++;
+        // m_idxCurrentMedia = rand() % m_currentPlaylist->getCount();
+    } else {
+        if (m_idxCurrentMedia < (int)m_currentPlaylist->getCount() - 1) {
+            m_idxCurrentMedia++;
+        } else if (m_loopMode != MP_LOOP_ALL && !bLoop) {
+            return ERR_END_OF_PLAYLIST;
+        } else {
+            m_idxCurrentMedia = 0;
+        }
+    }
+
+    autolock.unlock();
+
+    if (nOld != m_idxCurrentMedia) {
+        // Notify changed
+        currentMediaChanged();
+    }
+    return ERR_OK;
+}

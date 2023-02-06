@@ -24,7 +24,7 @@ CMDWave::CMDWave() {
     m_bKillThread = false;
     m_nSeekPos = 0;
     m_bSeekFlag = false;
-    m_state = PS_STOPED;
+    m_state = PS_STOPPED;
     m_bufInput.reserve(1024 * 16);
 }
 
@@ -43,8 +43,8 @@ cstr_t CMDWave::getFileExtentions() {
     return ".wav|wave files";
 }
 
-MLRESULT CMDWave::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia) {
-    MLRESULT nRet;
+ResultCode CMDWave::getMediaInfo(IMediaInput *pInput, IMediaInfo *pMedia) {
+    ResultCode nRet;
 
     nRet = getHeadInfo(pInput);
     if (nRet != ERR_OK) {
@@ -69,7 +69,7 @@ bool CMDWave::isUseOutputPlug() {
     return true;
 }
 
-MLRESULT CMDWave::play(IMPlayer *pPlayer, IMediaInput *pInput) {
+ResultCode CMDWave::play(IMPlayer *pPlayer, IMediaInput *pInput) {
     assert(pPlayer && pInput);
     if (!pPlayer || !pInput) {
         return ERR_INVALID_HANDLE;
@@ -77,9 +77,9 @@ MLRESULT CMDWave::play(IMPlayer *pPlayer, IMediaInput *pInput) {
 
     stop();
 
-    MLRESULT nRet;
+    ResultCode nRet;
 
-    m_state = PS_STOPED;
+    m_state = PS_STOPPED;
     m_bPaused = false;
     m_nSeekPos = 0;
     m_bSeekFlag = false;
@@ -138,17 +138,17 @@ R_FAILED:
     return nRet;
 }
 
-MLRESULT CMDWave::pause() {
+ResultCode CMDWave::pause() {
     m_state = PS_PAUSED;
     return m_pOutput->pause(true);
 }
 
-MLRESULT CMDWave::unpause() {
+ResultCode CMDWave::unpause() {
     m_state = PS_PLAYING;
     return m_pOutput->pause(false);
 }
 
-MLRESULT CMDWave::stop() {
+ResultCode CMDWave::stop() {
     m_bKillThread = true;
 
     if (m_state == PS_PAUSED) {
@@ -164,7 +164,7 @@ uint32_t CMDWave::getLength() {
     return m_audioInfo.nMediaLength;
 }
 
-MLRESULT CMDWave::seek(uint32_t dwPos) {
+ResultCode CMDWave::seek(uint32_t dwPos) {
     m_bSeekFlag = true;
     m_nSeekPos = dwPos;
 
@@ -181,7 +181,7 @@ uint32_t CMDWave::getPos() {
     }
 }
 
-MLRESULT CMDWave::setVolume(int volume, int nBanlance) {
+ResultCode CMDWave::setVolume(int volume, int nBanlance) {
     return m_pOutput->setVolume(volume, nBanlance);
 }
 
@@ -269,7 +269,7 @@ void CMDWave::decodeThreadProc() {
         sleep(10);
     }
 
-    m_state = PS_STOPED;
+    m_state = PS_STOPPED;
 
     m_pOutput->stop();
     m_pOutput->release();
@@ -278,9 +278,6 @@ void CMDWave::decodeThreadProc() {
     m_pInput->release();
     m_pInput = nullptr;
 
-    m_pMemAllocator->release();
-    m_pMemAllocator = nullptr;
-
     m_pPlayer->notifyEod(this, ERR_OK);
     m_pPlayer->release();
     m_pPlayer = nullptr;
@@ -288,7 +285,7 @@ void CMDWave::decodeThreadProc() {
     ERR_LOG0("End of decode thread! quit.");
 }
 
-MLRESULT CMDWave::getHeadInfo(IMediaInput *pInput) {
+ResultCode CMDWave::getHeadInfo(IMediaInput *pInput) {
     m_bufInput.clear();
     pInput->seek(0, SEEK_SET);
 

@@ -90,7 +90,7 @@ cstr_t CMOSoundCard::getDescription() {
     return "MPlayer soundcard output 1.0";
 }
 
-MLRESULT CMOSoundCard::open(int nSampleRate, int nNumChannels, int nBitsPerSamp) {
+ResultCode CMOSoundCard::open(int nSampleRate, int nNumChannels, int nBitsPerSamp) {
     DBG_LOG3("open, SapmleRate: %d, Channels: %d, BitsPerSample: %d", nSampleRate, nNumChannels, nBitsPerSamp);
 
     m_fadeMode = FADE_NONE;
@@ -157,7 +157,7 @@ MLRESULT CMOSoundCard::open(int nSampleRate, int nNumChannels, int nBitsPerSamp)
     return ERR_OK;
 }
 
-MLRESULT CMOSoundCard::waitForWrite() {
+ResultCode CMOSoundCard::waitForWrite() {
     /* wait till the interface is ready for data, or 1 second
     has elapsed.
     */
@@ -170,7 +170,7 @@ MLRESULT CMOSoundCard::waitForWrite() {
     return ERR_OK;
 }
 
-MLRESULT CMOSoundCard::write(IFBuffer *pBuf) {
+ResultCode CMOSoundCard::write(IFBuffer *pBuf) {
     snd_pcm_uframes_t fcount;
     int err;
 
@@ -204,13 +204,13 @@ MLRESULT CMOSoundCard::write(IFBuffer *pBuf) {
     return ERR_OK;
 }
 
-MLRESULT CMOSoundCard::flush() {
+ResultCode CMOSoundCard::flush() {
     m_eventCanWrite.set();
 
     return ERR_OK;
 }
 
-MLRESULT CMOSoundCard::pause(bool bPause) {
+ResultCode CMOSoundCard::pause(bool bPause) {
     return ERR_OK;
 }
 
@@ -218,7 +218,7 @@ bool CMOSoundCard::isPlaying() {
     return false;
 }
 
-MLRESULT CMOSoundCard::stop() {
+ResultCode CMOSoundCard::stop() {
     return ERR_OK;
 }
 
@@ -227,7 +227,7 @@ bool CMOSoundCard::isOpened() {
 }
 
 // volume
-MLRESULT CMOSoundCard::setVolume(int volume, int nBanlance) {
+ResultCode CMOSoundCard::setVolume(int volume, int nBanlance) {
     return ERR_FALSE;
 }
 

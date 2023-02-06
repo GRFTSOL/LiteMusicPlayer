@@ -48,11 +48,11 @@ public:
     void STDMETHODCALLTYPE StatusChange() { }
     void STDMETHODCALLTYPE ScriptCommand( BSTR scType, BSTR Param ) { }
     void STDMETHODCALLTYPE NewStream() { }
-    void STDMETHODCALLTYPE disconnect( long Result ) { }
+    void STDMETHODCALLTYPE disconnect( long result ) { }
     void STDMETHODCALLTYPE Buffering( VARIANT_BOOL start ) { }
     void STDMETHODCALLTYPE Error() { }
     void STDMETHODCALLTYPE Warning( long WarningType, long Param, BSTR Description ) { }
-    void STDMETHODCALLTYPE EndOfStream( long Result );
+    void STDMETHODCALLTYPE EndOfStream( long result );
     void STDMETHODCALLTYPE PositionChange( double oldPosition, double newPosition) { }
     void STDMETHODCALLTYPE MarkerHit( long MarkerNum ) { }
     void STDMETHODCALLTYPE DurationUnitChange( long NewDurationUnit ) { }
@@ -132,7 +132,7 @@ void CWmpEventsSink::PlayStateChange( long NewState ) {
     }
 }
 
-void CWmpEventsSink::EndOfStream( long Result ) {
+void CWmpEventsSink::EndOfStream( long result ) {
     if (m_mdWmpCore->m_mplayer) {
         m_mdWmpCore->m_mplayer->notifyEod(m_mdWmpCore, ERR_OK);
     }
@@ -157,7 +157,7 @@ CMDWmpCore::~CMDWmpCore(void) {
     }
 }
 
-MLRESULT hResultToMLResult(HRESULT hr) {
+ResultCode hResultToMLResult(HRESULT hr) {
     if (FAILED(hr)) {
         return ERR_FALSE;
     }
@@ -172,7 +172,7 @@ cstr_t CMDWmpCore::getFileExtentions() {
     return ".mp3|MP3 files|.wma|WMA files|.mp2|MP2 files";
 }
 
-MLRESULT CMDWmpCore::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia) {
+ResultCode CMDWmpCore::getMediaInfo(IMediaInput *pInput, IMediaInfo *pMedia) {
     if (!isOK()) {
         return ERR_DECODER_INIT_FAILED;
     }
@@ -227,7 +227,7 @@ bool CMDWmpCore::isUseOutputPlug() {
     return false;
 }
 
-MLRESULT CMDWmpCore::play(IMPlayer *pPlayer, IMediaInput *pInput) {
+ResultCode CMDWmpCore::play(IMPlayer *pPlayer, IMediaInput *pInput) {
     if (!isOK()) {
         return ERR_DECODER_INIT_FAILED;
     }
@@ -250,7 +250,7 @@ MLRESULT CMDWmpCore::play(IMPlayer *pPlayer, IMediaInput *pInput) {
     return ERR_OK;
 }
 
-MLRESULT CMDWmpCore::pause() {
+ResultCode CMDWmpCore::pause() {
     if (!isOK()) {
         return ERR_DECODER_INIT_FAILED;
     }
@@ -260,7 +260,7 @@ MLRESULT CMDWmpCore::pause() {
     return hResultToMLResult(hr);
 }
 
-MLRESULT CMDWmpCore::unpause() {
+ResultCode CMDWmpCore::unpause() {
     if (!isOK()) {
         return ERR_DECODER_INIT_FAILED;
     }
@@ -278,7 +278,7 @@ MLRESULT CMDWmpCore::unpause() {
     return ERR_OK;
 }
 
-MLRESULT CMDWmpCore::stop() {
+ResultCode CMDWmpCore::stop() {
     if (!isOK()) {
         return ERR_DECODER_INIT_FAILED;
     }
@@ -307,7 +307,7 @@ uint32_t CMDWmpCore::getLength() {
     return uint32_t(duration * 1000);
 }
 
-MLRESULT CMDWmpCore::seek(uint32_t nPos) {
+ResultCode CMDWmpCore::seek(uint32_t nPos) {
     if (!isOK()) {
         return ERR_DECODER_INIT_FAILED;
     }
@@ -331,7 +331,7 @@ uint32_t CMDWmpCore::getPos() {
     return (uint32_t)(pos * 1000);
 }
 
-MLRESULT CMDWmpCore::setVolume(int volume, int nBanlance) {
+ResultCode CMDWmpCore::setVolume(int volume, int nBanlance) {
     if (!isOK()) {
         return ERR_DECODER_INIT_FAILED;
     }
@@ -396,21 +396,15 @@ bool CMDWmpCore::init() {
     return true;
 }
 
-MLRESULT CMDWmpCore::doDecode(IMedia *pMedia) {
+ResultCode CMDWmpCore::doDecode(cstr_t mediaUrl) {
     if (!isOK()) {
         return ERR_DECODER_INIT_FAILED;
     }
 
-    MLRESULT nRet;
-    CXStr strMedia;
+    ResultCode nRet;
     CMPAutoPtr<IMediaInput> pInput;
 
-    nRet = pMedia->getSourceUrl(&strMedia);
-    if (nRet != ERR_OK) {
-        return nRet;
-    }
-
-    nRet = m_pPlayer->m_pluginMgrAgent.newInput(strMedia.c_str(), &pInput);
+    nRet = m_pPlayer->m_pluginMgr.newInput(mediaUrl, &pInput);
     if (nRet != ERR_OK) {
         return nRet;
     }
@@ -419,15 +413,15 @@ MLRESULT CMDWmpCore::doDecode(IMedia *pMedia) {
 
     nRet = play(m_pPlayer, pInput);
     if (nRet != ERR_OK) {
-        if (nRet == ERR_MI_NOT_FOUND && pMedia->getID() != MEDIA_ID_INVALID) {
+        if (nRet == ERR_MI_NOT_FOUND && pMedia->ID != MEDIA_ID_INVALID) {
             // the source can't be opened, set it as deleted.
-            m_pPlayer->m_pMediaLib->setDeleted(&pMedia);
+            m_pPlayer->m_mediaLib->setDeleted(&pMedia);
         }
         goto R_FAILED;
     }
 
     if (m_pPlayer->m_volume != -1) {
-        if (m_pPlayer->m_bMute) {
+        if (m_pPlayer->m_isMute) {
             setVolume(0, 0);
         } else {
             setVolume(m_pPlayer->m_volume, m_pPlayer->m_balance);

@@ -51,19 +51,17 @@ void CMPSkinMediaNumInfoCtrl::enumProperties(CUIObjProperties &listProperties) {
 #endif // _SKIN_EDITOR_
 
 void CMPSkinMediaNumInfoCtrl::updateShowTrackInfo() {
-    CMPAutoPtr<IMedia> pMedia;
-
-    if (g_Player.getCurrentMedia(&pMedia) != ERR_OK) {
+    auto media = g_player.getCurrentMedia();
+    if (media) {
         setText("");
         return;
     }
 
-    int64_t value = 0;
+    int value = 0;
     if (m_infoType == IT_BITRATE) {
-        pMedia->getAttribute(MA_BITRATE, &value);
-        value /= 1000;
+        value = media->bitRate / 1000;
     } else {
-        pMedia->getAttribute(MA_SAMPLE_RATE, &value);
+        value = media->sampleRate;
     }
 
     setText(itos(value).c_str());

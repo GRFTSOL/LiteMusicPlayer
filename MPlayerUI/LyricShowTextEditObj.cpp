@@ -966,11 +966,11 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
             replaceSel(strReplaceWith.c_str());
         }
     } else if (nId == CID_RERESH_ARTIST) {
-        m_pSkin->setUIObjectText(CID_E_ARTIST, g_Player.getArtist());
+        m_pSkin->setUIObjectText(CID_E_ARTIST, g_player.getArtist());
     } else if (nId == CID_RERESH_TITLE) {
-        m_pSkin->setUIObjectText(CID_E_TITLE, g_Player.getTitle());
+        m_pSkin->setUIObjectText(CID_E_TITLE, g_player.getTitle());
     } else if (nId == CID_RERESH_ALBUM) {
-        m_pSkin->setUIObjectText(CID_E_ALBUM, g_Player.getAlbum());
+        m_pSkin->setUIObjectText(CID_E_ALBUM, g_player.getAlbum());
     } else if (nId == CID_RERESH_BY) {
         string strLogName = g_profile.getString("LoginName", "");
         if (strLogName.size()) {
@@ -978,7 +978,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
         }
     } else if (nId == CID_RERESH_MEDIA_LENGTH) {
         LyricsProperties &prop = g_LyricData.properties();
-        prop.setMediaLength(g_Player.getMediaLength() / 1000);
+        prop.setMediaLength(g_player.getMediaLength() / 1000);
         m_pSkin->setUIObjectText(CID_E_MEDIA_LENGTH, prop.m_strMediaLength.c_str());
     }
 
@@ -993,7 +993,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
             if (getTimeTagOfLine(strLine.c_str(), strTimeTag)) {
                 nTime = getTimeTagValue(strTimeTag.c_str(), strTimeTag.size())
                 - g_LyricData.getOffsetTime();
-                g_Player.seekTo(nTime);
+                g_player.seekTo(nTime);
             }
             return true;
         }
@@ -1119,11 +1119,11 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
             LyricsProperties &prop = g_LyricData.properties();
 
             // Auto fill artist, album and title info
-            prop.m_strTitle = g_Player.getTitle();
-            prop.m_strArtist = g_Player.getArtist();
-            prop.m_strAlbum = g_Player.getAlbum();
-            if (g_Player.getMediaLength() > 0) {
-                prop.setMediaLength(g_Player.getMediaLength() / 1000);
+            prop.m_strTitle = g_player.getTitle();
+            prop.m_strArtist = g_player.getArtist();
+            prop.m_strAlbum = g_player.getAlbum();
+            if (g_player.getMediaLength() > 0) {
+                prop.setMediaLength(g_player.getMediaLength() / 1000);
             }
             string strLogName = g_profile.getString("LoginName", "");
             if (strLogName.size()) {
@@ -1414,10 +1414,10 @@ void CLyricShowTextEditObj::onPlayTimeChangedUpdate() {
 
     {
         // Prevent player forward to next track, if lyrics editor is focus, and lyrics changed.
-        if ((int)g_Player.getMediaLength() > 30 * 1000
-            && canUndo() && g_LyricData.getPlayElapsedTime() >= (int)g_Player.getMediaLength() - 1000
-            && strcmp(g_Player.getSrcMedia(), g_LyricData.getSongFileName()) == 0) {
-            g_Player.seekTo(0);
+        if ((int)g_player.getMediaLength() > 30 * 1000
+            && canUndo() && g_LyricData.getPlayElapsedTime() >= (int)g_player.getMediaLength() - 1000
+            && strcmp(g_player.getSrcMedia(), g_LyricData.getSongFileName()) == 0) {
+            g_player.seekTo(0);
         }
     }
 

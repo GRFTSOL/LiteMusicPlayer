@@ -217,7 +217,7 @@ bool CAutoProcessEmbeddedLyrics::onPostQuit() {
 void CAutoProcessEmbeddedLyrics::onSongChanged() {
     MutexAutolock autolock(m_mutex);
 
-    string strSongFileCur = g_Player.getSrcMedia();
+    string strSongFileCur = g_player.getSrcMedia();
 
     for (LIST_ITEMS::iterator it = m_listJobs.begin(); it != m_listJobs.end(); ) {
         Item &item = *it;

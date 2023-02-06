@@ -1,14 +1,13 @@
-#include "Player.h"
 #include "MPluginManager.h"
 #include "../Skin/SkinTypes.h"
 
 
 #ifdef _WIN32
 
-class CZikiPlayerPlugin {
+class PlayerPlugin {
 public:
-    CZikiPlayerPlugin() { m_hModule = nullptr; m_QueryPluginIF = nullptr; }
-    virtual ~CZikiPlayerPlugin() { if (m_hModule) FreeLibrary(m_hModule); }
+    PlayerPlugin() { m_hModule = nullptr; m_QueryPluginIF = nullptr; }
+    virtual ~PlayerPlugin() { if (m_hModule) FreeLibrary(m_hModule); }
 
     bool open(cstr_t szModule) {
         if (m_hModule) {
@@ -26,20 +25,15 @@ public:
 
     bool attach(HMODULE hModule) {
         m_hModule = hModule;
-        m_QueryPluginIF = (ZikiPlayerQueryPluginIF_t)GetProcAddress(m_hModule, SZ_FUNC_ZP_QUERY_PLUGIN_IF);
+        m_QueryPluginIF = (DHPlayerQueryPluginIF_t)GetProcAddress(m_hModule, SZ_FUNC_ZP_QUERY_PLUGIN_IF);
         return m_QueryPluginIF != nullptr;
     }
 
     void detach() { m_hModule = nullptr; m_QueryPluginIF = nullptr; }
 
-    MLRESULT zikiPlayerQueryPluginIF(
-        int nIndex,
-        MPInterfaceType *pInterfaceType,
-        IString *strDescription,
-        void * *lpInterface
-        ) {
+    ResultCode queryPluginIF(int index, MPInterfaceType *interfaceType, const char **description, void **interfacePtr) {
         if (m_QueryPluginIF) {
-            return m_QueryPluginIF(nIndex, pInterfaceType, strDescription, lpInterface);
+            return m_QueryPluginIF(index, interfaceType, description, interfacePtr);
         } else {
             return ERR_FALSE;
         }
@@ -47,16 +41,16 @@ public:
 
 protected:
     HMODULE                     m_hModule;
-    ZikiPlayerQueryPluginIF_t   m_QueryPluginIF;
+    DHPlayerQueryPluginIF_t   m_QueryPluginIF;
 
 };
 
 #else
 
-class CZikiPlayerPlugin {
+class PlayerPlugin {
 public:
-    CZikiPlayerPlugin() { m_QueryPluginIF = nullptr; }
-    virtual ~CZikiPlayerPlugin() { }
+    PlayerPlugin() { m_QueryPluginIF = nullptr; }
+    virtual ~PlayerPlugin() { }
 
     bool open(cstr_t szModule) {
         return false;
@@ -64,47 +58,77 @@ public:
 
     void detach() { }
 
-    MLRESULT zikiPlayerQueryPluginIF(
-        int nIndex,
-        MPInterfaceType *pInterfaceType,
-        IString *strDescription,
-        void * *lpInterface
-        ) {
+    ResultCode queryPluginIF(int index, MPInterfaceType *interfaceType, const char **description, void **interfacePtr) {
         if (m_QueryPluginIF) {
-            return m_QueryPluginIF(nIndex, pInterfaceType, strDescription, lpInterface);
+            return m_QueryPluginIF(index, interfaceType, description, interfacePtr);
         } else {
             return ERR_FALSE;
         }
     }
 
 protected:
-    ZikiPlayerQueryPluginIF_t   m_QueryPluginIF;
+    DHPlayerQueryPluginIF_t     m_QueryPluginIF;
 
 };
 
 #endif
 
-CMPluginManager::CMPluginManager(void) {
+PluginManager::PluginManager(void) {
     OBJ_REFERENCE_INIT
 }
 
-
-CMPluginManager::~CMPluginManager(void) {
+PluginManager::~PluginManager(void) {
 }
-
 
 //
 // Detect all the plugins and manage them.
 // All plugins are in "Plugins" folder.
 //
-MLRESULT CMPluginManager::detectPlugins() {
-    string strPluginFolder, strPlugin;
-    FileFind finder;
+ResultCode PluginManager::detectPlugins() {
 
-    strPluginFolder = getAppResourceDir();
+    //
+    // register internal plugins
+    //
+    IMediaDecoder *pDecoder = nullptr;
+
+#ifdef _MAC_OS
+    pDecoder = new CoreAVPlayer;
+    onInternalDecoderRegister(pDecoder);
+    pDecoder->release();
+#else
+#ifdef _MPLAYER
+    IMPlayer *player = nullptr;
+    CMPlayer::getInstance(&player);
+
+#ifdef _WIN32
+    IVisualizer *pVis = new CVISDemo();
+    pVis->init(player);
+    player->registerVis(pVis);
+#endif
+
+    pDecoder = new CMDLibmad;
+    onInternalDecoderRegister(pDecoder);
+    pDecoder->release();
+
+    pDecoder = new CMDWave;
+    onInternalDecoderRegister(pDecoder);
+    pDecoder->release();
+
+    pDecoder = new CMDRow;
+    onInternalDecoderRegister(pDecoder);
+    pDecoder->release();
+#else
+    pDecoder = new CMDWmpCore;
+    onInternalDecoderRegister(pDecoder);
+    pDecoder->release();
+#endif
+#endif // #ifndef _MAC_OS
+
+    string strPluginFolder = getAppResourceDir();
     strPluginFolder += "Plugins";
     dirStringAddSep(strPluginFolder);
 
+    FileFind finder;
     if (!finder.openDir(strPluginFolder.c_str())) {
         return ERR_OK;
     }
@@ -114,10 +138,10 @@ MLRESULT CMPluginManager::detectPlugins() {
             continue;
         }
 
-        strPlugin = strPluginFolder;
+        string strPlugin = strPluginFolder;
         strPlugin += finder.getCurName();
 
-        CZikiPlayerPlugin plugin;
+        PlayerPlugin plugin;
 
         if (!plugin.open(strPlugin.c_str())) {
             continue;
@@ -125,10 +149,8 @@ MLRESULT CMPluginManager::detectPlugins() {
 
         for (int i = 0; ; i++) {
             MPInterfaceType ifType;
-            MLRESULT nRet;
-            CXStr desc;
-
-            nRet = plugin.zikiPlayerQueryPluginIF(i, &ifType, &desc, nullptr);
+            const char *desc = nullptr;
+            auto nRet = plugin.queryPluginIF(i, &ifType, &desc, nullptr);
             if (nRet != ERR_OK) {
                 break;
             }
@@ -138,7 +160,7 @@ MLRESULT CMPluginManager::detectPlugins() {
                 {
                     CMPAutoPtr<IMediaInput> input;
 
-                    nRet = plugin.zikiPlayerQueryPluginIF(i, &ifType, nullptr, (void **)&input);
+                    nRet = plugin.queryPluginIF(i, &ifType, nullptr, (void **)&input);
                     if (nRet != ERR_OK || ifType != MPIT_INPUT) {
                         break;
                     }
@@ -146,9 +168,9 @@ MLRESULT CMPluginManager::detectPlugins() {
                 break;
             case MPIT_DECODE:
                 {
-                    CMPAutoPtr<IMediaDecode> decoder;
+                    CMPAutoPtr<IMediaDecoder> decoder;
 
-                    nRet = plugin.zikiPlayerQueryPluginIF(i, &ifType, nullptr, (void **)&decoder);
+                    nRet = plugin.queryPluginIF(i, &ifType, nullptr, (void **)&decoder);
                     if (nRet != ERR_OK || ifType != MPIT_DECODE) {
                         break;
                     }
@@ -166,18 +188,29 @@ MLRESULT CMPluginManager::detectPlugins() {
 }
 
 
-MLRESULT CMPluginManager::onInternalDecoderRegister(IMediaDecode *pDecoder) {
+ResultCode PluginManager::onInternalDecoderRegister(IMediaDecoder *pDecoder) {
     return registerDecoder(pDecoder, "", 0);
 }
 
 
-MLRESULT CMPluginManager::newInput(cstr_t szMediaUrl, IMediaInput **ppInput) {
-    // Use internal input
+ResultCode PluginManager::newInput(cstr_t szMediaUrl, IMediaInput **ppInput) {
+    ResultCode nRet;
+
+    *ppInput = new CMILocalFile;
+
+    nRet = (*ppInput)->open(szMediaUrl);
+    if (nRet != ERR_OK) {
+        delete *ppInput;
+        *ppInput = nullptr;
+        return nRet;
+    }
+
+    (*ppInput)->addRef();
     return ERR_NOT_SUPPORT;
 }
 
 
-MLRESULT CMPluginManager::newDecoder(IMediaInput *pInput, IMediaDecode **ppDecoder) {
+ResultCode PluginManager::newDecoder(IMediaInput *pInput, IMediaDecoder **ppDecoder) {
     cstr_t szMediaUrl = pInput->getSource();
     ListDecodersInfo::iterator it;
     cstr_t szExt;
@@ -195,14 +228,14 @@ MLRESULT CMPluginManager::newDecoder(IMediaInput *pInput, IMediaDecode **ppDecod
         DecoderInfo &info = *it;
 
         if (find(info.vExt.begin(), info.vExt.end(), strExtLower) != info.vExt.end()) {
-            CZikiPlayerPlugin plugin;
+            PlayerPlugin plugin;
             MPInterfaceType mpit;
 
             if (!plugin.open(info.strFileName.c_str())) {
                 break;    // Try next plugin
             }
 
-            if (plugin.zikiPlayerQueryPluginIF(info.nIFIndex, &mpit, nullptr, (void * *)ppDecoder) != ERR_OK) {
+            if (plugin.queryPluginIF(info.nIFIndex, &mpit, nullptr, (void * *)ppDecoder) != ERR_OK) {
                 break;    // Try next plugin
             }
             plugin.detach();
@@ -216,22 +249,31 @@ MLRESULT CMPluginManager::newDecoder(IMediaInput *pInput, IMediaDecode **ppDecod
 }
 
 
-MLRESULT CMPluginManager::newOutput(IMediaOutput **ppOutput) {
-    // Use internal output
+ResultCode PluginManager::newOutput(IMediaOutput **ppOutput) {
+#ifndef _MAC_OS
+    *ppOutput = new CMOSoundCard;
+    return ERR_OK;
+#else
     return ERR_NOT_SUPPORT;
+#endif // #ifndef _MAC_OS
 }
 
 
-MLRESULT CMPluginManager::getActiveDSP(IDSP **ppDSP) {
+ResultCode PluginManager::getActiveDSP(IDSP **ppDSP) {
+#ifdef _MPLAYER
+    *ppDSP = CDspSuperEQ::getInstance();
+    return ERR_OK;
+#else
     return ERR_NOT_SUPPORT;
+#endif
 }
 
 
-MLRESULT CMPluginManager::getActiveVis(IVector *pvVis) {
-    return ERR_NOT_SUPPORT;
+VecVisualizers PluginManager::getActiveVis() {
+    return VecVisualizers();
 }
 
-MLRESULT CMPluginManager::registerDecoder(IMediaDecode *pDecoder, cstr_t szModuleFileName, int nIFIndex) {
+ResultCode PluginManager::registerDecoder(IMediaDecoder *pDecoder, cstr_t szModuleFileName, int nIFIndex) {
     DecoderInfo decoderInfo;
 
     decoderInfo.desc = pDecoder->getDescription();
@@ -266,7 +308,7 @@ MLRESULT CMPluginManager::registerDecoder(IMediaDecode *pDecoder, cstr_t szModul
 }
 
 
-void CMPluginManager::unregisterDecoder(cstr_t szModuleFileName) {
+void PluginManager::unregisterDecoder(cstr_t szModuleFileName) {
     ListDecodersInfo::iterator it, itEnd;
 
     itEnd = m_listDecoders.end();

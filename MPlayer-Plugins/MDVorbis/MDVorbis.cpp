@@ -84,7 +84,7 @@ CMDVorbis::CMDVorbis()
 	m_bKillThread = false;
 	m_nSeekPos = 0;
 	m_bSeekFlag = false;
-	m_state = PS_STOPED;
+	m_state = PS_STOPPED;
 }
 
 CMDVorbis::~CMDVorbis()
@@ -109,7 +109,7 @@ cstr_t CMDVorbis::getFileExtentions()
 	return _T(".ogg\0ogg files\0");
 }
 
-MLRESULT CMDVorbis::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia)
+ResultCode CMDVorbis::getMediaInfo(IMediaInput *pInput, IMediaInfo *pMedia)
 {
 	OggVorbis_File	file;
 	ov_callbacks	ovcb;
@@ -185,11 +185,11 @@ bool CMDVorbis::isUseOutputPlug()
 	return true;
 }
 
-MLRESULT CMDVorbis::play(IMPlayer *pPlayer, IMediaInput *pInput)
+ResultCode CMDVorbis::play(IMPlayer *pPlayer, IMediaInput *pInput)
 {
-	MLRESULT		nRet;
+	ResultCode		nRet;
 
-	m_state = PS_STOPED;
+	m_state = PS_STOPPED;
 	m_bPaused = false;
 	m_nSeekPos = 0;
 	m_bSeekFlag = false;
@@ -267,7 +267,7 @@ R_FAILED:
 	return nRet;
 }
 
-MLRESULT CMDVorbis::pause()
+ResultCode CMDVorbis::pause()
 {
 	if (m_state != PS_PLAYING)
 		return ERR_PLAYER_INVALID_STATE;
@@ -276,7 +276,7 @@ MLRESULT CMDVorbis::pause()
 	return m_pOutput->pause(true);
 }
 
-MLRESULT CMDVorbis::unpause()
+ResultCode CMDVorbis::unpause()
 {
 	if (m_state != PS_PAUSED)
 		return ERR_PLAYER_INVALID_STATE;
@@ -290,7 +290,7 @@ bool CMDVorbis::IsPaused()
 	return m_state == PS_PAUSED;
 }
 
-MLRESULT CMDVorbis::stop()
+ResultCode CMDVorbis::stop()
 {
 	m_bKillThread = true;
 
@@ -310,7 +310,7 @@ uint32 CMDVorbis::getLength()
 	return m_audioInfo.nMediaLength;
 }
 
-MLRESULT CMDVorbis::Seek(uint32 dwPos)
+ResultCode CMDVorbis::Seek(uint32 dwPos)
 {
 	m_bSeekFlag = true;
 	m_nSeekPos = dwPos;
@@ -330,7 +330,7 @@ uint32 CMDVorbis::GetPos()
 		return m_nSeekPos;
 }
 
-MLRESULT CMDVorbis::setVolume(int volume, int nBanlance)
+ResultCode CMDVorbis::setVolume(int volume, int nBanlance)
 {
 	if (!m_pOutput)
 		return ERR_PLAYER_INVALID_STATE;
@@ -359,7 +359,7 @@ void CMDVorbis::DecodeThreadProc()
 		Sleep(10);
 	}
 
-	m_state = PS_STOPED;
+	m_state = PS_STOPPED;
 
 	m_pOutput->stop();
 	m_pOutput->Release();
@@ -443,7 +443,7 @@ void CMDVorbis::VorbisDecode()
 
 #ifdef _WIN32_WCE
 
-IMediaDecode *MPlayerGetMDOgg()
+IMediaDecoder *MPlayerGetMDOgg()
 {
 	return new CMDVorbis;
 }
@@ -457,23 +457,22 @@ IMediaDecode *MPlayerGetMDOgg()
 // nIndex = 0, return its interface type, and description, and lpInterface.
 // lpInterface can be NULL.
 //
-extern "C" __declspec(dllexport) MLRESULT ZikiPlayerQueryPluginIF(
-	int nIndex,
-	MPInterfaceType *pInterfaceType,
-	IString *strDescription,
-	LPVOID *lpInterface
+extern "C" __declspec(dllexport) ResultCode DHPlayerQueryPluginIF(
+	int index,
+	MPInterfaceType *interfaceType,
+	const char **description,
+	LPVOID *interfacePtr
 	)
 {
-	if (nIndex == 0)
+	if (index == 0)
 	{
-		*pInterfaceType = MPIT_DECODE;
-		if (strDescription)
-			strDescription->copy(SZ_DECODER_DESC);
-		if (lpInterface)
-		{
-			IMediaDecode	*pDecoder = new CMDVorbis;
+		*interfaceType = MPIT_DECODE;
+		if (description)
+			description = SZ_DECODER_DESC;
+		if (interfacePtr) {
+			IMediaDecoder	*pDecoder = new CMDVorbis;
 			pDecoder->AddRef();
-			*lpInterface = pDecoder;
+			*interfacePtr = pDecoder;
 		}
 
 		return ERR_OK;

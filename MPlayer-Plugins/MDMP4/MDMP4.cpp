@@ -401,7 +401,7 @@ int getsonglength(IMediaInput *pInput)
 
 
 /* Get the title from the file */
-void Mp4ffGetTags(mp4ff_t *file, IMedia *pMedia)
+void Mp4ffGetTags(mp4ff_t *file, IMediaInfo *media)
 {
     char temp[4096];
     int some_info = 0;
@@ -413,47 +413,47 @@ void Mp4ffGetTags(mp4ff_t *file, IMedia *pMedia)
     if (mp4ff_meta_get_track(file, &pVal))
 	{
 		Utf8ToUCS2(pVal, -1, str);
-        pMedia->setAttribute(MA_TRACK_NUMB, str.c_str());
+        media->setAttribute(MA_TRACK_NUMB, str.c_str());
 	}
 
     if (mp4ff_meta_get_artist(file, &pVal))
 	{
 		Utf8ToUCS2(pVal, -1, str);
-        pMedia->setAttribute(MA_ARTIST, str.c_str());
+        media->setAttribute(MA_ARTIST, str.c_str());
 	}
 
 	if (mp4ff_meta_get_title(file, &pVal))
 	{
 		Utf8ToUCS2(pVal, -1, str);
-        pMedia->setAttribute(MA_TITLE, str.c_str());
+        media->setAttribute(MA_TITLE, str.c_str());
 	}
 
 	if (mp4ff_meta_get_album(file, &pVal))
 	{
 		Utf8ToUCS2(pVal, -1, str);
-        pMedia->setAttribute(MA_ALBUM, str.c_str());
+        media->setAttribute(MA_ALBUM, str.c_str());
 	}
 
 	if (mp4ff_meta_get_date(file, &pVal))
 	{
 		Utf8ToUCS2(pVal, -1, str);
-        pMedia->setAttribute(MA_YEAR, str.c_str());
+        media->setAttribute(MA_YEAR, str.c_str());
 	}
 
 	if (mp4ff_meta_get_comment(file, &pVal))
 	{
 		Utf8ToUCS2(pVal, -1, str);
-        pMedia->setAttribute(MA_COMMENT, str.c_str());
+        media->setAttribute(MA_COMMENT, str.c_str());
 	}
 
 	if (mp4ff_meta_get_genre(file, &pVal))
 	{
 		Utf8ToUCS2(pVal, -1, str);
-        pMedia->setAttribute(MA_GENRE, str.c_str());
+        media->setAttribute(MA_GENRE, str.c_str());
 	}
 }
 
-MLRESULT CMDMP4::PreDecode()
+ResultCode CMDMP4::PreDecode()
 {
     int avg_bitrate, br, sr;
     unsigned char *buffer;
@@ -730,7 +730,7 @@ MLRESULT CMDMP4::PreDecode()
     if (m_downmix && (m_audioInfo.nChannels == 5 || m_audioInfo.nChannels == 6))
         m_audioInfo.nChannels = 2;
 
-    MLRESULT	nRet = m_pOutput->Open(m_audioInfo.nSampleRate, (int)m_audioInfo.nChannels,
+    ResultCode	nRet = m_pOutput->Open(m_audioInfo.nSampleRate, (int)m_audioInfo.nChannels,
         res_table[m_resolution]);
     if (nRet != ERR_OK)
     {
@@ -814,7 +814,7 @@ static void remap_channels(unsigned char *data, unsigned char *dataOut, unsigned
     }
 }
 
-MLRESULT CMDMP4::MP4PlayThreadFun()
+ResultCode CMDMP4::MP4PlayThreadFun()
 {
     int seq_frames = 0;
     int seq_bytes = 0;
@@ -1087,7 +1087,7 @@ int aac_seek(DecoderState *st, int nSampleRate, double seconds)
     }
 }
 
-MLRESULT CMDMP4::AACPlayThreadFun()
+ResultCode CMDMP4::AACPlayThreadFun()
 {
     int seq_frames = 0;
     int seq_bytes = 0;
@@ -1206,7 +1206,7 @@ CMDMP4::CMDMP4()
 	m_bKillThread = false;
 	m_nSeekPos = 0;
 	m_bSeekFlag = false;
-	m_state = PS_STOPED;
+	m_state = PS_STOPPED;
 }
 
 CMDMP4::~CMDMP4()
@@ -1231,7 +1231,7 @@ cstr_t CMDMP4::getFileExtentions()
 	return _T(".m4a\0MPEG-4 Files (*.m4a)\0.aac\0AAC Files (*.aac)\0");
 }
 
-MLRESULT CMDMP4::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pMedia)
+ResultCode CMDMP4::getMediaInfo(IMediaInput *pInput, IMediaInfo *media)
 {
     memset(&mp4state, 0, sizeof(DecoderState));
 	memset(&m_audioInfo, 0, sizeof(m_audioInfo));
@@ -1257,17 +1257,17 @@ MLRESULT CMDMP4::getMediaInfo(IMPlayer *pPlayer, IMediaInput *pInput, IMedia *pM
         if (file == NULL)
             return ERR_FALSE;
 
-        Mp4ffGetTags(file, pMedia);
+        Mp4ffGetTags(file, media);
 
         mp4ff_close(file);
     }
 
 	pInput->GetSize(m_audioInfo.nMediaFileSize);
-	pMedia->setAttribute(MA_FILESIZE, m_audioInfo.nMediaFileSize);
-	pMedia->setAttribute(MA_DURATION, m_audioInfo.nMediaLength);
-// 	pMedia->setAttribute(SZ_M_SampleRate, m_audioInfo.nSampleRate, false);
-//	pMedia->setAttribute(SZ_M_Channels, m_audioInfo.nChannels, false);
- 	// pMedia->setAttribute(SZ_M_BPS, m_audioInfo.nBps, false);
+	media->setAttribute(MA_FILESIZE, m_audioInfo.nMediaFileSize);
+	media->setAttribute(MA_DURATION, m_audioInfo.nMediaLength);
+// 	media->setAttribute(SZ_M_SampleRate, m_audioInfo.nSampleRate, false);
+//	media->setAttribute(SZ_M_Channels, m_audioInfo.nChannels, false);
+ 	// media->setAttribute(SZ_M_BPS, m_audioInfo.nBps, false);
 
 	return ERR_OK;
 }
@@ -1282,11 +1282,11 @@ bool CMDMP4::isUseOutputPlug()
 	return true;
 }
 
-MLRESULT CMDMP4::play(IMPlayer *pPlayer, IMediaInput *pInput)
+ResultCode CMDMP4::play(IMPlayer *pPlayer, IMediaInput *pInput)
 {
-	MLRESULT		nRet;
+	ResultCode		nRet;
 
-	m_state = PS_STOPED;
+	m_state = PS_STOPPED;
 	m_bPaused = false;
 	m_nSeekPos = 0;
 	m_bSeekFlag = false;
@@ -1355,7 +1355,7 @@ R_FAILED:
 	return nRet;
 }
 
-MLRESULT CMDMP4::pause()
+ResultCode CMDMP4::pause()
 {
 	if (m_state != PS_PLAYING)
 		return ERR_PLAYER_INVALID_STATE;
@@ -1364,7 +1364,7 @@ MLRESULT CMDMP4::pause()
 	return m_pOutput->pause(true);
 }
 
-MLRESULT CMDMP4::unpause()
+ResultCode CMDMP4::unpause()
 {
 	if (m_state != PS_PAUSED)
 		return ERR_PLAYER_INVALID_STATE;
@@ -1378,7 +1378,7 @@ bool CMDMP4::IsPaused()
 	return m_state == PS_PAUSED;
 }
 
-MLRESULT CMDMP4::stop()
+ResultCode CMDMP4::stop()
 {
 	m_bKillThread = true;
 
@@ -1398,7 +1398,7 @@ uint32 CMDMP4::getLength()
 	return mp4state.m_length;
 }
 
-MLRESULT CMDMP4::Seek(uint32 dwPos)
+ResultCode CMDMP4::Seek(uint32 dwPos)
 {
 	m_bSeekFlag = true;
 	m_nSeekPos = dwPos;
@@ -1418,7 +1418,7 @@ uint32 CMDMP4::GetPos()
 		return m_nSeekPos;
 }
 
-MLRESULT CMDMP4::setVolume(int volume, int nBanlance)
+ResultCode CMDMP4::setVolume(int volume, int nBanlance)
 {
 	if (!m_pOutput)
 		return ERR_PLAYER_INVALID_STATE;
@@ -1473,7 +1473,7 @@ void CMDMP4::DecodeThreadProc()
 		Sleep(10);
 	}
 
-	m_state = PS_STOPED;
+	m_state = PS_STOPPED;
 
 	m_pOutput->stop();
 	m_pOutput->Release();
@@ -1492,7 +1492,7 @@ void CMDMP4::DecodeThreadProc()
 
 #ifdef _WIN32_WCE
 
-IMediaDecode *MPlayerGetMDMP4()
+IMediaDecoder *MPlayerGetMDMP4()
 {
 	return new CMDMP4;
 }
@@ -1506,23 +1506,22 @@ IMediaDecode *MPlayerGetMDMP4()
 // nIndex = 0, return its interface type, and description, and lpInterface.
 // lpInterface can be NULL.
 //
-extern "C" __declspec(dllexport) MLRESULT ZikiPlayerQueryPluginIF(
-	int nIndex,
-	MPInterfaceType *pInterfaceType,
-	IString *strDescription,
-	LPVOID *lpInterface
+extern "C" __declspec(dllexport) ResultCode DHPlayerQueryPluginIF(
+	int index,
+	MPInterfaceType *interfaceType,
+	const char **description,
+	LPVOID *interfacePtr
 	)
 {
-	if (nIndex == 0)
+	if (index == 0)
 	{
-		*pInterfaceType = MPIT_DECODE;
-		if (strDescription)
-			strDescription->copy(SZ_DECODER_DESC);
-		if (lpInterface)
-		{
-			IMediaDecode	*pDecoder = new CMDMP4;
+		*interfaceType = MPIT_DECODE;
+		if (description)
+			description = SZ_DECODER_DESC;
+		if (interfacePtr) {
+			IMediaDecoder	*pDecoder = new CMDMP4;
 			pDecoder->AddRef();
-			*lpInterface = pDecoder;
+			*interfacePtr = pDecoder;
 		}
 
 		return ERR_OK;

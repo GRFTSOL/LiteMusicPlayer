@@ -19,7 +19,7 @@ cstr_t CMORaw::getDescription() {
     return "MPlayer Raw file output 1.0";
 }
 
-MLRESULT CMORaw::open(int nSampleRate, int nNumChannels, int nBitsPerSamp) {
+ResultCode CMORaw::open(int nSampleRate, int nNumChannels, int nBitsPerSamp) {
     m_bPaused = false;
     m_nChannels = nNumChannels;
     m_nSamplerate = nSampleRate;
@@ -38,7 +38,7 @@ MLRESULT CMORaw::open(int nSampleRate, int nNumChannels, int nBitsPerSamp) {
     return ERR_OK;
 }
 
-MLRESULT CMORaw::waitForWrite() {
+ResultCode CMORaw::waitForWrite() {
     sleep(10);
 
     m_eventCanWrite.acquire();
@@ -47,7 +47,7 @@ MLRESULT CMORaw::waitForWrite() {
     return ERR_OK;
 }
 
-MLRESULT CMORaw::write(IFBuffer *pBuf) {
+ResultCode CMORaw::write(IFBuffer *pBuf) {
     int nRet = ERR_OK;
 
     m_dwTotolBytesOffset += pBuf->size();
@@ -69,7 +69,7 @@ MLRESULT CMORaw::write(IFBuffer *pBuf) {
     return nRet;
 }
 
-MLRESULT CMORaw::flush() {
+ResultCode CMORaw::flush() {
     if (m_bPaused) {
         m_bPaused = false;
         m_eventCanWrite.set();
@@ -77,7 +77,7 @@ MLRESULT CMORaw::flush() {
     return ERR_OK;
 }
 
-MLRESULT CMORaw::pause(bool bPause) {
+ResultCode CMORaw::pause(bool bPause) {
     m_bPaused = bPause;
     if (bPause) {
         m_eventCanWrite.reset();
@@ -92,7 +92,7 @@ bool CMORaw::isPlaying() {
     return false;
 }
 
-MLRESULT CMORaw::stop() {
+ResultCode CMORaw::stop() {
     if (m_fp) {
         fclose(m_fp);
         m_fp = nullptr;
@@ -111,7 +111,7 @@ bool CMORaw::isOpened() {
 }
 
 // volume
-MLRESULT CMORaw::setVolume(int volume, int nBanlance) {
+ResultCode CMORaw::setVolume(int volume, int nBanlance) {
     return ERR_OK;
 }
 

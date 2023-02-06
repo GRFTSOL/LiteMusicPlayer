@@ -1240,19 +1240,19 @@ bool CLyricShowObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         m_pSkin->postShortcutKeyCmd(CMD_OPEN_LRC);
         break;
     case 'Z':
-        g_Player.prev();
+        g_player.prev();
         break;
     case 'X':
-        g_Player.play();
+        g_player.play();
         break;
     case 'C':
-        g_Player.playPause();
+        g_player.playPause();
         break;
     case 'V':
-        g_Player.stop();
+        g_player.stop();
         break;
     case 'B':
-        g_Player.next();
+        g_player.next();
         break;
     case VK_RIGHT:
         // 前进5秒
@@ -1260,13 +1260,13 @@ bool CLyricShowObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
             uint32_t dwCurPos;
             uint32_t dwLength;
 
-            dwCurPos = g_Player.getPlayPos();
+            dwCurPos = g_player.getPlayPos();
             dwCurPos += 5000;
-            dwLength = g_Player.getMediaLength();
+            dwLength = g_player.getMediaLength();
             if (dwCurPos > dwLength) {
                 dwCurPos = dwLength;
             }
-            g_Player.seekTo(dwCurPos);
+            g_player.seekTo(dwCurPos);
         }
         break;
     case VK_LEFT:
@@ -1274,12 +1274,12 @@ bool CLyricShowObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         {
             int dwCurPos;
 
-            dwCurPos = g_Player.getPlayPos();
+            dwCurPos = g_player.getPlayPos();
             dwCurPos -= 5000;
             if (dwCurPos < 0) {
                 dwCurPos = 0;
             }
-            g_Player.seekTo(dwCurPos);
+            g_player.seekTo(dwCurPos);
         }
         break;
     default:

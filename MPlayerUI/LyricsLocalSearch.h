@@ -20,7 +20,7 @@ public:
     void quit();
 
     // search match lyrics
-    void searchAllMatchLyrics(cstr_t szSongFile, cstr_t szArtist, cstr_t szTitle, V_LRCSEARCHRESULT &vLyrics);
+    void searchAllMatchLyrics(cstr_t szSongFile, cstr_t szArtist, cstr_t szTitle, ListLyrSearchResults &vLyrics);
 
     // search best match lyrics
     bool getBestMatchLyrics(cstr_t szSongFile, cstr_t szArtist, cstr_t szTitle, string &strLyrFile);
@@ -46,7 +46,7 @@ public:
     void saveLyricFolderCfg();
 
 protected:
-    void searchLyrics(CLyricsSearchParameter &searchParam, V_LRCSEARCHRESULT &vLyrics);
+    void searchLyrics(CLyricsSearchParameter &searchParam, ListLyrSearchResults &vLyrics);
 
     void loadLyricsAssociation();
     void saveLyricsAssociation();

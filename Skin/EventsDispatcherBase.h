@@ -61,8 +61,8 @@ public:
     }
 
 protected:
-    typedef list<IEventHandler *>            LIST_EVENTHANDLER;
-    typedef vector<LIST_EVENTHANDLER>        VecListEventHandler;
+    typedef list<IEventHandler *>            ListEventHandlers;
+    typedef vector<ListEventHandlers>        VecListEventHandler;
     VecListEventHandler         m_vListEventHandler;
     std::mutex                  m_mutex;
 
