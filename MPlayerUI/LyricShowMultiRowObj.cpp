@@ -50,13 +50,6 @@ void CLyricShowMultiRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
         *prcUpdate = m_rcObj;
     }
 
-    int y, yCurRow;
-    LyricsLine *pLineCur;
-    int nRowHeight;
-    int nDeltaTime;
-    LyricsLine *pLine;
-
-
     // get the current playing line
     int nRowCur = m_pMLData->getCurPlayLine(m_lyrLines);
     if (nRowCur == -1) {
@@ -68,9 +61,9 @@ void CLyricShowMultiRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
     int nCurRowCount = m_lyrLines.getCountWithSameTimeStamps(nRowCur);
     assert(nCurRowCount > 0);
 
-    pLineCur = m_lyrLines[nRowCur];
-    nRowHeight = getLineHeight();
-    nDeltaTime = pLineCur->nEndTime - pLineCur->nBegTime;
+    LyricsLine *pLineCur = m_lyrLines[nRowCur];
+    int nRowHeight = getLineHeight();
+    int nDeltaTime = pLineCur->nEndTime - pLineCur->nBegTime;
 
     CDispOptRecover dispOptRecover(this);
     if (m_img.isValid()) {
@@ -81,6 +74,7 @@ void CLyricShowMultiRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
         }
     }
 
+    int yCurRow;
     if (nDeltaTime == 0 && m_nCurRowOld == nRowCur) {
         yCurRow = m_yDrawingOld;
     } else {
@@ -131,13 +125,13 @@ void CLyricShowMultiRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
     canvas->setClipBoundBox(rcClip);
 
     int nRow, nRowEnd;
-    int yLyrStart, yLyrEnd;
+    int yLyrStart, yLyrEnd, y;
 
     // draw lyrics lines above current line
     nRow = nRowCur - 1;
     nRowEnd = 0;
     for (y = yCurRow - nRowHeight; y + nRowHeight > rcClip.top && nRow >= nRowEnd; y -= nRowHeight) {
-        pLine = m_lyrLines[nRow];
+        LyricsLine *pLine = m_lyrLines[nRow];
 
         if (!drawRow(canvas, pLine, AUTO_CAL_X, y, LP_ABOVE_CUR_LINE)) {
             break;
@@ -156,7 +150,7 @@ void CLyricShowMultiRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
     // draw lyrics lines below current line
     nRowEnd = (int)m_lyrLines.size();
     for (; y < rcClip.bottom && nRow < nRowEnd; y += nRowHeight) {
-        pLine = m_lyrLines[nRow];
+        LyricsLine *pLine = m_lyrLines[nRow];
         if (!drawRow(canvas, pLine, AUTO_CAL_X, y, LP_BELOW_CUR_LINE)) {
             break;
         }
@@ -188,7 +182,6 @@ void CLyricShowMultiRowObj::fastestDraw_GetUpdateRectOfFadeInOut(CRawGraph *canv
 
     // get current line update rect
     if (isKaraoke()) {
-        prcUpdate->top = y;
         prcUpdate->bottom = y + nRowHeight;
     }
 
@@ -221,6 +214,12 @@ void CLyricShowMultiRowObj::fastestDraw_GetUpdateRectOfFadeInOut(CRawGraph *canv
             }
             prcUpdate->bottom = y + nRowHeight * 2;
         }
+    }
+
+    if (prcUpdate->top != prcUpdate->bottom && isOutlineLyrics()) {
+        // 如果打开了 Outline, 则还需要增加 outline 的位置.
+        prcUpdate->top -= getOutlineMargin();
+        prcUpdate->bottom += getOutlineMargin();
     }
 
     if (prcUpdate->top < m_rcObj.top + m_nYMargin) {

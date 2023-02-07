@@ -125,11 +125,11 @@ export default defineComponent({
     },
   },
   computed: {
-    currentRoutePath() {
+    currentRoutePath() : string {
         return this.$route.path;
     },
-    currentRouteParentPath() {
-      let a = this.$route.path.split('/');
+    currentRouteParentPath() : string {
+      let a: Array<string> = this.$route.path.split('/');
       a.pop();
       a.pop();
       a.push('')

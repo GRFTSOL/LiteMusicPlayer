@@ -186,11 +186,12 @@ protected:
 
     bool isOutlineLyrics() const { return m_bOutlineLyrics || m_img.isValid(); }
 
-    int getFontHeight() const { return m_nFontHeight + (isOutlineLyrics() ? MARGIN_FONT * 2 : 0); }
+    int getFontHeight() const { return m_nFontHeight + getOutlineMargin(); }
 
     int getPatternFontHeight() const { return m_nFontHeight + MARGIN_FONT * 2; }
 
-    int getLineHeight() const { return m_nFontHeight + (isOutlineLyrics() ? MARGIN_FONT * 2 : 0) + m_nLineSpacing; }
+    int getLineHeight() const { return m_nFontHeight + getOutlineMargin() + m_nLineSpacing; }
+    int getOutlineMargin() const { return isOutlineLyrics() ? m_nFontHeight / 8 : 0; }
 
     inline CColor &getHighlightColor() { return m_tobHilight.clr[TCI_FILL]; }
     inline CColor &getLowlightColor() { return m_tobLowlight.clr[TCI_FILL]; }

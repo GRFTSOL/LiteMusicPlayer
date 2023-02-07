@@ -1,4 +1,4 @@
-﻿
+
 
 #include "MPlayerApp.h"
 #include "LyricShowSingleRowObj.h"
@@ -127,7 +127,6 @@ void CLyricShowSingleRowObj::drawCurLineFadeInNextLine(CRawGraph *canvas, Lyrics
 // OUTPUT:
 //        rcUpdate    -    更新的矩形区域
 void CLyricShowSingleRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
-    int y;
     LyricsLine *pLyricRow;
     int nRowCur;
     int nPlayPos;
@@ -152,7 +151,7 @@ void CLyricShowSingleRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
     updateLyricDrawBufferBackground(canvas, m_rcObj);
 
     nPlayPos = m_pMLData->getPlayElapsedTime();
-    y = getLineVertAlignPos() - getFontHeight() / 2;
+    int y = getLineVertAlignPos() - getFontHeight() / 2 + getOutlineMargin();
 
     // 在当前行结束前0.5秒渐变切换到下一行
     if (nPlayPos + FIO_TIME >= pLyricRow->nEndTime) {

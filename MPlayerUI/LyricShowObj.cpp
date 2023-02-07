@@ -1443,7 +1443,8 @@ void CLyricShowObj::wrapLyricsLines() {
 
     bool bVerticalStyle = (isKindOf(CLyricShowMultiRowObj::className()) || isKindOf(CLyricShowTxtObj::className()));
 
-    wrapDisplayLyrics(g_LyricData.getRawLyrics(), m_lyrLines, canvas, m_rcObj.width() - m_nXMargin * 2, bVerticalStyle);
+    int width = m_rcObj.width() - m_nXMargin * 2 + getOutlineMargin();
+    wrapDisplayLyrics(g_LyricData.getRawLyrics(), m_lyrLines, canvas, width, bVerticalStyle);
 
     reverseLyricsForRightToLeftLanguage();
 }

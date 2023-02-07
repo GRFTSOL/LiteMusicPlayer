@@ -132,6 +132,9 @@ bool GfxFont::create(cstr_t faceName, int fontHeight, bool italic, int weight, b
 int GfxFont::draw(CGContextRef ctx, CFStringRef string, int x, int y) {
     assert(string);
 
+    // 在 Mac 下字体是按照 descent 的位置来对齐的.
+    y -= CTFontGetDescent(m_font);
+
     CFAttributedStringRef attrString = CFAttributedStringCreate(kCFAllocatorDefault, string, m_attributes);
     assert(attrString);
 

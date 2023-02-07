@@ -69,12 +69,17 @@ Glyph *CRawGlyphBuilder::buildGlyph(string &ch) {
     int textWidth = 0;
     CFStringRef string = CFStringCreateWithBytes(nullptr, (UInt8*)ch.c_str(), ch.size(), kCFStringEncodingUTF8, false);
     if (string) {
-        int y = MARGIN_FONT + m_fontInfo.height - m_fontInfo.height / 6;
+        int y = MARGIN_FONT + m_fontInfo.height;
         if (isAnsiStr(ch.c_str())) {
             textWidth = m_fontLatin.draw(m_fontMemGraph.getHandle(), string, MARGIN_FONT, y);
         } else {
             textWidth = m_fontOthers.draw(m_fontMemGraph.getHandle(), string, MARGIN_FONT, y);
         }
+
+        // 用于校准字体绘制的位置.
+        // CGContextRef context = m_fontMemGraph.getHandle();
+        // CGContextSetRGBStrokeColor(context, 1.0, 1.0, 1.0, 1.0);
+        // CGContextStrokeRect(context, CGRectMake(0, 0, textWidth, nHeightBitmap));
 
         CFRelease(string);
     } else {
