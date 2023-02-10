@@ -7,6 +7,50 @@
 
 class CSkinEditCtrl;
 
+namespace _SkinEditCtrl {
+
+class StashSelectionCaret;
+class AutoBatchUndo;
+class EditorInsertAction;
+class EditorBatchAction;
+
+class AutoInvalidate {
+public:
+    AutoInvalidate(CSkinEditCtrl *editor) : m_editor(editor) { saveOrg(); }
+    ~AutoInvalidate();
+
+    void setNeedUpdate() { m_needUpdate = true; }
+
+protected:
+    void saveOrg();
+
+protected:
+    CSkinEditCtrl               *m_editor;
+    bool                        m_needUpdate = false;
+    int                         m_nTopVisibleLineOld;
+    int                         m_nScrollPosxOld;
+    int                         m_nBegSelRowOld, m_nEndSelRowOld;
+    int                         m_nBegSelColOld, m_nEndSelColOld;
+    int                         m_nCaretRowOld;
+
+};
+
+class AutoBatchUndo {
+public:
+    AutoBatchUndo(CSkinEditCtrl *editor);
+    ~AutoBatchUndo() { endBatchUndo(); }
+
+    void endBatchUndo();
+
+protected:
+    CSkinEditCtrl               *m_editor;
+    EditorBatchAction           *m_batchAction;
+    AutoInvalidate              m_update;
+
+};
+
+} // namespace _SkinEditCtrl
+
 //
 // Editor syntax (color) parser
 //
@@ -30,13 +74,13 @@ public:
     virtual void onEditorTextChanged(Status status, bool bVal) { }
     virtual void onEditorTextChanged() { }
 
-    virtual void onEditorKeyDown(uint32_t code, uint32_t flags) { }
+    virtual bool onEditorKeyDown(uint32_t code, uint32_t flags) { return false; }
     virtual void onEditorMouseWheel(int wheelDistance, int mkeys, CPoint pt) { }
     virtual void onEditorKillFocus() { }
 
 };
 
-#define CARET_EXTRA_EXPAND  2
+#define CARET_EXTRA_EXPAND  1
 
 class CSkinCaret {
 public:
@@ -128,113 +172,6 @@ public:
     };
 
 public:
-    class CAutoUpdate {
-    public:
-        CAutoUpdate(CSkinEditCtrl *pTarg) {
-            m_pTarget = pTarg;
-            m_bUpdate = false;
-            saveOrg();
-        }
-        ~CAutoUpdate() {
-            doUpdateNow();
-        }
-        void setUpdateFlag(bool bUpdate) { m_bUpdate = bUpdate; }
-
-        void doUpdateNow() {
-            if (!m_pTarget) {
-                return;
-            }
-
-            if (m_pTarget->isInBatchAction()) {
-                return;
-            }
-
-            if (m_bUpdate) {
-                m_bUpdate = false;
-                saveOrg();
-                m_pTarget->invalidate();
-                return;
-            }
-
-            if (m_nTopVisibleLineOld != m_pTarget->m_nTopVisibleLine ||
-                m_nScrollPosxOld != m_pTarget->m_nScrollPosx) {
-                saveOrg();
-                m_pTarget->invalidate();
-                return;
-            }
-
-            if (m_nCaretRowOld != m_pTarget->m_nCaretRow) {
-                saveOrg();
-                m_pTarget->invalidate();
-                return;
-            }
-
-            if (m_nBegSelRowOld == -1 && m_pTarget->m_nBegSelRow == -1) {
-                saveOrg();
-                return;
-            }
-
-            if (m_nBegSelRowOld != m_pTarget->m_nBegSelRow ||
-                m_nEndSelRowOld != m_pTarget->m_nEndSelRow ||
-                m_nBegSelColOld != m_pTarget->m_nBegSelCol ||
-                m_nEndSelColOld != m_pTarget->m_nEndSelCol) {
-                saveOrg();
-                m_pTarget->invalidate();
-                return;
-            }
-        }
-    protected:
-        void saveOrg() {
-            m_nTopVisibleLineOld = m_pTarget->m_nTopVisibleLine;
-            m_nScrollPosxOld = m_pTarget->m_nScrollPosx;
-            m_nBegSelRowOld = m_pTarget->m_nBegSelRow;
-            m_nEndSelRowOld = m_pTarget->m_nEndSelRow;
-            m_nBegSelColOld = m_pTarget->m_nBegSelCol;
-            m_nEndSelColOld = m_pTarget->m_nEndSelCol;
-            m_nCaretRowOld = m_pTarget->m_nCaretRow;
-        }
-
-    protected:
-        CSkinEditCtrl*m_pTarget;
-        bool                        m_bUpdate;
-        int                         m_nTopVisibleLineOld;
-        int                         m_nScrollPosxOld;
-        int                         m_nBegSelRowOld, m_nEndSelRowOld;
-        int                         m_nBegSelColOld, m_nEndSelColOld;
-        int                         m_nCaretRowOld;
-
-    };
-
-    friend class CAutoUpdate;
-
-    class CAutoBatchUndo {
-    public:
-        CAutoBatchUndo(CSkinEditCtrl *pTarg) : m_update(pTarg) {
-            m_pTarget = pTarg;
-
-            m_pTarget->m_undoMgr.beginBatchAction();
-        }
-
-        ~CAutoBatchUndo() {
-            endBatchUndo();
-        }
-
-        void endBatchUndo() {
-            m_pTarget->m_undoMgr.endBatchAction();
-            m_pTarget->updateScrollInfo(true);
-            m_pTarget->updateScrollInfo(false);
-            m_pTarget->makeCaretInSight();
-            m_update.setUpdateFlag(true);
-            m_update.doUpdateNow();
-        }
-
-    protected:
-        CSkinEditCtrl               *m_pTarget;
-        CAutoUpdate                 m_update;
-
-    };
-
-    friend class CAutoBatchUndo;
 
     struct CGlyph {
         uint8_t                     width;
@@ -247,14 +184,6 @@ public:
         bool reverseCmp(const char *str) { return chGlyph == *str; }
         bool reverseiCmp(const char *str);
         int length() { return 1; }
-
-        // WCHAR        chGlyph;
-        // bool cmp(const char *str) { return chGlyph == *str; }
-        // bool iCmp(const char *str);
-        // bool reverseCmp(const char *str) { return chGlyph == *str; }
-        // bool reverseiCmp(const char *str);
-        // int length() { return 1; }
-        // void textOut(CRawGraph *canvas, int x, int y) { canvas->textOut(x, y, &chGlyph, 1); }
     };
 
     enum Style {
@@ -411,7 +340,7 @@ protected:
     void prevWord(int &Row, int &nCol);
 
     void selectNone();
-    void removeSelected(int *pnBegSelRow = nullptr, int *pnBegSelCol = nullptr);
+    void removeSelected(int &pnBegSelRow, int &pnBegSelCol);
     void removeStr(int nRow, int nCol, int nSize);
     void removeChar(int nRow, int nCol);
 
@@ -419,6 +348,9 @@ protected:
 
     void insertChar(int nRow, int nCol, WCHAR chInsert);
     void insertStr(int nRow, int nCol, cstr_t szText);
+
+    int unindentLine(int lineNo);
+    void indentLine(int lineNo);
 
     void updateScrollInfo(bool bHorz = true, bool bVert = true);
 
@@ -503,9 +435,11 @@ public:
     virtual void onStatusChanged(Status status, bool bVal) override;
     virtual void onAction(Action action) override;
 
-    friend class CAutoUpdate;
-    friend class CEditInsertAction;
-    friend class CEditDelAction;
+    friend _SkinEditCtrl::StashSelectionCaret;
+    friend _SkinEditCtrl::EditorInsertAction;
+    friend _SkinEditCtrl::AutoBatchUndo;
+    friend _SkinEditCtrl::AutoInvalidate;
+    friend _SkinEditCtrl::EditorBatchAction;
 
 protected:
     uint32_t                    m_nEditorStyles;
@@ -529,6 +463,7 @@ protected:
     int                         m_begMarkedCol, m_endMarkedCol;
 
     int                         m_nOneCharDx;
+    int                         m_indentSize = 4;
 
     // undo
     CUndoMgr                    m_undoMgr;

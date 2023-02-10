@@ -337,6 +337,7 @@ void CSkinWnd::closeSkin() {
     m_pUIObjHandleContextMenuCmd = nullptr;
 
     m_pUIObjCapMouse = nullptr;
+    m_uiObjectFocus = nullptr;
 
     m_rootConainter.onDestroy();
     m_rootConainter.destroy();
@@ -700,14 +701,8 @@ bool CSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags) {
     }
 
     // tab key to switch between uiobject
-    if (nChar == VK_TAB) { // TAB
-        bool bShitDown = isModifierKeyPressed(MK_SHIFT, nFlags);
-        // shift + VK_TAB
-        if (bShitDown) {
-            m_rootConainter.focusToPrev();
-        } else {
-            m_rootConainter.focusToNext();
-        }
+    if (nChar == VK_TAB) {
+        switchFocusUIObj(isModifierKeyPressed(MK_SHIFT, nFlags));
 
         // Ignore '\t' WM_CHAR message.
         m_bIgnoreNextOnCharMsg = true;
@@ -1081,6 +1076,175 @@ void CSkinWnd::onKillFocus() {
     m_rootConainter.onKillFocus();
 }
 
+static CUIObject *getVisibleByHierachy(CUIObject *obj) {
+    CUIObject *visibleObj = nullptr;
+    for (auto p = obj; p != nullptr; p = p->getParent()) {
+        if (p->isVisible()) {
+            if (visibleObj == nullptr) {
+                visibleObj = p;
+            }
+        } else {
+            // 之前的 child 都 invisible
+            visibleObj = nullptr;
+        }
+    }
+
+    return visibleObj;
+}
+
+CUIObject *nextCanFocusUIObjInChildren(CSkinContainer *parent) {
+    int pos = 0, count = (int)parent->getChildrenCount();
+    for (; pos < count; pos++) {
+        CUIObject *obj = parent->getChildByIndex(pos);
+        if (obj->isVisible()) {
+            if (obj->needMsgKey()) {
+                return obj;
+            } else if (obj->isContainer()) {
+                obj = nextCanFocusUIObjInChildren(obj->getContainerIf());
+                if (obj) {
+                    return obj;
+                }
+            }
+        }
+    }
+
+    return nullptr;
+}
+
+CUIObject *nextCanFocusUIObjInSibParent(CUIObject *cur) {
+    CSkinContainer *parent = cur->getParent();
+    if (parent == nullptr) {
+        // 找到了根节点
+        return nullptr;
+    }
+
+    // 先找到 @cur 在 parent 中的位置
+    int pos = 0, count = (int)parent->getChildrenCount();
+    for (; pos < count; pos++) {
+        CUIObject *obj = parent->getChildByIndex(pos);
+        if (obj == cur) {
+            break;
+        }
+    }
+
+    // 在接下来的 sibling 中查找
+    for (pos++; pos < count; pos++) {
+        CUIObject *obj = parent->getChildByIndex(pos);
+        if (obj->isVisible()) {
+            if (obj->needMsgKey()) {
+                return obj;
+            } else if (obj->isContainer()) {
+                obj = nextCanFocusUIObjInChildren(obj->getContainerIf());
+                if (obj) {
+                    return obj;
+                }
+            }
+        }
+    }
+
+    // Sibling 中也没有，继续在 parent 中查找
+    return nextCanFocusUIObjInSibParent(parent);
+}
+
+CUIObject *prevCanFocusUIObjInChildren(CSkinContainer *parent) {
+    int pos = (int)parent->getChildrenCount() - 1;
+    for (; pos >= 0; pos--) {
+        CUIObject *obj = parent->getChildByIndex(pos);
+        if (obj->isVisible()) {
+            if (obj->needMsgKey()) {
+                return obj;
+            } else if (obj->isContainer()) {
+                obj = prevCanFocusUIObjInChildren(obj->getContainerIf());
+                if (obj) {
+                    return obj;
+                }
+            }
+        }
+    }
+
+    return nullptr;
+}
+
+CUIObject *prevCanFocusUIObjInSibParent(CUIObject *cur) {
+    CSkinContainer *parent = cur->getParent();
+    if (parent == nullptr) {
+        // 找到了根节点
+        return nullptr;
+    }
+
+    // 先找到 @cur 在 parent 中的位置
+    int pos = (int)parent->getChildrenCount() - 1;
+    for (; pos >= 0; pos--) {
+        CUIObject *obj = parent->getChildByIndex(pos);
+        if (obj == cur) {
+            break;
+        }
+    }
+
+    // 在接下来的 sibling 中查找
+    for (pos--; pos >= 0; pos--) {
+        CUIObject *obj = parent->getChildByIndex(pos);
+        if (obj->isVisible()) {
+            if (obj->needMsgKey()) {
+                return obj;
+            } else if (obj->isContainer()) {
+                obj = prevCanFocusUIObjInChildren(obj->getContainerIf());
+                if (obj) {
+                    return obj;
+                }
+            }
+        }
+    }
+
+    // Sibling 中也没有，继续在 parent 中查找
+    return prevCanFocusUIObjInSibParent(parent);
+}
+
+void CSkinWnd::switchFocusUIObj(bool toPrev) {
+    CUIObject *obj = nullptr;
+    CUIObject *prevFocus = getVisibleByHierachy(m_uiObjectFocus);
+    if (toPrev) {
+        if (prevFocus) {
+            if (prevFocus->isContainer()) {
+                // 在 prevFocus 的 children 中查找
+                obj = prevCanFocusUIObjInChildren(prevFocus->getContainerIf());
+            }
+
+            if (!obj) {
+                // 在兄弟节点/父节点查找
+                obj = prevCanFocusUIObjInSibParent(prevFocus);
+            }
+        }
+
+        if (!obj) {
+            // 从头再来查找
+            obj = prevCanFocusUIObjInChildren(&m_rootConainter);
+        }
+    } else {
+        if (prevFocus) {
+            if (prevFocus->isContainer()) {
+                // 在 prevFocus 的 children 中查找
+                obj = nextCanFocusUIObjInChildren(prevFocus->getContainerIf());
+            }
+
+            if (!obj) {
+                // 在兄弟节点/父节点查找
+                obj = nextCanFocusUIObjInSibParent(prevFocus);
+            }
+        }
+
+        if (!obj) {
+            // 从头再来查找
+            obj = nextCanFocusUIObjInChildren(&m_rootConainter);
+        }
+    }
+
+    if (obj != m_uiObjectFocus) {
+        // Focus 改变了.
+        setFocusUIObj(obj);
+    }
+}
+
 bool CSkinWnd::moveWindow(int X, int Y, int nWidth, int nHeight, bool bRepaint) {
     if (nHeight < m_wndResizer.getMinCy()) {
         nHeight = m_wndResizer.getMinCy();
@@ -1259,12 +1423,22 @@ bool CSkinWnd::getUnprocessedProperty(cstr_t szProperty, string &strValue) {
     return false;
 }
 
-void CSkinWnd::setFocusUIObject(int nId) {
-    m_rootConainter.setFocusUIObject(nId);
+void CSkinWnd::setFocusUIObj(CUIObject *obj) {
+    if (m_uiObjectFocus != obj) {
+        if (m_uiObjectFocus) {
+            m_uiObjectFocus->onKillFocus();
+        }
+
+        m_uiObjectFocus = obj;
+
+        if (obj) {
+            obj->onSetFocus();
+        }
+    }
 }
 
 CUIObject *CSkinWnd::getFocusUIObj() {
-    return m_rootConainter.getFocusUIObject();
+    return m_uiObjectFocus;
 }
 
 bool CSkinWnd::enableUIObject(int nId, bool bEnable, bool bRedraw) {
@@ -1739,9 +1913,7 @@ void CSkinWnd::onTimerDynamicAlphaChange() {
 }
 
 void CSkinWnd::onSkinLoaded() {
-    if (getFocusUIObj() == nullptr) {
-        m_rootConainter.focusToNext();
-    }
+    switchFocusUIObj();
 
     if (!m_scriptFile.empty()) {
         assert(m_vm == nullptr);
@@ -1905,13 +2077,26 @@ void CSkinWnd::onUserMessage(int nMessageID, LPARAM param) {
     m_rootConainter.onUserMessage(nMessageID, param);
 }
 
-void CSkinWnd::onRemoveUIObj(CUIObject *pObj) {
-    if (pObj == m_pUIObjCapMouse) {
-        releaseCaptureMouse(m_pUIObjCapMouse);
-    }
+void CSkinWnd::onRemoveUIObj(CUIObject *obj) {
+    onUIObjectHidden(obj);
 }
 
-void CSkinWnd::onAddUIObj(CUIObject *pObj) {
+void CSkinWnd::onAddUIObj(CUIObject *obj) {
+}
+
+void CSkinWnd::onUIObjectHidden(CUIObject *obj) {
+    if (obj == m_pUIObjCapMouse) {
+        releaseCaptureMouse(obj);
+    }
+
+    if (obj == m_pUIObjHandleContextMenuCmd) {
+        m_pUIObjHandleContextMenuCmd = nullptr;
+    }
+
+    if (obj == m_uiObjectFocus) {
+        // switchFocusUIObj();
+        m_uiObjectFocus = nullptr;
+    }
 }
 
 void CSkinWnd::onLanguageChanged() {
@@ -2176,19 +2361,6 @@ void CSkinWnd::toXML(CXMLWriter &xmlStream) {
     xmlStream.writeEndElement();
 }
 #endif // _SKIN_EDITOR_
-
-void CSkinWnd::onSwitchChildFocus(CUIObject *pUIObjFocusOld, CUIObject *pUIObjFocusNew) {
-    if (pUIObjFocusOld != pUIObjFocusNew) {
-        if (pUIObjFocusOld) {
-            pUIObjFocusOld->onKillFocus();
-        }
-
-        if (pUIObjFocusNew) {
-            pUIObjFocusNew->onSetFocus();
-        }
-    }
-}
-
 
 void CSkinWnd::onMouseActiveMsg() {
     m_timeLatestMouseMsg = getTickCount();

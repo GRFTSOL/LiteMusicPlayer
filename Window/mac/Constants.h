@@ -165,6 +165,8 @@ enum {
 #define MK_ALT              (1 << 19) // NSAlternateKeyMask
 #define MK_COMMAND          (1 << 20) // NSCommandKeyMask
 
+#define MK_LBUTTON          1
+
 #define WHEEL_DELTA         50
 
 #define MB_OK               0x00000000L
@@ -192,5 +194,3 @@ enum {
 #define IDNO                7
 #define IDCLOSE             8
 #define IDHELP              9
-
-#define MK_LBUTTON          1

@@ -100,7 +100,7 @@
 
     if (mIsTextInputMode) {
         if (mIsMarkedText || (code != kVK_Return && code != kVK_Escape && code < kVK_Delete &&
-            (modifierFlags & ~NSEventModifierFlagShift) == 0))
+            code != VK_TAB && (modifierFlags & ~NSEventModifierFlagShift) == 0))
         {
             // 输入法来处理键盘输入
             if ([[self inputContext] handleEvent:theEvent]) {
@@ -110,29 +110,6 @@
     }
 
     mBaseWnd->onKeyDown(code, modifierFlags);
-
-    bool bCaptionDown = isFlagSet(modifierFlags, NSEventModifierFlagCapsLock);
-    modifierFlags &= ~NSEventModifierFlagCapsLock;
-    if (modifierFlags != 0 && modifierFlags != NSEventModifierFlagShift) {
-        return;
-    }
-
-    @try {
-        NSString *s = [theEvent charactersIgnoringModifiers];
-        for (int i = 0; i < [s length]; i++) {
-            unichar c = [s characterAtIndex:i];
-            if (bCaptionDown) {
-                if ('a' <= c && c <= 'z') {
-                    c = toupper(c);
-                } else if ('A' <= c && c <= 'Z') {
-                    c = toupper(c);
-                }
-            }
-            mBaseWnd->onChar(c);
-        }
-    }
-    @catch (NSException *exception) {
-    }
 }
 
 - (void) keyUp:(NSEvent *)theEvent {
@@ -151,6 +128,8 @@
 
     uint32_t flags = (uint32_t)[theEvent modifierFlags];
     CPoint point = NSPointToCPoint(mInitPt, [self frame].size.height);
+
+    flags |= MK_LBUTTON;
 
     if ([theEvent clickCount] > 1) {
         mBaseWnd->onLButtonDblClk(flags, point);
@@ -174,13 +153,13 @@
     }
 
     NSWindow *window = [self window];
+    uint32_t flags = (uint32_t)[theEvent modifierFlags];
+    flags |= MK_LBUTTON;
 
-    if (mBaseWnd->isMouseCaptured()) {
-        mBaseWnd->onMouseDrag((uint32_t)[theEvent modifierFlags],
-            NSPointToCPoint([theEvent locationInWindow], [window frame].size.height));
-        return;
-    }
+    mBaseWnd->onMouseDrag(flags,
+        NSPointToCPoint([theEvent locationInWindow], [window frame].size.height));
 
+/* 拖动窗口位置.
     NSRect screenVisibleFrame = [[NSScreen mainScreen] visibleFrame];
     NSRect windowFrame = [window frame];
     NSPoint newOrigin = windowFrame.origin;
@@ -197,7 +176,7 @@
     }
 
     // Move the window to the new location
-    [window setFrameOrigin:newOrigin];
+    [window setFrameOrigin:newOrigin];*/
 }
 
 - (void)magnifyWithEvent:(NSEvent *)event {

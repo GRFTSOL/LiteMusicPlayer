@@ -64,7 +64,7 @@ public:
 
     void setNotification(IUndoMgrNotify *pNotify) { m_pNotify = pNotify; }
 
-    void beginBatchAction();
+    void beginBatchAction(CBatchUndoAction *batchAction = nullptr);
     void endBatchAction();
     bool isInBatchAction() const { return m_pBatchUndoAction != nullptr; }
 

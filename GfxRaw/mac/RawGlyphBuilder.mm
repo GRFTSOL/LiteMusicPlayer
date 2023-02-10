@@ -88,10 +88,13 @@ Glyph *CRawGlyphBuilder::buildGlyph(string &ch) {
 
     Glyph *glyph = new Glyph;
     glyph->ch = ch;
-    glyph->nWidth = (uint8_t)textWidth;
+    glyph->nWidth = (uint8_t)textWidth + 1; // 增加一个像素的字体间距.
 
     agg::pixfmt_rgba32 pixf(bufGraph);
     copyBitmpDataFromGraphBuffer(glyph, pixf);
+
+    // 字体又点偏上，修正一点位置
+    glyph->topOffset += 2;
 
     return glyph;
 }

@@ -31,7 +31,6 @@ public:
 
     virtual bool onMenuKey(uint32_t nChar, uint32_t nFlags) override;
 
-    virtual void onKillFocus() override;
     virtual void onSize() override;
 
     virtual bool onCommand(int nID) override;
@@ -97,13 +96,6 @@ public:
 
     void checkToolbarButton(int nToolbarId, int nButtonId, bool bCheck);
     void checkToolbarButton(cstr_t szToolbarId, cstr_t szButtonId, bool bCheck);
-
-    void setFocusUIObject(cstr_t szId);
-    void setFocusUIObject(int nId);
-    CUIObject *getFocusUIObject();
-    void setFocusChild(CUIObject *pObj);
-    int focusToNext();
-    int focusToPrev();
 
     bool removeUIObject(CUIObject *pObj, bool bFree);
 
@@ -178,7 +170,6 @@ protected:
     // All the children UIObject
 
     VecUIObjects                m_vUIObjs;
-    int                         m_nFocusUIObj;
 
     bool                        m_bClipChildren;
     string                      m_strContextMenu;

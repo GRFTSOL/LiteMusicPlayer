@@ -79,6 +79,15 @@ protected:
     virtual int virtualPosToObjectPos(int nVirtualPos) = 0;
     virtual int objectPosToVirtualPos(int nThumbPos) = 0;
 
+    void xcreaseVirtualPos(int offset) {
+        m_nVirtualCurPos += offset;
+        if (m_nVirtualCurPos < m_nVirtualMin) {
+            m_nVirtualCurPos = m_nVirtualMin;
+        } else if (m_nVirtualCurPos > m_nVirtualMax) {
+            m_nVirtualCurPos = m_nVirtualMax;
+        }
+    }
+
 protected:
     IScrollNotify               *m_pScrollNotify;
 

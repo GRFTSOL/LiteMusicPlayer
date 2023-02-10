@@ -939,18 +939,7 @@ bool CSkinListView::onLButtonDown(uint32_t nFlags, CPoint point) {
         return true;
     }
 
-    if (m_nFocusUIObj != -1) {
-        // 在增加了 header/footer 后，他们可能会设置 focus，会导致 focus 设置不对.
-        // 引起其他一系列问题.
-
-        // 清除此 container 内其他控件的 focus.
-        auto pOldFocusObj = getFocusUIObject();
-        if (pOldFocusObj) {
-            pOldFocusObj->onKillFocus();
-            setFocusChild(nullptr);
-        }
-        setFocus();
-    }
+    setFocus();
 
     int nColumnIndex;
     HitTestArea hta = hitTest(point, nColumnIndex);
@@ -1081,11 +1070,6 @@ bool CSkinListView::onLButtonDblClk(uint32_t nFlags, CPoint point) {
 }
 
 bool CSkinListView::onKeyDown(uint32_t nChar, uint32_t nFlags) {
-    if (m_nFocusUIObj >= 0 && m_nFocusUIObj < (int)m_vUIObjs.size()) {
-        CUIObject *pObj = m_vUIObjs[m_nFocusUIObj];
-        return pObj->onKeyDown(nChar, nFlags);
-    }
-
     return onHandleKeyDown(nChar, nFlags);
 }
 

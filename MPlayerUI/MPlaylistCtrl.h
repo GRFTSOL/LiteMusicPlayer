@@ -35,7 +35,7 @@ public:
 
     // Keyword Search 的回调消息
     virtual void onEditorTextChanged() override;
-    virtual void onEditorKeyDown(uint32_t code, uint32_t flags) override;
+    virtual bool onEditorKeyDown(uint32_t code, uint32_t flags) override;
     virtual void onEditorMouseWheel(int wheelDistance, int mkeys, CPoint pt) override;
     virtual void onEditorKillFocus() override;
 

@@ -105,7 +105,7 @@ public:
     CUIObject *removeUIObjectById(int nId);
     bool removeUIObject(CUIObject *pObj, bool bFree = false);
 
-    void setFocusUIObject(int nId);
+    void setFocusUIObj(CUIObject *obj);
 
     CUIObject *getFocusUIObj();
 
@@ -242,8 +242,9 @@ public:
 
     virtual void onUIObjNotify(IUIObjNotify *pNotify) { }
 
-    virtual void onRemoveUIObj(CUIObject *pObj);
-    virtual void onAddUIObj(CUIObject *pObj);
+    virtual void onRemoveUIObj(CUIObject *obj);
+    virtual void onAddUIObj(CUIObject *obj);
+    virtual void onUIObjectHidden(CUIObject *obj);
 
     virtual void onLanguageChanged() override;
 
@@ -358,7 +359,7 @@ protected:
 
     virtual int fromXML(SXNode *pXmlNode);
 
-    void onSwitchChildFocus(CUIObject *pUIObjFocusOld, CUIObject *pUIObjFocusNew);
+    void switchFocusUIObj(bool toPrev=false);
 
     virtual void onLoadWndSizePos();
     void saveWndPos();
@@ -484,6 +485,8 @@ protected:
 
     // The UIObject registered to handle context menu command.
     CUIObject                   *m_pUIObjHandleContextMenuCmd;
+
+    CUIObject                   *m_uiObjectFocus = nullptr;
 
     // auto allocated uni-ID
     int                         m_nextAuoUniID;

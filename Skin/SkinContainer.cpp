@@ -14,7 +14,6 @@ CSkinContainer::CSkinContainer() {
     // m_msgNeed = UO_MSG_WANT_ALL;
     m_pMenu = nullptr;
     m_bClipChildren = false;
-    m_nFocusUIObj = -1;
 }
 
 CSkinContainer::~CSkinContainer() {
@@ -223,8 +222,6 @@ void CSkinContainer::onMouseLeave(CPoint point) {
 }
 
 bool CSkinContainer::onLButtonDown(uint32_t nFlags, CPoint point) {
-    bool bMsgProceed = false;
-
     // send mouse move message to the ui objects that want to process
     for (int i = (int)m_vUIObjs.size() - 1; i >= 0; i--) {
         CUIObject *pObj = m_vUIObjs[i];
@@ -235,13 +232,12 @@ bool CSkinContainer::onLButtonDown(uint32_t nFlags, CPoint point) {
                 pObj->setFocus();
             }
             if (pObj->onLButtonDown(nFlags, point)) {
-                bMsgProceed = true;
-                break;
+                return true;
             }
         }
     }
 
-    return bMsgProceed;
+    return false;
 }
 
 bool CSkinContainer::onLButtonDblClk(uint32_t nFlags, CPoint point) {
@@ -339,13 +335,6 @@ bool CSkinContainer::onMenuKey(uint32_t nChar, uint32_t nFlags) {
     }
 
     return false;
-}
-
-void CSkinContainer::onKillFocus() {
-    for (int i = (int)m_vUIObjs.size() - 1; i >= 0; i--) {
-        CUIObject *child = m_vUIObjs[i];
-        child->onKillFocus();
-    }
 }
 
 void CSkinContainer::onSize() {
@@ -729,164 +718,6 @@ void CSkinContainer::checkToolbarButton(int nToolbarId, int nButtonId, bool bChe
     }
 }
 
-void CSkinContainer::setFocusUIObject(int nId) {
-    CUIObject *pObj = getUIObjectById(nId, nullptr);
-    if (pObj) {
-        pObj->setFocus();
-    }
-}
-
-void CSkinContainer::setFocusUIObject(cstr_t szId) {
-    setFocusUIObject(getIDByName(szId));
-}
-
-CUIObject *CSkinContainer::getFocusUIObject() {
-    if (m_nFocusUIObj >= 0 && m_nFocusUIObj < (int)m_vUIObjs.size()) {
-        CUIObject *pObj = m_vUIObjs[m_nFocusUIObj];
-        if (pObj->getContainerIf()) {
-            auto child = pObj->getContainerIf()->getFocusUIObject();
-            if (child) {
-                return child;
-            }
-        }
-
-        if (pObj->needMsgKey()) {
-            return pObj;
-        }
-    }
-
-    return nullptr;
-}
-
-void CSkinContainer::setFocusChild(CUIObject *pNewFocusObj) {
-    CUIObject *pOldFocusObj = nullptr;
-    if (m_nFocusUIObj >= 0 && m_nFocusUIObj < (int)m_vUIObjs.size()) {
-        pOldFocusObj = m_vUIObjs[m_nFocusUIObj];
-    }
-
-    if (pOldFocusObj == pNewFocusObj) {
-        return;
-    }
-
-    int nNewFocusObj = -1;
-
-    // get new Focus Object
-    if (pNewFocusObj != nullptr) {
-        for (nNewFocusObj = 0; nNewFocusObj < (int)m_vUIObjs.size(); nNewFocusObj++) {
-            if (m_vUIObjs[nNewFocusObj] == pNewFocusObj) {
-                break;
-            }
-        }
-        if (nNewFocusObj >= (int)m_vUIObjs.size()) {
-            assert(0 && "new focus UIObject is not the child of this container");
-            return;
-        }
-    }
-
-    m_nFocusUIObj = nNewFocusObj;
-
-    if (pOldFocusObj) {
-        // Kill Focus for old child.
-        if (pOldFocusObj->needMsgKey()) {
-            pOldFocusObj->onKillFocus();
-        } else if (pOldFocusObj->isContainer()) {
-            pOldFocusObj->getContainerIf()->setFocusChild(nullptr);
-        } else {
-            pOldFocusObj->onKillFocus();
-        }
-    }
-
-    if (pNewFocusObj) {
-        // Let parent container set focus child as "this"
-        if (pNewFocusObj->needMsgKey()) {
-            pNewFocusObj->onSetFocus();
-        }
-        if (m_pContainer) {
-            m_pContainer->setFocusChild(this);
-        }
-    }
-}
-
-int CSkinContainer::focusToNext() {
-    if (m_vUIObjs.empty()) {
-        assert(m_nFocusUIObj == -1);
-        return false;
-    }
-
-    int i = m_nFocusUIObj;
-    if (m_nFocusUIObj < 0 || m_nFocusUIObj >= (int)m_vUIObjs.size()) {
-        i = 0;
-    } else if (m_vUIObjs[m_nFocusUIObj]->needMsgKey()) {
-        i++;
-    }
-
-    for (int k = 0; k <= (int)m_vUIObjs.size(); k++, i++) {
-        CUIObject *pObj = m_vUIObjs[i % m_vUIObjs.size()];
-
-        if (!pObj->isVisible()) {
-            continue;
-        }
-
-        if (pObj->needMsgKey()) {
-            pObj->setFocus();
-            return true;
-        } else if (pObj->isContainer()) {
-            if (pObj->getContainerIf()->focusToNext()) {
-                return true;
-            }
-        }
-    }
-
-    if (!m_pContainer) {
-        CUIObject *pObj = getFocusUIObject();
-        if (pObj) {
-            setFocusChild(nullptr);
-        }
-    }
-
-    return false;
-}
-
-int CSkinContainer::focusToPrev() {
-    if (m_vUIObjs.empty()) {
-        assert(m_nFocusUIObj == -1);
-        return false;
-    }
-
-    int i = m_nFocusUIObj;
-    if (m_nFocusUIObj < 0 || m_nFocusUIObj >= (int)m_vUIObjs.size()) {
-        i = 0;
-    } else if (m_vUIObjs[m_nFocusUIObj]->needMsgKey()) {
-        i--;
-    }
-
-    for (int k = 0; k <= (int)m_vUIObjs.size(); k++, i--) {
-        CUIObject *pObj = m_vUIObjs[(i + m_vUIObjs.size()) % m_vUIObjs.size()];
-
-        if (!pObj->isVisible()) {
-            continue;
-        }
-
-        if (pObj->needMsgKey()) {
-            pObj->setFocus();
-            return true;
-        } else if (pObj->isContainer()) {
-            if (pObj->getContainerIf()->focusToPrev()) {
-                return true;
-            }
-        }
-    }
-
-    if (!m_pContainer) {
-        CUIObject *pObj = getFocusUIObject();
-        if (pObj) {
-            setFocusChild(nullptr);
-        }
-    }
-
-    return false;
-}
-
 bool CSkinContainer::removeUIObject(CUIObject *pObj, bool bFree) {
     for (int i = 0; i < int(m_vUIObjs.size()); i++) {
         CUIObject *p = m_vUIObjs[i];
@@ -897,12 +728,6 @@ bool CSkinContainer::removeUIObject(CUIObject *pObj, bool bFree) {
             m_vUIObjs.erase(m_vUIObjs.begin() + i);
             if (bFree) {
                 delete pObj;
-            }
-
-            // Change UIObject focus, if possible.
-            if (i == m_nFocusUIObj) {
-                m_nFocusUIObj = -1;
-                m_pSkin->getRootContainer()->focusToNext();
             }
 
             return true;
@@ -928,12 +753,6 @@ CUIObject *CSkinContainer::removeUIObjectById(int nId) {
             m_pSkin->unregisterTimerObject(pObj);
             m_pSkin->onRemoveUIObj(pObj);
             m_vUIObjs.erase(m_vUIObjs.begin() + i);
-
-            // Change UIObject focus, if possible.
-            if (i == m_nFocusUIObj) {
-                m_nFocusUIObj = -1;
-                m_pSkin->getRootContainer()->focusToNext();
-            }
 
             return pObj;
         } else if (pObj->isContainer()) {

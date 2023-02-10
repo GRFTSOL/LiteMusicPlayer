@@ -13,6 +13,8 @@ bool getTimeTagOfLine(cstr_t szLine, string &strTimeTag);
 
 int getTimeTagValue(const char *szTag, size_t nLen);
 
+using namespace _SkinEditCtrl;
+
 CLyrEditSyntaxParser::CLyrEditSyntaxParser() {
     m_pLyrEdit = nullptr;
 }
@@ -935,6 +937,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
         findNext();
     } else if (nId == CID_REPLACE) {
         // replace
+        bool matchCase = m_pSkin->isButtonChecked(CID_MATCHCASE);
         string strFindWhat = m_pSkin->getUIObjectText(CID_E_FIND);
         string strReplaceWith = m_pSkin->getUIObjectText(CID_E_REPLACE);
         string strSel;
@@ -945,7 +948,8 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
 
         selectionToText(strSel);
 
-        if (strSel.size() && strcmp(strSel.c_str(), strFindWhat.c_str()) == 0) {
+        auto cmpFunc = matchCase ? strcmp : strcasecmp;
+        if (strSel.size() && cmpFunc(strSel.c_str(), strFindWhat.c_str()) == 0) {
             replaceSel(strReplaceWith.c_str());
         }
         findNext();
@@ -961,7 +965,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
         setCaret(0, 0);
         m_nBegSelCol = -1;
 
-        CAutoBatchUndo autoBatchUndo(this);
+        AutoBatchUndo autoBatchUndo(this);
         while (findNext()) {
             replaceSel(strReplaceWith.c_str());
         }
@@ -1019,7 +1023,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
                 nBegSelRow = nEndSelRow = nLine;
             }
 
-            CAutoBatchUndo autoBatchUndo(this);
+            AutoBatchUndo autoBatchUndo(this);
 
             for (int i = nBegSelRow; i <= nEndSelRow; i++) {
                 getTextOfLine(i, strLine);
@@ -1066,7 +1070,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
 
             getCaret(nLine, nCol);
 
-            CAutoBatchUndo autoBatchUndo(this);
+            AutoBatchUndo autoBatchUndo(this);
 
             for (int i = nLine; getTextOfLine(i, strLine); i++) {
                 if (getTimeTagOfLine(strLine.c_str(), strTimeTag)) {
@@ -1140,7 +1144,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
 
             nLineCount = getLineCount();
 
-            CAutoBatchUndo autoBatchUndo(this);
+            AutoBatchUndo autoBatchUndo(this);
             for (int i = 0; i < nLineCount; i++) {
                 getTextOfLine(i, strLine);
 
@@ -1157,7 +1161,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
         {
             string strLine;
 
-            CAutoBatchUndo autoBatchUndo(this);
+            AutoBatchUndo autoBatchUndo(this);
             for (int i = getLineCount() - 1; i >= 0; i--) {
                 getTextOfLine(i, strLine);
 
@@ -1186,7 +1190,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
 
             nLineCount = getLineCount();
 
-            CAutoBatchUndo autoBatchUndo(this);
+            AutoBatchUndo autoBatchUndo(this);
             for (int i = 0; i < nLineCount; i++) {
                 getTextOfLine(i, strLine);
 
@@ -1235,7 +1239,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
             string strLine, strTimeTag;
             CLyrOneLine *pLine;
 
-            CAutoBatchUndo autoBatchUndo(this);
+            AutoBatchUndo autoBatchUndo(this);
             for (int i = getLineCount() - 1; i >= 0; i--) {
                 getTextOfLine(i, strLine);
                 pLine = getLine(i);
@@ -1259,7 +1263,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
 
             memset(szReplaceWith, 0, sizeof(szReplaceWith));
 
-            CAutoBatchUndo autoBatchUndo(this);
+            AutoBatchUndo autoBatchUndo(this);
             for (int i = getLineCount() - 1; i >= 0; i--) {
                 getTextOfLine(i, strLine);
                 pLine = getLine(i);
@@ -1300,7 +1304,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
         {
             string strLine, strTimeTag;
 
-            CAutoBatchUndo autoBatchUndo(this);
+            AutoBatchUndo autoBatchUndo(this);
             for (int i = getLineCount() - 1; i >= 0; i--) {
                 getTextOfLine(i, strLine);
 
@@ -1555,7 +1559,7 @@ void CLyricShowTextEditObj::syncTimeTag(bool bMoveToNextLine) {
 
     int nTimeDuarationOffset = 0;
     int nLine;
-    CAutoBatchUndo autoBatchUndo(this);
+    AutoBatchUndo autoBatchUndo(this);
     int nPlayingPos = g_LyricData.getPlayElapsedTime();
     if (nPlayingPos < 0) {
         nPlayingPos = 0;
@@ -1623,7 +1627,7 @@ void CLyricShowTextEditObj::adjustSyncTimeOfSelected(bool bIncreaseTime) {
     }
 
     int nLine;
-    CAutoBatchUndo autoBatchUndo(this);
+    AutoBatchUndo autoBatchUndo(this);
 
     for (nLine = nBegLine; nLine <= nEndLine; nLine++) {
         if (!getTextOfLine(nLine, strLine)) {

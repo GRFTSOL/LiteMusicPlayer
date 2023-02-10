@@ -394,12 +394,12 @@ void CMPlaylistCtrl::onEditorTextChanged() {
     m_timerIdBeginSearch = m_pSkin->registerTimerObject(this, 1000);
 }
 
-void CMPlaylistCtrl::onEditorKeyDown(uint32_t code, uint32_t flags) {
+bool CMPlaylistCtrl::onEditorKeyDown(uint32_t code, uint32_t flags) {
     if (!m_editorSearch) {
-        return;
+        return false;
     }
 
-    onHandleKeyDown(code, flags);
+    return onHandleKeyDown(code, flags);
 }
 
 void CMPlaylistCtrl::onEditorMouseWheel(int wheelDistance, int mkeys, CPoint pt) {

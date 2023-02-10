@@ -794,28 +794,15 @@ void CUIObject::setVisible(bool bVisible, bool bRedraw) {
         }
     }
 
-    CUIObject *pObjFocus;
-    pObjFocus = m_pSkin->getFocusUIObj();
+    CUIObject *pObjFocus = m_pSkin->getFocusUIObj();
     if (bVisible) {
         if (pObjFocus == nullptr) {
             // try to set focus to one UIObject
-            m_pSkin->getRootContainer()->focusToNext();
+            m_pSkin->switchFocusUIObj();
         }
     } else {
         // Hidden this, Will focus UIObject be hide by this call?
-        if (pObjFocus && (!pObjFocus->isVisible() || !pObjFocus->isParentVisible())) {
-            // Change focus UIObject.
-            m_pSkin->getRootContainer()->focusToNext();
-        }
-    }
-
-    if (!bVisible) {
-        // release capture mouse
-        CUIObject *pUIObjCaptureMouse = m_pSkin->getCaptureMouse();
-        if (pUIObjCaptureMouse
-            && (!pUIObjCaptureMouse->isVisible() || !pUIObjCaptureMouse->isParentVisible())) {
-            m_pSkin->releaseCaptureMouse(pUIObjCaptureMouse);
-        }
+        m_pSkin->onUIObjectHidden(this);
     }
 
     m_pContainer->onSetChildVisible(this, bVisible, bRedraw);
@@ -867,13 +854,11 @@ void CUIObject::setText(cstr_t szText) {
 void CUIObject::setFocus() {
     assert(needMsgKey() && isVisible() && isParentVisible());
 
-    if (m_pContainer) {
-        m_pContainer->setFocusChild(this);
-    }
+    m_pSkin->setFocusUIObj(this);
 }
 
 bool CUIObject::isOnFocus() {
-    return m_pContainer->getFocusUIObject() == this;
+    return m_pSkin->getFocusUIObj() == this;
 }
 
 bool CUIObject::isPtIn(CPoint pt) {

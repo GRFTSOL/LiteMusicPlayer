@@ -28,13 +28,6 @@ void CLyricShowTwoRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
         return;
     }
 
-    int y;
-    LyricsLine *pLyricRow;
-    int nRowHeight;// center row height
-    int nRowTheOther = 0;
-    int nRowCur;
-    LyricsLine *pLineTheOther = nullptr;
-
     canvas->setFont(&m_font);
 
     if (prcUpdate) {
@@ -42,51 +35,45 @@ void CLyricShowTwoRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
     }
 
     // get the current playing row
-    nRowCur = m_pMLData->getCurPlayLine(m_lyrLines);
+    int nRowCur = m_pMLData->getCurPlayLine(m_lyrLines);
     if (nRowCur == -1) {
         // no lyrics, redraw background
         updateLyricDrawBufferBackground(canvas, m_rcObj);
         return;
     }
 
-    pLyricRow = m_lyrLines[nRowCur];
+    LyricsLine *pLyricRow = m_lyrLines[nRowCur];
 
-    nRowHeight = getLineHeight();
+    int nRowHeight = getLineHeight();
 
-    y = getLineVertAlignPos() - getLineHeight() + m_nLineSpacing / 2;
+    int y = getLineVertAlignPos() - getLineHeight() + m_nLineSpacing / 2;
     if (y < m_rcObj.top + m_nYMargin) {
         y = m_rcObj.top + m_rcObj.height() / 2 - getLineHeight() + m_nLineSpacing / 2;
     }
 
     // 如果当前歌词行的显示时间超过一半，则预显示下一行歌词
+    int nRowTheOther = 0;
     if ( (m_pMLData->getPlayElapsedTime() - pLyricRow->nBegTime) * 2 >= pLyricRow->nEndTime - m_pMLData->getPlayElapsedTime()) {
         nRowTheOther = nRowCur + 1;//bShowNextRow = true;
     } else {
         nRowTheOther = nRowCur - 1;
         if (nRowTheOther < 0) {
             // 当前行为最开始的一行，则显示下一行
+            nRowTheOther = nRowCur + 1;
         }
-        nRowTheOther = nRowCur + 1;
     }
 
     if (nRowTheOther >= (int)m_lyrLines.size()) {
         // 当前行为最后一行，则显示前一行
         nRowTheOther = nRowCur - 1;
     }
-    if (nRowTheOther < 0) {
-        nRowTheOther = -1;
-    } else {
-        pLineTheOther = m_lyrLines[nRowTheOther];
-    }
 
-    int yCurRow;
-    int yTheOtherRow;
-    if (nRowCur % 2 == 0) {
-        yCurRow = y;
-        yTheOtherRow = y + nRowHeight;
-    } else {
-        yCurRow = y + nRowHeight;
-        yTheOtherRow = y;
+    LyricsLine *pLineTheOther = nRowTheOther >= 0 ? m_lyrLines[nRowTheOther] : nullptr;
+
+    int yCurRow = y;
+    int yTheOtherRow = y + nRowHeight;
+    if (nRowCur % 2 != 0) {
+        std::swap(yCurRow, yTheOtherRow);
     }
 
     if (prcUpdate && m_nCurRowOld == nRowCur

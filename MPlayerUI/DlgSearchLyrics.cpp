@@ -175,10 +175,12 @@ public:
     }
 
     // Edit control notification
-    void onEditorKeyDown(uint32_t code, uint32_t flags) override {
+    bool onEditorKeyDown(uint32_t code, uint32_t flags) override {
         if (code == VK_RETURN) {
             onSearch();
+            return true;
         }
+        return false;
     }
 
     void onCreate() override {

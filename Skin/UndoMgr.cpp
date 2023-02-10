@@ -64,12 +64,16 @@ CUndoMgr::~CUndoMgr() {
 }
 
 
-void CUndoMgr::beginBatchAction() {
+void CUndoMgr::beginBatchAction(CBatchUndoAction *batchAction) {
     assert(!m_pBatchUndoAction);
     if (m_pBatchUndoAction) {
         endBatchAction();
     }
-    m_pBatchUndoAction = new CBatchUndoAction;
+
+    if (batchAction == nullptr) {
+        batchAction = new CBatchUndoAction;
+    }
+    m_pBatchUndoAction = batchAction;
 }
 
 

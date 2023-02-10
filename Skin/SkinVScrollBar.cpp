@@ -48,11 +48,7 @@ void CSkinSrollBarBase::setScrollInfo(int nMin, int nMax, int nPage, int nPos, i
         m_nVirtualMax = 0;
     }
 
-    if (m_nVirtualCurPos > m_nVirtualMax) {
-        m_nVirtualCurPos = m_nVirtualMax;
-    } else if (m_nVirtualCurPos < m_nVirtualMin) {
-        m_nVirtualCurPos = m_nVirtualMin;
-    }
+    xcreaseVirtualPos(0);
 
     adjustThumbSize();
 
@@ -73,11 +69,7 @@ int CSkinSrollBarBase::setScrollPos(int nPos, bool bRedraw) {
     nPosOld = m_nVirtualCurPos;
     m_nVirtualCurPos = nPos;
 
-    if (m_nVirtualCurPos > m_nVirtualMax) {
-        m_nVirtualCurPos = m_nVirtualMax;
-    } else if (m_nVirtualCurPos < m_nVirtualMin) {
-        m_nVirtualCurPos = m_nVirtualMin;
-    }
+    xcreaseVirtualPos(0);
 
     m_nPosThumb = virtualPosToObjectPos(m_nVirtualCurPos);
 
@@ -157,17 +149,8 @@ void CSkinSrollBarBase::topBtOnLButtonDown(uint32_t nFlags, CPoint point) {
     // 捕捉鼠标输入
     m_pSkin->setCaptureMouse(this);
 
-    int nVirtualPosOld;
-
-    nVirtualPosOld = m_nVirtualCurPos;
-
-    if (m_nVirtualCurPos > m_nVirtualMin) {
-        m_nVirtualCurPos -= m_nVirtualLine;
-    }
-    if (m_nVirtualCurPos < m_nVirtualMin) {
-        m_nVirtualCurPos = m_nVirtualMin;
-    }
-
+    int nVirtualPosOld = m_nVirtualCurPos;
+    xcreaseVirtualPos(-m_nVirtualLine);
     if (m_nVirtualCurPos == nVirtualPosOld) {
         invalidate();
         return;
@@ -187,17 +170,8 @@ void CSkinSrollBarBase::bottomBtOnLButtonDown(uint32_t nFlags, CPoint point) {
     // 捕捉鼠标输入
     m_pSkin->setCaptureMouse(this);
 
-    int nVirtualPosOld;
-
-    nVirtualPosOld = m_nVirtualCurPos;
-
-    if (m_nVirtualCurPos < m_nVirtualMax) {
-        m_nVirtualCurPos += m_nVirtualLine;
-    }
-    if (m_nVirtualCurPos > m_nVirtualMax) {
-        m_nVirtualCurPos = m_nVirtualMax;
-    }
-
+    int nVirtualPosOld = m_nVirtualCurPos;
+    xcreaseVirtualPos(m_nVirtualLine);
     if (m_nVirtualCurPos == nVirtualPosOld) {
         invalidate();
         return;
@@ -220,8 +194,18 @@ void CSkinSrollBarBase::trackOnLButtonDown(uint32_t nFlags, CPoint point) {
     // DBG_LOG0("Track button down");
 
     if (m_PushDownPos == PUSH_DOWN_TOPTRACK) {
+        int nVirtualPosOld = m_nVirtualCurPos;
+        xcreaseVirtualPos(-m_nVirtualPage);
+        if (m_nVirtualCurPos == nVirtualPosOld) {
+            return;
+        }
         onScroll(SB_PAGEUP);
     } else if (m_PushDownPos == PUSH_DOWN_BOTTOMTRACK) {
+        int nVirtualPosOld = m_nVirtualCurPos;
+        xcreaseVirtualPos(m_nVirtualPage);
+        if (m_nVirtualCurPos == nVirtualPosOld) {
+            return;
+        }
         onScroll(SB_PAGEDOWN);
     }
 
@@ -300,17 +284,8 @@ void CSkinSrollBarBase::trackOnLButtonUp(uint32_t nFlags, CPoint point) {
 
 void CSkinSrollBarBase::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) {
     if (nMkeys == 0) {
-        int nVirtualPosOld;
-
-        nVirtualPosOld = m_nVirtualCurPos;
-
-        m_nVirtualCurPos -= m_nVirtualLine * nWheelDistance * m_nLinesPerWheel;
-        if (m_nVirtualCurPos < m_nVirtualMin) {
-            m_nVirtualCurPos = m_nVirtualMin;
-        } else if (m_nVirtualCurPos > m_nVirtualMax) {
-            m_nVirtualCurPos = m_nVirtualMax;
-        }
-
+        int nVirtualPosOld = m_nVirtualCurPos;
+        xcreaseVirtualPos(m_nVirtualLine * nWheelDistance * m_nLinesPerWheel);
         if (m_nVirtualCurPos == nVirtualPosOld) {
             invalidate();
             return;
@@ -404,7 +379,7 @@ void CSkinSrollBarBase::trackOnMouseDrag(CPoint point) {
 }
 
 void CSkinSrollBarBase::onTimer(int nId) {
-    if (nId ==     m_nClickDelayTimerId) {
+    if (nId == m_nClickDelayTimerId) {
         m_pSkin->unregisterTimerObject(this, m_nClickDelayTimerId);
         m_nClickDelayTimerId = 0;
 
@@ -416,17 +391,8 @@ void CSkinSrollBarBase::onTimer(int nId) {
             {
                 if (m_CursorPosLatest == PUSH_DOWN_TOPBT) {
                     // DBG_LOG0("Top button down: Timer...");
-                    int nVirtualPosOld;
-
-                    nVirtualPosOld = m_nVirtualCurPos;
-
-                    if (m_nVirtualCurPos > m_nVirtualMin) {
-                        m_nVirtualCurPos -= m_nVirtualLine;
-                    }
-                    if (m_nVirtualCurPos < m_nVirtualMin) {
-                        m_nVirtualCurPos = m_nVirtualMin;
-                    }
-
+                    int nVirtualPosOld = m_nVirtualCurPos;
+                    xcreaseVirtualPos(-m_nVirtualLine);
                     if (m_nVirtualCurPos == nVirtualPosOld) {
                         unregisterTimer();
                         return;
@@ -446,17 +412,8 @@ void CSkinSrollBarBase::onTimer(int nId) {
                 if (m_CursorPosLatest == PUSH_DOWN_BOTTOMBT) {
                     // DBG_LOG0("Bottom button down: Timer...");
 
-                    int nVirtualPosOld;
-
-                    nVirtualPosOld = m_nVirtualCurPos;
-
-                    if (m_nVirtualCurPos < m_nVirtualMax) {
-                        m_nVirtualCurPos += m_nVirtualLine;
-                    }
-                    if (m_nVirtualCurPos > m_nVirtualMax) {
-                        m_nVirtualCurPos = m_nVirtualMax;
-                    }
-
+                    int nVirtualPosOld = m_nVirtualCurPos;
+                    xcreaseVirtualPos(m_nVirtualLine);
                     if (m_nVirtualCurPos == nVirtualPosOld) {
                         unregisterTimer();
                         return;
@@ -479,17 +436,8 @@ void CSkinSrollBarBase::onTimer(int nId) {
                 if (m_CursorPosLatest == PUSH_DOWN_TOPTRACK) {
                     // DBG_LOG0("Track up : Timer...");
 
-                    int nVirtualPosOld;
-
-                    nVirtualPosOld = m_nVirtualCurPos;
-
-                    if (m_nVirtualCurPos > m_nVirtualMin) {
-                        m_nVirtualCurPos -= m_nVirtualPage;
-                    }
-                    if (m_nVirtualCurPos < m_nVirtualMin) {
-                        m_nVirtualCurPos = m_nVirtualMin;
-                    }
-
+                    int nVirtualPosOld = m_nVirtualCurPos;
+                    xcreaseVirtualPos(-m_nVirtualPage);
                     if (m_nVirtualCurPos == nVirtualPosOld) {
                         unregisterTimer();
                         return;
@@ -516,17 +464,8 @@ void CSkinSrollBarBase::onTimer(int nId) {
                 if (m_CursorPosLatest == PUSH_DOWN_BOTTOMTRACK) {
                     // DBG_LOG0("Track down: Timer...");
 
-                    int nVirtualPosOld;
-
-                    nVirtualPosOld = m_nVirtualCurPos;
-
-                    if (m_nVirtualCurPos < m_nVirtualMax) {
-                        m_nVirtualCurPos += m_nVirtualPage;
-                    }
-                    if (m_nVirtualCurPos > m_nVirtualMax) {
-                        m_nVirtualCurPos = m_nVirtualMax;
-                    }
-
+                    int nVirtualPosOld = m_nVirtualCurPos;
+                    xcreaseVirtualPos(m_nVirtualPage);
                     // 按下后的坐标
                     m_nPosThumb = virtualPosToObjectPos(m_nVirtualCurPos);
 
@@ -542,7 +481,7 @@ void CSkinSrollBarBase::onTimer(int nId) {
                     m_pSkin->getCursorClientPos(pt);
                     m_CursorPosLatest = getPushDownPos(pt);
 
-                    onScroll(SB_LINEDOWN);
+                    onScroll(SB_PAGEDOWN);
 
                     invalidate();
                 }
@@ -824,11 +763,7 @@ void CSkinVScrollBar::thumbOnLButtonDown(uint32_t nFlags, CPoint point) {
 }
 
 void CSkinVScrollBar::thumbOnMouseDrag(CPoint point) {
-    int nVirtualPosOld;
-    int nPosThumbOld;
-
-    nVirtualPosOld = m_nVirtualCurPos;
-    nPosThumbOld = m_nPosThumb;
+    int nVirtualPosOld = m_nVirtualCurPos, nPosThumbOld = m_nPosThumb;
 
     m_nPosThumb = point.y - (m_rcObj.top + m_nHeightPushBt) - m_nCursorToThumbBeg;
 
@@ -1125,12 +1060,9 @@ void CSkinHScrollBar::thumbOnLButtonDown(uint32_t nFlags, CPoint point) {
 }
 
 void CSkinHScrollBar::thumbOnMouseDrag(CPoint point) {
-    int nVirtualPosOld;
-    int nPosThumbOld;
     // DBG_LOG2("Drag Thumb OK! x: %d, y: %d", point.x, point.y);
 
-    nVirtualPosOld = m_nVirtualCurPos;
-    nPosThumbOld = m_nPosThumb;
+    int nVirtualPosOld = m_nVirtualCurPos, nPosThumbOld = m_nPosThumb;
 
     m_nPosThumb = point.x - (m_rcObj.left + m_nWidthPushBt) - m_nCursorToThumbBeg;
 

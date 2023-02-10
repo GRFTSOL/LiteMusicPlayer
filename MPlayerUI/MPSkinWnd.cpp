@@ -427,8 +427,6 @@ void CMPSkinWnd::onCreate() {
 }
 
 void CMPSkinWnd::onCommand(uint32_t uID, uint32_t nNotifyCode) {
-    int nUID = m_pSkinFactory->getUIDByMenuID(uID);
-
 #ifdef _WIN32_DESKTOP
     switch (uID) {
     case IDC_SET_OPAQUE_100:

@@ -23,12 +23,17 @@ public:
     void operator + (const char *str) { set(str); }
 
     bool operator == (Utf8CharType ch) {
-        for (int i = 0; szChar[i] != 0; i++) {
+        int i = 0;
+        for (; szChar[i] != 0; i++) {
             if (szChar[i] != ch.szChar[i]) {
                 return false;
             }
         }
-        return true;
+        return szChar[i] == ch.szChar[i];
+    }
+
+    bool operator == (char ch) {
+        return szChar[0] == ch && szChar[1] == '\0';
     }
 
     bool operator != (Utf8CharType ch) {
@@ -63,7 +68,15 @@ public:
 
     operator const char *() { return szChar; }
 
-    size_t size() { return strlen(szChar); }
+    size_t size() {
+        int i = 0;
+        for (; i < 4; i++) {
+            if (szChar[i] == 0) {
+                return i;
+            }
+        }
+        return i;
+    }
 
 };
 
