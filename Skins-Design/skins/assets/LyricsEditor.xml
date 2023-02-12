@@ -70,25 +70,28 @@
 		</Container>
 	
 		<Container Name="Lyrics Tag" ID="CID_C_LYR_TAG" Height="95" Width="200" LayoutParams="match_parent_width" FixedHeight="TRUE" >
-			<NormalText Text="Artist:" Rect="10,10,70," AlignText="AT_RIGHT | AT_VCENTER"/>
+			<NormalText Text="Artist:" Rect="10,12,70," AlignText="AT_RIGHT | AT_VCENTER"/>
 			<RefreshButton ID="CID_RERESH_ARTIST" ToolTip="Refresh from media tag" Rect="85,10,,"/>
 			<NormalEdit ID="CID_E_ARTIST" Rect="110,10,w/2-110,"/>
-			<NormalText Text="Edited by:" Rect="w/2,10,120," AlignText="AT_RIGHT | AT_VCENTER"/>
-			<RefreshButton ID="CID_RERESH_BY" ToolTip="Refresh from media tag" Rect="w/2+125,10,,"/>
-			<NormalEdit ID="CID_E_BY" Rect="w/2+150,10,w/2-160,"/>
 
-			<NormalText Text="Title:" Rect="10,40,70," AlignText="AT_RIGHT | AT_VCENTER"/>
+			<NormalText Text="Title:" Rect="10,42,70," AlignText="AT_RIGHT | AT_VCENTER"/>
 			<RefreshButton ID="CID_RERESH_TITLE" ToolTip="Refresh from media tag" Rect="85,40,,"/>
 			<NormalEdit ID="CID_E_TITLE" Rect="110,40,w/2-110,"/>
-			<NormalText Text="Media length:" Rect="w/2,40,120," AlignText="AT_RIGHT | AT_VCENTER"/>
-			<RefreshButton ID="CID_RERESH_MEDIA_LENGTH" ToolTip="Refresh from media tag" Rect="w/2+125,40,,"/>
-			<NormalEdit ID="CID_E_MEDIA_LENGTH" Rect="w/2+150,40,w/2-160,"/>
 
-			<NormalText Text="Album:" Rect="5,70,75," AlignText="AT_RIGHT | AT_VCENTER"/>
+			<NormalText Text="Album:" Rect="5,71,75," AlignText="AT_RIGHT | AT_VCENTER"/>
 			<RefreshButton ID="CID_RERESH_ALBUM" ToolTip="Refresh from media tag" Rect="85,70,,"/>
 			<NormalEdit ID="CID_E_ALBUM" Rect="110,70,w/2-110,"/>
-			<NormalText Text="Delay time (ms):" Rect="w/2,70,120," AlignText="AT_RIGHT | AT_VCENTER"/>
-			<NormalEdit ID="CID_E_OFFSET" Rect="w/2+150,70,w/2-160,"/>
+
+			<NormalText Text="Edited by:" Rect="w/2,12,140," AlignText="AT_RIGHT | AT_VCENTER"/>
+			<RefreshButton ID="CID_RERESH_BY" ToolTip="Refresh from media tag" Rect="w/2+145,10,,"/>
+			<NormalEdit ID="CID_E_BY" Rect="w/2+170,10,w/2-180,"/>
+
+			<NormalText Text="Media length:" Rect="w/2,42,140," AlignText="AT_RIGHT | AT_VCENTER"/>
+			<RefreshButton ID="CID_RERESH_MEDIA_LENGTH" ToolTip="Refresh from media tag" Rect="w/2+145,40,,"/>
+			<NormalEdit ID="CID_E_MEDIA_LENGTH" Rect="w/2+170,40,w/2-180,"/>
+
+			<NormalText Text="Delay time (ms):" Rect="w/2,71,140," AlignText="AT_RIGHT | AT_VCENTER"/>
+			<NormalEdit ID="CID_E_OFFSET" Rect="w/2+170,70,w/2-180,"/>
 		</Container>
 	</LinearContainer>
 </skinwnd>

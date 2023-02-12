@@ -520,7 +520,7 @@ void CMPlayerAppBase::setDefaultSettings() {
     g_profile.setDefaultIfNotExist(SZ_SECT_LYR_DISPLAY, "Ed_LowColor", "#000000");
     g_profile.setDefaultIfNotExist(SZ_SECT_LYR_DISPLAY, "Ed_BgColor", "#FFFFFF");
     g_profile.setDefaultIfNotExist(SZ_SECT_LYR_DISPLAY, "Ed_TagColor", "#FF8000");
-    g_profile.setDefaultIfNotExist(SZ_SECT_LYR_DISPLAY, "Ed_FocusLineBgColor", "#C0C0C0");
+    g_profile.setDefaultIfNotExist(SZ_SECT_LYR_DISPLAY, "Ed_FocusLineBgColor", "#E7F7FF");
 
     g_profile.setDefaultIfNotExist(SZ_SECT_LYR_DISPLAY, "HilightBorderColor", "#000000");
     g_profile.setDefaultIfNotExist(SZ_SECT_LYR_DISPLAY, "LowlightBorderColor", "#000000");

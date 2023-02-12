@@ -16,10 +16,10 @@ CMPFloatingLyrWnd::~CMPFloatingLyrWnd() {
 }
 
 int CMPFloatingLyrWnd::create() {
-    m_rcReal.left = g_profile.getInt(SZ_SECT_FLOATING_LYR, "wnd_left", m_rcReal.left);
-    m_rcReal.top = g_profile.getInt(SZ_SECT_FLOATING_LYR, "wnd_top", m_rcReal.top);
-    m_rcReal.right = m_rcReal.left + g_profile.getInt(SZ_SECT_FLOATING_LYR, "wnd_width", m_rcReal.width());
-    m_rcReal.bottom = m_rcReal.top + g_profile.getInt(SZ_SECT_FLOATING_LYR, "wnd_height", m_rcReal.height());
+    m_rcBoundBox.left = g_profile.getInt(SZ_SECT_FLOATING_LYR, "wnd_left", m_rcBoundBox.left);
+    m_rcBoundBox.top = g_profile.getInt(SZ_SECT_FLOATING_LYR, "wnd_top", m_rcBoundBox.top);
+    m_rcBoundBox.right = m_rcBoundBox.left + g_profile.getInt(SZ_SECT_FLOATING_LYR, "wnd_width", m_rcBoundBox.width());
+    m_rcBoundBox.bottom = m_rcBoundBox.top + g_profile.getInt(SZ_SECT_FLOATING_LYR, "wnd_height", m_rcBoundBox.height());
 
     SkinWndStartupInfo skinWndStartupInfo("FloatingLyr", "Floating Lyrics",
         "floatinglyr.xml", nullptr);

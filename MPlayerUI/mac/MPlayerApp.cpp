@@ -5,6 +5,7 @@
 #include "AutoProcessEmbeddedLyrics.h"
 #include "MPFloatingLyrWnd.h"
 #include "LyricShowObj.h"
+#include "HeadPhoneWatch.hpp"
 
 
 CMPlayerApp::CMPlayerApp() {
@@ -31,7 +32,13 @@ bool CMPlayerApp::init() {
     g_LangTool.setMacro(SZ_MACRO_PRODUCT_NAME, SZ_APP_NAME);
     g_LangTool.setMacro(SZ_MACRO_COMPANY_NAME, SZ_COMPANY_NAME);
 
-    return CMPlayerAppBase::init();
+    if (!CMPlayerAppBase::init()) {
+        return false;
+    }
+
+    setupHeadPhonePlugWatch();
+
+    return true;
 }
 
 void CMPlayerApp::quit() {

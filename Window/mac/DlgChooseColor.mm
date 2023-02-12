@@ -58,6 +58,7 @@ int CDlgChooseColor::doModal(Window *pWndParent, const CColor &clr) {
     nsclr = [panel color];
     if (nsclr != nil) {
         CGFloat r, g, b, a;
+        nsclr = [nsclr colorUsingColorSpace:[NSColorSpace sRGBColorSpace]];
         [nsclr getRed:&r green:&g blue:&b alpha:&a];
 
         m_clr.set(int(r * 255), int(g * 255), int(b * 255));

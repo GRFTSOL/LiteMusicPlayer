@@ -63,7 +63,7 @@ void SkinMenuItemsContainer::onMeasureSizeByContent() {
 
     int maxTextSize = 0;
     int maxShortcutSize = 0;
-    int expectedHeight = m_sepYPadding;
+    int expectedHeight = m_sepYPadding * 2;
 
     // 统计期望的高度和宽度
     for (auto &item : m_items) {

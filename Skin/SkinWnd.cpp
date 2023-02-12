@@ -155,18 +155,14 @@ CSkinWnd::CSkinWnd() {
     m_pUIObjHandleContextMenuCmd = nullptr;
 
     m_rcBoundBox.setLTRB(0, 0, 600, 350);
-    m_rcReal.setLTRB(0, 0, 600, 350);
 
     CRect rcRestrict;
     if (getMonitorRestrictRect(m_rcBoundBox, rcRestrict)) {
         m_rcBoundBox.offsetRect((rcRestrict.width() - m_rcBoundBox.width()) / 2,
             (rcRestrict.height() - m_rcBoundBox.height()) / 2);
-        m_rcReal = m_rcBoundBox;
     }
 
     m_timerIDMax = TIMER_ID_BEG_ALLOC;
-
-    m_dbScale = 1.0;
 
     m_nWidth = 0;
     m_nHeight = 0;
@@ -222,7 +218,7 @@ int CSkinWnd::create(SkinWndStartupInfo &skinWndStartupInfo, CSkinFactory *pSkin
     CAutoRedrawLock drawLock(this);
 
     createForSkin(skinWndStartupInfo.strClassName.c_str(), skinWndStartupInfo.strCaptionText.c_str(),
-        m_rcReal.left, m_rcReal.top, m_rcReal.width(), m_rcReal.height(), skinWndStartupInfo.pWndParent,
+        m_rcBoundBox.left, m_rcBoundBox.top, m_rcBoundBox.width(), m_rcBoundBox.height(), skinWndStartupInfo.pWndParent,
         bToolWindow, bTopmost, bVisible);
 
     return ERR_OK;
@@ -420,9 +416,6 @@ void CSkinWnd::processMouseMove(CPoint point) {
 void CSkinWnd::onMouseDrag(uint32_t nFlags, CPoint point) {
     processMouseMove(point);
 
-    point.x = (int)(point.x / m_dbScale);
-    point.y = (int)(point.y / m_dbScale);
-
     if (m_wndResizer.isSizing()) {
         m_wndResizer.onMouseMessage(nFlags, point);
         return;
@@ -487,9 +480,6 @@ void CSkinWnd::onLButtonDown(uint32_t nFlags, CPoint point) {
         setCursor(m_cursor);
     }
 
-    point.x = (int)(point.x / m_dbScale);
-    point.y = (int)(point.y / m_dbScale);
-
     setFocus();
 
     // first send message to ui objects that captured the mouse!
@@ -520,9 +510,6 @@ void CSkinWnd::onLButtonDblClk(uint32_t nFlags, CPoint point) {
     if (m_cursor.isValid()) {
         setCursor(m_cursor);
     }
-
-    point.x = (int)(point.x / m_dbScale);
-    point.y = (int)(point.y / m_dbScale);
 
     setFocus();
 
@@ -570,18 +557,9 @@ void CSkinWnd::onMagnify(float magnification) {
 }
 
 void CSkinWnd::onLButtonUp(uint32_t nFlags, CPoint point) {
-    /*    invalidateRect();
-
-    onSize(m_rcBoundBox.width(), m_rcBoundBox.height());
-
-    moveWindow(m_rcReal);*/
-
     if (m_cursor.isValid()) {
         setCursor(m_cursor);
     }
-
-    point.x = (int)(point.x / m_dbScale);
-    point.y = (int)(point.y / m_dbScale);
 
     if (m_wndResizer.isSizing()) {
         m_wndResizer.onMouseMessage(nFlags, point);
@@ -616,9 +594,6 @@ void CSkinWnd::onRButtonDown(uint32_t nFlags, CPoint point) {
         setCursor(m_cursor);
     }
 
-    point.x = (int)(point.x / m_dbScale);
-    point.y = (int)(point.y / m_dbScale);
-
     // first send message to ui objects that captured the mouse!
     if (m_pUIObjCapMouse) {
         if (isMouseCaptured() && m_pUIObjCapMouse->needMsgRButton()) {
@@ -639,9 +614,6 @@ void CSkinWnd::onRButtonUp(uint32_t nFlags, CPoint point) {
     if (m_cursor.isValid()) {
         setCursor(m_cursor);
     }
-
-    point.x = (int)(point.x / m_dbScale);
-    point.y = (int)(point.y / m_dbScale);
 
     // first send message to ui objects that captured the mouse!
     if (m_pUIObjCapMouse) {
@@ -843,17 +815,7 @@ void CSkinWnd::onPaint(CRawGraph *canvas, CRect *rcClip) {
         m_rootConainter.draw(canvas);
     }
 
-    ///*    CRect rc(20, 20, 50, 30);
-    //    CColor clr(RGB(10, 10, 10));
-    //    clr.setAlpha(50);
-    //    memCanvas->fillRect(rc, clr);*/
-    //
-    //    // from buffer to screen
-    //    // if (m_dbScale == 1.0)
     canvas->drawToWindow(rcClip->left, rcClip->top, rcClip->width(), rcClip->height(), rcClip->left, rcClip->top);
-    //    //memCanvas->drawToWindow(canvas, 0, 0, m_rcBoundBox.width(), m_rcBoundBox.height(), 0, 0);
-    //    // else
-    //        // memCanvas->drawToWindowStretch(canvas, 0, 0, m_rcReal.width(), m_rcReal.height(), 0, 0, m_rcBoundBox.width(), m_rcBoundBox.height());
 }
 
 
@@ -919,28 +881,17 @@ void CSkinWnd::invalidateUIObject(CUIObject *pObj) {
 
     autoCBR.recover();
 
-#ifdef _WIN32_DESKTOP
     if (m_bTranslucencyLayered) {
         updateLayeredWindowUsingMemGraph(m_pmemGraph);
         return;
     }
-#endif
 
-    CGraphics *canvas;
+    CGraphics *canvas = getGraphics();
 
-    canvas = getGraphics();
-
-//    if (m_dbScale == 1.0) {
-        m_pmemGraph->drawToWindow(canvas,
-            pObj->m_rcObj.left, pObj->m_rcObj.top,
-            pObj->m_rcObj.width(), pObj->m_rcObj.height(),
-            pObj->m_rcObj.left, pObj->m_rcObj.top);
-//    } else {
-//        m_pmemGraph->drawToWindowStretch(canvas,
-//            (int)(pObj->m_rcObj.left * m_dbScale), (int)(pObj->m_rcObj.top * m_dbScale),
-//            (int)((pObj->m_rcObj.width() + 1) * m_dbScale), (int)((pObj->m_rcObj.height() + 1) * m_dbScale),
-//            pObj->m_rcObj.left, pObj->m_rcObj.top, pObj->m_rcObj.width(), pObj->m_rcObj.height());
-//    }
+    m_pmemGraph->drawToWindow(canvas,
+        pObj->m_rcObj.left, pObj->m_rcObj.top,
+        pObj->m_rcObj.width(), pObj->m_rcObj.height(),
+        pObj->m_rcObj.left, pObj->m_rcObj.top);
 
     releaseGraphics(canvas);
 #else // _WIN32
@@ -1011,13 +962,9 @@ void CSkinWnd::onMove(int x, int y) {
 
     getWindowRect(&rc);
     if (!isWndOutOfScreen(rc)) {
-        rc.right = rc.left + m_rcReal.width();
-        rc.bottom = rc.top + m_rcReal.height();
-        m_rcReal = rc;
-        m_rcBoundBox.left = rc.left;
-        m_rcBoundBox.top = rc.top;
-        m_rcBoundBox.right = (int)(rc.left + rc.width() / m_dbScale);
-        m_rcBoundBox.bottom = (int)(rc.top + rc.height() / m_dbScale);
+        rc.right = rc.left + m_rcBoundBox.width();
+        rc.bottom = rc.top + m_rcBoundBox.height();
+        m_rcBoundBox = rc;
     }
 }
 
@@ -1032,13 +979,9 @@ void CSkinWnd::onSize(int cx, int cy) {
         rc.right = rc.left + cx;
         rc.bottom = rc.top + cy;
         if (isWndOutOfScreen(rc)) {
-            moveWindow(m_rcReal);
+            moveWindow(m_rcBoundBox);
         } else {
-            //            if (m_rcReal.requal(rc))
-            //                return;
-
-            m_rcReal = rc;
-            m_rcBoundBox.setLTWH(rc.left, rc.top, (int)(rc.width() / m_dbScale), (int)(rc.height() / m_dbScale));
+            m_rcBoundBox = rc;
 
 #ifdef _WIN32
             setUseWindowsAppearance(m_bWindowsAppearance);
@@ -2479,25 +2422,6 @@ void CSkinWnd::onTimerAnimation() {
     }
 }
 
-/*void CSkinWnd::onLoadWndSizePos()
-{
-    CRect        rcNew;
-
-    rcNew = m_rcReal;
-    if (m_wndResizer.isFixedWidth())
-        rcNew.right = rcNew.left + (int)(m_nWidth * m_dbScale);
-    if (m_wndResizer.isFixedHeight())
-        rcNew.bottom = rcNew.top + (int)(m_nHeight * m_dbScale);
-
-    if (rcNew.width() < m_wndResizer.getMinCx())
-        rcNew.right = rcNew.left + m_wndResizer.getMinCx();
-    if (rcNew.height() < m_wndResizer.getMinCy())
-        rcNew.bottom = rcNew.top + m_wndResizer.getMinCy();
-
-    if (rcNew.width() != m_rcReal.width() || rcNew.height() != m_rcReal.height())
-        moveWindow(rcNew);
-}*/
-
 void CSkinWnd::onLoadWndSizePos() {
 #ifdef _WIN32
     if (::getParent(m_hWnd)) {
@@ -2513,28 +2437,26 @@ void CSkinWnd::onLoadWndSizePos() {
         restore();
     }
 
-    getWindowRect(&m_rcReal);
+    getWindowRect(&m_rcBoundBox);
 
-    rcNew = m_rcReal;
+    rcNew = m_rcBoundBox;
 
     if (m_bRememberSizePos) {
         rcNew.left = g_profile.getInt(getSkinWndName(), "wnd_left", rcNew.left);
         rcNew.top = g_profile.getInt(getSkinWndName(), "wnd_top", rcNew.top);
         rcNew.right = rcNew.left + g_profile.getInt(getSkinWndName(), "wnd_width", m_nWidth);
         rcNew.bottom = rcNew.top + g_profile.getInt(getSkinWndName(), "wnd_height", m_nHeight);
-        // if (!rcNew.requal(m_rcReal))
-        //    bCenterWnd = false;
         bCenterWnd = false;
 
         if (m_wndResizer.isFixedWidth()) {
-            rcNew.right = int(rcNew.left + m_nWidth * m_dbScale);
+            rcNew.right = rcNew.left + m_nWidth;
         }
         if (m_wndResizer.isFixedHeight()) {
-            rcNew.bottom = int(rcNew.top + m_nHeight * m_dbScale);
+            rcNew.bottom = rcNew.top + m_nHeight;
         }
     } else {
-        rcNew.right = int(rcNew.left + m_nWidth * m_dbScale);
-        rcNew.bottom = int(rcNew.top + m_nHeight * m_dbScale);
+        rcNew.right = rcNew.left + m_nWidth;
+        rcNew.bottom = rcNew.top + m_nHeight;
     }
 
     if (rcNew.width() < m_wndResizer.getMinCx()) {
@@ -2556,7 +2478,7 @@ void CSkinWnd::onLoadWndSizePos() {
         }
     }
 
-    if (!rcNew.equal(m_rcReal)) {
+    if (!rcNew.equal(m_rcBoundBox)) {
         moveWindowSafely(rcNew.left, rcNew.top, rcNew.width(), rcNew.height(), true);
     }
 
@@ -2598,7 +2520,7 @@ void CSkinWnd::saveWndPos() {
     if (GetWindowPlacement(m_hWnd, &wp)) {
         rcToSave = wp.rcNormalPosition;
     } else {
-        rcToSave = m_rcReal;
+        rcToSave = m_rcBoundBox;
     }
 
     WndSizeMode sizeMode;

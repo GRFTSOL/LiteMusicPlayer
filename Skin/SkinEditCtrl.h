@@ -334,10 +334,11 @@ protected:
 
     int getEndColPosOfLine(int nLine);
 
-    void nextPos(int &Row, int &nCol);
-    void prevPos(int &Row, int &nCol);
-    void nextWord(int &Row, int &nCol);
-    void prevWord(int &Row, int &nCol);
+    void nextPos(int &row, int &col);
+    void prevPos(int &row, int &col);
+    void nextWord(int &row, int &col);
+    void prevWord(int &row, int &col);
+    void beginOfLine(int row, int &col);
 
     void selectNone();
     void removeSelected(int &pnBegSelRow, int &pnBegSelCol);

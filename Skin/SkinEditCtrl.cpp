@@ -1446,6 +1446,24 @@ void CSkinEditCtrl::prevWord(int &Row, int &nCol) {
     }
 }
 
+void CSkinEditCtrl::beginOfLine(int row, int &col) {
+    assert(row >= 0 && row < m_vLines.size());
+    COneLine *line = m_vLines[row];
+    for (int i = 0; i < (int)line->size(); i++) {
+        auto &glyph = line->at(i);
+        if (!glyph.isEqual(' ') && !glyph.isEqual('\t')) {
+            if (col > i) {
+                col = i;
+            } else {
+                col = 0;
+            }
+            return;
+        }
+    }
+
+    col = 0;
+}
+
 bool CSkinEditCtrl::isSelected() {
     return m_nBegSelRow != -1;
 }
@@ -1813,7 +1831,7 @@ void CSkinEditCtrl::updateScrollInfo(bool bHorz, bool bVert) {
 
         if (m_pHorzScrollBar) {
             if (wMax > nPage) {
-                m_pHorzScrollBar->setScrollInfo(m_pHorzScrollBar->getScrollPos(), wMax, nPage, m_nScrollPosx, m_nOneCharDx);
+                m_pHorzScrollBar->setScrollInfo(0, wMax, nPage, m_pHorzScrollBar->getScrollPos(), m_nOneCharDx);
             } else {
                 m_nScrollPosx = 0;
                 m_pHorzScrollBar->disableScrollBar();
@@ -1831,7 +1849,7 @@ void CSkinEditCtrl::updateScrollInfo(bool bHorz, bool bVert) {
 
         if (m_pVertScrollBar) {
             if ((int)m_vLines.size() > nPage) {
-                m_pVertScrollBar->setScrollInfo(m_pVertScrollBar->getScrollPos(), (int)m_vLines.size(), nPage, m_nTopVisibleLine);
+                m_pVertScrollBar->setScrollInfo(0, (int)m_vLines.size(), nPage, m_nTopVisibleLine);
             } else {
                 m_pVertScrollBar->disableScrollBar();
             }
@@ -2149,6 +2167,7 @@ void CSkinEditCtrl::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) {
 }
 
 bool CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
+    bool alt = isModifierKeyPressed(MK_ALT, nFlags);
     bool shift = isModifierKeyPressed(MK_SHIFT, nFlags);
 #ifdef _MAC_OS
     bool ctrl = isModifierKeyPressed(MK_COMMAND, nFlags);
@@ -2267,6 +2286,9 @@ bool CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         {
             bSelKey = true;
             if (ctrl) {
+                // to begin of line
+                beginOfLine(m_nCaretRow, m_nCaretCol);
+            } else if (alt) {
                 // to prev word
                 prevWord(m_nCaretRow, m_nCaretCol);
             } else {
@@ -2278,6 +2300,9 @@ bool CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         {
             bSelKey = true;
             if (ctrl) {
+                // to end of line
+                m_nCaretCol = (int)m_vLines[m_nCaretRow]->size();
+            } else if (alt) {
                 // to next word
                 nextWord(m_nCaretRow, m_nCaretCol);
             } else {
@@ -2296,7 +2321,11 @@ bool CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
             }
 
             bSelKey = true;
-            if (m_nCaretRow > 0) {
+
+            if (ctrl) {
+                m_nCaretRow = 0;
+                m_nCaretCol = 0;
+            } else if (m_nCaretRow > 0) {
                 bRecoverCaretMaxXLatestOrg = true;
                 setCaretToPos(m_rcContent.left + m_nCaretMaxXLatest, m_rcContent.top + m_nCaretY - getLineDy());
             }
@@ -2309,7 +2338,10 @@ bool CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
             }
 
             bSelKey = true;
-            if (m_nCaretRow < (int)m_vLines.size() - 1) {
+            if (ctrl) {
+                m_nCaretRow = (int)m_vLines.size() - 1;
+                m_nCaretCol = (int)m_vLines.back()->size();
+            } else if (m_nCaretRow < (int)m_vLines.size() - 1) {
                 bRecoverCaretMaxXLatestOrg = true;
                 setCaretToPos(m_rcContent.left + m_nCaretMaxXLatest, m_rcContent.top + m_nCaretY + getLineDy());
             }

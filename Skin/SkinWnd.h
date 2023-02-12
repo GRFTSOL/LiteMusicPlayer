@@ -441,9 +441,6 @@ protected:
     bool                        m_bMainAppWnd;      // true: when the Window is closed, exit process.
     bool                        m_bDialogWnd;       // For dialog Skin: Enter key = OK, Escape key = cancel.
 
-    double                      m_dbScale;          // 窗口是否进行缩放
-    CRect                       m_rcReal;           // 窗口的实际大小
-
     //
     // properties
     //

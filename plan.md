@@ -57,11 +57,9 @@
     
 
 ## 待完成
-* 去掉 MLFont, 使用类似 win32 的 FontCollection 来替代
 * 测试各种 UCS2 等编码的打开与保存
 * 找一个字代替，歌词解析时间出问题
 * onCommand，invalidate 等事件统一调度.
-* setCaptureMouse 需要重新审查过
 * 统一 eventDispatcher... g_playerEventDispatcher
 * 在执行关键命令时需要 client 传递的 cmdID 必须大于此值，防止重放攻击.
  uint32_t                    nextCmdId = 0;

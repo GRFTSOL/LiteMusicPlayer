@@ -310,6 +310,8 @@
 		C04DC042298D63AE00A0FCB1 /* Media.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C04DC041298D63AE00A0FCB1 /* Media.cpp */; };
 		C052876F2964FE50009BD885 /* FontInfoEx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C052876E2964FE50009BD885 /* FontInfoEx.cpp */; };
 		C05287722965A90E009BD885 /* RawGlyphSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05287702965A90E009BD885 /* RawGlyphSet.cpp */; };
+		C055400529978E390057629E /* HeadPhoneWatch.mm in Sources */ = {isa = PBXBuildFile; fileRef = C055400329978E390057629E /* HeadPhoneWatch.mm */; };
+		C0554007299791EA0057629E /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0554006299791EA0057629E /* CoreAudio.framework */; };
 		C05D73DF2951594000294F50 /* libTinyJsLib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C05D73DE2951592E00294F50 /* libTinyJsLib.dylib */; };
 		C05D73E32951B82100294F50 /* Profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D73E12951B82100294F50 /* Profile.cpp */; };
 		C05D73EE2952B72A00294F50 /* SkinJsAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D73EC2952B72A00294F50 /* SkinJsAPI.cpp */; };
@@ -1012,6 +1014,9 @@
 		C052876E2964FE50009BD885 /* FontInfoEx.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FontInfoEx.cpp; path = GfxRaw/FontInfoEx.cpp; sourceTree = "<group>"; };
 		C05287702965A90E009BD885 /* RawGlyphSet.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RawGlyphSet.cpp; path = GfxRaw/RawGlyphSet.cpp; sourceTree = "<group>"; };
 		C05287712965A90E009BD885 /* RawGlyphSet.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = RawGlyphSet.hpp; path = GfxRaw/RawGlyphSet.hpp; sourceTree = "<group>"; };
+		C055400329978E390057629E /* HeadPhoneWatch.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HeadPhoneWatch.mm; sourceTree = "<group>"; };
+		C055400429978E390057629E /* HeadPhoneWatch.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = HeadPhoneWatch.hpp; sourceTree = "<group>"; };
+		C0554006299791EA0057629E /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		C05D73D52951592D00294F50 /* TinyJS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TinyJS.xcodeproj; path = TinyJS/TinyJS.xcodeproj; sourceTree = "<group>"; };
 		C05D73E12951B82100294F50 /* Profile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Profile.cpp; sourceTree = "<group>"; };
 		C05D73EC2952B72A00294F50 /* SkinJsAPI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SkinJsAPI.cpp; sourceTree = "<group>"; };
@@ -1030,6 +1035,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C0554007299791EA0057629E /* CoreAudio.framework in Frameworks */,
 				C05D73DF2951594000294F50 /* libTinyJsLib.dylib in Frameworks */,
 				0EB71165277DEE4D006929F1 /* CoreData.framework in Frameworks */,
 				0EB71162277DCCE6006929F1 /* AppKit.framework in Frameworks */,
@@ -1199,6 +1205,7 @@
 		0E56BAA22740C32800032A3E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C0554006299791EA0057629E /* CoreAudio.framework */,
 				0EB71164277DEE4A006929F1 /* CoreData.framework */,
 				0EB71161277DCCE6006929F1 /* AppKit.framework */,
 				0EB7115E277DCC78006929F1 /* CoreText.framework */,
@@ -1616,6 +1623,8 @@
 				0EB7103A27773BB4006929F1 /* MPSkinMainWndMac.h */,
 				0EB7104227773BB4006929F1 /* PlayerEventDispatcher.h */,
 				0EB7104C27773BB4006929F1 /* PlayerEventDispatcher.mm */,
+				C055400329978E390057629E /* HeadPhoneWatch.mm */,
+				C055400429978E390057629E /* HeadPhoneWatch.hpp */,
 			);
 			name = mac;
 			path = MPlayerUI/mac;
@@ -2099,6 +2108,7 @@
 				0EB710BE27773BB6006929F1 /* MPHotkey.cpp in Sources */,
 				C04DBF6B297EB36200A0FCB1 /* dhm.c in Sources */,
 				0EB710B027773BB6006929F1 /* MPFloatingLyrWnd.cpp in Sources */,
+				C055400529978E390057629E /* HeadPhoneWatch.mm in Sources */,
 				C04DC007297ECDA100A0FCB1 /* nist_kw.c in Sources */,
 				C04DC01D297ECDA100A0FCB1 /* psa_crypto.c in Sources */,
 				0E56BBF52745E53D00032A3E /* SkinListCtrl.cpp in Sources */,
