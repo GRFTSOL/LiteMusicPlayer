@@ -29,6 +29,10 @@ bool JsUIObject::onSetValue(VMContext *ctx, const SizedString &name, const JsVal
     } else if (name.equal(SS_FORM_WIDTH)) {
         auto str = ctx->runtime->toSizedString(ctx, value);
         _obj->setProperty(SZ_PN_WIDTH, str.toString().c_str());
+    } else if (name.equal(SS_ON_MOUSE_ENTER)) {
+        _obj->m_onMouseEnterListener = value;
+    } else if (name.equal(SS_ON_MOUSE_LEAVE)) {
+        _obj->m_onMouseLeaveListener = value;
     }
 
     return false;
@@ -39,6 +43,10 @@ JsValue JsUIObject::onGetValue(VMContext *ctx, const SizedString &name) {
         return makeJsValueBool(_obj->isVisible());
     } else if (name.equal(SS_FORM_WIDTH)) {
         return ctx->runtime->pushString(_obj->m_formWidth.getFormula());
+    } else if (name.equal(SS_ON_MOUSE_ENTER)) {
+        return _obj->m_onMouseEnterListener;
+    } else if (name.equal(SS_ON_MOUSE_LEAVE)) {
+        return _obj->m_onMouseLeaveListener;
     }
 
     return jsValueEmpty;
@@ -50,6 +58,12 @@ void JsUIObject::onEnumAllProperties(VMContext *ctx, VecSizedStrings &names, Vec
 
     names.push_back(SS_FORM_WIDTH);
     values.push_back(ctx->runtime->pushString(_obj->m_formWidth.getFormula()));
+
+    names.push_back(SS_ON_MOUSE_ENTER);
+    values.push_back(_obj->m_onMouseEnterListener);
+
+    names.push_back(SS_ON_MOUSE_LEAVE);
+    values.push_back(_obj->m_onMouseLeaveListener);
 }
 
 CUIObject *convertToUIObject(VMContext *ctx, const JsValue &thiz, const Arguments &args) {

@@ -354,9 +354,12 @@ public:
 
     void dispatchUIObjNotify(IUIObjNotify *pNotify);
 
-protected:
-    void rootContainerFromXml(SXNode *pSkinWndNode, CSkinContainer *pRootContainer);
+public:
+    JsVirtualMachine *getVM() { return m_vm; }
 
+    void callVMFunction(const JsValue &memberFunc, const Arguments &args = Arguments(), const JsValue &thiz = jsValueGlobalThis);
+
+protected:
     virtual int fromXML(SXNode *pXmlNode);
 
     void switchFocusUIObj(bool toPrev=false);

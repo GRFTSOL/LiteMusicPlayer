@@ -14,14 +14,6 @@
 #include "../SkinWnd.h"
 
 
-const SizedString SS_ON_COMMAND = makeCommonString("oncommand");
-const SizedString SS_ON_MOUSEMOVE = makeCommonString("onmousemove");
-const SizedString SS_ON_SIZE = makeCommonString("onsize");
-const SizedString SS_ON_ACTIVATE = makeCommonString("onactivate");
-const SizedString SS_ON_DESTORY = makeCommonString("ondestory");
-const SizedString SS_ON_MOUSE_ACTIVATE = makeCommonString("onmouseactivate");
-const SizedString SS_HEIGHT = makeCommonString("height");
-
 JsValue jsValuePrototypeDocument;
 
 JsSkinDocument::JsSkinDocument(CSkinWnd *skinWnd) : JsObjectX(SJT_DOCUMENT, jsValuePrototypeDocument), _skinWnd(skinWnd) {
@@ -38,7 +30,7 @@ bool JsSkinDocument::onSetValue(VMContext *ctx, const SizedString &name, const J
         }
     } else if (name.equal(SS_ON_COMMAND)) {
         _skinWnd->m_onCommandListener = value;
-    } else if (name.equal(SS_ON_MOUSEMOVE)) {
+    } else if (name.equal(SS_ON_MOUSE_MOVE)) {
         _skinWnd->m_onMouseMoveListener = value;
     } else if (name.equal(SS_ON_SIZE)) {
         _skinWnd->m_onSizeListener = value;
@@ -61,7 +53,7 @@ JsValue JsSkinDocument::onGetValue(VMContext *ctx, const SizedString &name) {
         }
     } else if (name.equal(SS_ON_COMMAND)) {
         return _skinWnd->m_onCommandListener;
-    } else if (name.equal(SS_ON_MOUSEMOVE)) {
+    } else if (name.equal(SS_ON_MOUSE_MOVE)) {
         return _skinWnd->m_onMouseMoveListener;
     } else if (name.equal(SS_ON_SIZE)) {
         return _skinWnd->m_onSizeListener;
@@ -86,7 +78,7 @@ void JsSkinDocument::onEnumAllProperties(VMContext *ctx, VecSizedStrings &names,
     names.push_back(SS_ON_COMMAND);
     values.push_back(_skinWnd->m_onCommandListener);
 
-    names.push_back(SS_ON_MOUSEMOVE);
+    names.push_back(SS_ON_MOUSE_MOVE);
     values.push_back(_skinWnd->m_onMouseMoveListener);
 
     names.push_back(SS_ON_SIZE);

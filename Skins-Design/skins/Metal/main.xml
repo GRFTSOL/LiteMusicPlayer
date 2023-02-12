@@ -92,8 +92,8 @@
 						</Container>
 					</NormalPlaylist>
 				</Container>
-				<DecorativeContainer Name="Lyrics" Width="200" Height="108" MinWidth="200" MinHeight="108" LayoutParams="match_parent_height" Weight="1">
-					<LyricsShow ID="ID_LYRICS_SHOW" Rect="0,0,w,h" SetSkinBg="false"
+				<DecorativeContainer ID="CID_LYRICS" Name="Lyrics" Width="200" Height="108" MinWidth="200" MinHeight="108" LayoutParams="match_parent_height" Weight="1">
+					<LyricsShow Rect="0,0,w,h" SetSkinBg="false"
 					  EnableToolbar="FALSE" EnableAutoResize="FALSE" />
 
 					<Container ID="CID_LYR_TOOL_BAR" Rect="w-100,10,94,30" Visible="False">

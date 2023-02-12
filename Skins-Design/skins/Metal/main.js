@@ -10,6 +10,7 @@ var CID_AM_SHOW_LYR_TB = document.getCommandID('CID_AM_SHOW_LYR_TB');
 var elementPlaylistLyrics = document.getElementById('CID_PLAYLIST_LYRICS');
 var body = document.getElementById('CID_BODY');
 var bodyBg = document.getElementById('CID_BODY_BG');
+var lyricsElement = document.getElementById('CID_LYRICS');
 
 var STATUS_HIDE_NONE = 0,
     STATUS_HIDE_LYRICS = 1, 
@@ -73,12 +74,14 @@ document.onsize = function(w, h) {
     }
 }
 
-document.onmouseactivate = function(isActivate) {
-    if (isActivate) {
-        document.stopAnimation(CID_AM_HIDE_LYR_TB);
-        document.startAnimation(CID_AM_SHOW_LYR_TB);
-    } else {
-        document.stopAnimation(CID_AM_SHOW_LYR_TB);
-        document.startAnimation(CID_AM_HIDE_LYR_TB);
-    }
+lyricsElement.onmouseenter = function() {
+    document.stopAnimation(CID_AM_HIDE_LYR_TB);
+    document.startAnimation(CID_AM_SHOW_LYR_TB);
+    console.log('Enter');
+}
+
+lyricsElement.onmouseleave = function() {
+    document.stopAnimation(CID_AM_SHOW_LYR_TB);
+    document.startAnimation(CID_AM_HIDE_LYR_TB);
+    console.log('leave');
 }

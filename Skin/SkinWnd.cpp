@@ -284,9 +284,7 @@ void CSkinWnd::closeSkin() {
     m_onMouseActivateListener = jsValueEmpty;
 
     if (m_onDestoryListener.isFunction()) {
-        auto ctx = m_vm->defaultRuntime()->mainCtx();
-        ctx->error = JE_OK;
-        m_vm->callMember(ctx, jsValueGlobalThis, m_onDestoryListener, Arguments());
+        callVMFunction(m_onDestoryListener);
     }
 
     killTimer(TIMER_ID_TINY_JS_VM);
@@ -466,9 +464,7 @@ void CSkinWnd::onMouseMove(CPoint point) {
     }
 
     if (m_onMouseMoveListener.isFunction()) {
-        auto ctx = m_vm->defaultRuntime()->mainCtx();
-        ctx->error = JE_OK;
-        m_vm->callMember(ctx, jsValueGlobalThis, m_onMouseMoveListener,
+        callVMFunction(m_onMouseMoveListener,
             ArgumentsX(makeJsValueInt32(point.x), makeJsValueInt32(point.y)));
     }
 }
@@ -994,9 +990,7 @@ void CSkinWnd::onSize(int cx, int cy) {
             invalidateRect();
 
             if (m_onSizeListener.isFunction()) {
-                auto ctx = m_vm->defaultRuntime()->mainCtx();
-                ctx->error = JE_OK;
-                m_vm->callMember(ctx, jsValueGlobalThis, m_onSizeListener,
+                callVMFunction(m_onSizeListener,
                     ArgumentsX(makeJsValueInt32(cx), makeJsValueInt32(cy)));
             }
         }
@@ -1508,9 +1502,7 @@ void CSkinWnd::onActivate(bool bActived) {
         }
 
         if (m_onActivateListener.isFunction()) {
-            auto ctx = m_vm->defaultRuntime()->mainCtx();
-            ctx->error = JE_OK;
-            m_vm->callMember(ctx, jsValueGlobalThis, m_onActivateListener,
+            callVMFunction(m_onActivateListener,
                 ArgumentsX(makeJsValueBool(bActived)));
         }
     }
@@ -1912,10 +1904,7 @@ bool showAsToolWindowNoRefresh(HWND hWnd) {
 
 bool CSkinWnd::onCustomCommand(int nId) {
     if (m_onCommandListener.isFunction()) {
-        auto ctx = m_vm->defaultRuntime()->mainCtx();
-        ctx->error = JE_OK;
-        m_vm->callMember(ctx, jsValueGlobalThis, m_onCommandListener,
-            ArgumentsX(makeJsValueInt32(nId)));
+        callVMFunction(m_onCommandListener, ArgumentsX(makeJsValueInt32(nId)));
     }
 
     if (m_rootConainter.onCustomCommand(nId)) {
@@ -2211,6 +2200,12 @@ void CSkinWnd::dispatchUIObjNotify(IUIObjNotify *pNotify) {
     onUIObjNotify(pNotify);
 }
 
+void CSkinWnd::callVMFunction(const JsValue &memberFunc, const Arguments &args, const JsValue &thiz) {
+    auto ctx = m_vm->defaultRuntime()->mainCtx();
+    ctx->error = JE_OK;
+    m_vm->callMember(ctx, thiz, memberFunc, args);
+}
+
 int CSkinWnd::fromXML(SXNode *pXmlNode) {
     m_bTranslucencyLayered = false;
 
@@ -2329,9 +2324,7 @@ void CSkinWnd::onTimerMouseInactive() {
 
 void CSkinWnd::onMouseActive(bool bMouseActive) {
     if (m_onMouseActivateListener.isFunction()) {
-        auto ctx = m_vm->defaultRuntime()->mainCtx();
-        m_vm->callMember(ctx, jsValueGlobalThis, m_onMouseActivateListener,
-            ArgumentsX(makeJsValueBool(bMouseActive)));
+        callVMFunction(m_onMouseActivateListener, ArgumentsX(makeJsValueBool(bMouseActive)));
     }
 }
 

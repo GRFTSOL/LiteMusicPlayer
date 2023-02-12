@@ -186,6 +186,23 @@ bool CSkinContainer::onMouseDrag(CPoint point) {
     return bMsgProceed;
 }
 
+void CSkinContainer::callChildMouseLeave(CPoint point) {
+    for (int i = (int)m_vUIObjs.size() - 1; i >= 0; i--) {
+        CUIObject *child = m_vUIObjs[i];
+        if (child->m_isMouseIn) {
+            child->m_isMouseIn = false;
+            child->onMouseLeave(point);
+            if (child->m_onMouseLeaveListener.isFunction()) {
+                m_pSkin->callVMFunction(child->m_onMouseLeaveListener);
+            }
+
+            if (child->isContainer()) {
+                child->getContainerIf()->callChildMouseLeave(point);
+            }
+        }
+    }
+}
+
 bool CSkinContainer::onMouseMove(CPoint point) {
     for (int i = (int)m_vUIObjs.size() - 1; i >= 0; i--) {
         CUIObject *pObj = m_vUIObjs[i];
@@ -195,8 +212,18 @@ bool CSkinContainer::onMouseMove(CPoint point) {
             pObj->m_isMouseIn = isMouseIn;
             if (isMouseIn) {
                 pObj->onMouseEnter(point);
+                if (pObj->m_onMouseEnterListener.isFunction()) {
+                    m_pSkin->callVMFunction(pObj->m_onMouseEnterListener);
+                }
             } else {
                 pObj->onMouseLeave(point);
+                if (pObj->m_onMouseLeaveListener.isFunction()) {
+                    m_pSkin->callVMFunction(pObj->m_onMouseLeaveListener);
+                }
+
+                if (pObj->isContainer()) {
+                    pObj->getContainerIf()->callChildMouseLeave(point);
+                }
             }
         }
 

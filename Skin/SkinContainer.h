@@ -158,6 +158,8 @@ protected:
 
     void onAdd(CUIObject *pObj);
 
+    void callChildMouseLeave(CPoint point);
+
 protected:
 #ifdef _SKIN_EDITOR_
     virtual bool hasXMLChild();

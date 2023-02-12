@@ -205,6 +205,14 @@ bool CSkinSeekCtrl::onMouseMove(CPoint point) {
     return true;
 }
 
+void CSkinSeekCtrl::onMouseEnter(CPoint point) {
+    invalidate();
+}
+
+void CSkinSeekCtrl::onMouseLeave(CPoint point) {
+    invalidate();
+}
+
 void CSkinSeekCtrl::thumbOnMouseMove(CPoint point) {
     int nVirtualPosOld;
     int nPosThumbOld;
@@ -280,7 +288,7 @@ void CSkinSeekCtrl::draw(CRawGraph *canvas) {
     if (m_imgThumb.isValid()) {
         int yThumbSrc = 0;
         if (m_PushDownPos != PUSH_DOWN_THUMB) {
-            if (m_CursorPosLatest == PUSH_DOWN_THUMB) {
+            if (m_isMouseIn) {
                 yThumbSrc = nThumbHeight; // Hover on thumb.
             }
         } else {

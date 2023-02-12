@@ -51,6 +51,8 @@ public:
     bool onMouseDrag(CPoint point) override;
     bool onMouseMove(CPoint point) override;
     void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) override;
+    void onMouseEnter(CPoint point) override;
+    void onMouseLeave(CPoint point) override;
 
     void onVScroll(uint32_t nSBCode);
 

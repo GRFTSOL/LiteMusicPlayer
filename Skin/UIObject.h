@@ -418,6 +418,9 @@ public:
     bool                        m_bHideIfMouseInactive;
     bool                        m_isMouseIn;        // 鼠标是否在此组件内？
 
+    JsValue                     m_onMouseEnterListener;
+    JsValue                     m_onMouseLeaveListener;
+
     /**
      * Background related properties.
      **/
