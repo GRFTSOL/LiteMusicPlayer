@@ -10,19 +10,22 @@ struct MPHotKeySection {
     int                         *vHotkeys;
 };
 
+typedef struct OpaqueEventHotKeyRef*    EventHotKeyRef;
+
 extern MPHotKeySection g_vHotkeySections[];
 
 class CMPHotkey {
 public:
     struct CmdAccKey {
-        int                         cmd;
-        bool                        bGlobal;
-        uint16_t                    button;
-        uint16_t                    fsModifiers;
-        uint16_t                    idHotKey;
+        int                         cmd = 0;
+        bool                        bGlobal = false;
+        uint16_t                    button = 0;
+        uint16_t                    fsModifiers = 0;
+        uint16_t                    idHotKey = 0;
+        EventHotKeyRef              hotKeyRef = nullptr;
     };
-    typedef vector<CmdAccKey>        V_ACCKEY;
-    typedef V_ACCKEY::iterator        iterator;
+    typedef vector<CmdAccKey>        VecCmAccKeys;
+    typedef VecCmAccKeys::iterator   iterator;
 
 public:
     CMPHotkey();
@@ -67,7 +70,7 @@ protected:
 
 protected:
     bool                        m_bGlobalHotkeyEnabled;
-    V_ACCKEY                    m_vAccKey;
+    VecCmAccKeys                m_vAccKey;
 
 };
 

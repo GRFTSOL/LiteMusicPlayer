@@ -221,6 +221,18 @@ bool stretchBltRawImage(RawImageData *pImageSrc, RawImageData *pImageDst, const 
     }
 }
 
+RawImageDataPtr createScaledRawImageData(RawImageData *src, float scale) {
+    RawImageDataPtr newImage = make_shared<RawImageData>();
+
+    int width = src->width * scale;
+    int height = src->height * scale;
+    newImage->create(width, height, src->bitCount);
+
+    agg::rect_f rcSrc(0, 0, src->width, src->height);
+    stretchBltRawImage(src, newImage.get(), CRect(0, 0, width, height), rcSrc, BPM_COPY, 255);
+
+    return newImage;
+}
 
 //////////////////////////////////////////////////////////////////////
 

@@ -99,7 +99,7 @@ public:
 
         OverlayBlendingMode         obm;                // Overlay blending mode
         CColor                      clr[TCI_COUNT];     // Colors, Accessed by TOBColorIndex
-        CRawImage                   imgPattern;
+        RawImageDataPtr             imgPattern;
         string                      strPatternFile;
     };
 
@@ -188,7 +188,7 @@ protected:
 
     int getFontHeight() const { return m_nFontHeight + getOutlineMargin(); }
 
-    int getPatternFontHeight() const { return m_nFontHeight + MARGIN_FONT * 2; }
+    int getPatternFontHeight() const;
 
     int getLineHeight() const { return m_nFontHeight + getOutlineMargin() + m_nLineSpacing; }
     int getOutlineMargin() const { return isOutlineLyrics() ? m_nFontHeight / 8 : 0; }
@@ -311,7 +311,7 @@ cstr_t getLyrTOBSettingName(bool bHighlight, CLyricShowObj::TOBColorIndex nameIn
 
 void loadLyrOverlayBlendingSettings(cstr_t szSectName, CLyricShowObj::TextOverlayBlending &tob, int nGradientPatternHeight, bool bHilight);
 
-void createGradientFillImage24bpp(CRawImage &image, int nHeight, CColor clrGradient[3]);
+RawImageDataPtr createGradientFillImage(int nHeight, CColor clrGradient[3]);
 
 void profileWriteTOBToOld(bool bOutlineLyrText,
     const CLyricShowObj::TextOverlayBlending &tobHilight,

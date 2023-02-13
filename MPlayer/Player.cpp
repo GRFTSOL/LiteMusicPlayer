@@ -529,9 +529,9 @@ bool CPlayer::isCurrentMediaFileExist() {
 }
 
 void CPlayer::playMedia(int index) {
-    m_playerCore->stop();
+    stop();
     setCurrentMediaInPlaylist(index);
-    m_playerCore->play(m_currentMedia->url.c_str(), m_currentMedia.get());
+    play();
 }
 
 void CPlayer::getFileOpenDlgExtention(string &strExtentions) const {

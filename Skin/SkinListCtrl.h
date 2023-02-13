@@ -53,7 +53,7 @@ public:
     class ItemImage : public Item {
     public:
         ItemImage() { }
-        CRawImage                   image;
+        CSFImage                    image;
     };
 
     struct Row {

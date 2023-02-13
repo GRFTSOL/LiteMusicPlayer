@@ -17,6 +17,11 @@ CSFImage::~CSFImage(void) {
     detach();
 }
 
+void CSFImage::attach(const RawImageDataPtr &image) {
+    CRawImage::attach(image);
+    m_scaleFactor = 1.0;
+}
+
 void CSFImage::detach() {
     if (m_skinResMgr) {
         m_skinResMgr = nullptr;
@@ -59,7 +64,7 @@ bool CSFImage::loadFromSRM(CSkinWnd *skinWnd, cstr_t resName) {
 
     auto image = m_skinResMgr->loadBitmap(resName, m_scaleFactor);
     if (image) {
-        attach(image);
+        CRawImage::attach(image);
         m_cx /= m_scaleFactor;
         m_cy /= m_scaleFactor;
     } else {
@@ -70,12 +75,19 @@ bool CSFImage::loadFromSRM(CSkinWnd *skinWnd, cstr_t resName) {
 }
 
 const RawImageDataPtr &CSFImage::getRawImageData(float scaleFactor) {
-    if (m_skinResMgr && !m_resName.empty() && m_scaleFactor != scaleFactor) {
-        m_scaleFactor = scaleFactor;
-        auto image = m_skinResMgr->loadBitmap(m_resName.c_str(), scaleFactor);
-        assert(image);
-        if (image) {
-            m_image = image;
+    if (m_scaleFactor != scaleFactor) {
+        if (m_skinResMgr && !m_resName.empty()) {
+            m_scaleFactor = scaleFactor;
+            auto image = m_skinResMgr->loadBitmap(m_resName.c_str(), scaleFactor);
+            assert(image);
+            if (image) {
+                m_image = image;
+            }
+        } else {
+            // 动态创建的图片
+            // 需要按照 scaleFactor 来缩放 image;
+            m_image = createScaledRawImageData(m_image.get(), scaleFactor / m_scaleFactor);
+            m_scaleFactor = scaleFactor;
         }
     }
 

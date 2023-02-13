@@ -1113,6 +1113,11 @@ bool CSkinListView::onHandleKeyDown(uint32_t nChar, uint32_t nFlags) {
     }
 
     bool bShift = isModifierKeyPressed(MK_SHIFT, nFlags);
+#ifdef _MAC_OS
+    bool ctrl = isModifierKeyPressed(MK_COMMAND, nFlags);
+#else
+    bool ctrl = isModifierKeyPressed(MK_CONTROL, nFlags);
+#endif
 
     if (nChar != VK_UP && nChar != VK_DOWN && nChar != VK_PRIOR && nChar != VK_NEXT
         && nChar != VK_HOME && nChar != VK_END) {
@@ -1125,10 +1130,14 @@ bool CSkinListView::onHandleKeyDown(uint32_t nChar, uint32_t nFlags) {
     switch (nChar) {
     case VK_UP:
         {
-            if (m_nEndSelRow == -1) {
-                m_nEndSelRow = m_nFirstVisibleRow;
-            } else if (m_nEndSelRow > 0) {
-                m_nEndSelRow--;
+            if (ctrl) {
+                m_nEndSelRow = 0;
+            } else {
+                if (m_nEndSelRow == -1) {
+                    m_nEndSelRow = m_nFirstVisibleRow;
+                } else if (m_nEndSelRow > 0) {
+                    m_nEndSelRow--;
+                }
             }
 
             if (bShift) {
@@ -1143,10 +1152,14 @@ bool CSkinListView::onHandleKeyDown(uint32_t nChar, uint32_t nFlags) {
         break;
     case VK_DOWN:
         {
-            if (m_nEndSelRow == -1) {
-                m_nEndSelRow = m_nFirstVisibleRow;
-            } else if (m_nEndSelRow < (int)getRowCount() - 1) {
-                m_nEndSelRow++;
+            if (ctrl) {
+                m_nEndSelRow = getRowCount() - 1;
+            } else {
+                if (m_nEndSelRow == -1) {
+                    m_nEndSelRow = m_nFirstVisibleRow;
+                } else if (m_nEndSelRow < (int)getRowCount() - 1) {
+                    m_nEndSelRow++;
+                }
             }
 
             if (bShift) {

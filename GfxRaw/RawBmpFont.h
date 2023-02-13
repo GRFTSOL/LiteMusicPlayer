@@ -57,9 +57,9 @@ public:
     // void OutlineText
     void setClipBox(CRect &rc);
 
-    void setOverlayPattern(CRawImage *imgPattern);
-    void setOverlayPattern(CRawImage *imgPattern1, CRawImage *imgPattern2, int nAlphaPattern1, int nAlphaPattern2);
-    void setOverlayPattern(CRawImage *imgPattern1, int nAlphaPattern1, const CColor &clrPattern2, int nAlphaPattern2);
+    void setOverlayPattern(const RawImageDataPtr &imgPattern);
+    void setOverlayPattern(const RawImageDataPtr &imgPattern1, const RawImageDataPtr &imgPattern2, int nAlphaPattern1, int nAlphaPattern2);
+    void setOverlayPattern(const RawImageDataPtr &imgPattern1, int nAlphaPattern1, const CColor &clrPattern2, int nAlphaPattern2);
     void useColorOverlay();
 
     void setShadowMode(ShadowMode shadowMode);
@@ -83,7 +83,7 @@ protected:
     float                       m_scaleFactor;
     float                       m_glyphHeight;
 
-    CRawImage                   *m_imgPattern1, *m_imgPattern2;
+    RawImageDataPtr             m_imgPattern1, m_imgPattern2;
     CColor                      m_clrPattern2;
     int                         m_nAlphaPattern1, m_nAlphaPattern2;
     OverlayMode                 m_overlayMode;

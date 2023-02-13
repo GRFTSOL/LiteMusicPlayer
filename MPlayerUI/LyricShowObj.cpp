@@ -323,17 +323,15 @@ void gradientFillImageHorz(RawImageData *pImage, CRect &rc, CColor clrGradient[]
     }
 }
 
-void createGradientFillImage(CRawImage &image, int nHeight, CColor clrGradient[3]) {
+RawImageDataPtr createGradientFillImage(int nHeight, CColor clrGradient[3]) {
     // Raw font will add the Margin, we need to add it too.
     nHeight += MARGIN_FONT * 2;
 
-    if (!image.isValid() || image.height() != nHeight) {
-        RawImageDataPtr data = createRawImageData(nHeight * 2, nHeight, 24);
-        image.attach(data);
-    }
+    RawImageDataPtr image = createRawImageData(nHeight * 2, nHeight, 24);
 
-    CRect rc(0, 0, image.width(), image.height());
-    gradientFillImageVert(image.getHandle().get(), rc, clrGradient, 3);
+    CRect rc(0, 0, image->width, image->height);
+    gradientFillImageVert(image.get(), rc, clrGradient, 3);
+    return image;
 }
 
 IdToString g_idsLyrDisplayOpt[] = {
@@ -416,7 +414,7 @@ void loadLyrOverlayBlendingSettings(cstr_t szSectName, CLyricShowObj::TextOverla
             }
 
             if (image) {
-                tob.imgPattern.attach(image);
+                tob.imgPattern = image;
             }
         }
     } else if (tob.obm == OBM_GRADIENT_COLOR) {
@@ -424,13 +422,13 @@ void loadLyrOverlayBlendingSettings(cstr_t szSectName, CLyricShowObj::TextOverla
         profileGetColorValue(tob.clr[CLyricShowObj::TCI_GRADIENT2], szSectName, fieldName[CLyricShowObj::TCI_GRADIENT2]);
         profileGetColorValue(tob.clr[CLyricShowObj::TCI_GRADIENT3], szSectName, fieldName[CLyricShowObj::TCI_GRADIENT3]);
 
-        createGradientFillImage(tob.imgPattern, nGradientPatternHeight, tob.clr + CLyricShowObj::TCI_GRADIENT1);
+        tob.imgPattern = createGradientFillImage(nGradientPatternHeight, tob.clr + CLyricShowObj::TCI_GRADIENT1);
     } else {
-        tob.imgPattern.detach();
+        tob.imgPattern = nullptr;
         tob.obm = OBM_COLOR;
     }
 
-    if (!tob.imgPattern.isValid()) {
+    if (!tob.imgPattern) {
         tob.obm = OBM_COLOR;
     }
 }
@@ -438,26 +436,21 @@ void loadLyrOverlayBlendingSettings(cstr_t szSectName, CLyricShowObj::TextOverla
 void createLyrOverlayBlendingPattern(CLyricShowObj::TextOverlayBlending &tob, int nGradientPatternHeight) {
     assert(nGradientPatternHeight > 0 && nGradientPatternHeight < 300);
 
+    tob.imgPattern = nullptr;
     if (tob.obm == OBM_PATTERN) {
-        tob.imgPattern.detach();
-
         if (!tob.strPatternFile.empty()) {
             RawImageDataPtr image = loadRawImageDataPatternFile(tob.strPatternFile.c_str());
             if (image && image->bitCount != 24) {
                 image = convertTo24BppRawImage(image);
             }
 
-            if (image) {
-                tob.imgPattern.attach(image);
-            }
+            tob.imgPattern = image;
         }
     } else if (tob.obm == OBM_GRADIENT_COLOR) {
-        createGradientFillImage(tob.imgPattern, nGradientPatternHeight, tob.clr + CLyricShowObj::TCI_GRADIENT1);
-    } else {
-        tob.imgPattern.detach();
+        tob.imgPattern = createGradientFillImage(nGradientPatternHeight, tob.clr + CLyricShowObj::TCI_GRADIENT1);
     }
 
-    if (!tob.imgPattern.isValid()) {
+    if (!tob.imgPattern) {
         tob.obm = OBM_COLOR;
     }
 }
@@ -798,14 +791,14 @@ bool CLyricShowObj::drawRow(CRawGraph *canvas, LyricsLine *pLyricRow, int x, int
                     m_font.useColorOverlay();
                     alphaBlendColor(getLowlightColor(), getHighlightColor(), nAlpha, clrTxt);
                 } else {
-                    m_font.setOverlayPattern(&m_tobLowlight.imgPattern, 255 - nAlpha, m_tobHilight.clr[TCI_FILL], nAlpha);
+                    m_font.setOverlayPattern(m_tobLowlight.imgPattern, 255 - nAlpha, m_tobHilight.clr[TCI_FILL], nAlpha);
                 }
             } else {
                 // hilight is image
                 if (m_tobLowlight.obm == OBM_COLOR) {
-                    m_font.setOverlayPattern(&m_tobHilight.imgPattern, nAlpha, m_tobLowlight.clr[TCI_FILL], 255 - nAlpha);
+                    m_font.setOverlayPattern(m_tobHilight.imgPattern, nAlpha, m_tobLowlight.clr[TCI_FILL], 255 - nAlpha);
                 } else {
-                    m_font.setOverlayPattern(&m_tobHilight.imgPattern, &m_tobLowlight.imgPattern, nAlpha, 255 - nAlpha);
+                    m_font.setOverlayPattern(m_tobHilight.imgPattern, m_tobLowlight.imgPattern, nAlpha, 255 - nAlpha);
                 }
             }
         }
@@ -819,7 +812,7 @@ bool CLyricShowObj::drawRow(CRawGraph *canvas, LyricsLine *pLyricRow, int x, int
                 m_font.useColorOverlay();
                 alphaBlendColor(getHighlightColor(), m_clrBg, nAlpha, clrTxt);
             } else {
-                m_font.setOverlayPattern(&m_tobHilight.imgPattern, nAlpha, m_clrBg, 255 - nAlpha);
+                m_font.setOverlayPattern(m_tobHilight.imgPattern, nAlpha, m_clrBg, 255 - nAlpha);
             }
         }
         break;
@@ -830,7 +823,7 @@ bool CLyricShowObj::drawRow(CRawGraph *canvas, LyricsLine *pLyricRow, int x, int
                 m_font.useColorOverlay();
                 alphaBlendColor(m_clrBg, getLowlightColor(), nAlpha, clrTxt);
             } else {
-                m_font.setOverlayPattern(&m_tobLowlight.imgPattern, nAlpha, m_clrBg, 255 - nAlpha);
+                m_font.setOverlayPattern(m_tobLowlight.imgPattern, nAlpha, m_clrBg, 255 - nAlpha);
             }
         }
         break;
@@ -841,7 +834,7 @@ bool CLyricShowObj::drawRow(CRawGraph *canvas, LyricsLine *pLyricRow, int x, int
                 m_font.useColorOverlay();
                 clrTxt = getHighlightColor();
             } else {
-                m_font.setOverlayPattern(&m_tobHilight.imgPattern);
+                m_font.setOverlayPattern(m_tobHilight.imgPattern);
             }
         }
         break;
@@ -852,7 +845,7 @@ bool CLyricShowObj::drawRow(CRawGraph *canvas, LyricsLine *pLyricRow, int x, int
                 m_font.useColorOverlay();
                 clrTxt = getLowlightColor();
             } else {
-                m_font.setOverlayPattern(&m_tobLowlight.imgPattern);
+                m_font.setOverlayPattern(m_tobLowlight.imgPattern);
             }
         }
         break;
@@ -967,7 +960,7 @@ void CLyricShowObj::drawRowKaraoke(CRawGraph    *canvas, LyricsLine *pLyricRow, 
             if (m_tobHilight.obm == OBM_COLOR) {
                 m_font.useColorOverlay();
             } else {
-                m_font.setOverlayPattern(&m_tobHilight.imgPattern);
+                m_font.setOverlayPattern(m_tobHilight.imgPattern);
             }
 
             if (isOutlineLyrics()) {
@@ -1019,7 +1012,7 @@ void CLyricShowObj::drawRowKaraoke(CRawGraph    *canvas, LyricsLine *pLyricRow, 
             if (m_tobLowlight.obm == OBM_COLOR) {
                 m_font.useColorOverlay();
             } else {
-                m_font.setOverlayPattern(&m_tobLowlight.imgPattern);
+                m_font.setOverlayPattern(m_tobLowlight.imgPattern);
             }
 
             if (isOutlineLyrics()) {
@@ -1036,7 +1029,7 @@ void CLyricShowObj::drawRowKaraoke(CRawGraph    *canvas, LyricsLine *pLyricRow, 
         if (m_tobHilight.obm == OBM_COLOR) {
             m_font.useColorOverlay();
         } else {
-            m_font.setOverlayPattern(&m_tobHilight.imgPattern);
+            m_font.setOverlayPattern(m_tobHilight.imgPattern);
         }
 
         if (isOutlineLyrics()) {
@@ -1055,7 +1048,7 @@ void CLyricShowObj::drawRowKaraoke(CRawGraph    *canvas, LyricsLine *pLyricRow, 
     if (m_tobLowlight.obm == OBM_COLOR) {
         m_font.useColorOverlay();
     } else {
-        m_font.setOverlayPattern(&m_tobLowlight.imgPattern);
+        m_font.setOverlayPattern(m_tobLowlight.imgPattern);
     }
 
     // 显示时间未到的歌词段
@@ -1425,12 +1418,12 @@ void CLyricShowObj::onAdjustHue(float hue, float saturation, float luminance) {
         adjustColorHue(m_tobLowlight.clr[i], hue);
     }
 
-    if (m_tobHilight.imgPattern.isValid()) {
-        adjustImageHue(m_tobHilight.imgPattern.getHandle().get(), hue);
+    if (m_tobHilight.imgPattern) {
+        adjustImageHue(m_tobHilight.imgPattern.get(), hue);
     }
 
-    if (m_tobLowlight.imgPattern.isValid()) {
-        adjustImageHue(m_tobLowlight.imgPattern.getHandle().get(), hue);
+    if (m_tobLowlight.imgPattern) {
+        adjustImageHue(m_tobLowlight.imgPattern.get(), hue);
     }
 }
 
@@ -1809,7 +1802,8 @@ bool CLyricShowObj::setProperty(cstr_t szProperty, cstr_t szValue) {
             m_font.create(info, m_pSkin->getScaleFactor());
             m_nFontHeight = m_font.getHeight();
 
-            if (m_tobHilight.imgPattern.height() != getPatternFontHeight()) {
+            if (m_tobHilight.imgPattern &&
+                    m_tobHilight.imgPattern->height != getPatternFontHeight()) {
                 if (m_hue == 0) {
                     loadLyrOverlaySettings();
                 } else {
@@ -1875,9 +1869,7 @@ bool CLyricShowObj::onLyrDisplaySettings(cstr_t szProperty, cstr_t szValue) {
                 image = convertTo24BppRawImage(image);
             }
 
-            if (image) {
-                m_tobHilight.imgPattern.attach(image);
-            }
+            m_tobHilight.imgPattern = image;
         }
     }
     //
@@ -1892,9 +1884,7 @@ bool CLyricShowObj::onLyrDisplaySettings(cstr_t szProperty, cstr_t szValue) {
                 image = convertTo24BppRawImage(image);
             }
 
-            if (image) {
-                m_tobLowlight.imgPattern.attach(image);
-            }
+            m_tobLowlight.imgPattern = image;
         }
     } else if (isPropertyName(szProperty, "enableAdjustVertAlign")) {
         m_bEnableAdjustVertAlignUser = isTRUE(szValue);
@@ -1952,6 +1942,10 @@ void CLyricShowObj::updateBgImage() {
     if (m_bUseBgImg || m_bUseAlbumArtAsBg) {
         loadNextBgImage();
     }
+}
+
+int CLyricShowObj::getPatternFontHeight() const {
+    return (m_nFontHeight + MARGIN_FONT * 2) * m_pSkin->getScaleFactor();
 }
 
 void CLyricShowObj::setLyrAlign(cstr_t szValue) {

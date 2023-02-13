@@ -190,7 +190,7 @@ void CMPlaylistCtrl::onCreate() {
     assert(getColumnCount() == 0);
     addColumn(_TLT("Index"), 40, CColHeader::TYPE_TEXT, false, DT_CENTER);
     addColumn(_TLT("Media Files"), 130, CColHeader::TYPE_TEXT_EX, false, DT_CENTER);
-    addColumn(_TLT("Duration"), 50, CColHeader::TYPE_TEXT, false, DT_CENTER);
+    addColumn(_TLT("Duration"), 70, CColHeader::TYPE_TEXT, false, DT_CENTER);
 
     registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_CUR_PLAYLIST_CHANGED, ET_PLAYER_CUR_MEDIA_CHANGED);
 
@@ -277,13 +277,9 @@ bool CMPlaylistCtrl::onKeyDown(uint32_t code, uint32_t flags) {
 }
 
 bool CMPlaylistCtrl::onHandleKeyDown(uint32_t code, uint32_t flags) {
-    if (CSkinListCtrl::onHandleKeyDown(code, flags)) {
-        return true;
-    }
-
     if (code == VK_RETURN) {
         playItem(getNextSelectedItem(-1));
-    } else if (code == VK_ESCAPE) {
+    } else if (code == VK_ESCAPE && m_searchResults) {
         if (m_editorSearch) {
             m_editorSearch->setText("");
         }
@@ -293,13 +289,11 @@ bool CMPlaylistCtrl::onHandleKeyDown(uint32_t code, uint32_t flags) {
         updatePlaylist(true);
     } else if (code == VK_DELETE) {
         deleteSelectedItems();
-    } else if (code == VK_UP || code == VK_DOWN) {
-        bool ctrl = isModifierKeyPressed(MK_CONTROL, flags);
-        if (ctrl) {
-            offsetAllSelectedItems(code == VK_DOWN);
-        }
+    } else if ((code == VK_UP || code == VK_DOWN) &&
+               isModifierKeyPressed(MK_CONTROL, flags)) {
+        offsetAllSelectedItems(code == VK_DOWN);
     } else {
-        return false;
+        return CSkinListCtrl::onHandleKeyDown(code, flags);
     }
 
     return true;
@@ -497,7 +491,19 @@ void CMPlaylistCtrl::onCurrentPlaylistEvent(CEventPlaylistChanged *pEventPlaylis
 void CMPlaylistCtrl::setItemMediaDuration(int index, int seconds) {
     if (seconds > 0) {
         char buf[64];
-        sprintf(buf, "%d:%02d", seconds / 60, seconds % 60);
+
+        int minutes = seconds / 60; seconds %= 60;
+        if (minutes < 1000) {
+            sprintf(buf, "%d:%02d", seconds / 60, seconds % 60);
+        } else {
+            int hours = minutes / 60; minutes %= 60;
+            int days = hours / 24; hours %= 24;
+            if (days > 0) {
+                sprintf(buf, "%dD%dH", days, hours);
+            } else {
+                sprintf(buf, "%dH%dM", hours, minutes);
+            }
+        }
         setItemText(index, 2, buf, false);
     }
 }

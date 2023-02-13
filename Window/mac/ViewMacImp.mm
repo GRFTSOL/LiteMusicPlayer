@@ -93,7 +93,7 @@
 
 - (void) keyDown:(NSEvent *)theEvent {
     const uint32_t NEEDED_FLAGS = NSEventModifierFlagShift | NSEventModifierFlagControl
-        | NSEventModifierFlagOption | NSEventModifierFlagCommand;
+        | NSEventModifierFlagOption | NSEventModifierFlagCommand | NSEventModifierFlagFunction;
 
     uint32_t modifierFlags = [theEvent modifierFlags] & NEEDED_FLAGS;
     int code = [theEvent keyCode];

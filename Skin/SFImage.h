@@ -20,6 +20,7 @@ public:
 
     bool loadFromSRM(CSkinWnd *skinWnd, cstr_t resName);
 
+    virtual void attach(const RawImageDataPtr &image) override;
     virtual void detach() override;
 
     virtual const RawImageDataPtr &getRawImageData(float scaleFactor) override;

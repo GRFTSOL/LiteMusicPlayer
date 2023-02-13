@@ -1,33 +1,37 @@
-#include "MPlayerApp.h"
-#include "MLCmd.h"
-#include "MPHotkey.h"
+#import <Carbon/Carbon.h>
+#import "MPlayerApp.h"
+#import "MLCmd.h"
+#import "MPHotkey.h"
 
 
-/*
-// for pocket pc
+OSStatus hotKeyHandler(EventHandlerCallRef nextHandler, EventRef event, void *userData) {
+    EventHotKeyID eventHotkeyID;
+    GetEventParameter(event, kEventParamDirectObject, typeEventHotKeyID, NULL, sizeof(eventHotkeyID), NULL, &eventHotkeyID);
 
-MLCmdAccKey        g_mlCmdAccKey[] = 
-{
-    { CMD_PLAYPAUSE, VK_RETURN, 0, VK_RETURN, 0 },
-    { CMD_PLAYPAUSE, 0, 0, 0, 0 },
-    { CMD_STOP, 0, 0, 0 },
-    { CMD_PLAY, 0, 0, 0 },
-    { CMD_PAUSE, 0, 0, 0 },
-    { CMD_PREVIOUS, VK_LEFT, 0, VK_LEFT, 0 },
-    { CMD_NEXT, VK_RIGHT, 0, VK_RIGHT, 0 },
-    { CMD_VOL_INC, VK_UP, 0, VK_UP, 0 },
-    { CMD_VOL_DEC, VK_DOWN, 0, VK_DOWN, 0 },
-    { CMD_BACKWARD, 0, 0, 0, 0 },
-    { CMD_FORWARD, 0, 0, 0, 0 },
-    { CMD_MUTE, '#', 0, '#', 0 },
-    { CMD_BACKWARD_LYRICS, 0, 0 , 0, 0 },
-    { CMD_FORWARD_LYRICS, 0, 0, 0, 0 },
-    { CMD_TOGGLE_SCREEEN, 0, 0, 0, 0 },
-    { CMD_SHUFFLE, 0, 0, 0, 0 },
-    { CMD_LOOP, 0, 0, 0, 0 },
-};
+    DBG_LOG1("hotKeyHandler: %d\n", eventHotkeyID.id);
 
-int                g_mlCmdAccKeyCount = CountOf(g_mlCmdAccKey) - 1;*/
+    CMPHotkey *hotKey = (CMPHotkey *) userData;
+    hotKey->onHotKey(eventHotkeyID.id, 0, 0);
+    return noErr;
+}
+
+
+void setupGlobalHotkey() {
+    EventHandlerUPP hotKeyFunction = NewEventHandlerUPP(hotKeyHandler);
+    EventTypeSpec eventType;
+    eventType.eventClass = kEventClassKeyboard;
+    eventType.eventKind = kEventHotKeyReleased;
+
+    InstallApplicationEventHandler(hotKeyFunction, 1, &eventType, nullptr, NULL);
+
+    UInt32 keyCode = VK_F10;
+    EventHotKeyRef theRef = NULL;
+    EventHotKeyID keyID;
+    keyID.signature = 'FOO '; //arbitrary string
+    keyID.id = 1;
+
+    RegisterEventHotKey(keyCode, 0, keyID, GetApplicationEventTarget(), 0, &theRef);
+}
 
 
 int g_hcPlayback[] = { CMD_PLAY, CMD_PLAYPAUSE, CMD_STOP, CMD_PREVIOUS, CMD_NEXT, CMD_FORWARD, CMD_BACKWARD, CMD_J_PREV_LINE, CMD_J_NEXT_LINE, 0 };
@@ -116,6 +120,13 @@ CMPHotkey::~CMPHotkey() {
 
 void CMPHotkey::init() {
     m_bGlobalHotkeyEnabled = g_profile.getBool("enableGlobalHotkey", false);
+
+    EventHandlerUPP hotKeyFunction = NewEventHandlerUPP(hotKeyHandler);
+    EventTypeSpec eventType;
+    eventType.eventClass = kEventClassKeyboard;
+    eventType.eventKind = kEventHotKeyReleased;
+
+    InstallApplicationEventHandler(hotKeyFunction, 1, &eventType, this, NULL);
 
     if (loadSettings() != ERR_OK) {
         // load default
@@ -319,7 +330,7 @@ bool CMPHotkey::isDefaultKey(int cmd) {
     for (i = 0; i < CountOf(g_vDefAccKey); i++) {
         if (g_vDefAccKey[i].cmd == cmd) {
             int nId = makeHotkeyID(g_vDefAccKey[i].fsModifiers, g_vDefAccKey[i].button);
-            std::set<int>::iterator it = setKeys.find(nId);
+            auto it = setKeys.find(nId);
             if (it != setKeys.end()) {
                 setKeys.erase(it);
             } else {
@@ -485,12 +496,22 @@ void CMPHotkey::registerAllGlobalHotKeys() {
         CmdAccKey &cmdKey = m_vAccKey[i];
 
         cmdKey.idHotKey = makeHotkeyID(cmdKey.fsModifiers, cmdKey.button);
+        cmdKey.hotKeyRef = NULL;
+
+        UInt32 keyCode = VK_F10;
+        EventHotKeyID keyID;
+        keyID.signature = 'DHPL';
+        keyID.id = cmdKey.idHotKey;
+
+        RegisterEventHotKey(keyCode, 0, keyID, GetApplicationEventTarget(), 0, &cmdKey.hotKeyRef);
     }
 }
 
 void CMPHotkey::unregisterAllGlobalHotKeys() {
     for (int i = 0; i < (int)m_vAccKey.size(); i++) {
-        // CmdAccKey        &cmdKey = m_vAccKey[i];
-
+        CmdAccKey &cmdKey = m_vAccKey[i];
+        if (cmdKey.hotKeyRef != nullptr) {
+            UnregisterEventHotKey(cmdKey.hotKeyRef);
+        }
     }
 }

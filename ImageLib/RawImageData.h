@@ -138,24 +138,19 @@ RawImageDataPtr loadRawImageDataFromMem(const void *buf, int nSize);
 
 RawImageDataPtr convertTo24BppRawImage(const RawImageDataPtr &src);
 
-RawImageDataPtr duplicateRawImage(RawImageData * src);
+RawImageDataPtr duplicateRawImage(RawImageData *src);
 
 void rawImageBGR24Set(RawImageData *image, uint8_t r, uint8_t g, uint8_t b);
-
 void rawImageBGRA32Set(RawImageData *image, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-
 void rawImageSet(RawImageData *image, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
 void adjustImageHue(RawImageData *pImage, float hueOffset);
-
 void adjustImageHue(RawImageData *pImage, float hueOffset, float saturationRatio, float luminanceRatio);
 
 void adjustColorHue(COLORREF &clr, float hueOffset);
-
 void adjustColorHue(COLORREF &clr, float hueOffset, float saturationRatio, float luminanceRatio);
 
 COLORREF HLSToRGB(float hue, float saturation, float luminance);
-
 void RGBToHLS(COLORREF clr, float &hue, float &saturation, float &luminance);
 
 #endif // !defined(ImageLib_RawImageData_h)

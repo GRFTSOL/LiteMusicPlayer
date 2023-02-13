@@ -546,7 +546,7 @@ inline void getDrawGlyphClipPos(int &xDst, int &yDst, int &xDstEnd, int &yDstEnd
 // graph is 32 bpp, glyph is 32 bpp
 // pattern is 24 bpp.
 void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rcClip,
-    Glyph *pGlyph, int nAlphaGlyph, CRawImage *pattern)
+    Glyph *pGlyph, int nAlphaGlyph, RawImageData *imgPattern)
 {
     xDst -= MARGIN_FONT;
     yDst -= MARGIN_FONT;
@@ -554,7 +554,6 @@ void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rc
     int xDstEnd, yDstEnd, xSrc, ySrc;
     getDrawGlyphClipPos(xDst, yDst, xDstEnd, yDstEnd, xSrc, ySrc, pGlyph, rcClip);
 
-    RawImageDataPtr imgPattern = pattern->getHandle();
     assert(imgPattern->bitCount == 24);
 
     int xPtStart = xDst % imgPattern->width;
@@ -618,7 +617,7 @@ void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rc
 // graph is 32 bpp, glyph is 32 bpp
 // pattern is 24 bpp.
 void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rcClip,
-    Glyph *pGlyph, int nAlphaGlyph, CRawImage *pattern, int nAlphaPattern,
+    Glyph *pGlyph, int nAlphaGlyph, RawImageData *imgPattern, int nAlphaPattern,
     const CColor &clrPt, int nAlphaClrPt)
 {
     uint8_t pclrPt[3];
@@ -633,7 +632,6 @@ void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rc
     int xDstEnd, yDstEnd, xSrc, ySrc;
     getDrawGlyphClipPos(xDst, yDst, xDstEnd, yDstEnd, xSrc, ySrc, pGlyph, rcClip);
 
-    auto imgPattern = pattern->getHandle();
     assert(imgPattern->bitCount == 24);
 
     int xPtStart = xDst % imgPattern->width;
@@ -689,8 +687,7 @@ void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rc
 
 // graph is 32 bpp, glyph is 32 bpp
 // pattern is 24 bpp.
-void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rcClip, Glyph *pGlyph, int nAlphaGlyph,
-    CRawImage *pattern1, int nAlphaPt1, CRawImage *pattern2, int nAlphaPt2)
+void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rcClip, Glyph *pGlyph, int nAlphaGlyph, RawImageData *imgPattern1, int nAlphaPt1, RawImageData *imgPattern2, int nAlphaPt2)
 {
     xDst -= MARGIN_FONT;
     yDst -= MARGIN_FONT;
@@ -699,7 +696,6 @@ void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rc
     getDrawGlyphClipPos(xDst, yDst, xDstEnd, yDstEnd, xSrc, ySrc, pGlyph, rcClip);
 
     // pattern 1
-    auto imgPattern1 = pattern1->getHandle();
     assert(imgPattern1->bitCount == 24);
 
     int xPt1Start = xDst % imgPattern1->width;
@@ -709,7 +705,6 @@ void drawGlyphRGBA32(agg::rendering_buffer &graph, int xDst, int yDst, CRect &rc
     }
 
     // pattern 2
-    auto imgPattern2 = pattern2->getHandle();
     assert(imgPattern2->bitCount == 24);
 
     int xPt2Start = xDst % imgPattern2->width;
@@ -894,13 +889,13 @@ bool CRawBmpFont::drawTextClip(CRawGraph *canvas, float x, float y, float width,
         }
 
         if (m_overlayMode == OM_PATTERN) {
-            drawGlyphRGBA32(bufGraph, x, y, rcClip, glyph, textAlpha, m_imgPattern1);
+            drawGlyphRGBA32(bufGraph, x, y, rcClip, glyph, textAlpha, m_imgPattern1.get());
         } else if (m_overlayMode == OM_COLOR) {
             drawGlyphRGBA32(bufGraph, x, y, rcClip, false, glyph, textAlpha, clrText, bDrawAlphaChannel);
         } else if (m_overlayMode == OM_DUAL_PATTERN) {
-            drawGlyphRGBA32(bufGraph, x, y, rcClip, glyph, textAlpha, m_imgPattern1, m_nAlphaPattern1, m_imgPattern2, m_nAlphaPattern2);
+            drawGlyphRGBA32(bufGraph, x, y, rcClip, glyph, textAlpha, m_imgPattern1.get(), m_nAlphaPattern1, m_imgPattern2.get(), m_nAlphaPattern2);
         } else if (m_overlayMode == OM_PATTERN_COLOR) {
-            drawGlyphRGBA32(bufGraph, x, y, rcClip, glyph, textAlpha, m_imgPattern1, m_nAlphaPattern1, m_clrPattern2, m_nAlphaPattern2);
+            drawGlyphRGBA32(bufGraph, x, y, rcClip, glyph, textAlpha, m_imgPattern1.get(), m_nAlphaPattern1, m_clrPattern2, m_nAlphaPattern2);
         }
 
         x += glyph->nWidth;
@@ -1030,13 +1025,13 @@ bool CRawBmpFont::outlinedDrawTextClip(CRawGraph *canvas, float x, float y, floa
             // Draw inner text
             //
             if (m_overlayMode == OM_PATTERN) {
-                drawGlyphRGBA32(bufGraph, x, y, rcClip, glyph, textAlpha, m_imgPattern1);
+                drawGlyphRGBA32(bufGraph, x, y, rcClip, glyph, textAlpha, m_imgPattern1.get());
             } else if (m_overlayMode == OM_COLOR) {
                 drawGlyphRGBA32(bufGraph, x, y, rcClip, false, glyph, textAlpha, clrText, bDrawAlphaChannel);
             } else if (m_overlayMode == OM_DUAL_PATTERN) {
-                drawGlyphRGBA32(bufGraph, x, y, rcClip, glyph, textAlpha, m_imgPattern1, m_nAlphaPattern1, m_imgPattern2, m_nAlphaPattern2);
+                drawGlyphRGBA32(bufGraph, x, y, rcClip, glyph, textAlpha, m_imgPattern1.get(), m_nAlphaPattern1, m_imgPattern2.get(), m_nAlphaPattern2);
             } else if (m_overlayMode == OM_PATTERN_COLOR) {
-                drawGlyphRGBA32(bufGraph, x, y, rcClip, glyph, textAlpha, m_imgPattern1, m_nAlphaPattern1, m_clrPattern2, m_nAlphaPattern2);
+                drawGlyphRGBA32(bufGraph, x, y, rcClip, glyph, textAlpha, m_imgPattern1.get(), m_nAlphaPattern1, m_clrPattern2, m_nAlphaPattern2);
             }
         }
 
@@ -1045,14 +1040,14 @@ bool CRawBmpFont::outlinedDrawTextClip(CRawGraph *canvas, float x, float y, floa
     return true;
 }
 
-void CRawBmpFont::setOverlayPattern(CRawImage *imgPattern) {
+void CRawBmpFont::setOverlayPattern(const RawImageDataPtr &imgPattern) {
     assert(imgPattern);
     m_imgPattern1 = imgPattern;
     m_overlayMode = OM_PATTERN;
     m_imgPattern2 = nullptr;
 }
 
-void CRawBmpFont::setOverlayPattern(CRawImage *imgPattern1, CRawImage *imgPattern2, int nAlphaPattern1, int nAlphaPattern2) {
+void CRawBmpFont::setOverlayPattern(const RawImageDataPtr &imgPattern1, const RawImageDataPtr &imgPattern2, int nAlphaPattern1, int nAlphaPattern2) {
     assert(imgPattern1);
     assert(imgPattern2);
     m_imgPattern1 = imgPattern1;
@@ -1062,7 +1057,7 @@ void CRawBmpFont::setOverlayPattern(CRawImage *imgPattern1, CRawImage *imgPatter
     m_overlayMode = OM_DUAL_PATTERN;
 }
 
-void CRawBmpFont::setOverlayPattern(CRawImage *imgPattern1, int nAlphaPattern1, const CColor &clrPattern2, int nAlphaPattern2) {
+void CRawBmpFont::setOverlayPattern(const RawImageDataPtr &imgPattern1, int nAlphaPattern1, const CColor &clrPattern2, int nAlphaPattern2) {
     assert(imgPattern1);
     m_imgPattern1 = imgPattern1;
     m_clrPattern2 = clrPattern2;

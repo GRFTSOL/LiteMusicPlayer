@@ -2,7 +2,7 @@
 #include "LyrDisplayClrListWnd.h"
 
 
-void createGradientFillImage(CRawImage &image, int nHeight, CColor clrGradient[3]);
+RawImageDataPtr createGradientFillImage(int nHeight, CColor clrGradient[3]);
 
 string getPatternDir() {
     string strPatternDir = getAppResourceDir();
@@ -133,10 +133,9 @@ void CLyrDisplayClrListWnd::selectCurrentSetting() {
         }
     } else if (tob.obm == OBM_PATTERN) {
         nToSelect = findPattern(tob.strPatternFile.c_str());
-        if (nToSelect == -1 && tob.imgPattern.isValid()) {
-            addImage(tob.imgPattern.getHandle());
+        if (nToSelect == -1 && tob.imgPattern) {
+            addImage(tob.imgPattern);
             m_vFontClr.push_back(FontClrOpt(tob.strPatternFile.c_str()));
-            tob.imgPattern.detach();
             nToSelect = (int)m_vFontClr.size() - 1;
         }
     }
@@ -192,18 +191,15 @@ void CLyrDisplayClrListWnd::addGradientColors() {
 }
 
 void CLyrDisplayClrListWnd::addGradientColor(COLORREF clr0, COLORREF clr1, COLORREF clr2) {
-    CRawImage image;
     CColor clr[3];
 
     clr[0].set(clr0);
     clr[1].set(clr1);
     clr[2].set(clr2);
 
-    createGradientFillImage(image, HEIGHT_COLOR, clr);
-
-    if (image.isValid()) {
-        addImage(image.getHandle());
-        image.detach();
+    auto image = createGradientFillImage(HEIGHT_COLOR, clr);
+    if (image) {
+        addImage(image);
 
         m_vFontClr.push_back(FontClrOpt(clr0, clr1, clr2));
     }

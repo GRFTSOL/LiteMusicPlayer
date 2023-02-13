@@ -387,17 +387,16 @@ protected:
                 tob.clr[CLyricShowObj::TCI_FILL].g(),
                 tob.clr[CLyricShowObj::TCI_FILL].b(),
                 tob.clr[CLyricShowObj::TCI_FILL].getAlpha());
-            tob.imgPattern.attach(image);
+            tob.imgPattern = image;
         }
 
-        if (tob.imgPattern.isValid()) {
+        if (tob.imgPattern) {
             CSkinImageButton *pButton;
             pButton = (CSkinImageButton*)getUIObjectById(
                 bHilight ? CID_DS_CLR_HIGH : CID_DS_CLR_LOW, CSkinImageButton::className());
 
             if (pButton) {
-                pButton->setContentImage(tob.imgPattern.getHandle());
-                tob.imgPattern.detach();
+                pButton->setContentImage(tob.imgPattern);
             }
         }
     }

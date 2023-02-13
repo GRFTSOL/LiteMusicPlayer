@@ -226,22 +226,20 @@ void CMediaAlbumArtCtrl::createAlbumArtImage(RawImageDataPtr srcImageData) {
 
     auto scaleFactor = m_pSkin->getScaleFactor();
 
-    auto imageData = m_img.getRawImageData(scaleFactor);
-    m_img.attach(imageData);
-
-    // m_img, frameMask 是和 scaleFactor 无关的
+    // img, frameMask 是和 scaleFactor 无关的
+    CRawImage img(m_img.getRawImageData(scaleFactor));
     CRawImage frameMask(m_frmMask.getRawImageData(scaleFactor));
 
     // 一般来说 mask 比 显示的要小一圈.
     int widthMask = frameMask.width(), heightMask = frameMask.height();
-    int leftMask = (m_img.width() - widthMask) / 2, topMask = (m_img.height() - heightMask) / 2;
+    int leftMask = (img.width() - widthMask) / 2, topMask = (img.height() - heightMask) / 2;
 
     // 缩放和截断 srcImageData 到 widthMask, heightMask 的大小.
     CRawImage imageAlbumArt(createScaleImage(srcImageData, widthMask, heightMask));
 
     frameMask.blt(&imageAlbumArt, 0, 0, widthMask, heightMask, 0, 0, BPM_MULTIPLY);
 
-    imageAlbumArt.blt(&m_img, leftMask, topMask, widthMask, heightMask, 0, 0, BPM_BLEND);
+    imageAlbumArt.blt(&img, leftMask, topMask, widthMask, heightMask, 0, 0, BPM_BLEND);
 }
 
 void CMediaAlbumArtCtrl::resizeAlbumArt() {

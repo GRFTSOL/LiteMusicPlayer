@@ -106,7 +106,7 @@ bool CSkinMenuBar::onLButtonDown(uint32_t nFlags, CPoint point) {
         }
 
         onMenuItemSelected(index);
-        return true;
+        return false;
     }
 
     if (m_vSubMenus[index].isSubmenu) {

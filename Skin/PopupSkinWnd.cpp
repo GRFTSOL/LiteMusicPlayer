@@ -13,6 +13,7 @@ CPopupSkinWnd::~CPopupSkinWnd() {
 
 int CPopupSkinWnd::create(CSkinFactory *pSkinFactory, cstr_t szSkinWndName,
     Window *pWndParent, IPopupSkinWndNotify *pNotify, const CRect &rc) {
+    m_rcBoundBox = rc;
 
     SkinWndStartupInfo skinWndStartupInfo("ZPMenu", "menu", szSkinWndName, pWndParent);
     int nRet = CSkinWnd::create(skinWndStartupInfo, pSkinFactory, true, true);

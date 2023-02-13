@@ -21,8 +21,8 @@ public:
         uint16_t                    fsModifiers;
         uint16_t                    idHotKey;
     };
-    typedef vector<CmdAccKey>        V_ACCKEY;
-    typedef V_ACCKEY::iterator        iterator;
+    typedef vector<CmdAccKey>       VecCmAccKeys;
+    typedef VecCmAccKeys::iterator  iterator;
 
 public:
     CMPHotkey();
@@ -67,7 +67,7 @@ protected:
 
 protected:
     bool                        m_bEnabled;
-    V_ACCKEY                    m_vAccKey;
+    VecCmAccKeys                m_vAccKey;
 
 };
 

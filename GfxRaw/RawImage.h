@@ -14,6 +14,8 @@ bool bltRawImage(RawImageData *pImageDst, const CRect &rcDst, RawImageData *pIma
 
 void fillRect(RawImageData *pImage, int x, int y, int xMax, int yMax, const CColor &clrFill, BlendPixMode bpm, int nOpacityFill);
 
+RawImageDataPtr createScaledRawImageData(RawImageData *src, float scale);
+
 /**
  * CRawImage 将图片文件加载到内存中，然后可绘制到 CRawGraph 或者其他的 CRawImage 中.
  *

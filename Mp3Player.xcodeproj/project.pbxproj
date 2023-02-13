@@ -155,7 +155,7 @@
 		0EB710B927773BB6006929F1 /* DlgSearchLyrics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7103127773BB4006929F1 /* DlgSearchLyrics.cpp */; };
 		0EB710BA27773BB6006929F1 /* SkinFilterCtrl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7103227773BB4006929F1 /* SkinFilterCtrl.cpp */; };
 		0EB710BD27773BB6006929F1 /* LyricsOutPluginMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7103D27773BB4006929F1 /* LyricsOutPluginMgr.cpp */; };
-		0EB710BE27773BB6006929F1 /* MPHotkey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7103F27773BB4006929F1 /* MPHotkey.cpp */; };
+		0EB710BE27773BB6006929F1 /* MPHotkey.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7103F27773BB4006929F1 /* MPHotkey.mm */; };
 		0EB710BF27773BB6006929F1 /* MLTrayIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7104127773BB4006929F1 /* MLTrayIcon.cpp */; };
 		0EB710C027773BB6006929F1 /* MPlayerApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7104327773BB4006929F1 /* MPlayerApp.cpp */; };
 		0EB710C227773BB6006929F1 /* MPSkinMainWndMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7104527773BB4006929F1 /* MPSkinMainWndMac.cpp */; };
@@ -312,6 +312,7 @@
 		C05287722965A90E009BD885 /* RawGlyphSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05287702965A90E009BD885 /* RawGlyphSet.cpp */; };
 		C055400529978E390057629E /* HeadPhoneWatch.mm in Sources */ = {isa = PBXBuildFile; fileRef = C055400329978E390057629E /* HeadPhoneWatch.mm */; };
 		C0554007299791EA0057629E /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0554006299791EA0057629E /* CoreAudio.framework */; };
+		C055400929991C0E0057629E /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C055400829991C0E0057629E /* Carbon.framework */; };
 		C05D73DF2951594000294F50 /* libTinyJsLib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C05D73DE2951592E00294F50 /* libTinyJsLib.dylib */; };
 		C05D73E32951B82100294F50 /* Profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D73E12951B82100294F50 /* Profile.cpp */; };
 		C05D73EE2952B72A00294F50 /* SkinJsAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D73EC2952B72A00294F50 /* SkinJsAPI.cpp */; };
@@ -755,7 +756,7 @@
 		0EB7103C27773BB4006929F1 /* LyricsOutPluginMgr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LyricsOutPluginMgr.h; sourceTree = "<group>"; };
 		0EB7103D27773BB4006929F1 /* LyricsOutPluginMgr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LyricsOutPluginMgr.cpp; sourceTree = "<group>"; };
 		0EB7103E27773BB4006929F1 /* DlgSaveLyrPrompt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DlgSaveLyrPrompt.h; sourceTree = "<group>"; };
-		0EB7103F27773BB4006929F1 /* MPHotkey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MPHotkey.cpp; sourceTree = "<group>"; };
+		0EB7103F27773BB4006929F1 /* MPHotkey.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MPHotkey.mm; sourceTree = "<group>"; };
 		0EB7104127773BB4006929F1 /* MLTrayIcon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MLTrayIcon.cpp; sourceTree = "<group>"; };
 		0EB7104227773BB4006929F1 /* PlayerEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerEventDispatcher.h; sourceTree = "<group>"; };
 		0EB7104327773BB4006929F1 /* MPlayerApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MPlayerApp.cpp; sourceTree = "<group>"; };
@@ -1017,6 +1018,7 @@
 		C055400329978E390057629E /* HeadPhoneWatch.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HeadPhoneWatch.mm; sourceTree = "<group>"; };
 		C055400429978E390057629E /* HeadPhoneWatch.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = HeadPhoneWatch.hpp; sourceTree = "<group>"; };
 		C0554006299791EA0057629E /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
+		C055400829991C0E0057629E /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		C05D73D52951592D00294F50 /* TinyJS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TinyJS.xcodeproj; path = TinyJS/TinyJS.xcodeproj; sourceTree = "<group>"; };
 		C05D73E12951B82100294F50 /* Profile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Profile.cpp; sourceTree = "<group>"; };
 		C05D73EC2952B72A00294F50 /* SkinJsAPI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SkinJsAPI.cpp; sourceTree = "<group>"; };
@@ -1035,6 +1037,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C055400929991C0E0057629E /* Carbon.framework in Frameworks */,
 				C0554007299791EA0057629E /* CoreAudio.framework in Frameworks */,
 				C05D73DF2951594000294F50 /* libTinyJsLib.dylib in Frameworks */,
 				0EB71165277DEE4D006929F1 /* CoreData.framework in Frameworks */,
@@ -1205,6 +1208,7 @@
 		0E56BAA22740C32800032A3E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C055400829991C0E0057629E /* Carbon.framework */,
 				C0554006299791EA0057629E /* CoreAudio.framework */,
 				0EB71164277DEE4A006929F1 /* CoreData.framework */,
 				0EB71161277DCCE6006929F1 /* AppKit.framework */,
@@ -1615,7 +1619,7 @@
 				0EB7103C27773BB4006929F1 /* LyricsOutPluginMgr.h */,
 				0EB7104127773BB4006929F1 /* MLTrayIcon.cpp */,
 				0EB7104927773BB4006929F1 /* MLTrayIcon.h */,
-				0EB7103F27773BB4006929F1 /* MPHotkey.cpp */,
+				0EB7103F27773BB4006929F1 /* MPHotkey.mm */,
 				0EB7103527773BB4006929F1 /* MPHotkey.h */,
 				0EB7104327773BB4006929F1 /* MPlayerApp.cpp */,
 				0EB7103827773BB4006929F1 /* MPlayerApp.h */,
@@ -2105,7 +2109,7 @@
 				0E56BBDF2745E53D00032A3E /* SkinToggleCtrlContainer.cpp in Sources */,
 				0EB71113277CB16C006929F1 /* RegExTool.cpp in Sources */,
 				0EB7111B277D8400006929F1 /* Event.mm in Sources */,
-				0EB710BE27773BB6006929F1 /* MPHotkey.cpp in Sources */,
+				0EB710BE27773BB6006929F1 /* MPHotkey.mm in Sources */,
 				C04DBF6B297EB36200A0FCB1 /* dhm.c in Sources */,
 				0EB710B027773BB6006929F1 /* MPFloatingLyrWnd.cpp in Sources */,
 				C055400529978E390057629E /* HeadPhoneWatch.mm in Sources */,
