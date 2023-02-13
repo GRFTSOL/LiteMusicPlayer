@@ -63,6 +63,15 @@ void CEventsDispatcher::dispatchUnsyncEvent(IEvent *pEvent) {
     [dispatchItem release];
 }
 
+void CEventsDispatcher::dispatchUnsyncEventDelayed(IEvent *pEvent, int delayInMs) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [NSTimer scheduledTimerWithTimeInterval:((double)40 / 1000)
+                                        repeats:NO block:^(NSTimer * timer) {
+            dispatchUnsyncEvent(pEvent);
+        }];
+    });
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////

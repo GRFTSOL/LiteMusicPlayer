@@ -130,7 +130,7 @@
 import { defineComponent } from 'vue';
 import { exportFile } from 'quasar'
 import { Media } from '../../components/models';
-import { getMediaLibrary } from 'stores/MediaLibrary';
+import { getMediaLibrary } from 'boot/MediaLibrary';
 import MediaDetail from 'src/components/MediaDetail.vue'
 
 

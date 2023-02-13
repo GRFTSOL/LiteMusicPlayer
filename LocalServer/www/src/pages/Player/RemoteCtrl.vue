@@ -33,7 +33,7 @@
 
 import { defineComponent } from 'vue';
 import * as wsc from 'boot/web_socket_client';
-import { playerData } from 'stores/PlayerData';
+import { playerData } from 'boot/PlayerData';
 
 function paddingZero(n: number, width: number) {
   let str = String(Math.floor(n));

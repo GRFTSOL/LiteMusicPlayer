@@ -59,6 +59,7 @@ public:
         pEvent->eventType = eventType;
         dispatchUnsyncEvent(pEvent);
     }
+    virtual void dispatchUnsyncEventDelayed(IEvent *pEvent, int delayInMs) = 0;
 
 protected:
     typedef list<IEventHandler *>            ListEventHandlers;

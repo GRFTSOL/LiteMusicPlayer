@@ -921,7 +921,9 @@ void CPlayer::notifyEQSettingsChanged(const EQualizer *eq) {
 void CPlayer::notifySeek() {
     IEvent *pEvent = new IEvent();
     pEvent->eventType = ET_PLAYER_SEEK;
-    CMPlayerAppBase::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
+
+    // CoreAVPlayer 在 Seek 之后，立即调用 getPos 的值偶尔正确，延迟100ms 通知 Seek 更新.
+    CMPlayerAppBase::getEventsDispatcher()->dispatchUnsyncEventDelayed(pEvent, 100);
 }
 
 // For internal using, do NOT lock.

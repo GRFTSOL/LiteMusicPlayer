@@ -68,7 +68,7 @@ PlayerEventSender::PlayerEventSender(WebSocket::Server *server) : m_server(serve
         ET_PLAYER_CUR_MEDIA_INFO_CHANGED,
         ET_PLAYER_CUR_PLAYLIST_CHANGED,
         ET_PLAYER_SETTING_CHANGED,
-        ET_PLAYER_POS_UPDATE,
+        // ET_PLAYER_POS_UPDATE,
     };
 
     for (auto event : events) {
@@ -164,7 +164,7 @@ void PlayerEventSender::onEvent(const IEvent *event) {
     writer.String(TYPE_PLAYER_NOTIFICATION);
 
     switch (event->eventType) {
-        case ET_PLAYER_STATUS_CHANGED: writePlayerStatus(writer); break;
+        case ET_PLAYER_STATUS_CHANGED: writePlayerStatus(writer); writePlayerPosition(writer); break;
         case ET_PLAYER_SEEK:
         case ET_PLAYER_POS_UPDATE: writePlayerPosition(writer); break;
         case ET_PLAYER_CUR_PLAYLIST_CHANGED: writeCurPlaylist(writer); break;

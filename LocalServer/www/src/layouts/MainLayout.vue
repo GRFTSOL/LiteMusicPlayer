@@ -6,17 +6,44 @@
       <q-toolbar
         class="bg-grey-3 text-dark"
       >
-        <q-btn
+        <!-- <q-btn
           flat
           dense
           round
           icon="menu"
           aria-label="Menu"
           @click="leftNavBarOpen = !leftNavBarOpen"
-        />
+        /> -->
+        <template
+          v-for="menu in navBarData.menus"
+          :key="menu.title"
+        >
+          <q-btn-dropdown 
+            flat
+            no-caps
+            push
+            dense
+            :label="menu.title"
+            :icon="menu.icon"
+          >
+            <q-list>
+              <q-item clickable v-close-popup
+                v-for="child in menu.children"
+                :key="child.link"
+                :to="child.link" 
+              >
+                <q-item-section avatar>
+                  <q-avatar :icon="child.icon" flat />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ child.title }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+        </template>
 
         <q-toolbar-title>
-          媒体库
         </q-toolbar-title>
 
         <div>
@@ -36,10 +63,10 @@
         </q-toolbar>
     </q-header>
 
-      <LeftNavigationBar
-        v-model="leftNavBarOpen"
-        v-bind="navBarData"
-      />
+    <!-- <LeftNavigationBar
+      v-model="leftNavBarOpen"
+      v-bind="navBarData"
+    /> -->
 
     <q-page-container>
       <router-view />
@@ -50,7 +77,7 @@
 <script lang="ts">
 
 import { defineComponent, ref } from 'vue';
-import LeftNavigationBar from 'src/components/LeftNavigationBar.vue';
+// import LeftNavigationBar from 'src/components/LeftNavigationBar.vue';
 import UserDropdownBtn from 'src/components/UserDropdownBtn.vue';
 import { network, STATUS_CONNECTING, STATUS_DISCONNECTED, STATUS_INITED } from 'src/boot/web_socket_client';
 import { assert } from 'src/boot/utils';
@@ -180,7 +207,7 @@ const navBarData = {
 
 export default defineComponent({
   name: 'MainLayout',
-  components: { LeftNavigationBar, UserDropdownBtn },
+  components: { UserDropdownBtn },
   
   data() {
     const leftNavBarOpen = ref(false);

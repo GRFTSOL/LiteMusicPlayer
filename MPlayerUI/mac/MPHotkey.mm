@@ -492,9 +492,7 @@ int CMPHotkey::saveSettings() {
 }
 
 void CMPHotkey::registerAllGlobalHotKeys() {
-    for (int i = 0; i < (int)m_vAccKey.size(); i++) {
-        CmdAccKey &cmdKey = m_vAccKey[i];
-
+    for (CmdAccKey &cmdKey : m_vAccKey) {
         cmdKey.idHotKey = makeHotkeyID(cmdKey.fsModifiers, cmdKey.button);
         cmdKey.hotKeyRef = NULL;
 
@@ -508,10 +506,10 @@ void CMPHotkey::registerAllGlobalHotKeys() {
 }
 
 void CMPHotkey::unregisterAllGlobalHotKeys() {
-    for (int i = 0; i < (int)m_vAccKey.size(); i++) {
-        CmdAccKey &cmdKey = m_vAccKey[i];
+    for (CmdAccKey &cmdKey : m_vAccKey) {
         if (cmdKey.hotKeyRef != nullptr) {
             UnregisterEventHotKey(cmdKey.hotKeyRef);
+            cmdKey.hotKeyRef = nullptr;
         }
     }
 }
