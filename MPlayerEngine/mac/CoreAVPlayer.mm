@@ -141,37 +141,8 @@ const char *CoreAVPlayer::getFileExtentions()  {
 
 // 获取媒体的标签
 bool CoreAVPlayer::getMediaInfo(const char *mediaUrl, IMediaInfo *pMedia)  {
-    if (!isOK()) {
-        return false;
-    }
-
-    BasicMediaTags tags;
-    int ret = MediaTags::getTagFast(mediaUrl, tags);
-    if (ret != ERR_OK) {
-        return ret;
-    }
-
-    pMedia->setAttribute(MA_ARTIST, tags.artist.c_str());
-    pMedia->setAttribute(MA_TITLE, tags.title.c_str());
-    pMedia->setAttribute(MA_ALBUM, tags.album.c_str());
-    pMedia->setAttribute(MA_YEAR, atoi(tags.year.c_str()));
-    pMedia->setAttribute(MA_GENRE, tags.genre.c_str());
-    pMedia->setAttribute(MA_TRACK_NUMB, atoi(tags.trackNo.c_str()));
-
-    if (tags.mediaLength == 0) {
-        AVURLAsset *asset = [AVURLAsset assetWithURL:[NSURL fileURLWithPath:[NSString stringWithUTF8String: mediaUrl]]];
-        if (![asset isPlayable] || [asset hasProtectedContent]) {
-            return false;
-        }
-
-        CMTime duration = [asset duration];
-        if (duration.timescale > 0) {
-            tags.mediaLength = (int)(duration.value * 1000 / duration.timescale);
-        }
-    }
-    pMedia->setAttribute(MA_DURATION, tags.mediaLength);
-
-    return true;
+    // 不获取信息，由外部获取.
+    return false;
 }
 
 //

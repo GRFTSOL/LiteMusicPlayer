@@ -11,6 +11,9 @@
 #define SZ_TYPE_ILST        "ilst"
 #define SZ_TYPE_LYRICS      "\xA9lyr"
 #define SZ_TYPE_DATA        "data"
+#define SZ_TYPE_STSD        "stsd"
+
+#define SZ_TYPE_MP4A        "mp4a"
 
 
 M4aBox *getBox(M4aBox *parent, cstr_t szPath) {
@@ -271,6 +274,184 @@ int CM4aTag::open(cstr_t szFile, bool bModify, bool bCreate) {
     return open(m_fp, bCreate);
 }
 
+
+static uint64_t readAtomHeader(BinaryInputStream &stream, uint8_t *atomType) {
+    uint64_t size = stream.readUInt32BE();
+
+    memcpy(atomType, stream.currentPtr(), 4);
+    stream.forward(4);
+
+    if (size == 1) {
+        // 64bit atom size
+        size = stream.readUInt64BE();
+    }
+
+    return size;
+}
+
+static uint32_t readDescrLength(BinaryInputStream &stream) {
+    uint8_t b;
+    uint8_t numBytes = 0;
+    uint32_t length = 0;
+
+    do
+    {
+        b = stream.readUInt8();
+        numBytes++;
+        length = (length << 7) | (b & 0x7F);
+    } while ((b & 0x80) && numBytes < 4);
+
+    return length;
+}
+
+
+static void readEsds(BinaryInputStream &stream, uint32_t &avgBitrate) {
+    stream.readUInt32(); // version(1) + flags(3)
+
+    // ES_DescrTag
+    auto tag = stream.readUInt8();
+    if (tag == 0x03) {
+        // length
+        if (readDescrLength(stream) < 5 + 15) {
+            return;
+        }
+        // skip 3 bytes
+        stream.forward(3);
+    } else {
+        /* skip 2 bytes */
+        stream.forward(2);
+    }
+
+    // DecoderConfigDescrTab
+    if (stream.readUInt8() != 0x04) {
+        return;
+    }
+
+    if (readDescrLength(stream) < 13) {
+        return;
+    }
+
+    stream.readUInt8(); // audioType
+    stream.readUInt32BE(); // 0x15000414 ????
+    stream.readUInt32BE(); // maxBitrate
+    avgBitrate = stream.readUInt32BE();
+
+    // DecSpecificInfoTag
+    if (stream.readUInt8() != 0x05) {
+        return;
+    }
+}
+
+void CM4aTag::parseSTSD(M4aBox *box) {
+    unique_ptr<uint8_t> buf(new uint8_t[box->m_nSize]);
+
+    fseek(m_fp, box->m_nOffset + M4aBox::HEADER_SIZE, SEEK_SET);
+    auto read = fread(buf.get(), 1, box->m_nSize, m_fp);
+    if (read != box->m_nSize) {
+        return;
+    }
+
+    BinaryInputStream stream(buf.get(), box->m_nSize);
+
+    try {
+        stream.readUInt32(); // version(1) + flags(3)
+
+        auto count = stream.readUInt32BE();
+        for (uint32_t i = 0; i < count; i++) {
+            uint8_t type[4];
+
+            auto size = readAtomHeader(stream, type);
+            auto offset = stream.offset();
+
+            if (memcmp(type, SZ_TYPE_MP4A, 4) == 0) {
+                stream.forward(6); // reserved
+                stream.readUInt16BE(); // data_reference_index
+                stream.readUInt32BE(); // reserved
+                stream.readUInt32BE(); // reserved
+
+                m_channelCount = stream.readUInt16BE();
+                m_bitsPerSample = stream.readUInt16BE();
+
+                stream.readUInt16BE(); // Unkown
+                stream.readUInt16BE(); // Unkown
+
+                m_sampleRate = stream.readUInt16BE();
+
+                stream.readUInt16BE(); // Unkown
+
+                readAtomHeader(stream, type);
+                if (memcmp(type, "esds", 4) == 0) {
+                    readEsds(stream, m_bitRate);
+                }
+            }
+
+            stream.setOffset((uint32_t)(offset + size));
+        }
+    } catch (exception &e) {
+        //
+        ERR_LOG1("Got exception: %s", e.what());
+    }
+}
+
+void CM4aTag::parseMDHD(M4aBox *box) {
+    unique_ptr<uint8_t> buf(new uint8_t[box->m_nSize]);
+
+    fseek(m_fp, box->m_nOffset + M4aBox::HEADER_SIZE, SEEK_SET);
+    auto read = fread(buf.get(), 1, box->m_nSize, m_fp);
+    if (read != box->m_nSize) {
+        return;
+    }
+
+    BinaryInputStream stream(buf.get(), box->m_nSize);
+
+    try {
+        uint32_t version = stream.readUInt32();
+        if (version == 1) {
+            stream.readUInt64BE(); // creation-time
+            stream.readUInt64BE(); // modification-time
+            auto scale = stream.readUInt32BE(); // timescale
+            m_duration = stream.readUInt64BE() * 1000.0 / scale;
+        } else {
+            // version == 0
+            stream.readUInt32BE(); // creation-time
+            stream.readUInt32BE(); // modification-time
+            auto scale = stream.readUInt32BE(); // timescale
+            m_duration = stream.readUInt32BE() * 1000.0 / scale;
+        }
+    } catch (exception &e) {
+        ERR_LOG1("Got exception: %s", e.what());
+    }
+}
+
+void CM4aTag::parseMVHD(M4aBox *box) {
+    unique_ptr<uint8_t> buf(new uint8_t[box->m_nSize]);
+
+    fseek(m_fp, box->m_nOffset + M4aBox::HEADER_SIZE, SEEK_SET);
+    auto read = fread(buf.get(), 1, box->m_nSize, m_fp);
+    if (read != box->m_nSize) {
+        return;
+    }
+
+    BinaryInputStream stream(buf.get(), box->m_nSize);
+
+    try {
+        uint32_t version = stream.readUInt32(); // version + flags
+        stream.readUInt32BE(); // creation-time
+        stream.readUInt32BE(); // modification-time
+        auto scale = stream.readUInt32BE(); // timescale
+        m_duration = (uint32_t)(stream.readUInt32BE() * 1000.0 / scale);
+    } catch (exception &e) {
+        ERR_LOG1("Got exception: %s", e.what());
+    }
+}
+
+void printfBoxTree(M4aBox *root, int depth = 0) {
+    for (auto &child : root->m_vChildren) {
+        printf("%*s, %d\n", depth * 2 + 4, child->m_szType, (int)child->m_nSize);
+        printfBoxTree(child, depth + 1);
+    }
+}
+
 int CM4aTag::open(FILE *fp, bool bCreate) {
     assert(fp);
     m_fp = fp;
@@ -286,10 +467,32 @@ int CM4aTag::open(FILE *fp, bool bCreate) {
         return nRet;
     }
 
+    // printfBoxTree(&m_root);
+
     // read moov box immediately
     M4aBox *boxMoov = m_root.findBox(SZ_TYPE_MOOV);
     if (boxMoov == nullptr) {
         return ERR_NOT_SUPPORT_FILE_FORMAT;
+    }
+
+    auto box = getBox("moov.trak.mdia.minf.stbl.stsd");
+    if (box) {
+        // Sample description box
+        parseSTSD(box);
+    }
+
+    box = getBox("moov.trak.mdia.mdhd");
+    if (box) {
+        // track header
+        parseMDHD(box);
+    }
+
+    if (m_duration <= 0) {
+        box = getBox("moov.mvhd");
+        if (box) {
+            // movie header
+            parseMVHD(box);
+        }
     }
 
     return read(boxMoov);

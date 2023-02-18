@@ -236,4 +236,11 @@ protected:
 
 string formatDuration(int nTimeSec);
 
+void getArtistTitleFromFileName(string &artist, string &title, cstr_t fileName);
+
+/**
+* Format media title in format of "artist - title"
+**/
+string formatMediaTitle(cstr_t artist, cstr_t title);
+
 extern CPlayer g_player;

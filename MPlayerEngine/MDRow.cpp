@@ -50,7 +50,7 @@ ResultCode CMDRow::getMediaInfo(IMediaInput *pInput, IMediaInfo *pMedia) {
     pMedia->setAttribute(MA_DURATION, m_nLengthMs);
     pMedia->setAttribute(MA_SAMPLE_RATE, SAMPLERATE);
     pMedia->setAttribute(MA_CHANNELS, NCH);
-    pMedia->setAttribute(MA_BPS, BPS);
+    pMedia->setAttribute(MA_BITS_PER_SAMPLE, BPS);
 
     return ERR_OK;
 }

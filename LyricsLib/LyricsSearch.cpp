@@ -44,7 +44,7 @@ int CLyricsSearchParameter::calMatchValueByName(cstr_t szLyricsDir, cstr_t szLyr
     bool isDirSame = false;
 
     string strLyrArtist, strLyrTitle;
-    analyseLyricsFileNameEx(strLyrArtist, strLyrTitle, szLyricsFileName);
+    getArtistTitleFromFileName(strLyrArtist, strLyrTitle, szLyricsFileName);
 
     // Calculate match by artist and title.
     int matchValue = calMatchValueByTitle(strLyrArtist.c_str(), strLyrTitle.c_str(), fileType);

@@ -28,7 +28,7 @@ void updateLyrResultArtistTitle(ListLyrSearchResults &vResultsLocal) {
         LrcSearchResult &result = *it;
 
         if (result.strArtist.empty() && result.strTitle.empty()) {
-            analyseLyricsFileNameEx(result.strArtist, result.strTitle, result.strSaveFileName.c_str());
+            getArtistTitleFromFileName(result.strArtist, result.strTitle, result.strSaveFileName.c_str());
         }
     }
 }

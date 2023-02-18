@@ -55,7 +55,7 @@ ResultCode CMDWave::getMediaInfo(IMediaInput *pInput, IMediaInfo *pMedia) {
     pMedia->setAttribute(MA_DURATION, m_audioInfo.nMediaLength);
     pMedia->setAttribute(MA_SAMPLE_RATE, m_audioInfo.samples_per_sec);
     pMedia->setAttribute(MA_CHANNELS, m_audioInfo.channels);
-    pMedia->setAttribute(MA_BPS, m_audioInfo.bits_per_sample);
+    pMedia->setAttribute(MA_BITS_PER_SAMPLE, m_audioInfo.bits_per_sample);
     pMedia->setAttribute(MA_BITRATE, m_audioInfo.avg_bytes_per_sec);
 
     return nRet;

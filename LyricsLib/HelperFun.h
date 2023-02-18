@@ -3,7 +3,7 @@
 #include "../Utils/Utils.h"
 
 
-void analyseLyricsFileNameEx(string &strArtist, string &strTitle, cstr_t szFile);
+void getArtistTitleFromFileName(string &strArtist, string &strTitle, cstr_t szFile);
 
 /**
 * Format media title in format of "artist - title"

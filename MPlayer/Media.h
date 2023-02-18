@@ -27,27 +27,24 @@ public:
     string                      comments;
 
     int                         duration = MEDIA_LENGTH_INVALID;
-    uint32_t                    fileSize = 0;
+    uint64_t                    fileSize = 0;
     time_t                      timeAdded = 0;
     time_t                      timePlayed = 0;
 
     uint16_t                    rating = 0;          // 0 ~ 500
-    bool                        isUserRating = false;
     bool                        isFileDeleted = false;
     int                         countPlayed = 0;
-    int                         countPlaySkipped = 0;
 
     string                      lyricsFile;
     string                      musicHash;
 
     string                      format;
     int                         bitRate = 0;
-    bool                        isVbr = false;
     uint8_t                     channels = 0;
-    uint8_t                     BPS = 0;
-    bool                        infoUpdated = true;     // if InfoUpdated, it will be update to database when playing finished.
+    uint8_t                     bitsPerSample = 0;
     uint32_t                    sampleRate = 0;
-    string                      extraInfo;
+
+    bool isEqual(const Media *other) const;
 
     //
     // attribute methods

@@ -55,35 +55,19 @@ enum TagType {
     TT_M4A,
 };
 
-class TagFields {
-public:
-    string                      name;
-    string                      strValue;
-
-};
-typedef list<TagFields> ListTagFields;
-
-class CTag {
-public:
-    ListTagFields               m_listFields;
-    TagType                     m_tagType;
-    bool                        m_bRemovable;       // Can the tag be removed
-    bool                        m_bEmpty;           // Is this an empty tag?
-
-};
-
-class CListTags: public list<CTag *> {
-public:
-    CListTags();
-    virtual ~CListTags();
-
-};
-
 struct BasicMediaTags {
     string                      artist, title, album, year, genre, trackNo, comments;
     uint32_t                    mediaLength;
 
     BasicMediaTags() { mediaLength = 0; }
+};
+
+struct ExtendedMediaInfo {
+    bool                        isValid = false;
+    int                         bitRate = 0;
+    uint8_t                     channels = 0;
+    uint8_t                     bitsPerSample = 0;
+    uint32_t                    sampleRate = 0;
 };
 
 #endif /* MediaTagTypes_hpp */

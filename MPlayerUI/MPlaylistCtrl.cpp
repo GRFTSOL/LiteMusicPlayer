@@ -494,7 +494,7 @@ void CMPlaylistCtrl::setItemMediaDuration(int index, int seconds) {
 
         int minutes = seconds / 60; seconds %= 60;
         if (minutes < 1000) {
-            sprintf(buf, "%d:%02d", seconds / 60, seconds % 60);
+            sprintf(buf, "%d:%02d", minutes, seconds % 60);
         } else {
             int hours = minutes / 60; minutes %= 60;
             int days = hours / 24; hours %= 24;

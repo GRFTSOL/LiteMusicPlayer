@@ -4,11 +4,7 @@
 #endif
 #include "LrcTag.h"
 
-
-//////////////////////////////////////////////////////////////////////////
-//
-
-void analyseLyricsFileNameEx(string &strArtist, string &strTitle, cstr_t szFile) {
+void getArtistTitleFromFileName(string &strArtist, string &strTitle, cstr_t szFile) {
     string fileTitle = fileGetTitle(szFile);
 
     if (!strSplit(fileTitle.c_str(), " - ", strArtist, strTitle)
@@ -30,9 +26,6 @@ string formatMediaTitle(cstr_t szArtist, cstr_t szTitle) {
 
     return mediaTitle;
 }
-
-//////////////////////////////////////////////////////////////////////////
-//
 
 void analyseProxySetting(cstr_t szProxySetting, char szServer[], int nMaxSize, int &nPort) {
     cstr_t szColon;
@@ -80,22 +73,22 @@ bool getMLEncriptyData(string &strData) {
 
 #include "utils/unittest.h"
 
-TEST(HelperFun, testAnalyseLyricsFileNameEx) {
+TEST(HelperFun, testGetArtistTitleFromFileName) {
     string artist, title;
     cstr_t szFile;
 
     szFile = "c:\\abc\ar - ti-a.mp3";
-    analyseLyricsFileNameEx(artist, title, szFile);
+    getArtistTitleFromFileName(artist, title, szFile);
     ASSERT_TRUE(artist == "ar");
     ASSERT_TRUE(title == "ti-a");
 
     szFile = "c:\\abc\ar-ti-a.mp3";
-    analyseLyricsFileNameEx(artist, title, szFile);
+    getArtistTitleFromFileName(artist, title, szFile);
     ASSERT_TRUE(artist == "ar");
     ASSERT_TRUE(title == "ti-a");
 
     szFile = "c:\\abc\ti.mp3";
-    analyseLyricsFileNameEx(artist, title, szFile);
+    getArtistTitleFromFileName(artist, title, szFile);
     ASSERT_TRUE(artist == "");
     ASSERT_TRUE(title == "ti");
 }

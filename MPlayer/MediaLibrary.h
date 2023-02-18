@@ -130,9 +130,7 @@ public:
     // 0-5, 0 for unrate.
     ResultCode rate(Media *media, uint32_t nRating);
 
-    ResultCode updatePlayedTime(Media *media);
     ResultCode markPlayFinished(Media *media);
-    ResultCode markPlaySkipped(Media *media);
 
 public:
     int init();
@@ -140,13 +138,9 @@ public:
 
     bool isOK() { return m_nInitResult == ERR_OK; }
 
-    PlaylistPtr queryPlaylist(cstr_t szSQL, cstr_t szClause);
-
     VecStrings queryVStr(cstr_t szSql);
 
     ResultCode executeSQL(cstr_t szSql);
-
-    void getMediaCallback(Media *media, int numCols, char **results);
 
     ResultCode undeleteMedia(long nMediaID);
 
@@ -170,6 +164,10 @@ protected:
     PlaylistPtr getPlaylist(int playlistId);
     void deltePlaylist(int playlistId);
     void updateMediaCategories();
+    PlaylistPtr queryPlaylist(cstr_t SQL);
+    PlaylistPtr queryPlaylist(cstr_t szSQL, cstr_t szClause);
+    PlaylistPtr queryPlaylist(cstr_t szSQL, int clause);
+    PlaylistPtr queryPlaylist(cstr_t SQL, std::function<int (CSqlite3Stmt &stmt)> callback);
 
 protected:
     friend class CMLQueryPlaylist;
@@ -183,6 +181,7 @@ protected:
     CSqlite3                    m_db;
     std::recursive_mutex        m_mutexDataAccess;
 
+    CSqlite3Stmt                m_stmtUpdateMediaPlayTime, m_stmtUpdateMediaInfo;
     CSqlite3Stmt                m_sqlAdd, m_sqlAddFast, m_sqlQueryByUrl, m_stmtQueryByID;
     int                         m_nInitResult;
 

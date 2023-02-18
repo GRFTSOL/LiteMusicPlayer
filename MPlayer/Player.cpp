@@ -21,6 +21,40 @@ CPlayer g_player;
 CPlayerEventDispatcher g_playerEventDispatcher;
 
 
+string getMediaFormat(cstr_t url) {
+    auto ext = urlGetExt(url);
+    if (ext[0] == '.') {
+        ext++;
+
+        return toLower(ext);
+    }
+
+    return "Unkown";
+}
+
+void getArtistTitleFromFileName(string &artist, string &title, cstr_t fileName) {
+    string fileTitle = fileGetTitle(fileName);
+
+    if (!strSplit(fileTitle.c_str(), " - ", artist, title)
+        && !strSplit(fileTitle.c_str(), '-', artist, title)) {
+        artist.resize(0);
+        title = fileTitle;
+    }
+
+    trimStr(artist);
+    trimStr(title);
+}
+
+string formatMediaTitle(cstr_t artist, cstr_t title) {
+    string mediaTitle = artist;
+    if (mediaTitle.size() > 0 && !isEmptyString(title)) {
+        mediaTitle += " - ";
+    }
+    mediaTitle += title;
+
+    return mediaTitle;
+}
+
 void formatFullTitle(cstr_t szArtist, cstr_t szTitle, cstr_t szUri, string &strFullTitle) {
     strFullTitle = formatMediaTitle(szArtist, szTitle);
     if (strFullTitle.empty()) {
@@ -174,7 +208,7 @@ void CPlayer::onQuit() {
     g_profile.writeInt(SZ_SECT_PLAYER, "NowPlayingIdx", m_idxCurrentMedia);
 
     assert(m_playerCore);
-    m_playerCore->stop();
+    stop();
     delete m_playerCore;
 }
 
@@ -198,19 +232,6 @@ void CPlayer::play() {
             //     // the source can't be opened, set it as deleted.
             //     m_mediaLib->setDeleted(&media);
             // }
-
-            // set the play time
-            m_currentMedia->timePlayed = time(nullptr);
-
-            if (m_currentMedia->ID == MEDIA_ID_INVALID && m_isAutoAddToMediaLib) {
-                m_mediaLib->add(m_currentMedia);
-            }
-
-            // If media info in media library isn't up to date,
-            // update to media library.
-            if (m_currentMedia->ID != MEDIA_ID_INVALID && !m_currentMedia->infoUpdated) {
-                m_mediaLib->updateMediaInfo(m_currentMedia.get());
-            }
         }
     } else {
         // paused
@@ -277,13 +298,6 @@ void CPlayer::prev() {
 }
 
 void CPlayer::next() {
-    if (m_state != PS_STOPPED) {
-        // No rating consideration will be done at all if the song is skipped within these seconds.
-        if (getPlayPos() < 20 * 1000) {
-            m_mediaLib->markPlaySkipped(m_currentMedia.get());
-        }
-    }
-
     doNext(true);
 }
 
@@ -801,11 +815,33 @@ void CPlayer::setCurrentPlaylist(const PlaylistPtr &playlist) {
 }
 
 ResultCode CPlayer::loadMediaTagInfo(Media *media) {
-    m_playerCore->getMediaInfo(media->url.c_str(), media);
+    bool ret = m_playerCore->getMediaInfo(media->url.c_str(), media);
+    if (!ret || (media->artist.empty() && media->title.empty())) {
+        BasicMediaTags tags;
+        ExtendedMediaInfo infoExt;
+        int ret = MediaTags::getTags(media->url.c_str(), tags, infoExt);
+        if (ret == ERR_OK) {
+            media->artist = tags.artist.c_str();
+            media->title = tags.title.c_str();
+            media->album = tags.album.c_str();
+            media->year = atoi(tags.year.c_str());
+            media->genre = tags.genre.c_str();
+            media->trackNumb = atoi(tags.trackNo.c_str());
+            media->duration = tags.mediaLength;
 
-    // get artist, title from song file name.
+            media->bitsPerSample = infoExt.bitsPerSample;
+            media->bitRate = infoExt.bitRate;
+            media->channels = infoExt.channels;
+            media->sampleRate = infoExt.sampleRate;
+        }
+    }
+
+    media->fileSize = getFileLength(media->url.c_str());
+    media->format = getMediaFormat(media->url.c_str());
+
+    // get artist, title from music file name.
     if (media->artist.empty() && media->title.empty()) {
-        analyseLyricsFileNameEx(media->artist, media->title, media->url.c_str());
+        getArtistTitleFromFileName(media->artist, media->title, media->url.c_str());
     }
 
     return ERR_OK;
@@ -990,10 +1026,12 @@ void CPlayer::currentMediaChanged() {
         if (m_currentPlaylist->getCount() > 0) {
             m_currentMedia = m_currentPlaylist->getItem(m_idxCurrentMedia);
             if (m_currentMedia) {
-                loadMediaTagInfo(m_currentMedia.get());
-                // update media info to media library, if changed.
-                auto mediaOld = m_mediaLib->getMediaByUrl(m_currentMedia->url.c_str());
-                if (mediaOld && !isBasicMediaInfoSame(mediaOld.get(), m_currentMedia.get())) {
+                Media newInfo = *m_currentMedia.get();
+
+                loadMediaTagInfo(&newInfo);
+                if (!newInfo.isEqual(m_currentMedia.get())) {
+                    // update media info to media library, if changed.
+                    *(m_currentMedia.get()) = newInfo;
                     m_mediaLib->updateMediaInfo(m_currentMedia.get());
                 }
             }

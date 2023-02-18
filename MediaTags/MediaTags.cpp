@@ -91,12 +91,6 @@ bool getEmbeddedLyricsNameInfo(cstr_t szName, string &language, int &index) {
 
 //////////////////////////////////////////////////////////////////////////
 
-MediaTags::MediaTags(void) {
-}
-
-MediaTags::~MediaTags(void) {
-}
-
 bool isStrInArray(cstr_t szArray[], cstr_t str) {
     for (int i = 0; szArray[i] != nullptr; i++) {
         if (strcasecmp(szArray[i], str) == 0) {
@@ -107,7 +101,9 @@ bool isStrInArray(cstr_t szArray[], cstr_t str) {
     return false;
 }
 
-bool MediaTags::isMediaTypeSupported(cstr_t szFile) {
+namespace MediaTags {
+
+bool isMediaTypeSupported(cstr_t szFile) {
     if (isID3v2TagSupported(szFile)) {
         return true;
     }
@@ -119,17 +115,22 @@ bool MediaTags::isMediaTypeSupported(cstr_t szFile) {
     return false;
 }
 
-int MediaTags::getTagFast(cstr_t szFile, BasicMediaTags &tags) {
-    FILE *fp = fopen(szFile, "rb");
+int getTags(cstr_t szFile, BasicMediaTags &tags, ExtendedMediaInfo &extendedInfo) {
+    FilePtr fp(fopen(szFile, "rb"));
     if (!fp) {
         setCustomErrorDesc(stringPrintf("%s: %s", OSError().Description(), szFile).c_str());
         return ERR_CUSTOM_ERROR;
     }
 
     if (isID3v2TagSupported(szFile)) {
-        CMP3InfoReader reader;
-        reader.attach(fp);
-        tags.mediaLength = reader.getMediaLength();
+        MP3Info info;
+        if (readMP3Info(fp, info)) {
+            tags.mediaLength = info.duration;
+            extendedInfo.channels = info.getChannelCount();
+            extendedInfo.sampleRate = info.sampleRate;
+            extendedInfo.bitRate = info.bitRate;
+            extendedInfo.bitsPerSample = info.bitsPerSample;
+        }
 
         CID3v2IF id3v2(ED_SYSDEF);
         int nRet = id3v2.open(fp, false);
@@ -146,13 +147,22 @@ int MediaTags::getTagFast(cstr_t szFile, BasicMediaTags &tags) {
             return nRet;
         }
 
-        return tag.getTags(tags);
+        int ret = tag.getTags(tags);
+        if (ret != ERR_OK) {
+            return ret;
+        }
+
+        tags.mediaLength = tag.getDuration();
+        extendedInfo.channels = tag.getChannelCount();
+        extendedInfo.sampleRate = tag.getSampleRate();
+        extendedInfo.bitRate = tag.getBitRate();
+        extendedInfo.bitsPerSample = tag.getBitsPerSample();
     }
 
     return ERR_OK;
 }
 
-int MediaTags::getEmbeddedLyrics(cstr_t szFile, VecStrings &vLyricsNames) {
+int getEmbeddedLyrics(cstr_t szFile, VecStrings &vLyricsNames) {
     if (!isFileExist(szFile)) {
         return ERR_NOT_FOUND;
     }
@@ -214,23 +224,23 @@ int MediaTags::getEmbeddedLyrics(cstr_t szFile, VecStrings &vLyricsNames) {
     return ERR_OK;
 }
 
-bool MediaTags::isEmbeddedLyricsSupported(cstr_t szFile) {
+bool isEmbeddedLyricsSupported(cstr_t szFile) {
     return isID3v2TagSupported(szFile) || isM4aTagSupported(szFile);
 }
 
-bool MediaTags::isID3v2TagSupported(cstr_t szFile) {
+bool isID3v2TagSupported(cstr_t szFile) {
     return fileIsExtSame(szFile, ".mp3") || fileIsExtSame(szFile, ".mp2");
 }
 
-bool MediaTags::isM4aTagSupported(cstr_t szFile) {
-    return fileIsExtSame(szFile, ".m4a");
+bool isM4aTagSupported(cstr_t szFile) {
+    return fileIsExtSame(szFile, ".m4a") || fileIsExtSame(szFile, ".mp4");
 }
 
-bool MediaTags::isKarTagSupported(cstr_t szFile) {
+bool isKarTagSupported(cstr_t szFile) {
     return fileIsExtSame(szFile, ".kar") || fileIsExtSame(szFile, ".mid");
 }
 
-int MediaTags::removeEmbeddedLyrics(cstr_t szMediaFile, VecStrings &vLyrNamesToRemove, int *succeededCount) {
+int removeEmbeddedLyrics(cstr_t szMediaFile, VecStrings &vLyrNamesToRemove, int *succeededCount) {
     uint32_t uAllLstFlag = 0;
     for (uint32_t i = 0; i < vLyrNamesToRemove.size(); i++) {
         uAllLstFlag |= lyrSrcTypeFromName(vLyrNamesToRemove[i].c_str());
@@ -294,3 +304,5 @@ int MediaTags::removeEmbeddedLyrics(cstr_t szMediaFile, VecStrings &vLyrNamesToR
 
     return nRet;
 }
+
+} // namespace MediaTags

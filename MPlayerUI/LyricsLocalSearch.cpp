@@ -96,7 +96,7 @@ void CLyricsLocalSearch::searchAllMatchLyrics(cstr_t szSongFile, cstr_t szArtist
     //     if (vLyrics.size() == 0 && !isEmptyString(szSongFile))
     //     {
     //         string strArtist, strTitle;
-    //         analyseLyricsFileNameEx(strArtist, strTitle, szSongFile);
+    //         getArtistTitleFromFileName(strArtist, strTitle, szSongFile);
     //         if (strTitle.empty()
     //             || strcasecmp(szArtist, strArtist.c_str()) == 0 && strcasecmp(szTitle, strTitle.c_str()) == 0)
     //             return;

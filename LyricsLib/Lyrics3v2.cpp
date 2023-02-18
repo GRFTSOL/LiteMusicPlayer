@@ -211,7 +211,7 @@ int CLyrics3v2::writeLyrcsInfo(cstr_t szMp3File, const char *szLyrics, int nLen,
         lrcTag.readFromText((uint8_t *)szLyrics, nLen);
 
         if (lrcTag.m_strArtist.empty()) {
-            analyseLyricsFileNameEx(lrcTag.m_strArtist, lrcTag.m_strTitle, szMp3File);
+            getArtistTitleFromFileName(lrcTag.m_strArtist, lrcTag.m_strTitle, szMp3File);
         }
 
         setId3v1(szId3v1Tag, lrcTag.m_strTitle.c_str(), lrcTag.m_strArtist.c_str(), lrcTag.m_strAlbum.c_str());

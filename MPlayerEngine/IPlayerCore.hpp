@@ -45,20 +45,16 @@ enum MediaAttribute {
     MA_FILESIZE                 = 8,
     MA_TIME_ADDED               = 9,
     MA_TIME_PLAYED              = 10,
-    MA_IS_USER_RATING           = 12,
     MA_RATING                   = 11,
     MA_TIMES_PLAYED             = 13,
-    MA_TIMES_PLAY_SKIPPED       = 14,
     MA_LYRICS_FILE              = 15,
 
     // the following info will not be stored in media library
     MA_FORMAT                   = 16,
-    MA_ISVBR                    = 17,
     MA_BITRATE                  = 18,
-    MA_BPS                      = 19,
+    MA_BITS_PER_SAMPLE                      = 19,   // Bits Per Sample.
     MA_CHANNELS                 = 20,
     MA_SAMPLE_RATE              = 21,
-    MA_EXTRA_INFO               = 22,
 };
 
 class IMediaInfo {

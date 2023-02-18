@@ -288,20 +288,6 @@ ResultCode CMDLibmad::getMediaInfo(IMediaInput *pInput, IMediaInfo *pMedia) {
     pMedia->setAttribute(MA_BITRATE, m_audioInfo.nBitRate);
     pMedia->setAttribute(MA_ISVBR, m_audioInfo.bVbr);
 
-    pMedia->setAttribute(MA_EXTRA_INFO,
-        stringPrintf("Header offset: %d\n"
-        "MPEG version: %d\n"
-        "MPEG layer: %d\n"
-        "frames: %d\n"
-        "CRC: %s\n"
-        "copyrighted: %s\n",
-        m_audioInfo.nFirstFramePos,
-        (m_audioInfo.header.flags & MAD_FLAG_MPEG_V2) ? 2 : 1,
-        m_audioInfo.header.layer,
-        m_audioInfo.nFrameCount,
-        m_audioInfo.header.crc_check ? "YES" : "NO",
-        m_audioInfo.header.private_bits ? "YES" : "NO").c_str());
-
     return nRet;
 }
 

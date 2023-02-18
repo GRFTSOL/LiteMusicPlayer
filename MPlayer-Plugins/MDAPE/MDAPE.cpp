@@ -204,7 +204,7 @@ ResultCode CMDAPE::getMediaInfo(IMediaInput *pInput, IMediaInfo *pMedia)
 	pMedia->setAttribute(MA_DURATION, m_audioInfo.nMediaLength);
 	pMedia->setAttribute(MA_SAMPLE_RATE, m_audioInfo.nSampleRate);
 	pMedia->setAttribute(MA_CHANNELS, m_audioInfo.nChannels);
-	pMedia->setAttribute(MA_BPS, m_audioInfo.nBps);
+	pMedia->setAttribute(MA_BITS_PER_SAMPLE, m_audioInfo.nBps);
 
 	DestroyIAPEDecompress(apeDecompress);
 

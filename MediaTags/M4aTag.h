@@ -71,8 +71,17 @@ public:
 
     M4aBox *getBox(cstr_t szPath);
 
+    uint32_t getChannelCount() { return m_channelCount; }
+    uint32_t getBitsPerSample() { return m_bitsPerSample; }
+    uint32_t getSampleRate() { return m_sampleRate; }
+    uint32_t getBitRate() { return m_bitRate; }
+    uint32_t getDuration() { return m_duration; }
+
 protected:
     int parse(M4aBox *parent, int nExtraHeaderOffset = M4aBox::HEADER_SIZE);
+    void parseSTSD(M4aBox *box);
+    void parseMDHD(M4aBox *box);
+    void parseMVHD(M4aBox *box);
 
     int adjustStco(int nAdjustedOffset);
 
@@ -81,5 +90,11 @@ protected:
 
     FILE                        *m_fp;
     M4aBox                      m_root;             // The virtual root box
+
+    uint32_t                    m_channelCount = 0;
+    uint32_t                    m_bitsPerSample = 0;
+    uint32_t                    m_sampleRate = 0;
+    uint32_t                    m_bitRate = 0;
+    uint32_t                    m_duration = 0;
 
 };
