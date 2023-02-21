@@ -29,22 +29,22 @@
   album text COLLATE NOCASE,\
   title text COLLATE NOCASE,\
   track integer DEFAULT -1,\
-  year integer DEFAULT -1,\
+  year integer DEFAULT 0,\
   genre text DEFAULT NULL COLLATE NOCASE,\
   comment text DEFAULT NULL COLLATE NOCASE,\
   duration integer DEFAULT 0,\
   filesize integer DEFAULT 0,\
   time_added integer,\
   time_played integer DEFAULT 0,\
-  rating integer DEFAULT -1,\
-  times_played integer DEFAULT 0,\
+  rating integer DEFAULT 0,\
+  count_played integer DEFAULT 0,\
   music_hash text DEFAULT NULL,\
   lyrics_file text DEFAULT NULL,\
   format text DEFAULT NULL,\
-  bitRate integer DEFAULT -1,\
-  channels integer DEFAULT -1,\
-  bitsPerSample integer DEFAULT -1,\
-  sampleRate integer DEFAULT -1\
+  bitRate integer DEFAULT 0,\
+  channels integer DEFAULT 0,\
+  bitsPerSample integer DEFAULT 0,\
+  sampleRate integer DEFAULT 0\
 );\
 \
 CREATE UNIQUE INDEX IF NOT EXISTS mli_url on medialib (url);\
@@ -72,13 +72,13 @@ DROP INDEX IF EXISTS mli_music_hash;"
 
 #define SQL_ADD_MEDIA    "INSERT INTO medialib (url, artist, album, title, track, year, genre, comment, duration, filesize, time_added, music_hash, lyrics_file) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
 
-#define SQL_ADD_MEDIA_FAST    "INSERT INTO medialib (url, title, time_added) "\
-                              "VALUES (?, ?, ?);"
+#define SQL_ADD_MEDIA_FAST    "INSERT INTO medialib (url, artist, title, filesize, time_added, format) "\
+                              "VALUES (?, ?, ?, ?, ?, ?);"
 
 #define SQL_QUERY_MEDIA_BY_URL  "select * from medialib where url=? "
 #define SQL_QUERY_MEDIA_BY_ID   "select * from medialib where id=? "
 
-#define SQL_UPDATE_MEDIA_PLAY_TIME "update medialib set times_played=times_played+1, time_played=? where id=?"
+#define SQL_UPDATE_MEDIA_PLAY_TIME "update medialib set count_played=count_played+1, time_played=? where id=?"
 
 #define SQL_MEDIA_UPDATE_INFO "update medialib set url=?, artist=?, album=?, title=?, track=?,"\
     "year=?, genre=?, comment=?, duration=?, filesize=?, lyrics_file=?, music_hash=?,"\
@@ -399,9 +399,6 @@ MediaPtr CMediaLibrary::add(cstr_t mediaUrl) {
 
     g_player.loadMediaTagInfo(media.get());
 
-    media->timePlayed = time(nullptr);
-    media->timeAdded = time(nullptr);
-
     doAddMedia(media);
 
     return media;
@@ -423,20 +420,22 @@ MediaPtr CMediaLibrary::addFast(cstr_t mediaUrl) {
     media = newMedia();
 
     media->url = mediaUrl;
-    media->timePlayed = time(nullptr);
-    media->timeAdded = time(nullptr);
-    media->fileSize = getFileLength(mediaUrl);
-    media->title = urlGetTitle(mediaUrl);
     getArtistTitleFromFileName(media->artist, media->title, mediaUrl);
-
-    int n = 1;
-    int ret = m_sqlAddFast.bindText(n++, mediaUrl);
-    if (ret != ERR_OK) {
-        goto RET_FAILED;
+    FileStatInfo info;
+    if (getFileStatInfo(media->url.c_str(), info)) {
+        media->timeAdded = info.createdTime;
+        media->fileSize = info.fileSize;
     }
+    media->format = getMediaFormat(mediaUrl);
 
+    int n = 1, ret = ERR_OK;
+    // url, artist, title, filesize, time_added, format
+    SQLITE3_BIND_CSTR(m_sqlAddFast, mediaUrl);
+    SQLITE3_BIND_TEXT(m_sqlAddFast, media->artist);
     SQLITE3_BIND_TEXT(m_sqlAddFast, media->title);
-    m_sqlAddFast.bindInt64(n++, media->timeAdded);
+    SQLITE3_BIND_INT64(m_sqlAddFast, media->fileSize);
+    SQLITE3_BIND_INT64(m_sqlAddFast, media->timeAdded);
+    SQLITE3_BIND_TEXT(m_sqlAddFast, media->format);
 
     ret = m_sqlAddFast.step();
     if (ret != ERR_OK) {
@@ -452,6 +451,7 @@ MediaPtr CMediaLibrary::addFast(cstr_t mediaUrl) {
     return media;
 
 RET_FAILED:
+    m_sqlAddFast.reset();
 
     return nullptr;
 }
@@ -614,7 +614,7 @@ PlaylistPtr CMediaLibrary::getRecentPlayed(uint32_t nCount) {
 
 PlaylistPtr CMediaLibrary::getTopPlayed(uint32_t nCount) {
     char szQuery[256];
-    snprintf(szQuery, CountOf(szQuery), "select * from medialib where file_deleted!=1 order by times_played desc limit %d", nCount);
+    snprintf(szQuery, CountOf(szQuery), "select * from medialib where file_deleted!=1 order by count_played desc limit %d", nCount);
 
     return queryPlaylist(szQuery);
 }
@@ -679,11 +679,14 @@ ResultCode CMediaLibrary::markPlayFinished(Media *media) {
     media->countPlayed++;
     media->timePlayed = time(nullptr);
 
-    m_stmtUpdateMediaPlayTime.bindInt64(0, media->timePlayed);
-    m_stmtUpdateMediaPlayTime.bindInt(1, media->ID);
+    m_stmtUpdateMediaPlayTime.bindInt64(1, media->timePlayed);
+    m_stmtUpdateMediaPlayTime.bindInt(2, media->ID);
 
     auto ret = m_stmtUpdateMediaPlayTime.step();
+    assert(ret == ERR_OK);
     m_stmtUpdateMediaPlayTime.reset();
+
+    markPlayFinishedInMem(media);
 
     return ret;
 }
@@ -959,6 +962,22 @@ void CMediaLibrary::removeMediaInMem(Media *media) {
         if (item) {
             if (item->ID == id) {
                 m_allMedias->removeItem(i);
+                return;
+            }
+        }
+    }
+}
+
+void CMediaLibrary::markPlayFinishedInMem(Media *media) {
+    auto id = media->ID;
+    auto count =  m_allMedias->getCount();
+
+    for (uint32_t i = 0; i < count; i++) {
+        auto item = m_allMedias->getItem(i);
+        if (item) {
+            if (item->ID == id) {
+                item->timePlayed = media->timePlayed;
+                item->countPlayed = media->countPlayed;
                 return;
             }
         }

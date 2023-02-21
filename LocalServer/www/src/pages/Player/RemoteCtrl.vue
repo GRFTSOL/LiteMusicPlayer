@@ -34,35 +34,8 @@
 import { defineComponent } from 'vue';
 import * as wsc from 'boot/web_socket_client';
 import { playerData } from 'boot/PlayerData';
+import { formatDuration } from 'boot/utils';
 
-function paddingZero(n: number, width: number) {
-  let str = String(Math.floor(n));
-  while (str.length < width) {
-    str = '0' + str;
-  }
-  return str;
-}
-
-function formatDuration(n: number) {
-  n /= 1000;
-  let str = ':' + paddingZero(n % 60, 2); // Seconds
-  n /= 60;
-  if (n >= 1) {
-    str = paddingZero(n % 60, 2) + str; // Minutes
-    n /= 60;
-    if (n >= 1) {
-      str = paddingZero(n, 0) + ':' + str; // Hours
-    } else {
-      if (str[0] == '0') {
-        str = str.slice(1);
-      }
-    }
-  } else {
-    // Minutes: 0
-    str = '0' + str;
-  }
-  return str;
-}
 
 export default defineComponent({
   name: 'RemoteCtrlPlayer',

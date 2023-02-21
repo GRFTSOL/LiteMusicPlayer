@@ -9,40 +9,6 @@
 #include "Utils/rapidjson.h"
 
 
-void writeAllMediaLibrary(RapidjsonWriter &writer) {
-    auto lib = g_player.getMediaLibrary();
-
-    writer.StartObject();
-    writer.Key("type");
-    writer.String(TYPE_MEDIA_LIB_ALL);
-
-    writer.Key("list");
-    writer.StartArray();
-
-    auto playlist = lib->getAll();
-    int count = playlist->getCount();
-    for (int i = 0; i < count; i++) {
-        auto media = playlist->getItem(i);
-        if (media) {
-            writer.StartObject();
-
-            writer.Key("id"); writer.Int(media->ID);
-            writer.Key("artist"); writer.String(media->artist.c_str());
-            writer.Key("album"); writer.String(media->album.c_str());
-            writer.Key("title"); writer.String(media->title.c_str());
-            writer.Key("file"); writer.String(media->url.c_str());
-            writer.Key("duration"); writer.Int(media->duration);
-            writer.Key("genre"); writer.String(media->genre.c_str());
-            writer.Key("year"); writer.Int(media->year);
-
-            writer.EndObject();
-        }
-    }
-
-    writer.EndArray();
-    writer.EndObject();
-}
-
 cstr_t loopModeToString(int loop) {
     switch (loop) {
         case MP_LOOP_OFF: return "off";
@@ -97,8 +63,21 @@ void writeMedia(RapidjsonWriter &writer, Media *media) {
     writer.Key("artist"); writer.String(media->artist.c_str());
     writer.Key("album"); writer.String(media->album.c_str());
     writer.Key("title"); writer.String(media->title.c_str());
+    writer.Key("year"); writer.Int(media->year);
+    writer.Key("genre"); writer.String(media->genre.c_str());
     writer.Key("file"); writer.String(media->url.c_str());
     writer.Key("duration"); writer.Int(media->duration);
+    writer.Key("fileSize"); writer.Int64(media->fileSize);
+    writer.Key("timeAdded"); writer.Int64(media->timeAdded);
+    writer.Key("timePlayed"); writer.Int64(media->timePlayed);
+    writer.Key("lyricsFile"); writer.String(media->lyricsFile.c_str());
+    writer.Key("rating"); writer.Int(media->rating);
+    writer.Key("format"); writer.String(media->format.c_str());
+    writer.Key("countPlayed"); writer.Int(media->countPlayed);
+    writer.Key("bitRate"); writer.Int(media->bitRate);
+    writer.Key("channels"); writer.Int(media->channels);
+    writer.Key("bitsPerSample"); writer.Int(media->bitsPerSample);
+    writer.Key("sampleRate"); writer.Int(media->sampleRate);
     writer.EndObject();
 }
 
@@ -152,6 +131,29 @@ void writeAllPlayerStates(RapidjsonWriter &writer) {
     writeCurMedia(writer);
     writePlayerSettings(writer);
 
+    writer.EndObject();
+}
+
+void writeAllMediaLibrary(RapidjsonWriter &writer) {
+    auto lib = g_player.getMediaLibrary();
+
+    writer.StartObject();
+    writer.Key("type");
+    writer.String(TYPE_MEDIA_LIB_ALL);
+
+    writer.Key("list");
+    writer.StartArray();
+
+    auto playlist = lib->getAll();
+    int count = playlist->getCount();
+    for (int i = 0; i < count; i++) {
+        auto media = playlist->getItem(i);
+        if (media) {
+            writeMedia(writer, media.get());
+        }
+    }
+
+    writer.EndArray();
     writer.EndObject();
 }
 

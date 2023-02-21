@@ -836,7 +836,11 @@ ResultCode CPlayer::loadMediaTagInfo(Media *media) {
         }
     }
 
-    media->fileSize = getFileLength(media->url.c_str());
+    FileStatInfo info;
+    if (getFileStatInfo(media->url.c_str(), info)) {
+        media->timeAdded = info.createdTime;
+        media->fileSize = info.fileSize;
+    }
     media->format = getMediaFormat(media->url.c_str());
 
     // get artist, title from music file name.

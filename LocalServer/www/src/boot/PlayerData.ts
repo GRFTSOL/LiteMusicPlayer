@@ -4,10 +4,10 @@ import { deepCopy, assert } from 'src/boot/utils';
 
 
 let isPlaying = false;
-let startPosition = 0, startPositionTime = new Date().getTime(), idUpdatePlayerPosition;
+let startPosition = 0, startPositionTime = new Date().getTime(), idUpdatePlayerPosition: any;
 
 // 存储了 player 的所有信息：参考 PlayerEventSender.cpp 传递的数据结构
-export let playerData = reactive({
+export const playerData = reactive({
     status: 'stopped',
     position: 0,
     cur_playlist: [
@@ -36,21 +36,21 @@ export let playerData = reactive({
     },
 
     // Update values
-    setVolume(value) {
+    setVolume(value: number) {
         sendPlayerCommand('settings.volume', value);
     },
-    seek(value) {
+    seek(value: number) {
         sendPlayerCommand('position', value);
     },
 });
-window._playerData = playerData;
+// window._playerData = playerData;
 
 registerHandler(TYPE_PLAYER_STATES, handlePlayerStateMsg);
 registerHandler(TYPE_PLAYER_NOTIFICATION, handlePlayerStateMsg);
 registerHandler(TYPE_PLAYER_REMOTE_CTRL, handlePlayerRemoteCtrlResult);
 
-function handlePlayerStateMsg(json) {
-    let status = json.status;
+function handlePlayerStateMsg(json: any) {
+    const status = json.status;
     if (status != null) {
         if (status === 'playing') {
             if (!isPlaying) {
@@ -63,7 +63,7 @@ function handlePlayerStateMsg(json) {
                 isPlaying = false;
                 clearInterval(idUpdatePlayerPosition);
 
-                let now = new Date().getTime();;
+                const now = new Date().getTime();;
                 startPosition += now - startPositionTime;
                 startPositionTime = now;
             }
@@ -77,12 +77,12 @@ function handlePlayerStateMsg(json) {
 
     deepCopy(playerData, json);
 
-    console.log(JSON.stringify(json, null, 2));
-    console.log(json.cur_media?.title);
-    console.log(playerData.cur_media.title);
+    // console.log(JSON.stringify(json, null, 2));
+    // console.log(json.cur_media?.title);
+    // console.log(playerData.cur_media.title);
 }
 
-function handlePlayerRemoteCtrlResult(json) {
+function handlePlayerRemoteCtrlResult() {
     // No need to handle.
     assert(1);
 }

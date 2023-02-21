@@ -33,7 +33,6 @@ PlaylistPtr loadPlaylist(cstr_t szFile) {
 // \mp3\Britney Spears04\02.(You Drive Me ) Crazy.MP3
 // 02.(You Drive Me ) Crazy.MP3
 bool appendMediaToList(Playlist *playList, cstr_t szFileName, cstr_t szBasePath) {
-    ResultCode nRet;
     string strFile;
 
     if (szBasePath[1] == ':') {

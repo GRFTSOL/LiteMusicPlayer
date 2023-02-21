@@ -75,7 +75,7 @@ backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
         mXScroll = (mXScroll - (int)(mXScroll)) * negative;
     }
 
-    float scrollingDeltaY = [theEvent scrollingDeltaY];
+    float scrollingDeltaY = -[theEvent scrollingDeltaY];
     mYScroll += scrollingDeltaY / PER_SCROOLL;
     if (abs(mYScroll) >= 1) {
         mBaseWnd->onMouseWheel((int)(mYScroll), modifierFlags, pt);

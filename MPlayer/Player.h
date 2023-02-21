@@ -234,6 +234,8 @@ protected:
 
 };
 
+string getMediaFormat(cstr_t url);
+
 string formatDuration(int nTimeSec);
 
 void getArtistTitleFromFileName(string &artist, string &title, cstr_t fileName);

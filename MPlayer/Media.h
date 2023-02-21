@@ -22,7 +22,7 @@ public:
     string                      album;
     string                      title;
     int16_t                     trackNumb = -1;
-    int16_t                     year = -1;
+    int16_t                     year = 0;
     string                      genre;
     string                      comments;
 

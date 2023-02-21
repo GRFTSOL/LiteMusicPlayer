@@ -1,11 +1,22 @@
 
 export interface Media {
-  id: number,
+  id: number;
   artist: string;
   album: string;
   title: string;
+  year: number;
+  genre: string;
   file: string;
   duration: number;
-  genre: string;
-  year: string;
+  fileSize: number;
+  timeAdded: number;
+  timePlayed: number;
+  lyricsFile: string;
+  rating: number;
+  format: string;
+  countPlayed: number;
+  bitRate: number;
+  channels: number;
+  bitsPerSample: number;
+  sampleRate: number;
 }

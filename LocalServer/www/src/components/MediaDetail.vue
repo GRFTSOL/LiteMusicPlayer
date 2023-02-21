@@ -74,9 +74,7 @@
 
 <script lang="ts">
 
-import { defineComponent, PropType } from 'vue';
-
-import { Media } from './models';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'MediaDetail',

@@ -2,7 +2,7 @@
 
 
 Media::Media() : IMediaInfo() {
-    timeAdded = time(nullptr);
+    timeAdded = 0;
 }
 
 Media::~Media() {

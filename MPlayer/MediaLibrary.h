@@ -156,6 +156,7 @@ protected:
 
     void updateMediaInMem(Media *media);
     void removeMediaInMem(Media *media);
+    void markPlayFinishedInMem(Media *media);
 
     int upgradeCheck();
 
