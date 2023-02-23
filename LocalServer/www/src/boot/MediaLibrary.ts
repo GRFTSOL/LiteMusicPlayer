@@ -1,5 +1,6 @@
 import { reactive } from 'vue'
 import { registerHandler, TYPE_MEDIA_LIB_NOTIFICATION, TYPE_MEDIA_LIB_ALL } from 'src/boot/web_socket_client';
+import { Media } from 'src/components/models';
 
 
 const MNC_UPDATE = 1;
@@ -10,25 +11,7 @@ const mediaLibChangedCallbacks: any = [];
 
 // 存储了 MediaLibrary 的所有信息
 const mediaLibrary = reactive({
-    list: [
-        {
-            id: 0,
-            artist: '',
-            album: '',
-            title: '',
-            file: '',
-            duration: 0,
-            genre: '',
-            year: 0,
-            rating: 0,
-            format: '',
-            timeAdded: 0,
-            timePlayed: 0,
-            lyricsType: '',
-            countPlayed: 0,
-            bitRate: 0,
-        }
-    ],
+    list: [] as Array<Media>,
 });
 
 (window as any)._mediaLibrary = mediaLibrary;

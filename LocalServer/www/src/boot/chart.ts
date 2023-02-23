@@ -3,6 +3,40 @@ import { Group } from 'crossfilter2';
 import { deepCopy } from './utils';
 
 
+export function makeTextChartOption(title: string, subTitle: string, extraOptions?: any) {
+    const opt = {
+        graphic: {
+            elements: [
+                {
+                    type: 'text',
+                    left: 'center',
+                    top: 'center',
+                    style: {
+                        text: title,
+                        fontSize: 60,
+                        fontWeight: 'bold',
+                    },
+                },
+                {
+                    type: 'text',
+                    left: 'center',
+                    top: '70%',
+                    style: {
+                        text: subTitle,
+                        fontSize: 20,
+                    },
+                }
+            ]
+        }
+    };
+
+    if (extraOptions) {
+        deepCopy(opt, extraOptions);
+    }
+
+    return opt;
+}
+
 export function makePieChartOption(title: string, extraOptions?: any) {
     const opt = {
         title: {
@@ -92,6 +126,27 @@ export function makeBarChartOption(title: string, fixedXaxisData?: Array<string 
     return opt;
 }
 
+export function makeToolboxRemoveChart() {
+    return {
+        toolbox: {
+            show: true,
+            feature: {
+                myRemoveChart: {
+                    show: true,
+                    title: 'Remove',
+                    icon: 'path://M249,753L207,711L438,480L207,249L249,207L480,438L711,207L753,249L522,480L753,711L711,753L480,522L249,753Z',
+                    onclick: function (e: any) {
+                        if (e.option._removeChart) {
+                            e.option._removeChart();
+                        } else {
+                            console.warn('option._removeChart is not set.');
+                        }
+                    }
+                }
+            }
+        }
+    };
+}
 
 export function makeToolboxOption(dataZoom: boolean, filterNotSet: { title: string } | null) {
     const toolbox = {
