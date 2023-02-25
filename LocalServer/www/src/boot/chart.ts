@@ -46,6 +46,7 @@ export function makePieChartOption(title: string, extraOptions?: any) {
         tooltip: {
             trigger: 'item',
             formatter: '{b} : {c} ({d}%)',
+            confine: true,
         },
         // legend: {
         //   orient: 'vertical',

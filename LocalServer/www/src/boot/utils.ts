@@ -278,3 +278,29 @@ export function formatRecentDateTime(n: number) {
     duration /= 12;
     return stringFormat('{0} years ago', Math.floor(duration));
 }
+
+export function loadConfig(name: string, version: number, def?: null) : any {
+    const confText = localStorage.getItem(name);
+    if (confText) {
+        try {
+            const conf = JSON.parse(confText);
+            if (conf && conf._version === version) {
+                return conf;
+            }
+        } catch (error) {
+            console.warn(stringFormat('Failed to load config {0} from localStorage', name), error);
+        }
+    }
+
+    return def;
+}
+
+export function saveConfig(name: string, version: number, conf: any) : any {
+    conf._version = version;
+
+    try {
+        localStorage.setItem(name, JSON.stringify(conf));
+    } catch (error) {
+        console.warn(stringFormat('Failed to save config {0}', name), error);
+    }
+}

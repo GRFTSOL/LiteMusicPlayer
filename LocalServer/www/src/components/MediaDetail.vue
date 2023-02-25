@@ -2,7 +2,7 @@
   <q-dialog
     v-bind:value="value"
     v-on:input="$emit('input', $event)"
-    position="right"
+    :position="alignLeft? 'left' : 'right'"
     maximized
     full-height
   >
@@ -87,6 +87,10 @@ export default defineComponent({
       type: Object,
       default: () => ({}),
     },
+    alignLeft: {
+      type: Boolean,
+      default: false,
+    }
   },
   beforeUpdate() {
     this.media = this.mediaProp;
@@ -94,6 +98,7 @@ export default defineComponent({
   data () {
     return {
       media: {},
+      tab: 'info',
     }
   },
 

@@ -1,7 +1,65 @@
 <template>
   <q-page class="q-pa-md">
     <q-toolbar>
-      <q-btn flat round dense icon="edit_square" />
+      <q-btn-dropdown
+          dense
+          flat
+          color="primary"
+          label="过滤器"
+        >
+        <q-list>
+          <q-item>
+            <q-input dense debounce="400" color="primary" v-model="searchKeyword" label="搜索">
+              <template v-slot:append>
+                <q-icon name="search" />
+              </template>
+            </q-input>
+          </q-item>
+
+          <q-item
+            v-for="option in filterOptions"
+            :key="option.label"
+          >
+            <q-item-section>
+              <q-select outlined v-model="option.value"
+                :options="option.options"
+                @input="option.on = true"
+                @clear="option.on = false"
+                dense
+                :label="option.label">
+                <template v-slot:prepend>
+                  <q-icon :name="option.icon" />
+                </template>
+              </q-select>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-btn-dropdown>
+
+      <div>
+        <template
+          v-for="option in filterOptions"
+        >
+          <q-chip
+            v-if="option.on"
+            :key="option.label"
+            removable
+            v-model="option.on"
+            @remove="option.value=''"
+            color="primary"
+            text-color="white"
+            :icon="option.icon">
+            {{ option.value }}
+          </q-chip>
+        </template>
+
+        <q-btn
+          v-show="isFilterOn"
+          flat round dense
+          icon="playlist_remove"
+          @click="removeAllFilterOptions"
+        />
+      </div>
 
       <q-space />
 
@@ -43,133 +101,21 @@
         :key="chart.id" :gs-id="chart.id" :id="chart.id"
         >
         <div class="grid-stack-item-content">
+          <MediaTable
+            v-if="chart.echarts_option._is_media_table"
+            :mediaList="mediaList"
+            :canRemoveTable="chart.echarts_option.toolbox?.feature?.myRemoveChart?.show"
+            saveStateName="MediaLibAll"
+            @remove_table="removeChart(chart)"
+          />
           <v-chart class="chart" :option="chart.echarts_option" autoresize
+            v-else
             @selectchanged="chartFilterOnSelected($event, chart)"
             @dataZoom="chartFilterOnZoom($event, chart)" />
+          
         </div>
       </div>
     </div>
-
-    <q-table
-      flat
-      title="Treats"
-      :rows="mediaList"
-      :columns="columns"
-      row-key="id"
-      :visible-columns="visibleColumns"
-      :filter="isFilterOn"
-      :filter-method="filterMedias"
-      :rows-per-page-options="[10, 15, 20, 50, 100]"
-      @row-click="onClickRow"
-    >
-      <template v-slot:top="props">
-        <q-btn-dropdown
-            dense
-            flat
-            color="primary"
-            label="过滤器"
-          >
-          <q-list>
-            <q-item>
-              <q-input dense debounce="400" color="primary" v-model="searchKeyword" label="搜索">
-                <template v-slot:append>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
-            </q-item>
-
-            <q-item
-              v-for="option in filterOptions"
-              :key="option.label"
-            >
-              <q-item-section>
-                <q-select outlined v-model="option.value"
-                  :options="option.options"
-                  @input="option.on = true"
-                  @clear="option.on = false"
-                  dense
-                  :label="option.label">
-                  <template v-slot:prepend>
-                    <q-icon :name="option.icon" />
-                  </template>
-                </q-select>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-
-        <div>
-          <template
-            v-for="option in filterOptions"
-          >
-            <q-chip
-              v-if="option.on"
-              :key="option.label"
-              removable
-              v-model="option.on"
-              @remove="option.value=''"
-              color="primary"
-              text-color="white"
-              :icon="option.icon">
-              {{ option.value }}
-            </q-chip>
-          </template>
-
-          <q-btn
-            v-show="isFilterOn"
-            flat round dense
-            icon="playlist_remove"
-            @click="removeAllFilterOptions"
-          />
-        </div>
-
-        <q-space />
-
-
-        <div>
-          <q-btn-dropdown
-            dense
-            flat
-            color="primary"
-            label="显示列"
-          >
-            <q-list>
-              <q-item
-                v-for="column in columns"
-                :key="column.name"
-                v-close-popup>
-                <q-item-section>
-                  <q-toggle v-model="visibleColumns" :val="column.name" :label="column.label" />
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-btn-dropdown>
-        </div>
-
-        <q-btn
-          flat dense
-          label="导出"
-          @click="exportTable"
-        />
-        
-        <q-btn
-          flat round dense
-          icon="settings"
-        />
-
-        <q-btn
-          flat round dense
-          :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
-          @click="props.toggleFullscreen"
-        />
-      </template>
-
-    </q-table>
-
-    <MediaDetail
-      v-model="showMediaDetail"
-      v-bind:media="curMedia"
-    />
 
   </q-page>
 </template>
@@ -182,7 +128,7 @@ import { Media } from '../../components/models';
 import { getMediaLibrary, registerMediaLibChangedHandler } from 'boot/MediaLibrary';
 import { makePieChartOption, makeBarChartOption, makeTimelineChartOption, makeToolboxOption,
   makeToolboxRemoveChart, makeTextChartOption, fillChartOptionTopNItems, fillTimeChartOption } from 'boot/chart';
-import MediaDetail from 'src/components/MediaDetail.vue'
+import MediaTable from 'src/components/MediaTable.vue'
 import * as crossfilter from 'crossfilter2'
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
@@ -190,7 +136,7 @@ import { BarChart, PieChart } from 'echarts/charts';
 import { TitleComponent, TooltipComponent, LegendComponent, GridComponent, ToolboxComponent, DataZoomComponent,
   GraphicComponent, } from 'echarts/components';
 import VChart from 'vue-echarts';
-import { assert, stringFormat, deepCopy, formatDuration, formatRecentDateTime } from 'boot/utils';
+import { assert, stringFormat, deepCopy, loadConfig, saveConfig } from 'boot/utils';
 
 
 use([
@@ -265,8 +211,25 @@ const CHART_TYPE_PIE = 1;
 const CHART_TYPE_TIMELINE = 2;
 const CHART_TYPE_RATING = 3;
 const CHART_TYPE_SUMMARY = 4;
+const CHART_TYPE_MEDIA_LIST = 5;
 
 const DATA_CHART_DEFINES: Array<ChartDefine> = [
+  {
+    index: 0,
+    title: 'Count',
+    type: CHART_TYPE_SUMMARY,
+    w: 2, h: 2,
+    fieldSelector: null,
+    chartOption: () =>  makeTextChartOption('', ''),
+  },
+  {
+    index: 0,
+    title: 'Media List',
+    type: CHART_TYPE_MEDIA_LIST,
+    w: 5, h: 8,
+    fieldSelector: null,
+    chartOption: () =>  ({ _is_media_table: true }),
+  },
   {
     index: 0,
     title: 'Artist',
@@ -362,14 +325,6 @@ const DATA_CHART_DEFINES: Array<ChartDefine> = [
     fieldSelector: dimensionFieldDuration,
     chartOption: () =>  makePieChartOption('Duration'),
   },
-  {
-    index: 0,
-    title: 'Count',
-    type: CHART_TYPE_SUMMARY,
-    w: 2, h: 2,
-    fieldSelector: null,
-    chartOption: () =>  makeTextChartOption('', ''),
-  },
 ];
 
 // https://github.com/gridstack/gridstack.js/tree/master/doc
@@ -396,13 +351,6 @@ function fillRatingItems(group: crossfilter.Group<any, string | number, number>,
     echart_options.series[0].data = items;
 }
 
-function formatDurationML(n: number) {
-  if (n == 0) {
-    return '';
-  }
-  return formatDuration(n);
-}
-
 function formatDurationText(n: number) {
     n /= 1000;
     let minutes = n / 60;
@@ -422,7 +370,7 @@ function formatDurationText(n: number) {
       if (hours >= 1) {
         return stringFormat('{0} hour(s) {1} minute(s)', hours, minutes);
       } else {
-        return stringFormat('{0} day(s)', minutes);
+        return stringFormat('{0} minute(s)', minutes);
       }
     }
 }
@@ -431,34 +379,12 @@ function formatDurationText(n: number) {
 //   return new Date(n * 1000).toLocaleString();
 // }
 
-function formatTimePlayed(n: number) {
-  return n == 0 ? '' : formatRecentDateTime(n);
-}
-
-const MEDIA_LIB_COLUMNS = [
-  { name: 'id', field: 'id', label: 'ID', sortable: true, align: 'left', },
-  { name: 'artist', field: 'artist', label: 'Artist', sortable: true, align: 'left', },
-  { name: 'title', field: 'title', label: 'Title', sortable: true, align: 'left', },
-  { name: 'album', field: 'album', label: 'Album', sortable: true, align: 'left', },
-  { name: 'file', field: 'file', label: 'File', sortable: true, align: 'left', },
-  { name: 'duration', field: 'duration', label: 'Duration', sortable: true, format: formatDurationML, align: 'left', },
-  { name: 'genre', field: 'genre', label: 'Genre', sortable: true, align: 'left', },
-  { name: 'year', field: 'year', label: 'Year', sortable: true, align: 'left', },
-  { name: 'rating', field: 'rating', label: 'Rating', sortable: true, align: 'left', },
-  { name: 'format', field: 'format', label: 'Format', sortable: true, align: 'left', },
-  { name: 'timeAdded', field: 'timeAdded', label: 'TimeAdded', sortable: true, format: formatRecentDateTime, align: 'left', },
-  { name: 'timePlayed', field: 'timePlayed', label: 'TimePlayed', sortable: true, format: formatTimePlayed, align: 'left', },
-  { name: 'lyricsFile', field: 'lyricsFile', label: 'LyricsType', sortable: true, align: 'left', },
-  { name: 'countPlayed', field: 'countPlayed', label: 'CountPlayed', sortable: true, align: 'left', },
-  { name: 'bitRate', field: 'bitRate', label: 'BitRate', sortable: true, align: 'left', },
-];
-
 const COUNT_PLAYED_LEVELS = [0, 1, 5, 20, 50, 100, 500, 1000, 5000, 10000];
 const DURATION_LEVELS = [1, 2, 3, 4, 5, 6, 10, 20, 50, 100];
 
 export default defineComponent({
   name: 'PageIndex',
-  components: { VChart, MediaDetail },
+  components: { VChart, MediaTable },
   setup() {
     const isEditDashboard = ref(false);
     const chartDefines = DATA_CHART_DEFINES.slice();
@@ -485,15 +411,21 @@ export default defineComponent({
       });
 
       grid.on('change', onGridChanged);
+
+      loadDashboard();
+      grid.disable();
     });
 
     function initMediaLibFilters() {
       cf = crossfilter.default(getMediaLibrary().list)
       mediaLibFilters.splice(0, mediaLibFilters.length);
+      let i = 0;
       for (let item of DATA_CHART_DEFINES) {
-        item.index = mediaLibFilters.length;
+        item.index = i++;
         if (item.fieldSelector) {
           mediaLibFilters.push(cf.dimension<string | number | Date>(item.fieldSelector));
+        } else {
+          mediaLibFilters.push(null as any as MediaLibDimension);
         }
       }
     }
@@ -563,8 +495,8 @@ export default defineComponent({
       refreshCharts();
     }
 
-    function chartFilterOnNotSet(chart: ChartDefine, notSetValue: number | string) {
-      const dimension = mediaLibFilters[chart.index];
+    function chartFilterOnNotSet(chart_idx: number, notSetValue: number | string) {
+      const dimension = mediaLibFilters[chart_idx];
       if (!(dimension as any)._filteredNotSet) {
         dimension.filter(v => v === notSetValue);
         (dimension as any)._filteredNotSet = 1;
@@ -595,6 +527,7 @@ export default defineComponent({
         fillRatingItems(filter.group(), chart.echarts_option);
       } else if (type === CHART_TYPE_SUMMARY) {
         fillChartSummary(chart.echarts_option);
+      } else if (type === CHART_TYPE_MEDIA_LIST) {
       } else {
         assert(0);
       }
@@ -635,14 +568,31 @@ export default defineComponent({
     // }
 
     function addChart(chart: ChartDefine) {
-      const echarts_option = chart.chartOption();
+      function findEmptySpace(w: number, h: number) {
+        for (let y = 0; y < 50; y++) {
+          for (let x = 0; x < MAX_COLUMN_COUNT; x++) {
+            if (grid.isAreaEmpty(x, y, w, h)) {
+              return [x, y];
+            }
+          }
+        }
+        return [0, 0];
+      }
+
+      let [x, y] = findEmptySpace(chart.w, chart.h);
+
+      addChartEx(x, y, chart.w, chart.h, chart.index);
+    }
+
+    function addChartEx(x: number, y: number, w: number, h: number, chart_index: number) {
+      const echarts_option = DATA_CHART_DEFINES[chart_index].chartOption();
       const node: ChartItem = {
-        x: 0, y: 0, w: chart.w, h: chart.h, id: nextChartID(),
-        echarts_option, data_chart_idx: chart.index
+        x: x, y: y, w: w, h: h, id: nextChartID(),
+        echarts_option, data_chart_idx: chart_index
       };
 
       echarts_option._filterNotSet = function () {
-        chartFilterOnNotSet(chart, 0);
+        chartFilterOnNotSet(chart_index, 0);
       }
       echarts_option._removeChart = function() {
         removeChart(node);
@@ -652,18 +602,6 @@ export default defineComponent({
       }
 
       removeChartDefine(node);
-
-      let found = false;
-      for (let y = 0; y < 50 && !found; y++) {
-        for (let x = 0; x < MAX_COLUMN_COUNT; x++) {
-          if (grid.isAreaEmpty(x, y, 2, 2)) {
-            node.x = x;
-            node.y = y;
-            found = true;
-            break;
-          }
-        }
-      }
 
       chartItems.push(node);
       refreshChart(node);
@@ -687,11 +625,42 @@ export default defineComponent({
         return 'pie_chart';
       } else if (type === CHART_TYPE_SUMMARY) {
         return 'text_fields';
-      // } else if (type === CHART_TYPE_) {
-      //   return 'table_chart';
+      } else if (type === CHART_TYPE_MEDIA_LIST) {
+        return 'table_chart';
       } else {
         return 'bar_chart';
       } 
+    }
+
+    const CONF_VERSION = 1;
+
+    function loadDashboard() {
+      const conf = loadConfig('media_lib_all_dashboard', CONF_VERSION);
+      if (conf) {
+        conf.chartItems.sort((a : any, b : any) => a.y === b.y ? a.x - b.y : a.y - b.y);
+
+        if (conf.chartItems instanceof Array) {
+          for (let chart of conf.chartItems) {
+            addChartEx(chart.x, chart.y, chart.w, chart.h, chart.data_chart_idx);
+          }
+        }
+      }
+    }
+
+    function saveDashboard(items : Array<ChartItem>) {
+      const chartItems = [] as any;
+
+      for (let chart of items) {
+        chartItems.push({
+          x: chart.x,
+          y: chart.y,
+          w: chart.w,
+          h: chart.h,
+          data_chart_idx: chart.data_chart_idx,
+        });
+      }
+
+      saveConfig('media_lib_all_dashboard', CONF_VERSION, { chartItems });
     }
 
     watch(isEditDashboard, (newIsEditDashboard) => {
@@ -702,10 +671,15 @@ export default defineComponent({
         if (newIsEditDashboard) {
           deepCopy(chart.echarts_option, makeToolboxRemoveChart());
         } else {
-          if (chart.echarts_option?.toolbox?.feature?.myRemoveChart) {
+          if (chart.echarts_option.toolbox?.feature?.myRemoveChart) {
             chart.echarts_option.toolbox.feature.myRemoveChart.show = false;
           }
         }
+      }
+
+      if (!newIsEditDashboard) {
+        // Save configuration.
+        saveDashboard(chartItems);
       }
     });
 
@@ -742,41 +716,9 @@ export default defineComponent({
       ],
       filters: {
       },
-      visibleColumns: ['artist', 'album', 'title'],
-      columns: MEDIA_LIB_COLUMNS,
-      mediaLib: getMediaLibrary(),
-      showMediaDetail: false,
-      curMedia: {},
     });
   },
   methods: {
-    exportTable () {
-      // let a = [];
-      // a.push(this.columns.map(col => col.label).join(','));
-
-      // for (let row of this.mediaLib.list) {
-      //   let b = [] as Array<string>;
-      //   for (let col of this.columns) {
-      //     b.push(row[col.field as keyof Media]);
-      //   }
-      //   a.push(b.join(','));
-      // }
-      // const content = a.join('\n');
-
-      // const status = exportFile(
-      //   'table-export.csv',
-      //   content,
-      //   'text/csv'
-      // )
-
-      // if (status !== true) {
-      //   this.$q.notify({
-      //     message: 'Browser denied file download...',
-      //     color: 'negative',
-      //     icon: 'warning'
-      //   })
-      // }
-    },
     filterMedias(rows: Array<Media>) {
       let a = [];
       let filters = [];
@@ -817,15 +759,6 @@ export default defineComponent({
         option.on = false;
         option.value = '';
       }
-    },
-    onClickRow(_event: Event, row: Media) {
-      this.curMedia = row;
-      this.showMediaDetail = true;
-    },
-  },
-  watch: {
-    'mediaLib.list': function() {
-      //this.setupFilters();
     },
   },
   computed: {
