@@ -16,7 +16,7 @@ export const playerData = reactive({
             artist: '',
             album: '',
             title: '',
-            file: '',
+            url: '',
             duration: 0,
         }
     ],
@@ -25,7 +25,7 @@ export const playerData = reactive({
         artist: '',
         album: '',
         title: '',
-        file: '',
+        url: '',
         duration: 0,
     },
     settings: {

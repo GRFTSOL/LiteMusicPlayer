@@ -347,10 +347,6 @@ int CID3v2::open(FILE *fp, bool bCreate) {
     return ERR_OK;
 
 R_ERROR:
-    if (m_fp) {
-        fclose(m_fp);
-        m_fp = nullptr;
-    }
     return nRet;
 }
 

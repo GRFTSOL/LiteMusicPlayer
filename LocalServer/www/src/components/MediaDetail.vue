@@ -12,6 +12,7 @@
       >
         <q-toolbar-title>
           Media Information
+          {{ alignLeft  }}
         </q-toolbar-title>
       </q-toolbar>
 
@@ -36,24 +37,19 @@
         <q-tab-panels v-model="tab" animated>
 
           <q-tab-panel name="info" class="q-pa-md">
-            <div class="row q-gutter-md q-pb-md">
-              <div class="col">
+            <div
+              class="q-gutter-md q-pb-md row"
+            >
+              <div
+                v-for="field in FIELDS"
+                :key="field.name"
+                :class="field.name == 'url' ? 'col-10' : 'col-5'"
+                >
                 <q-input
-                  dense
-                  color="primary"
-                  v-model:value="media.artist"
-                  label="Artist"
-                />
-              </div>
-            </div>
-
-            <div class="row q-gutter-md q-pb-md">
-              <div class="col">
-                <q-input
-                  dense
-                  color="primary"
-                  v-model="media.title"
-                  label="Title"
+                  :modelValue="field.format ? field.format(curMedia[field.name]) : curMedia[field.name]"
+                  @@update:modelValue="(newValue: string) => curMedia[field.name] = newValue"
+                  :label="field.label" dense color="primary"
+                  :readonly="!field.editable"
                 />
               </div>
             </div>
@@ -74,7 +70,12 @@
 
 <script lang="ts">
 
-import { defineComponent } from 'vue';
+import { defineComponent, watch, ref, reactive } from 'vue';
+import { deepCopy } from 'boot/utils'
+import { MEDIA_LIB_COLUMNS } from 'src/components/MediaTable.vue'
+
+
+const FIELDS = MEDIA_LIB_COLUMNS;
 
 export default defineComponent({
   name: 'MediaDetail',
@@ -83,7 +84,7 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
-    mediaProp: {
+    media: {
       type: Object,
       default: () => ({}),
     },
@@ -92,19 +93,21 @@ export default defineComponent({
       default: false,
     }
   },
-  beforeUpdate() {
-    this.media = this.mediaProp;
-  },
-  data () {
+  setup(props) {
+    let curMedia = reactive(deepCopy({}, props.media));
+    const tab = ref('info');
+
     return {
-      media: {},
-      tab: 'info',
+      curMedia,
+      tab,
+      FIELDS,
+    };
+  },
+  watch: {
+    media(newMedia) {
+      this.curMedia = reactive(deepCopy({}, newMedia));
     }
   },
-
-  methods: {
-    
-  }
 });
 
 </script>

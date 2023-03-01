@@ -3,6 +3,58 @@ import { Group } from 'crossfilter2';
 import { deepCopy } from './utils';
 
 
+export function makeSunBurstOption(title: string) {
+    const opt = {
+        title: {
+            text: title,
+            left: 'center',
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: '{b} : {c}',
+            confine: true,
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                mySwitchChartType: {
+                    show: true,
+                    title: 'To Sunburst/Tree Map',
+                    icon: 'path://M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM12,20c-4.41,0 -8,-3.59 -8,-8s3.59,-8 8,-8 8,3.59 8,8 -3.59,8 -8,8zM15,6.5L15,9h-4v2h4v2.5l3.5,-3.5zM9,10.5L5.5,14 9,17.5L9,15h4v-2L9,13z',
+                    onclick: function (e: any) {
+                        if (e.option._switchSunburstTreemap) {
+                            e.option._switchSunburstTreemap();
+                        } else {
+                            console.warn('option._removeChart is not set.');
+                        }
+                    }
+                }
+            }
+        },
+        series: [
+            {
+                id: 'echarts-package-size',
+                type: 'sunburst',
+                data: [],
+                radius: [0, '90%'],
+                animationDurationUpdate: 1000,
+                universalTransition: true,
+                roam: false,
+                breadcrumb: {
+                    show: false
+                },
+                label: {
+                    show: true,
+                    overflow: 'truncate',
+                    align: 'left',
+                }
+            }
+        ]
+    };
+
+    return opt;
+}
+
 export function makeTextChartOption(title: string, subTitle: string, extraOptions?: any) {
     const opt = {
         graphic: {

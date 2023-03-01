@@ -138,8 +138,10 @@ int getTags(cstr_t szFile, BasicMediaTags &tags, ExtendedMediaInfo &extendedInfo
             id3v2.getTags(tags);
         } else {
             CID3v1 id3v1;
-            return id3v1.getTag(fp, tags);
+            id3v1.getTag(fp, tags);
         }
+
+        return ERR_OK;
     } else if (isM4aTagSupported(szFile)) {
         CM4aTag tag;
         int nRet = tag.open(fp, false);

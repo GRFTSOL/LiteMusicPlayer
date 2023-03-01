@@ -6,7 +6,7 @@ export interface Media {
   title: string;
   year: number;
   genre: string;
-  file: string;
+  url: string;
   duration: number;
   fileSize: number;
   timeAdded: number;

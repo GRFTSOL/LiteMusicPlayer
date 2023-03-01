@@ -65,7 +65,7 @@ void writeMedia(RapidjsonWriter &writer, Media *media) {
     writer.Key("title"); writer.String(media->title.c_str());
     writer.Key("year"); writer.Int(media->year);
     writer.Key("genre"); writer.String(media->genre.c_str());
-    writer.Key("file"); writer.String(media->url.c_str());
+    writer.Key("url"); writer.String(media->url.c_str());
     writer.Key("duration"); writer.Int(media->duration);
     writer.Key("fileSize"); writer.Int64(media->fileSize);
     writer.Key("timeAdded"); writer.Int64(media->timeAdded);
@@ -140,6 +140,9 @@ void writeAllMediaLibrary(RapidjsonWriter &writer) {
     writer.StartObject();
     writer.Key("type");
     writer.String(TYPE_MEDIA_LIB_ALL);
+
+    writer.Key("path_sep");
+    writer.String(PATH_SEP_STR);
 
     writer.Key("list");
     writer.StartArray();

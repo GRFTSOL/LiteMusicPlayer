@@ -12,6 +12,7 @@ const mediaLibChangedCallbacks: any = [];
 // 存储了 MediaLibrary 的所有信息
 const mediaLibrary = reactive({
     list: [] as Array<Media>,
+    path_sep: '/',
 });
 
 (window as any)._mediaLibrary = mediaLibrary;

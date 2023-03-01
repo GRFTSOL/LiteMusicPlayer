@@ -450,7 +450,7 @@ bool readMP3Info(FILE *fp, MP3Info &infoOut) {
     int nSamplesPerFrame = SAMPLES_PER_FRAMES[isLSF][infoOut.layer];
     int nFrameSize = (((COEFFICENTS[isLSF][infoOut.layer] * infoOut.bitRate / infoOut.sampleRate) + paddingSize)) * SLOT_SIZES[infoOut.layer];
 
-    size_t nFrameCount = getVbrInfoFrameCount(byHeader, PRE_READ_BUFF_SIZE, infoOut);
+    int64_t nFrameCount = getVbrInfoFrameCount(byHeader, PRE_READ_BUFF_SIZE, infoOut);
     if (nFrameCount < 0) {
         nFrameCount = (nFileSize - nHeaderPos) / nFrameSize;
     }

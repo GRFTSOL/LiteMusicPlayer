@@ -106,6 +106,8 @@ export function deepCopy(dst: any, src: any) {
         }
         dst[k] = vs;
     }
+
+    return dst;
 }
 
 export function appendUint32(arr: Array<number>, n: number) {
@@ -279,7 +281,26 @@ export function formatRecentDateTime(n: number) {
     return stringFormat('{0} years ago', Math.floor(duration));
 }
 
-export function loadConfig(name: string, version: number, def?: null) : any {
+export function formatBitRate(n: number) {
+    if (n <= 0) {
+        return '';
+    }
+
+    return (Math.floor(n / 1000)).toString() + 'k';
+}
+
+export function formatDurationML(n: number) {
+    if (n == 0) {
+        return '';
+    }
+    return formatDuration(n);
+}
+
+export function formatTimePlayed(n: number) {
+    return n == 0 ? '' : formatRecentDateTime(n);
+}
+
+export function loadConfig(name: string, version: number, def?: any): any {
     const confText = localStorage.getItem(name);
     if (confText) {
         try {
@@ -295,7 +316,7 @@ export function loadConfig(name: string, version: number, def?: null) : any {
     return def;
 }
 
-export function saveConfig(name: string, version: number, conf: any) : any {
+export function saveConfig(name: string, version: number, conf: any): any {
     conf._version = version;
 
     try {

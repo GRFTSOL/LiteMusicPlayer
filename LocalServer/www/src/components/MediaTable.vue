@@ -72,39 +72,28 @@
 
 <script lang="ts">
 
-import { defineComponent, reactive, watch } from 'vue';
-import { formatDuration, formatRecentDateTime, loadConfig, saveConfig } from 'boot/utils';
+import { defineComponent, reactive } from 'vue';
+import { formatDurationML, formatTimePlayed, formatRecentDateTime, formatBitRate, loadConfig, saveConfig } from 'boot/utils';
 import { Media } from 'components/models';
 import MediaDetail from 'src/components/MediaDetail.vue'
 
 
-function formatDurationML(n: number) {
-  if (n == 0) {
-    return '';
-  }
-  return formatDuration(n);
-}
-
-function formatTimePlayed(n: number) {
-  return n == 0 ? '' : formatRecentDateTime(n);
-}
-
-const MEDIA_LIB_COLUMNS = [
-  { name: 'id', field: 'id', label: 'ID', sortable: true, align: 'left', },
-  { name: 'artist', field: 'artist', label: 'Artist', sortable: true, align: 'left', },
-  { name: 'title', field: 'title', label: 'Title', sortable: true, align: 'left', },
-  { name: 'album', field: 'album', label: 'Album', sortable: true, align: 'left', },
-  { name: 'file', field: 'file', label: 'File', sortable: true, align: 'left', },
-  { name: 'duration', field: 'duration', label: 'Duration', sortable: true, format: formatDurationML, align: 'left', },
-  { name: 'genre', field: 'genre', label: 'Genre', sortable: true, align: 'left', },
-  { name: 'year', field: 'year', label: 'Year', sortable: true, align: 'left', },
-  { name: 'rating', field: 'rating', label: 'Rating', sortable: true, align: 'left', },
-  { name: 'format', field: 'format', label: 'Format', sortable: true, align: 'left', },
-  { name: 'timeAdded', field: 'timeAdded', label: 'TimeAdded', sortable: true, format: formatRecentDateTime, align: 'left', },
-  { name: 'timePlayed', field: 'timePlayed', label: 'TimePlayed', sortable: true, format: formatTimePlayed, align: 'left', },
-  { name: 'lyricsFile', field: 'lyricsFile', label: 'LyricsType', sortable: true, align: 'left', },
-  { name: 'countPlayed', field: 'countPlayed', label: 'CountPlayed', sortable: true, align: 'left', },
-  { name: 'bitRate', field: 'bitRate', label: 'BitRate', sortable: true, align: 'left', },
+export const MEDIA_LIB_COLUMNS = [
+  { name: 'id', field: 'id', label: 'ID', sortable: true, align: 'left', editable: false },
+  { name: 'artist', field: 'artist', label: 'Artist', sortable: true, align: 'left', editable: true },
+  { name: 'album', field: 'album', label: 'Album', sortable: true, align: 'left', editable: true },
+  { name: 'title', field: 'title', label: 'Title', sortable: true, align: 'left', editable: true },
+  { name: 'url', field: 'url', label: 'File', sortable: true, align: 'left', editable: false },
+  { name: 'duration', field: 'duration', label: 'Duration', sortable: true, format: formatDurationML, align: 'left', editable: false },
+  { name: 'genre', field: 'genre', label: 'Genre', sortable: true, align: 'left', editable: true },
+  { name: 'year', field: 'year', label: 'Year', sortable: true, align: 'left', editable: true },
+  { name: 'rating', field: 'rating', label: 'Rating', sortable: true, align: 'left', editable: true },
+  { name: 'format', field: 'format', label: 'Format', sortable: true, align: 'left', editable: false },
+  { name: 'timeAdded', field: 'timeAdded', label: 'Time Added', sortable: true, format: formatRecentDateTime, align: 'left', editable: false },
+  { name: 'timePlayed', field: 'timePlayed', label: 'Time Played', sortable: true, format: formatTimePlayed, align: 'left', editable: false },
+  { name: 'lyricsFile', field: 'lyricsFile', label: 'Lyrics File', sortable: true, align: 'left', editable: false },
+  { name: 'countPlayed', field: 'countPlayed', label: 'Count Played', sortable: true, align: 'left', editable: false },
+  { name: 'bitRate', field: 'bitRate', label: 'Bit Rate', sortable: true, align: 'left', format: formatBitRate, editable: false },
 ];
 
 export default defineComponent({

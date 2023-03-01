@@ -1,60 +1,30 @@
 <template>
   <q-page class="q-pa-md">
     <q-toolbar>
-      <q-btn-dropdown
-          dense
-          flat
-          color="primary"
-          label="过滤器"
-        >
-        <q-list>
-          <q-item>
-            <q-input dense debounce="400" color="primary" v-model="searchKeyword" label="搜索">
-              <template v-slot:append>
-                <q-icon name="search" />
-              </template>
-            </q-input>
-          </q-item>
+      <q-input dense debounce="400" color="primary" v-model="searchKeyword">
+        <template v-slot:append>
+          <q-icon name="search" />
+        </template>
+      </q-input>
 
-          <q-item
-            v-for="option in filterOptions"
-            :key="option.label"
-          >
-            <q-item-section>
-              <q-select outlined v-model="option.value"
-                :options="option.options"
-                @input="option.on = true"
-                @clear="option.on = false"
-                dense
-                :label="option.label">
-                <template v-slot:prepend>
-                  <q-icon :name="option.icon" />
-                </template>
-              </q-select>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </q-btn-dropdown>
-
-      <div>
+      <div class="q-gutter-xs row">
         <template
-          v-for="option in filterOptions"
+          v-for="item in filterOptions"
+          :key="item.id"
         >
           <q-chip
-            v-if="option.on"
-            :key="option.label"
             removable
-            v-model="option.on"
-            @remove="option.value=''"
+            @remove="removeFilterCondition(item)"
             color="primary"
             text-color="white"
-            :icon="option.icon">
-            {{ option.value }}
+            style="max-width: 150px" class="truncate-chip-labels"
+            :icon="item.icon"
+            :label="item.filterCondition">
           </q-chip>
         </template>
 
         <q-btn
-          v-show="isFilterOn"
+          v-show="filterOptions.length"
           flat round dense
           icon="playlist_remove"
           @click="removeAllFilterOptions"
@@ -110,9 +80,10 @@
           />
           <v-chart class="chart" :option="chart.echarts_option" autoresize
             v-else
+            :ref="(el) => chart.instance = el"
             @selectchanged="chartFilterOnSelected($event, chart)"
-            @dataZoom="chartFilterOnZoom($event, chart)" />
-          
+            @dataZoom="chartFilterOnZoom($event, chart)"
+          />
         </div>
       </div>
     </div>
@@ -126,13 +97,13 @@
 import { defineComponent, reactive, ref, onMounted, nextTick, watch } from 'vue';
 import { Media } from '../../components/models';
 import { getMediaLibrary, registerMediaLibChangedHandler } from 'boot/MediaLibrary';
-import { makePieChartOption, makeBarChartOption, makeTimelineChartOption, makeToolboxOption,
+import { makePieChartOption, makeBarChartOption, makeTimelineChartOption, makeToolboxOption, makeSunBurstOption,
   makeToolboxRemoveChart, makeTextChartOption, fillChartOptionTopNItems, fillTimeChartOption } from 'boot/chart';
 import MediaTable from 'src/components/MediaTable.vue'
 import * as crossfilter from 'crossfilter2'
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
-import { BarChart, PieChart } from 'echarts/charts';
+import { BarChart, PieChart, SunburstChart, TreemapChart } from 'echarts/charts';
 import { TitleComponent, TooltipComponent, LegendComponent, GridComponent, ToolboxComponent, DataZoomComponent,
   GraphicComponent, } from 'echarts/components';
 import VChart from 'vue-echarts';
@@ -143,6 +114,8 @@ use([
   CanvasRenderer,
   PieChart,
   BarChart,
+  SunburstChart,
+  TreemapChart,
   TitleComponent,
   TooltipComponent,
   LegendComponent,
@@ -160,6 +133,11 @@ interface ChartItem {
   id: string;
   echarts_option: any;
   data_chart_idx: number; // index of DATA_CHART_DEFINES
+  icon: string;
+  filterCondition: string;
+  selected: Array<number>;
+  instance: any;
+  conf?: any,
 }
 
 interface ChartDefine {
@@ -170,6 +148,7 @@ interface ChartDefine {
   h: number;
   fieldSelector: ((item: Media) => string | number) | null;
   chartOption: () =>  any;
+  icon: string;
 }
 
 type MediaLibDimension = crossfilter.Dimension<Media, string | number | Date>;
@@ -212,6 +191,7 @@ const CHART_TYPE_TIMELINE = 2;
 const CHART_TYPE_RATING = 3;
 const CHART_TYPE_SUMMARY = 4;
 const CHART_TYPE_MEDIA_LIST = 5;
+const CHART_TYPE_MEDIA_TREE = 6;
 
 const DATA_CHART_DEFINES: Array<ChartDefine> = [
   {
@@ -221,6 +201,7 @@ const DATA_CHART_DEFINES: Array<ChartDefine> = [
     w: 2, h: 2,
     fieldSelector: null,
     chartOption: () =>  makeTextChartOption('', ''),
+    icon: 'pin',
   },
   {
     index: 0,
@@ -229,6 +210,7 @@ const DATA_CHART_DEFINES: Array<ChartDefine> = [
     w: 5, h: 8,
     fieldSelector: null,
     chartOption: () =>  ({ _is_media_table: true }),
+    icon: 'view_list',
   },
   {
     index: 0,
@@ -237,6 +219,7 @@ const DATA_CHART_DEFINES: Array<ChartDefine> = [
     w: 3, h: 2,
     fieldSelector: (item: Media) => item.artist,
     chartOption: () =>  makePieChartOption('Artist'),
+    icon: 'face',
   },
   {
     index: 0,
@@ -245,6 +228,16 @@ const DATA_CHART_DEFINES: Array<ChartDefine> = [
     w: 3, h: 2,
     fieldSelector: (item: Media) => item.album,
     chartOption: () =>  makePieChartOption('Album'),
+    icon: 'album',
+  },
+  {
+    index: 0,
+    title: 'Media Tree',
+    type: CHART_TYPE_MEDIA_TREE,
+    w: 3, h: 4,
+    fieldSelector: (item: Media) => item.url,
+    chartOption: () =>  makeSunBurstOption('Media Tree'),
+    icon: 'brightness_7',
   },
   {
     index: 0,
@@ -253,6 +246,7 @@ const DATA_CHART_DEFINES: Array<ChartDefine> = [
     w: 2, h: 2,
     fieldSelector: (item: Media) => item.genre,
     chartOption: () =>  makePieChartOption('Genre'),
+    icon: 'category',
   },
   {
     index: 0,
@@ -260,6 +254,7 @@ const DATA_CHART_DEFINES: Array<ChartDefine> = [
     w: 3, h: 2,
     type: CHART_TYPE_TIMELINE,
     fieldSelector: dimensionFieldYear, chartOption: () =>  makeTimelineChartOption('Year Recorded', makeToolboxOption(true, { title: 'Filter Unkown Release Years' })),
+    icon: 'calendar_month',
   },
   {
     index: 0,
@@ -268,6 +263,7 @@ const DATA_CHART_DEFINES: Array<ChartDefine> = [
     w: 2, h: 2,
     fieldSelector: (item: Media) => item.rating,
     chartOption: () =>  makeBarChartOption('Rating', [1,2,3,4,5], makeToolboxOption(false, { title: 'Filter NOT Rated musics' })),
+    icon: 'stars',
   },
   {
     index: 0,
@@ -276,6 +272,7 @@ const DATA_CHART_DEFINES: Array<ChartDefine> = [
     w: 2, h: 2,
     fieldSelector: (item: Media) => item.format,
     chartOption: () =>  makePieChartOption('Format'),
+    icon: 'description',
   },
   {
     index: 0,
@@ -284,6 +281,7 @@ const DATA_CHART_DEFINES: Array<ChartDefine> = [
     w: 3, h: 2,
     fieldSelector: (item: Media) => item.timeAdded * 1000,
     chartOption: () =>  makeTimelineChartOption('Time Added', makeToolboxOption(true, null)),
+    icon: 'schedule',
   },
   {
     index: 0,
@@ -292,6 +290,7 @@ const DATA_CHART_DEFINES: Array<ChartDefine> = [
     w: 3, h: 2,
     fieldSelector: (item: Media) => item.timePlayed * 1000,
     chartOption: () =>  makeTimelineChartOption('Time Played', makeToolboxOption(true, { title: 'Filter NOT Played musics' })),
+    icon: 'play_arrow',
   },
   {
     index: 0,
@@ -300,6 +299,7 @@ const DATA_CHART_DEFINES: Array<ChartDefine> = [
     w: 2, h: 2,
     fieldSelector: (item: Media) => item.lyricsFile,
     chartOption: () =>  makePieChartOption('Lyrics Type'),
+    icon: 'lyrics',
   },
   {
     index: 0,
@@ -308,6 +308,7 @@ const DATA_CHART_DEFINES: Array<ChartDefine> = [
     w: 2, h: 2,
     fieldSelector: dimensionFieldCountPlayed,
     chartOption: () =>  makePieChartOption('Count Played'),
+    icon: 'functions',
   },
   {
     index: 0,
@@ -316,6 +317,7 @@ const DATA_CHART_DEFINES: Array<ChartDefine> = [
     w: 2, h: 2,
     fieldSelector: dimensionFieldBitRate,
     chartOption: () =>  makePieChartOption('BitRate'),
+    icon: '6k_plus',
   },
   {
     index: 0,
@@ -324,6 +326,7 @@ const DATA_CHART_DEFINES: Array<ChartDefine> = [
     w: 2, h: 2,
     fieldSelector: dimensionFieldDuration,
     chartOption: () =>  makePieChartOption('Duration'),
+    icon: 'hourglass_top',
   },
 ];
 
@@ -375,9 +378,100 @@ function formatDurationText(n: number) {
     }
 }
 
-// function formatDateTime(n: number) {
-//   return new Date(n * 1000).toLocaleString();
-// }
+interface MediaTree {
+    name: string;
+    value: number;     // 歌曲数量
+    path: string,
+    mediaDuration: number;  // 总共时长，单位秒
+    children: Array<MediaTree>;
+}
+
+function nextPathPart(path: string) {
+  let parts = path.split(/\/|\\/);
+  parts = parts.slice(0, parts.length - 1);
+  let i = 0;
+  return function() {
+    return parts[i++];
+  }
+}
+
+function addMediaTree(parent: MediaTree, nextPathPart: ()=>string | null, duration: number) {
+    parent.mediaDuration += duration;
+    parent.value++;
+
+    const name = nextPathPart();
+    if (name == null) {
+        return;
+    }
+
+    for (const child of parent.children) {
+        if (child.name == name) {
+            addMediaTree(child, nextPathPart, duration);
+            return;
+        }
+    }
+
+    // 添加
+    const node = {
+      name,
+      value: 1,
+      path: parent.path + name + getMediaLibrary().path_sep,
+      mediaDuration: duration,
+      children: [],
+    };
+    parent.children.push(node);
+
+    addMediaTree(node, nextPathPart, duration);
+}
+
+function simplifyMediaTree(parent: MediaTree) {
+  while (parent.children.length === 1) {
+    parent.name = parent.children[0].name;
+    parent.children = parent.children[0].children;
+  }
+
+  for (const child of parent.children) {
+    simplifyMediaTree(child);
+  }
+}
+
+function getSelectedMediaTreeItem(root: MediaTree, expected_idx: number) {
+  let idx = 2;
+
+  function search(parent: MediaTree) : MediaTree | null {
+    for (const child of parent.children) {
+      if (idx === expected_idx) {
+        return child;
+      }
+      idx++;
+      const ret = search(child);
+      if (ret) {
+        return ret;
+      }
+    }
+
+    return null;
+  }
+
+  return search(root);  
+}
+
+function constructMediaTree(medias: Array<Media>) : MediaTree {
+  const root: MediaTree = {
+    name: '',
+    value: 0,
+    path: '',
+    mediaDuration: 0,
+    children: [] as Array<MediaTree>,
+  };
+
+  for (const media of medias) {
+    addMediaTree(root, nextPathPart(media.url), media.duration);
+  }
+
+  simplifyMediaTree(root);
+  return root;
+}
 
 const COUNT_PLAYED_LEVELS = [0, 1, 5, 20, 50, 100, 500, 1000, 5000, 10000];
 const DURATION_LEVELS = [1, 2, 3, 4, 5, 6, 10, 20, 50, 100];
@@ -387,11 +481,15 @@ export default defineComponent({
   components: { VChart, MediaTable },
   setup() {
     const isEditDashboard = ref(false);
+    const searchKeyword = ref('');
     const chartDefines = DATA_CHART_DEFINES.slice();
     const mediaList = ref([] as Array<Media>);
+    const mediaTree = ref(null as any as MediaTree);
     const chartItems = reactive([] as Array<ChartItem>);
+    const filterOptions = reactive([] as Array<ChartItem>);
     let grid: any = null;
     const mediaLibFilters = [] as Array<MediaLibDimension>;
+    let filterKeyword = null as any as MediaLibDimension;
     let cf = null as any as crossfilter.Crossfilter<Media>;
     initMediaLibFilters();
     refreshCharts();
@@ -428,6 +526,8 @@ export default defineComponent({
           mediaLibFilters.push(null as any as MediaLibDimension);
         }
       }
+
+      filterKeyword = cf.dimension<string | number | Date>(item => (item.artist + ' ' + item.album + ' ' + item.title + ' ' + item.url + ' ' + item.genre).toLowerCase());
     }
 
     function onGridChanged(_event: Event, changeItems: Array<any>) {
@@ -441,29 +541,93 @@ export default defineComponent({
       });
     }
 
+    function removeFilterCondition(chart: ChartItem) {
+      // 只有将 selectedMode 切换为 series 才能删除所有选中的，之后再恢复为 multiple
+      chart.echarts_option.series[0].selectedMode = 'series'
+      chart.instance.setOption(chart.echarts_option);
+      chart.instance.dispatchAction({
+        type: 'unselect',
+        seriesIndex: 0,
+        dataIndex: chart.selected,
+      });
+      chart.echarts_option.series[0].selectedMode = 'multiple'
+      chart.instance.setOption(chart.echarts_option);
+
+      if (chart.echarts_option.dataZoom) {
+        chart.instance.dispatchAction({
+          type: 'dataZoom',
+          dataZoomIndex: 0,
+        });
+      }
+
+      const idx = filterOptions.indexOf(chart);
+      if (idx !== -1) {
+        filterOptions.splice(idx, 1);
+      }
+    }
+
+    function addFilter(chart: ChartItem) {
+      const idx = filterOptions.indexOf(chart);
+      if (idx === -1) {
+        filterOptions.push(chart);
+      }
+    }
+
+    function removeAllFilterOptions() {
+      let tmp = filterOptions.slice(0);
+      for (let chart of tmp) {
+        removeFilterCondition(chart);
+      }
+      searchKeyword.value = '';
+    }
+
     function chartFilterOnSelected(param: any, chart: ChartItem) {
       const dimension = mediaLibFilters[chart.data_chart_idx];
+      if (!dimension) {
+        return;
+      }
+
       const option = chart.echarts_option;
 
-      if (param.selected.length > 0) {
+      const idx = param.fromActionPayload.dataIndexInside;
+      if (DATA_CHART_DEFINES[chart.data_chart_idx].type === CHART_TYPE_MEDIA_TREE && idx > 1) {
+        const ret = getSelectedMediaTreeItem(mediaTree.value, idx);
+        assert(ret);
+        const path = ret?.path as string;
+        dimension.filter(v => (v as string).startsWith(path));
+        chart.filterCondition = ret?.name as string;
+        addFilter(chart);
+      } else if (param.selected.length > 0) {
         // 有过滤选项
-        let keys = {} as any;
+        let keys = {} as any, names = [] as Array<string>;
         for (let idx of param.selected[0].dataIndex) {
           const item = option.series[0].data[idx] as any;
-          if (item.key === null) {
-            // 选择了 Others，去掉前 N 个结果就是 other
-            let others = dimension.group().top(Number.MAX_VALUE).slice(option.series[0].data.length - 1);
-            for (let item of others) {
-              keys[(item as any).key] = 1;
+          if (item) {
+            if (item.key === null) {
+              // 选择了 Others，去掉前 N 个结果就是 other
+              let others = dimension.group().top(Number.MAX_VALUE).slice(option.series[0].data.length - 1);
+              for (let item of others) {
+                keys[(item as any).key] = 1;
+                names.push((item as any).key);
+              }
+            } else {
+              keys[item.key] = 1;
+              names.push(item.name);
             }
-          } else {
-            // 选择了其他的
-            keys[item.key] = 1;
           }
         }
 
-        dimension.filter(v => keys[v as any] === 1);
+        // chart.selected = names as any;
+        chart.selected = param.selected[0].dataIndex;
+        chart.filterCondition = names.join(',');
+        if (names.length) {
+          dimension.filter(v => keys[v as any] === 1);
+          addFilter(chart);
+        } else {
+          dimension.filterAll();
+        }
       } else {
+        chart.filterCondition = '';
         dimension.filterAll();
       }
 
@@ -475,10 +639,17 @@ export default defineComponent({
       const option = chart.echarts_option;
 
       if (param.startValue == null) {
-        const data = option.series[0].data;
-        const start = data[0][0], end = data[data.length - 1][0];
-        param.startValue = start + (end - start) * param.start / 100;
-        param.endValue = start + (end - start) * param.end / 100;
+        if (param.start == null) {
+          if (param.batch && param.batch[0]) {
+            param.startValue = param.batch[0].startValue;
+            param.endValue = param.batch[0].endValue;
+          }
+        } else {
+          const data = option.series[0].data;
+          const start = data[0][0], end = data[data.length - 1][0];
+          param.startValue = start + (end - start) * param.start / 100;
+          param.endValue = start + (end - start) * param.end / 100;
+        }
       }
 
       const zoom = option.dataZoom[0];
@@ -488,7 +659,10 @@ export default defineComponent({
       if (param.startValue != null) {
         // 有过滤选项
         dimension.filter(v => v >= param.startValue && v <= param.endValue);
+        addFilter(chart);
+        chart.filterCondition = stringFormat('{0} ~ {1}', new Date(param.startValue).toISOString(), new Date(param.endValue).toISOString());
       } else {
+        chart.filterCondition = '';
         dimension.filterAll();
       }
 
@@ -528,17 +702,20 @@ export default defineComponent({
       } else if (type === CHART_TYPE_SUMMARY) {
         fillChartSummary(chart.echarts_option);
       } else if (type === CHART_TYPE_MEDIA_LIST) {
+      } else if (type === CHART_TYPE_MEDIA_TREE) {
+        chart.echarts_option.series[0].data = [mediaTree.value];
       } else {
         assert(0);
       }
     }
 
     function refreshCharts() {
+      mediaList.value = cf.allFiltered();
+      mediaTree.value = constructMediaTree(mediaList.value);
+
       for (let chart of chartItems) {
         refreshChart(chart);
       }
-
-      mediaList.value = cf.allFiltered();
     }
 
     function removeChartDefine(chart: ChartItem) {
@@ -584,19 +761,34 @@ export default defineComponent({
       addChartEx(x, y, chart.w, chart.h, chart.index);
     }
 
-    function addChartEx(x: number, y: number, w: number, h: number, chart_index: number) {
-      const echarts_option = DATA_CHART_DEFINES[chart_index].chartOption();
+    function addChartEx(x: number, y: number, w: number, h: number, chart_index: number, conf?: any) {
+      const chartDefine = DATA_CHART_DEFINES[chart_index];
+      const echarts_option = chartDefine.chartOption();
       const node: ChartItem = {
         x: x, y: y, w: w, h: h, id: nextChartID(),
-        echarts_option, data_chart_idx: chart_index
+        echarts_option,
+        data_chart_idx: chart_index,
+        filterCondition: '',
+        selected: [],
+        icon: chartDefine.icon,
+        instance: null,
       };
 
       echarts_option._filterNotSet = function () {
         chartFilterOnNotSet(chart_index, 0);
-      }
+      };
       echarts_option._removeChart = function() {
         removeChart(node);
+      };
+      echarts_option._switchSunburstTreemap = function() {
+        switchSunburstTreemap();
+        node.instance.setOption(node.echarts_option);
+      };
+
+      if (chartDefine.type === CHART_TYPE_MEDIA_TREE && conf === 'treemap') {
+        switchSunburstTreemap();
       }
+
       if (isEditDashboard.value) {
         deepCopy(node.echarts_option, makeToolboxRemoveChart());
       }
@@ -609,6 +801,26 @@ export default defineComponent({
       nextTick(()=>{
         grid.makeWidget(node.id);
       });
+
+      function switchSunburstTreemap() {
+        const s0 = node.echarts_option.series[0];
+        node.conf = s0.type = s0.type === 'sunburst' ? 'treemap' : 'sunburst';
+        if (s0.type === 'sunburst') {
+          s0.label = {
+            show: true,
+            overflow: 'truncate',
+            align: 'left',
+          };
+        } else {
+          s0.label = {
+            show: true,
+          };
+        }
+
+        if (!isEditDashboard.value) {
+          saveDashboard();
+        }
+      }
     }
 
     function removeChart(item: ChartItem) {
@@ -625,7 +837,7 @@ export default defineComponent({
         return 'pie_chart';
       } else if (type === CHART_TYPE_SUMMARY) {
         return 'text_fields';
-      } else if (type === CHART_TYPE_MEDIA_LIST) {
+      } else if (type === CHART_TYPE_MEDIA_LIST || type === CHART_TYPE_MEDIA_TREE) {
         return 'table_chart';
       } else {
         return 'bar_chart';
@@ -635,32 +847,37 @@ export default defineComponent({
     const CONF_VERSION = 1;
 
     function loadDashboard() {
-      const conf = loadConfig('media_lib_all_dashboard', CONF_VERSION);
-      if (conf) {
-        conf.chartItems.sort((a : any, b : any) => a.y === b.y ? a.x - b.y : a.y - b.y);
+      try {
+        const conf = loadConfig('media_lib_all_dashboard', CONF_VERSION, {'chartItems':[{'x':0,'y':0,'w':2,'h':2,'data_chart_idx':0},{'x':7,'y':0,'w':5,'h':7,'data_chart_idx':1},{'x':2,'y':0,'w':3,'h':4,'data_chart_idx':4,'conf':'sunburst'},{'x':5,'y':0,'w':2,'h':2,'data_chart_idx':5},{'x':0,'y':2,'w':2,'h':2,'data_chart_idx':7},{'x':5,'y':2,'w':2,'h':2,'data_chart_idx':8},{'x':0,'y':4,'w':2,'h':2,'data_chart_idx':12},{'x':2,'y':4,'w':3,'h':2,'data_chart_idx':2},{'x':5,'y':4,'w':2,'h':2,'data_chart_idx':13},{'x':3,'y':6,'w':3,'h':2,'data_chart_idx':9},{'x':0,'y':6,'w':3,'h':2,'data_chart_idx':6},{'x':6,'y':7,'w':2,'h':2,'data_chart_idx':11},{'x':8,'y':7,'w':2,'h':2,'data_chart_idx':14},{'x':0,'y':8,'w':3,'h':2,'data_chart_idx':3},{'x':3,'y':8,'w':3,'h':2,'data_chart_idx':10}],'_version':1});
+        if (conf && conf.chartItems) {
+          conf.chartItems.sort((a : any, b : any) => a.y === b.y ? a.x - b.y : a.y - b.y);
 
-        if (conf.chartItems instanceof Array) {
-          for (let chart of conf.chartItems) {
-            addChartEx(chart.x, chart.y, chart.w, chart.h, chart.data_chart_idx);
+          if (conf.chartItems instanceof Array) {
+            for (let chart of conf.chartItems) {
+              addChartEx(chart.x, chart.y, chart.w, chart.h, chart.data_chart_idx, chart.conf);
+            }
           }
         }
+      } catch (e) {
+        console.error(e);
       }
     }
 
-    function saveDashboard(items : Array<ChartItem>) {
-      const chartItems = [] as any;
+    function saveDashboard() {
+      const items = [] as any;
 
-      for (let chart of items) {
-        chartItems.push({
+      for (let chart of chartItems) {
+        items.push({
           x: chart.x,
           y: chart.y,
           w: chart.w,
           h: chart.h,
           data_chart_idx: chart.data_chart_idx,
+          conf: chart.conf,
         });
       }
 
-      saveConfig('media_lib_all_dashboard', CONF_VERSION, { chartItems });
+      saveConfig('media_lib_all_dashboard', CONF_VERSION, { chartItems: items });
     }
 
     watch(isEditDashboard, (newIsEditDashboard) => {
@@ -679,97 +896,32 @@ export default defineComponent({
 
       if (!newIsEditDashboard) {
         // Save configuration.
-        saveDashboard(chartItems);
+        saveDashboard();
       }
     });
 
+    watch(searchKeyword, (newSearchKeyword) => {
+      newSearchKeyword = newSearchKeyword.toLowerCase();
+      filterKeyword.filter(v => (v as string).indexOf(newSearchKeyword) != -1);
+      refreshCharts();
+    });
+
     return reactive({
-      isEditDashboard: isEditDashboard,
+      isEditDashboard,
       chartItems,
       mediaList,
       chartFilterOnSelected,
       chartFilterOnZoom,
       addChart,
       removeChart,
+      removeFilterCondition,
       chartDefines,
       chartIcon,
 
-      searchKeyword: '',
-      filterOn: '',
-      filterOptions: [
-        {
-          icon: 'groups',
-          label: 'Artist',
-          field: 'artist',
-          options: [''],
-          value: '',
-          on: false,
-        },
-        {
-          icon: 'album',
-          label: 'Album',
-          field: 'album',
-          options: [''],
-          value: '',
-          on: false,
-        },
-      ],
-      filters: {
-      },
+      searchKeyword,
+      filterOptions,
+      removeAllFilterOptions,
     });
-  },
-  methods: {
-    filterMedias(rows: Array<Media>) {
-      let a = [];
-      let filters = [];
-
-      for (let filter of this.filterOptions) {
-        if (filter.on) {
-          filters.push({ filed: filter.field, value: filter.value });
-        }
-      }
-
-      for (let row of rows) {
-        let match = true;
-        for (let filter of filters) {
-        let v = row[filter.filed as keyof Media];
-          if (v !== filter.value) {
-            match = false;
-            break;
-          }
-        }
-
-        if (match) {
-          if (this.searchKeyword) {
-            if (row.title.indexOf(this.searchKeyword) === -1 &&
-                row.artist.indexOf(this.searchKeyword) === -1 &&
-                row.album.indexOf(this.searchKeyword) === -1) {
-              continue;
-            }
-          }
-
-          a.push(row);
-        }
-      }
-
-      return a;
-    },
-    removeAllFilterOptions() {
-      for (let option of this.filterOptions) {
-        option.on = false;
-        option.value = '';
-      }
-    },
-  },
-  computed: {
-    isFilterOn() {
-      for (let option of this.filterOptions) {
-        if (option.on) {
-          return 'true';
-        }
-      }
-      return '';
-    },
   },
 });
 
