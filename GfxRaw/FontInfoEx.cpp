@@ -83,7 +83,7 @@ string FontInfoEx::toString() const {
     text += itos(height); text += SZ_FEILD_SEP;
     text += itos(weight); text += SZ_FEILD_SEP;
     text += itos(italic); text += SZ_FEILD_SEP;
-    text += "0, ";
+    text += "0,";
     text += nameOthers;
 
     return text;

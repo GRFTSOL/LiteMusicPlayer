@@ -159,6 +159,42 @@ int getTags(cstr_t szFile, BasicMediaTags &tags, ExtendedMediaInfo &extendedInfo
         extendedInfo.sampleRate = tag.getSampleRate();
         extendedInfo.bitRate = tag.getBitRate();
         extendedInfo.bitsPerSample = tag.getBitsPerSample();
+    } else {
+        return ERR_NOT_SUPPORT_FILE_FORMAT;
+    }
+
+    return ERR_OK;
+}
+
+int setBasicTags(cstr_t szFile, BasicMediaTags &tags) {
+    FilePtr fp(fopen(szFile, "rb"));
+    if (!fp) {
+        setCustomErrorDesc(stringPrintf("%s: %s", OSError().Description(), szFile).c_str());
+        return ERR_CUSTOM_ERROR;
+    }
+
+    if (isID3v2TagSupported(szFile)) {
+        CID3v2IF id3v2(ED_SYSDEF);
+        int ret = id3v2.open(fp, false);
+        if (ret == ERR_OK) {
+            id3v2.setTags(tags);
+            ret = id3v2.save();
+        } else {
+            CID3v1 id3v1;
+            ret = id3v1.saveTag(fp, tags);
+        }
+
+        return ret;
+    } else if (isM4aTagSupported(szFile)) {
+        CM4aTag tag;
+        int ret = tag.open(fp, false);
+        if (ret == ERR_OK) {
+            tag.setTags(tags);
+            ret = tag.saveClose();
+        }
+        return ret;
+    } else {
+        return ERR_NOT_SUPPORT_FILE_FORMAT;
     }
 
     return ERR_OK;
@@ -308,3 +344,26 @@ int removeEmbeddedLyrics(cstr_t szMediaFile, VecStrings &vLyrNamesToRemove, int 
 }
 
 } // namespace MediaTags
+
+
+#if UNIT_TEST
+
+#include "../TinyJS/utils/unittest.h"
+
+
+TEST(MediaTagsTest, test) {
+    BasicMediaTags tags;
+    ExtendedMediaInfo extendedInfo;
+    string path = dirStringJoin(getSourceRootDir().c_str(), "MediaTags/samples/");
+
+    FileFind finder;
+    ASSERT_TRUE(finder.openDir(path.c_str()));
+
+    while (finder.findNext()) {
+        string fn = path + finder.getCurName();
+//        int ret = MediaTags::getTags(fn.c_str(), tags, extendedInfo);
+//        ASSERT_EQ(ret, ERR_OK);
+    }
+}
+
+#endif

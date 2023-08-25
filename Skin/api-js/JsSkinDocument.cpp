@@ -19,7 +19,7 @@ JsValue jsValuePrototypeDocument;
 JsSkinDocument::JsSkinDocument(CSkinWnd *skinWnd) : JsObjectX(SJT_DOCUMENT, jsValuePrototypeDocument), _skinWnd(skinWnd) {
 }
 
-bool JsSkinDocument::onSetValue(VMContext *ctx, const SizedString &name, const JsValue &value) {
+bool JsSkinDocument::onSetValue(VMContext *ctx, const StringView &name, const JsValue &value) {
     if (name.equal(SS_HEIGHT)) {
         auto h = (int32_t)ctx->runtime->toNumber(ctx, value);
         if (h >= 10 && h <= 1920) {
@@ -45,7 +45,7 @@ bool JsSkinDocument::onSetValue(VMContext *ctx, const SizedString &name, const J
     return false;
 }
 
-JsValue JsSkinDocument::onGetValue(VMContext *ctx, const SizedString &name) {
+JsValue JsSkinDocument::onGetValue(VMContext *ctx, const StringView &name) {
     if (name.equal(SS_HEIGHT)) {
         CRect rc;
         if (_skinWnd->getWindowRect(&rc)) {
@@ -68,7 +68,7 @@ JsValue JsSkinDocument::onGetValue(VMContext *ctx, const SizedString &name) {
     return jsValueEmpty;
 }
 
-void JsSkinDocument::onEnumAllProperties(VMContext *ctx, VecSizedStrings &names, VecJsValues &values) {
+void JsSkinDocument::onEnumAllProperties(VMContext *ctx, VecStringViews &names, VecJsValues &values) {
     CRect rc;
     if (_skinWnd->getWindowRect(&rc)) {
         names.push_back(SS_HEIGHT);
@@ -124,7 +124,7 @@ int getIdFromArg0(CSkinWnd *skinWnd, VMContext *ctx, const Arguments &args) {
     if (idVal.type == JDT_INT32) {
         id = getJsValueInt32(idVal);
     } else {
-        auto str = ctx->runtime->toSizedString(ctx, idVal);
+        auto str = ctx->runtime->toStringView(ctx, idVal);
         id = skinWnd->getSkinFactory()->getIDByName(str.toString().c_str());
     }
 

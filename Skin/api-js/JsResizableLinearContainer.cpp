@@ -9,21 +9,21 @@
 #include "Skin/SkinResizableLinearContainer.h"
 
 
-const SizedString SS_MODE = makeCommonString("mode");
+const StringView SS_MODE = makeCommonString("mode");
 
 JsResizableLinearContainer::JsResizableLinearContainer(CSkinResizableLinearContainer *obj) : JsUIObject(obj) {
 }
 
-bool JsResizableLinearContainer::onSetValue(VMContext *ctx, const SizedString &name, const JsValue &value) {
+bool JsResizableLinearContainer::onSetValue(VMContext *ctx, const StringView &name, const JsValue &value) {
     if (name.equal(SS_MODE)) {
-        auto mode = ctx->runtime->toSizedString(ctx, value);
+        auto mode = ctx->runtime->toStringView(ctx, value);
         uiobject()->setMode(mode.toString().c_str());
     }
 
     return false;
 }
 
-JsValue JsResizableLinearContainer::onGetValue(VMContext *ctx, const SizedString &name) {
+JsValue JsResizableLinearContainer::onGetValue(VMContext *ctx, const StringView &name) {
     if (name.equal(SS_MODE)) {
         return ctx->runtime->pushString(uiobject()->getMode());
     }
@@ -31,7 +31,7 @@ JsValue JsResizableLinearContainer::onGetValue(VMContext *ctx, const SizedString
     return jsValueEmpty;
 }
 
-void JsResizableLinearContainer::onEnumAllProperties(VMContext *ctx, VecSizedStrings &names, VecJsValues &values) {
+void JsResizableLinearContainer::onEnumAllProperties(VMContext *ctx, VecStringViews &names, VecJsValues &values) {
     names.push_back(SS_MODE);
     values.push_back(ctx->runtime->pushString(uiobject()->getMode()));
 }

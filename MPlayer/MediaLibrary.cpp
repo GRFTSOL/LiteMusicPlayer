@@ -256,7 +256,7 @@ PlaylistPtr CMediaLibrary::getMediaCategory(const MediaCategory &category) {
                 auto media = m_allMedias->getItem(i);
                 auto str = media->artist;
                 if (startsWith(category.value.c_str(), str.c_str())) {
-                    SizedString key(category.value.c_str(), category.value.size());
+                    StringView key(category.value.c_str(), category.value.size());
                     key.shrink((int)str.size());
                     if (key.startsWith(ALBUM_ARTIST_SEP)) {
                         key.shrink(ALBUM_ARTIST_SEP_LEN);

@@ -310,7 +310,7 @@ bool CUIObjProperties::isPropExist(cstr_t szName) {
 void readMarginValue(cstr_t szValue, CRect &rc) {
     VecStrings vRect;
 
-    SizedString(szValue).split(',', vRect);
+    StringView(szValue).split(',', vRect);
     for (auto &s : vRect) {
         trimStr(s);
     }

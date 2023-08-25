@@ -773,7 +773,7 @@ int CSkinFactory::changeSkin(cstr_t szSkinName, cstr_t szSkinDir, cstr_t szExtra
     strSkinWndDef = g_profile.getString(getSkinFileName(), "DefaultSkinWnd", "");
 
     VecStrings strs;
-    SizedString(strOpenedSkinWnds).split(',', strs);
+    StringView(strOpenedSkinWnds).split(',', strs);
     for (auto &s : strs) {
         setOpenedSkinWnds.insert(s);
     }

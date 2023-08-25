@@ -65,7 +65,7 @@ string packDataPacket(MessageType type, uint32_t clientId, const string &data) {
     stream.writeUInt8(CUR_VERSION);
     stream.writeUInt8(type);
     stream.writeUInt32BE(clientId);
-    auto s = stream.toSizedString();
+    auto s = stream.toStringView();
 
     string packet((cstr_t)s.data, s.len);
     packet.append(data);

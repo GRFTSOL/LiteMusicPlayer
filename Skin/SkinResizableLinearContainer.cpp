@@ -320,7 +320,7 @@ JsValue CSkinResizableLinearContainer::getJsObject(VMContext *ctx) {
 }
 
 void CSkinResizableLinearContainer::setMode(cstr_t modeName) {
-    SizedString mode(modeName);
+    StringView mode(modeName);
     if (m_vUIObjs.size() >= 2) {
         if (mode.equal("left")) {
             m_vUIObjs[0]->setVisible(true, false);

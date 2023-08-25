@@ -63,3 +63,5 @@
 * 统一 eventDispatcher... g_playerEventDispatcher
 * 在执行关键命令时需要 client 传递的 cmdID 必须大于此值，防止重放攻击.
  uint32_t                    nextCmdId = 0;
+* 歌词关联保存到 medialib 中
+* medialib 中字段: music_hash

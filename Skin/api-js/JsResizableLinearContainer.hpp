@@ -19,9 +19,9 @@ class JsResizableLinearContainer : public JsUIObject {
 public:
     JsResizableLinearContainer(CSkinResizableLinearContainer *obj);
 
-    virtual bool onSetValue(VMContext *ctx, const SizedString &name, const JsValue &value) override;
-    virtual JsValue onGetValue(VMContext *ctx, const SizedString &name) override;
-    virtual void onEnumAllProperties(VMContext *ctx, VecSizedStrings &names, VecJsValues &values) override;
+    virtual bool onSetValue(VMContext *ctx, const StringView &name, const JsValue &value) override;
+    virtual JsValue onGetValue(VMContext *ctx, const StringView &name) override;
+    virtual void onEnumAllProperties(VMContext *ctx, VecStringViews &names, VecJsValues &values) override;
 
     CSkinResizableLinearContainer *uiobject() const { return (CSkinResizableLinearContainer *)_obj; }
 

@@ -17,17 +17,17 @@
 
 JsValue jsValuePrototypeUIObject;
 
-const SizedString SS_VISIBLE = makeCommonString("visible");
-const SizedString SS_FORM_WIDTH = makeCommonString("formWidth");
+const StringView SS_VISIBLE = makeCommonString("visible");
+const StringView SS_FORM_WIDTH = makeCommonString("formWidth");
 
 JsUIObject::JsUIObject(CUIObject *obj) : JsObjectX(SJT_UIOBJECT, jsValuePrototypeUIObject), _obj(obj) {
 }
 
-bool JsUIObject::onSetValue(VMContext *ctx, const SizedString &name, const JsValue &value) {
+bool JsUIObject::onSetValue(VMContext *ctx, const StringView &name, const JsValue &value) {
     if (name.equal(SS_VISIBLE)) {
         _obj->setVisible(ctx->runtime->testTrue(value), true);
     } else if (name.equal(SS_FORM_WIDTH)) {
-        auto str = ctx->runtime->toSizedString(ctx, value);
+        auto str = ctx->runtime->toStringView(ctx, value);
         _obj->setProperty(SZ_PN_WIDTH, str.toString().c_str());
     } else if (name.equal(SS_ON_MOUSE_ENTER)) {
         _obj->m_onMouseEnterListener = value;
@@ -38,7 +38,7 @@ bool JsUIObject::onSetValue(VMContext *ctx, const SizedString &name, const JsVal
     return false;
 }
 
-JsValue JsUIObject::onGetValue(VMContext *ctx, const SizedString &name) {
+JsValue JsUIObject::onGetValue(VMContext *ctx, const StringView &name) {
     if (name.equal(SS_VISIBLE)) {
         return makeJsValueBool(_obj->isVisible());
     } else if (name.equal(SS_FORM_WIDTH)) {
@@ -52,7 +52,7 @@ JsValue JsUIObject::onGetValue(VMContext *ctx, const SizedString &name) {
     return jsValueEmpty;
 }
 
-void JsUIObject::onEnumAllProperties(VMContext *ctx, VecSizedStrings &names, VecJsValues &values) {
+void JsUIObject::onEnumAllProperties(VMContext *ctx, VecStringViews &names, VecJsValues &values) {
     names.push_back(SS_VISIBLE);
     values.push_back(makeJsValueBool(_obj->isVisible()));
 

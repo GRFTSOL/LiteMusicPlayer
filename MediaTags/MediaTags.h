@@ -9,6 +9,7 @@ namespace MediaTags {
 
 // pMediaLength: in ms
 int getTags(cstr_t szFile, BasicMediaTags &tags, ExtendedMediaInfo &extendedInfo);
+int setBasicTags(cstr_t szFile, BasicMediaTags &tags);
 
 bool isMediaTypeSupported(cstr_t szFile);
 

@@ -20,9 +20,9 @@ class JsUIObject : public JsObjectX {
 public:
     JsUIObject(CUIObject *obj);
 
-    virtual bool onSetValue(VMContext *ctx, const SizedString &name, const JsValue &value) override;
-    virtual JsValue onGetValue(VMContext *ctx, const SizedString &name) override;
-    virtual void onEnumAllProperties(VMContext *ctx, VecSizedStrings &names, VecJsValues &values) override;
+    virtual bool onSetValue(VMContext *ctx, const StringView &name, const JsValue &value) override;
+    virtual JsValue onGetValue(VMContext *ctx, const StringView &name) override;
+    virtual void onEnumAllProperties(VMContext *ctx, VecStringViews &names, VecJsValues &values) override;
 
     CUIObject *uiobject() const { return _obj; }
 

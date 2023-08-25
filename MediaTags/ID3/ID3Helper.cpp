@@ -361,7 +361,7 @@ TEST(ID3Helper, FileMoveEndData)
 
 #if UNIT_TEST
 
-#include "utils/unittest.h"
+#include "../../TinyJS/utils/unittest.h"
 
 TEST(ID3Helper, CopyAnsiStr) {
 #define        SZ_TEXT_TEST "abc\0def\0"
@@ -383,19 +383,20 @@ TEST(ID3Helper, CopyAnsiStr) {
 
 TEST(ID3Helper, CopyStrByEncodingAndBom) {
 #define        SZ_TEXT_TEST "abc\0def\0"
+
     cstr_t text = SZ_TEXT_TEST;
     int lenText = CountOf(SZ_TEXT_TEST);
     int n;
-    string wStr;
+    u16string wStr;
     utf8ToUCS2(text, lenText, wStr);
 
-    string wLyrics;
+    u16string wLyrics;
     wLyrics.append((const WCHAR *)SZ_FE_UCS2, 1);
     wLyrics.append(wStr.c_str(), wStr.size());
 
-    string wLyricsBe;
+    u16string wLyricsBe;
     wLyricsBe.append(wStr.c_str(), wStr.size());
-    uCS2LEToBE(wLyricsBe.data(), wLyricsBe.size());
+    ucs2EncodingReverse((WCHAR *)wLyricsBe.data(), (uint32_t)wLyricsBe.size());
 
     string utf8Lyrics;
     utf8Lyrics.append(SZ_FE_UTF8);
@@ -411,7 +412,7 @@ TEST(ID3Helper, CopyStrByEncodingAndBom) {
         ASSERT_TRUE(n == 2);
         ASSERT_TRUE(strcmp(str.c_str(), "ab") == 0);
 
-        n = copyStrByEncodingAndBom(str, IET_UCS2LE_BOM, (cstr_t)wLyrics.c_str(), wLyrics.size() * sizeof(WCHAR));
+        n = copyStrByEncodingAndBom(str, IET_UCS2LE_BOM, (cstr_t)wLyrics.c_str(), (uint32_t)wLyrics.size() * sizeof(WCHAR));
         ASSERT_TRUE(n == (4 + 1) * sizeof(WCHAR));
         ASSERT_TRUE(strcmp(str.c_str(), "abc") == 0);
 
@@ -419,7 +420,7 @@ TEST(ID3Helper, CopyStrByEncodingAndBom) {
         ASSERT_TRUE(n == (2 + 1) * sizeof(WCHAR));
         ASSERT_TRUE(strcmp(str.c_str(), "ab") == 0);
 
-        n = copyStrByEncodingAndBom(str, IET_UCS2BE_NO_BOM, (cstr_t)wLyricsBe.c_str(), wLyricsBe.size() * sizeof(WCHAR));
+        n = copyStrByEncodingAndBom(str, IET_UCS2BE_NO_BOM, (cstr_t)wLyricsBe.c_str(), (uint32_t)wLyricsBe.size() * sizeof(WCHAR));
         ASSERT_TRUE(n == 4 * sizeof(WCHAR));
         ASSERT_TRUE(strcmp(str.c_str(), "abc") == 0);
 
@@ -427,7 +428,7 @@ TEST(ID3Helper, CopyStrByEncodingAndBom) {
         ASSERT_TRUE(n == 2 * sizeof(WCHAR));
         ASSERT_TRUE(strcmp(str.c_str(), "ab") == 0);
 
-        n = copyStrByEncodingAndBom(str, IET_ANSI, utf8Lyrics.c_str(), utf8Lyrics.size());
+        n = copyStrByEncodingAndBom(str, IET_ANSI, utf8Lyrics.c_str(), (uint32_t)utf8Lyrics.size());
         ASSERT_TRUE(n == 4 + 3);
         ASSERT_TRUE(strcmp(str.c_str(), "abc") == 0);
 

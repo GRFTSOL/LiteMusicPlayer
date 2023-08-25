@@ -1866,7 +1866,7 @@ void CSkinWnd::onSkinLoaded() {
 
             m_vm->run(code.c_str(), code.size());
             if (ctx->error != JE_OK) {
-                auto err = m_vm->defaultRuntime()->toSizedString(ctx, ctx->errorMessage);
+                auto err = m_vm->defaultRuntime()->toStringView(ctx, ctx->errorMessage);
                 ERR_LOG3("Failed to eval script: %s, error: %.*s", m_scriptFile.c_str(), err.len, err.data);
             }
 

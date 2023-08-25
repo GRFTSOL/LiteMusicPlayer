@@ -44,9 +44,9 @@ cstr_t iDToString(IdToString Ids[], uint32_t nID, cstr_t szDefaultID) {
 }
 
 uint32_t getCombinationValue(IdToString Ids[], cstr_t szValue) {
-    vector<SizedString> vStr;
+    vector<StringView> vStr;
 
-    SizedString str(szValue);
+    StringView str(szValue);
     str.split('|', vStr);
 
     uint32_t dwFlags = 0;
