@@ -16,6 +16,7 @@ public:
     MediaPtr getItem(int nIndex);
 
     void insertItem(int nIndex, const MediaPtr &media);
+    void insert(int position, Playlist *other);
 
     void moveItem(int nIndexOld, int nIndexNew);
 

@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-md">
     <q-toolbar>
-      <q-input dense debounce="400" color="primary" v-model="searchKeyword">
+      <q-input dense debounce="400" color="primary" v-model="searchKeyword" class="q-pr-sm" hide-bottom-space>
         <template v-slot:append>
           <q-icon name="search" />
         </template>
@@ -33,7 +33,7 @@
 
       <q-space />
 
-      <template v-if="isEditDashboard">
+      <template v-if="isEditDashboard && chartDefines.length">
       <q-btn-dropdown
         dense
         flat
@@ -560,16 +560,20 @@ export default defineComponent({
         });
       }
 
-      const idx = filterOptions.indexOf(chart);
-      if (idx !== -1) {
-        filterOptions.splice(idx, 1);
-      }
+      removeFilter(chart);
     }
 
     function addFilter(chart: ChartItem) {
       const idx = filterOptions.indexOf(chart);
       if (idx === -1) {
         filterOptions.push(chart);
+      }
+    }
+
+    function removeFilter(chart: ChartItem) {
+      const idx = filterOptions.indexOf(chart);
+      if (idx !== -1) {
+        filterOptions.splice(idx, 1);
       }
     }
 
@@ -624,10 +628,12 @@ export default defineComponent({
           dimension.filter(v => keys[v as any] === 1);
           addFilter(chart);
         } else {
+          removeFilter(chart);
           dimension.filterAll();
         }
       } else {
         chart.filterCondition = '';
+        removeFilter(chart);
         dimension.filterAll();
       }
 

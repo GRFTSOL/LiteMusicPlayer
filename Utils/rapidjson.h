@@ -12,6 +12,7 @@
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/writer.h>
 #include <string>
+#include <vector>
 
 
 using RapidjsonWriter = rapidjson::Writer<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::kWriteNanAndInfFlag>;
@@ -35,5 +36,6 @@ using RapidjsonPrettyWriter = rapidjson::PrettyWriter<rapidjson::StringBuffer, r
 
 std::string getMemberString(const rapidjson::Value &message, const char *key, const char *defVal = "");
 int getMemberInt(const rapidjson::Value &message, const char *key, int defVal = 0);
+std::vector<int> getMemberIntArray(const rapidjson::Value &message, const char *key);
 
 #endif /* rapidjson_h */

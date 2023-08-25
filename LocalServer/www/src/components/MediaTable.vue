@@ -11,14 +11,38 @@
     ref="el_table"
   >
     <template v-slot:top="props">
-      
+      <q-btn-dropdown
+          dense
+          flat
+          icon="play_circle"
+        >
+          <q-list dense>
+            <q-item clickable v-close-popup @click="play">
+              <q-item-section avatar>
+                <q-avatar icon="play_circle"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Play</q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-item clickable v-close-popup @click="queue">
+              <q-item-section avatar>
+                <q-avatar icon="queue_music"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Add to Playlist</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
+
       <q-space />
 
       <div>
         <q-btn-dropdown
           dense
           flat
-          color="primary"
           label="显示列"
         >
           <q-list>
@@ -73,28 +97,12 @@
 <script lang="ts">
 
 import { defineComponent, reactive } from 'vue';
-import { formatDurationML, formatTimePlayed, formatRecentDateTime, formatBitRate, loadConfig, saveConfig } from 'boot/utils';
+import { loadConfig, saveConfig } from 'boot/utils';
 import { Media } from 'components/models';
 import MediaDetail from 'src/components/MediaDetail.vue'
+import { MEDIA_LIB_COLUMNS } from 'src/components/MediaDetail.vue'
+import * as wsc from 'boot/web_socket_client';
 
-
-export const MEDIA_LIB_COLUMNS = [
-  { name: 'id', field: 'id', label: 'ID', sortable: true, align: 'left', editable: false },
-  { name: 'artist', field: 'artist', label: 'Artist', sortable: true, align: 'left', editable: true },
-  { name: 'album', field: 'album', label: 'Album', sortable: true, align: 'left', editable: true },
-  { name: 'title', field: 'title', label: 'Title', sortable: true, align: 'left', editable: true },
-  { name: 'url', field: 'url', label: 'File', sortable: true, align: 'left', editable: false },
-  { name: 'duration', field: 'duration', label: 'Duration', sortable: true, format: formatDurationML, align: 'left', editable: false },
-  { name: 'genre', field: 'genre', label: 'Genre', sortable: true, align: 'left', editable: true },
-  { name: 'year', field: 'year', label: 'Year', sortable: true, align: 'left', editable: true },
-  { name: 'rating', field: 'rating', label: 'Rating', sortable: true, align: 'left', editable: true },
-  { name: 'format', field: 'format', label: 'Format', sortable: true, align: 'left', editable: false },
-  { name: 'timeAdded', field: 'timeAdded', label: 'Time Added', sortable: true, format: formatRecentDateTime, align: 'left', editable: false },
-  { name: 'timePlayed', field: 'timePlayed', label: 'Time Played', sortable: true, format: formatTimePlayed, align: 'left', editable: false },
-  { name: 'lyricsFile', field: 'lyricsFile', label: 'Lyrics File', sortable: true, align: 'left', editable: false },
-  { name: 'countPlayed', field: 'countPlayed', label: 'Count Played', sortable: true, align: 'left', editable: false },
-  { name: 'bitRate', field: 'bitRate', label: 'Bit Rate', sortable: true, align: 'left', format: formatBitRate, editable: false },
-];
 
 export default defineComponent({
   name: 'MediaTable',
@@ -130,7 +138,23 @@ export default defineComponent({
 
       onClickRow,
       saveVisibleColumns,
+      play() {
+        
+        wsc.sendPlayerCommand('play_list', getAllIDs());
+      },
+      queue() {
+        wsc.sendPlayerCommand('queue_playlist', getAllIDs());
+      },
     });
+
+    function getAllIDs() {
+      const all = [] as Array<number>;
+      for (let item of props.mediaList) {
+        all.push(item.id);
+      }
+
+      return all;
+    }
 
     function onClickRow(_event: Event, row: Media) {
       data.curMedia = row;

@@ -39,6 +39,26 @@ void Playlist::insertItem(int nIndex, const MediaPtr &media) {
     g_player.notifyPlaylistChanged(this, IMPEvent::PCA_INSERT, nIndex, 0);
 }
 
+void Playlist::insert(int position, Playlist *other) {
+    if (position == -1) {
+        position = (int)getCount();
+    }
+
+    {
+        MutexAutolock lock(m_mutexDataAccess);
+
+        int count = (int)other->getCount();
+        for (int i = 0; i < count; i++) {
+            auto item = other->getItem(i);
+            if (item) {
+                m_vMedia.insert(m_vMedia.begin() + position++, item);
+            }
+        }
+    }
+
+    g_player.notifyPlaylistChanged(this, IMPEvent::PCA_FULL_UPDATE, 0, 0);
+}
+
 void Playlist::moveItem(int nIndexOld, int nIndexNew) {
     assert(nIndexOld >= 0 && nIndexOld < (int)m_vMedia.size());
     assert(nIndexNew >= 0 && nIndexNew < (int)m_vMedia.size());

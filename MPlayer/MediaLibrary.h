@@ -85,6 +85,7 @@ public:
 
     MediaPtr getMediaByUrl(cstr_t szUrl);
     MediaPtr getMediaByID(int id);
+    PlaylistPtr getMediaByIDs(const VecInts &ids);
 
     MediaPtr add(cstr_t szMediaUrl);
 

@@ -55,6 +55,16 @@ void PlayerRemoteCtrlHandler::onMessage(Server *server, const websocketpp::conne
         } else if (cmd == "settings.loop") {
             string parameter = getMemberString(message, "parameter");
             g_player.setLoop(loopModeFromString(parameter.c_str()));
+        } else if (cmd == "play_list") {
+            auto listIDs = getMemberIntArray(message, "parameter");
+            auto playlist = g_player.getMediaLibrary()->getMediaByIDs(listIDs);
+            g_player.setCurrentPlaylist(playlist);
+            g_player.play();
+        } else if (cmd == "queue_playlist") {
+            auto listIDs = getMemberIntArray(message, "parameter");
+            auto tmp = g_player.getMediaLibrary()->getMediaByIDs(listIDs);
+            auto playlist = g_player.getCurrentPlaylist();
+            playlist->insert(-1, tmp.get());
         }
     }
 

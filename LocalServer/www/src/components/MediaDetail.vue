@@ -45,12 +45,26 @@
                 :key="field.name"
                 :class="field.name == 'url' ? 'col-10' : 'col-5'"
                 >
+                <q-rating
+                  v-if="field.name === 'rating'"
+                  v-model="curMedia[field.name]"
+                  size="2.5em"
+                  color="grey"
+                  color-selected="red-7"
+                />
                 <q-input
+                  v-else
                   :modelValue="field.format ? field.format(curMedia[field.name]) : curMedia[field.name]"
-                  @@update:modelValue="(newValue: string) => curMedia[field.name] = newValue"
+                  @update:modelValue="(newValue: string | number | null) => curMedia[field.name] = newValue"
                   :label="field.label" dense color="primary"
                   :readonly="!field.editable"
                 />
+              </div>
+            </div>
+            <div class="row justify-end">
+              <div class="col-4 q-gutter-md q-pb-md ">
+                <q-btn :disabled="!isBasicInfoModified" color="primary" label="Save" @click="save" v-close-popup/>
+                <q-btn label="Close" v-close-popup/>
               </div>
             </div>
           </q-tab-panel>
@@ -70,12 +84,28 @@
 
 <script lang="ts">
 
-import { defineComponent, watch, ref, reactive } from 'vue';
-import { deepCopy } from 'boot/utils'
-import { MEDIA_LIB_COLUMNS } from 'src/components/MediaTable.vue'
+import { defineComponent, ref, reactive, computed } from 'vue';
+import { formatDurationML, formatTimePlayed, formatRecentDateTime, formatBitRate, deepCopy } from 'boot/utils'
+import { saveMediaBasicInfo } from 'boot/MediaLibrary'
 
 
-const FIELDS = MEDIA_LIB_COLUMNS;
+export const MEDIA_LIB_COLUMNS = [
+  { name: 'id', field: 'id', label: 'ID', sortable: true, align: 'left', editable: false },
+  { name: 'artist', field: 'artist', label: 'Artist', sortable: true, align: 'left', editable: true },
+  { name: 'album', field: 'album', label: 'Album', sortable: true, align: 'left', editable: true },
+  { name: 'title', field: 'title', label: 'Title', sortable: true, align: 'left', editable: true },
+  { name: 'url', field: 'url', label: 'File', sortable: true, align: 'left', editable: false },
+  { name: 'duration', field: 'duration', label: 'Duration', sortable: true, format: formatDurationML, align: 'left', editable: false },
+  { name: 'genre', field: 'genre', label: 'Genre', sortable: true, align: 'left', editable: true },
+  { name: 'year', field: 'year', label: 'Year', sortable: true, align: 'left', editable: true },
+  { name: 'rating', field: 'rating', label: 'Rating', sortable: true, align: 'left', editable: true },
+  { name: 'format', field: 'format', label: 'Format', sortable: true, align: 'left', editable: false },
+  { name: 'timeAdded', field: 'timeAdded', label: 'Time Added', sortable: true, format: formatRecentDateTime, align: 'left', editable: false },
+  { name: 'timePlayed', field: 'timePlayed', label: 'Time Played', sortable: true, format: formatTimePlayed, align: 'left', editable: false },
+  { name: 'lyricsFile', field: 'lyricsFile', label: 'Lyrics File', sortable: true, align: 'left', editable: false },
+  { name: 'countPlayed', field: 'countPlayed', label: 'Count Played', sortable: true, align: 'left', editable: false },
+  { name: 'bitRate', field: 'bitRate', label: 'Bit Rate', sortable: true, align: 'left', format: formatBitRate, editable: false },
+];
 
 export default defineComponent({
   name: 'MediaDetail',
@@ -97,15 +127,31 @@ export default defineComponent({
     let curMedia = reactive(deepCopy({}, props.media));
     const tab = ref('info');
 
+    function save() {
+      saveMediaBasicInfo(curMedia);
+    }
+
+    const isBasicInfoModified = computed(function() {
+      for (let field of MEDIA_LIB_COLUMNS) {
+        if (props.media[field.name] !== curMedia[field.name]) {
+          return true;
+        }
+      }
+
+      return false;
+    });
+
     return {
       curMedia,
       tab,
-      FIELDS,
+      FIELDS: MEDIA_LIB_COLUMNS,
+      save,
+      isBasicInfoModified,
     };
   },
   watch: {
     media(newMedia) {
-      this.curMedia = reactive(deepCopy({}, newMedia));
+      deepCopy(this.curMedia, newMedia);
     }
   },
 });

@@ -43,3 +43,26 @@ int getMemberInt(const rapidjson::Value &message, const char *key, int defVal) {
 
     return defVal;
 }
+
+std::vector<int> getMemberIntArray(const rapidjson::Value &message, const char *key) {
+    assert(message.IsObject());
+
+    std::vector<int> values;
+    auto it = message.FindMember(key);
+    if (it == message.MemberEnd()) {
+        return values;
+    }
+
+    auto &arr = (*it).value;
+    if (arr.IsArray()) {
+        auto count = arr.Size();
+        for (int i = 0; i < count; i++) {
+            auto &item = arr[i];
+            if (item.IsInt()) {
+                values.push_back(item.GetInt());
+            }
+        }
+    }
+
+    return values;
+}

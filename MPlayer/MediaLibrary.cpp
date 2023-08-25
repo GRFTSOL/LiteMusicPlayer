@@ -381,6 +381,31 @@ MediaPtr CMediaLibrary::getMediaByID(int id) {
     return media;
 }
 
+PlaylistPtr CMediaLibrary::getMediaByIDs(const VecInts &ids) {
+    if (!isOK()) {
+        return nullptr;
+    }
+
+    auto playlist = newPlaylist();
+    RMutexAutolock autolock(m_mutexDataAccess);
+
+    for (auto id : ids) {
+        m_stmtQueryByID.bindInt(1, id);
+
+        MediaPtr media;
+        int ret = m_stmtQueryByID.step();
+        if (ret == ERR_SL_OK_ROW) {
+            media = sqliteQueryMedia(m_stmtQueryByID);
+            if (!media->isFileDeleted) {
+                playlist->insertItem(-1, media);
+            }
+        }
+        m_stmtQueryByID.reset();
+    }
+
+    return playlist;
+}
+
 MediaPtr CMediaLibrary::add(cstr_t mediaUrl) {
     if (!isOK()) {
         return nullptr;
