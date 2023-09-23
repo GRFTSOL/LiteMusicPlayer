@@ -3,7 +3,7 @@
 #include "PlayListFile.h"
 #include "OnlineSearch.h"
 #include "../LyricsLib/HelperFun.h"
-#include "../LyricsLib/MLLib.h"
+#include "../LyricsLib/CurrentLyrics.h"
 
 
 #ifdef _WIN32
@@ -721,7 +721,7 @@ void CPlayer::saveCurrentPlaylistAs(cstr_t szFile) {
 }
 
 void CPlayer::onUISeekbarSeek(int nPos) {
-    g_LyricData.SetPlayElapsedTime(nPos);
+    g_currentLyrics.SetPlayElapsedTime(nPos);
 
     CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
 }
@@ -827,8 +827,8 @@ ResultCode CPlayer::loadMediaTagInfo(Media *media) {
             media->year = atoi(tags.year.c_str());
             media->genre = tags.genre.c_str();
             media->trackNumb = atoi(tags.trackNo.c_str());
-            media->duration = tags.mediaLength;
 
+            media->duration = infoExt.mediaLength;
             media->bitsPerSample = infoExt.bitsPerSample;
             media->bitRate = infoExt.bitRate;
             media->channels = infoExt.channels;
@@ -970,7 +970,7 @@ void CPlayer::notifySeek() {
 void CPlayer::generateShuffleMediaQueue() {
     VecInts vMediaSequence;
     auto nCount = m_currentPlaylist->getCount();
-    m_idxCurrentShuffleMedia = 0;
+    m_idxCurrentShuffleMedia = 1;
 
     for (int i = 0; i < nCount; i++) {
         vMediaSequence.push_back(i);
@@ -982,26 +982,6 @@ void CPlayer::generateShuffleMediaQueue() {
         m_vShuffleMedia.push_back(vMediaSequence[nNext]);
         vMediaSequence.erase(vMediaSequence.begin() + nNext);
     }
-}
-
-static bool isBasicMediaInfoSame(Media *media1, Media *media2) {
-    static MediaAttribute vStrAttrCheck[] = { MA_ARTIST, MA_ALBUM, MA_TITLE, MA_GENRE, MA_COMMENT,
-        MA_TRACK_NUMB, MA_YEAR, MA_BITRATE, MA_DURATION, MA_FILESIZE };
-
-    int i;
-    string str1, str2;
-
-    for (i = 0; i < CountOf(vStrAttrCheck); i++) {
-        str1.clear();
-        str2.clear();
-        media1->getAttribute(vStrAttrCheck[i], str1);
-        media2->getAttribute(vStrAttrCheck[i], str2);
-        if (strcmp(str1.c_str(), str2.c_str()) != 0) {
-            return false;
-        }
-    }
-
-    return true;
 }
 
 void CPlayer::currentMediaChanged() {
@@ -1056,7 +1036,7 @@ void CPlayer::currentMediaChanged() {
 ResultCode CPlayer::doNext(bool bLoop) {
     RMutexAutolock autolock(m_mutexDataAccess);
 
-    if (m_currentPlaylist->getCount() == 0) {
+    if (m_currentPlaylist->getCount() <= 1) {
         return ERR_EMPTY_PLAYLIST;
     }
 

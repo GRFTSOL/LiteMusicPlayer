@@ -226,14 +226,7 @@ menufile_v2
     A&bout $Product$...@IDC_ABOUT
     $Product$ &Help@IDC_ML_HELP
     separator
-    &Activate $Product$...@IDC_REGISTER
-    separator
     $Product$ &Website@IDC_WEBHOME
-
-# menu: StaticLyricsMenu
-  &Clear Lyrics Scrolling Actions@IDC_SL_CLEAR_TIME_STAMP
-  Lyrics &Editor...@IDC_LYR_EDITOR
-  &Help@IDC_HELP_STATIC_LYR
 
 # menu: MainContextMenu
   popup@&File
@@ -340,8 +333,6 @@ menufile_v2
   popup@&Help and Support
     A&bout $Product$...@IDC_ABOUT
     $Product$ &Help@IDC_ML_HELP
-    separator
-    &Activate $Product$...@IDC_REGISTER
     separator
     $Product$ &Website@IDC_WEBHOME
     &Report to Author@IDC_EMAIL

@@ -37,8 +37,9 @@ void CSkinScrollFrameCtrlBase::onCreate() {
         createFrameCtrl();
     }
 
-    if (m_bVertScrollBar) {
-        createVertScrollbar();
+    createVertScrollbar();
+    if (!m_bVertScrollBar && m_pObjVertScrollBar) {
+        m_pObjVertScrollBar->setVisible(false);
     }
     if (m_bHorzScrollBar) {
         createHorzScrollbar();
@@ -154,9 +155,8 @@ void CSkinScrollFrameCtrlBase::createVertScrollbar() {
 
     int nWidth = 14;
     m_pObjVertScrollBar->m_formWidth.calCualteValue(nWidth);
-    m_nWidthVertScrollBar = nWidth;
 
-    m_pObjVertScrollBar->m_formLeft.setFormula(stringPrintf("w-%d", m_nWidthVertScrollBar + m_rcPadding.right).c_str());
+    m_pObjVertScrollBar->m_formLeft.setFormula(stringPrintf("w-%d", nWidth + m_rcPadding.right).c_str());
     m_pObjVertScrollBar->m_formTop.setFormula(m_rcPadding.top);
     m_pObjVertScrollBar->m_formHeight.setFormula(stringPrintf("h-%d", m_rcPadding.top + m_rcPadding.bottom + m_nHeightHorzScrollBar).c_str());
     if (m_pObjHorzScrollBar) {
@@ -169,7 +169,10 @@ void CSkinScrollFrameCtrlBase::createVertScrollbar() {
     m_pVertScrollBar = (CSkinVScrollBar*)m_pObjVertScrollBar;
     m_pVertScrollBar->setScrollNotify(this);
 
-    m_rcContent.right -= m_nWidthVertScrollBar;
+    if (m_bVertScrollBar) {
+        m_nWidthVertScrollBar = nWidth;
+        m_rcContent.right -= nWidth;
+    }
 }
 
 void CSkinScrollFrameCtrlBase::createHorzScrollbar() {

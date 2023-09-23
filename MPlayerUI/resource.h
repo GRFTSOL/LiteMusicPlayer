@@ -62,7 +62,6 @@
 #define IDC_BROWSE                      1010
 #define IDC_DEL_FILE                    1011
 #define IDC_RENAME                      1012
-#define IDC_REGISTER                    1013
 #define IDC_PLAY                        1014
 #define IDC_TAB                         1015
 #define IDC_LIST                        1016
@@ -353,9 +352,7 @@
 #define IDC_SAVE_PIC_AS                 40170
 #define IDC_ADDFILE                     40171
 #define IDC_LYR_EDITOR                  40172
-#define IDC_SL_CLEAR_TIME_STAMP         40173
 #define IDC_MORE                        40174
-#define IDC_HELP_STATIC_LYR             40175
 #define IDC_EMBEDDED_LYRICS             40178
 #define IDC_ADD_FILES                   40179
 #define IDC_ADD_FOLDER                  40180

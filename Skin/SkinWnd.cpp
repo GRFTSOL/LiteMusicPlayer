@@ -372,6 +372,10 @@ void CSkinWnd::closeSkin() {
     m_animateDuration = 0;
 }
 
+CUIObject *CSkinWnd::createUIObject(cstr_t className, CSkinContainer *container) {
+    return m_pSkinFactory->createUIObject(this, className, container);
+}
+
 CUIObject *CSkinWnd::getUIObjectByClassName(cstr_t className) {
     return m_rootConainter.getUIObjectByClassName(className);
 }
@@ -656,15 +660,22 @@ bool CSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags) {
                 return true;
             }
         }
+    }
 
-        if (isDialogWnd()) {
-            if (nChar == VK_ESCAPE) {
-                onCancel();
-                return true;
-            } else if (nChar == VK_RETURN && !pObjFocus->needMsgEnterKey()) {
-                onOK();
-                return true;
-            }
+    if (isDialogWnd()) {
+        if (nChar == VK_ESCAPE) {
+            onCancel();
+            return true;
+        } else if (nChar == VK_RETURN) {
+            onOK();
+            return true;
+        }
+    }
+
+    if (nFlags == MK_COMMAND) {
+        if (nChar == VK_W) {
+            onCustomCommand(CMD_CLOSE);
+            return true;
         }
     }
 
@@ -1375,6 +1386,14 @@ void CSkinWnd::setFocusUIObj(CUIObject *obj) {
 }
 
 CUIObject *CSkinWnd::getFocusUIObj() {
+    auto obj = m_uiObjectFocus;
+    while (obj) {
+        if (!obj->isVisible()) {
+            return nullptr;
+        }
+        obj = obj->getParent();
+    }
+
     return m_uiObjectFocus;
 }
 
@@ -1872,6 +1891,13 @@ void CSkinWnd::onSkinLoaded() {
 
             // 需要周期性的执行 TinyJs VM 的任务.
             setTimer(TIMER_ID_TINY_JS_VM, 1);
+
+            // 初始化调用一些 JS 事件
+            if (m_onSizeListener.isFunction()) {
+                int cx = m_rcBoundBox.width(), cy = m_rcBoundBox.height();
+                callVMFunction(m_onSizeListener,
+                    ArgumentsX(makeJsValueInt32(cx), makeJsValueInt32(cy)));
+            }
         }
     }
 }

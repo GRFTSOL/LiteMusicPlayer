@@ -1,6 +1,7 @@
 #include <bitset>
 #include "../../Utils/Utils.h"
 #include "ID3v2Frame.h"
+#include "ID3Helper.h"
 
 
 CID3v2Frame::CID3v2Frame(uint32_t frameID) {
@@ -17,29 +18,51 @@ CID3v2Frame::~CID3v2Frame() {
 }
 
 int CID3v2Frame::renderFrame(const ID3v2Header *pHeader, string &buff) {
-    int nRet;
+    string encoded;
+    string lengthIndicator;
+    string *data = &m_frameData;
 
-    nRet = renderFrameHdr(pHeader, buff);
-    if (nRet != ERR_OK) {
-        return nRet;
+    if (m_framehdr.bCompression || m_framehdr.bEncryption) {
+        // 不支持加密和压缩，未修改过数据
+    } else {
+        if (m_framehdr.bUnsyncronisation || pHeader->isUnsyncFlagSet()) {
+            encoded = synchDataEncode(m_frameData);
+            data = &encoded;
+            if (encoded.size() != m_frameData.size() && !m_framehdr.bUnsyncronisation) {
+                // Foobar2000 doesn't support only ID3v2 header has Unsyncronisation flag set.
+                // So set bUnsyncronisation is to support foobar2000.
+                m_framehdr.bUnsyncronisation = true;
+            }
+        }
+
+        if (m_framehdr.bDataLengthIndicator) {
+            // 原始的长度
+            lengthIndicator = syncBytesFromUInt32((uint32_t)m_frameData.size());
+        }
     }
 
-    buff.append(m_frameData.c_str(), m_frameData.size());
+    int ret = renderFrameHdr(pHeader, buff, uint32_t(lengthIndicator.size() + data->size()));
+    if (ret != ERR_OK) {
+        return ret;
+    }
+
+    buff.append(lengthIndicator);
+    buff.append(*data);
 
     return ERR_OK;
 }
 
 
-int CID3v2Frame::renderFrameHdr(const ID3v2Header *pHeader, string &buff) {
+int CID3v2Frame::renderFrameHdr(const ID3v2Header *pHeader, string &buff, uint32_t lengthData) {
     if (pHeader->byMajorVer == ID3v2Header::ID3V2_V2) {
         ID3v2FrameHeaderV2 fh2;
-        byteDataFromUInt((uint32_t)m_frameData.size(), fh2.bySize, CountOf(fh2.bySize));
+        byteDataFromUInt(lengthData, fh2.bySize, CountOf(fh2.bySize));
         fh2.fromFrameUintID(m_framehdr.nFrameID);
 
         buff.append((const char *)&fh2, sizeof(fh2));
     } else if (pHeader->byMajorVer == ID3v2Header::ID3V2_V3) {
         ID3v2FrameHeaderV3 fh3;
-        byteDataFromUInt((uint32_t)m_frameData.size(), fh3.bySize, CountOf(fh3.bySize));
+        byteDataFromUInt(lengthData, fh3.bySize, CountOf(fh3.bySize));
         fh3.fromFrameUintID(m_framehdr.nFrameID);
         memcpy(fh3.byFlags, m_framehdr.byFlags, CountOf(fh3.byFlags));
 
@@ -63,7 +86,7 @@ int CID3v2Frame::renderFrameHdr(const ID3v2Header *pHeader, string &buff) {
         buff.append((const char *)&fh3, sizeof(fh3));
     } else if (pHeader->byMajorVer == ID3v2Header::ID3V2_V4) {
         ID3v2FrameHeaderV3 fh3;
-        synchDataFromUInt((uint32_t)m_frameData.size(), fh3.bySize, CountOf(fh3.bySize));
+        syncBytesFromUInt32(lengthData, fh3.bySize);
         fh3.fromFrameUintID(m_framehdr.nFrameID);
         memcpy(fh3.byFlags, m_framehdr.byFlags, CountOf(fh3.byFlags));
 

@@ -29,7 +29,7 @@ protected:
     void wrapInfoText();
 
 protected:
-    CLyricsLines                m_vText;
-    CLyricsLines                m_vUnWrapedText;
+    LyricsLines                m_vText;
+    LyricsLines                m_vUnWrapedText;
 
 };

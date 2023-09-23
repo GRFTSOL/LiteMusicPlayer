@@ -17,6 +17,13 @@ void fillRect(RawImageData *pImage, int x, int y, int xMax, int yMax, const CCol
 RawImageDataPtr createScaledRawImageData(RawImageData *src, float scale);
 
 /**
+ * 从 @src 绘制到 @dst
+ * - 如果 @isFillAll 为 true，则会裁剪 @src，将 @dst 绘制满
+ * - 如果 @isFillAll 为 false，则会裁剪 @dst，仅仅在需要的区域绘制
+ */
+void getStretchDrawDstRect(CRect &src, CRect &dst, bool isFillAll = false);
+
+/**
  * CRawImage 将图片文件加载到内存中，然后可绘制到 CRawGraph 或者其他的 CRawImage 中.
  *
  * - 绘制的坐标为逻辑坐标
@@ -82,6 +89,8 @@ public:
     int y() const { return m_y; }
     int width() const { return m_cx; }
     int height() const { return m_cy; }
+
+    CRect getRect() const { return makeRectLTWH(m_x, m_y, m_cx, m_cy); }
 
     void setXYWH(int x, int y, int width, int height)
         { m_x = x; m_y = y; m_cx = width; m_cy = height; }

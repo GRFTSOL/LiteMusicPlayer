@@ -142,7 +142,6 @@
 		0EB710A827773BB6006929F1 /* PreferPageLyrics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7101827773BB2006929F1 /* PreferPageLyrics.cpp */; };
 		0EB710A927773BB6006929F1 /* MPlayerAppBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7101927773BB2006929F1 /* MPlayerAppBase.cpp */; };
 		0EB710AA27773BB6006929F1 /* Helper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7101A27773BB2006929F1 /* Helper.cpp */; };
-		0EB710AB27773BB6006929F1 /* SkinImageListCtrl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7101C27773BB3006929F1 /* SkinImageListCtrl.cpp */; };
 		0EB710AE27773BB6006929F1 /* LyricShowMultiRowObj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7101F27773BB3006929F1 /* LyricShowMultiRowObj.cpp */; };
 		0EB710B027773BB6006929F1 /* MPFloatingLyrWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7102327773BB3006929F1 /* MPFloatingLyrWnd.cpp */; };
 		0EB710B127773BB6006929F1 /* LyricShowObj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7102427773BB3006929F1 /* LyricShowObj.cpp */; };
@@ -178,9 +177,6 @@
 		0EB710F7277AFFA1006929F1 /* MLProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB710F6277AFFA0006929F1 /* MLProfile.cpp */; };
 		0EB710FE277C0F5A006929F1 /* Digest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB710FB277C0F59006929F1 /* Digest.cpp */; };
 		0EB710FF277C0F5A006929F1 /* MLBinXMLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB710FD277C0F59006929F1 /* MLBinXMLParser.cpp */; };
-		0EB71109277C6AE5006929F1 /* DlgSaveEmbeddedLyrics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0EB71105277C6AE4006929F1 /* DlgSaveEmbeddedLyrics.mm */; };
-		0EB7110A277C6AE5006929F1 /* DlgSaveEmbeddedLyricsController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0EB71106277C6AE4006929F1 /* DlgSaveEmbeddedLyricsController.mm */; };
-		0EB7110B277C6AE5006929F1 /* DlgSaveEmbeddedLyricsController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0EB71108277C6AE4006929F1 /* DlgSaveEmbeddedLyricsController.xib */; };
 		0EB7110F277CAB54006929F1 /* Looper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7110D277CAB53006929F1 /* Looper.cpp */; };
 		0EB71113277CB16C006929F1 /* RegExTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB71111277CB16B006929F1 /* RegExTool.cpp */; };
 		0EB7111B277D8400006929F1 /* Event.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7111A277D83FF006929F1 /* Event.mm */; };
@@ -189,6 +185,8 @@
 		0EB7115F277DCC79006929F1 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EB7115E277DCC78006929F1 /* CoreText.framework */; };
 		0EB71162277DCCE6006929F1 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EB71161277DCCE6006929F1 /* AppKit.framework */; };
 		0EB71165277DEE4D006929F1 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EB71164277DEE4A006929F1 /* CoreData.framework */; };
+		C006B8E92A99D6940045EA52 /* aesce.c in Sources */ = {isa = PBXBuildFile; fileRef = C006B8E72A99D6940045EA52 /* aesce.c */; };
+		C006B8EB2A99D6C10045EA52 /* psa_util.c in Sources */ = {isa = PBXBuildFile; fileRef = C006B8EA2A99D6C10045EA52 /* psa_util.c */; };
 		C04DBA9D296FD6F700A0FCB1 /* SkinMenuItemsContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C04DBA9B296FD6F700A0FCB1 /* SkinMenuItemsContainer.cpp */; };
 		C04DBF0A297ADFC400A0FCB1 /* ConnectionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C04DBEF9297ADFC400A0FCB1 /* ConnectionManager.cpp */; };
 		C04DBF0C297ADFC400A0FCB1 /* RequestParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C04DBEFD297ADFC400A0FCB1 /* RequestParser.cpp */; };
@@ -313,12 +311,13 @@
 		C055400529978E390057629E /* HeadPhoneWatch.mm in Sources */ = {isa = PBXBuildFile; fileRef = C055400329978E390057629E /* HeadPhoneWatch.mm */; };
 		C0554007299791EA0057629E /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0554006299791EA0057629E /* CoreAudio.framework */; };
 		C055400929991C0E0057629E /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C055400829991C0E0057629E /* Carbon.framework */; };
-		C05D73DF2951594000294F50 /* libTinyJsLib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C05D73DE2951592E00294F50 /* libTinyJsLib.dylib */; };
 		C05D73E32951B82100294F50 /* Profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D73E12951B82100294F50 /* Profile.cpp */; };
 		C05D73EE2952B72A00294F50 /* SkinJsAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D73EC2952B72A00294F50 /* SkinJsAPI.cpp */; };
 		C05D74002954775A00294F50 /* JsUIObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D73FF2954775A00294F50 /* JsUIObject.cpp */; };
 		C05D740429547A4500294F50 /* JsSkinDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D740229547A4500294F50 /* JsSkinDocument.cpp */; };
 		C05D740729553EBB00294F50 /* JsResizableLinearContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D740529553EBB00294F50 /* JsResizableLinearContainer.cpp */; };
+		C0A81FFF2ABDDFC200CDF309 /* libTinyJsStaticLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A81FFE2ABDDFBB00CDF309 /* libTinyJsStaticLib.a */; };
+		C0ADB9712AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0ADB96F2AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -427,6 +426,20 @@
 			remoteGlobalIDString = C06C1614294EAFF70022ADCA;
 			remoteInfo = TinyJsLib;
 		};
+		C0A81FFD2ABDDFBB00CDF309 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C05D73D52951592D00294F50 /* TinyJS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C0A81F742ABDDF4800CDF309;
+			remoteInfo = TinyJsStaticLib;
+		};
+		C0A820002ABDDFDC00CDF309 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C05D73D52951592D00294F50 /* TinyJS.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = C0A81F732ABDDF4800CDF309;
+			remoteInfo = TinyJsStaticLib;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -440,27 +453,6 @@
 		0E56B8F1273CD7BE00032A3E /* Mp3Player.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Mp3Player.entitlements; sourceTree = "<group>"; };
 		0E56B970273E115500032A3E /* WndDrag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WndDrag.cpp; sourceTree = "<group>"; };
 		0E56BA94273FCEAB00032A3E /* IWindow.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IWindow.cpp; sourceTree = "<group>"; };
-		0E56BAA32740C32800032A3E /* libsktext.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsktext.a; path = ../../ProjectsOpenSource/skia/out/Debug/libsktext.a; sourceTree = "<group>"; };
-		0E56BAA42740C32800032A3E /* libsksg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsksg.a; path = ../../ProjectsOpenSource/skia/out/Debug/libsksg.a; sourceTree = "<group>"; };
-		0E56BAA52740C32800032A3E /* libskshaper.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libskshaper.a; path = ../../ProjectsOpenSource/skia/out/Debug/libskshaper.a; sourceTree = "<group>"; };
-		0E56BAA62740C32800032A3E /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = ../../ProjectsOpenSource/skia/out/Debug/libjpeg.a; sourceTree = "<group>"; };
-		0E56BAA72740C32800032A3E /* libwebp_sse41.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libwebp_sse41.a; path = ../../ProjectsOpenSource/skia/out/Debug/libwebp_sse41.a; sourceTree = "<group>"; };
-		0E56BAA82740C32800032A3E /* libzlib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libzlib.a; path = ../../ProjectsOpenSource/skia/out/Debug/libzlib.a; sourceTree = "<group>"; };
-		0E56BAA92740C32800032A3E /* libskia.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libskia.a; path = ../../ProjectsOpenSource/skia/out/Debug/libskia.a; sourceTree = "<group>"; };
-		0E56BAAA2740C32800032A3E /* libskottie.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libskottie.a; path = ../../ProjectsOpenSource/skia/out/Debug/libskottie.a; sourceTree = "<group>"; };
-		0E56BAAB2740C32800032A3E /* libspvtools.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libspvtools.a; path = ../../ProjectsOpenSource/skia/out/Debug/libspvtools.a; sourceTree = "<group>"; };
-		0E56BAAC2740C32800032A3E /* libskresources.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libskresources.a; path = ../../ProjectsOpenSource/skia/out/Debug/libskresources.a; sourceTree = "<group>"; };
-		0E56BAAD2740C32800032A3E /* libicu.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libicu.a; path = ../../ProjectsOpenSource/skia/out/Debug/libicu.a; sourceTree = "<group>"; };
-		0E56BAAE2740C32800032A3E /* libaudioplayer.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libaudioplayer.a; path = ../../ProjectsOpenSource/skia/out/Debug/libaudioplayer.a; sourceTree = "<group>"; };
-		0E56BAAF2740C32800032A3E /* libharfbuzz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libharfbuzz.a; path = ../../ProjectsOpenSource/skia/out/Debug/libharfbuzz.a; sourceTree = "<group>"; };
-		0E56BAB02740C32800032A3E /* libspvtools_val.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libspvtools_val.a; path = ../../ProjectsOpenSource/skia/out/Debug/libspvtools_val.a; sourceTree = "<group>"; };
-		0E56BAB12740C32800032A3E /* libimgui.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libimgui.a; path = ../../ProjectsOpenSource/skia/out/Debug/libimgui.a; sourceTree = "<group>"; };
-		0E56BAB22740C32800032A3E /* libmicrohttpd.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmicrohttpd.a; path = ../../ProjectsOpenSource/skia/out/Debug/libmicrohttpd.a; sourceTree = "<group>"; };
-		0E56BAB32740C32800032A3E /* libcompression_utils_portable.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcompression_utils_portable.a; path = ../../ProjectsOpenSource/skia/out/Debug/libcompression_utils_portable.a; sourceTree = "<group>"; };
-		0E56BAB42740C32800032A3E /* libskunicode.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libskunicode.a; path = ../../ProjectsOpenSource/skia/out/Debug/libskunicode.a; sourceTree = "<group>"; };
-		0E56BAB52740C32800032A3E /* libparticles.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libparticles.a; path = ../../ProjectsOpenSource/skia/out/Debug/libparticles.a; sourceTree = "<group>"; };
-		0E56BAB62740C32800032A3E /* libwebp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libwebp.a; path = ../../ProjectsOpenSource/skia/out/Debug/libwebp.a; sourceTree = "<group>"; };
-		0E56BAB72740C32800032A3E /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = ../../ProjectsOpenSource/skia/out/Debug/libpng.a; sourceTree = "<group>"; };
 		0E56BB072743FC5F00032A3E /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		0E56BB0D2743FC5F00032A3E /* UtilsTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UtilsTypes.h; sourceTree = "<group>"; };
 		0E56BB132743FCBD00032A3E /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Window.h; sourceTree = "<group>"; };
@@ -588,12 +580,6 @@
 		0E56BD22274D38CC00032A3E /* Error.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Error.cpp; sourceTree = "<group>"; };
 		0E56BD23274D38CC00032A3E /* Profile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Profile.cpp; sourceTree = "<group>"; };
 		0E56BD28274DD1D100032A3E /* PrivateProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateProfile.cpp; sourceTree = "<group>"; };
-		0E56BD37274E588800032A3E /* libsktext.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsktext.so; path = ../../ProjectsOpenSource/skia/out/Shared/libsktext.so; sourceTree = "<group>"; };
-		0E56BD38274E588800032A3E /* libsksg.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsksg.so; path = ../../ProjectsOpenSource/skia/out/Shared/libsksg.so; sourceTree = "<group>"; };
-		0E56BD39274E588800032A3E /* libskunicode.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libskunicode.so; path = ../../ProjectsOpenSource/skia/out/Shared/libskunicode.so; sourceTree = "<group>"; };
-		0E56BD3A274E588800032A3E /* libskia.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libskia.so; path = ../../ProjectsOpenSource/skia/out/Shared/libskia.so; sourceTree = "<group>"; };
-		0E56BD3B274E588800032A3E /* libskparagraph.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libskparagraph.so; path = ../../ProjectsOpenSource/skia/out/Shared/libskparagraph.so; sourceTree = "<group>"; };
-		0E56BD3C274E588800032A3E /* libskshaper.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libskshaper.so; path = ../../ProjectsOpenSource/skia/out/Shared/libskshaper.so; sourceTree = "<group>"; };
 		0E56BD44274E58A900032A3E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		0E56BD45274E58AA00032A3E /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		0EB70F08277223D1006929F1 /* RawPen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RawPen.cpp; path = GfxRaw/RawPen.cpp; sourceTree = "<group>"; };
@@ -731,7 +717,6 @@
 		0EB7101927773BB2006929F1 /* MPlayerAppBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MPlayerAppBase.cpp; path = MPlayerUI/MPlayerAppBase.cpp; sourceTree = "<group>"; };
 		0EB7101A27773BB2006929F1 /* Helper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Helper.cpp; path = MPlayerUI/Helper.cpp; sourceTree = "<group>"; };
 		0EB7101B27773BB2006929F1 /* MPSkinInfoTextCtrlEx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPSkinInfoTextCtrlEx.h; path = MPlayerUI/MPSkinInfoTextCtrlEx.h; sourceTree = "<group>"; };
-		0EB7101C27773BB3006929F1 /* SkinImageListCtrl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkinImageListCtrl.cpp; path = MPlayerUI/SkinImageListCtrl.cpp; sourceTree = "<group>"; };
 		0EB7101F27773BB3006929F1 /* LyricShowMultiRowObj.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LyricShowMultiRowObj.cpp; path = MPlayerUI/LyricShowMultiRowObj.cpp; sourceTree = "<group>"; };
 		0EB7102227773BB3006929F1 /* SkinTreeCtrl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkinTreeCtrl.h; path = MPlayerUI/SkinTreeCtrl.h; sourceTree = "<group>"; };
 		0EB7102327773BB3006929F1 /* MPFloatingLyrWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MPFloatingLyrWnd.cpp; path = MPlayerUI/MPFloatingLyrWnd.cpp; sourceTree = "<group>"; };
@@ -750,7 +735,6 @@
 		0EB7103227773BB4006929F1 /* SkinFilterCtrl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkinFilterCtrl.cpp; path = MPlayerUI/SkinFilterCtrl.cpp; sourceTree = "<group>"; };
 		0EB7103427773BB4006929F1 /* DlgUpdateLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DlgUpdateLibrary.h; sourceTree = "<group>"; };
 		0EB7103527773BB4006929F1 /* MPHotkey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPHotkey.h; sourceTree = "<group>"; };
-		0EB7103627773BB4006929F1 /* DlgBatchProcessEmbeddedLyrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DlgBatchProcessEmbeddedLyrics.h; sourceTree = "<group>"; };
 		0EB7103827773BB4006929F1 /* MPlayerApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPlayerApp.h; sourceTree = "<group>"; };
 		0EB7103A27773BB4006929F1 /* MPSkinMainWndMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPSkinMainWndMac.h; sourceTree = "<group>"; };
 		0EB7103C27773BB4006929F1 /* LyricsOutPluginMgr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LyricsOutPluginMgr.h; sourceTree = "<group>"; };
@@ -781,7 +765,6 @@
 		0EB7105E27773BB5006929F1 /* MLClientSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MLClientSession.h; path = MPlayerUI/MLClientSession.h; sourceTree = "<group>"; };
 		0EB7106027773BB5006929F1 /* DlgSearchLyrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgSearchLyrics.h; path = MPlayerUI/DlgSearchLyrics.h; sourceTree = "<group>"; };
 		0EB7106127773BB5006929F1 /* Player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Player.h; sourceTree = "<group>"; };
-		0EB7106227773BB5006929F1 /* SkinImageListCtrl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkinImageListCtrl.h; path = MPlayerUI/SkinImageListCtrl.h; sourceTree = "<group>"; };
 		0EB7106427773BB5006929F1 /* MPEventsDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MPEventsDispatcher.cpp; path = MPlayerUI/MPEventsDispatcher.cpp; sourceTree = "<group>"; };
 		0EB7106527773BB5006929F1 /* LyricsLocalSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LyricsLocalSearch.h; path = MPlayerUI/LyricsLocalSearch.h; sourceTree = "<group>"; };
 		0EB7106627773BB5006929F1 /* MPlayerAppBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPlayerAppBase.h; path = MPlayerUI/MPlayerAppBase.h; sourceTree = "<group>"; };
@@ -813,11 +796,6 @@
 		0EB710FB277C0F59006929F1 /* Digest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Digest.cpp; sourceTree = "<group>"; };
 		0EB710FC277C0F59006929F1 /* MLBinXMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLBinXMLParser.h; sourceTree = "<group>"; };
 		0EB710FD277C0F59006929F1 /* MLBinXMLParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MLBinXMLParser.cpp; sourceTree = "<group>"; };
-		0EB71104277C6AE4006929F1 /* DlgSaveEmbeddedLyrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DlgSaveEmbeddedLyrics.h; sourceTree = "<group>"; };
-		0EB71105277C6AE4006929F1 /* DlgSaveEmbeddedLyrics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DlgSaveEmbeddedLyrics.mm; sourceTree = "<group>"; };
-		0EB71106277C6AE4006929F1 /* DlgSaveEmbeddedLyricsController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DlgSaveEmbeddedLyricsController.mm; sourceTree = "<group>"; };
-		0EB71107277C6AE4006929F1 /* DlgSaveEmbeddedLyricsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DlgSaveEmbeddedLyricsController.h; sourceTree = "<group>"; };
-		0EB71108277C6AE4006929F1 /* DlgSaveEmbeddedLyricsController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DlgSaveEmbeddedLyricsController.xib; sourceTree = "<group>"; };
 		0EB7110D277CAB53006929F1 /* Looper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Looper.cpp; sourceTree = "<group>"; };
 		0EB7110E277CAB54006929F1 /* Looper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Looper.h; sourceTree = "<group>"; };
 		0EB71111277CB16B006929F1 /* RegExTool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExTool.cpp; sourceTree = "<group>"; };
@@ -830,6 +808,9 @@
 		0EB7115E277DCC78006929F1 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		0EB71161277DCCE6006929F1 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		0EB71164277DEE4A006929F1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		C006B8E72A99D6940045EA52 /* aesce.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = aesce.c; path = "third-parties/mbedtls/library/aesce.c"; sourceTree = "<group>"; };
+		C006B8E82A99D6940045EA52 /* aesce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = aesce.h; path = "third-parties/mbedtls/library/aesce.h"; sourceTree = "<group>"; };
+		C006B8EA2A99D6C10045EA52 /* psa_util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = psa_util.c; path = "third-parties/mbedtls/library/psa_util.c"; sourceTree = "<group>"; };
 		C04DBA9B296FD6F700A0FCB1 /* SkinMenuItemsContainer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SkinMenuItemsContainer.cpp; sourceTree = "<group>"; };
 		C04DBA9C296FD6F700A0FCB1 /* SkinMenuItemsContainer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SkinMenuItemsContainer.hpp; sourceTree = "<group>"; };
 		C04DBEF8297ADFC400A0FCB1 /* Connection.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Connection.hpp; sourceTree = "<group>"; };
@@ -1029,6 +1010,8 @@
 		C05D740329547A4500294F50 /* JsSkinDocument.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = JsSkinDocument.hpp; sourceTree = "<group>"; };
 		C05D740529553EBB00294F50 /* JsResizableLinearContainer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JsResizableLinearContainer.cpp; sourceTree = "<group>"; };
 		C05D740629553EBB00294F50 /* JsResizableLinearContainer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = JsResizableLinearContainer.hpp; sourceTree = "<group>"; };
+		C0ADB96F2AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DlgSaveEmbeddedLyrics.cpp; path = MPlayerUI/DlgSaveEmbeddedLyrics.cpp; sourceTree = "<group>"; };
+		C0ADB9702AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = DlgSaveEmbeddedLyrics.hpp; path = MPlayerUI/DlgSaveEmbeddedLyrics.hpp; sourceTree = "<group>"; };
 		C0E6A46227A3CEBB009FA5AF /* rapidjson */ = {isa = PBXFileReference; lastKnownFileType = folder; name = rapidjson; path = "third-parties/rapidjson/rapidjson"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1037,9 +1020,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C0A81FFF2ABDDFC200CDF309 /* libTinyJsStaticLib.a in Frameworks */,
 				C055400929991C0E0057629E /* Carbon.framework in Frameworks */,
 				C0554007299791EA0057629E /* CoreAudio.framework in Frameworks */,
-				C05D73DF2951594000294F50 /* libTinyJsLib.dylib in Frameworks */,
 				0EB71165277DEE4D006929F1 /* CoreData.framework in Frameworks */,
 				0EB71162277DCCE6006929F1 /* AppKit.framework in Frameworks */,
 				0EB7115F277DCC79006929F1 /* CoreText.framework in Frameworks */,
@@ -1218,33 +1201,6 @@
 				0EB71150277D9B77006929F1 /* AVKit.framework */,
 				0E56BD45274E58AA00032A3E /* CoreFoundation.framework */,
 				0E56BD44274E58A900032A3E /* CoreGraphics.framework */,
-				0E56BD3A274E588800032A3E /* libskia.so */,
-				0E56BD3B274E588800032A3E /* libskparagraph.so */,
-				0E56BD38274E588800032A3E /* libsksg.so */,
-				0E56BD3C274E588800032A3E /* libskshaper.so */,
-				0E56BD37274E588800032A3E /* libsktext.so */,
-				0E56BD39274E588800032A3E /* libskunicode.so */,
-				0E56BAAE2740C32800032A3E /* libaudioplayer.a */,
-				0E56BAB32740C32800032A3E /* libcompression_utils_portable.a */,
-				0E56BAAF2740C32800032A3E /* libharfbuzz.a */,
-				0E56BAAD2740C32800032A3E /* libicu.a */,
-				0E56BAB12740C32800032A3E /* libimgui.a */,
-				0E56BAA62740C32800032A3E /* libjpeg.a */,
-				0E56BAB22740C32800032A3E /* libmicrohttpd.a */,
-				0E56BAB52740C32800032A3E /* libparticles.a */,
-				0E56BAB72740C32800032A3E /* libpng.a */,
-				0E56BAA92740C32800032A3E /* libskia.a */,
-				0E56BAAA2740C32800032A3E /* libskottie.a */,
-				0E56BAAC2740C32800032A3E /* libskresources.a */,
-				0E56BAA42740C32800032A3E /* libsksg.a */,
-				0E56BAA52740C32800032A3E /* libskshaper.a */,
-				0E56BAA32740C32800032A3E /* libsktext.a */,
-				0E56BAB42740C32800032A3E /* libskunicode.a */,
-				0E56BAB02740C32800032A3E /* libspvtools_val.a */,
-				0E56BAAB2740C32800032A3E /* libspvtools.a */,
-				0E56BAA72740C32800032A3E /* libwebp_sse41.a */,
-				0E56BAB62740C32800032A3E /* libwebp.a */,
-				0E56BAA82740C32800032A3E /* libzlib.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1440,6 +1396,8 @@
 				0EB70FE927773BB0006929F1 /* DlgAdjustHue.h */,
 				0EB70FD627773BAF006929F1 /* DlgMediaInfo.cpp */,
 				0EB7106F27773BB6006929F1 /* DlgMediaInfo.h */,
+				C0ADB96F2AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.cpp */,
+				C0ADB9702AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.hpp */,
 				0EB7103127773BB4006929F1 /* DlgSearchLyrics.cpp */,
 				0EB7106027773BB5006929F1 /* DlgSearchLyrics.h */,
 				0EB70FC227773BAF006929F1 /* DlgUpload.cpp */,
@@ -1547,8 +1505,6 @@
 				0EB70FF327773BB1006929F1 /* SkinDroplistCtrl.h */,
 				0EB7103227773BB4006929F1 /* SkinFilterCtrl.cpp */,
 				0EB7107427773BB6006929F1 /* SkinFilterCtrl.h */,
-				0EB7101C27773BB3006929F1 /* SkinImageListCtrl.cpp */,
-				0EB7106227773BB5006929F1 /* SkinImageListCtrl.h */,
 				0EB70FFD27773BB1006929F1 /* SkinPicText.cpp */,
 				0EB7107227773BB6006929F1 /* SkinPicText.h */,
 				0EB70FC527773BAF006929F1 /* SkinRateCtrl.cpp */,
@@ -1602,33 +1558,27 @@
 		0EB7103327773BB4006929F1 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				0EB7103627773BB4006929F1 /* DlgBatchProcessEmbeddedLyrics.h */,
 				0EB7104727773BB4006929F1 /* DlgChooseFont.h */,
 				0EB7105027773BB4006929F1 /* DlgChooseFont.mm */,
-				0EB71104277C6AE4006929F1 /* DlgSaveEmbeddedLyrics.h */,
-				0EB71105277C6AE4006929F1 /* DlgSaveEmbeddedLyrics.mm */,
-				0EB71107277C6AE4006929F1 /* DlgSaveEmbeddedLyricsController.h */,
-				0EB71106277C6AE4006929F1 /* DlgSaveEmbeddedLyricsController.mm */,
-				0EB71108277C6AE4006929F1 /* DlgSaveEmbeddedLyricsController.xib */,
 				0EB7104627773BB4006929F1 /* DlgSaveLyrPrompt.cpp */,
 				0EB7103E27773BB4006929F1 /* DlgSaveLyrPrompt.h */,
 				0EB7104A27773BB4006929F1 /* DlgUpdateLibrary.cpp */,
 				0EB7103427773BB4006929F1 /* DlgUpdateLibrary.h */,
+				C055400429978E390057629E /* HeadPhoneWatch.hpp */,
+				C055400329978E390057629E /* HeadPhoneWatch.mm */,
 				0EB7104B27773BB4006929F1 /* HelperMac.cpp */,
 				0EB7103D27773BB4006929F1 /* LyricsOutPluginMgr.cpp */,
 				0EB7103C27773BB4006929F1 /* LyricsOutPluginMgr.h */,
 				0EB7104127773BB4006929F1 /* MLTrayIcon.cpp */,
 				0EB7104927773BB4006929F1 /* MLTrayIcon.h */,
-				0EB7103F27773BB4006929F1 /* MPHotkey.mm */,
 				0EB7103527773BB4006929F1 /* MPHotkey.h */,
+				0EB7103F27773BB4006929F1 /* MPHotkey.mm */,
 				0EB7104327773BB4006929F1 /* MPlayerApp.cpp */,
 				0EB7103827773BB4006929F1 /* MPlayerApp.h */,
 				0EB7104527773BB4006929F1 /* MPSkinMainWndMac.cpp */,
 				0EB7103A27773BB4006929F1 /* MPSkinMainWndMac.h */,
 				0EB7104227773BB4006929F1 /* PlayerEventDispatcher.h */,
 				0EB7104C27773BB4006929F1 /* PlayerEventDispatcher.mm */,
-				C055400329978E390057629E /* HeadPhoneWatch.mm */,
-				C055400429978E390057629E /* HeadPhoneWatch.hpp */,
 			);
 			name = mac;
 			path = MPlayerUI/mac;
@@ -1685,6 +1635,64 @@
 		C04DBF23297EB34100A0FCB1 /* mbedtls */ = {
 			isa = PBXGroup;
 			children = (
+				C006B8EA2A99D6C10045EA52 /* psa_util.c */,
+				C006B8E72A99D6940045EA52 /* aesce.c */,
+				C006B8E82A99D6940045EA52 /* aesce.h */,
+				C04DBF2D297EB36000A0FCB1 /* aes.c */,
+				C04DBF5B297EB36200A0FCB1 /* aesni.c */,
+				C04DBF44297EB36100A0FCB1 /* aesni.h */,
+				C04DBF5C297EB36200A0FCB1 /* aria.c */,
+				C04DBF57297EB36200A0FCB1 /* asn1parse.c */,
+				C04DBF39297EB36100A0FCB1 /* asn1write.c */,
+				C04DBF38297EB36100A0FCB1 /* base64.c */,
+				C04DBF29297EB36000A0FCB1 /* bignum_core.c */,
+				C04DBF3E297EB36100A0FCB1 /* bignum_core.h */,
+				C04DBF27297EB36000A0FCB1 /* bignum_mod_raw.c */,
+				C04DBF34297EB36100A0FCB1 /* bignum_mod_raw.h */,
+				C04DBF4D297EB36100A0FCB1 /* bignum_mod.c */,
+				C04DBF25297EB36000A0FCB1 /* bignum_mod.h */,
+				C04DBF52297EB36100A0FCB1 /* bignum.c */,
+				C04DBF26297EB36000A0FCB1 /* bn_mul.h */,
+				C04DBF2B297EB36000A0FCB1 /* camellia.c */,
+				C04DBF35297EB36100A0FCB1 /* ccm.c */,
+				C04DBF33297EB36000A0FCB1 /* chacha20.c */,
+				C04DBF2C297EB36000A0FCB1 /* chachapoly.c */,
+				C04DBF50297EB36100A0FCB1 /* check_crypto_config.h */,
+				C04DBF55297EB36200A0FCB1 /* cipher_wrap.c */,
+				C04DBF36297EB36100A0FCB1 /* cipher_wrap.h */,
+				C04DBF3A297EB36100A0FCB1 /* cipher.c */,
+				C04DBF2E297EB36000A0FCB1 /* cmac.c */,
+				C04DBF56297EB36200A0FCB1 /* common.h */,
+				C04DBF30297EB36000A0FCB1 /* constant_time_internal.h */,
+				C04DBF48297EB36100A0FCB1 /* constant_time_invasive.h */,
+				C04DBF2F297EB36000A0FCB1 /* constant_time.c */,
+				C04DBF51297EB36100A0FCB1 /* ctr_drbg.c */,
+				C04DBF28297EB36000A0FCB1 /* debug.c */,
+				C04DBF3B297EB36100A0FCB1 /* des.c */,
+				C04DBF37297EB36100A0FCB1 /* dhm.c */,
+				C04DBF4B297EB36100A0FCB1 /* ecdh.c */,
+				C04DBF4C297EB36100A0FCB1 /* ecdsa.c */,
+				C04DBF3D297EB36100A0FCB1 /* ecjpake.c */,
+				C04DBF49297EB36100A0FCB1 /* ecp_curves.c */,
+				C04DBF59297EB36200A0FCB1 /* ecp_internal_alt.h */,
+				C04DBF45297EB36100A0FCB1 /* ecp_invasive.h */,
+				C04DBF3C297EB36100A0FCB1 /* ecp.c */,
+				C04DBF2A297EB36000A0FCB1 /* entropy_poll.c */,
+				C04DBF40297EB36100A0FCB1 /* entropy_poll.h */,
+				C04DBF32297EB36000A0FCB1 /* entropy.c */,
+				C04DBF3F297EB36100A0FCB1 /* error.c */,
+				C04DBF4A297EB36100A0FCB1 /* gcm.c */,
+				C04DBF24297EB36000A0FCB1 /* hash_info.c */,
+				C04DBF46297EB36100A0FCB1 /* hash_info.h */,
+				C04DBF4F297EB36100A0FCB1 /* hkdf.c */,
+				C04DBF47297EB36100A0FCB1 /* hmac_drbg.c */,
+				C04DBF4E297EB36100A0FCB1 /* lmots.c */,
+				C04DBF5A297EB36200A0FCB1 /* lmots.h */,
+				C04DBF53297EB36100A0FCB1 /* lms.c */,
+				C04DBF54297EB36200A0FCB1 /* md_wrap.h */,
+				C04DBF41297EB36100A0FCB1 /* md.c */,
+				C04DBF31297EB36000A0FCB1 /* md5.c */,
+				C04DBF58297EB36200A0FCB1 /* memory_buffer_alloc.c */,
 				C04DBF92297ECD9E00A0FCB1 /* mps_common.h */,
 				C04DBFAD297ECD9F00A0FCB1 /* mps_error.h */,
 				C04DBF95297ECD9E00A0FCB1 /* mps_reader.c */,
@@ -1774,61 +1782,6 @@
 				C04DBFB2297ECD9F00A0FCB1 /* x509.c */,
 				C04DBFB8297ECD9F00A0FCB1 /* x509write_crt.c */,
 				C04DBFA1297ECD9E00A0FCB1 /* x509write_csr.c */,
-				C04DBF2D297EB36000A0FCB1 /* aes.c */,
-				C04DBF5B297EB36200A0FCB1 /* aesni.c */,
-				C04DBF44297EB36100A0FCB1 /* aesni.h */,
-				C04DBF5C297EB36200A0FCB1 /* aria.c */,
-				C04DBF57297EB36200A0FCB1 /* asn1parse.c */,
-				C04DBF39297EB36100A0FCB1 /* asn1write.c */,
-				C04DBF38297EB36100A0FCB1 /* base64.c */,
-				C04DBF29297EB36000A0FCB1 /* bignum_core.c */,
-				C04DBF3E297EB36100A0FCB1 /* bignum_core.h */,
-				C04DBF27297EB36000A0FCB1 /* bignum_mod_raw.c */,
-				C04DBF34297EB36100A0FCB1 /* bignum_mod_raw.h */,
-				C04DBF4D297EB36100A0FCB1 /* bignum_mod.c */,
-				C04DBF25297EB36000A0FCB1 /* bignum_mod.h */,
-				C04DBF52297EB36100A0FCB1 /* bignum.c */,
-				C04DBF26297EB36000A0FCB1 /* bn_mul.h */,
-				C04DBF2B297EB36000A0FCB1 /* camellia.c */,
-				C04DBF35297EB36100A0FCB1 /* ccm.c */,
-				C04DBF33297EB36000A0FCB1 /* chacha20.c */,
-				C04DBF2C297EB36000A0FCB1 /* chachapoly.c */,
-				C04DBF50297EB36100A0FCB1 /* check_crypto_config.h */,
-				C04DBF55297EB36200A0FCB1 /* cipher_wrap.c */,
-				C04DBF36297EB36100A0FCB1 /* cipher_wrap.h */,
-				C04DBF3A297EB36100A0FCB1 /* cipher.c */,
-				C04DBF2E297EB36000A0FCB1 /* cmac.c */,
-				C04DBF56297EB36200A0FCB1 /* common.h */,
-				C04DBF30297EB36000A0FCB1 /* constant_time_internal.h */,
-				C04DBF48297EB36100A0FCB1 /* constant_time_invasive.h */,
-				C04DBF2F297EB36000A0FCB1 /* constant_time.c */,
-				C04DBF51297EB36100A0FCB1 /* ctr_drbg.c */,
-				C04DBF28297EB36000A0FCB1 /* debug.c */,
-				C04DBF3B297EB36100A0FCB1 /* des.c */,
-				C04DBF37297EB36100A0FCB1 /* dhm.c */,
-				C04DBF4B297EB36100A0FCB1 /* ecdh.c */,
-				C04DBF4C297EB36100A0FCB1 /* ecdsa.c */,
-				C04DBF3D297EB36100A0FCB1 /* ecjpake.c */,
-				C04DBF49297EB36100A0FCB1 /* ecp_curves.c */,
-				C04DBF59297EB36200A0FCB1 /* ecp_internal_alt.h */,
-				C04DBF45297EB36100A0FCB1 /* ecp_invasive.h */,
-				C04DBF3C297EB36100A0FCB1 /* ecp.c */,
-				C04DBF2A297EB36000A0FCB1 /* entropy_poll.c */,
-				C04DBF40297EB36100A0FCB1 /* entropy_poll.h */,
-				C04DBF32297EB36000A0FCB1 /* entropy.c */,
-				C04DBF3F297EB36100A0FCB1 /* error.c */,
-				C04DBF4A297EB36100A0FCB1 /* gcm.c */,
-				C04DBF24297EB36000A0FCB1 /* hash_info.c */,
-				C04DBF46297EB36100A0FCB1 /* hash_info.h */,
-				C04DBF4F297EB36100A0FCB1 /* hkdf.c */,
-				C04DBF47297EB36100A0FCB1 /* hmac_drbg.c */,
-				C04DBF4E297EB36100A0FCB1 /* lmots.c */,
-				C04DBF5A297EB36200A0FCB1 /* lmots.h */,
-				C04DBF53297EB36100A0FCB1 /* lms.c */,
-				C04DBF54297EB36200A0FCB1 /* md_wrap.h */,
-				C04DBF41297EB36100A0FCB1 /* md.c */,
-				C04DBF31297EB36000A0FCB1 /* md5.c */,
-				C04DBF58297EB36200A0FCB1 /* memory_buffer_alloc.c */,
 			);
 			name = mbedtls;
 			sourceTree = "<group>";
@@ -1864,6 +1817,7 @@
 			children = (
 				C05D73DC2951592E00294F50 /* TinyJS */,
 				C05D73DE2951592E00294F50 /* libTinyJsLib.dylib */,
+				C0A81FFE2ABDDFBB00CDF309 /* libTinyJsStaticLib.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1898,6 +1852,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				C0A820012ABDDFDC00CDF309 /* PBXTargetDependency */,
 				C05D73FD2954316B00294F50 /* PBXTargetDependency */,
 				0EB70FA62776C89C006929F1 /* PBXTargetDependency */,
 				0EB70FA82776C89C006929F1 /* PBXTargetDependency */,
@@ -2029,6 +1984,13 @@
 			remoteRef = C05D73DD2951592E00294F50 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		C0A81FFE2ABDDFBB00CDF309 /* libTinyJsStaticLib.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libTinyJsStaticLib.a;
+			remoteRef = C0A81FFD2ABDDFBB00CDF309 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -2038,7 +2000,6 @@
 			files = (
 				0E56B8EA273CD7BE00032A3E /* Assets.xcassets in Resources */,
 				0E56B8ED273CD7BE00032A3E /* MainMenu.xib in Resources */,
-				0EB7110B277C6AE5006929F1 /* DlgSaveEmbeddedLyricsController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2067,7 +2028,6 @@
 				0E56BC172745E53E00032A3E /* SkinListView.cpp in Sources */,
 				C04DBFF3297ECDA100A0FCB1 /* sha256.c in Sources */,
 				0EB710A227773BB6006929F1 /* LyricShowSingleRowObj.cpp in Sources */,
-				0EB71109277C6AE5006929F1 /* DlgSaveEmbeddedLyrics.mm in Sources */,
 				0E56BBE92745E53D00032A3E /* SkinContainer.cpp in Sources */,
 				C04DC015297ECDA100A0FCB1 /* pkcs7.c in Sources */,
 				0EB710C027773BB6006929F1 /* MPlayerApp.cpp in Sources */,
@@ -2080,7 +2040,6 @@
 				0EB710C727773BB6006929F1 /* PlayerEventDispatcher.mm in Sources */,
 				C04DBF21297C0BD900A0FCB1 /* Server.cpp in Sources */,
 				0E56BB1D2743FCBE00032A3E /* WindowMacImp.mm in Sources */,
-				0EB710AB27773BB6006929F1 /* SkinImageListCtrl.cpp in Sources */,
 				C04DBFE8297ECDA100A0FCB1 /* ssl_tls12_server.c in Sources */,
 				0EB70F4B27759DC5006929F1 /* RawGlyphBuilder.mm in Sources */,
 				0EB710B427773BB6006929F1 /* PlayListFile.cpp in Sources */,
@@ -2147,7 +2106,6 @@
 				0EB70F4C27759DC5006929F1 /* RawGraphData.mm in Sources */,
 				0E56BC71274B479200032A3E /* TextFile.cpp in Sources */,
 				0E56BBE62745E53D00032A3E /* SkinLinearContainer.cpp in Sources */,
-				0EB7110A277C6AE5006929F1 /* DlgSaveEmbeddedLyricsController.mm in Sources */,
 				C04DBF7B297EB36200A0FCB1 /* bignum_mod.c in Sources */,
 				0EB7110F277CAB54006929F1 /* Looper.cpp in Sources */,
 				C04DBFF5297ECDA100A0FCB1 /* sha512.c in Sources */,
@@ -2240,6 +2198,8 @@
 				0EB710B127773BB6006929F1 /* LyricShowObj.cpp in Sources */,
 				0EB70F6F27759E22006929F1 /* FileOpenDlg.mm in Sources */,
 				0EB70F7227759E22006929F1 /* ScrollBarHandler.cpp in Sources */,
+				C006B8EB2A99D6C10045EA52 /* psa_util.c in Sources */,
+				C0ADB9712AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.cpp in Sources */,
 				C04DBF83297EB36200A0FCB1 /* memory_buffer_alloc.c in Sources */,
 				0EB7107A27773BB6006929F1 /* LyrDisplayClrListWnd.cpp in Sources */,
 				C04DBF10297ADFC400A0FCB1 /* Connection.cpp in Sources */,
@@ -2250,6 +2210,7 @@
 				C04DC001297ECDA100A0FCB1 /* ssl_msg.c in Sources */,
 				0E56BBEA2745E53D00032A3E /* SkinFontProperty.cpp in Sources */,
 				0EB710D227773BB6006929F1 /* OnlineSearch.cpp in Sources */,
+				C006B8E92A99D6940045EA52 /* aesce.c in Sources */,
 				0E56BBED2745E53D00032A3E /* SkinResizableLinearContainer.cpp in Sources */,
 				0EB7108C27773BB6006929F1 /* MPSkinWnd.cpp in Sources */,
 				0E56BBF22745E53D00032A3E /* SFImage.cpp in Sources */,
@@ -2382,6 +2343,11 @@
 			isa = PBXTargetDependency;
 			name = TinyJsLib;
 			targetProxy = C05D73FC2954316B00294F50 /* PBXContainerItemProxy */;
+		};
+		C0A820012ABDDFDC00CDF309 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = TinyJsStaticLib;
+			targetProxy = C0A820002ABDDFDC00CDF309 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

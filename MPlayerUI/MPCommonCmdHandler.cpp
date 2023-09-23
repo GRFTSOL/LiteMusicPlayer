@@ -7,7 +7,7 @@
 #include "DlgSearchLyrics.h"
 #include "DlgUpload.h"
 #include "AutoProcessEmbeddedLyrics.h"
-#include "DlgSaveEmbeddedLyrics.h"
+#include "DlgSaveEmbeddedLyrics.hpp"
 #include "PreferenceDlg.h"
 #include "DlgAbout.h"
 #include "MPSkinMenu.h"
@@ -36,16 +36,6 @@ CMPCommonCmdHandler::~CMPCommonCmdHandler() {
 // if the command id is processed, return true.
 bool CMPCommonCmdHandler::onCommand(int nId) {
     switch (nId) {
-    case IDC_SL_CLEAR_TIME_STAMP:
-        {
-            if (g_LyricData.getLyrContentType() == LCT_TXT) {
-                CLyricShowTxtObj *pObj = (CLyricShowTxtObj*)m_pSkinWnd->getUIObjectByClassName(CLyricShowTxtObj::className());
-                if (pObj) {
-                    g_LyricData.clearRecordedLyrScrollActions(pObj->getLyrics());
-                }
-            }
-        }
-        break;
     case IDC_EDITOR_LYR_COLOR:
     case IDC_EDITOR_HIGH_COLOR:
     case IDC_TAG_COLOR:
@@ -119,7 +109,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             string strUrl;
 
             strUrl = getStrName(SN_HTTP_RATE_LRC);
-            strUrl += g_LyricData.properties().m_strId;
+            strUrl += g_currentLyrics.properties().id;
 
             strUrl += stringPrintf("&rating=%d", nRate).c_str();
             openUrl(m_pSkinWnd, strUrl.c_str());
@@ -205,9 +195,6 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             openUrl(m_pSkinWnd, str.c_str());
         }
         break;
-        //     case CMD_MINIMIZE:
-        //         CMPlayerAppBase::getMPSkinFactory()->minizeAll();
-        //         break;
     case CMD_APPLY_ACCOUNT:
         {
             openUrl(m_pSkinWnd, getStrName(SN_HTTP_SIGNUP));
@@ -261,35 +248,6 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             copyFile(dlg.getOpenFile(), strAlbumArtFileName.c_str(), false);
 
             CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_PLAYER_CUR_MEDIA_INFO_CHANGED);
-        }
-        break;
-    case CMD_HELP_STATIC_LYR:
-        openUrl(m_pSkinWnd, getStrName(SN_HTTP_HELP_STATIC_LYR));
-        break;
-
-    case CMD_LYR_SCROLL_ENABLE_RECORD:
-    case CMD_LYR_SCROLL_ENABLE_REPLAY:
-        {
-            CLyricShowTxtObj *pObj = (CLyricShowTxtObj*)m_pSkinWnd->getUIObjectByClassName(CLyricShowTxtObj::className());
-            if (pObj) {
-                if (nID == CMD_LYR_SCROLL_ENABLE_RECORD) {
-                    pObj->enableRecordScrollingActions(!pObj->isRecordScrollingActionsEnabled());
-                } else {
-                    pObj->enableReplayScrollingActions(!pObj->isReplayScrollingActionsEnabled());
-                }
-            }
-        }
-        break;
-
-    case CMD_LYR_SCROLL_MENU:
-        {
-            CMenu *menu = nullptr;
-            CPoint pt = getCursorPos();
-            if (m_pSkinWnd->getSkinFactory()->loadMenu(m_pSkinWnd, &menu, "StaticLyricsMenu")) {
-                menu->enableItem(IDC_SL_CLEAR_TIME_STAMP, g_LyricData.getLyrContentType() == LCT_TXT);
-                menu->trackPopupMenu(pt.x, pt.y, m_pSkinWnd, nullptr);
-                delete menu;
-            }
         }
         break;
     case CMD_LYR_EDITOR:
@@ -464,9 +422,9 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
         {
             CMPlayerAppBase::getInstance()->getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_ON_SAVE_EDIT);
 
-            if (g_LyricData.isContentModified()) {
+            if (g_currentLyrics.isContentModified()) {
                 string        strMessage = stringPrintf(_TLT("The lyrics of the %s file have changed."),
-                    fileGetName(g_LyricData.getSongFileName())).c_str();
+                    fileGetName(g_currentLyrics.getMediaSource())).c_str();
                 strMessage += "\r\n\r\n";
                 strMessage += _TLT("Do you want to save the changes?");
                 int nRet = m_pSkinWnd->messageOut(strMessage.c_str(), MB_ICONQUESTION | MB_YESNOCANCEL);
@@ -509,15 +467,11 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             pEvent->eventType = ET_LYRICS_ON_SAVE_EDIT;
             CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(pEvent);
 
-            saveAsLyricsFile(m_pSkinWnd,
-                lyricsConentTypeToFileType(g_LyricData.getLyrContentType()));
+            saveAsLyricsFile(m_pSkinWnd);
         }
         break;
     case CMD_SAVE_LYR_IN_SONG_FILE:
-        {
-            CDlgSaveEmbeddedLyrics dlg;
-            dlg.doModal(m_pSkinWnd);
-        }
+        showSaveEmbeddedLyricsDialog(m_pSkinWnd);
         break;
     case CMD_FORWARD_LYRICS:
         {
@@ -528,7 +482,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
                     pObj->onKeyDown(VK_DOWN, 0);
                 }
             } else {
-                g_LyricData.setOffsetTime(g_LyricData.getOffsetTime() + SET_SPEED_SPAN);
+                g_currentLyrics.setOffsetTime(g_currentLyrics.getOffsetTime() + SET_SPEED_SPAN);
                 CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
 
                 CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_EDITOR_RELOAD_TAG);
@@ -547,7 +501,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
                     pObj->onKeyDown(VK_UP, 0);
                 }
             } else {
-                g_LyricData.setOffsetTime(g_LyricData.getOffsetTime() - SET_SPEED_SPAN);
+                g_currentLyrics.setOffsetTime(g_currentLyrics.getOffsetTime() - SET_SPEED_SPAN);
                 CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
 
                 CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_EDITOR_RELOAD_TAG);
@@ -625,7 +579,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
         break;
     case CMD_RATE_LYR:
         {
-            if (!g_LyricData.hasLyricsOpened()) {
+            if (!g_currentLyrics.hasLyricsOpened()) {
                 m_pSkinWnd->messageOut(_TLT("No Lyrics file was opened."));
                 break;
             }
@@ -640,9 +594,9 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
     case CMD_J_NEXT_LINE:
         {
             // Jump to next/previous line of lyrics.
-            CLyricsLines &vLyrics = g_LyricData.getRawLyrics();
+            LyricsLines &vLyrics = g_currentLyrics.getLyricsLines();
 
-            int nCurLine = g_LyricData.getCurPlayLine(vLyrics);
+            int nCurLine = g_currentLyrics.getCurPlayLine(vLyrics);
             if (nCurLine >= 0 && nCurLine < (int)vLyrics.size()) {
                 if (nID == CMD_J_NEXT_LINE) {
                     if (nCurLine == vLyrics.size() - 1) {
@@ -655,35 +609,34 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
                     }
                 }
 
-                g_player.seekTo(vLyrics[nCurLine]->nBegTime);
+                g_player.seekTo(vLyrics[nCurLine].beginTime);
             }
         }
         break;
     case CMD_UPLOAD_LYR:
         {
-            if (!g_LyricData.hasLyricsOpened()) {
+            if (!g_currentLyrics.hasLyricsOpened()) {
                 m_pSkinWnd->messageOut(_TLT("No Lyrics file was opened."));
                 break;
             }
 
             // show upload lyrics dialog
-            string strLyrics;
-            g_LyricData.toString(strLyrics, FT_LYRICS_LRC, true);
+            string strLyrics = g_currentLyrics.toString(true);
             showUploadLyrDialog(m_pSkinWnd,
                 strLyrics,
-                g_LyricData.getSongFileName(),
-                g_LyricData.getLyricsFileName());
+                g_currentLyrics.getMediaSource(),
+                g_currentLyrics.getLyricsFileName());
         }
         break;
     case CMD_EXTERNAL_LYR_EDIT:
         //
         // Edit lyrics with external editor.
-        if (g_LyricData.getLyricsSourceType() != LST_FILE) {
+        if (g_currentLyrics.getLyricsSourceType() != LST_FILE) {
             m_pSkinWnd->messageOut(_TLT("Embedded lyrics can not be edited with external editors."));
             break;
         }
 
-        if (g_LyricData.hasLyricsOpened()) {
+        if (g_currentLyrics.hasLyricsOpened()) {
             if (!CMPlayerAppBase::getInstance()->onLyricsChangingSavePrompt()) {
                 break;
             }
@@ -692,7 +645,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             getNotepadEditor(strEditor);
             execute(m_pSkinWnd,
                 CMLProfile::getDir(SZ_SECT_UI, "LyricsEditor", strEditor.c_str()).c_str(),
-                g_LyricData.getLyricsFileName());
+                g_currentLyrics.getLyricsFileName());
         }
         break;
     default:
@@ -784,14 +737,14 @@ bool CMPCommonCmdHandler::onCommandCharEncoding(int nCmdId) {
         return false;
     }
 
-    if (!g_LyricData.hasLyricsOpened()) {
+    if (!g_currentLyrics.hasLyricsOpened()) {
         return true;
     }
 
     //
     // if (修改了歌词)
     //        提示需要重新加载歌词，提示用户是否继续
-    if (g_LyricData.isContentModified()) {
+    if (g_currentLyrics.isContentModified()) {
         string str;
 
         str += _TLT("Change character encoding must reload lyrics, and your modification will be lost.");
@@ -803,7 +756,7 @@ bool CMPCommonCmdHandler::onCommandCharEncoding(int nCmdId) {
     }
 
     // 以用户指定的编码重新打开歌词
-    g_LyricData.reopenLyrics(true, (CharEncodingType)nEncodingId);
+    g_currentLyrics.reopenWithEncoding((CharEncodingType)nEncodingId);
 
     CMPlayerAppBase::getInstance()->dispatchLyricsChangedSyncEvent();
 
@@ -818,41 +771,28 @@ bool CMPCommonCmdHandler::onCommandCharEncoding(int nCmdId) {
 // RETURN:
 //        true    -    保存成功，注意：如果没有歌词数据也返回true；
 //        false    -    用户选择取消，或者保存失败;
-bool CMPCommonCmdHandler::saveAsLyricsFile(Window *pWndParent, MLFileType DefFileType) {
-    if (!g_LyricData.hasLyricsOpened()) {
+bool CMPCommonCmdHandler::saveAsLyricsFile(Window *pWndParent) {
+    if (!g_currentLyrics.hasLyricsOpened()) {
         pWndParent->messageOut(_TLT("No Lyrics file was opened."));
         return true;
     }
 
-    string strFile = g_LyricData.getLyricsFileName();
+    string strFile = g_currentLyrics.getLyricsFileName();
     if (strFile.empty() || !isFileExist(strFile.c_str())) {
-        strFile = g_LyricsDownloader.getSaveLyricsFile(g_LyricData.getSongFileName(),
-            g_LyricData.getSuggestedLyricsFileName().c_str());
+        strFile = g_LyricsDownloader.getSaveLyricsFile(g_currentLyrics.getMediaSource(),
+            g_currentLyrics.getSuggestedLyricsFileName().c_str());
     }
 
-    // set saved file extension
-    if (DefFileType == FT_LYRICS_LRC) {
-        fileSetExt(strFile, ".lrc");
-    } else if (DefFileType == FT_LYRICS_TXT) {
-        fileSetExt(strFile, ".txt");
-    } else if (DefFileType == FT_LYRICS_SNC) {
-        fileSetExt(strFile, ".snc");
-    }
-
-    char szWndTitle[256];
     int nFileExtIndex;
-    if (DefFileType == FT_LYRICS_SNC) {
-        nFileExtIndex = 4;
-    } else if (DefFileType == FT_LYRICS_TXT) {
-        nFileExtIndex = 3;
-    } else if (DefFileType == FT_LYRICS_LRC) {
+    if (g_currentLyrics.getLyrContentType() >= LCT_LRC) {
+        fileSetExt(strFile, ".lrc");
         nFileExtIndex = 2;
     } else {
-        nFileExtIndex = 1;
+        fileSetExt(strFile, ".txt");
+        nFileExtIndex = 3;
     }
 
-    strcpy_safe(szWndTitle, CountOf(szWndTitle), _TLT("save As"));
-    CFileSaveDlg        dlg(szWndTitle, strFile.c_str(),
+    CFileSaveDlg        dlg(_TLT("Save As"), strFile.c_str(),
         "All supported files (*.lrc; *.txt; *.snc)\0*.lrc;*.txt;*.snc\0LRC Lyrics File (*.lrc)\0*.lrc\0Text File (*.txt)\0*.txt\0Snc File (*.snc)\0*.snc\0\0",
         nFileExtIndex);
 
@@ -862,20 +802,15 @@ bool CMPCommonCmdHandler::saveAsLyricsFile(Window *pWndParent, MLFileType DefFil
             // set file extend name as the user selected.
             fileSetExt(strFile, dlg.getSelectedExt());
         }
-        MLFileType fileType = GetLyricsFileType(strFile.c_str());
-        if (fileType != FT_LYRICS_LRC && fileType != FT_LYRICS_TXT
-            && fileType != FT_LYRICS_SNC) {
-            return false;
-        }
 
         bool bUseNewFileName;
-        int nRet = g_LyricData.saveAsFile(strFile.c_str(), bUseNewFileName);
+        int nRet = g_currentLyrics.saveAsFile(strFile.c_str(), bUseNewFileName);
         if (nRet != ERR_OK) {
             pWndParent->messageOut(ERROR2STR_LOCAL(nRet));
             return false;
         }
         if (bUseNewFileName) {
-            g_LyricSearch.associateLyrics(g_LyricData.getSongFileName(), g_LyricData.getLyricsFileName());
+            g_LyricSearch.associateLyrics(g_currentLyrics.getMediaSource(), g_currentLyrics.getLyricsFileName());
         }
     } else {
         return false;
@@ -894,24 +829,19 @@ bool CMPCommonCmdHandler::saveCurrentLyrics(CSkinWnd *pSkinWnd, bool bDispatchOn
         CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(pEvent);
     }
 
-    if (g_LyricData.doesChooseNewFileName()) {
-        if (!saveAsLyricsFile(pSkinWnd,
-            lyricsConentTypeToFileType(g_LyricData.getLyrContentType()))) {
+    if (g_currentLyrics.doesChooseNewFileName()) {
+        if (!saveAsLyricsFile(pSkinWnd)) {
             return false;
         }
     } else {
-        nRet = g_LyricData.save();
+        nRet = g_currentLyrics.save();
         if (nRet != ERR_OK) {
-            if (g_LyricData.getLyricsSourceType() != LST_FILE) {
-                string str;
-                g_LyricData.toString(str, FT_LYRICS_LRC, true);
-
+            if (g_currentLyrics.getLyricsSourceType() != LST_FILE) {
                 VecStrings vLyrNames;
-                vLyrNames.push_back(g_LyricData.getLyricsFileName());
+                vLyrNames.push_back(g_currentLyrics.getLyricsFileName());
 
-                string bufLyrics = insertWithFileBom(str);
-                g_autoProcessEmbeddedLyrics.saveEmbeddedLyrics(g_LyricData.getSongFileName(),
-                    nullptr, &bufLyrics, vLyrNames);
+                g_autoProcessEmbeddedLyrics.saveEmbeddedLyrics(g_currentLyrics.getMediaSource(),
+                    g_currentLyrics.toString(true), vLyrNames);
             }
             pSkinWnd->messageOut(stringPrintf("%s\n%s", ERROR2STR_LOCAL(nRet), _TLT("Failed to save embedded lyrics, $Product$ will auto try again later.")).c_str());
         }
@@ -920,11 +850,11 @@ bool CMPCommonCmdHandler::saveCurrentLyrics(CSkinWnd *pSkinWnd, bool bDispatchOn
     return true;
 }
 
-CLyricsLines &CMPCommonCmdHandler::getDisplayLyrics() {
+LyricsLines &CMPCommonCmdHandler::getDisplayLyrics() {
     CLyricShowObj *pObj = (CLyricShowObj*)m_pSkinWnd->getUIObjectByClassName(CLyricShowMultiRowObj::className());
     if (pObj) {
         return pObj->getLyrics();
     } else {
-        return g_LyricData.getRawLyrics();
+        return g_currentLyrics.getLyricsLines();
     }
 }

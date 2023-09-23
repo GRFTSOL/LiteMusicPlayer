@@ -10,7 +10,6 @@
 #include "MPSkinMainWnd.h"
 #include "LyricsLocalSearch.h"
 #include "MLProfile.h"
-#include "../LyricsLib/MLLib.h"
 
 #ifdef _WIN32
 #include "win32/MPHotkey.h"
@@ -45,11 +44,11 @@ class CMLClientSession;
 class CPreferenceDlg;
 class CDownloadTask;
 class CMPlayerApp;
-class CMLData;
+class CurrentLyrics;
 
 
 // lyrics data
-extern CMLData g_LyricData;
+extern CurrentLyrics g_currentLyrics;
 
 // lyrics download manager
 extern CDownloadMgr g_LyricsDownloader;
@@ -74,7 +73,6 @@ enum STR_NAME {
     SN_HTTP_HELP_UPLOAD_LYR,
     SN_HTTP_HELP_EDIT_LYR,
     SN_HTTP_HELP_SEARCH_LYR_SUGGESTIONS,
-    SN_HTTP_HELP_STATIC_LYR,
     SN_HTTP_HELP_G15_LCD,
     SN_HTTP_FEEDBACK,
     SN_EMAIL,

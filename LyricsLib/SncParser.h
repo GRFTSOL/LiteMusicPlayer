@@ -7,18 +7,13 @@
 #include "LyricsParser.h"
 
 
-class CSncParser : public CLyricsParser {
+class CSncParser : public ILyricsParser {
 public:
-    CSncParser(CMLData *pMLData);
-    virtual ~CSncParser();
-
-    virtual int parseFile(bool bUseSpecifiedEncoding, CharEncodingType encoding) { return ERR_FALSE; }
-    virtual int saveAsFile(cstr_t file);
-
-    virtual LYRICS_CONTENT_TYPE getLyrContentType() { return LCT_UNKNOWN; }
+    virtual int parseFile(cstr_t fileName, bool bUseSpecifiedEncoding, CharEncodingType encoding, RawLyrics &lyricsOut) { return ERR_FALSE; }
+    virtual int saveAsFile(cstr_t file, const RawLyrics &lyrics);
 
 protected:
-    bool lyricsLineToText(LyricsLine *pLine, string &strBuff);
+    bool lyricsLineToText(LyricsLine &line, int offsetTime, string &strBuff);
 
 };
 

@@ -11,6 +11,7 @@
 #include "../version.h"
 #include "../LyricsLib/LyricsKeywordFilter.h"
 #include "../LocalServer/LocalServer.hpp"
+#include "../MediaTags/LrcParser.h"
 #include "utils/unittest.h"
 
 #ifdef _LINUX_GTK2
@@ -34,7 +35,7 @@
 
 #endif
 
-CMLData g_LyricData;
+CurrentLyrics g_currentLyrics;
 
 CDownloadMgr g_LyricsDownloader;
 
@@ -67,7 +68,6 @@ cstr_t getStrName(STR_NAME nameId) {
         case SN_HTTP_HELP_UPLOAD_LYR: return "http://www.crintsoft.com/mlfaq-upload.htm";
         case SN_HTTP_HELP_EDIT_LYR: return "http://www.crintsoft.com/mlfaq-editlrc.htm";
         case SN_HTTP_HELP_SEARCH_LYR_SUGGESTIONS: return "http://www.crintsoft.com/mlfaq-search-lyrics-suggestions.htm";
-        case SN_HTTP_HELP_STATIC_LYR: return "http://www.crintsoft.com/help-lyrscrollaction.htm";
         case SN_HTTP_DLPLUGIN: return "http://www.crintsoft.com/mlplugin.htm";
         case SN_HTTP_HELP_G15_LCD: return "http://www.crintsoft.com/help-logitech-lcd.htm";
         case SN_HTTP_FEEDBACK: return "http://www.crintsoft.com/contactus.htm";
@@ -123,8 +123,6 @@ bool CMPlayerAppBase::init() {
     g_LyricSearch.init();
 
     g_LyricsDownloader.init();
-
-    g_LyricData.m_nGlobalOffsetTime = g_profile.getInt(SZ_SECT_LYR_DISPLAY, "LyrDelayTime", 0);
 
     setDefaultLyricsEncoding(getDefaultLyricsEncodingSettings());
 
@@ -202,7 +200,7 @@ void CMPlayerAppBase::quit() {
     m_pSkinFactory->quit();
     g_player.onQuit();
 
-    g_LyricData.close();
+    g_currentLyrics.close();
 
     g_profile.close();
     g_log.close();
@@ -252,7 +250,7 @@ void CMPlayerAppBase::onMediaChanged(bool bAutoDownloadIfNotExist) {
     // auto save embedded lyrics
     g_autoProcessEmbeddedLyrics.onSongChanged();
 
-    g_LyricData.newLyrics(g_player.getMediaKey().c_str(), g_player.getMediaLength());
+    g_currentLyrics.newLyrics(g_player.getMediaKey().c_str(), g_player.getMediaLength());
 
     //
     // 没有歌曲信息
@@ -278,24 +276,25 @@ void CMPlayerAppBase::onMediaChanged(bool bAutoDownloadIfNotExist) {
         }
     }
 
-    if (g_LyricData.hasLyricsOpened()) {
+    if (g_currentLyrics.hasLyricsOpened()) {
         if (g_bAutoMinimized) {
             CMPlayerAppBase::getMPSkinFactory()->restoreAll();
             g_bAutoMinimized = false;
         }
     } else {
         // add Media Info:
-        VecStrings vMediaInfo;
+        string mediaInfo;
         if (!isEmptyString(g_player.getArtist())) {
-            vMediaInfo.push_back(string(_TLT("Artist:")) + " " + g_player.getArtist());
+            mediaInfo.append(string(_TLT("Artist:")) + " " + g_player.getArtist() + SZ_NEW_LINE);
         }
         if (!isEmptyString(g_player.getTitle())) {
-            vMediaInfo.push_back(string(_TLT("Title:")) + " " + g_player.getTitle());
+            mediaInfo.append(string(_TLT("Title:")) + " " + g_player.getTitle() + SZ_NEW_LINE);
         }
         if (!isEmptyString(g_player.getAlbum())) {
-            vMediaInfo.push_back(string(_TLT("Album:")) + " " + g_player.getAlbum());
+            mediaInfo.append(string(_TLT("Album:")) + " " + g_player.getAlbum() + SZ_NEW_LINE);
         }
-        g_LyricData.addTextInLyrics(vMediaInfo);
+        g_currentLyrics.fromString(mediaInfo.c_str());
+        g_currentLyrics.properties().lyrContentType = LCT_UNKNOWN;
 
         dispatchLyricsChangedSyncEvent();
     }
@@ -413,7 +412,7 @@ void CMPlayerAppBase::newLyrics() {
         return;
     }
 
-    g_LyricData.newLyrics(g_player.getMediaKey().c_str(), g_player.getMediaLength());
+    g_currentLyrics.newLyrics(g_player.getMediaKey().c_str(), g_player.getMediaLength());
 
     dispatchLyricsChangedSyncEvent();
 }
@@ -421,7 +420,7 @@ void CMPlayerAppBase::newLyrics() {
 int CMPlayerAppBase::openLyrics(cstr_t szAssociateKeyword, cstr_t szLrcSource) {
     int nRet;
 
-    nRet = g_LyricData.openLyrics(szAssociateKeyword, g_player.getMediaLength(), szLrcSource);
+    nRet = g_currentLyrics.openLyrics(szAssociateKeyword, g_player.getMediaLength(), szLrcSource);
     if (nRet != ERR_OK) {
         return nRet;
     }
@@ -434,17 +433,11 @@ int CMPlayerAppBase::openLyrics(cstr_t szAssociateKeyword, cstr_t szLrcSource) {
 // Before lyrics changing, show save Prompt dialog,
 // if return true, cancel changes.
 bool CMPlayerAppBase::onLyricsChangingSavePrompt() {
-    int nRet;
-
     // 判断是否要保存歌词
     m_pEventDispatcher->dispatchSyncEvent(ET_LYRICS_ON_SAVE_EDIT);
 
-    if (g_LyricData.hasLyricsOpened() && g_LyricData.isModified()) {
-        if (g_LyricData.isOnlyAddLyrScrollActions()) {
-            nRet = IDYES;
-        } else {
-            nRet = saveLyrDialogBox(getMainWnd());
-        }
+    if (g_currentLyrics.hasLyricsOpened() && g_currentLyrics.isModified()) {
+        int nRet = saveLyrDialogBox(getMainWnd());
         if (nRet == IDYES) {
             return CMPCommonCmdHandler::saveCurrentLyrics(getMainWnd(), false);
         } else if (nRet == IDCANCEL) {

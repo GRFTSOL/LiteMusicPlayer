@@ -94,6 +94,8 @@ public:
     virtual int openSkin(cstr_t szSkinWndName);
     virtual void closeSkin();
 
+    virtual CUIObject *createUIObject(cstr_t className, CSkinContainer *container);
+
     //
     // UIObject related functions
     //

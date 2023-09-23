@@ -67,6 +67,6 @@ protected:
         WP_ELEMENT_BODY,
     };
 
-    WritePos                    m_wp;
+    WritePos                    m_wp = WP_READY;
 
 };

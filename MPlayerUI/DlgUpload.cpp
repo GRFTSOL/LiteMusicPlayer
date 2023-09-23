@@ -1,7 +1,7 @@
 #include "MPlayerApp.h"
 #include "DlgUpload.h"
 #include "WaitingDlg.h"
-#include "../LyricsLib/MLLib.h"
+#include "../LyricsLib/CurrentLyrics.h"
 
 
 #define SZ_EX_POOL_WORK_END "WorkEnd"
@@ -76,15 +76,15 @@ public:
                 assert(m_strLyrSource.size());
                 if (m_strLyrId.size()) {
                     // save lyrics id
-                    if (strcmp(g_LyricData.getSongFileName(), m_strMediaSource.c_str()) == 0
-                        && strcmp(g_LyricData.getLyricsFileName(), m_strLyrSource.c_str()) == 0) {
-                        g_LyricData.properties().m_strId = m_strLyrId;
-                        g_LyricData.save();
+                    if (strcmp(g_currentLyrics.getMediaSource(), m_strMediaSource.c_str()) == 0
+                        && strcmp(g_currentLyrics.getLyricsFileName(), m_strLyrSource.c_str()) == 0) {
+                        g_currentLyrics.properties().id = m_strLyrId;
+                        g_currentLyrics.save();
                     } else {
-                        CMLData lyrData;
+                        CurrentLyrics lyrData;
                         lyrData.openLyrics(m_strMediaSource.c_str(), 0,
                             m_strLyrId.c_str());
-                        lyrData.properties().m_strId = m_strLyrId;
+                        lyrData.properties().id = m_strLyrId;
                         lyrData.save();
                     }
                 }

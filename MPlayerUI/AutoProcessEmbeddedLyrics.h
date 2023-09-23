@@ -1,35 +1,33 @@
 #pragma once
 
 
+/**
+ * When music is playing, the media file can NOT be modified, so try to save/modify/remove
+ * file later in the background. CAutoProcessEmbeddedLyrics is responsible for this.
+ */
 class CAutoProcessEmbeddedLyrics {
 public:
     struct Item {
         string                      m_strSongFile;
         VecStrings                  m_vLyrNames;        // SZ_SONG_ID3V2_USLT, etc.
-        bool                        m_bRemove;          // true: remove, false: add.
-        uint8_t                     m_nTryFailed;
-        bool                        m_bDealOK;
-        int                         m_nSucceededCount;
+        bool                        m_bRemove = false;  // true: remove, false: add.
+        uint8_t                     m_nTryFailed = 0;
+        bool                        m_bDealOK = false;
+        int                         m_nSucceededCount = 0;
 
         // save embedded lyrics
         string                      m_strLyrics;
 
-        Item() {
-            m_bDealOK = false;
-            m_nTryFailed = 0;
-            m_nSucceededCount = 0;
-        }
-
         bool fromXML(SXNode *pNode);
         void toXML(CXMLWriter &xmlWriter);
     };
-    typedef list<Item>        LIST_ITEMS;
+    using ListItems = list<Item>;
 
     CAutoProcessEmbeddedLyrics();
     virtual ~CAutoProcessEmbeddedLyrics();
 
-    int saveEmbeddedLyrics(cstr_t szSongFile, cstr_t szLyricsFile, string *pBufLyrics, VecStrings &vEmbeddedLyrNames, bool bAddToQueueOnFailed = true, int *succeededCount = nullptr);
-    int removeEmbeddedLyrics(cstr_t szSongFile, VecStrings &vEmbeddedLyrNames, bool bAddToQueueOnFailed = true);
+    int saveEmbeddedLyrics(cstr_t szSongFile, const string &strLyrics, const VecStrings &vEmbeddedLyrNames);
+    int removeEmbeddedLyrics(cstr_t szSongFile, const VecStrings &vEmbeddedLyrNames, bool bAddToQueueOnFailed = true);
     void removeJob(cstr_t szSongFile);
 
     void init();
@@ -38,7 +36,6 @@ public:
     void onSongChanged();
 
 protected:
-    friend class CDlgBatchProcessEmbeddedLyrics;
     friend class AutoProcessEmbeddedLyrics_AutoProcessEmbeddedLyricsLoad_Test;
 
     int dealEmbeddedLyrics(Item &item);
@@ -48,7 +45,7 @@ protected:
     void saveJobs();
     void loadJobs(bool bDeleteFile);
 
-    LIST_ITEMS                  m_listJobs;
+    ListItems                   m_listJobs;
     std::mutex                  m_mutex;
 
 };

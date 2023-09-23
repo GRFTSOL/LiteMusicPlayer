@@ -1,0 +1,195 @@
+=== vbr11.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 
+@genre: 
+@bitrate: 32
+@sample-rate: 11025
+@channels: 1
+length: 0:09
+@length-ms: 9195
+
+=== vbr11stereo.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 
+@genre: 
+@bitrate: 32
+@sample-rate: 11025
+@channels: 2
+length: 0:09
+@length-ms: 9195
+
+=== vbr16.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 
+@genre: 
+@bitrate: 64
+@sample-rate: 16000
+@channels: 1
+length: 0:09
+@length-ms: 9144
+
+=== vbr16stereo.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 
+@genre: 
+@bitrate: 64
+@sample-rate: 16000
+@channels: 2
+length: 0:09
+@length-ms: 9144
+
+=== vbr22.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 
+@genre: 
+@bitrate: 64
+@sample-rate: 22050
+@channels: 1
+length: 0:09
+@length-ms: 9117
+
+=== vbr22stereo.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 
+@genre: 
+@bitrate: 64
+@sample-rate: 22050
+@channels: 2
+length: 0:09
+@length-ms: 9117
+
+=== vbr32.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 
+@genre: 
+@bitrate: 128
+@sample-rate: 32000
+@channels: 1
+length: 0:09
+@length-ms: 9108
+
+=== vbr32stereo.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 
+@genre: 
+@bitrate: 128
+@sample-rate: 32000
+@channels: 2
+length: 0:09
+@length-ms: 9108
+
+=== vbr44.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 
+@genre: 
+@bitrate: 128
+@sample-rate: 44100
+@channels: 1
+length: 0:09
+@length-ms: 9091
+
+=== vbr44stereo.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 
+@genre: 
+@bitrate: 128
+@sample-rate: 44100
+@channels: 2
+length: 0:09
+@length-ms: 9091
+
+=== vbr48.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 
+@genre: 
+@bitrate: 128
+@sample-rate: 48000
+@channels: 1
+length: 0:09
+@length-ms: 9072
+
+=== vbr48stereo.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 
+@genre: 
+@bitrate: 128
+@sample-rate: 48000
+@channels: 2
+length: 0:09
+@length-ms: 9072
+
+=== vbr8.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 
+@genre: 
+@bitrate: 32
+@sample-rate: 8000
+@channels: 1
+length: 0:09
+@length-ms: 9216
+
+=== vbr8stereo.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 
+@genre: 
+@bitrate: 32
+@sample-rate: 8000
+@channels: 2
+length: 0:09
+@length-ms: 9216

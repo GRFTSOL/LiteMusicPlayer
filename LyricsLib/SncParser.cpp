@@ -1,38 +1,19 @@
-#include "MLLib.h"
 #include "SncParser.h"
 #include "HelperFun.h"
 
-
-CSncParser::CSncParser(CMLData *pMLData) : CLyricsParser(pMLData) {
-
-}
-
-CSncParser::~CSncParser() {
-
-}
 
 // COMMENTS:
 //    保存为*.snc文件
 //    snc 文件的格式：
 //        ⑩00003210⑿
 //        我躲在车里
-int CSncParser::saveAsFile(cstr_t file) {
-    int nCount;
+int CSncParser::saveAsFile(cstr_t file, const RawLyrics &lyrics) {
     string strData;
-    string strBuff;
 
-    nCount = (int)m_pMLData->m_arrFileLines.size();
-    for (int i = 0; i < nCount; i++) {
-        LyricsLine *pLine;
-
-        pLine = m_pMLData->m_arrFileLines[i];
-
-        if (pLine) {
-            // save row.
-            if (lyricsLineToText(pLine, strBuff)) {
-                strData += strBuff;
-            }
-        }
+    int offsetTime = lyrics.properties().getOffsetTime();
+    LyricsLines lines = lyrics.toLyricsLinesOnly();
+    for (auto &line : lines) {
+        lyricsLineToText(line, offsetTime, strData);
     }
 
     if (!writeFile(file, strData)) {
@@ -46,30 +27,25 @@ int CSncParser::saveAsFile(cstr_t file) {
 //        ⑩00010450⑿
 //          MMSS
 //        我躲在车里
-bool CSncParser::lyricsLineToText(LyricsLine *pLine, string &strBuff) {
-    strBuff.clear();
-
-    if (!pLine->bLyricsLine) {
+bool CSncParser::lyricsLineToText(LyricsLine &line, int offsetTime, string &strBuff) {
+    if (!line.isLyricsLine) {
         return false;
     }
 
-    if (pLine->isTempLine()) {
+    if (line.isTempLine) {
         return false;
     }
 
-    int nMs = pLine->nBegTime + m_pMLData->getOffsetTime();
+    int nMs = line.beginTime + offsetTime;
     int n10Ms = (nMs / 10) % 100;
     int nSec = (nMs / 1000) % 60;
     int nMin = nMs / (1000 * 60);
 
     strBuff = stringPrintf("⑩%04d%02d%02d⑿\r\n", nMin, nSec, n10Ms).c_str();
 
-    int nCount;
     string strLyrics;
-
-    nCount = (int)pLine->vFrags.size();
-    for (int i = 0; i < nCount; i++) {
-        strLyrics += pLine->vFrags[i]->szLyric;
+    for (auto &piece : line.pieces) {
+        strLyrics += piece.text;
     }
     trimStr(strLyrics);
 

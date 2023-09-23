@@ -25,6 +25,7 @@ BuildLog.htm
 *.idb
 *.log
 project.xcworkspace
+*.xcscheme
 obj
 /third-parties
 /temp

@@ -55,11 +55,11 @@ protected:
     void loadMenu(const rapidjson::Value &items, CMenu &menu);
 
 protected:
-    typedef list<Item>        LIST_ITEMS;
+    typedef list<Item>        ListItems;
 
     int                         m_nOrgAppenPos;
     int                         m_nAppendPosition;
-    LIST_ITEMS                  m_listItems;
+    ListItems                   m_listItems;
 
 };
 

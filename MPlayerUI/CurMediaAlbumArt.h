@@ -9,22 +9,17 @@ public:
     CCurMediaAlbumArt();
     virtual ~CCurMediaAlbumArt();
 
-    bool isLoaded() const { return m_bLoaded; }
-    int load();
+    void reset();
+    void restartLoop();
 
-    void close();
-
-    RawImageDataPtr loadAlbumArtByIndex(int nIndex);
+    RawImageDataPtr loadNext();
 
     int getPicCount();
 
 public:
-    // V_PICS                m_vPics;
-    ID3v2Pictures               m_id3v2Pic;
-
-    // album art of song file directory.
-    VecStrings                  m_vAlbumPicFile;
-
-    bool                        m_bLoaded;
+    int                         m_idxEmbeddedPicture = 0;
+    int                         m_idxFilePicture = 0;
+    // Album art in song file's directory.
+    VecStrings                  m_vAlbumPicFiles;
 
 };

@@ -92,8 +92,7 @@ public:
 class CID3v2FrameParserComment : public CID3v2FrameParserBase {
 public:
     CID3v2FrameParserComment(CharEncodingType encoding) : CID3v2FrameParserBase(encoding) {
-        memset(m_szLanguage, 0, sizeof(m_szLanguage));
-        m_EncodingType = IET_ANSI;
+        m_encodingType = IET_ANSI;
     }
     virtual int parse(const CID3v2Frame *pFrame);
     virtual int toFrame(CID3v2Frame *pFrame);
@@ -101,8 +100,8 @@ public:
     void setText(cstr_t szShortDesc, cstr_t szText);
 
 public:
-    ID3v2EncType                m_EncodingType;
-    char                        m_szLanguage[4];
+    ID3v2EncType                m_encodingType;
+    string                      m_language;
     string                      m_strShortDesc, m_strText;
 
 };

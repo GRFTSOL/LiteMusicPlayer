@@ -93,29 +93,13 @@ void CMPSkinInfoTextCtrlEx::onSize() {
 }
 
 void CMPSkinInfoTextCtrlEx::appendInfoText(const string &str) {
-    LyricsPiece *pPiece;
+    LyricsLine line(0, 0);
+    line.appendPiece(0, 0, str);
 
-    pPiece = (LyricsPiece *)new uint8_t[sizeof(LyricsPiece) + str.size() * sizeof(char)];
-
-    pPiece->nBegTime = 0;
-    pPiece->nEndTime = 0;
-    pPiece->nDrawWidth = 0;
-    strcpy_safe(pPiece->szLyric, str.size() + 1, str.c_str());
-    pPiece->nLen = str.size();
-    pPiece->bTempBegTime = true;
-    pPiece->bTempEndTime = true;
-
-    LyricsLine *pLine = new LyricsLine;
-    pLine->nBegTime = 0;
-    pLine->nEndTime = 0;
-    pLine->bLyricsLine = true;
-    pLine->szContent = nullptr;
-    pLine->vFrags.push_back(pPiece);
-
-    m_vUnWrapedText.push_back(pLine);
+    m_vUnWrapedText.push_back(line);
 }
 
-bool wrapDisplayLyrics(CLyricsLines &lyrLinesSrc, CLyricsLines &lyrLinesOut, CRawGraph *canvas, int nWidthMax, bool bVerticalStyle);
+bool wrapDisplayLyrics(LyricsLines &lyrLinesSrc, LyricsLines &lyrLinesOut, CRawGraph *canvas, int nWidthMax, bool bVerticalStyle);
 
 void CMPSkinInfoTextCtrlEx::wrapInfoText() {
     CRawGraph *canvas;

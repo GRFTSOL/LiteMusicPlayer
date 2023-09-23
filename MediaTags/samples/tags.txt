@@ -1,0 +1,794 @@
+=== test.m4a
+@title: Nothing
+@artist: Marian
+@album: Only Our Hearts To Lose
+@year: 2011
+// @comment: 
+@track: 11,11
+@genre: Pop
+@bitrate: 256
+@sample-rate: 44100
+@channels: 2
+length: 5:14
+@length-ms: 314979
+
+=== flac_application.flac
+@title: I Want the World to Stop
+@artist: Belle and Sebastian
+@album: Belle and Sebastian Write About Love
+@year: 2010-10-11
+// @comment: 
+@track: 4/11
+@genre: 
+@bitrate: 0
+@sample-rate: 44100
+@channels: 2
+length: 4:33
+@length-ms: 273640
+
+=== with_id3_header.flac
+@title: title
+@artist: artist
+@album: album
+@year: 2018
+// @comment: 
+@track: 1
+@genre: genre
+@bitrate: 261
+@sample-rate: 44100
+@channels: 1
+length: 0:00
+@length-ms: 454
+
+=== with_padded_id3_header.flac
+@title: title
+@artist: artist
+@album: album
+@year: 2018
+// @comment: 
+@track: 1
+@genre: genre
+@bitrate: 261
+@sample-rate: 44100
+@channels: 1
+length: 0:00
+@length-ms: 454
+
+=== with_padded_id3_header2.flac
+@title: title
+@artist: artist
+@album: album
+@year: 2018
+// @comment: 
+@track: 1
+@genre: genre
+@bitrate: 261
+@sample-rate: 44100
+@channels: 1
+length: 0:00
+@length-ms: 454
+
+=== no-tags.flac
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 0
+@genre: 
+@bitrate: 1
+@sample-rate: 44100
+@channels: 2
+length: 0:03
+@length-ms: 3685
+
+=== flac1.5sStereo.flac
+@title: track
+@artist: art
+@album: alb
+@year: 2014
+// @comment: 
+@track: 23
+@genre: Avantgarde
+@bitrate: 318
+@sample-rate: 44100
+@channels: 2
+length: 0:01
+@length-ms: 1500
+
+=== flac1sMono.flac
+@title: track
+@artist: art
+@album: alb
+@year: 2014
+// @comment: 
+@track: 23
+@genre: Avantgarde
+@bitrate: 211
+@sample-rate: 44100
+@channels: 1
+length: 0:01
+@length-ms: 1000
+
+=== flac453sStereo.flac
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 0
+@genre: 
+@bitrate: 1
+@sample-rate: 44100
+@channels: 2
+length: 7:33
+@length-ms: 453515
+
+=== flac_with_image.flac
+
+=== variable-block.flac
+@title: DIVE FOR YOU
+@artist: Boom Boom Satellites
+@album: Appleseed Original Soundtrack
+@year: 2004
+// @comment: Original Soundtrack
+@track: 01
+@genre: Anime Soundtrack
+@bitrate: 0
+@sample-rate: 44100
+@channels: 2
+length: 4:21
+@length-ms: 261680
+
+=== 106-invalid-streaminfo.flac
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 0
+@genre: 
+@bitrate: 1
+@sample-rate: 44100
+@channels: 2
+length: 0:03
+@length-ms: 3685
+
+=== 106-short-picture-block-size.flac
+
+=== id3_comment_utf_16_double_bom.mp3
+@title: The Embrace (Romano Alfieri Remix)
+@artist: Johannes Heil & D.Diggler
+@album: The Embrace
+@year: 2012
+// @comment: Unclear
+@track: 04-johannes_heil_and_d.diggler-the_embrace_(romano_alfieri_remix)
+@genre: 
+@bitrate: 0
+@sample-rate: 0
+@channels: 0
+length: 0:00
+@length-ms: 0
+
+=== 12oz.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 0
+@genre: 
+@bitrate: 320
+@sample-rate: 44100
+@channels: 2
+length: 0:00
+@length-ms: 993
+
+=== UTF16.mp3
+@title: Lemonworld
+@artist: The National
+@album: High Violet
+@year: 2010
+// @comment: Track 7
+@track: 07/11
+@genre: Indie
+@bitrate: 0
+@sample-rate: 0
+@channels: 0
+length: 0:00
+@length-ms: 0
+
+=== cbr.mp3
+@title: I Can Walk On Water I Can Fly
+@artist: Basshunter
+@album: I Can Walk On Water I Can Fly
+@year: 2007
+// @comment: Ripped by THSLIVE
+@track: 01
+@genre: Dance
+@bitrate: 128
+@sample-rate: 44100
+@channels: 2
+length: 0:00
+@length-ms: 470
+
+=== chinese_id3.mp3
+@title: 角落之歌
+@artist: 苏云
+@album: 角落之歌
+@year: 
+// @comment: 
+@track: 1
+@genre: 休闲音乐
+@bitrate: 128
+@sample-rate: 44100
+@channels: 2
+length: 4:23
+@length-ms: 263941
+
+=== composer.ogg
+@title: A Title
+@artist: An Artist
+@album: An Album
+@year: 2007
+// @comment: A Comment
+@track: 2
+@genre: Some Genre
+@bitrate: 112
+@sample-rate: 44100
+@channels: 2
+length: 0:03
+@length-ms: 3685
+
+=== corrupt_metadata.ogg
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 0
+@genre: 
+@bitrate: 80
+@sample-rate: 44100
+@channels: 1
+length: 0:02
+@length-ms: 2132
+
+=== cover_img.mp3
+@title: A Brain In A Bottle
+@artist: Thom Yorke
+@album: Tomorrow's Modern Boxes
+@year: 2014
+// @comment: 
+@track: 1
+@genre: Electronic
+@bitrate: 320
+@sample-rate: 44100
+@channels: 2
+length: 0:00
+@length-ms: 280503
+
+=== cut_off_titles.mp3
+@title: Tony Hawk VS Wayne Gretzky
+@artist: Epic Rap Battles Of History
+@album: ERB
+@year: 
+// @comment: 
+@track: 0
+@genre: 
+@bitrate: 192
+@sample-rate: 44100
+@channels: 2
+length: 0:00
+@length-ms: 26
+
+=== empty.ogg
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 0
+@genre: 
+@bitrate: 112
+@sample-rate: 44100
+@channels: 2
+length: 0:03
+@length-ms: 3685
+
+=== empty_file.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 0
+@genre: 
+@bitrate: 0
+@sample-rate: 0
+@channels: 0
+length: 0:00
+@length-ms: 0
+
+=== id3_comment_utf_16_with_bom.mp3
+@title: 1 Ghosts I
+@artist: Nine Inch Nails
+@album: Ghosts I-IV
+@year: 2008
+// @comment: 3/4 time
+@track: 1/36
+@genre: 
+@bitrate: 0
+@sample-rate: 0
+@channels: 0
+length: 0:00
+@length-ms: 0
+
+=== id3_genre_id_out_of_bounds.mp3
+@title: 01 GREAT BIG WHITE WORLD
+@artist: Manson
+@album: MECHANICAL ANIMALS
+@year: 0
+// @comment: 
+@track: Marilyn
+@genre: 
+@bitrate: 0
+@sample-rate: 0
+@channels: 0
+length: 0:00
+@length-ms: 0
+
+=== id3_image_jfif.mp3
+@title: Future Love
+@artist: Flamingosis & The Kount
+@album: Maniacs!
+@year: 2020
+// @comment: Visit https://flamingosis1.bandcamp.com
+@track: 2
+@genre: 
+@bitrate: 128
+@sample-rate: 44100
+@channels: 2
+length: 2:56
+@length-ms: 176039
+
+=== id3_xxx_lang.mp3
+@title: Counting Bodies Like Sheep to the Rhythm of the War Drums
+@artist: A Perfect Circle
+@album: eMOTIVe
+@year: 2004
+// @comment:                             
+@track: 10/12
+@genre: Rock
+@bitrate: 192
+@sample-rate: 44100
+@channels: 2
+length: 0:00
+@length-ms: 104
+
+=== id3image_without_description.mp3
+@title: Nikes
+@artist: 
+@album: Blonde
+@year: 2016
+// @comment: 
+@track: 1/17
+@genre: Pop
+@bitrate: 0
+@sample-rate: 0
+@channels: 0
+length: 0:00
+@length-ms: 0
+
+=== id3v1_does_not_overwrite_id3v2.mp3
+@title: Time What Is Time
+@artist: Blind Guardian
+@album: Somewhere Far Beyond
+@year: 1992
+// @comment: 
+@track: 01
+@genre: Power Metal
+@bitrate: 0
+@sample-rate: 0
+@channels: 0
+length: 0:00
+@length-ms: 0
+
+=== id3v22-test.mp3
+@title: cosmic american
+@artist: Anais Mitchell
+@album: Hymns for the Exiled
+@year: 2004
+// @comment: Waterbug Records, www.anaismitchell.com
+@track: 3/11
+@genre: 
+@bitrate: 160
+@sample-rate: 44100
+@channels: 2
+length: 0:00
+@length-ms: 131
+
+=== id3v22.TCO.genre.mp3
+@title: Applause
+@artist: Lady GaGa
+@album: ARTPOP
+@year: 
+// @comment: 0
+@track: 0
+@genre: Pop
+@bitrate: 0
+@sample-rate: 0
+@channels: 0
+length: 0:00
+@length-ms: 0
+
+=== id3v22_image.mp3
+@title: Kids (MGMT Cover) 
+@artist: The Kooks
+@album: winniecooper.net 
+@year: 2008
+// @comment: 
+@track: 0
+@genre: .
+@bitrate: 0
+@sample-rate: 0
+@channels: 0
+length: 0:00
+@length-ms: 0
+
+=== id3v24-long-title.mp3
+@title: Out of the Woodwork
+@artist: Courtney Barnett
+@album: The Double EP: A Sea of Split Peas
+@year: 2013
+// @comment: Amazon.com Song ID: 240853806
+@track: 1/12
+@genre: Alternative Rock
+@bitrate: 0
+@sample-rate: 0
+@channels: 0
+length: 0:00
+@length-ms: 0
+
+=== id3v24_genre_null_byte.mp3
+@title: 星のない世界
+@artist: aiko
+@album: 秘密
+@year: 2008
+// @comment: 
+@track: 10
+@genre: Pop
+@bitrate: 0
+@sample-rate: 0
+@channels: 0
+length: 0:00
+@length-ms: 0
+
+=== image-text-encoding.mp3
+@title: image-encoding
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 0
+@genre: 
+@bitrate: 32
+@sample-rate: 22050
+@channels: 1
+length: 0:01
+@length-ms: 1071
+
+=== incomplete.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 0
+@genre: 
+@bitrate: 0
+@sample-rate: 0
+@channels: 0
+length: 0:00
+@length-ms: 0
+
+=== iso8859_with_image.m4a
+@title: Cold Water (feat. Justin Bieber & MO)
+@artist: Major Lazer
+@album: Cold Water (feat. Justin Bieber & MO) - Single
+@year: 2016
+// @comment: ? 2016 Mad Decent
+@track: 0
+@genre: Electronic;Music
+@bitrate: 126
+@sample-rate: 44100
+@channels: 2
+length: 3:08
+@length-ms: 188546
+
+=== mpeg4_desc_cmt.m4a
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: test comment
+@track: 0
+@genre: 
+@bitrate: 102
+@sample-rate: 44100
+@channels: 2
+length: 0:02
+@length-ms: 2360
+
+=== multipage-setup.ogg
+@title: Burst
+@artist: UVERworld
+@album: Timeless
+@year: 2006
+// @comment: SRCL-6240
+@track: 7
+@genre: JRock
+@bitrate: 160
+@sample-rate: 44100
+@channels: 2
+length: 0:04
+@length-ms: 4129
+
+=== multipagecomment.ogg
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 0
+@genre: 
+@bitrate: 112
+@sample-rate: 44100
+@channels: 2
+length: 0:03
+@length-ms: 3685
+
+=== nicotinetestdata.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 0
+@genre: 
+@bitrate: 64
+@sample-rate: 44100
+@channels: 2
+length: 0:05
+@length-ms: 5042
+
+=== ogg_with_image.ogg
+@title: Sample Title
+@artist: Sample Artist
+@album: 
+@year: 
+// @comment: 
+@track: 0
+@genre: 
+@bitrate: 96
+@sample-rate: 44100
+@channels: 1
+length: 0:00
+@length-ms: 100
+
+=== silence-22khz-mono-1s.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 0
+@genre: 
+@bitrate: 32
+@sample-rate: 22050
+@channels: 1
+length: 0:01
+@length-ms: 1071
+
+=== silence-44-s-v1.mp3
+@title: Silence
+@artist: piman
+@album: Quod Libet Test Data
+@year: 2004
+// @comment: 
+@track: 2
+@genre: Darkwave
+@bitrate: 32
+@sample-rate: 44100
+@channels: 2
+length: 0:03
+@length-ms: 3762
+
+=== silence-44khz-56k-mono-1s.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 0
+@genre: 
+@bitrate: 56
+@sample-rate: 44100
+@channels: 1
+length: 0:01
+@length-ms: 1045
+
+=== test.ogg
+@title: the boss
+@artist: james brown
+@album: the boss
+@year: 2006
+// @comment: hello!
+@track: 1
+@genre: 
+@bitrate: 160
+@sample-rate: 44100
+@channels: 2
+length: 0:01
+@length-ms: 1000
+
+=== test2.m4a
+@title: Go Out and Get Some
+@artist: Millie Jackson
+@album: Get It Out 'cha System
+@year: 1978
+// @comment: Millie Jackson - Get It Out 'cha System - 1978
+@track: 1,9
+@genre: R&B/Soul
+@bitrate: 256
+@sample-rate: 44100
+@channels: 2
+length: 2:47
+@length-ms: 167787
+
+=== utf-8-id3v2.mp3
+@title: Gran día
+@artist: Paso a paso
+@album: S/T
+@year: 2003
+// @comment: 
+@track: 01/21
+@genre: Acustico
+@bitrate: 0
+@sample-rate: 0
+@channels: 0
+length: 0:00
+@length-ms: 0
+
+=== utf16be.mp3
+@title: 52-girls
+@artist: The B52s
+@album: party mix
+@year: 1981
+// @comment: 
+@track: 6
+@genre: Rock
+@bitrate: 0
+@sample-rate: 0
+@channels: 0
+length: 0:00
+@length-ms: 0
+
+=== vbr_xing_header.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 0
+@genre: 
+@bitrate: 128
+@sample-rate: 44100
+@channels: 1
+length: 0:03
+@length-ms: 3944
+
+=== vbr_xing_header_2channel.mp3
+@title: Lochaber No More
+@artist: Knodel and Valencia
+@album: The Harpers' Masque
+@year: 1992
+// @comment: 
+@track: 0
+@genre: 
+@bitrate: 64
+@sample-rate: 22050
+@channels: 2
+length: 4:10
+@length-ms: 250044
+
+=== vbr_xing_header_short.mp3
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 0
+@genre: 
+@bitrate: 32
+@sample-rate: 8000
+@channels: 1
+length: 0:00
+@length-ms: 144
+
+=== vbri.mp3
+@title: I Can Walk On Water I Can Fly
+@artist: Basshunter
+@album: I Can Walk On Water I Can Fly
+@year: 2007
+// @comment: Ripped by THSLIVE
+@track: 01
+@genre: Dance
+@bitrate: 160
+@sample-rate: 44100
+@channels: 2
+length: 3:42
+@length-ms: 222198
+
+
+*** END ***
+
+
+
+=== lossless.wma
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: 
+@track: 0
+@genre: 
+@bitrate: 667
+@sample-rate: 44100
+@channels: 2
+length: 0:43
+@length-ms: 43133
+
+=== test2.wma
+@title: Doll
+@artist: Foo Fighters
+@album: The Colour and the Shape
+@year: 1997
+// @comment: 
+@track: 1
+@genre: Alternative
+@bitrate: 64
+@sample-rate: 44100
+@channels: 2
+length: 1:23
+@length-ms: 83406
+
+
+=== mpeg4_xa9des.m4a
+@title: 
+@artist: 
+@album: 
+@year: 
+// @comment: test comment
+@track: 0
+@genre: 
+@bitrate: 0
+@sample-rate: 0
+@channels: 0
+length: 0:00
+@length-ms: 727106
+
+=== utf-8-id3v2-invalid-string.mp3
+String::copyFromUTF8(): �ran día
+@title: 
+@artist: Paso a paso
+@album: S/T
+@year: 2003
+// @comment: 
+@track: 1
+@genre: Acustico
+@bitrate: 0
+@sample-rate: 0
+@channels: 0
+length: 0:00
+@length-ms: 0

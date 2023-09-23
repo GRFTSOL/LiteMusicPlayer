@@ -22,8 +22,8 @@ CSkinSeekCtrl::CSkinSeekCtrl() {
     m_msgNeed = UO_MSG_WANT_LBUTTON | UO_MSG_WANT_MOUSEMOVE | UO_MSG_WANT_MOUSEWHEEL;
 
     m_nXCursorToThumbBeg = 0;
-    m_PushDownPos = PUSH_DOWN_NONE;
-    m_CursorPosLatest = PUSH_DOWN_NONE;
+    m_pushDownPos = PUSH_DOWN_NONE;
+    m_cursorPosLatest = PUSH_DOWN_NONE;
 
     m_pScrollNotify = nullptr;
 }
@@ -51,10 +51,10 @@ bool CSkinSeekCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
 bool CSkinSeekCtrl::onLButtonDown(uint32_t nFlags, CPoint point) {
     assert(m_pSkin);
 
-    m_PushDownPos = getPushDownPos(point);
-    m_CursorPosLatest = m_PushDownPos;
+    m_pushDownPos = getPushDownPos(point);
+    m_cursorPosLatest = m_pushDownPos;
 
-    switch (m_PushDownPos) {
+    switch (m_pushDownPos) {
     case PUSH_DOWN_THUMB:
         // 滚动条的拖动box(thumb)
         thumbOnLButtonDown(nFlags, point);
@@ -87,7 +87,7 @@ void CSkinSeekCtrl::trackOnLButtonDown(uint32_t nFlags, CPoint point) {
     m_pSkin->setCaptureMouse(this);
 
     m_nPosThumb = point.x - m_rcObj.left;
-    if (m_PushDownPos == PUSH_DOWN_BOTTOMTRACK) {
+    if (m_pushDownPos == PUSH_DOWN_BOTTOMTRACK) {
         m_nPosThumb -= m_nWidthThumb / 2;
     } else {
         m_nPosThumb -= m_nWidthThumb / 2;
@@ -101,7 +101,7 @@ void CSkinSeekCtrl::trackOnLButtonDown(uint32_t nFlags, CPoint point) {
 
     m_nVirtualCurPos = objectPosToVirtualPos(m_nPosThumb);
 
-    m_CursorPosLatest = m_PushDownPos = PUSH_DOWN_THUMB;
+    m_cursorPosLatest = m_pushDownPos = PUSH_DOWN_THUMB;
 
     m_nXCursorToThumbBeg = point.x - (m_rcObj.left + m_nPosThumb);
 
@@ -114,7 +114,7 @@ void CSkinSeekCtrl::trackOnLButtonDown(uint32_t nFlags, CPoint point) {
 
 bool CSkinSeekCtrl::onLButtonUp(uint32_t nFlags, CPoint point) {
     // DBG_LOG0("onLButtonUp ");
-    switch (m_PushDownPos) {
+    switch (m_pushDownPos) {
     case PUSH_DOWN_THUMB:
         {
             // 滚动条的拖动box(thumb)
@@ -130,7 +130,7 @@ bool CSkinSeekCtrl::onLButtonUp(uint32_t nFlags, CPoint point) {
         break;
     }
 
-    m_PushDownPos = PUSH_DOWN_NONE;
+    m_pushDownPos = PUSH_DOWN_NONE;
 
     invalidate();
 
@@ -173,7 +173,7 @@ void CSkinSeekCtrl::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) {
 }
 
 bool CSkinSeekCtrl::onMouseDrag(CPoint point) {
-    switch (m_PushDownPos) {
+    switch (m_pushDownPos) {
     case PUSH_DOWN_THUMB:
         thumbOnMouseMove(point);
         break;
@@ -185,15 +185,15 @@ bool CSkinSeekCtrl::onMouseDrag(CPoint point) {
 }
 
 bool CSkinSeekCtrl::onMouseMove(CPoint point) {
-    switch (m_PushDownPos) {
+    switch (m_pushDownPos) {
     case PUSH_DOWN_NONE:
         {
             PUSH_DOWN_POS CursorPosNew;
 
             CursorPosNew = getPushDownPos(point);
 
-            if (CursorPosNew != m_CursorPosLatest) {
-                m_CursorPosLatest = CursorPosNew;
+            if (CursorPosNew != m_cursorPosLatest) {
+                m_cursorPosLatest = CursorPosNew;
                 invalidate();
             }
         }
@@ -287,12 +287,12 @@ void CSkinSeekCtrl::draw(CRawGraph *canvas) {
     // draw thumb
     if (m_imgThumb.isValid()) {
         int yThumbSrc = 0;
-        if (m_PushDownPos != PUSH_DOWN_THUMB) {
+        if (m_pushDownPos != PUSH_DOWN_THUMB) {
             if (m_isMouseIn) {
                 yThumbSrc = nThumbHeight; // Hover on thumb.
             }
         } else {
-            if (m_CursorPosLatest == PUSH_DOWN_THUMB) {
+            if (m_cursorPosLatest == PUSH_DOWN_THUMB) {
                 yThumbSrc = nThumbHeight * 2; // push down on thumb.
             }
         }
@@ -348,7 +348,7 @@ void CSkinSeekCtrl::enumProperties(CUIObjProperties &listProperties) {
 int CSkinSeekCtrl::setScrollPos(int nPos, bool bRedraw) {
     int nPosOld, nPosThumbOld;
 
-    if (m_PushDownPos == PUSH_DOWN_THUMB) {
+    if (m_pushDownPos == PUSH_DOWN_THUMB) {
         return m_nVirtualCurPos;
     }
 

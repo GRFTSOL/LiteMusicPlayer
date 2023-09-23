@@ -12,8 +12,6 @@ enum MediaTagType {
     MTT_APEV2                   = 1 << 3,
 };
 
-uint32_t getSupportedMTTByExt(cstr_t szMedia);
-
 
 #include "PreferencePageBase.h"
 
@@ -22,6 +20,8 @@ class CDlgMediaInfo : public CMPSkinWnd {
 public:
     CDlgMediaInfo(const MediaPtr &media);
     ~CDlgMediaInfo(void);
+
+    CUIObject *createUIObject(cstr_t className, CSkinContainer *container) override;
 
     void onSkinLoaded() override;
 
@@ -41,32 +41,29 @@ protected:
     friend class CDlgMediaInfoPageLyrics;
     friend class CDlgMediaInfoPagePictures;
 
+    bool                        _isTagsModified = false;
+    bool                        _isLyricsModified = false;
+    bool                        _isPicturesModified = false;
+    bool                        _canModifyTags = false;
+    bool                        _canModifyLyrics = false;
+    bool                        _canModifyPictures = false;
+
     // basic and detail info
-    string                      m_artist,  m_title,  m_album,  m_comment;
-    string                      m_track,  m_year,  m_genre,  m_composer;
-    string                      m_encoded,  m_url,  m_copyRight,  m_origArtist,  m_publisher,  m_bpm;
-    bool                        m_bBasicInfoModified;
-    bool                        m_bDetailInfoModified;
+    BasicMediaTags              _tags;
+    ExtendedMediaInfo           _info;
 
     // lyrics
-    string                      m_strLyrName;
-    string                      m_strLyrics;
-    bool                        m_bUnsyncLyricsModified;
+    string                      _lyrics;
+    string                      _lyricsOrg;
 
-    // pictures
-    ID3v2Pictures               m_pictures;
-    bool                        m_bPicturesModified;
+    // Array of pictures' data
+    VecStrings                  _pictures;
 
+    MediaPtr                    _media;
 
-protected:
-    MediaPtr                    m_media;
+    string                      _strMediaFile;
+    bool                        _bReadOnly;
 
-    string                      m_strMediaFile;
-    bool                        m_bReadOnly;
-    uint32_t                    m_nSupportedMediaTagType;
-    CharEncodingType            m_nEncodingOfConvertAnsi;
-
-    vector<class CDlgMediaInfoPage *>   m_vInfoPages;
-    class CDlgMediaInfoPage             *m_pOldPage;
+    vector<class CDlgMediaInfoPage *>   _vInfoPages;
 
 };

@@ -474,7 +474,7 @@ void CSkinContainer::createChild(SXNode *pXmlNode) {
             continue;
         }
 
-        CUIObject *pObj = m_pSkin->getSkinFactory()->createUIObject(m_pSkin, pNode->name.c_str(), this);
+        CUIObject *pObj = m_pSkin->createUIObject(pNode->name.c_str(), this);
         if (pObj) {
             // set its properties
             pObj->fromXML(pNode);
@@ -586,7 +586,7 @@ CUIObject *CSkinContainer::getUIObjectById(int nId, cstr_t szClassName) {
 
 CUIObject *CSkinContainer::getUIObjectAtPosition(const CPoint &pos) {
     for (auto obj : m_vUIObjs) {
-        if (obj->isPtIn(pos)) {
+        if (obj->isVisible() && obj->isPtIn(pos)) {
             if (obj->isContainer()) {
                 return obj->getContainerIf()->getUIObjectAtPosition(pos);
             }
@@ -889,9 +889,18 @@ void CSkinContainer::updateMemGraphicsToScreen(const CRect* lpRect, CUIObject *p
 }
 
 void CSkinContainer::switchToPage(cstr_t szPageClass, bool bWaitResultOfNextPage, int nRequestCodeOfNextPage, bool bAnimation) {
+    CUIObject *obj = getUIObjectByClassName(szPageClass);
+    if (obj && obj->isContainer()) {
+        switchToPage(static_cast<CSkinContainer *>(obj), bWaitResultOfNextPage, nRequestCodeOfNextPage, bAnimation);
+    } else {
+        ERR_LOG1("Switch to an inexistant Page: %s", szPageClass);
+    }
+}
+
+void CSkinContainer::switchToPage(CSkinContainer *toActivate, bool bWaitResultOfNextPage, int nRequestCodeOfNextPage, bool bAnimation) {
     if (m_vStackPageView.size() > 100) {
         DBG_LOG1("Stack of Page View is too large, clear it: %d", m_vStackPageView.size());
-        m_vStackPageView.empty();
+        m_vStackPageView.pop();
     }
 
     PageViewItem pvToHide(nullptr, false, 0);
@@ -899,21 +908,15 @@ void CSkinContainer::switchToPage(cstr_t szPageClass, bool bWaitResultOfNextPage
         pvToHide = m_vStackPageView.top();
     }
 
-    CSkinContainer *pToActivate = (CSkinContainer *)getChildByClass(szPageClass);
-    if (!pToActivate) {
-        ERR_LOG1("Switch to an inexistant Page: %s", szPageClass);
-        return;
-    }
-
-    PageViewItem pvToActivate(pToActivate, bWaitResultOfNextPage, nRequestCodeOfNextPage);
+    PageViewItem pvToActivate(toActivate, bWaitResultOfNextPage, nRequestCodeOfNextPage);
     m_vStackPageView.push(pvToActivate);
 
-    bool bIsNewPageAtLeft = isPageAtLeft(pToActivate, pvToHide.pContainerPage);
+    bool bIsNewPageAtLeft = isPageAtLeft(toActivate, pvToHide.pContainerPage);
     if (pvToHide.pContainerPage) {
         pvToHide.pContainerPage->setVisibleEx(false, bAnimation, bIsNewPageAtLeft ? AD_RIGHT: AD_LEFT);
     }
-    pToActivate->onSwitchTo();
-    pToActivate->setVisibleEx(true, bAnimation, bIsNewPageAtLeft ? AD_LEFT : AD_RIGHT);
+    toActivate->onSwitchTo();
+    toActivate->setVisibleEx(true, bAnimation, bIsNewPageAtLeft ? AD_LEFT : AD_RIGHT);
 }
 
 void CSkinContainer::switchToLastPage(int nResultCodeOfPage, bool bAnimation) {

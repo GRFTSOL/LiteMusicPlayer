@@ -33,11 +33,8 @@ public:
     int updateGeneralUrlFrame(cstr_t szText);
     int removeGeneralUrlFrame();
 
-    int getPictures(ID3v2Pictures &pictures);
-    int updatePictures(ID3v2Pictures &pictures);
-
-    int updatePicFrame(ID3v2Pictures::ITEM *pic);
-    int removePicFrame(ID3v2FrameUID_t nFrameUID, uint32_t picType);
+    void getPictures(ID3v2Pictures &pictures);
+    void setPictures(const VecStrings &picturesData);
 
 protected:
     int updateTextFrame(uint32_t nFrameID, cstr_t szText);

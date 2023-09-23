@@ -21,70 +21,21 @@ CLyricShowSingleRowObj::~CLyricShowSingleRowObj() {
 
 #define  FIO_TIME           500
 
-//
-// 取得此行歌词的Fade out color
-//
-void CLyricShowSingleRowObj::getCurLineFadeOutColor(LyricsLine *pLine, CColor clrIn, CColor clrOut, CColor &color) {
-    int nTime;
-
-    if (!pLine) {
-        return;
-    }
-
-    nTime = pLine->nEndTime - m_pMLData->getPlayElapsedTime();
-    if (nTime <= FIO_TIME && nTime >= 0) {
-        int nPart1;
-
-        nPart1 = FIO_TIME - nTime;
-        color.set((clrOut.r() * nPart1 + clrIn.r() * nTime) / FIO_TIME,
-            (clrOut.g() * nPart1 + clrIn.g() * nTime) / FIO_TIME,
-            (clrOut.b() * nPart1 + clrIn.b() * nTime) / FIO_TIME);
-    } else {
-        color = clrOut;
-    }
-}
-
-//
-// 取得此行歌词的Fade In color
-//
-void CLyricShowSingleRowObj::getNextLineFadeInColor(LyricsLine *pLine, CColor clrIn, CColor clrOut, CColor &color) {
-    int nTime;
-
-    if (!pLine) {
-        return;
-    }
-
-    // nTime 变小
-    nTime = pLine->nBegTime - m_pMLData->getPlayElapsedTime();
-    if (nTime <= FIO_TIME && nTime >= 0) {
-        int nPart1;
-
-        nPart1 = nTime;
-        nTime = FIO_TIME - nTime;
-
-        color.set((clrOut.r() * nPart1 + clrIn.r() * nTime) / FIO_TIME,
-            (clrOut.g() * nPart1 + clrIn.g() * nTime) / FIO_TIME,
-            (clrOut.b() * nPart1 + clrIn.b() * nTime) / FIO_TIME);
-    } else {
-        color = clrIn;
-    }
-}
-
 void alphaBlendColor(CColor &clr1, CColor &clr2, int nAlpha, CColor &clrOut);
 
-void CLyricShowSingleRowObj::drawCurLineFadeInNextLine(CRawGraph *canvas, LyricsLine *pLineCur, LyricsLine *pLineNext, int x, int y) {
+void CLyricShowSingleRowObj::drawCurLineFadeInNextLine(CRawGraph *canvas, LyricsLine &lineCur, LyricsLine *lineNext, int x, int y) {
     int nTime;
     int nAlphaCurLine, nAlphaNextLine;
 
-    nTime = pLineCur->nEndTime - m_pMLData->getPlayElapsedTime();
+    nTime = lineCur.endTime - m_curLyrics->getPlayElapsedTime();
     if (nTime <= FIO_TIME && nTime >= 0) {
         nAlphaCurLine = (FIO_TIME - nTime) * 255 / FIO_TIME;
     } else {
         nAlphaCurLine = 255;
     }
 
-    if (pLineNext) {
-        nTime = pLineNext->nBegTime - m_pMLData->getPlayElapsedTime();
+    if (lineNext) {
+        nTime = lineNext->beginTime - m_curLyrics->getPlayElapsedTime();
         if (nTime <= FIO_TIME && nTime >= 0) {
             nAlphaNextLine = nTime * 255 / FIO_TIME;
         } else {
@@ -99,12 +50,12 @@ void CLyricShowSingleRowObj::drawCurLineFadeInNextLine(CRawGraph *canvas, Lyrics
         // transparent window
         uint8_t alphaOld = canvas->getOpacityPainting();
         canvas->setOpacityPainting(nAlphaNextLine);
-        drawRow(canvas, pLineCur, AUTO_CAL_X, y, getHighlightColor(), m_tobHilight.clr[TCI_BORDER]);
+        drawRow(canvas, lineCur, AUTO_CAL_X, y, getHighlightColor(), m_tobHilight.clr[TCI_BORDER]);
 
-        if (pLineNext) {
+        if (lineNext) {
             canvas->setOpacityPainting(nAlphaCurLine);
 
-            drawRow(canvas, pLineNext, AUTO_CAL_X, y, getHighlightColor(), m_tobHilight.clr[TCI_BORDER]);
+            drawRow(canvas, *lineNext, AUTO_CAL_X, y, getHighlightColor(), m_tobHilight.clr[TCI_BORDER]);
         }
         canvas->setOpacityPainting(alphaOld);
     } else {
@@ -113,13 +64,13 @@ void CLyricShowSingleRowObj::drawCurLineFadeInNextLine(CRawGraph *canvas, Lyrics
         alphaBlendColor(m_tobHilight.clr[TCI_BORDER], m_clrBg, nAlphaCurLine, clrTxtBorder);
         alphaBlendColor(getHighlightColor(), m_clrBg, nAlphaCurLine, clrTxt);
 
-        drawRow(canvas, pLineCur, AUTO_CAL_X, y, clrTxt, clrTxtBorder);
+        drawRow(canvas, lineCur, AUTO_CAL_X, y, clrTxt, clrTxtBorder);
 
-        if (pLineNext) {
+        if (lineNext) {
             alphaBlendColor(m_tobHilight.clr[TCI_BORDER], m_clrBg, nAlphaNextLine, clrTxtBorder);
             alphaBlendColor(getHighlightColor(), m_clrBg, nAlphaNextLine, clrTxt);
 
-            drawRow(canvas, pLineNext, AUTO_CAL_X, y, clrTxt, clrTxtBorder);
+            drawRow(canvas, *lineNext, AUTO_CAL_X, y, clrTxt, clrTxtBorder);
         }
     }
 }
@@ -127,10 +78,6 @@ void CLyricShowSingleRowObj::drawCurLineFadeInNextLine(CRawGraph *canvas, Lyrics
 // OUTPUT:
 //        rcUpdate    -    更新的矩形区域
 void CLyricShowSingleRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
-    LyricsLine *pLyricRow;
-    int nRowCur;
-    int nPlayPos;
-
     canvas->setFont(&m_font);
 
     if (prcUpdate) {
@@ -138,25 +85,25 @@ void CLyricShowSingleRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
     }
 
     // get the current playing row
-    nRowCur = m_pMLData->getCurPlayLine(m_lyrLines);
+    int nRowCur = m_curLyrics->getCurPlayLine(m_lyrLines);
     if (nRowCur == -1) {
         // no lyrics, redraw background
         updateLyricDrawBufferBackground(canvas, m_rcObj);
         return;
     }
 
-    pLyricRow = m_lyrLines[nRowCur];
+    auto &lyricRow = m_lyrLines[nRowCur];
 
     // clear back buffer
     updateLyricDrawBufferBackground(canvas, m_rcObj);
 
-    nPlayPos = m_pMLData->getPlayElapsedTime();
+    int nPlayPos = m_curLyrics->getPlayElapsedTime();
     int y = getLineVertAlignPos() - getFontHeight() / 2 + getOutlineMargin();
 
     // 在当前行结束前0.5秒渐变切换到下一行
-    if (nPlayPos + FIO_TIME >= pLyricRow->nEndTime) {
+    if (nPlayPos + FIO_TIME >= lyricRow.endTime) {
         // 计算渐变显示的颜色
-        LyricsLine *pLineNext = nullptr;
+        LyricsLine *lineNext = nullptr;
 
         CRect rcClip;
 
@@ -169,10 +116,10 @@ void CLyricShowSingleRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
         canvas->setClipBoundBox(rcClip);
 
         if (nRowCur + 1 < (int)m_lyrLines.size()) {
-            pLineNext = m_lyrLines[nRowCur + 1];
+            lineNext = &m_lyrLines[nRowCur + 1];
         }
 
-        drawCurLineFadeInNextLine(canvas, pLyricRow, pLineNext, -1, y);
+        drawCurLineFadeInNextLine(canvas, lyricRow, lineNext, -1, y);
     } else {
 
         CRect rcClip;
@@ -185,7 +132,7 @@ void CLyricShowSingleRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
         CRawGraph::CClipBoxAutoRecovery autoCBR(canvas);
         canvas->setClipBoundBox(rcClip);
 
-        drawRow(canvas, pLyricRow, AUTO_CAL_X, y, LP_CUR_LINE);
+        drawRow(canvas, lyricRow, AUTO_CAL_X, y, LP_CUR_LINE);
     }
 }
 

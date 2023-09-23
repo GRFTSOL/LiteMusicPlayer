@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skinwnd Extends="WindowFrame" Name="SaveEmbeddedLyrics.xml" Caption="Save embedded lyrics"
+         MinWidth="400" MinHeight="250" Width="600" Height="300" RememberSizePos="true"
+         Animate="fade" AnimateDuration="300">
+
+  <NormalCheckBox ID="CID_C_EL0" Text="" Rect="25,30,w-50,"/>
+  <NormalCheckBox ID="CID_C_EL1" Text="" Rect="25,60,w-50,"/>
+  <NormalCheckBox ID="CID_C_EL2" Text="" Rect="25,90,w-50,"/>
+  <NormalCheckBox ID="CID_C_EL3" Text="" Rect="25,120,w-50,"/>
+  <NormalCheckBox ID="CID_C_EL4" Text="" Rect="25,150,w-50,"/>
+
+  <NormalTextBt ID="ID_OK" Text="OK" Rect="w/2-100-20,h-40,100,"/>
+  <NormalTextBt ID="ID_CANCEL" Text="Cancel" Rect="w/2+20,h-40,100,"/>
+</skinwnd>

@@ -712,27 +712,23 @@ protected:
         m_pLyricsList->invalidate();
     }
 
-    void appendItemInResultsList(LrcSearchResult &Item, bool bInetFile) {
-        int nItem;
+    void appendItemInResultsList(LrcSearchResult &item, bool bInetFile) {
         char szTemp[MAX_PATH];
-        int nImg;
-        MLFileType fileType;
-        LRC_SOURCE_TYPE lrcSrcType;
-        string name;
+        int nImg = 0;
         bool bLocalFile = false;
 
-        lrcSrcType = lyrSrcTypeFromName(Item.strUrl.c_str());
+        LRC_SOURCE_TYPE lrcSrcType = lyrSrcTypeFromName(item.strUrl.c_str());
 
-        fileType = GetLyricsFileType(Item.strSaveFileName.c_str());
-        if (fileType == FT_LYRICS_LRC)        nImg = IMG_L_LRC;
-        else if (fileType == FT_LYRICS_TXT)    nImg = IMG_L_TXT;
-        else                                nImg = IMG_L_UNKNOWN;
+        auto ct  = getLyricsContentTypeByFileExt(item.strSaveFileName.c_str());
+        if (ct == LCT_LRC) nImg = IMG_L_LRC;
+        else if (ct == LCT_TXT) nImg = IMG_L_TXT;
+        else nImg = IMG_L_UNKNOWN;
 
         if (!bInetFile) {
             // local file...
-            if (lrcSrcType == LST_ID3V2_SYLT || lrcSrcType == LST_ID3V2_LYRICS || lrcSrcType == LST_LYRICS3V2 || lrcSrcType == LST_KAR_LYRICS) {
+            if (lrcSrcType == LST_ID3V2_SYLT || lrcSrcType == LST_ID3V2_LYRICS || lrcSrcType == LST_LYRICS3V2 || lrcSrcType == LST_SOLE_EMBEDDED_LYRICS) {
                 nImg = IMG_L_LRC;
-            } else if (lrcSrcType == LST_ID3V2_USLT || lrcSrcType == LST_M4A_LYRICS) {
+            } else if (lrcSrcType == LST_ID3V2_USLT) {
                 nImg = IMG_L_TXT;
             } else if (lrcSrcType == LST_NONE) {
                 nImg = IMG_NONE;
@@ -743,30 +739,30 @@ protected:
             nImg += IMG_OFFSET_INET;
         }
 
-        nItem = m_pLyricsList->insertItem(m_pLyricsList->getItemCount(), Item.strArtist.c_str(), nImg, 0, false);
-        m_pLyricsList->setItemText(nItem, COL_TITLE, Item.strTitle.c_str(), false);
+        int index = m_pLyricsList->insertItem(m_pLyricsList->getItemCount(), item.strArtist.c_str(), nImg, 0, false);
+        m_pLyricsList->setItemText(index, COL_TITLE, item.strTitle.c_str(), false);
 
-        if (Item.fRate != 0.0) {
-            snprintf(szTemp, CountOf(szTemp), "%.1f/5 (%d %s)", Item.fRate, Item.nRateCount, _TLT("Votes"));
+        if (item.fRate != 0.0) {
+            snprintf(szTemp, CountOf(szTemp), "%.1f/5 (%d %s)", item.fRate, item.nRateCount, _TLT("Votes"));
         } else {
             strcpy_safe(szTemp, CountOf(szTemp), "-");
         }
-        m_pLyricsList->setItemText(nItem, COL_RATING, szTemp, false);
+        m_pLyricsList->setItemText(index, COL_RATING, szTemp, false);
 
         if (bInetFile) {
-            itoa(Item.nDownloads, szTemp);
-            m_pLyricsList->setItemText(nItem, COL_DOWNLOADS, szTemp, false);
+            itoa(item.nDownloads, szTemp);
+            m_pLyricsList->setItemText(index, COL_DOWNLOADS, szTemp, false);
         }
 
         if (bLocalFile) {
-            m_pLyricsList->setItemText(nItem, COL_FROM, Item.strUrl.c_str(), false);
+            m_pLyricsList->setItemText(index, COL_FROM, item.strUrl.c_str(), false);
         } else {
-            m_pLyricsList->setItemText(nItem, COL_FROM, Item.strUploader.c_str(), false);
+            m_pLyricsList->setItemText(index, COL_FROM, item.strUploader.c_str(), false);
         }
 
-        m_pLyricsList->setItemText(nItem, COL_ALBUM, Item.strAlbum.c_str(), false);
+        m_pLyricsList->setItemText(index, COL_ALBUM, item.strAlbum.c_str(), false);
         if (m_pLyricsList->getColumnCount() > COL_URL) {
-            m_pLyricsList->setItemText(nItem, COL_URL, Item.strUrl.c_str(), false);
+            m_pLyricsList->setItemText(index, COL_URL, item.strUrl.c_str(), false);
         }
     }
 

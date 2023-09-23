@@ -1,68 +1,70 @@
 #include "MPlayerAppBase.h"
 #include "DlgMediaInfo.h"
-#include "SkinImageListCtrl.h"
+#include "../MediaTags/ID3/ID3v1.h"
+#include "../MediaTags/LrcParser.h"
 
-
-uint32_t getSupportedMTTByExt(cstr_t szMedia) {
-    cstr_t szExt = fileGetExt(szMedia);
-
-    if (strcmp(szExt, ".mp3") == 0) {
-        return MTT_ID3V1 | MTT_ID3V2;
-    }
-
-    return 0;
-}
 
 class CDlgMediaInfoPage : public CSkinContainer {
 public:
-    CDlgMediaInfoPage(cstr_t szPageId, cstr_t szAssociateTabButtonId) : CSkinContainer() {
-        m_strAssociateTabButtonId = szAssociateTabButtonId;
-        m_strPageId = szPageId;
-        m_nAssociateTabButtonId = -1;
-        m_pageId = -1;
-        m_bModified = false;
+    CDlgMediaInfoPage(CDlgMediaInfo *parent, cstr_t szPageId, cstr_t szAssociateTabButtonId) : CSkinContainer() {
+        _parent = parent;
+        _strAssociateTabButtonId = szAssociateTabButtonId;
+        _strPageId = szPageId;
+        _nAssociateTabButtonId = -1;
+        _pageId = -1;
+        _isModified = false;
     }
 
-    virtual void setParent(CDlgMediaInfo *pParent) { m_pDlgMediaInfo = pParent; m_pSkin = pParent; }
     virtual void onUpdateView(bool bRedraw = true) { }
     virtual void onSave() { }
 
-    void onInitialUpdate() {
-        CSkinContainer::onInitialUpdate();
+    void onCreate() override {
+        CSkinContainer::onCreate();
 
-        m_nAssociateTabButtonId = getIDByName(m_strAssociateTabButtonId.c_str());
-        m_pageId = getIDByName(m_strPageId.c_str());
-        onUpdateView(false);
+        _nAssociateTabButtonId = getIDByName(_strAssociateTabButtonId.c_str());
+        _pageId = getIDByName(_strPageId.c_str());
     }
 
-    void getFeildNewValue(int nID, string &strValue) {
+    void getFieldNewValue(int nID, string &strValue) {
         string str;
 
         str = getUIObjectText(nID);
         if (strcmp(str.c_str(), strValue.c_str()) != 0) {
-            m_bModified = true;
+            _isModified = true;
             strValue = str;
         }
     }
 
-    bool isModified() { return m_bModified; }
+    int getAssociateTabButtonId() const { return _nAssociateTabButtonId; }
 
-    int getAssociateTabButtonId() const { return m_nAssociateTabButtonId; }
+    void setEditorReadonly(int id, bool isReadonly) {
+        auto obj = getUIObjectById(id, CSkinEditCtrl::className());
+        if (obj) {
+            auto editor = static_cast<CSkinEditCtrl *>(obj);
+            auto style = editor->getStyle();
+            if (isReadonly) {
+                style |= CSkinEditCtrl::S_READ_ONLY;
+            } else {
+                style &= ~CSkinEditCtrl::S_READ_ONLY;
+            }
+            editor->setStyle(style);
+        }
+    }
 
 protected:
     friend class CDlgMediaInfo;
 
-    CDlgMediaInfo               *m_pDlgMediaInfo;
-    bool                        m_bModified;
-    string                      m_strAssociateTabButtonId, m_strPageId;
-    int                         m_nAssociateTabButtonId;
-    int                         m_pageId;
+    CDlgMediaInfo               *_parent;
+    bool                        _isModified;
+    string                      _strAssociateTabButtonId, _strPageId;
+    int                         _nAssociateTabButtonId;
+    int                         _pageId;
 
 };
 
 class CDlgMediaInfoPageBasic : public CDlgMediaInfoPage {
 public:
-    CDlgMediaInfoPageBasic() : CDlgMediaInfoPage("CID_C_MI_BASIC", "CMD_MI_BASIC") {
+    CDlgMediaInfoPageBasic(CDlgMediaInfo *parent) : CDlgMediaInfoPage(parent, "CID_C_MI_BASIC", "CMD_MI_BASIC"), _tags(parent->_tags) {
     }
 
     void onCreate() {
@@ -83,77 +85,118 @@ public:
     }
 
     void onUpdateView(bool bRedraw = true) {
-        m_bModified = false;
+        _isModified = false;
+        _idToValues = {
+            { CID_E_ARTIST, &_tags.artist },
+            { CID_E_ALBUM, &_tags.album },
+            { CID_E_TITLE, &_tags.title },
+            { CID_E_TRACK, &_tags.trackNo },
+            { CID_E_YEAR, &_tags.year },
+            { CID_CB_GENRE, &_tags.genre },
+        };
 
-        setUIObjectText(CID_E_ARTIST, m_pDlgMediaInfo->m_artist.c_str(), bRedraw);
-        setUIObjectText(CID_E_ALBUM, m_pDlgMediaInfo->m_album.c_str(), bRedraw);
-        setUIObjectText(CID_E_TITLE, m_pDlgMediaInfo->m_title.c_str(), bRedraw);
-        setUIObjectText(CID_E_TRACK, m_pDlgMediaInfo->m_track.c_str(), bRedraw);
-        setUIObjectText(CID_E_YEAR, m_pDlgMediaInfo->m_year.c_str(), bRedraw);
-        setUIObjectText(CID_CB_GENRE, m_pDlgMediaInfo->m_genre.c_str(), bRedraw);
-        setUIObjectText(CID_E_COMMENT, m_pDlgMediaInfo->m_comment.c_str(), bRedraw);
+        for (auto &item : _idToValues) {
+            setUIObjectText(item.first, item.second->c_str(), bRedraw);
+            setEditorReadonly(item.first, !_parent->_canModifyTags);
+        }
     }
 
     virtual void onSave() {
-        getFeildNewValue(CID_E_ARTIST, m_pDlgMediaInfo->m_artist);
-        getFeildNewValue(CID_E_ALBUM, m_pDlgMediaInfo->m_album);
-        getFeildNewValue(CID_E_TITLE, m_pDlgMediaInfo->m_title);
-        getFeildNewValue(CID_E_TRACK, m_pDlgMediaInfo->m_track);
-        getFeildNewValue(CID_E_YEAR, m_pDlgMediaInfo->m_year);
-        getFeildNewValue(CID_CB_GENRE, m_pDlgMediaInfo->m_genre);
-        getFeildNewValue(CID_E_COMMENT, m_pDlgMediaInfo->m_comment);
-        m_pDlgMediaInfo->m_bBasicInfoModified = m_bModified;
+        for (auto &item : _idToValues) {
+            getFieldNewValue(item.first, *item.second);
+        }
+        _parent->_isTagsModified = _isModified;
     }
 
+    BasicMediaTags              &_tags;
     int                         CID_E_ARTIST, CID_E_ALBUM, CID_E_TITLE;
     int                         CID_E_TRACK, CID_E_YEAR, CID_CB_GENRE, CID_E_COMMENT;
+    std::vector<std::pair<int, string *>> _idToValues;
 
 };
 
+string formatFileSize(long size) {
+    static cstr_t UNITS[] = { "KB", "MB", "G" };
+
+    if (size < 1024) {
+        return stringPrintf("%lld bytes", size);
+    }
+
+    int index = 0;
+    double v = size / 1024.0;
+    for (; v >= 1024 && index - 1 < (int)CountOf(UNITS); index++) {
+        v /= 1024;
+    }
+
+    return stringPrintf("%.2f %s (%lld bytes)", v, UNITS[index], size);
+}
+
 class CDlgMediaInfoPageDetail : public CDlgMediaInfoPage {
 public:
-    CDlgMediaInfoPageDetail() : CDlgMediaInfoPage("CID_C_MI_DETAIL", "CMD_MI_DETAIL") {
+    CDlgMediaInfoPageDetail(CDlgMediaInfo *parent) : CDlgMediaInfoPage(parent, "CID_C_MI_DETAIL", "CMD_MI_DETAIL"), _info(parent->_info), _parent(parent) {
     }
 
     void onCreate() {
         CDlgMediaInfoPage::onCreate();
 
-        GET_ID_BY_NAME3(CID_E_COMPOSER, CID_E_COPYRIGHT, CID_E_ENCODED);
-        GET_ID_BY_NAME4(CID_E_URL, CID_E_ORIG_ARTIST, CID_E_PUBLISHER, CID_E_BPM);
+        _detailsListCtrl = static_cast<CSkinListCtrl *>(getUIObjectById("LIST_DETAILS", CSkinListCtrl::className()));
+        if (_detailsListCtrl) {
+            _detailsListCtrl->addColumn("Name", 160);
+            _detailsListCtrl->addColumn("Value", 450);
+        }
     }
 
     void onUpdateView(bool bRedraw = true) {
-        m_bModified = false;
+        if (_detailsListCtrl) {
+            _detailsListCtrl->deleteAllItems();
 
-        setUIObjectText(CID_E_COMPOSER, m_pDlgMediaInfo->m_composer.c_str(), bRedraw);
-        setUIObjectText(CID_E_COPYRIGHT, m_pDlgMediaInfo->m_copyRight.c_str(), bRedraw);
-        setUIObjectText(CID_E_ENCODED, m_pDlgMediaInfo->m_encoded.c_str(), bRedraw);
-        setUIObjectText(CID_E_URL, m_pDlgMediaInfo->m_url.c_str(), bRedraw);
-        setUIObjectText(CID_E_ORIG_ARTIST, m_pDlgMediaInfo->m_origArtist.c_str(), bRedraw);
-        setUIObjectText(CID_E_PUBLISHER, m_pDlgMediaInfo->m_publisher.c_str(), bRedraw);
-        setUIObjectText(CID_E_BPM, m_pDlgMediaInfo->m_bpm.c_str(), bRedraw);
-    }
+            int index = _detailsListCtrl->insertItem(-1, _TL("Duration"));
+            _detailsListCtrl->setItemText(index, 1, formatDuration((_info.mediaLength + 500) / 1000));
 
-    virtual void onSave() {
-        getFeildNewValue(CID_E_COMPOSER, m_pDlgMediaInfo->m_composer);
-        getFeildNewValue(CID_E_COPYRIGHT, m_pDlgMediaInfo->m_copyRight);
-        getFeildNewValue(CID_E_ENCODED, m_pDlgMediaInfo->m_encoded);
-        getFeildNewValue(CID_E_URL, m_pDlgMediaInfo->m_url);
-        getFeildNewValue(CID_E_ORIG_ARTIST, m_pDlgMediaInfo->m_origArtist);
-        getFeildNewValue(CID_E_PUBLISHER, m_pDlgMediaInfo->m_publisher);
-        getFeildNewValue(CID_E_BPM, m_pDlgMediaInfo->m_bpm);
-        m_pDlgMediaInfo->m_bDetailInfoModified = m_bModified;
+            index = _detailsListCtrl->insertItem(-1, _TL("Sample rate"));
+            _detailsListCtrl->setItemText(index, 1, stringPrintf("%d Hz", _info.sampleRate));
+
+            index = _detailsListCtrl->insertItem(-1, _TL("Channels"));
+            _detailsListCtrl->setItemText(index, 1, stringPrintf("%d", _info.channels));
+
+            index = _detailsListCtrl->insertItem(-1, _TL("Bitrate"));
+            _detailsListCtrl->setItemText(index, 1, stringPrintf("%d kbps", _info.bitRate));
+
+            _detailsListCtrl->insertItem(-1, "");
+
+            index = _detailsListCtrl->insertItem(-1, _TL("File Name"));
+            _detailsListCtrl->setItemText(index, 1, fileGetName(_parent->_strMediaFile.c_str()));
+
+            index = _detailsListCtrl->insertItem(-1, _TL("Path"));
+            _detailsListCtrl->setItemText(index, 1, fileGetPath(_parent->_strMediaFile.c_str()));
+
+            index = _detailsListCtrl->insertItem(-1, _TL("Kind"));
+            _detailsListCtrl->setItemText(index, 1, MediaTags::getFileKind(_parent->_strMediaFile.c_str()));
+
+            FileStatInfo fstat;
+            getFileStatInfo(_parent->_strMediaFile.c_str(), fstat);
+
+            index = _detailsListCtrl->insertItem(-1, _TL("Size"));
+            _detailsListCtrl->setItemText(index, 1, formatFileSize(fstat.fileSize));
+
+            index = _detailsListCtrl->insertItem(-1, _TL("Modified"));
+            _detailsListCtrl->setItemText(index, 1, DateTime((int64_t)fstat.moifiedTime * 1000).toDateTimeString());
+
+            index = _detailsListCtrl->insertItem(-1, _TL("Created"));
+            _detailsListCtrl->setItemText(index, 1, DateTime((int64_t)fstat.createdTime * 1000).toDateTimeString());
+        }
     }
 
 protected:
-    int                         CID_E_COMPOSER, CID_E_COPYRIGHT, CID_E_ENCODED;
-    int                         CID_E_URL, CID_E_ORIG_ARTIST, CID_E_PUBLISHER, CID_E_BPM;
+    CDlgMediaInfo               *_parent;
+    ExtendedMediaInfo           &_info;
+    CSkinListCtrl               *_detailsListCtrl;
 
 };
 
 class CDlgMediaInfoPageLyrics : public CDlgMediaInfoPage {
 public:
-    CDlgMediaInfoPageLyrics() : CDlgMediaInfoPage("CID_C_MI_LYRICS", "CMD_MI_LYRICS") {
+    CDlgMediaInfoPageLyrics(CDlgMediaInfo *parent) : CDlgMediaInfoPage(parent, "CID_C_MI_LYRICS", "CMD_MI_LYRICS") {
     }
 
     void onCreate() {
@@ -163,22 +206,15 @@ public:
     }
 
     void onUpdateView(bool bRedraw = true) {
-        m_bModified = false;
+        _isModified = false;
 
-        if (m_pDlgMediaInfo->m_strLyrics.size() > 0) {
-            setUIObjectText(CID_E_LYRICS, m_pDlgMediaInfo->m_strLyrics.c_str());
-        }
+        setUIObjectText(CID_E_LYRICS, _parent->_lyrics.c_str());
+        setEditorReadonly(CID_E_LYRICS, !_parent->_canModifyLyrics);
     }
 
     virtual void onSave() {
-        string strLyrics;
-        strLyrics = getUIObjectText(CID_E_LYRICS);
-
-        if (strcmp(strLyrics.c_str(), m_pDlgMediaInfo->m_strLyrics.c_str()) != 0) {
-            m_pDlgMediaInfo->m_strLyrics = strLyrics.c_str();
-            m_bModified = true;
-            m_pDlgMediaInfo->m_bUnsyncLyricsModified = m_bModified;
-        }
+        getFieldNewValue(CID_E_LYRICS, _parent->_lyrics);
+        _parent->_isLyricsModified = _isModified;
     }
 
 protected:
@@ -190,127 +226,205 @@ protected:
 
 class CDlgMediaInfoPagePictures : public CDlgMediaInfoPage {
 public:
-    CDlgMediaInfoPagePictures() : CDlgMediaInfoPage("CID_C_MI_PICTURES", "CMD_MI_PICTURES") {
+    CDlgMediaInfoPagePictures(CDlgMediaInfo *parent) : CDlgMediaInfoPage(parent, "CID_C_MI_PICTURES", "CMD_MI_PICTURES") {
     }
 
     void onCreate() {
         CDlgMediaInfoPage::onCreate();
 
-        GET_ID_BY_NAME3(CID_ADD_PIC, CID_DEL_PIC, CID_SAVE_PIC_AS);
+        GET_ID_BY_NAME(PIC_ACTIONS);
 
-        m_pPicList = (CSkinImageListCtrl*)getUIObjectById("CID_LIST_PICS", CSkinImageListCtrl::className());
+        _picListCtrl = (CSkinListCtrl *)getUIObjectById("LIST_PICTURES", CSkinListCtrl::className());
+        if (_picListCtrl) {
+            _picListCtrl->addColumn("Name", 250, CColHeader::TYPE_IMAGE, false, DT_CENTER);
+        }
     }
 
     bool onCustomCommand(int nId) {
-        if (nId == CID_ADD_PIC) {
+        assert(_picListCtrl);
+        if (_picListCtrl == nullptr) {
+            return false;
+        }
+
+        if (nId == PIC_ACTIONS) {
+            CMenu menu;
+            VecStrings options;
+
+            menu.createPopupMenu();
+
+            menu.appendItem(IDC_ADD_PIC, _TL("&Add Picture..."));
+            menu.appendItem(IDC_DEL_PIC, _TL("&Delete Picture"));
+            menu.appendItem(IDC_SAVE_PIC_AS, _TL("&Save Picture as..."));
+
+            if (_picListCtrl->getSelectedCount() == 0) {
+                menu.enableItem(IDC_DEL_PIC, false);
+                menu.enableItem(IDC_SAVE_PIC_AS, false);
+            }
+
+            CRect rc;
+            getUIObjectRect(nId, rc);
+            m_pSkin->clientToScreen(rc);
+            menu.trackPopupMenu(rc.left, rc.bottom, m_pSkin);
+            return true;
+        }
+
+        return CDlgMediaInfoPage::onCustomCommand(nId);
+    }
+
+    bool onCommand(int nId) {
+
+        if (nId == IDC_ADD_PIC) {
             // add picture
             CFileOpenDlg    dlg(_TLT("Browse picture file"),
-                "", "All picture files (*.bmp; *.jpg; *.gif; *.png)\0*.bmp;*.jpg;*.gif;*.png\0\0", 1);
+                "", "All picture files (*.bmp; *.jpg; *.gif; *.png)\0*.bmp;*.jpg;*.jpeg;*.gif;*.png\0\0", 1);
 
             if (dlg.doModal(m_pSkin) != IDOK) {
                 return true;
             }
 
-            ID3v2Pictures::ITEM *pic;
+            string picData;
+            if (readFile(dlg.getOpenFile(), picData)) {
+                _parent->_isPicturesModified = true;
+                _parent->_pictures.push_back(picData);
 
-            pic = m_pDlgMediaInfo->m_pictures.appendNewPic();
-            pic->action = IFA_ADD;
-            pic->m_picType = ID3v2Pictures::PT_COVER_FRONT;
-            pic->setImageFile(dlg.getOpenFile());
-        } else if (nId == CID_DEL_PIC) {
+                int index = _picListCtrl->insertItem(-1, "");
+                auto image = loadRawImageDataFromMem(picData.c_str(), (uint32_t)picData.size());
+                _picListCtrl->setItemImage(index, 0, image);
+            } else {
+                ERR_LOG1("Failed to read picture file: %s", dlg.getOpenFile());
+            }
+        } else if (nId == IDC_DEL_PIC) {
             // delete picture
-        } else if (nId == CID_SAVE_PIC_AS) {
+            while (true) {
+                int index = _picListCtrl->getNextSelectedItem(-1);
+                if (index != -1) {
+                    _parent->_isPicturesModified = true;
+                    _picListCtrl->deleteItem(index);
+                    if (index < _parent->_pictures.size()) {
+                        _parent->_pictures.erase(_parent->_pictures.begin() + index);
+                    }
+                } else {
+                    break;
+                }
+            }
+        } else if (nId == IDC_SAVE_PIC_AS) {
             int nPos = -1;
 
             while (1) {
-                nPos = m_pPicList->getNextSelectedItem(nPos);
+                nPos = _picListCtrl->getNextSelectedItem(nPos);
                 if (nPos == -1) {
                     break;
                 }
 
-                assert(nPos < m_pDlgMediaInfo->m_pictures.m_vItems.size());
-                assert(m_pPicList->getItemCount() == m_pDlgMediaInfo->m_pictures.m_vItems.size());
+                assert(nPos < _parent->_pictures.size());
+                assert(_picListCtrl->getItemCount() == _parent->_pictures.size());
 
-                ID3v2Pictures::ITEM *pic = m_pDlgMediaInfo->m_pictures.m_vItems[nPos];
-                char szExtA[4];
-                string strExt;
-
-                pic->mimeToPicExt(szExtA);
                 CFileSaveDlg    dlg(_TLT("save picture as..."),
-                    "", "All picture files (*.bmp; *.jpg; *.gif; *.png)\0*.bmp;*.jpg;*.gif;*.png\0\0", 1);
+                    "", "All picture files (*.jpg; *.gif; *.png; *.bmp)\0*.jpg;*.gif;*.png;*.bmp\0\0", 1);
 
                 if (dlg.doModal(m_pSkin) != IDOK) {
                     break;
                 }
-                strExt = ".";
-                strExt += szExtA;
+                string strExt = guessPictureDataExt(_parent->_pictures[nPos]);
 
                 string file = dlg.getSaveFile();
                 fileSetExt(file, strExt.c_str());
 
-                writeFile(file.c_str(), pic->m_buffPic.data(), pic->m_buffPic.size());
+                writeFile(file.c_str(), _parent->_pictures[nPos]);
             }
         } else {
-            return CSkinContainer::onCustomCommand(nId);
+            return CDlgMediaInfoPage::onCommand(nId);
         }
 
         return true;
     }
 
     void onUpdateView(bool bRedraw = true) {
-        m_bModified = false;
+        _parent->_isPicturesModified = false;
+        if (_picListCtrl) {
+            _picListCtrl->deleteAllItems();
 
-    }
-
-    virtual void onSave() {
-        if (m_pDlgMediaInfo->m_pictures.isModified()) {
-            m_bModified = true;
+            for (auto &pic : _parent->_pictures) {
+                int index = _picListCtrl->insertItem(-1, "");
+                auto image = loadRawImageDataFromMem(pic.c_str(), (uint32_t)pic.size());
+                _picListCtrl->setItemImage(index, 0, image);
+            }
         }
-        m_pDlgMediaInfo->m_bPicturesModified = m_bModified;
     }
 
 protected:
-    int                         CID_ADD_PIC, CID_DEL_PIC, CID_SAVE_PIC_AS;
-    CSkinImageListCtrl          *m_pPicList;
+    int                         PIC_ACTIONS;
+    CSkinListCtrl              *_picListCtrl;
 
 };
 
 
 //////////////////////////////////////////////////////////////////////////
 
-CDlgMediaInfo::CDlgMediaInfo(const MediaPtr &media) : CMPSkinWnd(), m_media(media) {
-    m_pOldPage = nullptr;
-
-    m_vInfoPages.push_back(new CDlgMediaInfoPageBasic());
-    m_vInfoPages.push_back(new CDlgMediaInfoPageDetail());
-    m_vInfoPages.push_back(new CDlgMediaInfoPageLyrics());
-    m_vInfoPages.push_back(new CDlgMediaInfoPagePictures());
+CDlgMediaInfo::CDlgMediaInfo(const MediaPtr &media) : CMPSkinWnd(), _media(media) {
 }
 
 CDlgMediaInfo::~CDlgMediaInfo(void) {
 }
 
+
+CUIObject *CDlgMediaInfo::createUIObject(cstr_t className, CSkinContainer *container) {
+    static std::pair<cstr_t, std::function<CDlgMediaInfoPage *(CDlgMediaInfo *)>> Pages[] = {
+        { "Container.basic", [](CDlgMediaInfo *dlg) { return new CDlgMediaInfoPageBasic(dlg); } },
+        { "Container.detail", [](CDlgMediaInfo *dlg) { return new CDlgMediaInfoPageDetail(dlg); } },
+        { "Container.lyrics", [](CDlgMediaInfo *dlg) { return new CDlgMediaInfoPageLyrics(dlg); } },
+        { "Container.pictures", [](CDlgMediaInfo *dlg) { return new CDlgMediaInfoPagePictures(dlg); } },
+    };
+
+    for (auto &page : Pages) {
+        if (strcmp(className, page.first) == 0) {
+            auto obj = page.second(this);
+            obj->setParent(this, container);
+            _vInfoPages.push_back(obj);
+            return obj;
+        }
+    }
+
+    return CMPSkinWnd::createUIObject(className, container);
+}
+
 void CDlgMediaInfo::onSkinLoaded() {
     CMPSkinWnd::onSkinLoaded();
 
-    for (int i = 0; i < (int)m_vInfoPages.size(); i++) {
-        m_vInfoPages[i]->setParent(this);
-        m_vInfoPages[i]->onInitialUpdate();
-    }
-
     reloadMediaInfo();
 
-    CSkinToolbar*pToolbar = (CSkinToolbar *)getUIObjectById(m_pSkinFactory->getIDByName("CID_TB_MEDIAINFO"),
+    assert(!_vInfoPages.empty());
+    auto defPageId = g_profile.getString("media-info", "active-page", _vInfoPages[0]->_strPageId.c_str());
+    auto defPage = _vInfoPages[0];
+
+    for (auto page : _vInfoPages) {
+        if (page->_strPageId == defPageId) {
+            defPage = page;
+        }
+    }
+
+    CSkinToolbar*pToolbar = (CSkinToolbar *)getUIObjectById(m_pSkinFactory->getIDByName("CID_MEDIA_INFO_TAB"),
         CSkinToolbar::className());
     if (pToolbar) {
-        pToolbar->setCheck(m_pSkinFactory->getIDByName("CMD_MI_BASIC"), true, false);
+        pToolbar->setCheck(m_pSkinFactory->getIDByName(defPage->_strAssociateTabButtonId),
+            true, false);
+    }
+
+    auto obj = getUIObjectById(defPage->_strPageId);
+    if (obj && obj->isContainer()) {
+        obj->getParent()->switchToPage(static_cast<CSkinContainer *>(obj), false, 0, false);
     }
 }
 
 bool CDlgMediaInfo::onCustomCommand(int nId) {
-    for (auto page : m_vInfoPages) {
-        if (page->m_nAssociateTabButtonId == nId) {
-            
+    for (auto page : _vInfoPages) {
+        if (page->_nAssociateTabButtonId == nId) {
+            auto obj = getUIObjectById(page->_strPageId);
+            if (obj && obj->isContainer()) {
+                obj->getParent()->switchToPage(static_cast<CSkinContainer *>(obj), false, 0, true);
+                g_profile.writeString("media-info", "active-page", page->_strPageId.c_str());
+                return true;
+            }
         }
     }
 
@@ -318,7 +432,7 @@ bool CDlgMediaInfo::onCustomCommand(int nId) {
 }
 
 void CDlgMediaInfo::onDestroy() {
-    m_media = nullptr;
+    _media = nullptr;
 
     CMPSkinWnd::onDestroy();
 }
@@ -328,163 +442,68 @@ void converID3v1Tag(char szTag[], int nLen, cstr_t szValue, int nEncoding) {
 }
 
 void CDlgMediaInfo::onOK() {
-    bool bModified = false;
-    int nRet;
-
-    for (int i = 0; i < (int)m_vInfoPages.size(); i++) {
-        m_vInfoPages[i]->onSave();
-        if (m_vInfoPages[i]->isModified()) {
-            bModified = true;
-        }
+    for (auto page : _vInfoPages) {
+        page->onSave();
     }
 
-    if (!bModified) {
+    int ret = ERR_OK;
+    if (_isTagsModified && _canModifyTags) {
+        ret = MediaTags::setBasicTags(_strMediaFile.c_str(), _tags);
+    }
+
+    if (_isLyricsModified && ret == ERR_OK && _canModifyLyrics) {
+        ret = MediaTags::saveEmbeddedLyrics(_strMediaFile.c_str(), _lyrics);
+    }
+
+    // id3v2 pictures
+    if (_isPicturesModified && ret == ERR_OK && _canModifyPictures) {
+        ret = MediaTags::setEmbeddedPictures(_strMediaFile.c_str(), _pictures);
+    }
+
+    if (ret != ERR_OK) {
+        messageOut(ERROR2STR_LOCAL(ret));
         return;
     }
 
-    //
-    // update media info.
-    //
-    BasicMediaTags tags;
-    tags.title = m_title;
-    tags.album = m_album;
-    tags.year = m_year;
-    tags.genre = m_genre;
-    tags.trackNo = m_track;
-    tags.comments = m_comment;
-
-    // update id3v1 tag
-    if (m_bBasicInfoModified && (m_nSupportedMediaTagType & MTT_ID3V1)) {
-        CID3v1 id3v1;
-        nRet = id3v1.saveTag(m_strMediaFile.c_str(), tags);
-        if (nRet != ERR_OK) {
-            messageOut(ERROR2STR_LOCAL(nRet));
-            return;
-        }
-    }
-
-    // update id3v2 tag
-    if (m_bDetailInfoModified ||
-        m_bUnsyncLyricsModified ||
-        m_bPicturesModified ||
-        (m_bBasicInfoModified && (m_nSupportedMediaTagType & MTT_ID3V2))) {
-        CID3v2IF id3v2(m_nEncodingOfConvertAnsi);
-
-        nRet = id3v2.open(m_strMediaFile.c_str(), true, true);
-        if (nRet == ERR_OK) {
-            // ID3v2 general tags
-            if (m_bBasicInfoModified || m_bDetailInfoModified) {
-                nRet = id3v2.setTags(tags);
-                //nRet = id3v2.SetExtraTags(m_composer.c_str(), m_encoded.c_str(), m_url.c_str(), m_copyRight.c_str(),
-                //    m_origArtist.c_str(), m_publisher.c_str(), m_bpm.c_str());
-                if (nRet != ERR_OK) {
-                    goto ERR_MSG_OUT_RET;
-                }
-            }
-
-            // Id3v2 lyrics
-            if (m_bUnsyncLyricsModified) {
-                nRet = id3v2.setUnsynchLyrics(m_strLyrName.c_str(), "", m_strLyrics.c_str());
-                if (nRet != ERR_OK) {
-                    goto ERR_MSG_OUT_RET;
-                }
-            }
-
-            // id3v2 pictures
-            if (m_bPicturesModified) {
-                nRet = id3v2.updatePictures(m_pictures);
-                if (nRet != ERR_OK) {
-                    goto ERR_MSG_OUT_RET;
-                }
-            }
-        }
-        nRet = id3v2.save();
-        if (nRet != ERR_OK) {
-            goto ERR_MSG_OUT_RET;
-        }
-    }
-
     CMPSkinWnd::onOK();
-    return;
-
-ERR_MSG_OUT_RET:
-    messageOut(ERROR2STR_LOCAL(nRet));
 }
-
-void CDlgMediaInfo::clear() {
-    m_artist.resize(0);
-    m_title.resize(0);
-    m_album.resize(0);
-    m_comment.resize(0);
-    m_track.resize(0);
-    m_year.resize(0);
-    m_genre.resize(0);
-    m_composer.resize(0);
-    m_encoded.resize(0);
-    m_url.resize(0);
-    m_copyRight.resize(0);
-    m_origArtist.resize(0);
-    m_publisher.resize(0);
-    m_bpm.resize(0);
-
-    m_bBasicInfoModified = false;
-    m_bDetailInfoModified = false;
-    m_bUnsyncLyricsModified = false;
-    m_bPicturesModified = false;
-
-    m_strLyrics.clear();
-}
-
-#define IfNotEmptyThenSet(strSrc, strTarg)  if (!strSrc.empty())    strTarg = strSrc
 
 void CDlgMediaInfo::reloadMediaInfo() {
     //
     // get Media file name and info
     //
-    clear();
-
-    if (!m_media) {
+    if (!_media) {
         return;
     }
 
-    m_nSupportedMediaTagType = 0;
-    m_strMediaFile = m_media->url;
-    m_nSupportedMediaTagType = getSupportedMTTByExt(m_strMediaFile.c_str());
+    _strMediaFile = _media->url;
 
-    // load id3v1 tag
-    BasicMediaTags tags;
-    if (m_nSupportedMediaTagType & MTT_ID3V1) {
-        CID3v1 id3v1;
-        id3v1.getTag(m_strMediaFile.c_str(), tags);
-    }
+    _isTagsModified = false;
+    _isLyricsModified = false;
+    _isPicturesModified = false;
 
-    // load id3v2 tag
-    if (m_nSupportedMediaTagType & MTT_ID3V2) {
-        CID3v2IF id3v2(m_nEncodingOfConvertAnsi);
+    _canModifyTags = MediaTags::canSaveBasicTags(_strMediaFile.c_str());
+    _canModifyLyrics = MediaTags::canSaveEmbeddedLyrics(_strMediaFile.c_str());
+    _canModifyPictures = MediaTags::canSavePictures(_strMediaFile.c_str());
 
-        int ret = id3v2.open(m_strMediaFile.c_str(), false, false);
+    MediaTags::getTags(_strMediaFile.c_str(), _tags, _info);
+
+    auto vExistingLyrUrls = MediaTags::getEmbeddedLyrics(_strMediaFile.c_str());
+    if (!vExistingLyrUrls.empty()) {
+        RawLyrics rawLyrics;
+        // The firsted returned lyrics should be the best lyrics.
+        int ret = MediaTags::openEmbeddedLyrics(_strMediaFile.c_str(), vExistingLyrUrls[0].c_str(), false, ED_SYSDEF, rawLyrics);
         if (ret == ERR_OK) {
-            // ID3v2 general tags
-            ret = id3v2.getTags(tags);
-
-            // Id3v2 lyrics
-            ID3v2UnsynchLyrics lyrics;
-            ret = id3v2.getUnsyncLyrics(lyrics);
-            if (ret == ERR_OK) {
-                m_strLyrics = lyrics.m_strLyrics.c_str();
-            }
-
-            // id3v2 pictures
-            id3v2.getPictures(m_pictures);
+            _lyrics = toLyricsString(rawLyrics);
         }
+        _lyricsOrg = _lyrics;
     }
 
-    m_title = tags.title;
-    m_album = tags.album;
-    m_year = tags.year;
-    m_genre = tags.genre;
-    m_track = tags.trackNo;
-    m_comment = tags.comments;
+    MediaTags::getEmbeddedPictures(_strMediaFile.c_str(), _pictures);
+
+    for (auto page : _vInfoPages) {
+        page->onUpdateView();
+    }
 }
 
 void showMediaInfoDialog(CSkinWnd *pParent, const MediaPtr &media) {

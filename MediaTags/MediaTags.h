@@ -1,25 +1,35 @@
 #pragma once
 
-#include "ID3/ID3v1.h"
-#include "ID3v2IF.h"
-#include "M4aTag.h"
+#include "MediaTagTypes.hpp"
+#include "LyricsData.h"
 
 
 namespace MediaTags {
 
-// pMediaLength: in ms
-int getTags(cstr_t szFile, BasicMediaTags &tags, ExtendedMediaInfo &extendedInfo);
-int setBasicTags(cstr_t szFile, BasicMediaTags &tags);
+string getFileKind(cstr_t fileName);
 
-bool isMediaTypeSupported(cstr_t szFile);
+int getTags(cstr_t fileName, BasicMediaTags &tags, ExtendedMediaInfo &extendedInfo);
+bool canSaveBasicTags(cstr_t lyricsName);
+int setBasicTags(cstr_t fileName, BasicMediaTags &tags);
 
-int getEmbeddedLyrics(cstr_t szFile, VecStrings &vLyricsNames);
+bool isEmbeddedLyricsUrl(cstr_t lyricsName);
 
-bool isEmbeddedLyricsSupported(cstr_t szFile);
-bool isID3v2TagSupported(cstr_t szFile);
-bool isM4aTagSupported(cstr_t szFile);
-bool isKarTagSupported(cstr_t szFile);
+VecStrings getEmbeddedLyrics(cstr_t fileName);
+int openEmbeddedLyrics(cstr_t fileName, cstr_t lyricsUrl, bool isUseSpecifiedEncoding, CharEncodingType encodingSpecified, RawLyrics &rawLyricsOut);
+int saveEmbeddedLyrics(cstr_t fileName, const VecStrings &vLyricsUrls, const string &lyrics);
+int saveEmbeddedLyrics(cstr_t fileName, const VecStrings &vLyricsUrls, const RawLyrics &rawLyrics);
+// 保存一种或者多种嵌入到歌曲中的歌词
+int saveEmbeddedLyrics(cstr_t fileName, const string &lyrics);
 
-int removeEmbeddedLyrics(cstr_t szMediaFile, VecStrings &vLyrNamesToRemove, int *succeededCount = nullptr);
+bool canSaveEmbeddedLyrics(cstr_t fileName);
+VecStrings getSupportedEmbeddedLyricsUrls(cstr_t fileName);
+string getSuggestedEmbeddedLyricsUrl(cstr_t fileName);
+
+int removeEmbeddedLyrics(cstr_t mediaFile, VecStrings &vLyrNamesToRemove, int *succeededCount = nullptr);
+
+int getEmbeddedPicture(cstr_t fileName, int index, string &imageDataOut);
+void getEmbeddedPictures(cstr_t fileName, VecStrings &imageDataOut);
+bool canSavePictures(cstr_t fileName);
+int setEmbeddedPictures(cstr_t fileName, const VecStrings &pictures);
 
 } // namespace MediaTags

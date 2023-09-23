@@ -117,8 +117,8 @@ void CLyricsKeywordFilter::init(cstr_t dataDir) {
         // replace
         u16string strWSrc, strWDst;
 
-        utf8ToUCS2(TO_RPLACE_STRS[i], -1, strWSrc);
-        utf8ToUCS2(TO_RPLACE_STRS[i + 1], -1, strWDst);
+        utf8ToUCS2(TO_RPLACE_STRS[i], -1, strWDst);
+        utf8ToUCS2(TO_RPLACE_STRS[i + 1], -1, strWSrc);
         ucs2TableReplaceChars(strWSrc.c_str(), strWDst.c_str());
     }
 
@@ -198,7 +198,7 @@ void CLyricsKeywordFilter::filter(cwstr_t szInput, u16string &strOut) {
                 if (wTo == '(') {
                     nCommentDeep++;
                 } else if (wTo != ')') {
-                    strOut += wTo;
+                    strOut.push_back(wTo);
                 }
             } else {
                 if (wTo == ')') {

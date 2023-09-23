@@ -11,11 +11,10 @@ void CFileDlgExtFilter::addExtention(cstr_t szDesc, cstr_t szExt) {
     append(1, char('\0'));
 }
 
-void ExtFiltersToSet(cstr_t extFilter, SetStrings &setExts) {
+void extractExtFilters(cstr_t extFilter, VecStrings &vExts) {
     VecStrings vStr;
     multiStrToVStr(extFilter, vStr);
 
-    string str;
     for (uint32_t i = 0; i < vStr.size(); i++) {
         cstr_t p = vStr[i].c_str();
         while (p != nullptr) {
@@ -28,22 +27,25 @@ void ExtFiltersToSet(cstr_t extFilter, SetStrings &setExts) {
             while (isAlphaDigit(*end)) {
                 end++;
             }
-            str.clear();
-            str.append(beg, int(end - beg));
-            setExts.insert(toLower(str.c_str()));
+
+            string str(beg, int(end - beg));
+            str = toLower(str.c_str());
+            if (!isInArray(str, vExts)) {
+                vExts.push_back(str);
+            }
             p = end;
         }
     }
 }
 
-NSArray *SetStrToExtArray(SetStrings &setExt) {
-    if (setExt.size() == 0) {
+NSArray *toNsStringArray(VecStrings &vExts) {
+    if (vExts.empty()) {
         return nil;
     }
 
     NSMutableArray *ext = [[NSMutableArray alloc] init];
-    for (SetStrings::iterator it = setExt.begin(); it != setExt.end(); ++it) {
-        NSString *s = [NSString stringWithUTF8String:(*it).c_str()];
+    for (auto &name : vExts) {
+        NSString *s = [NSString stringWithUTF8String:name.c_str()];
         [ext addObject:s];
     }
 
@@ -60,7 +62,7 @@ CFileOpenDlg::CFileOpenDlg(cstr_t szTitle, cstr_t szFile, cstr_t extFilter, int 
     }
 
     if (extFilter) {
-        ExtFiltersToSet(extFilter, m_setExt);
+        extractExtFilters(extFilter, m_vExts);
     }
 }
 
@@ -80,7 +82,7 @@ int CFileOpenDlg::doModal(Window *pWndParent) {
 
     // [openDlg setDirectoryURL:[NSURL URLWithString:[NSString stringWithUTF8String:m_szFile]]];
 
-    [openDlg setAllowedFileTypes:SetStrToExtArray(m_setExt)];
+    [openDlg setAllowedFileTypes:toNsStringArray(m_vExts)];
 
     m_vFiles.clear();
 

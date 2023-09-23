@@ -39,7 +39,7 @@ void CSkinMenuBar::onCreate() {
 
     m_font.setParent(m_pSkin);
 
-    m_popupMenu = (SkinMenuItemsContainer *)m_pSkin->getSkinFactory()->createUIObject(m_pSkin, "MenuItemsContainer", m_pSkin->getRootContainer());
+    m_popupMenu = (SkinMenuItemsContainer *)m_pSkin->createUIObject("MenuItemsContainer", m_pSkin->getRootContainer());
     assert(m_popupMenu);
     m_popupMenu->setParentMsgReceiver(this);
     m_pSkin->getRootContainer()->addUIObject(m_popupMenu);

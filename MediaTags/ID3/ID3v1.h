@@ -37,7 +37,7 @@ public:
     };
 #pragma pack(pop)
 
-    static cstr_t *getSupportedExtArray();
+    bool hasTag(FILE *fp);
 
     int getTag(cstr_t szFile, BasicMediaTags &tags);
     int getTag(FILE *fp, BasicMediaTags &tags);

@@ -12,7 +12,7 @@ CDlgSaveEmbeddedLyrics::~CDlgSaveEmbeddedLyrics() {
 }
 
 int CDlgSaveEmbeddedLyrics::doModal(Window *pWnd) {
-    if (!g_LyricData.hasLyricsOpened()) {
+    if (!g_currentLyrics.hasLyricsOpened()) {
         pWnd->messageOut(_TLT("No Lyrics file was opened."));
         return IDCANCEL;
     }
@@ -25,9 +25,8 @@ int CDlgSaveEmbeddedLyrics::doModal(Window *pWnd) {
         return IDCANCEL;
     }
 
-    string str;
-    g_LyricData.toString(str, FT_LYRICS_LRC, true);
-    m_bufLyrics = insertWithFileBom(str);
+    string str = g_currentLyrics.toString(true);
+    m_bufLyrics = autoInsertWithUtf8Bom(str);
 
     if (MediaTags::isM4aTagSupported(m_strMediaUrl.c_str())) {
         // save lyrics directly
@@ -55,14 +54,14 @@ bool CDlgSaveEmbeddedLyrics::onInitDialog() {
     int n = m_ctrlListLyrics.InsertColumn(COL_DESC, _TLT("Embedded Lyrics Type"), LVCFMT_LEFT, 450);
     n = m_ctrlListLyrics.InsertColumn(COL_NAME, _TLT(""), LVCFMT_LEFT, 200);
 
-    VecStrings vLyricsNames;
-    MediaTags::getEmbeddedLyrics(m_strMediaUrl.c_str(), vLyricsNames);
+    VecStrings vLyricsUrls;
+    MediaTags::getEmbeddedLyrics(m_strMediaUrl.c_str(), vLyricsUrls);
 
-    m_bHasEmbeddedLyrAlready = vLyricsNames.size() > 0;
+    m_bHasEmbeddedLyrAlready = vLyricsUrls.size() > 0;
 
-    addEmbeddedItem(vLyricsNames, SZ_SONG_ID3V2_USLT);
-    addEmbeddedItem(vLyricsNames, SZ_SONG_ID3V2_SYLT);
-    addEmbeddedItem(vLyricsNames, SZ_SONG_LYRICS3V2);
+    addEmbeddedItem(vLyricsUrls, SZ_SONG_ID3V2_USLT);
+    addEmbeddedItem(vLyricsUrls, SZ_SONG_ID3V2_SYLT);
+    addEmbeddedItem(vLyricsUrls, SZ_SONG_LYRICS3V2);
 
     return true;
 }

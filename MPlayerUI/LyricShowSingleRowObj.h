@@ -14,13 +14,8 @@ public:
 
 public:
     void fastDraw(CRawGraph *canvas, CRect *prcUpdate = nullptr);
-    int getLyricRightRowAlignPos(CRawGraph *canvas, LyricsLine *pLyricRow);
-    int getLyricLeftRowAlignPos(CRawGraph *canvas, LyricsLine *pLyricRow);
 
-    void drawCurLineFadeInNextLine(CRawGraph *canvas, LyricsLine *pLineCur, LyricsLine *pLineNext, int x, int y);
-
-    void getCurLineFadeOutColor(LyricsLine *pLine, CColor clrIn, CColor clrOut, CColor &color);
-    void getNextLineFadeInColor(LyricsLine *pLine, CColor clrIn, CColor clrOut, CColor &color);
+    void drawCurLineFadeInNextLine(CRawGraph *canvas, LyricsLine &lineCur, LyricsLine *lineNext, int x, int y);
 
 public:
     static cstr_t className() { return ms_szClassName; }

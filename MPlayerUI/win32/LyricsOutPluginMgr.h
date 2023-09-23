@@ -37,7 +37,7 @@ public:
     void onSongChanged();
 
     virtual int getLineCount();
-    virtual bool getLyricsOfLine(int nLine, char szLyrics[], int nBuffLen, int &nBegTime, int &nEndTime);
+    virtual bool getLyricsOfLine(int nLine, char szLyrics[], int nBuffLen, int &beginTime, int &endTime);
     virtual int getCurLine();
     virtual int getPlayPos();
     virtual bool getMediaFile(char szFile[], int nBuffLen);

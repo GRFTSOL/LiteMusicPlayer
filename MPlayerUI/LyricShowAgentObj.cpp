@@ -104,7 +104,7 @@ void CLyricShowAgentObj::onEvent(const IEvent *pEvent) {
     } else if (pEvent->eventType == ET_LYRICS_CHANGED && m_bEnableStaticTextStyle) {
         m_pSkin->postExecOnMainThread([this]() {
             string strNewStyle;
-            if (g_LyricData.getLyrContentType() != LCT_TXT) {
+            if (g_currentLyrics.getLyrContentType() != LCT_TXT) {
                 strNewStyle = m_strLyrDisplayStyleDefault;
             } else {
                 strNewStyle = SZ_TXT_LYR_CONTAINER;
@@ -155,8 +155,7 @@ void CLyricShowAgentObj::createInfoTextCtrl() {
             return;
         }
 
-        m_pInfoTextCtrl = (CMPSkinInfoTextCtrl*)m_pSkin->getSkinFactory()->createUIObject(m_pSkin,
-            CMPSkinInfoTextCtrl::className(), this);
+        m_pInfoTextCtrl = (CMPSkinInfoTextCtrl*)m_pSkin->createUIObject(CMPSkinInfoTextCtrl::className(), this);
         assert(m_pInfoTextCtrl);
         if (m_pInfoTextCtrl->isUseParentBg()) {
             m_pInfoTextCtrl->setProperty("TextColor", colorToStr(m_pLyricsShow->getHighlightColor()).c_str());
@@ -189,7 +188,7 @@ void CLyricShowAgentObj::changeLyricsDisplayStyle(cstr_t szLyrDispalyStyle, bool
 
     m_strLyrDisplayStyleCurrent = szLyrDispalyStyle;
 
-    m_pLyricsShow = (CLyricShowObj*)m_pSkin->getSkinFactory()->createUIObject(m_pSkin, szLyrDispalyStyle, this);
+    m_pLyricsShow = (CLyricShowObj*)m_pSkin->createUIObject(szLyrDispalyStyle, this);
     if (!m_pLyricsShow) {
         return;
     }
@@ -205,17 +204,15 @@ void CLyricShowAgentObj::changeLyricsDisplayStyle(cstr_t szLyrDispalyStyle, bool
     CSkinToolbar *pToolbarLyrTxt = (CSkinToolbar*)m_pSkin->getUIObjectById(ID_TB_LYR_TXT, CSkinToolbar::className());
     if (pToolbarLyrSync && pToolbarLyrTxt) {
         bool bTxtStyle = (strcasecmp(m_strLyrDisplayStyleCurrent.c_str(), SZ_TXT_LYR_CONTAINER) == 0);
-        if (bTxtStyle) {
-            CLyricShowTxtObj *pTxtObj = (CLyricShowTxtObj *)m_pSkin->getUIObjectByClassName(CLyricShowTxtObj::className());
-            if (pTxtObj) {
-                pToolbarLyrTxt->setCheck(CMD_LYR_SCROLL_ENABLE_RECORD,
-                    pTxtObj->isRecordScrollingActionsEnabled() && g_LyricData.getLyrContentType() == LCT_TXT, false);
-                pToolbarLyrTxt->setCheck(CMD_LYR_SCROLL_ENABLE_REPLAY, pTxtObj->isReplayScrollingActionsEnabled(), false);
-            }
-        }
 
         pToolbarLyrSync->setVisible(!bTxtStyle, true);
         pToolbarLyrTxt->setVisible(bTxtStyle, true);
+
+        // 根据当前的模式调整 toolbar 的大小.
+        auto parentToolbar = pToolbarLyrSync->getParent();
+        int w1 = bTxtStyle ? pToolbarLyrTxt->m_rcObj.width() : pToolbarLyrSync->m_rcObj.width();
+        int w2 = !bTxtStyle ? pToolbarLyrTxt->m_rcObj.width() : pToolbarLyrSync->m_rcObj.width();
+        parentToolbar->m_rcObj.right -= w2 - w1;
     }
 }
 
@@ -228,7 +225,7 @@ void CLyricShowAgentObj::loadToolbar() {
         this->removeUIObject(m_pToolbar, true);
     }
 
-    m_pToolbar = m_pSkin->getSkinFactory()->createUIObject(m_pSkin, "NormalToolbar", this);
+    m_pToolbar = m_pSkin->createUIObject("NormalToolbar", this);
     if (m_pToolbar) {
         m_pToolbar->setProperty(SZ_PN_RECT, "0,0,w,");
         this->insertUIObjectAt(m_pLyricsShow, m_pToolbar);

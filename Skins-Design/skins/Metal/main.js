@@ -16,7 +16,7 @@ var STATUS_HIDE_NONE = 0,
     STATUS_HIDE_LYRICS = 1, 
     STATUS_HIDE_PLAYLIST = 2;
 
-var plStatus = profile.getInt('MetalUI', 'PlaylistLyricsHideStatus', STATUS_HIDE_NONE);
+var plStatus = profile.getInt('Metal-PlaylistLyricsHideStatus', STATUS_HIDE_NONE);
 if (plStatus != STATUS_HIDE_NONE) {
     doHidePlaylistLyrics();
 }
@@ -34,13 +34,20 @@ function doHidePlaylistLyrics() {
 }
 
 function doShowHideBody() {
-    if (orgHeight) {
+    if (document.height < 170) {
         // 显示 body
+        if (!orgHeight) {
+            orgHeight = profile.getInt('Metal-main-wnd-height', document.height);
+            if (orgHeight < 170) {
+                orgHeight = 400;
+            }
+        }
+
         document.height = orgHeight;
-        orgHeight = '';
         body.visible = true;
         bodyBg.visible = false;
     } else {
+        profile.writeInt('Metal-main-wnd-height', document.height);
         orgHeight = document.height;
         document.height = 120;
         body.visible = false;
@@ -55,7 +62,7 @@ document.oncommand = function(cmd) {
         if (plStatus > 2) {
             plStatus = 0;
         }
-        profile.writeInt('MetalUI', 'PlaylistLyricsHideStatus', plStatus);
+        profile.writeInt('Metal-PlaylistLyricsHideStatus', plStatus);
         doHidePlaylistLyrics();
     } else if (cmd == CID_HIDE_BOTTOM) {
         console.log('oncommand: ', 'CID_HIDE_BOTTOM', orgHeight);
@@ -70,7 +77,6 @@ document.onsize = function(w, h) {
     } else {
         body.visible = true;
         bodyBg.visible = false;
-        orgHeight = '';
     }
 }
 

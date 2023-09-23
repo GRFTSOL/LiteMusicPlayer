@@ -46,11 +46,13 @@
 				BgColorPressed="#D0D0D0" BgPressedAlpha="127"/>
 			
 			<Text ID="ID_CAPTION" Rect="w/2,8,w/2-10-60-10,20" CaptionText="true" FontName="Verdana" FontHeight="16" FontBold="false" TextColor="#FFFFFF" TextOutlinedColor="#000000" TextOutlined="true" LeftMargin="0" AlignText="AT_LEFT | AT_VCENTER"/>
-			<Toolbar ID="CID_TB_SYSBT" Rect="w-10-20,10,20,16" TranslucencyWithSkin="TRUE"
+			<Toolbar ID="CID_TB_SYSBT" Rect="w-10-60,10,60,16" TranslucencyWithSkin="TRUE"
 				 Image="caption_btn.png" enablehover="TRUE" units_x="16"
 				 blank_x="-1" blank_cx="16" seperator_x="0" seperator_cx="10"
 				 MarginX="0" MarginY="0" ButtonSpacesCX="5" FullStatusImage="TRUE">
-			  <button ID="ID_CLOSE" Left="4" />
+				<button ID="ID_MINIMIZE" Left="1" />
+				<button ID="ID_MAXIMIZE" Left="2" CanCheck="TRUE" checked_left="3"/>
+      			<button ID="ID_CLOSE" Left="4" />
 			</Toolbar>
 		</Container>
 
@@ -81,13 +83,12 @@
 			<button ID="ID_FORWARD_LYRICS" Left="7" Continuous="TRUE"/>
 		</Toolbar>
 
-		<Toolbar ID="ID_TB_LYR_TXT" Rect="8,2,78,20" Image="lyr_scroll_actions_tb.png" enablehover="TRUE"
-				units_x="20" blank_x="-1" blank_cx="20" seperator_x="-1" seperator_cx="20" ButtonSpacesCX="4"
-				MarginX="0" MarginY="0" FullStatusImage="TRUE" Visible="false">
-			<button ID="ID_LYR_SCROLL_ENABLE_RECORD" Left="0" CanCheck="TRUE" checked_left="1"/>
-			<button ID="ID_LYR_SCROLL_ENABLE_REPLAY" Left="2" CanCheck="TRUE" checked_left="3"/>
-			<button ID="ID_LYR_SCROLL_MENU" Left="4"/>
-		</Toolbar>
+            <Toolbar ID="ID_TB_LYR_TXT" Rect="8,2,56,22" Image="fl_buttons.png" enablehover="TRUE"
+                        units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" ButtonSpacesCX="1"
+                        Margin="8,1,0,0" MarginX="0" MarginY="0" FullStatusImage="TRUE">
+                  <button ID="ID_SEARCH_LYRICS" Left="5" />
+                  <button ID="CMD_LYR_EDITOR" Left="16"/>
+            </Toolbar>
 
 		<Toolbar Rect="86,1,w-88,22" Image="fl_buttons.png" enablehover="TRUE"
 				units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" ButtonSpacesCX="1"
@@ -165,6 +166,6 @@
     <VScrollBar Width="15" PushBtHeight="15" ThumbHeight="20" TrackHeight="20" ScrollBarWidth="15" Image="s_vscrollbar.png" ScalableThumb="TRUE" />
     <HScrollBar Height="15" PushBtWidth="15" ThumbWidth="20" TrackWidth="20" ScrollBarHeight="15" Image="s_hscrollbar.png" ScalableThumb="TRUE" />
     <ListCtrl BgColor="#4F586E" SelBgColor="#D9D9D9" TextColor="#FFFFFF" SelTextColor="#4F586E" FontHeight="13"/>
-	<InfoText Name="InfoText" Rect="0,h-26,w,26" FontName="Verdana" FontHeight="16" FontItalic="1" TextColor="#0000FF" LeftMargin="10" TranslucencyWithSkin="TRUE"/>
+    <InfoText Name="InfoText" Rect="0,h-26,w,26" FontName="Verdana" FontHeight="16" FontItalic="1" TextColor="#0000FF" LeftMargin="10" TranslucencyWithSkin="TRUE"/>
   </style>
 </styles>

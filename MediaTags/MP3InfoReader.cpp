@@ -1,82 +1,8 @@
 #include "MP3InfoReader.h"
 #include "ID3/ID3v2.h"
+#include "ID3/ID3Helper.h"
 #include "../TinyJS/utils/BinaryFileStream.h"
 
-
-class CFileStream {
-public:
-    CFileStream(FILE *fp) : m_fp(fp) {
-        fseek(fp, 0, SEEK_SET);
-        m_end = m_pos = m_buf;
-    }
-
-    inline uint8_t readUInt8() {
-        if (m_pos >= m_end) {
-            fillBuffer();
-            if (m_pos >= m_end) {
-                throw BinaryStreamOutOfRange(__LINE__);
-            }
-        }
-
-        return *m_pos++;
-    }
-
-    inline uint8_t *readBuff(int size) {
-        if (m_pos + size > m_end) {
-            fillBuffer();
-            if (m_pos + size > m_end) {
-                throw BinaryStreamOutOfRange(__LINE__);
-            }
-        }
-
-        auto p = m_pos;
-        m_pos += size;
-        return p;
-    }
-
-    void seekTo(long position) {
-        if (fseek(m_fp, position, SEEK_SET)) {
-            throw BinaryStreamOutOfRange(__LINE__);
-        }
-        m_pos = m_end = m_buf;
-    }
-
-    void forward(long offset) {
-        m_pos += offset;
-        if (m_pos > m_end || m_pos < m_buf) {
-            if (fseek(m_fp, -(m_end - m_pos) + offset, SEEK_SET)) {
-                throw BinaryStreamOutOfRange(__LINE__);
-            }
-            m_pos = m_end = m_buf;
-        }
-    }
-
-    int offset() { return (int)(ftell(m_fp) - (m_end - m_pos)); }
-
-    bool isEof() {
-        return m_pos == m_end && feof(m_fp);
-    }
-
-protected:
-    void fillBuffer() {
-        size_t len = m_end - m_pos;
-        memmove(m_buf, m_pos, len);
-        m_pos = m_buf;
-        m_end = m_buf + len;
-
-        auto n = fread(m_end, 1, m_buf + BUF_SIZE - m_end, m_fp);
-        m_end += n;
-    }
-
-    enum {
-        BUF_SIZE                    = 1024 * 4
-    };
-
-    FILE                        *m_fp;
-    uint8_t                     m_buf[BUF_SIZE];
-    uint8_t                     *m_pos, *m_end;
-
-};
 
 // sampling rates in hertz: 1. index = MPEG version ID, 2. index = sampling rate index
 const uint32_t SAMPLE_RATES[4][3] = {
@@ -159,23 +85,27 @@ enum { PRE_READ_BUFF_SIZE   = 256 };
 
 int findFirstFrame(FILE *fp, uint8_t byHeader[PRE_READ_BUFF_SIZE]) {
     try {
-        CFileStream is(fp);
+        BinaryFileInputStream is(fp);
 
-        ID3v2Header *header = (ID3v2Header *)is.readBuff(sizeof(ID3v2Header));
+        string buf = is.readString(sizeof(ID3v2Header));
+        ID3v2Header *header = (ID3v2Header *)buf.c_str();
 
         if (strncmp(header->szID, ID3_TAGID, ID3_TAGIDSIZE) == 0) {
             // 略过 ID3v2 tag
-            int len = synchDataToUInt(header->bySize, CountOf(header->bySize)) + ID3_TAGHEADERSIZE;
-            is.seekTo(len);
+            int len = syncBytesToUInt32(header->bySize);
+            is.forward(len);
         }
 
+        uint8_t prev = is.readUInt8();
         while (!is.isEof()) {
-            if (is.readUInt8() == 0xFF
-                && (is.readUInt8() & 0xE0) == 0xE0) {
+            uint8_t cur = is.readUInt8();
+            if (prev == 0xFF && cur != 0xFF
+                && (cur & 0xE0) == 0xE0) {
                 is.forward(-2);
-                memcpy(byHeader, is.readBuff(PRE_READ_BUFF_SIZE), PRE_READ_BUFF_SIZE);
-                return is.offset() - PRE_READ_BUFF_SIZE;
+                is.readBuf(byHeader, PRE_READ_BUFF_SIZE);
+                return (int)is.offset() - PRE_READ_BUFF_SIZE;
             }
+            prev = cur;
         }
     } catch (std::exception &e) {
         DBG_LOG1("Failed to findFirstFrame: %s", e.what());
@@ -246,7 +176,7 @@ protected:
 int getVbrInfoFrameCount(uint8_t const *frameBuff, int nBuffLen, MP3Info &info) {
     int nOffset;
 
-    if (info.version == MP3Info::MPEG2) {
+    if (info.version == MP3Info::MPEG2 || info.version == MP3Info::MPEG25) {
         nOffset = info.channelMode == MP3Info::SingleChannel ? 9 : 17;
     } else {
         nOffset = info.channelMode == MP3Info::SingleChannel ? 17 : 32;
@@ -324,15 +254,7 @@ int getVbrInfoFrameCount(uint8_t const *frameBuff, int nBuffLen, MP3Info &info) 
     return nFrameCount;
 }
 
-bool readMP3Info(FILE *fp, MP3Info &infoOut) {
-    uint8_t byHeader[PRE_READ_BUFF_SIZE];
-
-    fseek(fp, 0, SEEK_SET);
-
-    int nHeaderPos = findFirstFrame(fp, byHeader);
-    if (nHeaderPos == -1) {
-        return 0;
-    }
+bool parseFrameHeader(uint8_t byHeader[PRE_READ_BUFF_SIZE], size_t headerPos, size_t fileSize, MP3Info &infoOut) {
 
     // get MPEG version [bit 11,12]
     infoOut.version = (MP3Info::MPAVersion)((byHeader[1] >> 3) & 0x03); // mask only the rightmost 2 bits
@@ -357,7 +279,7 @@ bool readMP3Info(FILE *fp, MP3Info &infoOut) {
     if (bBitrateIndex == 0x0F) { // all bits set is reserved
         return false;
     }
-    infoOut.bitRate = BIT_RATES[isLSF][infoOut.layer][bBitrateIndex] * 1000; // convert from kbit to bit
+    infoOut.bitRate = BIT_RATES[isLSF][infoOut.layer][bBitrateIndex]; // convert from kbit to bit
     if (infoOut.bitRate == 0) { // means free bitrate (is unsupported yet)
         return false;
     }
@@ -410,7 +332,7 @@ bool readMP3Info(FILE *fp, MP3Info &infoOut) {
             }
 
             // which allocation table is used
-            switch (infoOut.bitRate / 1000 / (infoOut.channelMode == MP3Info::SingleChannel ? 1 : 2)) {
+            switch (infoOut.bitRate / (infoOut.channelMode == MP3Info::SingleChannel ? 1 : 2)) {
             case 32:
             case 48:
                 if (infoOut.sampleRate == 32000) {
@@ -444,17 +366,77 @@ bool readMP3Info(FILE *fp, MP3Info &infoOut) {
         }
     }
 
-    fseek(fp, 0, SEEK_END);
-    auto nFileSize = ftell(fp);
-
     int nSamplesPerFrame = SAMPLES_PER_FRAMES[isLSF][infoOut.layer];
-    int nFrameSize = (((COEFFICENTS[isLSF][infoOut.layer] * infoOut.bitRate / infoOut.sampleRate) + paddingSize)) * SLOT_SIZES[infoOut.layer];
+    int nFrameSize = (((COEFFICENTS[isLSF][infoOut.layer] * infoOut.bitRate * 1000 / infoOut.sampleRate) + paddingSize)) * SLOT_SIZES[infoOut.layer];
 
     int64_t nFrameCount = getVbrInfoFrameCount(byHeader, PRE_READ_BUFF_SIZE, infoOut);
     if (nFrameCount < 0) {
-        nFrameCount = (nFileSize - nHeaderPos) / nFrameSize;
+        if (nFrameSize > 0) {
+            nFrameCount = (fileSize - headerPos) / nFrameSize;
+        }
     }
 
-    infoOut.duration = int((double)nSamplesPerFrame * nFrameCount * 1000 / infoOut.sampleRate);
+    if (nFrameCount > 0) {
+        infoOut.duration = int((double)nSamplesPerFrame * nFrameCount * 1000 / infoOut.sampleRate + 0.5);
+    } else if (infoOut.bitRate > 0) {
+        infoOut.duration = (uint32_t)((fileSize - headerPos) * 8 / (double)infoOut.bitRate + 0.5);
+    } else {
+        infoOut.duration = 0;
+    }
     return true;
+}
+
+void findHeader(BinaryFileInputStream &is) {
+    uint8_t prev = is.readUInt8();
+    while (!is.isEof()) {
+        uint8_t cur = is.readUInt8();
+        if (prev == 0xFF && cur != 0xFF
+            && (cur & 0xE0) == 0xE0) {
+            is.forward(-2);
+            return;
+        }
+        prev = cur;
+    }
+
+    throw std::exception();
+}
+
+bool readMP3Info(FILE *fp, MP3Info &infoOut) {
+    uint8_t byHeader[PRE_READ_BUFF_SIZE];
+
+    fseek(fp, 0, SEEK_SET);
+
+    try {
+        BinaryFileInputStream is(fp);
+
+        auto fileSize = is.size();
+        string buf = is.readString(sizeof(ID3v2Header));
+        ID3v2Header *header = (ID3v2Header *)buf.c_str();
+
+        if (strncmp(header->szID, ID3_TAGID, ID3_TAGIDSIZE) == 0) {
+            // 略过 ID3v2 tag
+            int len = syncBytesToUInt32(header->bySize);
+            is.forward(len);
+        } else {
+            is.setOffset(0);
+        }
+
+        while (true) {
+            if (is.offset() != 0) {
+                // 如果 mp3 从文件头开始，则不需要 findHeader()
+                findHeader(is);
+            }
+
+            auto headerPos = is.offset();
+            is.readBuf(byHeader, PRE_READ_BUFF_SIZE);
+
+            if (parseFrameHeader(byHeader, headerPos, fileSize, infoOut)) {
+                return true;
+            }
+        }
+
+    } catch (std::exception &e) {
+        DBG_LOG1("Failed to findFirstFrame: %s", e.what());
+        return false;
+    }
 }

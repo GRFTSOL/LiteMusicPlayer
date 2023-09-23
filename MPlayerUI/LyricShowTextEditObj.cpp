@@ -2,7 +2,7 @@
 #include "MLCmd.h"
 #include "LyricShowTextEditObj.h"
 #include "LyricShowObj.h"
-#include "../LyricsLib/MLLib.h"
+#include "../MediaTags/LrcParser.h"
 
 
 #define TIMER_SPAN_LYR_PREVIEW_UPDATE   500
@@ -38,7 +38,7 @@ void CLyrEditSyntaxParser::onNotifyParseLine(int nLine) {
         string strTime;
         int i;
         if (getTimeTagOfLine(strLine.c_str(), strTime)) {
-            pLine->nBegTime = getTimeTagValue(strTime.c_str(), strTime.size());
+            pLine->beginTime = getTimeTagValue(strTime.c_str(), strTime.size());
             pLine->bTimeLine = true;
             // DBG_LOG2("Line: %d Changed: %s", nLine, strLine.c_str());
             for (i = 0; i < (int)strTime.size(); i++) {
@@ -48,8 +48,8 @@ void CLyrEditSyntaxParser::onNotifyParseLine(int nLine) {
                 (*pLine)[i].clrIndex = C_LOWLIGHT;
             }
 
-            if (nLine == m_pLyrEdit->getLineCount() - 1 || pLine->nEndTime < pLine->nBegTime) {
-                pLine->nEndTime = pLine->nBegTime + 1000 * 5;
+            if (nLine == m_pLyrEdit->getLineCount() - 1 || pLine->endTime < pLine->beginTime) {
+                pLine->endTime = pLine->beginTime + 1000 * 5;
             }
 
             do {
@@ -59,7 +59,7 @@ void CLyrEditSyntaxParser::onNotifyParseLine(int nLine) {
             while (pLine2 && !pLine2->bTimeLine);
 
             if (pLine2 && pLine2->bTimeLine) {
-                pLine2->nEndTime = pLine->nBegTime;
+                pLine2->endTime = pLine->beginTime;
             }
         } else {
             // other text ...
@@ -136,7 +136,7 @@ void CLyricShowTextEditObj::onCreate() {
     m_pSkin->setUIObjectText(CID_E_REPLACE, g_profile.getString("ReplaceWith", ""));
 
     // If there's no lyrics opened, fill media info.
-    if (!g_LyricData.hasLyricsOpened()) {
+    if (!g_currentLyrics.hasLyricsOpened()) {
         onCustomCommand(CMD_AUTO_FILL_LYR_INFO);
     }
 
@@ -166,7 +166,7 @@ void CLyricShowTextEditObj::onEvent(const IEvent *pEvent) {
     } else if (pEvent->eventType == ET_LYRICS_DRAW_UPDATE) {
         onPlayTimeChangedUpdate();
     } else if (pEvent->eventType == ET_PLAYER_CUR_MEDIA_CHANGED) {
-        if (!g_LyricData.hasLyricsOpened()) {
+        if (!g_currentLyrics.hasLyricsOpened()) {
             onCustomCommand(CMD_AUTO_FILL_LYR_INFO);
         }
     } else if (pEvent->eventType == ET_LYRICS_DISPLAY_SETTINGS) {
@@ -213,7 +213,11 @@ void CLyricShowTextEditObj::autoVScrollDown(int nDownLine) {
 }
 
 bool CLyricShowTextEditObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
+#ifdef _MAC_OS
+    bool ctrl = isModifierKeyPressed(MK_COMMAND, nFlags);
+#else
     bool ctrl = isModifierKeyPressed(MK_CONTROL, nFlags);
+#endif
     bool shift = isModifierKeyPressed(MK_SHIFT, nFlags);
 
     if (!ctrl && !shift) {
@@ -283,12 +287,16 @@ bool CLyricShowTextEditObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
 
     if (ctrl) {
         switch (nChar) {
-        case 'F':
-            showFindDialog();
-            return true;
-        case 'H':
-            showFindDialog(false);
-            return true;
+            case VK_F:
+                if (isModifierKeyPressed(MK_ALT, nFlags)) {
+                    showFindDialog(false);
+                } else {
+                    showFindDialog();
+                }
+                return true;
+            case VK_H:
+                showFindDialog(false);
+                return true;
         }
     }
 
@@ -451,7 +459,7 @@ void CLyricShowTextEditObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
     *prcUpdate = rc;
 
     int xStart = rc.left + m_xMargin;
-    int nTimePos = g_LyricData.getPlayElapsedTime();
+    int nTimePos = g_currentLyrics.getPlayElapsedTime();
     CLyrOneLine *pLyrLine;
 
     if (m_nTopVisibleLine == m_nTopVisibleLineOld) {
@@ -459,7 +467,7 @@ void CLyricShowTextEditObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
         if (m_nCurPosLineOld >= 0 && m_nCurPosLineOld < (int)m_vLines.size()) {
             pLyrLine = (CLyrOneLine*)m_vLines[m_nCurPosLineOld];
             if (pLyrLine->bTimeLine) {
-                if (pLyrLine->nBegTime <= nTimePos && nTimePos <= pLyrLine->nEndTime) {
+                if (pLyrLine->beginTime <= nTimePos && nTimePos <= pLyrLine->endTime) {
                     int nTimeTagLen;
                     // current line of cur pos doesn't change, only update this line
                     for (nTimeTagLen = 0; nTimeTagLen < (int)pLyrLine->size(); nTimeTagLen++) {
@@ -470,10 +478,10 @@ void CLyricShowTextEditObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
                     }
 
                     int nXOfCurPosLine = 0;
-                    int dt = (pLyrLine->nEndTime - pLyrLine->nBegTime);
+                    int dt = (pLyrLine->endTime - pLyrLine->beginTime);
                     assert(dt > 0);
                     if (dt > 0) {
-                        nXOfCurPosLine = int(pLyrLine->size() - nTimeTagLen) * (nTimePos - pLyrLine->nBegTime) / dt + nTimeTagLen;
+                        nXOfCurPosLine = int(pLyrLine->size() - nTimeTagLen) * (nTimePos - pLyrLine->beginTime) / dt + nTimeTagLen;
                     }
                     if (nXOfCurPosLine > (int)pLyrLine->size()) {
                         nXOfCurPosLine = (int)pLyrLine->size();
@@ -512,7 +520,7 @@ void CLyricShowTextEditObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
                 }
                 pLyrLine = (CLyrOneLine *)m_vLines[i];
                 if (pLyrLine->bTimeLine &&
-                    pLyrLine->nBegTime <= nTimePos && nTimePos <= pLyrLine->nEndTime) {
+                    pLyrLine->beginTime <= nTimePos && nTimePos <= pLyrLine->endTime) {
                     m_nCurPosLineOld = i;
                     break;
                 }
@@ -560,7 +568,7 @@ void CLyricShowTextEditObj::reDraw(CRawGraph *canvas) {
     yMax = rcClip.bottom;
     assert(m_nTopVisibleLine >= 0 && m_nTopVisibleLine < (int)m_vLines.size());
 
-    int nTimePos = g_LyricData.getPlayElapsedTime();
+    int nTimePos = g_currentLyrics.getPlayElapsedTime();
 
     m_nCurPosLineOld = -1;
     m_nXOfCurPosLineOld = -1;
@@ -578,17 +586,17 @@ void CLyricShowTextEditObj::reDraw(CRawGraph *canvas) {
         pLyrLine = (CLyrOneLine *)m_vLines[i];
         if (!pLyrLine->bTimeLine) {
             drawLine(canvas, pLyrLine, xStart, xMax, y);
-        } else if (pLyrLine->nEndTime < nTimePos) {
+        } else if (pLyrLine->endTime < nTimePos) {
             // draw in highlight
             CColor clrOld;
             clrOld = getColor(CLyrEditSyntaxParser::C_LOWLIGHT);
             setColor(CLyrEditSyntaxParser::C_LOWLIGHT, getColor(CLyrEditSyntaxParser::C_HILIGHT));
             CSkinEditCtrl::drawLine(canvas, pLyrLine, xStart, xMax, y);
             setColor(CLyrEditSyntaxParser::C_LOWLIGHT, clrOld);
-        } else if (pLyrLine->nBegTime >= nTimePos) {
+        } else if (pLyrLine->beginTime >= nTimePos) {
             // draw in lowlight
             CSkinEditCtrl::drawLine(canvas, pLyrLine, xStart, xMax, y);
-        } else if (pLyrLine->nBegTime >= pLyrLine->nEndTime) {
+        } else if (pLyrLine->beginTime >= pLyrLine->endTime) {
             // draw in highlight
             CColor clrOld;
             clrOld = getColor(CLyrEditSyntaxParser::C_LOWLIGHT);
@@ -620,7 +628,7 @@ void CLyricShowTextEditObj::drawLineGradual(CRawGraph *canvas, COneLine *pLine, 
         return;
     }
 
-    int nTimePos = g_LyricData.getPlayElapsedTime();
+    int nTimePos = g_currentLyrics.getPlayElapsedTime();
 
     uint8_t byClrLast = 0;
     int k;
@@ -630,10 +638,10 @@ void CLyricShowTextEditObj::drawLineGradual(CRawGraph *canvas, COneLine *pLine, 
 
     canvas->setTextColor(m_vClrTable[byClrLast]);
 
-    if (nTimePos < pLyrLine->nBegTime) {
-        nTimePos = pLyrLine->nBegTime;
-    } else if (nTimePos > pLyrLine->nEndTime) {
-        nTimePos = pLyrLine->nEndTime;
+    if (nTimePos < pLyrLine->beginTime) {
+        nTimePos = pLyrLine->beginTime;
+    } else if (nTimePos > pLyrLine->endTime) {
+        nTimePos = pLyrLine->endTime;
     }
 
     // draw time tag
@@ -668,10 +676,10 @@ void CLyricShowTextEditObj::drawLineGradual(CRawGraph *canvas, COneLine *pLine, 
     nTimeTagLen = k;
 
     int nXOfCurPosLine = 0;
-    int dt = (pLyrLine->nEndTime - pLyrLine->nBegTime);
+    int dt = (pLyrLine->endTime - pLyrLine->beginTime);
     assert(dt > 0);
     if (dt > 0) {
-        nXOfCurPosLine = int(pLyrLine->size() - nTimeTagLen) * (nTimePos - pLyrLine->nBegTime) / dt + nTimeTagLen;
+        nXOfCurPosLine = int(pLyrLine->size() - nTimeTagLen) * (nTimePos - pLyrLine->beginTime) / dt + nTimeTagLen;
     }
 
     if (nXOfCurPosLine > (int)pLyrLine->size()) {
@@ -963,11 +971,14 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
         }
 
         setCaret(0, 0);
+        m_nBegSelRow = -1;
         m_nBegSelCol = -1;
 
+        int countReplaced = 0;
         AutoBatchUndo autoBatchUndo(this);
-        while (findNext()) {
+        while (findNext(true, false)) {
             replaceSel(strReplaceWith.c_str());
+            countReplaced++;
         }
     } else if (nId == CID_RERESH_ARTIST) {
         m_pSkin->setUIObjectText(CID_E_ARTIST, g_player.getArtist());
@@ -981,9 +992,9 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
             m_pSkin->setUIObjectText(CID_E_BY, strLogName.c_str());
         }
     } else if (nId == CID_RERESH_MEDIA_LENGTH) {
-        LyricsProperties &prop = g_LyricData.properties();
+        LyricsProperties &prop = g_currentLyrics.properties();
         prop.setMediaLength(g_player.getMediaLength() / 1000);
-        m_pSkin->setUIObjectText(CID_E_MEDIA_LENGTH, prop.m_strMediaLength.c_str());
+        m_pSkin->setUIObjectText(CID_E_MEDIA_LENGTH, prop.mediaLength.c_str());
     }
 
     switch (nId) {
@@ -996,7 +1007,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
             getTextOfLine(nLine, strLine);
             if (getTimeTagOfLine(strLine.c_str(), strTimeTag)) {
                 nTime = getTimeTagValue(strTimeTag.c_str(), strTimeTag.size())
-                - g_LyricData.getOffsetTime();
+                - g_currentLyrics.getOffsetTime();
                 g_player.seekTo(nTime);
             }
             return true;
@@ -1081,7 +1092,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
                         nTime -= 200;
                     }
 
-                    string newTimeTag = formtLrcTimeTag(nTime, true);
+                    string newTimeTag = formatLrcTimeTag(nTime, true);
 
                     setSelOfLine(i, 0, (int)strTimeTag.size());
                     replaceSel(newTimeTag.c_str());
@@ -1120,18 +1131,18 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
         break;
     case CMD_AUTO_FILL_LYR_INFO:
         {
-            LyricsProperties &prop = g_LyricData.properties();
+            LyricsProperties &prop = g_currentLyrics.properties();
 
             // Auto fill artist, album and title info
-            prop.m_strTitle = g_player.getTitle();
-            prop.m_strArtist = g_player.getArtist();
-            prop.m_strAlbum = g_player.getAlbum();
+            prop.title = g_player.getTitle();
+            prop.artist = g_player.getArtist();
+            prop.album = g_player.getAlbum();
             if (g_player.getMediaLength() > 0) {
                 prop.setMediaLength(g_player.getMediaLength() / 1000);
             }
             string strLogName = g_profile.getString("LoginName", "");
             if (strLogName.size()) {
-                prop.m_strBy = strLogName;
+                prop.by = strLogName;
             }
 
             updateLyricsProperties(true);
@@ -1354,9 +1365,9 @@ void CLyricShowTextEditObj::onSaveLyrics() {
 
     getText(strEdit);
 
-    string strId = g_LyricData.properties().m_strId;
-    g_LyricData.properties().clear();
-    g_LyricData.fromString(strEdit.c_str());
+    string strId = g_currentLyrics.properties().id;
+    g_currentLyrics.properties().clear();
+    g_currentLyrics.fromString(strEdit.c_str());
 
 #define SET_PROP(strProp, propCtrlId)                \
     str = m_pSkin->getUIObjectText(propCtrlId);        \
@@ -1365,19 +1376,19 @@ void CLyricShowTextEditObj::onSaveLyrics() {
     else if (strcmp(strProp.c_str(), str.c_str()) != 0) \
         m_pSkin->setUIObjectText(propCtrlId, strProp.c_str());
 
-    LyricsProperties &prop = g_LyricData.properties();
+    LyricsProperties &prop = g_currentLyrics.properties();
     string str, strOffset = prop.getOffsetTimeStr();
-    SET_PROP(prop.m_strArtist, CID_E_ARTIST);
-    SET_PROP(prop.m_strTitle, CID_E_TITLE);
-    SET_PROP(prop.m_strAlbum, CID_E_ALBUM);
-    SET_PROP(prop.m_strBy, CID_E_BY);
+    SET_PROP(prop.artist, CID_E_ARTIST);
+    SET_PROP(prop.title, CID_E_TITLE);
+    SET_PROP(prop.album, CID_E_ALBUM);
+    SET_PROP(prop.by, CID_E_BY);
     SET_PROP(strOffset, CID_E_OFFSET);
-    SET_PROP(prop.m_strMediaLength, CID_E_MEDIA_LENGTH);
+    SET_PROP(prop.mediaLength, CID_E_MEDIA_LENGTH);
     if (strOffset.size()) {
         prop.setOffsetTime(strOffset.c_str());
-        g_LyricData.setOffsetTime(atoi(strOffset.c_str()));
+        g_currentLyrics.setOffsetTime(atoi(strOffset.c_str()));
     }
-    prop.m_strId = strId;
+    prop.id = strId;
 };
 
 void CLyricShowTextEditObj::onLyricsChanged() {
@@ -1385,23 +1396,19 @@ void CLyricShowTextEditObj::onLyricsChanged() {
         return;
     }
 
-    string str, strTags, strValue;
-    g_LyricData.toString(str, FT_LYRICS_LRC, false);
+    string str = g_currentLyrics.toString(false);
 
     updateLyricsProperties();
 
     setText(str.c_str());
 
-    int nCurLine;
-    nCurLine = g_LyricData.getCurPlayLine(g_LyricData.getRawLyrics());
+    int nCurLine = g_currentLyrics.getCurPlayLine(g_currentLyrics.getLyricsLines());
     setCaret(nCurLine, 0);
     // ::sendMessage(getHandle(), EM_LINESCROLL, 0, nCurLine);
 
     m_pSkin->invalidateRect();
 
-    CSkinToolbar *pToolBar;
-
-    pToolBar = (CSkinToolbar *)m_pSkin->getUIObjectById(ID_TB_LYR_EDIT, CSkinToolbar::className());
+    auto pToolBar = (CSkinToolbar *)m_pSkin->getUIObjectById(ID_TB_LYR_EDIT, CSkinToolbar::className());
     if (pToolBar) {
         pToolBar->enableBt(CMD_EDIT_REDO, canRedo());
         pToolBar->enableBt(CMD_EDIT_UNDO, canUndo());
@@ -1419,8 +1426,8 @@ void CLyricShowTextEditObj::onPlayTimeChangedUpdate() {
     {
         // Prevent player forward to next track, if lyrics editor is focus, and lyrics changed.
         if ((int)g_player.getMediaLength() > 30 * 1000
-            && canUndo() && g_LyricData.getPlayElapsedTime() >= (int)g_player.getMediaLength() - 1000
-            && strcmp(g_player.getSrcMedia(), g_LyricData.getSongFileName()) == 0) {
+            && canUndo() && g_currentLyrics.getPlayElapsedTime() >= (int)g_player.getMediaLength() - 1000
+            && strcmp(g_player.getSrcMedia(), g_currentLyrics.getMediaSource()) == 0) {
             g_player.seekTo(0);
         }
     }
@@ -1460,14 +1467,14 @@ void CLyricShowTextEditObj::onPlayTimeChangedUpdate() {
 }
 
 void CLyricShowTextEditObj::updateLyricsProperties(bool bRedraw) {
-    LyricsProperties &prop = g_LyricData.properties();
+    LyricsProperties &prop = g_currentLyrics.properties();
 
-    m_pSkin->setUIObjectText(CID_E_ARTIST, prop.m_strArtist.c_str(), false);
-    m_pSkin->setUIObjectText(CID_E_TITLE, prop.m_strTitle.c_str(), false);
-    m_pSkin->setUIObjectText(CID_E_ALBUM, prop.m_strAlbum.c_str(), false);
-    m_pSkin->setUIObjectText(CID_E_BY, prop.m_strBy.c_str(), false);
-    m_pSkin->setUIObjectText(CID_E_OFFSET, prop.getOffsetTimeStr(), false);
-    m_pSkin->setUIObjectText(CID_E_MEDIA_LENGTH, prop.m_strMediaLength.c_str(), false);
+    m_pSkin->setUIObjectText(CID_E_ARTIST, prop.artist.c_str(), false);
+    m_pSkin->setUIObjectText(CID_E_TITLE, prop.title.c_str(), false);
+    m_pSkin->setUIObjectText(CID_E_ALBUM, prop.album.c_str(), false);
+    m_pSkin->setUIObjectText(CID_E_BY, prop.by.c_str(), false);
+    m_pSkin->setUIObjectText(CID_E_OFFSET, prop.getOffsetTimeStr().c_str(), false);
+    m_pSkin->setUIObjectText(CID_E_MEDIA_LENGTH, prop.mediaLength.c_str(), false);
 
     if (bRedraw) {
         m_pSkin->invalidateRect();
@@ -1560,7 +1567,7 @@ void CLyricShowTextEditObj::syncTimeTag(bool bMoveToNextLine) {
     int nTimeDuarationOffset = 0;
     int nLine;
     AutoBatchUndo autoBatchUndo(this);
-    int nPlayingPos = g_LyricData.getPlayElapsedTime();
+    int nPlayingPos = g_currentLyrics.getPlayElapsedTime();
     if (nPlayingPos < 0) {
         nPlayingPos = 0;
     }
@@ -1573,7 +1580,7 @@ void CLyricShowTextEditObj::syncTimeTag(bool bMoveToNextLine) {
         if (!getTimeTagOfLine(strLine.c_str(), strTimeTag)) {
             // This line wasn't synchronized yet,
             if (nLine == nBegLine) {
-                string newTimeTag = formtLrcTimeTag(nPlayingPos, true);
+                string newTimeTag = formatLrcTimeTag(nPlayingPos, true);
 
                 setSelOfLine(nLine, 0, 0);
                 replaceSel(newTimeTag.c_str());
@@ -1587,13 +1594,13 @@ void CLyricShowTextEditObj::syncTimeTag(bool bMoveToNextLine) {
         nTime = getTimeTagValue(strTimeTag.c_str(), strTimeTag.size());
         if (nLine == nBegLine) {
             nTimeDuarationOffset = nTime - nPlayingPos;
-            nTime = g_LyricData.getPlayElapsedTime();
+            nTime = g_currentLyrics.getPlayElapsedTime();
         } else {
             nTime -= nTimeDuarationOffset;
         }
 
         // set new time
-        string newTimeTag = formtLrcTimeTag(nTime, true);
+        string newTimeTag = formatLrcTimeTag(nTime, true);
 
         setSelOfLine(nLine, 0, (int)strTimeTag.size());
         replaceSel(newTimeTag.c_str());
@@ -1648,7 +1655,7 @@ void CLyricShowTextEditObj::adjustSyncTimeOfSelected(bool bIncreaseTime) {
         }
 
         // set new time
-        string newTimeTag = formtLrcTimeTag(nTime, true);
+        string newTimeTag = formatLrcTimeTag(nTime, true);
 
         setSelOfLine(nLine, 0, (int)strTimeTag.size());
         replaceSel(newTimeTag.c_str());
@@ -1702,7 +1709,7 @@ void CLyricShowTextEditObj::showFindDialog(bool bFind) {
     m_pSkin->invalidateRect();
 }
 
-bool CLyricShowTextEditObj::findNext(bool bSearchDown) {
+bool CLyricShowTextEditObj::findNext(bool bSearchDown, bool isMessageOut) {
     uint32_t dwFlags = 0;
 
     if (m_pSkin->isButtonChecked(CID_MATCHCASE)) {
@@ -1715,7 +1722,9 @@ bool CLyricShowTextEditObj::findNext(bool bSearchDown) {
     string strFindWhat = m_pSkin->getUIObjectText(CID_E_FIND);
 
     if (!findText(strFindWhat.c_str(), dwFlags)) {
-        m_pSkin->messageOut(stringPrintf(_TLT("Can't find \"%s\""), strFindWhat.c_str()).c_str());
+        if (isMessageOut) {
+            m_pSkin->messageOut(stringPrintf(_TLT("Can't find \"%s\""), strFindWhat.c_str()).c_str());
+        }
         return false;
     }
 

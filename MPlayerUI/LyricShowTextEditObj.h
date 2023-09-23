@@ -30,13 +30,10 @@ public:
     class CLyrOneLine : public CSkinEditCtrl::COneLine {
     public:
         CLyrOneLine() {
-            nBegTime = 0; nEndTime = 0;
+            beginTime = 0; endTime = 0;
             bTimeLine = false;
-            bTempBegTime = true;
-            bTempEndTime = true;
         }
-        int                         nBegTime, nEndTime;
-        bool                        bTempBegTime, bTempEndTime;
+        int                         beginTime, endTime;
         bool                        bTimeLine;
     };
 
@@ -75,7 +72,7 @@ public:
     // Find and replace dialog
     //
     void showFindDialog(bool bFind = true);
-    bool findNext(bool bSearchDown = true);
+    bool findNext(bool bSearchDown = true, bool isMessageOut = true);
 
 protected:
     virtual int getCaretLineHomePos() override;

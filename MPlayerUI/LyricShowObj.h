@@ -9,7 +9,7 @@
 #pragma once
 
 #include "../MediaTags/LyricsData.h"
-#include "../LyricsLib/MLLib.h"
+#include "../LyricsLib/CurrentLyrics.h"
 
 
 enum LyrAlignment {
@@ -131,18 +131,18 @@ public:
 
     virtual void setAntialise(bool bAntialis);
 
-    int getAlpha(LyricsLine *pLine);
+    int getAlpha(LyricsLine &line);
 
-    void setLyricData(CMLData *pMLData);
+    void setLyricData(CurrentLyrics *pMLData);
 
-    bool isKaraoke() { return m_bKaraoke || m_pMLData->isKaraokeShowStyle(); }
+    bool isKaraoke() { return m_bKaraoke || m_curLyrics->isKaraokeShowStyle(); }
 
     //
     // set setting values
     //
     bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 
-    CLyricsLines &getLyrics() { return m_lyrLines; }
+    LyricsLines &getLyrics() { return m_lyrLines; }
 
 protected:
     virtual bool onLyrDisplaySettings(cstr_t szProperty, cstr_t szValue);
@@ -164,17 +164,17 @@ protected:
 
     void darkenLyricsBg(CRawGraph *canvas, CRect &rc);
 
-    int getLyricRowAlignPos(CRawGraph *canvas, LyricsLine *pLyricRow);
-    int getLyricRowTextWidth(CRawGraph *canvas, LyricsLine *pLyricRow);
+    int getLyricRowAlignPos(CRawGraph *canvas, LyricsLine &lyricRow);
+    int getLyricRowTextWidth(CRawGraph *canvas, LyricsLine &lyricRow);
 
     void fastDrawMediaInfo(CRawGraph *canvas, CRect *prcUpdate = nullptr);
 
-    bool drawRow(CRawGraph *canvas, LyricsLine *pLyricRow, int x, int y, LinePos linePos = LP_ABOVE_CUR_LINE);
-    void drawRow(CRawGraph *canvas, LyricsLine *pLyricRow, int x, int y, CColor &clrTxt, CColor &clrTxtBorder);
+    bool drawRow(CRawGraph *canvas, LyricsLine &lyricRow, int x, int y, LinePos linePos = LP_ABOVE_CUR_LINE);
+    void drawRow(CRawGraph *canvas, LyricsLine &lyricRow, int x, int y, CColor &clrTxt, CColor &clrTxtBorder);
 
-    void drawRowKaraoke(CRawGraph *canvas, LyricsLine *pLyricRow, int x, int y);
+    void drawRowKaraoke(CRawGraph *canvas, LyricsLine &lyricRow, int x, int y);
 
-    void drawCurrentRow(CRawGraph *canvas, LyricsLine *pLyricRow, int x, int y);
+    void drawCurrentRow(CRawGraph *canvas, LyricsLine &lyricRow, int x, int y);
 
     void fadeOutVertBorder(CRawGraph *canvas, int yDrawLyrStartPos, int yDrawLyrEndPos);
 
@@ -257,7 +257,6 @@ protected:
     CCurMediaAlbumArt           m_curAlbumArt;
     string                      m_strBgPicFolder;
     VecStrings                  m_vPicFiles;
-    int                         m_nextPic;
     int                         m_nextPicInFolder;
     CSFImage                    m_img;
     bool                        m_bDarkenLyrBgOnImg;
@@ -297,8 +296,8 @@ protected:
     EventType                   m_etDispSettings;
 
     // 歌词数据
-    CMLData                     *m_pMLData;
-    CLyricsLines                m_lyrLines;
+    CurrentLyrics               *m_curLyrics;
+    LyricsLines                 m_lyrLines;
 
     bool                        m_bCanWrapLines;
 

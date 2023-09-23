@@ -3,9 +3,9 @@
 #include "FileSaveDlg.h"
 
 
-NSArray *SetStrToExtArray(SetStrings &setExt);
+NSArray *toNsStringArray(VecStrings &setExt);
 
-void ExtFiltersToSet(cstr_t extFilter, SetStrings &setExts);
+void extractExtFilters(cstr_t extFilter, VecStrings &vExts);
 
 // COMMENT:
 //        取得 GetSaveFileName 中lpstrFilter 的第nIndex个扩展名。
@@ -41,7 +41,7 @@ CFileSaveDlg::CFileSaveDlg(cstr_t szTitle, cstr_t szFile, cstr_t extFilter, int 
     strcpy_safe(m_szFile, CountOf(m_szFile), szFile);
 
     if (extFilter) {
-        ExtFiltersToSet(extFilter, m_setExt);
+        extractExtFilters(extFilter, m_vExts);
     }
 }
 
@@ -54,7 +54,7 @@ int CFileSaveDlg::doModal(Window *pWndParent) {
     // Enable the selection of files in the dialog.
     [saveDlg setDirectoryURL:[NSURL URLWithString:[NSString stringWithUTF8String:m_szFile]]];
 
-    [saveDlg setAllowedFileTypes:SetStrToExtArray(m_setExt)];
+    [saveDlg setAllowedFileTypes:toNsStringArray(m_vExts)];
 
     //[saveDlg set:YES];
 

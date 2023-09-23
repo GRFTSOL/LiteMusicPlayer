@@ -1,7 +1,7 @@
 #include "MPlayerApp.h"
 #include "PreferPageAdvanced.h"
 #include "DownloadMgr.h"
-#include "../LyricsLib/LrcTag.h"
+#include "../MediaTags/LrcParser.h"
 
 #ifdef _WIN32
 #include "win32/HotkeyCtrlEx.h"
@@ -497,40 +497,6 @@ public:
 
 };
 
-class CPfItemLyrDelayTime : public CPfItemInt {
-public:
-    CPfItemLyrDelayTime() : CPfItemInt(connectToLocalStr(_TLM("Lyrics Display"),
-        _TLM("Global lyrics displaying delay time (seconds)")).c_str(),
-        ET_NULL, SZ_SECT_LYR_DISPLAY, "LyrDelayTime", 0) { }
-
-    virtual void getOptions(VecStrings &vString, int &nRadio) {
-        int nMax = 20;
-        float fDelayTime = -5.0;
-        for (int i = 0; i <= nMax; i++) {
-            vString.push_back(stringPrintf("%.1f", fDelayTime + i * 0.5));
-        }
-
-        nRadio = getIntValue() / 500 + nMax / 2;
-        if (nRadio >= nMax) {
-            nRadio = nMax;
-        } else if (nRadio < 0) {
-            nRadio = 0;
-        }
-    }
-
-    virtual void setOption(int nIndex) {
-        int nGlobalOffsetTime = -5000 + 500 * nIndex;
-        setIntValue(nGlobalOffsetTime);
-    }
-
-    virtual void setIntValue(int value) {
-        g_LyricData.m_nGlobalOffsetTime = value;
-        CMPlayerSettings::setSettings(eventType, strSection.c_str(),
-            strValueName.c_str(), value, eventType != ET_INVALID);
-    }
-
-};
-
 #ifdef _WIN32
 class CDlgShortcutKey : public CBaseDialog {
 public:
@@ -806,7 +772,6 @@ void CPagePfAdvanced::onInitialUpdate() {
         ET_LYRICS_DISPLAY_SETTINGS, SZ_SECT_LYR_DISPLAY,
         "enableAdjustVertAlign", false));
     m_vPreferItems.push_back(new CPfItemLyrLineSpacing());
-    m_vPreferItems.push_back(new CPfItemLyrDelayTime());
 
     //
     // Lyrics

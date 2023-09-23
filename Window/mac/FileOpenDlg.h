@@ -27,6 +27,6 @@ public:
 public:
     VecStrings                  m_vFiles;
     bool                        m_bAllowMultiSel;
-    SetStrings                  m_setExt;
+    VecStrings                  m_vExts;
 
 };

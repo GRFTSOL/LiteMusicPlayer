@@ -10,14 +10,5 @@
     <NormalText ID="CID_CHECK_VERSION" Text="Checking for updates..." Rect="20,75,w-20-130,15"/>
     <NormalLink ID="CID_COPYRIGHT" Text="" Rect="20,120,w-40,15" AlignText="AT_LEFT"/>
     <NormalLink ID="CID_FEEDBACK" Text="Submit online feedback form" Rect="20,140,w-40,15" AlignText="AT_LEFT"/>
-
-    <LinearContainer Rect="20,140,w-40,h-140-20">
-      <NormalText ID="CID_BLANK_PLACE_HOLDER" Rect="20,0,w,1" Weight="1" FontHeight="20" AlignText="AT_RIGHT"/>
-      <NormalText ID="CID_LICENSE_TO" Rect="0,0,w,25" LayoutParams="align_right" FontHeight="20" AlignText="AT_RIGHT"/>
-      <NormalText ID="CID_LICENSE" Rect="0,25,w,60" Margin="0,0,5,0" LayoutParams="align_right | wrap_content_height" AlignText="AT_RIGHT"/>
-      <ErrorText ID="CID_ACT_NOTICE" Rect="0,80,w,40" Visible="false" LayoutParams="align_right" AlignText="AT_RIGHT"/>
-      <NormalTextBt ID="CID_ENTER_CODE" Text="&amp;Activate" Visible="false" LayoutParams="align_right" Rect="w-110-20,120,110,"/>
-    </LinearContainer>
   </Container.About>
-  <include Name="Activate.xml"/>
 </skinwnd>

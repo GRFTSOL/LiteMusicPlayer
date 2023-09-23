@@ -233,14 +233,16 @@ RawImageDataPtr loadRawImageDataFromFile(cstr_t file) {
     return image;
 }
 
+static char SIGNATURE_BMP[2] = {'B', 'M'};
+static uint8_t SIGNATURE_PNG[8] = {137, 80, 78, 71, 13, 10, 26, 10};
+static uint8_t SIGNATURE_JPG[2] = {0xFF, 0xD8};
+static uint8_t SIGNATURE_GIF[4] = {'G', 'I', 'F', '8'};
 
 RawImageDataPtr loadRawImageDataFromMem(const void *buf, int nSize) {
 #ifdef _IPHONE
     return nullptr;
 #else
     CBuffILIO io;
-    uint8_t *tag = (uint8_t *)buf;
-    uint8_t png_signature[8] = {137, 80, 78, 71, 13, 10, 26, 10};
 
     if (!io.open(buf, nSize)) {
         return nullptr;
@@ -248,13 +250,13 @@ RawImageDataPtr loadRawImageDataFromMem(const void *buf, int nSize) {
 
     RawImageDataPtr image;
 
-    if (memcmp(buf, "BM", 2) == 0) {
+    if (memcmp(buf, SIGNATURE_BMP, CountOf(SIGNATURE_BMP)) == 0) {
         image = loadRawImageDataFromBmpFile(&io);
-    } else if (memcmp(buf, png_signature, 8) == 0) {
+    } else if (memcmp(buf, SIGNATURE_PNG, CountOf(SIGNATURE_PNG)) == 0) {
         image = loadRawImageDataFromPngFile(&io);
-    } else if (tag[0] == 0xFF && tag[1] == 0xD8) {
+    } else if (memcmp(buf, SIGNATURE_JPG, CountOf(SIGNATURE_JPG)) == 0) {
         image = loadRawImageDataFromJpgFile(&io);
-    } else if (memcmp(buf, "GIF8", 4) == 0) {
+    } else if (memcmp(buf, SIGNATURE_GIF, CountOf(SIGNATURE_GIF)) == 0) {
         image = loadRawImageDataFromGifFile(&io);
     } else {
         image = nullptr;
@@ -268,6 +270,27 @@ RawImageDataPtr loadRawImageDataFromMem(const void *buf, int nSize) {
 
     return image;
 #endif // _IPHONE
+}
+
+cstr_t guessPictureDataExt(const StringView &imageData) {
+    if (imageData.len < CountOf(SIGNATURE_PNG)) {
+        // Invalid image data
+        return ".err";
+    }
+
+    auto buf = imageData.data;
+    if (memcmp(buf, SIGNATURE_BMP, CountOf(SIGNATURE_BMP)) == 0) {
+        return ".bmp";
+    } else if (memcmp(buf, SIGNATURE_PNG, CountOf(SIGNATURE_PNG)) == 0) {
+        return ".png";
+    } else if (memcmp(buf, SIGNATURE_JPG, CountOf(SIGNATURE_JPG)) == 0) {
+        return ".jpg";
+    } else if (memcmp(buf, SIGNATURE_GIF, CountOf(SIGNATURE_GIF)) == 0) {
+        return ".gif";
+    } else {
+        // Unkown
+        return ".jpg";
+    }
 }
 
 void rawImageBGR24Set(RawImageData *image, uint8_t r, uint8_t g, uint8_t b) {

@@ -1,4 +1,4 @@
-﻿
+
 
 #include "MPlayerApp.h"
 #include "LyricShowVobSub.h"
@@ -20,44 +20,39 @@ CLyricShowVobSub::~CLyricShowVobSub() {
 }
 
 void CLyricShowVobSub::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
-    int y;
-    LyricsLine *pLyricRow = nullptr, *pLyricRowNext = nullptr;
-
     canvas->setFont(&m_font);
 
     if (prcUpdate) {
         *prcUpdate = m_rcObj;
     }
 
-    if (m_pMLData == nullptr) {
+    if (m_curLyrics == nullptr) {
         return;
     }
 
-    int nRowCur, nRowNext;
-    int nPlayPos;
-
     // get the current playing row
-    nRowCur = m_pMLData->getCurPlayLine(m_lyrLines);
+    int nRowCur = m_curLyrics->getCurPlayLine(m_lyrLines);
     if (nRowCur == -1) {
         // no lyrics, redraw background
         updateLyricDrawBufferBackground(canvas, m_rcObj);
         return;
     }
 
-    nPlayPos = m_pMLData->getPlayElapsedTime();
+    int nPlayPos = m_curLyrics->getPlayElapsedTime();
 
-    pLyricRow = m_lyrLines[nRowCur];
-    nRowNext = nRowCur +1;
+    auto &lyricRow = m_lyrLines[nRowCur];
+    int nRowNext = nRowCur +1;
 
-    pLyricRowNext = nullptr;
+    LyricsLine *lyricRowNext = nullptr;
     if (nRowNext < (int)m_lyrLines.size()) {
-        pLyricRowNext = m_lyrLines[nRowNext];
-        if (nPlayPos < pLyricRowNext->nBegTime) {
-            pLyricRowNext = nullptr;
+        lyricRowNext = &m_lyrLines[nRowNext];
+        if (nPlayPos < lyricRowNext->beginTime) {
+            lyricRowNext = nullptr;
         }
     }
 
-    if (pLyricRowNext) {
+    int y = 0;
+    if (lyricRowNext) {
         y = getLineVertAlignPos() - getLineHeight() - m_nLineSpacing / 2;
     } else {
         y = getLineVertAlignPos() - getLineHeight() / 2;
@@ -66,8 +61,8 @@ void CLyricShowVobSub::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
     //
     // 增加此判断提高效率
     //
-    if (nPlayPos >= pLyricRow->nBegTime &&
-        nPlayPos <= pLyricRow->nEndTime &&
+    if (nPlayPos >= lyricRow.beginTime &&
+        nPlayPos <= lyricRow.endTime &&
         nRowCur == m_nCurRowOld && prcUpdate != nullptr &&
         (m_LyricsDisplayOpt == DO_NORMAL && !isKaraoke())) {
         return;
@@ -89,23 +84,22 @@ void CLyricShowVobSub::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
     CRawGraph::CClipBoxAutoRecovery autoCBR(canvas);
     canvas->setClipBoundBox(rcClip);
 
-    if (nPlayPos >= pLyricRow->nBegTime &&
-        nPlayPos <= pLyricRow->nEndTime) {
+    if (nPlayPos >= lyricRow.beginTime &&
+        nPlayPos <= lyricRow.endTime) {
         // 显示此行
-        drawCurrentRow(canvas, pLyricRow, AUTO_CAL_X, y);
+        drawCurrentRow(canvas, lyricRow, AUTO_CAL_X, y);
         y += getLineHeight();
         m_bClearedOld = false;
     }
 
-    if (pLyricRowNext && nPlayPos >= pLyricRowNext->nBegTime &&
-        nPlayPos <= pLyricRowNext->nEndTime) {
+    if (lyricRowNext && nPlayPos >= lyricRowNext->beginTime &&
+        nPlayPos <= lyricRowNext->endTime) {
         // 显示此行
-        drawCurrentRow(canvas, pLyricRowNext, AUTO_CAL_X, y);
+        drawCurrentRow(canvas, *lyricRowNext, AUTO_CAL_X, y);
         m_bClearedOld = false;
     }
 
-    if (nPlayPos >= pLyricRow->nBegTime &&
-        nPlayPos <= pLyricRow->nEndTime) {
+    if (nPlayPos >= lyricRow.beginTime && nPlayPos <= lyricRow.endTime) {
         m_nCurRowOld = nRowCur;
     }
 }

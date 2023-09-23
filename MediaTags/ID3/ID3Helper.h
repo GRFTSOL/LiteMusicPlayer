@@ -16,15 +16,22 @@ int copyAnsiStr(string &str, const char *data, int nLen);
 // return the size of bytes used from buffer data
 int copyStrByEncodingAndBom(string &str, ID3v2EncType encType, const char *data, int len, CharEncodingType encoding = ED_SYSDEF);
 
-uint32_t synchDataToUInt(uint8_t *byData, int nLen);
-void synchDataFromUInt(uint32_t value, uint8_t *byData, int nLen);
+uint32_t syncBytesToUInt32(uint8_t *bytes);
+void syncBytesFromUInt32(uint32_t value, uint8_t *bytesOut);
+inline string syncBytesFromUInt32(uint32_t value) {
+    uint8_t buf[4];
+    syncBytesFromUInt32(value, buf);
+    return string((char *)buf, 4);
+}
+
+void synchDataDecode(string &data);
+string synchDataEncode(const string &data);
 
 uint32_t byteDataToUInt(uint8_t *byData, int nLen);
 void byteDataFromUInt(uint32_t value, uint8_t *byData, int nLen);
 
 int fileDataReset(FILE *m_fp, long nOffset, long nSize, int nMask);
 int fileDataCmp(FILE *m_fp, long nOffset, const void *lpData, long nSize, int &nResult);
-int fileAppendData(FILE *m_fp, long nAppend, int nMask = 0);
 int fileMoveEndData(FILE *m_fp, long nOffset, long nNewOffset);
 
 #endif // !defined(MediaTags_ID3_ID3Helper_h)

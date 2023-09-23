@@ -212,6 +212,7 @@ public:
     // UID = UIObject ID
     //
     int getIDByName(cstr_t szId) { return getIDByNameEx(szId, nullptr); }
+    int getIDByName(const string &id) { return getIDByNameEx(id.c_str(), nullptr); }
     int getIDByNameEx(cstr_t szId, string *pstrToolTip);
     virtual int getIDByNameEx(cstr_t szId, string &strToolTip)
         { return getIDByNameEx(szId, &strToolTip); }
@@ -262,7 +263,7 @@ public:
     void registerUIObjNewer(cstr_t szClassName, IUIObjNewer *pObjNewer);
 
     // create new uiobject by class name
-    virtual CUIObject * createUIObject(CSkinWnd *pSkin, cstr_t szClassName, CSkinContainer *pContainer);
+    virtual CUIObject *createUIObject(CSkinWnd *pSkin, cstr_t szClassName, CSkinContainer *pContainer);
 
     //
     virtual CUIObject *createDynamicCtrl(CSkinContainer *pContainer, cstr_t szClassName, int nIDAssign = UID_INVALID, cstr_t szLeft = nullptr, cstr_t szTop = nullptr, cstr_t szWidth = nullptr, cstr_t szHeight = nullptr);

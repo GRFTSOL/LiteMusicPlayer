@@ -1,18 +1,6 @@
 #pragma once
 
-#include "../MLProtocol/MLUtils.h"
-
-
-#ifndef _IPHONE
-#define _ID3V2_SUPPORT
-#endif
-
-#ifdef _ID3V2_SUPPORT
-#include "Lyrics3v2.h"
 #include "../MediaTags/MediaTags.h"
-
-
-#endif // #ifdef _ID3V2_SUPPORT
 
 #define MATCH_VALUE_MIN     30
 #define MATCH_VALUE_OK      60
@@ -38,9 +26,9 @@ public:
 public:
     CLyricsSearchParameter(cstr_t szSongFile, cstr_t szArtist, cstr_t szTitle, bool bOnlySearchBestMatch = false);
 
-    int calMatchValueByName(cstr_t szLyricsDir, cstr_t szLyricsFileName, MLFileType fileType);
+    int calMatchValueByName(cstr_t szLyricsDir, cstr_t szLyricsFileName, LyricsContentType lct);
 
-    int calMatchValueByTitle(cstr_t szLyrArtist, cstr_t szLyrTitle, MLFileType fileType);
+    int calMatchValueByTitle(cstr_t szLyrArtist, cstr_t szLyrTitle, LyricsContentType lct);
 
     bool isBestMatchLyricsFound();
 
@@ -86,5 +74,4 @@ public:
 
 void searchMatchLyricsInDir(cstr_t szDir, CLyricsSearchParameter &searchParam, ListLyrSearchResults &vLyrics, bool bIncludeSub);
 
-int searchEmbeddedLyrics(cstr_t szSongFile, ListLyrSearchResults &vLyrics, bool bOnlyListAvailable = false);
-int searchEmbeddedLyrics(cstr_t szSongFile, uint32_t &lrcSourceType);
+void searchEmbeddedLyrics(cstr_t szSongFile, ListLyrSearchResults &vLyrics, bool bOnlyListAvailable = false);

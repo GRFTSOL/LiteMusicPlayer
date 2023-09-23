@@ -1,11 +1,17 @@
 #include "LyricsSearch.h"
-#include "MLData.h"
+#include "CurrentLyrics.h"
 #include "HelperFun.h"
 #include "LyricsKeywordFilter.h"
 
 
-//////////////////////////////////////////////////////////////////////////
-// CLyricsSearchParameter
+//                       TXT,                 LRC
+const int __vArTiSame[] = { MATCH_VALUE_OK,      MATCH_VALUE_OK + 20 };
+const int __vTiSame[]   = { MATCH_VALUE_OK - 30, MATCH_VALUE_OK - 10 };
+
+int getMatchValueIndex(LyricsContentType lct) {
+    return lct >= LCT_LRC ? 1 : 0;
+}
+
 CLyricsSearchParameter::CLyricsSearchParameter(cstr_t szSongFile, cstr_t szArtist, cstr_t szTitle, bool bOnlySearchBestMatch) {
     this->szSongFile = szSongFile;
     this->szArtist = szArtist;
@@ -22,22 +28,7 @@ CLyricsSearchParameter::CLyricsSearchParameter(cstr_t szSongFile, cstr_t szArtis
     }
 }
 
-//                           TXT,                 LRC                     SRT
-const int __vArTiSame[] = { MATCH_VALUE_OK, MATCH_VALUE_OK + 20, MATCH_VALUE_OK + 10 };
-const int __vTiSame[] = { MATCH_VALUE_OK - 30, MATCH_VALUE_OK - 10, MATCH_VALUE_OK - 20 };
-
-inline int fileTypeToMatchValueCol(MLFileType fileType) {
-    int col = 0;
-    if (fileType == FT_LYRICS_LRC) {
-        col = 1;
-    } else if (fileType == FT_SUBTITLE_SRT) {
-        col = 2;
-    }
-
-    return col;
-}
-
-int CLyricsSearchParameter::calMatchValueByName(cstr_t szLyricsDir, cstr_t szLyricsFileName, MLFileType fileType) {
+int CLyricsSearchParameter::calMatchValueByName(cstr_t szLyricsDir, cstr_t szLyricsFileName, LyricsContentType lct) {
     assert(endsWith(szLyricsDir, PATH_SEP_STR));
 
     bool isFileTitleSame = false;
@@ -47,7 +38,7 @@ int CLyricsSearchParameter::calMatchValueByName(cstr_t szLyricsDir, cstr_t szLyr
     getArtistTitleFromFileName(strLyrArtist, strLyrTitle, szLyricsFileName);
 
     // Calculate match by artist and title.
-    int matchValue = calMatchValueByTitle(strLyrArtist.c_str(), strLyrTitle.c_str(), fileType);
+    int matchValue = calMatchValueByTitle(strLyrArtist.c_str(), strLyrTitle.c_str(), lct);
 
     // Is file name same with song file name?
     if (strSongTitle.size() > 0) {
@@ -72,7 +63,8 @@ int CLyricsSearchParameter::calMatchValueByName(cstr_t szLyricsDir, cstr_t szLyr
 
     if (isFileTitleSame && matchValue < MATCH_VALUE_OK) {
         // File name same.
-        matchValue = __vArTiSame[fileTypeToMatchValueCol(fileType)];
+
+        matchValue = __vArTiSame[getMatchValueIndex(lct)];
         if (isDirSame) {
             matchValue += 2;
         }
@@ -81,7 +73,7 @@ int CLyricsSearchParameter::calMatchValueByName(cstr_t szLyricsDir, cstr_t szLyr
     return matchValue;
 }
 
-int CLyricsSearchParameter::calMatchValueByTitle(cstr_t szLyrArtist, cstr_t szLyrTitle, MLFileType fileType) {
+int CLyricsSearchParameter::calMatchValueByTitle(cstr_t szLyrArtist, cstr_t szLyrTitle, LyricsContentType lct) {
     bool isTitleSame = false;
     bool isArtistSame = false;
 
@@ -100,9 +92,9 @@ int CLyricsSearchParameter::calMatchValueByTitle(cstr_t szLyrArtist, cstr_t szLy
 
     int matchValue;
     if (isArtistSame) {
-        matchValue = __vArTiSame[fileTypeToMatchValueCol(fileType)];
+        matchValue = __vArTiSame[getMatchValueIndex(lct)];
     } else {
-        matchValue = __vTiSame[fileTypeToMatchValueCol(fileType)];
+        matchValue = __vTiSame[getMatchValueIndex(lct)];
     }
 
     bool isTitleAllSame = strIsISame(szTitle, szLyrTitle);
@@ -223,10 +215,6 @@ void ListLyrSearchResults::deleteByOrder(int n) {
     }
 }
 
-bool isSupportedOpenFileType(MLFileType fileType) {
-    return fileType != FT_UNKNOWN && isFlagSet(FT_LYRICS_TXT | FT_SUBTITLE_SRT | FT_LYRICS_LRC, fileType);
-}
-
 //
 // Return it, if:
 // * Name is same as song file name.
@@ -254,12 +242,12 @@ void searchMatchLyricsInDir(cstr_t szDir, CLyricsSearchParameter &searchParam, L
                 }
             }
         } else {
-            MLFileType fileType = GetLyricsFileType(finder.getCurName());
-            if (!isSupportedOpenFileType(fileType)) {
+            auto ct = getLyricsContentTypeByFileExt(finder.getCurName());
+            if (ct == LCT_UNKNOWN) {
                 continue;
             }
 
-            int nMatchValue = searchParam.calMatchValueByName(szDir, finder.getCurName(), fileType);
+            int nMatchValue = searchParam.calMatchValueByName(szDir, finder.getCurName(), ct);
             if (nMatchValue > MATCH_VALUE_MIN) {
                 if (searchParam.bOnlySearchBestMatch) {
                     if (nMatchValue > searchParam.nMatchValueOfBest) {
@@ -275,7 +263,7 @@ void searchMatchLyricsInDir(cstr_t szDir, CLyricsSearchParameter &searchParam, L
                 LrcSearchResult LrcResult;
                 LrcResult.nMatchValue = (float)nMatchValue;
                 LrcResult.strUrl = dirStringJoin(szDir, finder.getCurName());
-                LrcResult.strSaveFileName = fileGetTitle(finder.getCurName());
+                LrcResult.strSaveFileName = fileGetName(finder.getCurName());
                 vLyrics.addResult(LrcResult);
             }
         }
@@ -284,15 +272,10 @@ void searchMatchLyricsInDir(cstr_t szDir, CLyricsSearchParameter &searchParam, L
 
 string removePrefixOfAcckey(cstr_t szStr);
 
-int searchEmbeddedLyrics(cstr_t szSongFile, ListLyrSearchResults &vLyrics, bool bOnlyListAvailable) {
-    VecStrings vLyricsNames;
-    int nRet = MediaTags::getEmbeddedLyrics(szSongFile, vLyricsNames);
-    if (nRet != ERR_OK) {
-        return nRet;
-    }
+void searchEmbeddedLyrics(cstr_t szSongFile, ListLyrSearchResults &vLyrics, bool bOnlyListAvailable) {
+    VecStrings vLyricsUrls = MediaTags::getEmbeddedLyrics(szSongFile);
 
-    for (uint32_t i = 0; i < vLyricsNames.size(); i++) {
-        string &lyrName = vLyricsNames[i];
+    for (auto &lyrName : vLyricsUrls) {
         LRC_SOURCE_TYPE lst = lyrSrcTypeFromName(lyrName.c_str());
 
         LrcSearchResult result;
@@ -306,7 +289,7 @@ int searchEmbeddedLyrics(cstr_t szSongFile, ListLyrSearchResults &vLyrics, bool 
 
         string language;
         int index;
-        if (getEmbeddedLyricsNameInfo(lyrName.c_str(), language, index)) {
+        if (getEmbeddedLyricsUrlInfo(lyrName.c_str(), language, index)) {
             string strIndex;
             if (index > 0) {
                 strIndex = stringPrintf(": %d", index).c_str();
@@ -323,29 +306,11 @@ int searchEmbeddedLyrics(cstr_t szSongFile, ListLyrSearchResults &vLyrics, bool 
 
         vLyrics.addResult(result);
     }
-
-    return ERR_OK;
-}
-
-int searchEmbeddedLyrics(cstr_t szSongFile, uint32_t &lrcSourceType) {
-    lrcSourceType = 0;
-
-    VecStrings vLyricsNames;
-    int nRet = MediaTags::getEmbeddedLyrics(szSongFile, vLyricsNames);
-    if (nRet != ERR_OK) {
-        return nRet;
-    }
-
-    for (uint32_t i = 0; i < vLyricsNames.size(); i++) {
-        lrcSourceType |= lyrSrcTypeFromName(vLyricsNames[i].c_str());
-    }
-
-    return ERR_OK;
 }
 
 #if UNIT_TEST
 
-#include "utils/unittest.h"
+#include "../TinyJS/utils/unittest.h"
 
 TEST(lrcSearch, CLyricsSearchParameter) {
     string testDir = getUnittestTempDir();
@@ -353,14 +318,26 @@ TEST(lrcSearch, CLyricsSearchParameter) {
     cstr_t szArtist = "artist";
     cstr_t szTitle = "title";
 
-    cstr_t vLyrFileName[] = { "artist - title.lrc", "artist - 01 title.txt", "artist(who are you?) - 01 title.txt", "title.lrc", "artist.lrc", };
-    int vMatchValue[] = { __vArTiSame[1] + 2 + 2, __vArTiSame[0] + 1 + 1, __vArTiSame[0] + 1, __vTiSame[1] + 1 + 1, 0 };
+    cstr_t vLyrFileName[] = {
+        "artist - title.lrc",
+        "artist - 01 title.txt",
+        "artist(who are you?) - 01 title.txt",
+        "title.lrc",
+        "artist.lrc",
+    };
+    int vMatchValue[] = {
+        __vArTiSame[1] + 2 + 2,
+        __vArTiSame[0] + 1 + 1,
+        __vArTiSame[0] + 1,
+        __vTiSame[1] + 1 + 1,
+        0
+    };
 
     CLyricsSearchParameter searchParam(strMedia.c_str(), szArtist, szTitle);
 
     for (int i = 0; i < CountOf(vLyrFileName); i++) {
         string strLyrFile = dirStringJoin(testDir.c_str(), vLyrFileName[i]);
-        int matchValue = searchParam.calMatchValueByName(testDir.c_str(), vLyrFileName[i], GetLyricsFileType(strLyrFile.c_str()));
+        int matchValue = searchParam.calMatchValueByName(testDir.c_str(), vLyrFileName[i], getLyricsContentTypeByFileExt(strLyrFile.c_str()));
         ASSERT_TRUE(matchValue == vMatchValue[i]);
     }
 }
@@ -374,7 +351,7 @@ TEST(lrcSearch, CLyricsSearchParameter2) {
     CLyricsSearchParameter searchParam(strMedia.c_str(), szArtist, szTitle);
 
     string strLyrFile = dirStringJoin(testDir.c_str(), "just a media.lrc");
-    int matchValue = searchParam.calMatchValueByName(testDir.c_str(), strLyrFile.c_str(), GetLyricsFileType(strLyrFile.c_str()));
+    int matchValue = searchParam.calMatchValueByName(testDir.c_str(), strLyrFile.c_str(), getLyricsContentTypeByFileExt(strLyrFile.c_str()));
     ASSERT_TRUE(matchValue == __vArTiSame[1] + 2);
 
     deleteFile(strMedia.c_str());

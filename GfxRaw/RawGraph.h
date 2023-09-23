@@ -131,19 +131,32 @@ public:
     void clearClipBoundBox();
 
     bool textOut(float x, float y, cstr_t szText, size_t nLen);
+    bool textOut(float x, float y, const StringView &text)
+        { return textOut(x, y, text.data, text.len); }
     bool drawTextClip(cstr_t szText, size_t nLen, const CRect &rcPos, float xLeftClipOffset = 0);
+    bool drawTextClip(const StringView &text, const CRect &rcPos, float xLeftClipOffset = 0)
+        { return drawTextClip(text.data, text.len, rcPos, xLeftClipOffset); }
 
     bool textOutOutlined(float x, float y, cstr_t szText, size_t nLen, const CColor &clrText, const CColor &clrBorder);
+    bool textOutOutlined(float x, float y, const StringView &text, const CColor &clrText, const CColor &clrBorder)
+        { return textOutOutlined(x, y, text.data, text.len, clrText, clrBorder); }
     bool drawTextClipOutlined(cstr_t szText, size_t nLen, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, float xLeftClipOffset = 0);
+    bool drawTextClipOutlined(const StringView &text, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, float xLeftClipOffset = 0)
+        { return drawTextClipOutlined(text.data, text.len, rcPos, clrText, clrBorder, xLeftClipOffset); }
+
     bool drawTextOutlined(cstr_t szText, size_t nLen, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, uint32_t uFormat = DT_SINGLELINE | DT_LEFT);
+    bool drawTextOutlined(const StringView &text, const CRect &rcPos, const CColor &clrText, const CColor &clrBorder, uint32_t uFormat = DT_SINGLELINE | DT_LEFT)
+        { return drawTextOutlined(text.data, text.len, rcPos, clrText, clrBorder, uFormat); }
 
     bool drawText(cstr_t szText, size_t nLen, const CRect &rcPos, uint32_t uFormat = DT_SINGLELINE | DT_LEFT);
+    bool drawText(const StringView &text, const CRect &rcPos, uint32_t uFormat = DT_SINGLELINE | DT_LEFT)
+        { return drawText(text.data, text.len, rcPos, uFormat); }
 
     bool getTextExtentPoint32(cstr_t szText, size_t nLen, CSize *pSize);
+    bool getTextExtentPoint32(const StringView &text, CSize *size)
+        { return getTextExtentPoint32(text.data, text.len, size); }
 
-    void setTextColor(const CColor &color) {
-        m_clrText = color;
-    }
+    void setTextColor(const CColor &color) { m_clrText = color; }
 
     void setFont(CRawBmpFont *font);
 

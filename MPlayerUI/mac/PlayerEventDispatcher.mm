@@ -7,6 +7,7 @@
 //
 #import <Cocoa/Cocoa.h>
 #import "PlayerEventDispatcher.h"
+#import "../../LyricsLib/CurrentLyrics.h"
 
 
 @interface _PlayerEventDispatcherInternal : NSObject
@@ -44,7 +45,7 @@
     }
 
     int nPlayPos = g_player.getPlayPos();
-    g_LyricData.SetPlayElapsedTime(nPlayPos);
+    g_currentLyrics.SetPlayElapsedTime(nPlayPos);
 
     CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
 

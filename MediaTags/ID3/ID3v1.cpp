@@ -226,9 +226,21 @@ CID3v1::~CID3v1() {
 
 }
 
-cstr_t *CID3v1::getSupportedExtArray() {
-    static cstr_t arr[] = { ".mp3", ".mp2", nullptr };
-    return arr;
+bool CID3v1::hasTag(FILE *fp) {
+    if (fseek(fp, -ID3_V1_LEN, SEEK_END) != 0) {
+        return false;
+    }
+
+    char szID3v1[ID3_V1_LEN];
+    if (fread(szID3v1, 1, ID3_V1_LEN, fp) != ID3_V1_LEN) {
+        return false;
+    }
+
+    if (memcmp(szID3v1, "TAG", ID3_V1_LEN_ID) != 0) {
+        return false;
+    }
+
+    return true;
 }
 
 int CID3v1::getTag(cstr_t szFile, BasicMediaTags &tags) {

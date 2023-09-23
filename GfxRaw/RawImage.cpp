@@ -234,6 +234,40 @@ RawImageDataPtr createScaledRawImageData(RawImageData *src, float scale) {
     return newImage;
 }
 
+void getStretchDrawDstRect(CRect &src, CRect &dst, bool isFillAll) {
+    if (src.empty() || dst.empty()) {
+        return;
+    }
+
+    if (isFillAll) {
+        // fully cover @dst, need to clip @src
+        if (src.width() * dst.height() < src.height() * dst.width()) {
+            // Clip src Y
+            int h = dst.height() * src.width() / dst.width();
+            src.top += (src.height() - h) / 2;
+            src.bottom = src.top + h;
+        } else {
+            // Clip src X
+            int w = dst.width() * src.height() / dst.height();
+            src.left += (src.width() - w) / 2;
+            src.right = src.left + w;
+        }
+    } else {
+        // need to clip @src
+        if (dst.width() * src.height() < dst.height() * src.width()) {
+            // Clip dst Y
+            int h = src.height() * dst.width() / src.width();
+            dst.top += (dst.height() - h) / 2;
+            dst.bottom = dst.top + h;
+        } else {
+            // Clip dst X
+            int w = src.width() * dst.height() / src.height();
+            dst.left += (dst.width() - w) / 2;
+            dst.right = dst.left + w;
+        }
+    }
+}
+
 //////////////////////////////////////////////////////////////////////
 
 CRawImage::CRawImage(void) {

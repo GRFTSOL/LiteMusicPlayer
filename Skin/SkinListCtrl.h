@@ -105,6 +105,8 @@ public:
     int getItemText(int nItem, int nSubItem, char * lpszText, int nLen);
     int getItemText(int nItem, int nSubItem, string &strText);
     virtual bool setItemText(int row, int col, cstr_t text, bool isRedraw = true);
+    bool setItemText(int row, int col, const string &text, bool isRedraw = true)
+        { return setItemText(row, col, text.c_str(), isRedraw); }
     bool setItemTextEx(int row, int col, cstr_t text, const VecTextColor & vTextColor, bool isRedraw = true);
 
     virtual bool setItemImage(int nItem, int nSubItem, const RawImageDataPtr &image, bool bRedraw = true);

@@ -32,17 +32,13 @@ CLyricShowTxtObj::CLyricShowTxtObj() {
     m_nCurLineLatest = 0;
     m_timeBeginScroll = 0;
     m_bInVerticalScrollingMode = false;
-
-    m_bRecordScrollingActionsEnabled = true;
-    m_bReplayScrollingActionsEnabled = true;
-    m_bReplayDisabledTemp = false;
 }
 
 CLyricShowTxtObj::~CLyricShowTxtObj() {
 }
 
 bool CLyricShowTxtObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
-    if (g_LyricData.getLyrContentType() != LCT_TXT && !m_bReplayScrollingActionsEnabled) {
+    if (g_currentLyrics.getLyrContentType() != LCT_TXT) {
         return CLyricShowMultiRowObj::onKeyDown(nChar, nFlags);
     }
 
@@ -92,10 +88,6 @@ bool CLyricShowTxtObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
     }
 
     if (bProcessed) {
-        if (!m_bRecordScrollingActionsEnabled) {
-            m_bReplayDisabledTemp = true;
-        }
-
         if (nCurLineNew < 0) {
             nCurLineNew = 0;
         }
@@ -104,7 +96,6 @@ bool CLyricShowTxtObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
             if (m_pScrollBar) {
                 m_pScrollBar->setScrollPos(nCurLineNew);
             }
-            startScrollAnimation(nCurLineNew);
         }
         return true;
     } else {
@@ -113,31 +104,13 @@ bool CLyricShowTxtObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
 }
 
 void CLyricShowTxtObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
-    if (!m_pMLData->hasLyricsOpened() || m_lyrLines.size() == 0) {
+    if (!m_curLyrics->hasLyricsOpened() || m_lyrLines.size() == 0) {
         fastDrawMediaInfo(canvas, prcUpdate);
         return;
     }
 
-    int nCurLine = m_pMLData->getCurPlayLine(m_lyrLines);
+    int nCurLine = m_curLyrics->getCurPlayLine(m_lyrLines);
     if (nCurLine < 0 || nCurLine >= (int)m_lyrLines.size()) {
-        return;
-    }
-
-    if (m_bReplayScrollingActionsEnabled && !m_bReplayDisabledTemp
-        && m_lyrLines[nCurLine]->nEndTime != CLyrScrollActionRecorder::MAX_TIME) {
-        // in Scrolling mode
-        m_bInVerticalScrollingMode = true;
-        if (m_nCurLine != nCurLine) {
-            m_nCurLineNew = m_nCurLine = nCurLine;
-            if (m_pScrollBar) {
-                m_pScrollBar->setScrollPos(m_nCurLine);
-            }
-        }
-
-        CDispOptRecover dispOptRecover(this);
-        m_LyricsDisplayOpt = DO_FADEOUT_LOWCOLOR;
-
-        CLyricShowMultiRowObj::fastDraw(canvas, prcUpdate);
         return;
     }
 
@@ -236,15 +209,6 @@ void CLyricShowTxtObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
 void CLyricShowTxtObj::onLyricsChanged() {
     CLyricShowMultiRowObj::onLyricsChanged();
 
-    m_bReplayDisabledTemp = false;
-
-    CSkinToolbar *pToolbarLyrTxt = (CSkinToolbar*)m_pSkin->getUIObjectById(ID_TB_LYR_TXT, CSkinToolbar::className());
-    if (pToolbarLyrTxt) {
-        pToolbarLyrTxt->setCheck(CMD_LYR_SCROLL_ENABLE_RECORD,
-            isRecordScrollingActionsEnabled() && g_LyricData.getLyrContentType() == LCT_TXT);
-        pToolbarLyrTxt->setCheck(CMD_LYR_SCROLL_ENABLE_REPLAY, isReplayScrollingActionsEnabled());
-    }
-
     m_nCurLine = 0;
     m_nCurLineNew = 0;
 
@@ -257,10 +221,6 @@ void CLyricShowTxtObj::onLyrDrawContextChanged() {
     CLyricShowMultiRowObj::onLyrDrawContextChanged();
 
     setScrollInfo();
-
-    if (g_LyricData.isUsingLyrScrollActionRecorder()) {
-        g_LyricData.updateTimeTagByLyrScrollActions(m_lyrLines);
-    }
 }
 
 void CLyricShowTxtObj::setScrollInfo() {
@@ -275,32 +235,11 @@ void CLyricShowTxtObj::setScrollInfo() {
 
 void CLyricShowTxtObj::onPlayTimeChangedUpdate() {
     // No need to update lyrics with time
-    if (!m_bInScrollingToNewLine && !m_bInVerticalScrollingMode && (!m_bReplayScrollingActionsEnabled || m_bReplayDisabledTemp)) {
+    if (!m_bInScrollingToNewLine && !m_bInVerticalScrollingMode) {
         return;
     }
 
     CLyricShowMultiRowObj::onPlayTimeChangedUpdate();
-}
-
-void CLyricShowTxtObj::enableRecordScrollingActions(bool bEnable) {
-    if (g_LyricData.getLyrContentType() == LCT_TXT) {
-        m_bReplayDisabledTemp = false;
-        m_bRecordScrollingActionsEnabled = bEnable;
-        g_profile.writeInt("LyrRecordSAEnabled", bEnable);
-    }
-}
-
-void CLyricShowTxtObj::enableReplayScrollingActions(bool bEnable) {
-    if (bEnable) {
-        m_bReplayDisabledTemp = false;
-    }
-    m_bReplayScrollingActionsEnabled = bEnable;
-    g_profile.writeInt("LyrReplaySAEnabled", bEnable);
-
-    CSkinToolbar *pToolbarLyrTxt = (CSkinToolbar*)m_pSkin->getUIObjectById(ID_TB_LYR_TXT, CSkinToolbar::className());
-    if (pToolbarLyrTxt) {
-        pToolbarLyrTxt->setCheck(CMD_LYR_SCROLL_ENABLE_REPLAY, isReplayScrollingActionsEnabled());
-    }
 }
 
 void CLyricShowTxtObj::onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) {
@@ -323,9 +262,6 @@ void CLyricShowTxtObj::onCreate() {
 
     registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_LYRICS_ON_SAVE_EDIT);
 
-    m_bRecordScrollingActionsEnabled = g_profile.getBool("LyrRecordSAEnabled", false);
-    m_bReplayScrollingActionsEnabled = g_profile.getBool("LyrReplaySAEnabled", true);
-
     m_pObjScrollBar = m_pContainer->getUIObjectByClassName(CSkinVScrollBar::className());
     if (m_pObjScrollBar) {
         m_pScrollBar = (CSkinVScrollBar*)m_pObjScrollBar;
@@ -338,24 +274,10 @@ void CLyricShowTxtObj::onCreate() {
     setScrollInfo();
 }
 
-void CLyricShowTxtObj::onEvent(const IEvent *pEvent) {
-    if (pEvent->eventType == ET_LYRICS_ON_SAVE_EDIT) {
-        if (g_LyricData.getLyrContentType() == LCT_TXT) {
-            g_LyricData.lyrScrollActionsToTag();
-        }
-    } else {
-        CLyricShowMultiRowObj::onEvent(pEvent);
-    }
-}
-
 void CLyricShowTxtObj::onSize() {
     CLyricShowMultiRowObj::onSize();
 
     setScrollInfo();
-
-    if (g_LyricData.isUsingLyrScrollActionRecorder()) {
-        g_LyricData.updateTimeTagByLyrScrollActions(m_lyrLines);
-    }
 }
 
 void CLyricShowTxtObj::onTimer(int nId) {
@@ -378,15 +300,6 @@ int CLyricShowTxtObj::getLinesPerPage() {
 
 void CLyricShowTxtObj::startScrollAnimation(int nCurLineNew) {
     bool bMultipleLineScrolled = (abs(nCurLineNew - m_nCurLine) > 1);
-
-    if (!m_bRecordScrollingActionsEnabled || bMultipleLineScrolled) {
-        m_bReplayDisabledTemp = true;
-    }
-
-    if (g_LyricData.getLyrContentType() == LCT_TXT && m_bRecordScrollingActionsEnabled
-        && !bMultipleLineScrolled) {
-        g_LyricData.lyrScrollToLine(m_lyrLines, nCurLineNew, g_LyricData.getPlayElapsedTime(), true);
-    }
 
     if (m_bInScrollingToNewLine) {
         m_yOffsetScroll = m_yCurLineLatest - getLineVertAlignPos();

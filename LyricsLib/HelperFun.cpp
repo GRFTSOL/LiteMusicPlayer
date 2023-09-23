@@ -2,7 +2,6 @@
 #ifdef WIN32
 #include "mbstring.h"
 #endif
-#include "LrcTag.h"
 
 void getArtistTitleFromFileName(string &strArtist, string &strTitle, cstr_t szFile) {
     string fileTitle = fileGetTitle(szFile);
@@ -71,7 +70,7 @@ bool getMLEncriptyData(string &strData) {
 
 #if UNIT_TEST
 
-#include "utils/unittest.h"
+#include "../TinyJS/utils/unittest.h"
 
 TEST(HelperFun, testGetArtistTitleFromFileName) {
     string artist, title;

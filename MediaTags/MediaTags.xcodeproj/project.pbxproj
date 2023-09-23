@@ -21,16 +21,29 @@
 		5FB59274154594EA0071B204 /* ID3v2IF.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FB59267154594E90071B204 /* ID3v2IF.h */; };
 		5FB59275154594EA0071B204 /* LyricsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FB59268154594E90071B204 /* LyricsData.cpp */; };
 		5FB59276154594EA0071B204 /* LyricsData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FB59269154594E90071B204 /* LyricsData.h */; };
-		5FB59277154594EA0071B204 /* M4aTag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FB5926A154594E90071B204 /* M4aTag.cpp */; };
-		5FB59278154594EA0071B204 /* M4aTag.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FB5926B154594E90071B204 /* M4aTag.h */; };
-		5FB59279154594EA0071B204 /* MidiTag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FB5926C154594E90071B204 /* MidiTag.cpp */; };
-		5FB5927A154594EA0071B204 /* MidiTag.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FB5926D154594E90071B204 /* MidiTag.h */; };
+		5FB59277154594EA0071B204 /* M4aFileTags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FB5926A154594E90071B204 /* M4aFileTags.cpp */; };
+		5FB59278154594EA0071B204 /* M4aFileTags.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 5FB5926B154594E90071B204 /* M4aFileTags.hpp */; };
+		5FB59279154594EA0071B204 /* MidiFileTags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FB5926C154594E90071B204 /* MidiFileTags.cpp */; };
+		5FB5927A154594EA0071B204 /* MidiFileTags.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FB5926D154594E90071B204 /* MidiFileTags.h */; };
 		5FB5927B154594EA0071B204 /* MP3InfoReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FB5926E154594E90071B204 /* MP3InfoReader.cpp */; };
 		5FB5927C154594EA0071B204 /* MP3InfoReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FB5926F154594E90071B204 /* MP3InfoReader.h */; };
 		5FB5927E154594EA0071B204 /* MediaTags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FB59271154594E90071B204 /* MediaTags.cpp */; };
 		5FB5927F154594EA0071B204 /* MediaTags.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FB59272154594E90071B204 /* MediaTags.h */; };
+		C006B8F02A9C4A310045EA52 /* FlacFileTags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C006B8EE2A9C4A310045EA52 /* FlacFileTags.cpp */; };
+		C006B8F12A9C4A310045EA52 /* FlacFileTags.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C006B8EF2A9C4A310045EA52 /* FlacFileTags.hpp */; };
+		C006B8F42A9E25840045EA52 /* XiphComment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C006B8F22A9E25840045EA52 /* XiphComment.cpp */; };
+		C006B8F52A9E25840045EA52 /* XiphComment.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C006B8F32A9E25840045EA52 /* XiphComment.hpp */; };
+		C006B8F82AA20F370045EA52 /* OggFileTags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C006B8F62AA20F370045EA52 /* OggFileTags.cpp */; };
+		C006BA702AA7FD2B0045EA52 /* IMediaFileTags.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C006BA6E2AA7FD2B0045EA52 /* IMediaFileTags.hpp */; };
+		C006BA802AAA14330045EA52 /* LrcParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C006BA7E2AAA14330045EA52 /* LrcParser.cpp */; };
+		C006BA812AAA14330045EA52 /* LrcParser.h in Headers */ = {isa = PBXBuildFile; fileRef = C006BA7F2AAA14330045EA52 /* LrcParser.h */; };
+		C006BA852AAAEE790045EA52 /* LrcParserHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = C006BA842AAAEE790045EA52 /* LrcParserHelper.h */; };
 		C05D744F29613F4700294F50 /* MediaTagTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D744D29613F4700294F50 /* MediaTagTypes.cpp */; };
 		C05D745029613F4700294F50 /* MediaTagTypes.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C05D744E29613F4700294F50 /* MediaTagTypes.hpp */; };
+		C0CBA42C2AAEF98A0061416F /* MP3FileTags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0CBA42A2AAEF98A0061416F /* MP3FileTags.cpp */; };
+		C0CBA42D2AAEF98A0061416F /* MP3FileTags.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C0CBA42B2AAEF98A0061416F /* MP3FileTags.hpp */; };
+		C0CBA4302AAF16FD0061416F /* Lyrics3v2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0CBA42E2AAF16FD0061416F /* Lyrics3v2.cpp */; };
+		C0CBA4312AAF16FD0061416F /* Lyrics3v2.h in Headers */ = {isa = PBXBuildFile; fileRef = C0CBA42F2AAF16FD0061416F /* Lyrics3v2.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,16 +62,30 @@
 		5FB59267154594E90071B204 /* ID3v2IF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ID3v2IF.h; sourceTree = "<group>"; };
 		5FB59268154594E90071B204 /* LyricsData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LyricsData.cpp; sourceTree = "<group>"; };
 		5FB59269154594E90071B204 /* LyricsData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LyricsData.h; sourceTree = "<group>"; };
-		5FB5926A154594E90071B204 /* M4aTag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = M4aTag.cpp; sourceTree = "<group>"; };
-		5FB5926B154594E90071B204 /* M4aTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = M4aTag.h; sourceTree = "<group>"; };
-		5FB5926C154594E90071B204 /* MidiTag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MidiTag.cpp; sourceTree = "<group>"; };
-		5FB5926D154594E90071B204 /* MidiTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiTag.h; sourceTree = "<group>"; };
+		5FB5926A154594E90071B204 /* M4aFileTags.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = M4aFileTags.cpp; sourceTree = "<group>"; };
+		5FB5926B154594E90071B204 /* M4aFileTags.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = M4aFileTags.hpp; sourceTree = "<group>"; };
+		5FB5926C154594E90071B204 /* MidiFileTags.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MidiFileTags.cpp; sourceTree = "<group>"; };
+		5FB5926D154594E90071B204 /* MidiFileTags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiFileTags.h; sourceTree = "<group>"; };
 		5FB5926E154594E90071B204 /* MP3InfoReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MP3InfoReader.cpp; sourceTree = "<group>"; };
 		5FB5926F154594E90071B204 /* MP3InfoReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MP3InfoReader.h; sourceTree = "<group>"; };
 		5FB59271154594E90071B204 /* MediaTags.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTags.cpp; sourceTree = "<group>"; };
 		5FB59272154594E90071B204 /* MediaTags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTags.h; sourceTree = "<group>"; };
+		C006B8EE2A9C4A310045EA52 /* FlacFileTags.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FlacFileTags.cpp; sourceTree = "<group>"; };
+		C006B8EF2A9C4A310045EA52 /* FlacFileTags.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FlacFileTags.hpp; sourceTree = "<group>"; };
+		C006B8F22A9E25840045EA52 /* XiphComment.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XiphComment.cpp; sourceTree = "<group>"; };
+		C006B8F32A9E25840045EA52 /* XiphComment.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = XiphComment.hpp; sourceTree = "<group>"; };
+		C006B8F62AA20F370045EA52 /* OggFileTags.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OggFileTags.cpp; sourceTree = "<group>"; };
+		C006B8F72AA20F370045EA52 /* OggFileTags.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = OggFileTags.hpp; sourceTree = "<group>"; };
+		C006BA6E2AA7FD2B0045EA52 /* IMediaFileTags.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = IMediaFileTags.hpp; sourceTree = "<group>"; };
+		C006BA7E2AAA14330045EA52 /* LrcParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LrcParser.cpp; sourceTree = "<group>"; };
+		C006BA7F2AAA14330045EA52 /* LrcParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LrcParser.h; sourceTree = "<group>"; };
+		C006BA842AAAEE790045EA52 /* LrcParserHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LrcParserHelper.h; sourceTree = "<group>"; };
 		C05D744D29613F4700294F50 /* MediaTagTypes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTagTypes.cpp; sourceTree = "<group>"; };
 		C05D744E29613F4700294F50 /* MediaTagTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MediaTagTypes.hpp; sourceTree = "<group>"; };
+		C0CBA42A2AAEF98A0061416F /* MP3FileTags.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MP3FileTags.cpp; sourceTree = "<group>"; };
+		C0CBA42B2AAEF98A0061416F /* MP3FileTags.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MP3FileTags.hpp; sourceTree = "<group>"; };
+		C0CBA42E2AAF16FD0061416F /* Lyrics3v2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Lyrics3v2.cpp; sourceTree = "<group>"; };
+		C0CBA42F2AAF16FD0061416F /* Lyrics3v2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lyrics3v2.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,16 +102,16 @@
 		0EB71128277D84C1006929F1 /* ID3 */ = {
 			isa = PBXGroup;
 			children = (
-				0EB71129277D84C1006929F1 /* ID3v2Frame.h */,
-				0EB7112A277D84C1006929F1 /* ID3v2Frame.cpp */,
-				0EB7112B277D84C1006929F1 /* ID3v2FrameParser.h */,
-				0EB7112C277D84C1006929F1 /* ID3v2.h */,
-				0EB71135277D84C1006929F1 /* ID3v2FrameParser.cpp */,
-				0EB71136277D84C1006929F1 /* ID3Helper.h */,
-				0EB71137277D84C1006929F1 /* ID3v2.cpp */,
-				0EB71138277D84C1006929F1 /* ID3v1.h */,
-				0EB71139277D84C1006929F1 /* ID3v1.cpp */,
 				0EB7113A277D84C1006929F1 /* ID3Helper.cpp */,
+				0EB71136277D84C1006929F1 /* ID3Helper.h */,
+				0EB71139277D84C1006929F1 /* ID3v1.cpp */,
+				0EB71138277D84C1006929F1 /* ID3v1.h */,
+				0EB71137277D84C1006929F1 /* ID3v2.cpp */,
+				0EB7112C277D84C1006929F1 /* ID3v2.h */,
+				0EB7112A277D84C1006929F1 /* ID3v2Frame.cpp */,
+				0EB71129277D84C1006929F1 /* ID3v2Frame.h */,
+				0EB71135277D84C1006929F1 /* ID3v2FrameParser.cpp */,
+				0EB7112B277D84C1006929F1 /* ID3v2FrameParser.h */,
 			);
 			path = ID3;
 			sourceTree = "<group>";
@@ -108,21 +135,35 @@
 		5FB59262154594860071B204 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				C006B8EE2A9C4A310045EA52 /* FlacFileTags.cpp */,
+				C006B8EF2A9C4A310045EA52 /* FlacFileTags.hpp */,
 				0EB71128277D84C1006929F1 /* ID3 */,
 				5FB59266154594E90071B204 /* ID3v2IF.cpp */,
 				5FB59267154594E90071B204 /* ID3v2IF.h */,
+				C006BA6E2AA7FD2B0045EA52 /* IMediaFileTags.hpp */,
+				C006BA7E2AAA14330045EA52 /* LrcParser.cpp */,
+				C006BA7F2AAA14330045EA52 /* LrcParser.h */,
+				C006BA842AAAEE790045EA52 /* LrcParserHelper.h */,
+				C0CBA42E2AAF16FD0061416F /* Lyrics3v2.cpp */,
+				C0CBA42F2AAF16FD0061416F /* Lyrics3v2.h */,
 				5FB59268154594E90071B204 /* LyricsData.cpp */,
 				5FB59269154594E90071B204 /* LyricsData.h */,
-				5FB5926A154594E90071B204 /* M4aTag.cpp */,
-				5FB5926B154594E90071B204 /* M4aTag.h */,
-				5FB5926C154594E90071B204 /* MidiTag.cpp */,
-				5FB5926D154594E90071B204 /* MidiTag.h */,
-				5FB5926E154594E90071B204 /* MP3InfoReader.cpp */,
-				5FB5926F154594E90071B204 /* MP3InfoReader.h */,
+				5FB5926A154594E90071B204 /* M4aFileTags.cpp */,
+				5FB5926B154594E90071B204 /* M4aFileTags.hpp */,
 				5FB59271154594E90071B204 /* MediaTags.cpp */,
 				5FB59272154594E90071B204 /* MediaTags.h */,
 				C05D744D29613F4700294F50 /* MediaTagTypes.cpp */,
 				C05D744E29613F4700294F50 /* MediaTagTypes.hpp */,
+				5FB5926C154594E90071B204 /* MidiFileTags.cpp */,
+				5FB5926D154594E90071B204 /* MidiFileTags.h */,
+				C0CBA42A2AAEF98A0061416F /* MP3FileTags.cpp */,
+				C0CBA42B2AAEF98A0061416F /* MP3FileTags.hpp */,
+				5FB5926E154594E90071B204 /* MP3InfoReader.cpp */,
+				5FB5926F154594E90071B204 /* MP3InfoReader.h */,
+				C006B8F62AA20F370045EA52 /* OggFileTags.cpp */,
+				C006B8F72AA20F370045EA52 /* OggFileTags.hpp */,
+				C006B8F22A9E25840045EA52 /* XiphComment.cpp */,
+				C006B8F32A9E25840045EA52 /* XiphComment.hpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -134,18 +175,25 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C006BA852AAAEE790045EA52 /* LrcParserHelper.h in Headers */,
+				C006B8F12A9C4A310045EA52 /* FlacFileTags.hpp in Headers */,
+				C0CBA4312AAF16FD0061416F /* Lyrics3v2.h in Headers */,
 				0EB71144277D84C1006929F1 /* ID3v1.h in Headers */,
 				0EB7113D277D84C1006929F1 /* ID3v2FrameParser.h in Headers */,
 				5FB59274154594EA0071B204 /* ID3v2IF.h in Headers */,
 				5FB59276154594EA0071B204 /* LyricsData.h in Headers */,
+				C006BA702AA7FD2B0045EA52 /* IMediaFileTags.hpp in Headers */,
+				C006B8F52A9E25840045EA52 /* XiphComment.hpp in Headers */,
 				C05D745029613F4700294F50 /* MediaTagTypes.hpp in Headers */,
 				0EB71142277D84C1006929F1 /* ID3Helper.h in Headers */,
 				0EB7113E277D84C1006929F1 /* ID3v2.h in Headers */,
-				5FB59278154594EA0071B204 /* M4aTag.h in Headers */,
-				5FB5927A154594EA0071B204 /* MidiTag.h in Headers */,
+				5FB59278154594EA0071B204 /* M4aFileTags.hpp in Headers */,
+				5FB5927A154594EA0071B204 /* MidiFileTags.h in Headers */,
 				0EB7113B277D84C1006929F1 /* ID3v2Frame.h in Headers */,
+				C0CBA42D2AAEF98A0061416F /* MP3FileTags.hpp in Headers */,
 				5FB5927C154594EA0071B204 /* MP3InfoReader.h in Headers */,
 				5FB5927F154594EA0071B204 /* MediaTags.h in Headers */,
+				C006BA812AAA14330045EA52 /* LrcParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -200,15 +248,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C006B8F42A9E25840045EA52 /* XiphComment.cpp in Sources */,
 				0EB71141277D84C1006929F1 /* ID3v2FrameParser.cpp in Sources */,
 				0EB71146277D84C1006929F1 /* ID3Helper.cpp in Sources */,
 				0EB71143277D84C1006929F1 /* ID3v2.cpp in Sources */,
 				5FB59273154594EA0071B204 /* ID3v2IF.cpp in Sources */,
+				C006B8F02A9C4A310045EA52 /* FlacFileTags.cpp in Sources */,
 				5FB59275154594EA0071B204 /* LyricsData.cpp in Sources */,
-				5FB59277154594EA0071B204 /* M4aTag.cpp in Sources */,
-				5FB59279154594EA0071B204 /* MidiTag.cpp in Sources */,
+				C006BA802AAA14330045EA52 /* LrcParser.cpp in Sources */,
+				5FB59277154594EA0071B204 /* M4aFileTags.cpp in Sources */,
+				C0CBA4302AAF16FD0061416F /* Lyrics3v2.cpp in Sources */,
+				5FB59279154594EA0071B204 /* MidiFileTags.cpp in Sources */,
+				C0CBA42C2AAEF98A0061416F /* MP3FileTags.cpp in Sources */,
 				C05D744F29613F4700294F50 /* MediaTagTypes.cpp in Sources */,
 				0EB7113C277D84C1006929F1 /* ID3v2Frame.cpp in Sources */,
+				C006B8F82AA20F370045EA52 /* OggFileTags.cpp in Sources */,
 				5FB5927B154594EA0071B204 /* MP3InfoReader.cpp in Sources */,
 				5FB5927E154594EA0071B204 /* MediaTags.cpp in Sources */,
 				0EB71145277D84C1006929F1 /* ID3v1.cpp in Sources */,
@@ -247,7 +301,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "${SRCROOT}/../third-parties/googletest/include";
+				HEADER_SEARCH_PATHS = (
+					$SRCROOT/../TinyJs,
+					"${SRCROOT}/../third-parties/googletest/include",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -276,7 +333,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "${SRCROOT}/../third-parties/googletest/include";
+				HEADER_SEARCH_PATHS = (
+					$SRCROOT/../TinyJs,
+					"${SRCROOT}/../third-parties/googletest/include",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
 			};

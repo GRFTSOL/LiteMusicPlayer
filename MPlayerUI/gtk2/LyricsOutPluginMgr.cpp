@@ -71,7 +71,7 @@ void CLyricsOutPluginMgr::onLyricsChanged() {
 int CLyricsOutPluginMgr::getLineCount() {
 }
 
-bool CLyricsOutPluginMgr::getLyricsOfLine(int nLine, char szLyrics[], int nBuffLen, int &nBegTime, int &nEndTime) {
+bool CLyricsOutPluginMgr::getLyricsOfLine(int nLine, char szLyrics[], int nBuffLen, int &beginTime, int &endTime) {
     return false;
 }
 
@@ -80,7 +80,7 @@ int CLyricsOutPluginMgr::getCurLine() {
 }
 
 int CLyricsOutPluginMgr::getPlayPos() {
-    return g_LyricData.getPlayElapsedTime();
+    return g_currentLyrics.getPlayElapsedTime();
 }
 
 bool CLyricsOutPluginMgr::getMediaFile(char szFile[], int nBuffLen) {

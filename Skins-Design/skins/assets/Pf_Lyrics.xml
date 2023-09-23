@@ -23,8 +23,6 @@
     </PreferPage.LyrDownload>
     <PreferPage.LyrSaveOptions ID="CID_C_LYR_SAVE_OPT" Visible="false" Name="Lyrics Saving Options" Rect="0,30,w,h-30-10">
       <NormalCheckBox ID="CID_C_REMOVE_EXTRA_BLANK_LINES" Text="&amp;Remove extra blank lines in lyrics." Rect="10,15,w-50,"/>
-      <NormalCheckBox ID="CID_C_APPEND_OFFSET_FOR_IOS" Text="&amp;Append time stamps(offset:) in lyrics on iPhone, iPod and iPad." Rect="10,45,140,"/>
-      <NormalCheckBox ID="CID_C_KEEP_TIME_STAMP_FOR_IOS" Text="&amp;Keep time stamps[xx:xx:xx] in lyrics for iPhone, iPod and iPad." Rect="10,75,140,"/>
     </PreferPage.LyrSaveOptions>
     <PreferPage.LyrOutputPlugin ID="CID_C_LYR_OUTPUT_PLUGIN" Name="Lyrics Output Plug-ins" Visible="false" Rect="0,30,w,h-30-10">
       <NormalText Rect="10,10,w-20,60" Text="$Product$ will use the plug-ins below for lyrics output. You can select a plug-in and configure, view about boxes, or uninstall them."/>

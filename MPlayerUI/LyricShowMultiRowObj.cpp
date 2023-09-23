@@ -34,12 +34,12 @@ void CLyricShowMultiRowObj::invalidate() {
 }
 
 void CLyricShowMultiRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
-    assert(m_pMLData);
-    if (m_pMLData == nullptr) {
+    assert(m_curLyrics);
+    if (m_curLyrics == nullptr) {
         return;
     }
 
-    if (!m_pMLData->hasLyricsOpened() || m_lyrLines.size() == 0) {
+    if (!m_curLyrics->hasLyricsOpened() || m_lyrLines.size() == 0) {
         fastDrawMediaInfo(canvas, prcUpdate);
         return;
     }
@@ -51,7 +51,7 @@ void CLyricShowMultiRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
     }
 
     // get the current playing line
-    int nRowCur = m_pMLData->getCurPlayLine(m_lyrLines);
+    int nRowCur = m_curLyrics->getCurPlayLine(m_lyrLines);
     if (nRowCur == -1) {
         // no lyrics, redraw the whole background
         updateLyricDrawBufferBackground(canvas, m_rcObj);
@@ -61,9 +61,9 @@ void CLyricShowMultiRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
     int nCurRowCount = m_lyrLines.getCountWithSameTimeStamps(nRowCur);
     assert(nCurRowCount > 0);
 
-    LyricsLine *pLineCur = m_lyrLines[nRowCur];
+    LyricsLine &lineCur = m_lyrLines[nRowCur];
     int nRowHeight = getLineHeight();
-    int nDeltaTime = pLineCur->nEndTime - pLineCur->nBegTime;
+    int nDeltaTime = lineCur.endTime - lineCur.beginTime;
 
     CDispOptRecover dispOptRecover(this);
     if (m_img.isValid()) {
@@ -79,13 +79,13 @@ void CLyricShowMultiRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
         yCurRow = m_yDrawingOld;
     } else {
         yCurRow = getLineVertAlignPos();
-        if (m_pMLData->getPlayElapsedTime() < pLineCur->nBegTime || nDeltaTime == 0) {
+        if (m_curLyrics->getPlayElapsedTime() < lineCur.beginTime || nDeltaTime == 0) {
             ;
-        } else if (m_pMLData->getPlayElapsedTime() > pLineCur->nEndTime) {
+        } else if (m_curLyrics->getPlayElapsedTime() > lineCur.endTime) {
             yCurRow += -nRowHeight * nCurRowCount;
         } else {
             yCurRow += -nRowHeight * nCurRowCount +
-                nRowHeight * nCurRowCount * (pLineCur->nEndTime - m_pMLData->getPlayElapsedTime()) / nDeltaTime;
+                nRowHeight * nCurRowCount * (lineCur.endTime - m_curLyrics->getPlayElapsedTime()) / nDeltaTime;
         }
     }
 
@@ -131,9 +131,9 @@ void CLyricShowMultiRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
     nRow = nRowCur - 1;
     nRowEnd = 0;
     for (y = yCurRow - nRowHeight; y + nRowHeight > rcClip.top && nRow >= nRowEnd; y -= nRowHeight) {
-        LyricsLine *pLine = m_lyrLines[nRow];
+        LyricsLine &line = m_lyrLines[nRow];
 
-        if (!drawRow(canvas, pLine, AUTO_CAL_X, y, LP_ABOVE_CUR_LINE)) {
+        if (!drawRow(canvas, line, AUTO_CAL_X, y, LP_ABOVE_CUR_LINE)) {
             break;
         }
         nRow--;
@@ -150,8 +150,8 @@ void CLyricShowMultiRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
     // draw lyrics lines below current line
     nRowEnd = (int)m_lyrLines.size();
     for (; y < rcClip.bottom && nRow < nRowEnd; y += nRowHeight) {
-        LyricsLine *pLine = m_lyrLines[nRow];
-        if (!drawRow(canvas, pLine, AUTO_CAL_X, y, LP_BELOW_CUR_LINE)) {
+        LyricsLine &line = m_lyrLines[nRow];
+        if (!drawRow(canvas, line, AUTO_CAL_X, y, LP_BELOW_CUR_LINE)) {
             break;
         }
         nRow++;
@@ -187,10 +187,7 @@ void CLyricShowMultiRowObj::fastestDraw_GetUpdateRectOfFadeInOut(CRawGraph *canv
 
     // get previous line update rect
     if (nCurLine > 0) {
-        LyricsLine *pPrevLine;
-        pPrevLine = m_lyrLines[nCurLine - 1];
-
-        nAlpha = getAlpha(pPrevLine);
+        nAlpha = getAlpha(m_lyrLines[nCurLine - 1]);
         if (m_nPrevLineAlphaOld != nAlpha) {
             m_nPrevLineAlphaOld = nAlpha;
 
@@ -201,10 +198,7 @@ void CLyricShowMultiRowObj::fastestDraw_GetUpdateRectOfFadeInOut(CRawGraph *canv
 
     // get next line update rect
     if (nCurLine < (int)m_lyrLines.size() - 1) {
-        LyricsLine *pNextLine;
-        pNextLine = m_lyrLines[nCurLine + 1];
-
-        nAlpha = getAlpha(pNextLine);
+        nAlpha = getAlpha(m_lyrLines[nCurLine + 1]);
         if (m_nextLineAlphaOld != nAlpha) {
             m_nextLineAlphaOld = nAlpha;
 

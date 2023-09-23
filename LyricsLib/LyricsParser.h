@@ -6,19 +6,16 @@
 
 #pragma once
 
-class CLyricsParser {
+#include "../MediaTags/LyricsData.h"
+
+
+class ILyricsParser {
 public:
-    CLyricsParser(CMLData *pMLData) : m_pMLData(pMLData) {
-    }
-    virtual ~CLyricsParser() { };
+    ILyricsParser() { }
+    virtual ~ILyricsParser() { };
 
 public:
-    virtual int parseFile(bool bUseSpecifiedEncoding, CharEncodingType encoding) = 0;
-    virtual int saveAsFile(cstr_t file) = 0;
-
-    virtual LYRICS_CONTENT_TYPE getLyrContentType() = 0;
-
-public:
-    CMLData                     *m_pMLData;
+    virtual int parseFile(cstr_t fileName, bool bUseSpecifiedEncoding, CharEncodingType encoding, RawLyrics &lyricsOut) = 0;
+    virtual int saveAsFile(cstr_t file, const RawLyrics &lyrics) = 0;
 
 };

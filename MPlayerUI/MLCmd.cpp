@@ -25,10 +25,6 @@ UIObjectIDDefinition g_uidDefinition[] = {
     { "ID_LYR_HIGH_CLR_LIST", CMD_LYR_HIGH_CLR_LIST, 0, _TLM("Highlight lyrics color") },
     { "ID_MENU_STATIC_LYR", CMD_MENU_STATIC_LYR, 0, _TLM("Menu") },
 
-    { "ID_LYR_SCROLL_ENABLE_RECORD",     CMD_LYR_SCROLL_ENABLE_RECORD, 0, _TLM("enable/Disable record lyrics scrolling actions") },
-    { "ID_LYR_SCROLL_ENABLE_REPLAY",     CMD_LYR_SCROLL_ENABLE_REPLAY, 0, _TLM("enable/Disable replay lyrics scrolling actions") },
-    { "ID_LYR_SCROLL_MENU",     CMD_LYR_SCROLL_MENU, 0, _TLM("Menu") },
-
     { "ID_TB_LYR_SYNC", ID_TB_LYR_SYNC, 0, nullptr },
     { "ID_TB_LYR_TXT", ID_TB_LYR_TXT, 0, nullptr },
     { "ID_TB_LYR_EDIT", ID_TB_LYR_EDIT, 0, nullptr },
@@ -144,7 +140,6 @@ UIObjectIDDefinition g_uidDefinition[] = {
     DEFINE_CMD_ID( CMD_ABOUT, IDC_ABOUT )
     DEFINE_CMD_ID( CMD_ADJUST_HUE, IDC_ADJUST_HUE )
     DEFINE_CMD_ID( CMD_BR_ALBUM_ART, IDC_BR_ALBUM_ART )
-    DEFINE_CMD_ID( CMD_HELP_STATIC_LYR, IDC_HELP_STATIC_LYR )
     DEFINE_CMD_ID( CMD_LOGIN_VIA_IE, IDC_LOGIN_VIA_IE )
     DEFINE_CMD_ID( CMD_APPLY_ACCOUNT, IDC_APPLY_ACCOUNT )
     DEFINE_CMD_ID( CMD_EMAIL, IDC_EMAIL )

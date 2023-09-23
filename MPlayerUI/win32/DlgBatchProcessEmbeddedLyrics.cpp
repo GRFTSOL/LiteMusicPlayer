@@ -29,7 +29,7 @@ bool CDlgBatchProcessEmbeddedLyrics::onInitDialog() {
 
     MutexAutolock autolock(g_autoProcessEmbeddedLyrics.m_mutex);
 
-    CAutoProcessEmbeddedLyrics::LIST_ITEMS::iterator it, itEnd;
+    CAutoProcessEmbeddedLyrics::ListItems::iterator it, itEnd;
     itEnd = g_autoProcessEmbeddedLyrics.m_listJobs.end();
     for (it = g_autoProcessEmbeddedLyrics.m_listJobs.begin(); it != itEnd; ++it) {
         CAutoProcessEmbeddedLyrics::Item &item = *it;
@@ -45,7 +45,7 @@ bool CDlgBatchProcessEmbeddedLyrics::onInitDialog() {
 void CDlgBatchProcessEmbeddedLyrics::onOK() {
     MutexAutolock autolock(g_autoProcessEmbeddedLyrics.m_mutex);
     int nRet, n = 0, nFailedTimes = 0;
-    CAutoProcessEmbeddedLyrics::LIST_ITEMS::iterator it, itEnd;
+    CAutoProcessEmbeddedLyrics::ListItems::iterator it, itEnd;
 
     itEnd = g_autoProcessEmbeddedLyrics.m_listJobs.end();
     for (it = g_autoProcessEmbeddedLyrics.m_listJobs.begin(); it != itEnd; ++it) {

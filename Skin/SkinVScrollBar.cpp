@@ -26,8 +26,8 @@ CSkinSrollBarBase::CSkinSrollBarBase() {
     m_pScrollNotify = nullptr;
 
     m_nCursorToThumbBeg = 0;
-    m_PushDownPos = PUSH_DOWN_NONE;
-    m_CursorPosLatest = PUSH_DOWN_NONE;
+    m_pushDownPos = PUSH_DOWN_NONE;
+    m_cursorPosLatest = PUSH_DOWN_NONE;
 
     m_nLinesPerWheel = 1;
 }
@@ -48,7 +48,7 @@ void CSkinSrollBarBase::setScrollInfo(int nMin, int nMax, int nPage, int nPos, i
         m_nVirtualMax = 0;
     }
 
-    xcreaseVirtualPos(0);
+    increaseVirtualPos(0);
 
     adjustThumbSize();
 
@@ -69,9 +69,7 @@ int CSkinSrollBarBase::setScrollPos(int nPos, bool bRedraw) {
     nPosOld = m_nVirtualCurPos;
     m_nVirtualCurPos = nPos;
 
-    xcreaseVirtualPos(0);
-
-    m_nPosThumb = virtualPosToObjectPos(m_nVirtualCurPos);
+    increaseVirtualPos(0);
 
     if (bRedraw) {
         invalidate();
@@ -117,10 +115,10 @@ void CSkinSrollBarBase::onSize() {
 bool CSkinSrollBarBase::onLButtonDown(uint32_t nFlags, CPoint point) {
     assert(m_pSkin);
 
-    m_PushDownPos = getPushDownPos(point);
-    m_CursorPosLatest = m_PushDownPos;
+    m_pushDownPos = getPushDownPos(point);
+    m_cursorPosLatest = m_pushDownPos;
 
-    switch (m_PushDownPos) {
+    switch (m_pushDownPos) {
     case PUSH_DOWN_TOPBT:
         // 滚动条上面的按钮
         topBtOnLButtonDown(nFlags, point);
@@ -149,14 +147,10 @@ void CSkinSrollBarBase::topBtOnLButtonDown(uint32_t nFlags, CPoint point) {
     // 捕捉鼠标输入
     m_pSkin->setCaptureMouse(this);
 
-    int nVirtualPosOld = m_nVirtualCurPos;
-    xcreaseVirtualPos(-m_nVirtualLine);
-    if (m_nVirtualCurPos == nVirtualPosOld) {
+    if (!increaseVirtualPos(-m_nVirtualLine)) {
         invalidate();
         return;
     }
-
-    m_nPosThumb = virtualPosToObjectPos(m_nVirtualCurPos);
 
     onScroll(SB_LINEUP);
 
@@ -170,14 +164,11 @@ void CSkinSrollBarBase::bottomBtOnLButtonDown(uint32_t nFlags, CPoint point) {
     // 捕捉鼠标输入
     m_pSkin->setCaptureMouse(this);
 
-    int nVirtualPosOld = m_nVirtualCurPos;
-    xcreaseVirtualPos(m_nVirtualLine);
-    if (m_nVirtualCurPos == nVirtualPosOld) {
+    if (!increaseVirtualPos(m_nVirtualLine)) {
         invalidate();
         return;
     }
 
-    m_nPosThumb = virtualPosToObjectPos(m_nVirtualCurPos);
     onScroll(SB_LINEDOWN);
 
     registerTimer();
@@ -193,17 +184,13 @@ void CSkinSrollBarBase::trackOnLButtonDown(uint32_t nFlags, CPoint point) {
     registerTimer();
     // DBG_LOG0("Track button down");
 
-    if (m_PushDownPos == PUSH_DOWN_TOPTRACK) {
-        int nVirtualPosOld = m_nVirtualCurPos;
-        xcreaseVirtualPos(-m_nVirtualPage);
-        if (m_nVirtualCurPos == nVirtualPosOld) {
+    if (m_pushDownPos == PUSH_DOWN_TOPTRACK) {
+        if (!increaseVirtualPos(-m_nVirtualPage)) {
             return;
         }
         onScroll(SB_PAGEUP);
-    } else if (m_PushDownPos == PUSH_DOWN_BOTTOMTRACK) {
-        int nVirtualPosOld = m_nVirtualCurPos;
-        xcreaseVirtualPos(m_nVirtualPage);
-        if (m_nVirtualCurPos == nVirtualPosOld) {
+    } else if (m_pushDownPos == PUSH_DOWN_BOTTOMTRACK) {
+        if (!increaseVirtualPos(m_nVirtualPage)) {
             return;
         }
         onScroll(SB_PAGEDOWN);
@@ -214,7 +201,7 @@ void CSkinSrollBarBase::trackOnLButtonDown(uint32_t nFlags, CPoint point) {
 
 bool CSkinSrollBarBase::onLButtonUp(uint32_t nFlags, CPoint point) {
     // DBG_LOG0("onLButtonUp ");
-    switch (m_PushDownPos) {
+    switch (m_pushDownPos) {
     case PUSH_DOWN_TOPBT:
         // 滚动条上面的按钮
         topBtOnLButtonUp(nFlags, point);
@@ -236,7 +223,7 @@ bool CSkinSrollBarBase::onLButtonUp(uint32_t nFlags, CPoint point) {
         break;
     }
 
-    m_PushDownPos = PUSH_DOWN_NONE;
+    m_pushDownPos = PUSH_DOWN_NONE;
 
     //    PUSH_DOWN_POS        CursorPosNew;
     //    CursorPosNew = getPushDownPos(point);
@@ -272,8 +259,6 @@ void CSkinSrollBarBase::thumbOnLButtonUp(uint32_t nFlags, CPoint point) {
 }
 
 void CSkinSrollBarBase::trackOnLButtonUp(uint32_t nFlags, CPoint point) {
-    onTimer(m_nRepeatTimerId);
-
     unregisterTimer();
 
     // 释放鼠标输入
@@ -284,14 +269,10 @@ void CSkinSrollBarBase::trackOnLButtonUp(uint32_t nFlags, CPoint point) {
 
 void CSkinSrollBarBase::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) {
     if (nMkeys == 0) {
-        int nVirtualPosOld = m_nVirtualCurPos;
-        xcreaseVirtualPos(m_nVirtualLine * nWheelDistance * m_nLinesPerWheel);
-        if (m_nVirtualCurPos == nVirtualPosOld) {
+        if (!increaseVirtualPos(m_nVirtualLine * nWheelDistance * m_nLinesPerWheel)) {
             invalidate();
             return;
         }
-
-        m_nPosThumb = virtualPosToObjectPos(m_nVirtualCurPos);
 
         onScroll(SB_THUMBPOSITION);
 
@@ -300,7 +281,7 @@ void CSkinSrollBarBase::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) 
 }
 
 bool CSkinSrollBarBase::onMouseDrag(CPoint point) {
-    switch (m_PushDownPos) {
+    switch (m_pushDownPos) {
     case PUSH_DOWN_THUMB:
         // 滚动条的拖动box(thumb)
         thumbOnMouseDrag(point);
@@ -313,7 +294,7 @@ bool CSkinSrollBarBase::onMouseDrag(CPoint point) {
 }
 
 bool CSkinSrollBarBase::onMouseMove(CPoint point) {
-    switch (m_PushDownPos) {
+    switch (m_pushDownPos) {
     case PUSH_DOWN_TOPBT:
         // 滚动条上面的按钮
         topBtOnMouseMove(point);
@@ -332,8 +313,8 @@ bool CSkinSrollBarBase::onMouseMove(CPoint point) {
             PUSH_DOWN_POS posNew = getPushDownPos(point);
 
 
-            if (posNew != m_CursorPosLatest) {
-                m_CursorPosLatest = posNew;
+            if (posNew != m_cursorPosLatest) {
+                m_cursorPosLatest = posNew;
                 invalidate();
             }
         }
@@ -350,8 +331,8 @@ void CSkinSrollBarBase::topBtOnMouseMove(CPoint point) {
 
     CursorPosNew = getPushDownPos(point);
 
-    if (CursorPosNew != m_CursorPosLatest) {
-        m_CursorPosLatest = CursorPosNew;
+    if (CursorPosNew != m_cursorPosLatest) {
+        m_cursorPosLatest = CursorPosNew;
         invalidate();
     }
 }
@@ -361,8 +342,8 @@ void CSkinSrollBarBase::bottomBtOnMouseMove(CPoint point) {
 
     CursorPosNew = getPushDownPos(point);
 
-    if (CursorPosNew != m_CursorPosLatest) {
-        m_CursorPosLatest = CursorPosNew;
+    if (CursorPosNew != m_cursorPosLatest) {
+        m_cursorPosLatest = CursorPosNew;
         invalidate();
     }
 }
@@ -372,10 +353,24 @@ void CSkinSrollBarBase::trackOnMouseDrag(CPoint point) {
 
     CursorPosNew = getPushDownPos(point);
 
-    if (CursorPosNew != m_CursorPosLatest) {
-        m_CursorPosLatest = CursorPosNew;
+    if (CursorPosNew != m_cursorPosLatest) {
+        m_cursorPosLatest = CursorPosNew;
         invalidate();
     }
+}
+
+bool CSkinSrollBarBase::increaseVirtualPos(int offset) {
+    int oldPos = m_nVirtualCurPos;
+    m_nVirtualCurPos += offset;
+    if (m_nVirtualCurPos < m_nVirtualMin) {
+        m_nVirtualCurPos = m_nVirtualMin;
+    } else if (m_nVirtualCurPos > m_nVirtualMax) {
+        m_nVirtualCurPos = m_nVirtualMax;
+    }
+
+    m_nPosThumb = virtualPosToObjectPos(m_nVirtualCurPos);
+
+    return oldPos != m_nVirtualCurPos;
 }
 
 void CSkinSrollBarBase::onTimer(int nId) {
@@ -385,20 +380,16 @@ void CSkinSrollBarBase::onTimer(int nId) {
 
         m_nRepeatTimerId = m_pSkin->registerTimerObject(this, 100);
     } else if (nId == m_nRepeatTimerId) {
-        switch (m_PushDownPos) {
+        switch (m_pushDownPos) {
         case PUSH_DOWN_TOPBT:
             // 滚动条上面的按钮
             {
-                if (m_CursorPosLatest == PUSH_DOWN_TOPBT) {
+                if (m_cursorPosLatest == PUSH_DOWN_TOPBT) {
                     // DBG_LOG0("Top button down: Timer...");
-                    int nVirtualPosOld = m_nVirtualCurPos;
-                    xcreaseVirtualPos(-m_nVirtualLine);
-                    if (m_nVirtualCurPos == nVirtualPosOld) {
+                    if (!increaseVirtualPos(-m_nVirtualLine)) {
                         unregisterTimer();
                         return;
                     }
-
-                    m_nPosThumb = virtualPosToObjectPos(m_nVirtualCurPos);
 
                     onScroll(SB_LINEUP);
 
@@ -409,17 +400,13 @@ void CSkinSrollBarBase::onTimer(int nId) {
         case PUSH_DOWN_BOTTOMBT:
             // 滚动条下面的按钮
             {
-                if (m_CursorPosLatest == PUSH_DOWN_BOTTOMBT) {
+                if (m_cursorPosLatest == PUSH_DOWN_BOTTOMBT) {
                     // DBG_LOG0("Bottom button down: Timer...");
 
-                    int nVirtualPosOld = m_nVirtualCurPos;
-                    xcreaseVirtualPos(m_nVirtualLine);
-                    if (m_nVirtualCurPos == nVirtualPosOld) {
+                    if (!increaseVirtualPos(m_nVirtualLine)) {
                         unregisterTimer();
                         return;
                     }
-
-                    m_nPosThumb = virtualPosToObjectPos(m_nVirtualCurPos);
 
                     onScroll(SB_LINEDOWN);
 
@@ -433,24 +420,20 @@ void CSkinSrollBarBase::onTimer(int nId) {
         case PUSH_DOWN_TOPTRACK:
             // 滚动条的空白位置，进行翻页操作
             {
-                if (m_CursorPosLatest == PUSH_DOWN_TOPTRACK) {
+                if (m_cursorPosLatest == PUSH_DOWN_TOPTRACK) {
                     // DBG_LOG0("Track up : Timer...");
 
-                    int nVirtualPosOld = m_nVirtualCurPos;
-                    xcreaseVirtualPos(-m_nVirtualPage);
-                    if (m_nVirtualCurPos == nVirtualPosOld) {
+                    if (!increaseVirtualPos(-m_nVirtualPage)) {
                         unregisterTimer();
                         return;
                     }
-
-                    m_nPosThumb = virtualPosToObjectPos(m_nVirtualCurPos);
 
                     //
                     // 取得新的位置
                     CPoint pt;
 
                     m_pSkin->getCursorClientPos(pt);
-                    m_CursorPosLatest = getPushDownPos(pt);
+                    m_cursorPosLatest = getPushDownPos(pt);
 
                     onScroll(SB_PAGEUP);
 
@@ -461,15 +444,11 @@ void CSkinSrollBarBase::onTimer(int nId) {
         case PUSH_DOWN_BOTTOMTRACK:
             // 滚动条的空白位置，进行翻页操作
             {
-                if (m_CursorPosLatest == PUSH_DOWN_BOTTOMTRACK) {
+                if (m_cursorPosLatest == PUSH_DOWN_BOTTOMTRACK) {
                     // DBG_LOG0("Track down: Timer...");
 
-                    int nVirtualPosOld = m_nVirtualCurPos;
-                    xcreaseVirtualPos(m_nVirtualPage);
                     // 按下后的坐标
-                    m_nPosThumb = virtualPosToObjectPos(m_nVirtualCurPos);
-
-                    if (m_nVirtualCurPos == nVirtualPosOld) {
+                    if (!increaseVirtualPos(m_nVirtualPage)) {
                         unregisterTimer();
                         return;
                     }
@@ -479,7 +458,7 @@ void CSkinSrollBarBase::onTimer(int nId) {
                     CPoint pt;
 
                     m_pSkin->getCursorClientPos(pt);
-                    m_CursorPosLatest = getPushDownPos(pt);
+                    m_cursorPosLatest = getPushDownPos(pt);
 
                     onScroll(SB_PAGEDOWN);
 
@@ -535,14 +514,14 @@ void CSkinVScrollBar::draw(CRawGraph *canvas) {
     }
 
     // 1、绘窗口上面的按钮
-    if (m_PushDownPos != PUSH_DOWN_TOPBT) {
-        if (m_CursorPosLatest == PUSH_DOWN_TOPBT) {
+    if (m_pushDownPos != PUSH_DOWN_TOPBT) {
+        if (m_cursorPosLatest == PUSH_DOWN_TOPBT) {
             pImg = &m_imgTopBtFocus; // 光标 hover 在上面的按钮上
         } else {
             pImg = &m_imgTopBtNormal; // 普通
         }
     } else {
-        if (m_CursorPosLatest == PUSH_DOWN_TOPBT) {
+        if (m_cursorPosLatest == PUSH_DOWN_TOPBT) {
             pImg = &m_imgTopBtPushDown; // 按下状态
         } else {
             pImg = &m_imgTopBtNormal; // 普通
@@ -563,28 +542,31 @@ void CSkinVScrollBar::draw(CRawGraph *canvas) {
 
 
     // 3、绘窗口中间的 Thumb
-    if (m_PushDownPos != PUSH_DOWN_THUMB) {
-        if (m_CursorPosLatest == PUSH_DOWN_THUMB) {
+    if (m_pushDownPos != PUSH_DOWN_THUMB) {
+        if (m_cursorPosLatest == PUSH_DOWN_THUMB) {
             pImg = &m_imgThumbFocus; // 光标 hover 在上面的按钮上
         } else {
             pImg = &m_imgThumbNormal; // 普通
         }
     } else {
-        if (m_CursorPosLatest == PUSH_DOWN_THUMB) {
+        if (m_cursorPosLatest == PUSH_DOWN_THUMB) {
             pImg = &m_imgThumbPushDown; // 按下状态
         } else {
             pImg = &m_imgThumbNormal; // 普通
         }
     }
 
-    if (m_bStretchedThumb) {
-        pImg->blt(canvas, m_rcObj.left, y, pImg->m_cx, MARGIN_THUMB, pImg->m_x, pImg->m_y);
-        pImg->stretchBlt(canvas, m_rcObj.left, y + MARGIN_THUMB, pImg->m_cx, m_nSizeThumbStretched - MARGIN_THUMB * 2, pImg->m_x, pImg->m_y + MARGIN_THUMB, pImg->m_cx, pImg->m_cy - MARGIN_THUMB * 2);
-        pImg->blt(canvas, m_rcObj.left, y + m_nSizeThumbStretched - MARGIN_THUMB, pImg->m_cx, MARGIN_THUMB, pImg->m_x, pImg->m_y + pImg->m_cy - MARGIN_THUMB);
-    } else {
-        pImg->blt(canvas, m_rcObj.left, y);
+    if (m_nVirtualMax != 0) {
+        // No thumb
+        if (m_bStretchedThumb) {
+            pImg->blt(canvas, m_rcObj.left, y, pImg->m_cx, MARGIN_THUMB, pImg->m_x, pImg->m_y);
+            pImg->stretchBlt(canvas, m_rcObj.left, y + MARGIN_THUMB, pImg->m_cx, m_nSizeThumbStretched - MARGIN_THUMB * 2, pImg->m_x, pImg->m_y + MARGIN_THUMB, pImg->m_cx, pImg->m_cy - MARGIN_THUMB * 2);
+            pImg->blt(canvas, m_rcObj.left, y + m_nSizeThumbStretched - MARGIN_THUMB, pImg->m_cx, MARGIN_THUMB, pImg->m_x, pImg->m_y + pImg->m_cy - MARGIN_THUMB);
+        } else {
+            pImg->blt(canvas, m_rcObj.left, y);
+        }
+        y += m_nSizeThumbStretched;
     }
-    y += m_nSizeThumbStretched;
 
 
     // 4、绘窗口中的空白区域
@@ -595,14 +577,14 @@ void CSkinVScrollBar::draw(CRawGraph *canvas) {
     }
 
     // 4、绘窗口下面的按钮
-    if (m_PushDownPos != PUSH_DOWN_BOTTOMBT) {
-        if (m_CursorPosLatest == PUSH_DOWN_BOTTOMBT) {
+    if (m_pushDownPos != PUSH_DOWN_BOTTOMBT) {
+        if (m_cursorPosLatest == PUSH_DOWN_BOTTOMBT) {
             pImg = &m_imgBottomBtFocus; // 光标 hover 在上面的按钮上
         } else {
             pImg = &m_imgBottomBtNormal; // 普通
         }
     } else {
-        if (m_CursorPosLatest == PUSH_DOWN_BOTTOMBT) {
+        if (m_cursorPosLatest == PUSH_DOWN_BOTTOMBT) {
             pImg = &m_imgBottomBtPushDown; // 按下状态
         } else {
             pImg = &m_imgBottomBtNormal; // 普通
@@ -804,7 +786,7 @@ int CSkinVScrollBar::objectPosToVirtualPos(int nThumbPos) {
         return 0;
     }
 
-    return int((double)nThumbPos * (m_nVirtualMax - m_nVirtualMin) / (m_rcObj.height() - m_nHeightPushBt * 2 - m_nSizeThumbStretched));
+    return int((double)nThumbPos * (m_nVirtualMax - m_nVirtualMin) / (m_rcObj.height() - m_nHeightPushBt * 2 - m_nSizeThumbStretched) + 0.5);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -832,14 +814,14 @@ void CSkinHScrollBar::draw(CRawGraph *canvas) {
     }
 
     // 1、绘窗口上面的按钮
-    if (m_PushDownPos != PUSH_DOWN_TOPBT) {
-        if (m_CursorPosLatest == PUSH_DOWN_TOPBT) {
+    if (m_pushDownPos != PUSH_DOWN_TOPBT) {
+        if (m_cursorPosLatest == PUSH_DOWN_TOPBT) {
             pImg = &m_imgTopBtFocus; // 光标 hover 在上面的按钮上
         } else {
             pImg = &m_imgTopBtNormal; // 普通
         }
     } else {
-        if (m_CursorPosLatest == PUSH_DOWN_TOPBT) {
+        if (m_cursorPosLatest == PUSH_DOWN_TOPBT) {
             pImg = &m_imgTopBtPushDown; // 按下状态
         } else {
             pImg = &m_imgTopBtNormal; // 普通
@@ -858,30 +840,32 @@ void CSkinHScrollBar::draw(CRawGraph *canvas) {
         x += m_nPosThumb;
     }
 
-
     // 3、绘窗口中间的 Thumb
-    if (m_PushDownPos != PUSH_DOWN_THUMB) {
-        if (m_CursorPosLatest == PUSH_DOWN_THUMB) {
+    if (m_pushDownPos != PUSH_DOWN_THUMB) {
+        if (m_cursorPosLatest == PUSH_DOWN_THUMB) {
             pImg = &m_imgThumbFocus; // 光标 hover 在上面的按钮上
         } else {
             pImg = &m_imgThumbNormal; // 普通
         }
     } else {
-        if (m_CursorPosLatest == PUSH_DOWN_THUMB) {
+        if (m_cursorPosLatest == PUSH_DOWN_THUMB) {
             pImg = &m_imgThumbPushDown; // 按下状态
         } else {
             pImg = &m_imgThumbNormal; // 普通
         }
     }
 
-    if (m_bStretchedThumb) {
-        pImg->blt(canvas, x, m_rcObj.top, MARGIN_THUMB, pImg->m_cy, pImg->m_x, pImg->m_y);
-        pImg->stretchBlt(canvas, x + MARGIN_THUMB, m_rcObj.top, m_nSizeThumbStretched - MARGIN_THUMB * 2, pImg->m_cy, pImg->m_x + MARGIN_THUMB, pImg->m_y, pImg->m_cx - MARGIN_THUMB * 2, pImg->m_cy);
-        pImg->blt(canvas, x + m_nSizeThumbStretched - MARGIN_THUMB, m_rcObj.top, MARGIN_THUMB, pImg->m_cy, pImg->m_x + pImg->m_cx - MARGIN_THUMB, pImg->m_y);
-    } else {
-        pImg->blt(canvas, x, m_rcObj.top);
+    if (m_nVirtualMax != 0) {
+        // No thumb
+        if (m_bStretchedThumb) {
+            pImg->blt(canvas, x, m_rcObj.top, MARGIN_THUMB, pImg->m_cy, pImg->m_x, pImg->m_y);
+            pImg->stretchBlt(canvas, x + MARGIN_THUMB, m_rcObj.top, m_nSizeThumbStretched - MARGIN_THUMB * 2, pImg->m_cy, pImg->m_x + MARGIN_THUMB, pImg->m_y, pImg->m_cx - MARGIN_THUMB * 2, pImg->m_cy);
+            pImg->blt(canvas, x + m_nSizeThumbStretched - MARGIN_THUMB, m_rcObj.top, MARGIN_THUMB, pImg->m_cy, pImg->m_x + pImg->m_cx - MARGIN_THUMB, pImg->m_y);
+        } else {
+            pImg->blt(canvas, x, m_rcObj.top);
+        }
+        x += m_nSizeThumbStretched;
     }
-    x += m_nSizeThumbStretched;
 
 
     // 4、绘窗口中的空白区域
@@ -892,14 +876,14 @@ void CSkinHScrollBar::draw(CRawGraph *canvas) {
     }
 
     // 4、绘窗口下面的按钮
-    if (m_PushDownPos != PUSH_DOWN_BOTTOMBT) {
-        if (m_CursorPosLatest == PUSH_DOWN_BOTTOMBT) {
+    if (m_pushDownPos != PUSH_DOWN_BOTTOMBT) {
+        if (m_cursorPosLatest == PUSH_DOWN_BOTTOMBT) {
             pImg = &m_imgBottomBtFocus; // 光标 hover 在上面的按钮上
         } else {
             pImg = &m_imgBottomBtNormal; // 普通
         }
     } else {
-        if (m_CursorPosLatest == PUSH_DOWN_BOTTOMBT) {
+        if (m_cursorPosLatest == PUSH_DOWN_BOTTOMBT) {
             pImg = &m_imgBottomBtPushDown; // 按下状态
         } else {
             pImg = &m_imgBottomBtNormal; // 普通

@@ -45,7 +45,6 @@ CMediaAlbumArtCtrl::CMediaAlbumArtCtrl() {
     m_msgNeed = UO_MSG_WANT_LBUTTON;
 
     m_clrBg.set(RGB(0, 0, 0));
-    m_nCurAlbumArt = 0;
 }
 
 CMediaAlbumArtCtrl::~CMediaAlbumArtCtrl() {
@@ -85,18 +84,13 @@ bool CMediaAlbumArtCtrl::onLButtonDown(uint32_t nFlags, CPoint point) {
 }
 
 void CMediaAlbumArtCtrl::onTimer(int nId) {
-    if (m_mediaAlbumArt.getPicCount() > 1) {
-        m_nCurAlbumArt++;
-        if (m_nCurAlbumArt >= m_mediaAlbumArt.getPicCount()) {
-            m_nCurAlbumArt = 0;
-        }
-
-        RawImageDataPtr prawImg = m_mediaAlbumArt.loadAlbumArtByIndex(m_nCurAlbumArt);
-        if (prawImg) {
-            createAlbumArtImage(prawImg);
-            return;
-        }
+    RawImageDataPtr image = m_mediaAlbumArt.loadNext();
+    if (image) {
+        createAlbumArtImage(image);
         invalidate();
+        return;
+    } else {
+        m_mediaAlbumArt.restartLoop();
     }
 }
 
@@ -171,17 +165,14 @@ void CMediaAlbumArtCtrl::enumProperties(CUIObjProperties &listProperties) {
 #endif // _SKIN_EDITOR_
 
 void CMediaAlbumArtCtrl::updateAlbumArt() {
-    m_mediaAlbumArt.close();
-    m_nCurAlbumArt = 0;
+    m_mediaAlbumArt.reset();
     m_img.detach();
     m_imgOrg.detach();
 
-    if (m_mediaAlbumArt.load() == ERR_OK) {
-        auto prawImg = m_mediaAlbumArt.loadAlbumArtByIndex(m_nCurAlbumArt);
-        if (prawImg) {
-            createAlbumArtImage(prawImg);
-            return;
-        }
+    auto image = m_mediaAlbumArt.loadNext();
+    if (image) {
+        createAlbumArtImage(image);
+        return;
     }
 
     if (isMaskImageUsed()) {

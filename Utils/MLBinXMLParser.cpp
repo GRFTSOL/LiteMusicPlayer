@@ -592,7 +592,7 @@ TEST(MLBinXMLParser, ParseBinXml) {
     CMLBinXMLWriter xmlWriter2;
     xmlData.m_pRoot->toXML(xmlWriter2);
     string &buf2 = xmlWriter2.getBuffer();
-    ASSERT_TRUE(buf.size() == buf2.size());
+    ASSERT_EQ(buf.size(), buf2.size());
     ASSERT_TRUE(memcmp(buf.c_str(), buf2.c_str(), buf.size()) == 0);
 }
 

@@ -30,7 +30,6 @@ public:
     void onLyricsChanged() override;
 
     void onCreate() override;
-    void onEvent(const IEvent *pEvent) override;
     void onSize() override;
 
     void onTimer(int nId) override;
@@ -39,14 +38,6 @@ public:
     virtual void onHScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override { }
 
     void onPlayTimeChangedUpdate() override;
-
-    bool isRecordScrollingActionsEnabled()
-    const { return m_bRecordScrollingActionsEnabled; };
-    void enableRecordScrollingActions(bool bEnable);
-
-    bool isReplayScrollingActionsEnabled()
-    const { return m_bReplayScrollingActionsEnabled && !m_bReplayDisabledTemp;  };
-    void enableReplayScrollingActions(bool bEnable);
 
 protected:
     void onLyrDrawContextChanged() override;
@@ -74,11 +65,6 @@ protected:
     int64_t                     m_timeBeginScroll;
 
     bool                        m_bInVerticalScrollingMode;
-
-    bool                        m_bRecordScrollingActionsEnabled;
-    bool                        m_bReplayScrollingActionsEnabled;
-
-    bool                        m_bReplayDisabledTemp;
 
 };
 

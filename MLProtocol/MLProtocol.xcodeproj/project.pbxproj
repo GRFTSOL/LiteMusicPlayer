@@ -14,8 +14,6 @@
 		5FBCCD0D14851A5D00D7C64A /* HttpProtocol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FBCCCFE14851A5D00D7C64A /* HttpProtocol.cpp */; };
 		5FBCCD0E14851A5D00D7C64A /* HttpProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FBCCCFF14851A5D00D7C64A /* HttpProtocol.h */; };
 		5FBCCD0F14851A5D00D7C64A /* MLProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FBCCD0014851A5D00D7C64A /* MLProtocol.h */; };
-		5FBCCD1214851A5D00D7C64A /* MLUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FBCCD0314851A5D00D7C64A /* MLUtils.cpp */; };
-		5FBCCD1314851A5D00D7C64A /* MLUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FBCCD0414851A5D00D7C64A /* MLUtils.h */; };
 		5FBCCD1414851A5D00D7C64A /* NetSDK.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FBCCD0514851A5D00D7C64A /* NetSDK.cpp */; };
 		5FBCCD1514851A5D00D7C64A /* NetSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FBCCD0614851A5D00D7C64A /* NetSDK.h */; };
 		5FBCCD1814851A5D00D7C64A /* sockadapt.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FBCCD0914851A5D00D7C64A /* sockadapt.h */; };
@@ -35,8 +33,6 @@
 		5FBCCCFE14851A5D00D7C64A /* HttpProtocol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HttpProtocol.cpp; sourceTree = SOURCE_ROOT; };
 		5FBCCCFF14851A5D00D7C64A /* HttpProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HttpProtocol.h; sourceTree = SOURCE_ROOT; };
 		5FBCCD0014851A5D00D7C64A /* MLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLProtocol.h; sourceTree = SOURCE_ROOT; };
-		5FBCCD0314851A5D00D7C64A /* MLUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MLUtils.cpp; sourceTree = SOURCE_ROOT; };
-		5FBCCD0414851A5D00D7C64A /* MLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLUtils.h; sourceTree = SOURCE_ROOT; };
 		5FBCCD0514851A5D00D7C64A /* NetSDK.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetSDK.cpp; sourceTree = SOURCE_ROOT; };
 		5FBCCD0614851A5D00D7C64A /* NetSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetSDK.h; sourceTree = SOURCE_ROOT; };
 		5FBCCD0914851A5D00D7C64A /* sockadapt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sockadapt.h; sourceTree = SOURCE_ROOT; };
@@ -103,8 +99,6 @@
 				5FBCCCFE14851A5D00D7C64A /* HttpProtocol.cpp */,
 				5FBCCCFF14851A5D00D7C64A /* HttpProtocol.h */,
 				5FBCCD0014851A5D00D7C64A /* MLProtocol.h */,
-				5FBCCD0314851A5D00D7C64A /* MLUtils.cpp */,
-				5FBCCD0414851A5D00D7C64A /* MLUtils.h */,
 				5FBCCD0514851A5D00D7C64A /* NetSDK.cpp */,
 				5FBCCD0614851A5D00D7C64A /* NetSDK.h */,
 				5FBCCD0914851A5D00D7C64A /* sockadapt.h */,
@@ -123,7 +117,6 @@
 				5FBCCD0C14851A5D00D7C64A /* HttpClient.h in Headers */,
 				5FBCCD0E14851A5D00D7C64A /* HttpProtocol.h in Headers */,
 				5FBCCD0F14851A5D00D7C64A /* MLProtocol.h in Headers */,
-				5FBCCD1314851A5D00D7C64A /* MLUtils.h in Headers */,
 				5FBCCD1514851A5D00D7C64A /* NetSDK.h in Headers */,
 				5FDF9A7218B6F33600ACB5D9 /* ClientCom.h in Headers */,
 				5FBCCD1814851A5D00D7C64A /* sockadapt.h in Headers */,
@@ -183,7 +176,6 @@
 			files = (
 				5FBCCD0B14851A5D00D7C64A /* HttpClient.cpp in Sources */,
 				5FBCCD0D14851A5D00D7C64A /* HttpProtocol.cpp in Sources */,
-				5FBCCD1214851A5D00D7C64A /* MLUtils.cpp in Sources */,
 				5FBCCD1414851A5D00D7C64A /* NetSDK.cpp in Sources */,
 				5F2BD4B6148D04DA003E7F5C /* MLProtocol.cpp in Sources */,
 				5FDF9A7118B6F33600ACB5D9 /* ClientCom.cpp in Sources */,

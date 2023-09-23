@@ -14,7 +14,7 @@ public:
     virtual ~CID3v2Frame();
 
     uint32_t getFrameID() const { return m_framehdr.nFrameID; }
-    virtual int renderFrame(const ID3v2Header *pHeader, string &buff);
+    int renderFrame(const ID3v2Header *pHeader, string &buff);
 
     // string *getData() { return &m_frameData; }
     //    char *data() { return m_frameData.data(); }
@@ -25,7 +25,7 @@ public:
 #endif
 
 protected:
-    virtual int renderFrameHdr(const ID3v2Header *pHeader, string &buff);
+    int renderFrameHdr(const ID3v2Header *pHeader, string &buff, uint32_t lengthData);
 
 public:
     ID3v2FrameHdr               m_framehdr;

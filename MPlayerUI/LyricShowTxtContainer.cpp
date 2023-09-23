@@ -20,7 +20,7 @@ void CLyricShowTxtContainer::onCreate() {
     //
     // create Scrollbar
     //
-    m_pObjScrollBar = m_pSkin->getSkinFactory()->createUIObject(m_pSkin, CSkinVScrollBar::className(), m_pContainer);
+    m_pObjScrollBar = m_pSkin->createUIObject(CSkinVScrollBar::className(), m_pContainer);
     if (!m_pObjScrollBar) {
         return;
     }
@@ -31,7 +31,7 @@ void CLyricShowTxtContainer::onCreate() {
     addUIObject(m_pObjScrollBar);
 
 
-    m_pLyricsShow = m_pSkin->getSkinFactory()->createUIObject(m_pSkin, CLyricShowTxtObj::className(), this);
+    m_pLyricsShow = m_pSkin->createUIObject(CLyricShowTxtObj::className(), this);
     if (!m_pLyricsShow) {
         return;
     }

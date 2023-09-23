@@ -68,28 +68,23 @@ RawImageDataPtr autoFitImageToRect(const RawImageDataPtr &pImgSrc, int wDst, int
     return pImgDst;
 }
 
-int getLyricFragDrawWidth(LyricsPiece *pPiece, CRawGraph* canvas) {
-    assert(pPiece);
-
-    if (pPiece->nDrawWidth == 0) {
+int getLyricFragDrawWidth(LyricsPiece &piece, CRawGraph* canvas) {
+    if (piece.drawWidth == 0) {
         CSize size;
-        canvas->getTextExtentPoint32(pPiece->szLyric, pPiece->nLen, &size);
-        pPiece->nDrawWidth = (int16_t)size.cx;
+        canvas->getTextExtentPoint32(piece.text, &size);
+        piece.drawWidth = (int16_t)size.cx;
     }
 
-    return pPiece->nDrawWidth;
+    return piece.drawWidth;
 }
 
-int getMLRowDrawWidth(LyricsLine *pLine, CRawGraph *canvas) {
-    VecLyricsPiece::iterator it, itEnd;
+int getMLRowDrawWidth(const LyricsLine &line, CRawGraph *canvas) {
     int w = 0;
 
-    itEnd = pLine->vFrags.end();
-    for (it = pLine->vFrags.begin(); it != itEnd; it++) {
-        LyricsPiece *pPiece = *it;
+    for (auto &piece : line.pieces) {
 
         CSize size;
-        if (canvas->getTextExtentPoint32(pPiece->szLyric, pPiece->nLen, &size)) {
+        if (canvas->getTextExtentPoint32(piece.text, &size)) {
             w += size.cx;
         }
     }
@@ -98,15 +93,15 @@ int getMLRowDrawWidth(LyricsLine *pLine, CRawGraph *canvas) {
 }
 
 
-void wrapWords(CRawGraph *canvas, int nWidthMax, cstr_t szText, vector<string> &vStr) {
-    if (strlen(szText) <= 10) {
-        vStr.push_back(szText);
+void wrapWords(CRawGraph *canvas, int nWidthMax, const string &text, vector<string> &vStr) {
+    if (text.size() <= 10) {
+        vStr.push_back(text);
         return;
     }
 
     string str;
 
-    StringIterator strIterator(szText);
+    StringIterator strIterator(text.c_str());
     while (!strIterator.isEOS()) {
         int nWidth = 0;
         int nLineBeg = strIterator.getPos();
@@ -137,7 +132,7 @@ void wrapWords(CRawGraph *canvas, int nWidthMax, cstr_t szText, vector<string> &
             ++strIterator;
         }
         str.clear();
-        str.append(szText + nLineBeg, strIterator.getPos() - nLineBeg);
+        str.append(text.c_str() + nLineBeg, strIterator.getPos() - nLineBeg);
         if (str.size()) {
             if (str.data()[str.size() - 1] == '\r') {
                 str.resize(str.size() - 1);
@@ -151,56 +146,48 @@ void wrapWords(CRawGraph *canvas, int nWidthMax, cstr_t szText, vector<string> &
     }
 }
 
-bool wrapDisplayLyrics(CLyricsLines &lyrLinesSrc, CLyricsLines &lyrLinesOut, CRawGraph *canvas, int nWidthMax, bool bVerticalStyle) {
-    int i;
+bool wrapDisplayLyrics(LyricsLines &lyrLinesSrc, LyricsLines &lyrLinesOut, CRawGraph *canvas, int nWidthMax, bool bVerticalStyle) {
 
     lyrLinesOut.clear();
 
-    LyricsLine *pLine;
     vector<string> vStr;
-    for (i = 0; i < (int)lyrLinesSrc.size(); i++) {
-        LyricsLine *pLineSrc = lyrLinesSrc[i];
-
-        if (pLineSrc->vFrags.size() > 1 || pLineSrc->vFrags.size() == 0
-            || getMLRowDrawWidth(pLineSrc, canvas) <= nWidthMax) {
-            // Not support vFrags > 1.
-            pLine = duplicateLyricsLine(pLineSrc);
-            lyrLinesOut.push_back(pLine);
+    for (auto &lineSrc : lyrLinesSrc) {
+        if (lineSrc.pieces.size() > 1 || lineSrc.pieces.size() == 0
+            || getMLRowDrawWidth(lineSrc, canvas) <= nWidthMax) {
+            // Not support pieces > 1.
+            lyrLinesOut.push_back(lineSrc);
         } else {
             // Wrap
-            LyricsPiece *pPieceSrc = pLineSrc->vFrags[0];
+            LyricsPiece &pieceSrc = lineSrc.pieces[0];
             vStr.clear();
-            wrapWords(canvas, nWidthMax, pPieceSrc->szLyric, vStr);
+            wrapWords(canvas, nWidthMax, pieceSrc.text, vStr);
 
             if (bVerticalStyle) {
                 // All lines of lyrics has same time, for vertical scroll styles.
                 for (int k = 0; k < (int)vStr.size(); k++) {
-                    pLine = newLyricsLine(pPieceSrc->nBegTime, pPieceSrc->nEndTime, pLineSrc->szContent, -1, pLineSrc->bLyricsLine);
-
-                    pLine->appendPiece(pPieceSrc->nBegTime, pPieceSrc->nEndTime, vStr[k].c_str(), vStr[k].size(), false, false);
-
-                    lyrLinesOut.push_back(pLine);
+                    LyricsLine line(pieceSrc.beginTime, pieceSrc.endTime);
+                    line.appendPiece(pieceSrc.beginTime, pieceSrc.endTime, vStr[k]);
+                    lyrLinesOut.push_back(line);
                 }
             } else {
-                int nLen = pPieceSrc->nLen;
-                int nTimeSpan = pLineSrc->nEndTime - pLineSrc->nBegTime;
+                int nLen = (int)pieceSrc.text.size();
+                int nTimeSpan = lineSrc.endTime - lineSrc.beginTime;
 
                 // assert(vStr.size() > 1);
-                int nBegTime = pLineSrc->nBegTime;
+                int beginTime = lineSrc.beginTime;
                 for (int k = 0; k < (int)vStr.size(); k++) {
-                    int nEndTime;
+                    int endTime;
                     if (nLen > 0) {
-                        nEndTime = nBegTime + (int)(vStr[k].size() * nTimeSpan) / nLen;
+                        endTime = beginTime + (int)(vStr[k].size() * nTimeSpan) / nLen;
                     } else {
-                        nEndTime = nBegTime + nTimeSpan;
+                        endTime = beginTime + nTimeSpan;
                     }
-                    pLine = newLyricsLine(nBegTime, nEndTime, pLineSrc->szContent, -1, pLineSrc->bLyricsLine);
 
-                    pLine->appendPiece(nBegTime, nEndTime, vStr[k].c_str(), vStr[k].size(), false, false);
+                    LyricsLine line(beginTime, endTime);
+                    line.appendPiece(beginTime, endTime, vStr[k]);
+                    lyrLinesOut.push_back(line);
 
-                    lyrLinesOut.push_back(pLine);
-
-                    nBegTime = nEndTime;
+                    beginTime = endTime;
                 }
             }
         }
@@ -471,7 +458,7 @@ CLyricShowObj::CLyricShowObj() {
     m_nXMargin = 5;
     m_nYMargin = 2;
 
-    m_pMLData = nullptr;
+    m_curLyrics = nullptr;
 
     m_bCanWrapLines = true;
 
@@ -521,8 +508,6 @@ CLyricShowObj::CLyricShowObj() {
     m_clrDarken.set(RGB(0x18, 0x3C, 0x7B));
     m_clrDarken.setAlpha(128);
 
-    m_nextPic = 0;
-
     m_nextPicInFolder = 0;
 
     m_Cursor.loadCursorFromRes(IDC_MLHAND);
@@ -544,7 +529,7 @@ CLyricShowObj::~CLyricShowObj() {
 }
 
 void CLyricShowObj::onCreate() {
-    m_pMLData = &g_LyricData;
+    m_curLyrics = &g_currentLyrics;
 
     {
         // Is floating lyrics?
@@ -564,7 +549,7 @@ void CLyricShowObj::onCreate() {
     // !auto resize || !wrap lines
     if (!m_bEnableAutoResize || !g_profile.getBool(SZ_SECT_UI, "AutoAdjustWndWidth", false)
         || !m_bCanWrapLines) {
-        m_pMLData->copyLyricsLines(m_lyrLines);
+        m_lyrLines = m_curLyrics->getLyricsLines();
         reverseLyricsForRightToLeftLanguage();
     }
 }
@@ -641,8 +626,8 @@ void CLyricShowObj::fastDrawMediaInfo(CRawGraph *canvas, CRect *prcUpdate) {
     }
 }
 
-void CLyricShowObj::setLyricData(CMLData *pMLData) {
-    m_pMLData = pMLData;
+void CLyricShowObj::setLyricData(CurrentLyrics *pMLData) {
+    m_curLyrics = pMLData;
 }
 
 // draw lyrics line according to current display style and linePos
@@ -676,16 +661,12 @@ enum    LYR_COLOR_TRANSFORM {
     LCT_LOW,
 };
 
-bool CLyricShowObj::drawRow(CRawGraph *canvas, LyricsLine *pLyricRow, int x, int y, LinePos linePos) {
+bool CLyricShowObj::drawRow(CRawGraph *canvas, LyricsLine &lyricRow, int x, int y, LinePos linePos) {
     int nSize;
     CColor clrTxt, clrTxtBorder;
     int nAlpha = 255, alphaOld = 255;
     bool bSetOpacityPainting = false;
     LYR_COLOR_TRANSFORM lct;
-
-    if (pLyricRow == nullptr) {
-        return false;
-    }
 
     // 1). Fadeout to low light color
     //        a. LP_ABOVE_CUR_LINE :    higlight -> low light
@@ -696,7 +677,7 @@ bool CLyricShowObj::drawRow(CRawGraph *canvas, LyricsLine *pLyricRow, int x, int
     if (m_LyricsDisplayOpt == DO_FADEOUT_LOWCOLOR) {
         if (linePos == LP_ABOVE_CUR_LINE) {
             lct = LCT_HIGH_TO_LOW;
-            nAlpha = getAlpha(pLyricRow);
+            nAlpha = getAlpha(lyricRow);
             if (nAlpha == 255) {
                 lct = LCT_LOW;
             } else if (nAlpha == 0) {
@@ -707,7 +688,7 @@ bool CLyricShowObj::drawRow(CRawGraph *canvas, LyricsLine *pLyricRow, int x, int
                 lct = LCT_LOW;
             } else {
                 lct = LCT_LOW_TO_HIGH;
-                nAlpha = 255 - getAlpha(pLyricRow);
+                nAlpha = 255 - getAlpha(lyricRow);
                 if (nAlpha == 255) {
                     lct = LCT_LOW;
                 } else if (nAlpha == 0) {
@@ -727,7 +708,7 @@ bool CLyricShowObj::drawRow(CRawGraph *canvas, LyricsLine *pLyricRow, int x, int
     else if (m_LyricsDisplayOpt == DO_FADEOUT_BG || m_LyricsDisplayOpt == DO_AUTO) {
         if (linePos == LP_ABOVE_CUR_LINE) {
             lct = LCT_HIGH_TO_BG;
-            nAlpha = getAlpha(pLyricRow);
+            nAlpha = getAlpha(lyricRow);
             if (nAlpha == 0) {
                 return false;
             }
@@ -744,7 +725,7 @@ bool CLyricShowObj::drawRow(CRawGraph *canvas, LyricsLine *pLyricRow, int x, int
             } else {
                 lct = LCT_BG_TO_HIGH;
             }
-            nAlpha = getAlpha(pLyricRow);
+            nAlpha = getAlpha(lyricRow);
             if (nAlpha == 0) {
                 return false;
             }
@@ -853,16 +834,12 @@ bool CLyricShowObj::drawRow(CRawGraph *canvas, LyricsLine *pLyricRow, int x, int
 
 
     if (x == AUTO_CAL_X) {
-        x = getLyricRowAlignPos(canvas, pLyricRow);
+        x = getLyricRowAlignPos(canvas, lyricRow);
     }
 
     // 画出此行歌词
-    nSize = (int)pLyricRow->vFrags.size();
-    for (int i = 0; i < nSize; i++) {
-        LyricsPiece *pPiece;
-
-        pPiece = pLyricRow->vFrags[i];
-
+    nSize = (int)lyricRow.pieces.size();
+    for (LyricsPiece &piece : lyricRow.pieces) {
         if (bSetOpacityPainting) {
             alphaOld = canvas->getOpacityPainting();
             canvas->setOpacityPainting(nAlpha);
@@ -870,56 +847,49 @@ bool CLyricShowObj::drawRow(CRawGraph *canvas, LyricsLine *pLyricRow, int x, int
 
         if (isOutlineLyrics()) {
             // draw lyrics text outlined
-            canvas->textOutOutlined(x, y + MARGIN_FONT, pPiece->szLyric, pPiece->nLen, clrTxt, clrTxtBorder);
+            canvas->textOutOutlined(x, y + MARGIN_FONT, piece.text, clrTxt, clrTxtBorder);
         } else {
             canvas->setTextColor(clrTxt);
-
-            canvas->textOut(x, y, pPiece->szLyric, pPiece->nLen);
+            canvas->textOut(x, y, piece.text);
         }
 
         if (bSetOpacityPainting) {
             canvas->setOpacityPainting(alphaOld);
         }
 
-        x += getLyricFragDrawWidth(pPiece, canvas);
+        x += getLyricFragDrawWidth(piece, canvas);
     }
 
     return true;
 }
 
-void CLyricShowObj::drawRow(CRawGraph *canvas, LyricsLine *pLyricRow, int x, int y, CColor &clrTxt, CColor &clrTxtBorder) {
+void CLyricShowObj::drawRow(CRawGraph *canvas, LyricsLine &lyricRow, int x, int y, CColor &clrTxt, CColor &clrTxtBorder) {
     int nSize;
 
     if (x == AUTO_CAL_X) {
-        x = getLyricRowAlignPos(canvas, pLyricRow);
+        x = getLyricRowAlignPos(canvas, lyricRow);
     }
 
     // 画出此行歌词
-    nSize = (int)pLyricRow->vFrags.size();
-    for (int i = 0; i < nSize; i++) {
-        LyricsPiece *pPiece;
-
-        pPiece = pLyricRow->vFrags[i];
+    nSize = (int)lyricRow.pieces.size();
+    for (auto &piece : lyricRow.pieces) {
 
         if (isOutlineLyrics()) {
             // draw lyrics text outlined
-            canvas->textOutOutlined(x, y + MARGIN_FONT, pPiece->szLyric, pPiece->nLen, clrTxt, clrTxtBorder);
+            canvas->textOutOutlined(x, y + MARGIN_FONT, piece.text, clrTxt, clrTxtBorder);
         } else {
             canvas->setTextColor(clrTxt);
-            canvas->textOut(x, y, pPiece->szLyric, pPiece->nLen);
+            canvas->textOut(x, y, piece.text.c_str(), piece.text.size());
         }
 
-        x += getLyricFragDrawWidth(pPiece, canvas);
+        x += getLyricFragDrawWidth(piece, canvas);
     }
 }
 
 // COMMENT:
 //        逐字显示歌词, like Karaoke
-void CLyricShowObj::drawRowKaraoke(CRawGraph    *canvas, LyricsLine *pLyricRow, int x, int y) {
-    assert(m_pMLData);
-    if (pLyricRow == nullptr) {
-        return;
-    }
+void CLyricShowObj::drawRowKaraoke(CRawGraph *canvas, LyricsLine &lyricRow, int x, int y) {
+    assert(m_curLyrics);
 
     // exp. "Said I love you but I lie"
     //               p^
@@ -928,27 +898,23 @@ void CLyricShowObj::drawRowKaraoke(CRawGraph    *canvas, LyricsLine *pLyricRow, 
     // 3. draw word pCurWord
     // 4. draw words after pCurWords
     // 5. ok
-    LyricsPiece *pPiece;
-    int nSize;
-    int nCurPos;
 
-    if (pLyricRow->nBegTime >= m_pMLData->getPlayElapsedTime()) {
-        drawRow(canvas, pLyricRow, x, y, LP_BELOW_CUR_LINE);
+    if (lyricRow.beginTime >= m_curLyrics->getPlayElapsedTime()) {
+        drawRow(canvas, lyricRow, x, y, LP_BELOW_CUR_LINE);
         return;
     }
 
-    nSize = (int)pLyricRow->vFrags.size();
-
     // 取得该行歌词显示的X座标
     if (x == AUTO_CAL_X) {
-        x = getLyricRowAlignPos(canvas, pLyricRow);
+        x = getLyricRowAlignPos(canvas, lyricRow);
     }
 
     // 先将在时间已过的歌词段显示出来
+    int nCurPos = 0, nSize = (int)lyricRow.pieces.size();
     for (nCurPos = 0; nCurPos < nSize; nCurPos++) {
-        pPiece = pLyricRow->vFrags[nCurPos];
+        auto &piece = lyricRow.pieces[nCurPos];
 
-        if (pPiece->nEndTime >= m_pMLData->getPlayElapsedTime()) {
+        if (piece.endTime >= m_curLyrics->getPlayElapsedTime()) {
             // 时间未过的歌词段
             break;
         } else {
@@ -965,12 +931,12 @@ void CLyricShowObj::drawRowKaraoke(CRawGraph    *canvas, LyricsLine *pLyricRow, 
 
             if (isOutlineLyrics()) {
                 // draw lyrics text outlined
-                canvas->textOutOutlined(x, y + MARGIN_FONT, pPiece->szLyric, pPiece->nLen, m_tobHilight.clr[TCI_FILL], m_tobHilight.clr[TCI_BORDER]);
+                canvas->textOutOutlined(x, y + MARGIN_FONT, piece.text, m_tobHilight.clr[TCI_FILL], m_tobHilight.clr[TCI_BORDER]);
             } else {
                 canvas->setTextColor(getHighlightColor());
-                canvas->textOut(x, y, pPiece->szLyric, pPiece->nLen);
+                canvas->textOut(x, y, piece.text);
             }
-            x += getLyricFragDrawWidth(pPiece, canvas);;
+            x += getLyricFragDrawWidth(piece, canvas);;
         }
     }
 
@@ -982,24 +948,24 @@ void CLyricShowObj::drawRowKaraoke(CRawGraph    *canvas, LyricsLine *pLyricRow, 
         int nFragDrawWidth;
         int nKaraokePos = 0;
 
-        pPiece = pLyricRow->vFrags[nCurPos];
+        auto &piece = lyricRow.pieces[nCurPos];
 
         // get width of the lyrics fragment
-        nFragDrawWidth = getLyricFragDrawWidth(pPiece, canvas);
+        nFragDrawWidth = getLyricFragDrawWidth(piece, canvas);
 
-        if (pPiece->nBegTime < m_pMLData->getPlayElapsedTime()) {
-            // 如果时间 m_pMLData->getPlayElapsedTime() 在当前歌词段之间
+        if (piece.beginTime < m_curLyrics->getPlayElapsedTime()) {
+            // 如果时间 m_curLyrics->getPlayElapsedTime() 在当前歌词段之间
             //    |1word2|   |1word2|
-            //                  ^ pPiece
-            int dt = (pPiece->nEndTime - pPiece->nBegTime);
+            //                  ^ piece
+            int dt = (piece.endTime - piece.beginTime);
             if (dt != 0) {
 
-                nKaraokePos = nFragDrawWidth * (m_pMLData->getPlayElapsedTime() - pPiece->nBegTime) / dt;
+                nKaraokePos = nFragDrawWidth * (m_curLyrics->getPlayElapsedTime() - piece.beginTime) / dt;
                 // rcText.setLTRB(x, y, x + nKaraokePos + 1, y + getFontHeight() + 1);
             }
         } else {
             //    |1word2|   |1word2|
-            //             ^  pPiece
+            //             ^  piece
             nKaraokePos = nFragDrawWidth;
         }
 
@@ -1016,10 +982,10 @@ void CLyricShowObj::drawRowKaraoke(CRawGraph    *canvas, LyricsLine *pLyricRow, 
             }
 
             if (isOutlineLyrics()) {
-                canvas->drawTextClipOutlined(pPiece->szLyric, pPiece->nLen, rcText, m_tobLowlight.clr[TCI_FILL], m_tobLowlight.clr[TCI_BORDER], nKaraokePos);
+                canvas->drawTextClipOutlined(piece.text, rcText, m_tobLowlight.clr[TCI_FILL], m_tobLowlight.clr[TCI_BORDER], nKaraokePos);
             } else {
                 canvas->setTextColor(getLowlightColor());
-                canvas->drawTextClip(pPiece->szLyric, pPiece->nLen, rcText, nKaraokePos);
+                canvas->drawTextClip(piece.text, rcText, nKaraokePos);
             }
         }
 
@@ -1034,10 +1000,10 @@ void CLyricShowObj::drawRowKaraoke(CRawGraph    *canvas, LyricsLine *pLyricRow, 
 
         if (isOutlineLyrics()) {
             // draw lyrics text outlined
-            canvas->drawTextClipOutlined(pPiece->szLyric, pPiece->nLen, rcText, m_tobHilight.clr[TCI_FILL], m_tobHilight.clr[TCI_BORDER]);
+            canvas->drawTextClipOutlined(piece.text, rcText, m_tobHilight.clr[TCI_FILL], m_tobHilight.clr[TCI_BORDER]);
         } else {
             canvas->setTextColor(getHighlightColor());
-            canvas->drawTextClip(pPiece->szLyric, pPiece->nLen, rcText);
+            canvas->drawTextClip(piece.text, rcText);
         }
 
         // 增加 x 的偏移位置
@@ -1053,29 +1019,29 @@ void CLyricShowObj::drawRowKaraoke(CRawGraph    *canvas, LyricsLine *pLyricRow, 
 
     // 显示时间未到的歌词段
     for (; nCurPos < nSize; nCurPos++) {
-        pPiece = pLyricRow->vFrags[nCurPos];
+        auto &piece = lyricRow.pieces[nCurPos];
 
         // draw text border
         if (isOutlineLyrics()) {
             // draw lyrics text outlined
-            canvas->textOutOutlined(x, y + MARGIN_FONT, pPiece->szLyric, pPiece->nLen, m_tobLowlight.clr[TCI_FILL], m_tobLowlight.clr[TCI_BORDER]);
+            canvas->textOutOutlined(x, y + MARGIN_FONT, piece.text, m_tobLowlight.clr[TCI_FILL], m_tobLowlight.clr[TCI_BORDER]);
         } else {
             canvas->setTextColor(getLowlightColor());
-            canvas->textOut(x, y, pPiece->szLyric, pPiece->nLen);
+            canvas->textOut(x, y, piece.text);
         }
-        x += getLyricFragDrawWidth(pPiece, canvas);
+        x += getLyricFragDrawWidth(piece, canvas);
     }
     // 5. ok
 }
 
-void CLyricShowObj::drawCurrentRow(CRawGraph    *canvas, LyricsLine *pLyricRow, int x, int y) {
-    assert(m_pMLData);
+void CLyricShowObj::drawCurrentRow(CRawGraph *canvas, LyricsLine &lyricRow, int x, int y) {
+    assert(m_curLyrics);
     assert(canvas);
 
     if (isKaraoke()) {
-        drawRowKaraoke(canvas, pLyricRow, x, y);
+        drawRowKaraoke(canvas, lyricRow, x, y);
     } else {
-        drawRow(canvas, pLyricRow, x, y, LP_CUR_LINE);
+        drawRow(canvas, lyricRow, x, y, LP_CUR_LINE);
     }
 }
 
@@ -1119,19 +1085,13 @@ void CLyricShowObj::fadeOutVertBorder(CRawGraph *canvas, int yDrawLyrStartPos, i
 }
 
 // COMMENT:
-//        根据当前的 Graphics 环境，取得歌词pLyricRow行的宽度
-int CLyricShowObj::getLyricRowTextWidth(CRawGraph    *canvas, LyricsLine *pLyricRow) {
-    assert(m_pMLData);
+//        根据当前的 Graphics 环境，取得歌词 lyricRow 行的宽度
+int CLyricShowObj::getLyricRowTextWidth(CRawGraph *canvas, LyricsLine &lyricRow) {
+    assert(m_curLyrics);
 
     int nTxtWidth = 0;
-    int nSize;
-    LyricsPiece *pPiece;
-
-    nSize = (int)pLyricRow->vFrags.size();
-    for (int i = 0; i < nSize; i++) {
-        pPiece = pLyricRow->vFrags[i];
-
-        nTxtWidth += getLyricFragDrawWidth(pPiece, canvas);
+    for (auto &piece : lyricRow.pieces) {
+        nTxtWidth += getLyricFragDrawWidth(piece, canvas);
     }
 
     return nTxtWidth;
@@ -1173,11 +1133,11 @@ void CLyricShowObj::setAntialise(bool bAntialis) {
 //        取得该行歌词显示的X座标
 // INPUT:
 //        canvas        -    显示歌词行的设备
-//        pLyricRow -    歌词行
+//        lyricRow -    歌词行
 // OUTPUT:
 //        输出此行歌词显示的 X 座标位置
-int CLyricShowObj::getLyricRowAlignPos(CRawGraph    *canvas, LyricsLine *pLyricRow) {
-    assert(m_pMLData);
+int CLyricShowObj::getLyricRowAlignPos(CRawGraph *canvas, LyricsLine &lyricRow) {
+    assert(m_curLyrics);
 
     int x;
     switch (m_nAlignment) {
@@ -1192,7 +1152,7 @@ int CLyricShowObj::getLyricRowAlignPos(CRawGraph    *canvas, LyricsLine *pLyricR
         {
             int nTxtWidth;
             // 取得此行歌词的显示宽度
-            nTxtWidth = getLyricRowTextWidth(canvas, pLyricRow);
+            nTxtWidth = getLyricRowTextWidth(canvas, lyricRow);
 
             // 计算左边显示的位置
             x = m_rcObj.left + (m_rcObj.width() - nTxtWidth) / 2;
@@ -1203,7 +1163,7 @@ int CLyricShowObj::getLyricRowAlignPos(CRawGraph    *canvas, LyricsLine *pLyricR
         {
             int nTxtWidth;
             // 取得此行歌词的显示宽度
-            nTxtWidth = getLyricRowTextWidth(canvas, pLyricRow);
+            nTxtWidth = getLyricRowTextWidth(canvas, lyricRow);
 
             // 计算左边显示的位置
             x = m_rcObj.right - nTxtWidth - m_nXMargin;
@@ -1214,7 +1174,7 @@ int CLyricShowObj::getLyricRowAlignPos(CRawGraph    *canvas, LyricsLine *pLyricR
 }
 
 bool CLyricShowObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
-    assert(m_pMLData);
+    assert(m_curLyrics);
 
     if (nFlags != 0) {
         return false;
@@ -1222,11 +1182,11 @@ bool CLyricShowObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
 
     switch (nChar) {
     case VK_UP:
-        m_pMLData->setOffsetTime(m_pMLData->getOffsetTime() - SET_SPEED_SPAN);
+        m_curLyrics->setOffsetTime(m_curLyrics->getOffsetTime() - SET_SPEED_SPAN);
         CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
         break;
     case VK_DOWN:
-        m_pMLData->setOffsetTime(m_pMLData->getOffsetTime() + SET_SPEED_SPAN);
+        m_curLyrics->setOffsetTime(m_curLyrics->getOffsetTime() + SET_SPEED_SPAN);
         CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
         break;
     case 'D':
@@ -1362,7 +1322,7 @@ void CLyricShowObj::onLyricsChanged() {
     if ((m_bEnableAutoResize && g_profile.getBool(SZ_SECT_UI, "AutoAdjustWndWidth", false))
         || !m_bCanWrapLines) {
         // auto resize || !wrap lines
-        m_pMLData->copyLyricsLines(m_lyrLines);
+        m_lyrLines = m_curLyrics->getLyricsLines();
         reverseLyricsForRightToLeftLanguage();
     } else {
         wrapLyricsLines();
@@ -1437,7 +1397,7 @@ void CLyricShowObj::wrapLyricsLines() {
     bool bVerticalStyle = (isKindOf(CLyricShowMultiRowObj::className()) || isKindOf(CLyricShowTxtObj::className()));
 
     int width = m_rcObj.width() - m_nXMargin * 2 - getOutlineMargin();
-    wrapDisplayLyrics(g_LyricData.getRawLyrics(), m_lyrLines, canvas, width, bVerticalStyle);
+    wrapDisplayLyrics(g_currentLyrics.getLyricsLines(), m_lyrLines, canvas, width, bVerticalStyle);
 
     reverseLyricsForRightToLeftLanguage();
 }
@@ -1485,7 +1445,7 @@ bool CLyricShowObj::autoWidthSkinAccordLyrics() {
     CRect rc, rcOrg;
     int nWidthMax = 200;
 
-    if (!m_pMLData || !m_bEnableAutoResize || m_pSkin->m_wndResizer.isFixedWidth()) {
+    if (!m_curLyrics || !m_bEnableAutoResize || m_pSkin->m_wndResizer.isFixedWidth()) {
         return false;
     }
 
@@ -1605,19 +1565,19 @@ void CLyricShowObj::onPlayTimeChangedUpdate() {
     }
 }
 
-int CLyricShowObj::getAlpha(LyricsLine *pLine) {
+int CLyricShowObj::getAlpha(LyricsLine &line) {
     int nTime;
     const int FADE_DURATION = 1500;
 
-    if (pLine->nBegTime > m_pMLData->getPlayElapsedTime()) {
-        nTime = pLine->nBegTime - m_pMLData->getPlayElapsedTime();
+    if (line.beginTime > m_curLyrics->getPlayElapsedTime()) {
+        nTime = line.beginTime - m_curLyrics->getPlayElapsedTime();
         if (nTime <= FADE_DURATION && nTime >= -FADE_DURATION) {
             return (FADE_DURATION - nTime) * 255 / FADE_DURATION;
         } else {
             return 0;
         }
     } else {
-        nTime = m_pMLData->getPlayElapsedTime() - pLine->nEndTime;
+        nTime = m_curLyrics->getPlayElapsedTime() - line.endTime;
         if (nTime >= FADE_DURATION) {
             return 0;
         } else if (nTime > 0) {
@@ -1630,7 +1590,6 @@ int CLyricShowObj::getAlpha(LyricsLine *pLine) {
 
 void CLyricShowObj::loadBgImageFolder() {
     m_vPicFiles.clear();
-    m_nextPic = 0;
     m_nextPicInFolder = 0;
 
     if (m_strBgPicFolder.empty()) {
@@ -1657,49 +1616,24 @@ void CLyricShowObj::loadBgImageFolder() {
 
 void CLyricShowObj::loadNextBgImage() {
     if (!m_bUseAlbumArtAsBg && !m_bUseBgImg) {
-        m_curAlbumArt.close();
         m_img.detach();
         return;
     }
 
     RawImageDataPtr image;
-    if (m_bUseAlbumArtAsBg && !m_curAlbumArt.isLoaded()) {
-        m_curAlbumArt.load();
-        m_nextPic = 0;
-        image = m_curAlbumArt.loadAlbumArtByIndex(m_nextPic);
-    }
-
-    if (!image) {
-        // is m_nextPic index correct?
-        if (m_curAlbumArt.getPicCount() + m_vPicFiles.size() == 0) {
-            return;
-        }
-
-        if (m_nextPic >= m_curAlbumArt.getPicCount() + (int)m_vPicFiles.size()) {
-            m_nextPic = 0;
-        }
-    }
-
-    if (!image && m_curAlbumArt.getPicCount() > 0) {
-        // load album art
-        while (m_nextPic < m_curAlbumArt.getPicCount() && !image) {
-            image = m_curAlbumArt.loadAlbumArtByIndex(m_nextPic);
-            m_nextPic++;
-        }
+    if (m_bUseAlbumArtAsBg) {
+        image = m_curAlbumArt.loadNext();
     }
 
     if (!image && m_bUseBgImg && !m_vPicFiles.empty()) {
-        if (m_nextPic - m_curAlbumArt.getPicCount() != m_nextPicInFolder) {
-            if (m_nextPicInFolder < 0 || m_nextPicInFolder >= (int)m_vPicFiles.size()) {
-                m_nextPicInFolder = 0;
-            }
-            m_nextPic = m_nextPicInFolder + m_curAlbumArt.getPicCount();
-        }
+        int index = m_nextPicInFolder % m_vPicFiles.size();
+        image = loadRawImageDataFromFile(m_vPicFiles[index].c_str());
 
-        if (m_nextPicInFolder >= 0 && m_nextPicInFolder < (int)m_vPicFiles.size()) {
-            image = loadRawImageDataFromFile(m_vPicFiles[m_nextPicInFolder].c_str());
-            m_nextPic++;
-            m_nextPicInFolder++;
+        m_nextPicInFolder = index + 1;
+        if (m_nextPicInFolder == m_vPicFiles.size()) {
+            // 重新循环展示
+            m_curAlbumArt.restartLoop();
+            m_nextPicInFolder = 0;
         }
     }
 
@@ -1935,9 +1869,7 @@ void CLyricShowObj::updateBgImage() {
         m_img.detach();
     }
 
-    if (m_curAlbumArt.isLoaded()) {
-        m_curAlbumArt.close();
-    }
+    m_curAlbumArt.reset();
 
     if (m_bUseBgImg || m_bUseAlbumArtAsBg) {
         loadNextBgImage();
@@ -2068,7 +2000,7 @@ inline bool isNoneAlpha(char c) {
     return (uint32_t)c < 0x7F && !isAlpha(c) && !isDigit(c);
 }
 
-void reverseStringForRightToLeftLanguage(char * szText) {
+void reverseStringForRightToLeftLanguage(char *szText) {
     cstr_t p = szText;
     cstr_t szStart = szText;
     cstr_t szNoneAlpha = nullptr;
@@ -2133,12 +2065,12 @@ void reverseStringForRightToLeftLanguage(char * szText) {
 
 void CLyricShowObj::reverseLyricsForRightToLeftLanguage() {
     for (int i = 0; i < (int)m_lyrLines.size(); i++) {
-        LyricsLine *pLine = m_lyrLines[i];
-        for (int k = 0; k < (int)pLine->vFrags.size(); k++) {
-            LyricsPiece *pPiece = pLine->vFrags[k];
+        LyricsLine &line = m_lyrLines[i];
+        for (int k = 0; k < (int)line.pieces.size(); k++) {
+            LyricsPiece &piece = line.pieces[k];
 
-            if (isStrArabic(pPiece->szLyric)) {
-                reverseStringForRightToLeftLanguage(pPiece->szLyric);
+            if (isStrArabic(piece.text.c_str())) {
+                reverseStringForRightToLeftLanguage((char *)piece.text.c_str());
             }
         }
     }

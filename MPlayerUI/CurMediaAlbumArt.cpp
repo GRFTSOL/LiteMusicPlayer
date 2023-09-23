@@ -22,26 +22,6 @@ bool isSupportedImageFile(cstr_t szFile) {
     return false;
 }
 
-/*
-bool getImageFileWithName(cstr_t szName, VecStrings &vPicFiles)
-{
-    string                strPicFile;
-    int            i;
-
-    for (i = 0; i < CountOf(SZ_SUPPORTED_IMG_EXT); i++)
-    {
-        strPicFile = szName;
-        strPicFile += SZ_SUPPORTED_IMG_EXT[i];
-        if (isFileExist(strPicFile.c_str()))
-        {
-            // Find it:)
-            vPicFiles.push_back(strPicFile);
-        }
-    }
-
-    return false;
-}*/
-
 bool getCurrentMediaAlbumArtInSongDir(VecStrings &vPicFiles) {
     string strFile;
     cstr_t szAlbumName = g_player.getAlbum(), szSongFile = g_player.getSrcMedia();
@@ -120,66 +100,49 @@ bool getCurrentMediaAlbumArtInSongDir(VecStrings &vPicFiles) {
 }
 
 CCurMediaAlbumArt::CCurMediaAlbumArt() {
-    m_bLoaded = false;
 }
 
 CCurMediaAlbumArt::~CCurMediaAlbumArt() {
 }
 
-int CCurMediaAlbumArt::load() {
-    string strSongFile;
-    int nRet;
-
-    close();
-
-    m_bLoaded = true;
-    strSongFile = g_player.getSrcMedia();
-
-    // load id3v2 pictures...
-    CID3v2IF id3v2(ED_SYSDEF);
-    nRet = id3v2.open(strSongFile.c_str(), false, false);
-    if (nRet == ERR_OK) {
-        id3v2.getPictures(m_id3v2Pic);
-    }
-
-    // load album art in song dir, with same album name.
-    getCurrentMediaAlbumArtInSongDir(m_vAlbumPicFile);
-
-    if (getPicCount() > 0) {
-        return ERR_OK;
-    } else {
-        return ERR_NOT_FOUND;
-    }
+void CCurMediaAlbumArt::reset() {
+    m_vAlbumPicFiles.clear();
+    restartLoop();
 }
 
-void CCurMediaAlbumArt::close() {
-    m_id3v2Pic.free();
-    m_vAlbumPicFile.clear();
-    m_bLoaded = false;
+void CCurMediaAlbumArt::restartLoop() {
+    m_idxEmbeddedPicture = 0;
+    m_idxFilePicture = 0;
 }
 
-RawImageDataPtr CCurMediaAlbumArt::loadAlbumArtByIndex(int nIndex) {
-    if (nIndex < 0) {
-        return nullptr;
+RawImageDataPtr CCurMediaAlbumArt::loadNext() {
+    string songFile = g_player.getSrcMedia();
+    if (m_idxEmbeddedPicture != -1) {
+        string picData;
+        int ret = MediaTags::getEmbeddedPicture(songFile.c_str(), m_idxEmbeddedPicture, picData);
+        if (ret == ERR_OK) {
+            // 加载嵌入的图片
+            m_idxEmbeddedPicture++;
+            return loadRawImageDataFromMem(picData.c_str(), (int)picData.size());
+        }
+
+        // 没有嵌入的图片
+        m_idxEmbeddedPicture = -1;
     }
 
-    if (nIndex < (int)m_id3v2Pic.m_vItems.size()) {
-        ID3v2Pictures::ITEM *pic = m_id3v2Pic.m_vItems[nIndex];
-        return loadRawImageDataFromMem(pic->m_buffPic.c_str(), (int)pic->m_buffPic.size());
-    } else {
-        nIndex -= (int)m_id3v2Pic.m_vItems.size();
-        if (nIndex < (int)m_vAlbumPicFile.size()) {
-            return loadRawImageDataFromFile(m_vAlbumPicFile[nIndex].c_str());
-        } else {
-            return nullptr;
+    if (m_idxFilePicture != -1) {
+        if (m_idxFilePicture == 0) {
+            getCurrentMediaAlbumArtInSongDir(m_vAlbumPicFiles);
+        }
+
+        if (m_idxFilePicture < m_vAlbumPicFiles.size()) {
+            int index = m_idxFilePicture;
+            m_idxFilePicture++;
+            if (m_idxFilePicture >= m_vAlbumPicFiles.size()) {
+                m_idxFilePicture = -1;
+            }
+            return loadRawImageDataFromFile(m_vAlbumPicFiles[index].c_str());
         }
     }
-}
-
-int CCurMediaAlbumArt::getPicCount() {
-    int n = (int)m_id3v2Pic.m_vItems.size();
-
-    n += m_vAlbumPicFile.size();
-
-    return n;
+    return nullptr;
 }

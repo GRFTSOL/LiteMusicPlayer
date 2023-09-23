@@ -11,9 +11,10 @@ class CID3v2Frame;
 
 enum ID3v2EncType {
     IET_ANSI                    = 0,
-    IET_UCS2LE_BOM              = 1,
-    IET_UCS2BE_NO_BOM           = 2,
+    IET_UCS2                    = 1,
+    IET_UTF16BE                 = 2,
     IET_UTF8                    = 3,
+    IET_UTF16LE                 = 4,
 };
 
 CharEncodingType iD3v2EncTypeToCharEncoding(ID3v2EncType encType);
@@ -80,10 +81,10 @@ struct ID3v2Header {
     //   footer is present this equals to ('total size' - 20) bytes, otherwise
     //   ('total size' - 10) bytes.
 
-    bool isFooterFlagSet() { return (byFlag & HEADER_FLAG_FOOTER) == HEADER_FLAG_FOOTER; }
-    bool isExtendedFlagSet() { return (byFlag & HEADER_FLAG_EXTENDED) == HEADER_FLAG_EXTENDED; }
-    bool isUnsyncFlagSet() { return (byFlag & HEADER_FLAG_UNSYNC) == HEADER_FLAG_UNSYNC; }
-    bool isExperimentalFlagSet() { return (byFlag & HEADER_FLAG_EXPERIMENTAL) == HEADER_FLAG_EXPERIMENTAL; }
+    bool isFooterFlagSet() const { return (byFlag & HEADER_FLAG_FOOTER) == HEADER_FLAG_FOOTER; }
+    bool isExtendedFlagSet() const { return (byFlag & HEADER_FLAG_EXTENDED) == HEADER_FLAG_EXTENDED; }
+    bool isUnsyncFlagSet() const { return (byFlag & HEADER_FLAG_UNSYNC) == HEADER_FLAG_UNSYNC; }
+    bool isExperimentalFlagSet() const { return (byFlag & HEADER_FLAG_EXPERIMENTAL) == HEADER_FLAG_EXPERIMENTAL; }
 };
 
 /***********************************************************************\
@@ -142,7 +143,11 @@ typedef int ID3v2FrameUID_t;
 #define MakeUintFrameID3(by1, by2, by3) (((by1) << 24) | ((by2) << 16) | ((by3) << 8))
 #define MakeUintFrameID4(by1, by2, by3, by4) (((by1) << 24) | ((by2) << 16) | ((by3) << 8) | (by4))
 
-enum ID3v2_2_GENERAL_ID {
+enum ID3v2GeneralID {
+    //
+    // ID3v2-2 ids
+    //
+
     ID3V2_2_COMPOSER            = MakeUintFrameID3('T', 'C', 'M'), // TCM    : Composer
     ID3V2_2_TPOS                = MakeUintFrameID3('T', 'P', 'O'), // TPOS :
     ID3V2_2_ARTIST              = MakeUintFrameID3('T', 'P', '1'), // TP1 : Artist
@@ -164,13 +169,15 @@ enum ID3v2_2_GENERAL_ID {
     ID3V2_2_USLT                = MakeUintFrameID3('U', 'L', 'T'), // ULT : unsync lyrics
     ID3V2_2_SYLT                = MakeUintFrameID3('S', 'L', 'T'), // SLT : sync lyrics
 
-    ID3V2_2_YEAR2               = MakeUintFrameID3('T', 'O', 'R'), // TOR : Year
+    ID3V2_2_YEAR2               = MakeUintFrameID3('T', 'Y', 'E'), // TYE : Year
 
     ID3V2_2_LENGTH              = MakeUintFrameID3('T', 'L', 'E'), // TLE : length of the audiofile in milliseconds
     ID3V2_2_PART_OF_SET         = MakeUintFrameID3('T', 'P', 'A'), // TPA : Part of a set, Disknumber(iTunes)
-};
 
-enum ID3v2_3_GENERAL_ID {
+    //
+    // ID3v2-3 ids
+    //
+
     ID3V2_3_COMPOSER            = MakeUintFrameID4('T', 'C', 'O', 'M'), // TCOM    : Composer
     ID3V2_3_TPOS                = MakeUintFrameID4('T', 'P', 'O', 'S'), // TPOS :
     ID3V2_3_ARTIST              = MakeUintFrameID4('T', 'P', 'E', '1'), // TPE1 : Artist
@@ -233,8 +240,6 @@ ID3v2FrameHdr() :
 
 // #define ID3V2Size(bySize)    (bySize[3] | (bySize[2] << 7) | (bySize[1] << 14) | (bySize[0] << 21))
 
-uint32_t synchDataToUInt(uint8_t *byData, int nLen);
-void synchDataFromUInt(uint32_t value, uint8_t *byData, int nLen);
 uint32_t byteDataToUInt(uint8_t *byData, int nLen);
 void byteDataFromUInt(uint32_t value, uint8_t *byData, int nLen);
 
@@ -250,9 +255,9 @@ class CID3v2FrameFactoryBase;
 class ID3v2Text {
 public:
     ID3v2Text() {
-        m_EncodingType = IET_ANSI;
+        m_encodingType = IET_ANSI;
     }
-    ID3v2EncType                m_EncodingType;
+    ID3v2EncType                m_encodingType;
     string                      m_str;
 
     void setValue(cstr_t szValue);
@@ -264,9 +269,9 @@ public:
 class ID3v2TextUserDefined {
 public:
     ID3v2TextUserDefined() {
-        m_EncodingType = IET_ANSI;
+        m_encodingType = IET_ANSI;
     }
-    ID3v2EncType                m_EncodingType;
+    ID3v2EncType                m_encodingType;
     string                      m_strValue, m_strDesc;
 
     void setValue(cstr_t szDescription, cstr_t szValue);
@@ -293,7 +298,7 @@ public:
     int removeTagAndClose();
 
 public:
-    typedef list<CID3v2Frame*>        FRAME_LIST;
+    typedef list<CID3v2Frame *>        FRAME_LIST;
     typedef FRAME_LIST::iterator    FrameIterator;
 
     FrameIterator frameBegin() { return m_listFrames.begin(); }
@@ -308,6 +313,12 @@ public:
 
     int removeFrame(uint32_t nFrameID);
     int removeFrameByUID(ID3v2FrameUID_t frameUID);
+
+    int getHeaderBeginPosition() const { return m_nId3v2BegPos; }
+    size_t getHeaderTotalSize() const { return m_nHeaderTotalLen; }
+    size_t getHeaderEndPosition() const { return m_nId3v2BegPos + m_nHeaderTotalLen; }
+
+    bool hasFrames() const { return !m_listFrames.empty(); }
 
 protected:
     int findID3v2();
@@ -364,6 +375,9 @@ struct ID3v2SynchLyrics {
 
     ID3v2SynchLyrics();
 
+    void addSynable(int begTime, const string &text);
+    void addNewLineSynable();
+
     // This Uid identified the position of the frame in the id3v2 tag.
     // It's used for update the tag.
     ID3v2FrameUID_t             frameUID;
@@ -375,7 +389,7 @@ struct ID3v2SynchLyrics {
     bool                        m_bTimeStampMs;
     uint8_t                     m_byContentType;
 
-    char                        m_szLanguage[10];
+    string                      m_language;
     string                      m_strContentDesc;
 
     typedef list< LrcSyllable >        LIST_SYLRC;
@@ -394,7 +408,7 @@ struct ID3v2UnsynchLyrics {
     ID3v2FrameAction            action;
 
     ID3v2EncType                m_encodingType;
-    char                        m_szLanguage[10];
+    string                      m_language;
     string                      m_strContentDesc, m_strLyrics;
 };
 
@@ -427,15 +441,14 @@ public:
 
     struct ITEM {
         ITEM() {
-            action = IFA_NONE;
             frameUID = -1;
         }
-        ID3v2FrameUID_t             frameUID;
-        ID3v2FrameAction            action;
+        ID3v2FrameUID_t             frameUID = -1;
         string                      m_strMimeType;      // for pic
-        PicType                     m_picType;
+        PicType                     m_picType = PT_COVER_FRONT;
         ID3v2Text                   m_text;
         string                      m_buffPic;
+        CID3v2Frame                 *m_frame = nullptr;
 
         void mimeToPicExt(char szPicExt[4]);
         bool picExtToMime(cstr_t szPicExt);
@@ -449,7 +462,6 @@ public:
 
     int getCount() const { return (int)m_vItems.size(); }
     ITEM *appendNewPic();
-    bool isModified();
 
     void free() {
         for (V_ITEMS::iterator it = m_vItems.begin(); it != m_vItems.end(); it++) {

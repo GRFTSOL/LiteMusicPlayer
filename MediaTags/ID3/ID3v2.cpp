@@ -8,14 +8,16 @@
 
 CharEncodingType iD3v2EncTypeToCharEncoding(ID3v2EncType encType) {
     switch (encType) {
-    case IET_UCS2LE_BOM:
+    case IET_ANSI:
+        return ED_SYSDEF;
+    case IET_UCS2:
         return ED_UNICODE;
-    case IET_UCS2BE_NO_BOM:
+    case IET_UTF16BE:
         return ED_UNICODE_BIG_ENDIAN;
     case IET_UTF8:
         return ED_UTF8;
-    case IET_ANSI:
-        return ED_SYSDEF;
+    case IET_UTF16LE:
+        return ED_UNICODE;
     default:
         assert(0);
         return ED_SYSDEF;
@@ -23,15 +25,10 @@ CharEncodingType iD3v2EncTypeToCharEncoding(ID3v2EncType encType) {
 }
 
 ID3v2EncType charEncodingToID3v2EncType(CharEncodingType encoding) {
-    switch (encoding) {
-    case ED_UNICODE:
-        return IET_UCS2LE_BOM;
-    case ED_UNICODE_BIG_ENDIAN:
-        return IET_UCS2BE_NO_BOM;
-    case ED_UTF8:
-        return IET_UTF8;
-    default:
+    if (encoding == ED_SYSDEF) {
         return IET_ANSI;
+    } else {
+        return IET_UCS2;
     }
 }
 
@@ -64,15 +61,30 @@ ID3v2SynchLyrics::ID3v2SynchLyrics() {
     action = IFA_NONE;
     m_bTimeStampMs = true;
     m_byContentType = CT_LYRICS;
-    strcpy(m_szLanguage, "eng");
+    m_language = "eng";
     m_bAllSyllableIsNewLine = true;
-    m_encodingType = IET_UCS2LE_BOM;
+    m_encodingType = IET_UCS2;
+}
+
+void ID3v2SynchLyrics::addSynable(int begTime, const string &text) {
+    LrcSyllable synable;
+    synable.strText = text;
+    synable.nTime = begTime;
+    synable.bNewLine = false;
+    m_vSynLyrics.push_back(synable);
+}
+
+void ID3v2SynchLyrics::addNewLineSynable() {
+    LrcSyllable synable;
+    synable.nTime = -1;
+    synable.bNewLine = true;
+    m_vSynLyrics.push_back(synable);
 }
 
 ID3v2UnsynchLyrics::ID3v2UnsynchLyrics() {
     frameUID = -1;
     action = IFA_NONE;
-    strcpy(m_szLanguage, "eng");
+    m_language = "eng";
     m_encodingType = IET_ANSI;
 }
 
@@ -80,7 +92,7 @@ void ID3v2UnsynchLyrics::setValueAndOptimizeEncoding(cstr_t szDescription, cstr_
     if (isAnsiStr(szDescription) && isAnsiStr(szLyrics)) {
         m_encodingType = IET_ANSI;
     } else {
-        m_encodingType = IET_UCS2LE_BOM;
+        m_encodingType = IET_UCS2;
     }
 
     m_strContentDesc = szDescription;
@@ -146,20 +158,9 @@ ID3v2Pictures::ITEM *ID3v2Pictures::appendNewPic() {
     ITEM *pic = new ITEM;
 
     pic->m_picType = PT_COVER_FRONT;
-    pic->action = IFA_ADD;
     m_vItems.push_back(pic);
 
     return pic;
-}
-
-bool ID3v2Pictures::isModified() {
-    for (size_t i = 0; i < m_vItems.size(); i++) {
-        if (m_vItems[i]->action != IFA_NONE) {
-            return true;
-        }
-    }
-
-    return false;
 }
 
 cstr_t *ID3v2Pictures::getAllPicDescriptions() {
@@ -209,16 +210,7 @@ int CID3v2::findID3v2() {
 
     const int TAG_SIZE = strlen(ID3_TAGID);
     char buf[ID3V2_TAG_IN_RANGE];
-    size_t size = 0;
-
-    // Read enough data one time.
-    while (size <= ID3V2_TAG_IN_RANGE) {
-        int n = (int)fread(buf + size, 1, sizeof(buf) - size, m_fp);
-        if (n <= 0) {
-            break;
-        }
-        size += n;
-    }
+    size_t size = fread(buf, 1, sizeof(buf), m_fp);
 
     const char *data = buf, *dataend = buf + size - TAG_SIZE - 1;
     for (; data < dataend; data++) {
@@ -302,8 +294,7 @@ int CID3v2::open(FILE *fp, bool bCreate) {
         E_RETURN(ERR_READ_FILE);
     }
 
-    m_nHeaderTotalLen = synchDataToUInt(m_id3v2Header.bySize, CountOf(m_id3v2Header.bySize))
-    + ID3_TAGHEADERSIZE;
+    m_nHeaderTotalLen = syncBytesToUInt32(m_id3v2Header.bySize) + ID3_TAGHEADERSIZE;
 
     if (m_id3v2Header.byMajorVer == ID3v2Header::ID3V2_V2) {
         // DBG_LOG1("ID3V2 v2, Len: %d", m_nHeaderTotalLen);
@@ -323,7 +314,7 @@ int CID3v2::open(FILE *fp, bool bCreate) {
             E_RETURN(ERR_READ_FILE);
         }
 
-        m_nExtendedHeaderLen = synchDataToUInt(extendedHeader.bySize, CountOf(extendedHeader.bySize));
+        m_nExtendedHeaderLen = syncBytesToUInt32(extendedHeader.bySize);
         fseek(m_fp, m_nExtendedHeaderLen, SEEK_CUR);
     } else {
         m_nExtendedHeaderLen = 0;
@@ -409,7 +400,7 @@ int CID3v2::save() {
         if (m_id3v2Header.isFooterFlagSet()) {
             nSizeInHeader -= ID3_TAGFOOTERSIZE;
         }
-        synchDataFromUInt((uint32_t)nSizeInHeader, m_id3v2Header.bySize, CountOf(m_id3v2Header.bySize));
+        syncBytesFromUInt32((uint32_t)nSizeInHeader, m_id3v2Header.bySize);
     }
 
     if (!m_bCreateNew) {
@@ -588,7 +579,7 @@ int CID3v2::readFrame(CID3v2Frame *pFrame) {
             return ERR_READ_FILE;
         }
         frame.nFrameID = fh3.toFrameUintID();
-        frame.nLen = synchDataToUInt(fh3.bySize, CountOf(fh3.bySize));
+        frame.nLen = syncBytesToUInt32(fh3.bySize);
 
         assert(CountOf(frame.byFlags) == CountOf(fh3.byFlags));
         memcpy(frame.byFlags, fh3.byFlags, CountOf(fh3.byFlags));
@@ -623,11 +614,41 @@ int CID3v2::readFrame(CID3v2Frame *pFrame) {
         return ERR_INVALID_ID3V2_FRAME;
     }
 
+    if (frame.bCompression || frame.bEncryption) {
+        // 不支持加密和压缩
+        buffData.resize(frame.nLen);
+        if (fread((char *)buffData.data(), 1, frame.nLen, m_fp) != frame.nLen) {
+            buffData.clear();
+            return ERR_READ_FILE;
+        }
+        return ERR_OK;
+    }
+
+    uint32_t realLength = frame.nLen;
+    if (frame.bDataLengthIndicator) {
+        uint8_t length[4];
+        auto ret = fread(length, 1, 4, m_fp);
+        if (ret != 4) {
+            return ERR_READ_FILE;
+        }
+        frame.nLen -= 4;
+        realLength = syncBytesToUInt32(length);
+    }
+
     buffData.resize(frame.nLen);
     if (fread((char *)buffData.data(), 1, frame.nLen, m_fp) != frame.nLen) {
         buffData.clear();
         return ERR_READ_FILE;
     }
+
+    if (frame.bUnsyncronisation || m_id3v2Header.isUnsyncFlagSet()) {
+        synchDataDecode(buffData);
+    }
+
+    frame.nLen = (uint32_t)buffData.size();
+    // if (realLength != buffData.size()) {
+    //     printf("RealLength is NOT equal to data size: %d, %d\n", realLength, (int)buffData.size());
+    // }
 
     return ERR_OK;
 }

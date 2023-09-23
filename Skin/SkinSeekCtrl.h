@@ -95,8 +95,8 @@ protected:
     int                         m_nVirtualCurPos;
 
     int                         m_nXCursorToThumbBeg; // 鼠标点下位置距拖动ThumbBox 距离: point.y - m_rcObj.top - m_nHeightEnd;
-    PUSH_DOWN_POS               m_PushDownPos;      // 鼠标按下的位置
-    PUSH_DOWN_POS               m_CursorPosLatest;  // 鼠标按下的位置
+    PUSH_DOWN_POS               m_pushDownPos;      // 鼠标按下的位置
+    PUSH_DOWN_POS               m_cursorPosLatest;  // 鼠标按下的位置
 
     CSFImage                    m_imgSimple;
 

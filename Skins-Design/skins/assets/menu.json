@@ -484,14 +484,6 @@
           "separator"
         ], 
         [
-          "&Activate $Product$...", 
-          "IDC_REGISTER", 
-          1013
-        ], 
-        [
-          "separator"
-        ], 
-        [
           "$Product$ &Website", 
           "IDC_WEBHOME", 
           40066
@@ -909,23 +901,6 @@
       "Browse Album Art...", 
       "IDC_BR_ALBUM_ART", 
       40124
-    ]
-  ], 
-  "StaticLyricsMenu": [
-    [
-      "&Clear Lyrics Scrolling Actions", 
-      "IDC_SL_CLEAR_TIME_STAMP", 
-      40173
-    ], 
-    [
-      "Lyrics &Editor...", 
-      "IDC_LYR_EDITOR", 
-      40172
-    ], 
-    [
-      "&Help", 
-      "IDC_HELP_STATIC_LYR", 
-      40175
     ]
   ], 
   "MainWndMenu": [
@@ -1356,14 +1331,6 @@
           "$Product$ &Help", 
           "IDC_ML_HELP", 
           40023
-        ], 
-        [
-          "separator"
-        ], 
-        [
-          "&Activate $Product$...", 
-          "IDC_REGISTER", 
-          1013
         ], 
         [
           "separator"

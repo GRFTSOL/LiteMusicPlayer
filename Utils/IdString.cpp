@@ -51,8 +51,7 @@ uint32_t getCombinationValue(IdToString Ids[], cstr_t szValue) {
 
     uint32_t dwFlags = 0;
     for (auto &str : vStr) {
-        str.trim(' ');
-        dwFlags |= stringToID(Ids, str.toString().c_str(), 0);
+        dwFlags |= stringToID(Ids, str.trim(' ').toString().c_str(), 0);
     }
 
     return dwFlags;

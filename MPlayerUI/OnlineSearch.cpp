@@ -55,7 +55,7 @@ void retLyrInfoListToVResult(CLyricsSearchParameter &searchParam, RetLyrInfoList
         item.fRate = file.fRate;
         item.nRateCount = file.nRateCount;
         item.nDownloads = file.nDownloads;
-        item.nMatchValue = (float)searchParam.calMatchValueByTitle(item.strArtist.c_str(), item.strTitle.c_str(), GetLyricsFileType(item.strSaveFileName.c_str()));
+        item.nMatchValue = (float)searchParam.calMatchValueByTitle(item.strArtist.c_str(), item.strTitle.c_str(), getLyricsContentTypeByFileExt(item.strSaveFileName.c_str()));
         // DBG_LOG2("file: %s, value: %d", item.strSaveFileName.c_str(), item.nMatchValue);
 
         // sort English result before other language.
@@ -388,12 +388,12 @@ bool CLyrSearchResultCacheDB::updateSearchLrcInfo(cstr_t szFileAssociateKeyword,
     return true;
 }
 
-CLyrSearchResultCacheMemDB::LIST_ITEMS CLyrSearchResultCacheMemDB::m_listResults;
+CLyrSearchResultCacheMemDB::ListItems CLyrSearchResultCacheMemDB::m_listResults;
 
 bool CLyrSearchResultCacheMemDB::searchCache(cstr_t szFileAssociateKeyword, cstr_t szArtist, cstr_t szTitle, ListLyrSearchResults *pvResult, uint32_t *pdwSearchTime) {
     CLyricsSearchParameter searchParam(szFileAssociateKeyword, szArtist, szTitle);
 
-    for (LIST_ITEMS::iterator it = m_listResults.begin(); it != m_listResults.end(); ++it) {
+    for (ListItems::iterator it = m_listResults.begin(); it != m_listResults.end(); ++it) {
         ITEM &item = *it;
         if (strcmp(item.strKeyword.c_str(), szFileAssociateKeyword) == 0) {
             if (pdwSearchTime) {
@@ -418,7 +418,7 @@ bool CLyrSearchResultCacheMemDB::searchCache(cstr_t szFileAssociateKeyword, cstr
 }
 
 bool CLyrSearchResultCacheMemDB::updateSearchLrcInfo(cstr_t szFileAssociateKeyword, MLMsgRetSearch &retSearch) {
-    LIST_ITEMS::iterator it, itEnd;
+    ListItems::iterator it, itEnd;
     CXMLWriter xml;
 
     resultToXML(retSearch, xml);

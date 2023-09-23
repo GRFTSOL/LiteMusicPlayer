@@ -44,3 +44,7 @@ export function getMediaLibrary() {
 export function registerMediaLibChangedHandler(callback: any) {
     mediaLibChangedCallbacks.push(callback);
 }
+
+export function saveMediaBasicInfo(media: Media) {
+    return true;
+}

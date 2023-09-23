@@ -16,6 +16,6 @@ public:
 
 public:
     char                        m_szFile[MAX_PATH];
-    SetStrings                  m_setExt;
+    VecStrings                  m_vExts;
 
 };

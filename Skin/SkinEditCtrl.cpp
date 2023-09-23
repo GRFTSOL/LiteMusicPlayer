@@ -193,7 +193,7 @@ public:
 
 class EditorBatchAction : public CBatchUndoAction {
 public:
-    EditorBatchAction(CSkinEditCtrl *editor) : m_autoInvalidate(editor) {
+    EditorBatchAction(CSkinEditCtrl *editor)  {
         m_selectionCaretBefore.set(editor);
     }
 
@@ -201,14 +201,11 @@ public:
         CBatchUndoAction::undo();
         m_selectionCaretBefore.apply();
 
-        m_autoInvalidate.setNeedUpdate();
     }
 
     virtual void redo() {
         CBatchUndoAction::redo();
         m_selectionCaretAfter.apply();
-
-        m_autoInvalidate.setNeedUpdate();
     }
 
     void end() {
@@ -216,7 +213,6 @@ public:
     }
 
 protected:
-    AutoInvalidate              m_autoInvalidate;
     StashSelectionCaret         m_selectionCaretBefore, m_selectionCaretAfter;
 
 };
@@ -2111,7 +2107,7 @@ void CSkinEditCtrl::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) {
     int nOffset = nWheelDistance;
     if (isFlagSet(nMkeys, MK_SHIFT)) {
         // horz scroll bar
-        int pos = m_pHorzScrollBar->getScrollPos() - nOffset * m_nOneCharDx;
+        int pos = m_pHorzScrollBar->getScrollPos() + nOffset * m_nOneCharDx;
         if (pos < 0) {
             pos = 0;
         } else if (pos > m_pHorzScrollBar->getMax()) {
@@ -2137,13 +2133,13 @@ void CSkinEditCtrl::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) {
             invalidate();
         }
     } else {
-        if (m_pVertScrollBar->getScrollPos() - nOffset < 0) {
+        if (m_pVertScrollBar->getScrollPos() + nOffset < 0) {
             return;
         }
-        if (m_pVertScrollBar->getScrollPos() - nOffset > m_pVertScrollBar->getMax()) {
+        if (m_pVertScrollBar->getScrollPos() + nOffset > m_pVertScrollBar->getMax()) {
             return;
         }
-        m_pVertScrollBar->setScrollPos(m_pVertScrollBar->getScrollPos() - nOffset, true);
+        m_pVertScrollBar->setScrollPos(m_pVertScrollBar->getScrollPos() + nOffset, true);
 
         if (m_nTopVisibleLine != m_pVertScrollBar->getScrollPos()) {
             m_nTopVisibleLine = m_pVertScrollBar->getScrollPos();
@@ -2669,11 +2665,19 @@ void CSkinEditCtrl::onHScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar
 }
 
 void CSkinEditCtrl::onInputText(cstr_t text) {
+    if (isReadOnly()) {
+        return;
+    }
+
     insertStr(text);
 }
 
 void CSkinEditCtrl::onInputMarkedText(cstr_t text) {
     // MarkedText 是输入法输入的临时字符串，会被后期的 InputText 替换掉.
+    if (isReadOnly()) {
+        return;
+    }
+
     insertStr(text, true);
 }
 

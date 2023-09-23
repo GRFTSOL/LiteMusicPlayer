@@ -139,6 +139,7 @@ public:
     // Page view APIs
     // void switchToPage(int nIdPage, bool bWaitResultOfNextPage, int nRequestCodeOfNextPage, bool bAnimation);
     void switchToPage(cstr_t szPageClass, bool bWaitResultOfNextPage, int nRequestCodeOfNextPage, bool bAnimation);
+    void switchToPage(CSkinContainer *toActivate, bool bWaitResultOfNextPage, int nRequestCodeOfNextPage, bool bAnimation);
     void switchToLastPage(int nResultCodeOfPage, bool bAnimation);
     bool hasActivePage() const { return m_vStackPageView.size() > 0; }
 

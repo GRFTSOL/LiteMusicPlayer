@@ -1,4 +1,3 @@
-#include "MLLib.h"
 #include "HelperFun.h"
 #include "LyricsParser.h"
 #include "LrcParser.h"
@@ -16,16 +15,7 @@
 //你得耐著性子先看完脱口秀
 
 
-
-CSrtParser::CSrtParser(CMLData *pMLData) : CLyricsParser(pMLData) {
-
-}
-
-CSrtParser::~CSrtParser() {
-
-}
-
-int CSrtParser::saveAsFile(cstr_t file) {
+int CSrtParser::saveAsFile(cstr_t file, const RawLyrics &rawLyrics) {
     string strData;
     string strBuff;
     char szTime[256];
@@ -37,27 +27,23 @@ int CSrtParser::saveAsFile(cstr_t file) {
     int nBegOld = -1, nEndOld = -1;
 
     int index = 1;
-    int nCount = (int)m_pMLData->m_arrFileLines.size();
-    for (int i = 0; i < nCount; i++) {
-        LyricsLine *pLine;
-
-        pLine = m_pMLData->m_arrFileLines[i];
-
-        if (pLine && lyricsLineToText(pLine, strBuff)) {
-            if (pLine->nBegTime == nBegOld && pLine->nEndTime == nEndOld) {
+    LyricsLines lyrics = rawLyrics.toLyricsLinesOnly();
+    for (LyricsLine &line : lyrics) {
+        if (lyricsLineToText(line, strBuff)) {
+            if (line.beginTime == nBegOld && line.endTime == nEndOld) {
                 // 时间相同的行
                 strData += strBuff;
             } else {
-                nBegOld = pLine->nBegTime;
-                nEndOld = pLine->nEndTime;
+                nBegOld = line.beginTime;
+                nEndOld = line.endTime;
 
                 if (index > 1) {
                     strData += "\n";
                 }
 
                 int nHour, nMinute, nSec, nMs;
-                nMs = pLine->nBegTime % 1000;
-                nSec = pLine->nBegTime / 1000;
+                nMs = line.beginTime % 1000;
+                nSec = line.beginTime / 1000;
                 nMinute = nSec / 60;
                 nSec %= 60;
                 nHour = nMinute / 60;
@@ -65,8 +51,8 @@ int CSrtParser::saveAsFile(cstr_t file) {
                 snprintf(szTime, CountOf(szTime), "%d\n%02d:%02d:%02d,%03d --> ", index++, nHour, nMinute, nSec, nMs);
                 strData += szTime;
 
-                nMs = pLine->nEndTime % 1000;
-                nSec = pLine->nEndTime / 1000;
+                nMs = line.endTime % 1000;
+                nSec = line.endTime / 1000;
                 nMinute = nSec / 60;
                 nSec %= 60;
                 nHour = nMinute / 60;
@@ -130,7 +116,7 @@ static cstr_t readTime(cstr_t szBeg, uint32_t &dwTime) {
 }
 
 // 分析歌词文件，并且存储到 pMLData 中
-int CSrtParser::parseFile(bool bUseSpecifiedEncoding, CharEncodingType encoding) {
+int CSrtParser::parseFile(cstr_t fileName, bool bUseSpecifiedEncoding, CharEncodingType encoding, RawLyrics &lyricsOut) {
     //8
     //00:00:21,657 --> 00:00:26,516
     //就像佛洛伊飞船出场前
@@ -146,7 +132,7 @@ int CSrtParser::parseFile(bool bUseSpecifiedEncoding, CharEncodingType encoding)
     Parse_State state;
     uint32_t dwBegTime, dwEndTime;
 
-    int nRet = file.open(m_pMLData->getLyricsFileName(), true, encoding);
+    int nRet = file.open(fileName, true, encoding);
     if (nRet != ERR_OK) {
         return nRet;
     }
@@ -195,35 +181,23 @@ int CSrtParser::parseFile(bool bUseSpecifiedEncoding, CharEncodingType encoding)
                 continue;
             }
 
-            LyricsLine *pLine = newLyricsLine(dwBegTime, dwEndTime);
-            pLine->appendPiece(dwBegTime, dwEndTime,
-                line.c_str(), line.size(), false, false);
-
-            m_pMLData->addLineByTime(pLine);
+            LyricsLine lyrLine(dwBegTime, dwEndTime);
+            lyrLine.appendPiece(dwBegTime, dwEndTime, line);
+            lyricsOut.push_back(lyrLine);
         }
     }
 
     return ERR_OK;
 }
 
-LYRICS_CONTENT_TYPE CSrtParser::getLyrContentType() {
-    return LCT_LRC;
-}
-
-bool CSrtParser::lyricsLineToText(LyricsLine *pLine, string &strBuff) {
+bool CSrtParser::lyricsLineToText(const LyricsLine &line, string &strBuff) {
     strBuff.clear();
-    if (!pLine->bLyricsLine) {
+
+    if (!line.isLyricsLine || line.isTempLine) {
         return false;
     }
 
-    if (pLine->isTempLine()) {
-        return false;
-    }
-
-    for (int i = 0; i < (int)pLine->vFrags.size(); i++) {
-        strBuff += pLine->vFrags[i]->szLyric;
-    }
-
+    strBuff = line.joinPiecesText();
     strBuff += "\r\n";
 
     return true;

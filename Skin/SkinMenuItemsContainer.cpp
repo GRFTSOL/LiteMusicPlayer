@@ -531,7 +531,7 @@ void SkinMenuItemsContainer::onMenuItemSelected() {
     if (m_items[m_selectedItem].isSubmenu) {
         // 显示子菜单
         if (m_childMenu == nullptr) {
-            m_childMenu = (SkinMenuItemsContainer *)m_pSkin->getSkinFactory()->createUIObject(m_pSkin, "MenuItemsContainer", m_pSkin->getRootContainer());
+            m_childMenu = (SkinMenuItemsContainer *)m_pSkin->createUIObject("MenuItemsContainer", m_pSkin->getRootContainer());
             assert(m_childMenu);
             m_childMenu->setParentMsgReceiver(this);
             m_pSkin->getRootContainer()->addUIObject(m_childMenu);

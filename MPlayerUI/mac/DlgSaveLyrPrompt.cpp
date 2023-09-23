@@ -1,5 +1,6 @@
 #include "MPlayerApp.h"
 #include "DlgSaveLyrPrompt.h"
+#include "../../LyricsLib/CurrentLyrics.h"
 
 
 int saveLyrDialogBox(Window *pWnd) {
@@ -8,7 +9,7 @@ int saveLyrDialogBox(Window *pWnd) {
         bInModal = true;
 
         string        strMessage = stringPrintf(_TLT("The lyrics of the %s file have changed."),
-            fileGetName(g_LyricData.getSongFileName())).c_str();
+            fileGetName(g_currentLyrics.getMediaSource())).c_str();
         strMessage += "\r\n\r\n";
         strMessage += _TLT("Do you want to save the changes?");
 

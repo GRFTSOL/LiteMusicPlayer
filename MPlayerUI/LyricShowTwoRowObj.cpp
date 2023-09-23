@@ -24,7 +24,7 @@ CLyricShowTwoRowObj::~CLyricShowTwoRowObj() {
 }
 
 void CLyricShowTwoRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
-    if (m_pMLData == nullptr) {
+    if (m_curLyrics == nullptr) {
         return;
     }
 
@@ -35,14 +35,14 @@ void CLyricShowTwoRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
     }
 
     // get the current playing row
-    int nRowCur = m_pMLData->getCurPlayLine(m_lyrLines);
+    int nRowCur = m_curLyrics->getCurPlayLine(m_lyrLines);
     if (nRowCur == -1) {
         // no lyrics, redraw background
         updateLyricDrawBufferBackground(canvas, m_rcObj);
         return;
     }
 
-    LyricsLine *pLyricRow = m_lyrLines[nRowCur];
+    LyricsLine &lyricRow = m_lyrLines[nRowCur];
 
     int nRowHeight = getLineHeight();
 
@@ -53,7 +53,7 @@ void CLyricShowTwoRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
 
     // 如果当前歌词行的显示时间超过一半，则预显示下一行歌词
     int nRowTheOther = 0;
-    if ( (m_pMLData->getPlayElapsedTime() - pLyricRow->nBegTime) * 2 >= pLyricRow->nEndTime - m_pMLData->getPlayElapsedTime()) {
+    if ( (m_curLyrics->getPlayElapsedTime() - lyricRow.beginTime) * 2 >= lyricRow.endTime - m_curLyrics->getPlayElapsedTime()) {
         nRowTheOther = nRowCur + 1;//bShowNextRow = true;
     } else {
         nRowTheOther = nRowCur - 1;
@@ -68,7 +68,7 @@ void CLyricShowTwoRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
         nRowTheOther = nRowCur - 1;
     }
 
-    LyricsLine *pLineTheOther = nRowTheOther >= 0 ? m_lyrLines[nRowTheOther] : nullptr;
+    LyricsLine *lineTheOther = nRowTheOther >= 0 ? &m_lyrLines[nRowTheOther] : nullptr;
 
     int yCurRow = y;
     int yTheOtherRow = y + nRowHeight;
@@ -110,7 +110,7 @@ void CLyricShowTwoRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
         canvas->setClipBoundBox(rcClip);
 
         // 显示当前歌词行
-        drawCurrentRow(canvas, pLyricRow, AUTO_CAL_X, yCurRow);
+        drawCurrentRow(canvas, lyricRow, AUTO_CAL_X, yCurRow);
 
         return;
     } else {
@@ -143,11 +143,11 @@ void CLyricShowTwoRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
     canvas->setClipBoundBox(rcClip);
 
     // 显示当前歌词行
-    drawCurrentRow(canvas, pLyricRow, AUTO_CAL_X, yCurRow);
+    drawCurrentRow(canvas, lyricRow, AUTO_CAL_X, yCurRow);
 
-    if (pLineTheOther) {
+    if (lineTheOther) {
         // 显示前（后）一歌词行
-        drawRow(canvas, pLineTheOther, AUTO_CAL_X, yTheOtherRow,
+        drawRow(canvas, *lineTheOther, AUTO_CAL_X, yTheOtherRow,
             nRowTheOther < nRowCur ? LP_ABOVE_CUR_LINE : LP_BELOW_CUR_LINE);
     }
 }

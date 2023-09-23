@@ -136,6 +136,8 @@ RawImageDataPtr createRawImageData(int width, int height, int bitCount);
 RawImageDataPtr loadRawImageDataFromFile(cstr_t szFile);
 RawImageDataPtr loadRawImageDataFromMem(const void *buf, int nSize);
 
+cstr_t guessPictureDataExt(const StringView &imageData);
+
 RawImageDataPtr convertTo24BppRawImage(const RawImageDataPtr &src);
 
 RawImageDataPtr duplicateRawImage(RawImageData *src);

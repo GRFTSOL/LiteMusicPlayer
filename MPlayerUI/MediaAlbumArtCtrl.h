@@ -39,7 +39,6 @@ protected:
     bool isMaskImageUsed() { return m_frmMask.isValid(); }
 
     CCurMediaAlbumArt           m_mediaAlbumArt;
-    int                         m_nCurAlbumArt;
 
     string                      m_strImgFile;
     CSFImage                    m_img;

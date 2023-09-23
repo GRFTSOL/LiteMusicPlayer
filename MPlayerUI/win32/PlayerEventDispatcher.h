@@ -101,7 +101,7 @@ public:
         }
 
         int nPlayPos = g_player.getPlayPos();
-        g_LyricData.SetPlayElapsedTime(nPlayPos);
+        g_currentLyrics.SetPlayElapsedTime(nPlayPos);
 
         CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
 

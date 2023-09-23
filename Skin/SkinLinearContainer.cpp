@@ -173,11 +173,11 @@ void CSkinLinearContainer::uIObjsToItems(VecUIObjects::iterator itBeg, VecUIObje
         item.weight = p->getWeight();
         if (m_bVertical) {
             item.minSize = p->getMinHeight();
-            item.size = p->m_rcObj.height();
+            item.size = p->m_rcObj.height() - p->m_rcPadding.top - p->m_rcPadding.bottom;
             totalFixedSize += p->getMargin().top + p->getMargin().bottom;
         } else {
             item.minSize = p->getMinWidth();
-            item.size = p->m_rcObj.width();
+            item.size = p->m_rcObj.width() - p->m_rcPadding.left - p->m_rcPadding.right;
             totalFixedSize += p->getMargin().left + p->getMargin().right;
         }
 

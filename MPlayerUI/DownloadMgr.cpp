@@ -9,6 +9,8 @@
 #include "MPlayerApp.h"
 #include "DownloadMgr.h"
 #include "../MLProtocol/HttpClient.h"
+#include "../MediaTags/LrcParser.h"
+#include "../LyricsLib/CurrentLyrics.h"
 #include "OnlineSearch.h"
 #include "AutoProcessEmbeddedLyrics.h"
 
@@ -86,10 +88,10 @@ void CDownloadMgr::onSongChanged() {
         return;
     }
 
-    if (g_LyricData.hasLyricsOpened()) {
+    if (g_currentLyrics.hasLyricsOpened()) {
         // For text lyrics and not associated by user, continue to search for LRC lyrics.
         if (!(g_profile.getBool(SZ_SECT_LYR_DL, "DownLrcEvenIfHasTxt", true)
-            && g_LyricData.getLyrContentType() == LCT_TXT
+            && g_currentLyrics.getLyrContentType() == LCT_TXT
             && !g_LyricSearch.isAssociatedLyrics(g_player.getMediaKey().c_str()))) {
             return;
         }
@@ -155,7 +157,7 @@ bool CDownloadMgr::searchInCacheResult(bool bShowInfoText) {
 
             // If current lyrics is text lyrics, and the match lyrics is also text
             // lyrics, do NOT download it.
-            if (g_LyricData.getLyrContentType() != LCT_UNKNOWN
+            if (g_currentLyrics.getLyrContentType() != LCT_UNKNOWN
                 && result.nMatchValue < MATCH_VALUE_BETTER) {
                 return true;
             }
@@ -174,7 +176,7 @@ bool CDownloadMgr::searchInCacheResult(bool bShowInfoText) {
     }
 
     // If any lyrics is opened, do not continue to download.
-    if (g_LyricData.hasLyricsOpened()) {
+    if (g_currentLyrics.hasLyricsOpened()) {
         return true;
     }
 
@@ -370,7 +372,7 @@ void CDownloadMgr::onEndDownload(CDownloadTask *pTask) {
 
                 // show rate link
                 if (!g_profile.getBool(SZ_SECT_UI, "HideRateLink", false)) {
-                    if (g_LyricData.properties().m_strId.size()) {
+                    if (g_currentLyrics.properties().id.size()) {
                         CMPlayerApp::getInstance()->dispatchLongErrorText(_TLT("Are these lyrics correct to the song? rate them!"), CMD_RATE_LYR);
                     }
                 }
@@ -639,10 +641,10 @@ int CDownloadMgr::saveDownloadedLyrics(cstr_t szMediaFile, cstr_t szLyrFileName,
     int nRet = ERR_OK;
 
     if (vEmbeddedLyrNames.size() > 0
-        && MediaTags::isEmbeddedLyricsSupported(szMediaFile)) {
-        string bufLyrics;
-        bufLyrics.append((cstr_t)lpData, nSize);
-        nRet = g_autoProcessEmbeddedLyrics.saveEmbeddedLyrics(szMediaFile, nullptr, &bufLyrics, vEmbeddedLyrNames);
+            && MediaTags::canSaveEmbeddedLyrics(szMediaFile)) {
+        string lyrics((cstr_t)lpData, nSize);
+        lyrics = convertBinLyricsToUtf8(lyrics, false, ED_SYSDEF);
+        nRet = g_autoProcessEmbeddedLyrics.saveEmbeddedLyrics(szMediaFile, lyrics, vEmbeddedLyrNames);
         if (nRet == ERR_OK) {
             bLrcSaved = true;
         }

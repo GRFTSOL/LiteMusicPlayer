@@ -240,7 +240,7 @@ protected:
     virtual bool isClickedOn(int row, int col, CColHeader *pHeader, int x, int y);
 
     virtual void drawCell(int row, int col, CRect &rcCell, CRawGraph *canvas, CColor &clrText);
-    virtual void drawCellImage(CRawImage &image, CRect &rcCell, CRawGraph *canvas);
+    virtual void drawCellImage(CRawImage &image, CRect &rcCell, CRawGraph *canvas, uint32_t drawFlags);
 
 public:
     void draw(CRawGraph *canvas) override;

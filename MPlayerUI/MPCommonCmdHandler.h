@@ -21,13 +21,13 @@ public:
     virtual bool getChecked(uint32_t nID, bool &bChecked);
     virtual bool getRadioChecked(vector<uint32_t> &vIDs, uint32_t &nIDChecked);
 
-    static bool saveAsLyricsFile(Window *pWndParent, MLFileType DefFileType);
+    static bool saveAsLyricsFile(Window *pWndParent);
     static bool saveCurrentLyrics(CSkinWnd *pSkinWnd, bool bDispatchOnSave);
 
 protected:
     bool onCommandCharEncoding(int nCmdId);
 
-    CLyricsLines &getDisplayLyrics();
+    LyricsLines &getDisplayLyrics();
 
 protected:
     string                      m_strSectName;

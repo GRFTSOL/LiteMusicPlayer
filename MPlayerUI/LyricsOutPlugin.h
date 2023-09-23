@@ -5,7 +5,7 @@
 
 interface IMLyrOutHost {
     virtual int getLineCount() = 0;
-    virtual bool getLyricsOfLine(int nLine, char szLyrics[], int nBuffLen, int &nBegTime, int &nEndTime) = 0;
+    virtual bool getLyricsOfLine(int nLine, char szLyrics[], int nBuffLen, int &beginTime, int &endTime) = 0;
     virtual int getCurLine() = 0;
     virtual int getPlayPos() = 0;
     virtual bool getMediaFile(char szFile[], int nBuffLen) = 0;
@@ -32,7 +32,7 @@ interface ILyricsOut {
     // uNotifyFlag, return NOTIF_CUR_LINE, NOTIF_...
     virtual bool onInit(unsigned int *uNotifyFlag) = 0;
 
-    virtual void onCurLineChanged(int nLine, cstr_t szLyrics, int nBegTime, int nEndTime) = 0;
+    virtual void onCurLineChanged(int nLine, cstr_t szLyrics, int beginTime, int endTime) = 0;
     virtual void onHalfOfCurLine(int nLine) = 0;
     virtual void onPlayPos(int uPos) = 0;
     virtual void onLyricsChanged() = 0;

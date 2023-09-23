@@ -57,8 +57,8 @@ protected:
         string                      strKeyword;
         string                      strXml;
     };
-    typedef list<ITEM>        LIST_ITEMS;
-    static LIST_ITEMS           m_listResults;
+    using ListItems = list<ITEM>;
+    static ListItems                m_listResults;
 
 };
 

@@ -2,6 +2,7 @@
 #include "ID3/ID3v1.h"
 #include "ID3/ID3v2FrameParser.h"
 #include "MediaTags.h"
+#include "../ImageLib/RawImageData.h"
 
 
 #define SZ_ID3V2_LYR_USER_DEFINED   "LYRICS"
@@ -47,7 +48,7 @@ int CID3v2IF::listLyrics(VecStrings &vLyrNames) {
 
             nRet = parser.parseInfoOnly(pFrame, unsyncLyrics);
             if (nRet == ERR_OK) {
-                string name = string(SZ_SONG_ID3V2_USLT) + unsyncLyrics.m_szLanguage;
+                string name = string(SZ_SONG_ID3V2_USLT) + unsyncLyrics.m_language;
                 addEmbeddedLyrics(vLyrNames, name);
             }
         } else if (isSynchLyricsFrameID(pFrame->m_framehdr.nFrameID)) {
@@ -56,7 +57,7 @@ int CID3v2IF::listLyrics(VecStrings &vLyrNames) {
 
             nRet = parser.parseInfoOnly(pFrame, syncLyrics);
             if (nRet == ERR_OK && syncLyrics.m_byContentType == ID3v2SynchLyrics::CT_LYRICS) {
-                string name = string(SZ_SONG_ID3V2_SYLT) + syncLyrics.m_szLanguage;
+                string name = string(SZ_SONG_ID3V2_SYLT) + syncLyrics.m_language;
                 addEmbeddedLyrics(vLyrNames, name);
             }
         } else if (pFrame->m_framehdr.nFrameID == ID3V2_2_USER_TEXT
@@ -152,6 +153,12 @@ int CID3v2IF::setSynchLyrics(cstr_t szName, ID3v2SynchLyrics &lyrics) {
         pTargFrame = *it;
     }
 
+    string language;
+    int index;
+    if (getEmbeddedLyricsUrlInfo(szName, language, index) && language.size() > 0) {
+        lyrics.m_language = language;
+    }
+
     // do update
     pTargFrame->m_frameData.clear();
     CID3v2FrameParserSynLyrics parser(m_Encoding);
@@ -160,15 +167,12 @@ int CID3v2IF::setSynchLyrics(cstr_t szName, ID3v2SynchLyrics &lyrics) {
 
 int CID3v2IF::setUnsynchLyrics(cstr_t szName, cstr_t szDesc, cstr_t szLyrics) {
     ID3v2UnsynchLyrics unsyncLyr;
-    string language;
     int index;
 
-    getEmbeddedLyricsNameInfo(szName, language, index);
-
-    if (language.empty()) {
-        language = "eng";
+    getEmbeddedLyricsUrlInfo(szName, unsyncLyr.m_language, index);
+    if (unsyncLyr.m_language.empty()) {
+        unsyncLyr.m_language = "eng";
     }
-    strcpy_safe(unsyncLyr.m_szLanguage, CountOf(unsyncLyr.m_szLanguage), language.c_str());
     unsyncLyr.setValueAndOptimizeEncoding(szDesc, szLyrics);
 
     return setUnsynchLyrics(szName, unsyncLyr);
@@ -404,9 +408,9 @@ int CID3v2IF::updateGeneralCommentFrame(cstr_t szText) {
         frameAdd(pFrame);
 
         if (isAnsiStr(szText)) {
-            parser.m_EncodingType = IET_ANSI;
+            parser.m_encodingType = IET_ANSI;
         } else {
-            parser.m_EncodingType = IET_UCS2LE_BOM;
+            parser.m_encodingType = IET_UCS2;
         }
     }
 
@@ -439,8 +443,7 @@ int CID3v2IF::removeGeneralCommentFrame() {
         if (pFrame->m_framehdr.nFrameID == nFrameID) {
             nRet = parser.parse(pFrame);
             if (nRet == ERR_OK) {
-                if (isEmptyString(parser.m_szLanguage) &&
-                    parser.m_strShortDesc.empty()) {
+                if (parser.m_language.empty() && parser.m_strShortDesc.empty()) {
                     // find it, and remove it.
                     frameRemove(it);
                     return ERR_OK;
@@ -472,7 +475,7 @@ int CID3v2IF::updateGeneralUrlFrame(cstr_t szText) {
     }
 
     parser.m_strUrl = szText;
-    parser.m_textDesc.m_EncodingType = IET_ANSI;
+    parser.m_textDesc.m_encodingType = IET_ANSI;
 
     // do update
     pFrame->m_frameData.clear();
@@ -488,109 +491,72 @@ int CID3v2IF::removeGeneralUrlFrame() {
     }
 }
 
-int CID3v2IF::getPictures(ID3v2Pictures &pictures) {
-    int nRet;
-    FrameIterator it;
-    CID3v2Frame *pFrame = nullptr;
+void CID3v2IF::getPictures(ID3v2Pictures &pictures) {
     CID3v2FrameParserPic parser(m_Encoding);
-    uint32_t nFrameID;
-    ID3v2Pictures::ITEM *pic;
-
-    if (isID3v2_2()) {
-        nFrameID = ID3V2_2_PICTURE;
-    } else {
-        nFrameID = ID3V2_3_PICTURE;
-    }
+    uint32_t nFrameID = isID3v2_2() ? ID3V2_2_PICTURE : ID3V2_3_PICTURE;
 
     pictures.free();
 
-    for (it = frameBegin(); it != frameEnd(); ++it) {
-        pFrame = *it;
-        if (pFrame->m_framehdr.nFrameID == nFrameID) {
-            pic = new ID3v2Pictures::ITEM;
-            nRet = parser.parse(this, pFrame, pic);
-            if (nRet == ERR_OK) {
+    for (auto frame : m_listFrames) {
+        if (frame->m_framehdr.nFrameID == nFrameID) {
+            auto pic = new ID3v2Pictures::ITEM;
+            int ret = parser.parse(this, frame, pic);
+            if (ret == ERR_OK) {
                 pictures.m_vItems.push_back(pic);
             } else {
-                ERR_LOG1("parse ID3v2 picture frame failed: %s", (cstr_t)Error2Str(nRet));
+                ERR_LOG1("parse ID3v2 picture frame failed: %s", (cstr_t)Error2Str(ret));
                 delete pic;
             }
         }
     }
-
-    return ERR_OK;
 }
 
-int CID3v2IF::updatePictures(ID3v2Pictures &pictures) {
-    int nRet;
-
-    for (ID3v2Pictures::V_ITEMS::iterator it = pictures.m_vItems.begin();
-    it != pictures.m_vItems.end(); ++it)
-        {
-        ID3v2Pictures::ITEM *pic = *it;
-        if (pic->action == IFA_DEL) {
-            nRet = removeFrameByUID(pic->frameUID);
-        } else if (pic->action == IFA_MODIFY || pic->action == IFA_ADD) {
-            nRet = updatePicFrame(pic);
-        } else {
-            continue;
-        }
-        if (nRet != ERR_OK) {
-            return nRet;
-        }
-    }
-
-    return ERR_OK;
-}
-
-int CID3v2IF::updatePicFrame(ID3v2Pictures::ITEM *pic) {
-    int nRet;
-    CID3v2Frame *pFrame = nullptr;
+void CID3v2IF::setPictures(const VecStrings &picturesData) {
     CID3v2FrameParserPic parser(m_Encoding);
-    uint32_t nFrameID;
+    ID3v2Pictures pictures;
+    getPictures(pictures);
 
-    if (isID3v2_2()) {
-        nFrameID = ID3V2_2_PICTURE;
+    auto &pics = pictures.m_vItems;
+    int i = 0;
+    for (; i < pics.size() && i < picturesData.size(); i++) {
+        pics[i]->m_buffPic = picturesData[i];
+        pics[i]->picExtToMime(guessPictureDataExt(picturesData[i]));
+        parser.toFrame(this, pics[i]->m_frame, pics[i]);
+    }
+
+    static ID3v2Pictures::PicType picTypes[] = {
+        ID3v2Pictures::PT_COVER_FRONT, ID3v2Pictures::PT_COVER_BACK, ID3v2Pictures::PT_ARTIST,
+        ID3v2Pictures::PT_MEDIA, ID3v2Pictures::PT_STD_ICON, ID3v2Pictures::PT_LEAD_ARTIST,
+        ID3v2Pictures::PT_CONDUCTOR, ID3v2Pictures::PT_BAND, ID3v2Pictures::PT_COMPOSER,
+        ID3v2Pictures::PT_LYRICIST, ID3v2Pictures::PT_RECORD_LOC, ID3v2Pictures::PT_DURING_LOC,
+        ID3v2Pictures::PT_DURING_PERF, ID3v2Pictures::PT_MOVIE_CAPTURE, ID3v2Pictures::PT_COLORED_FISH,
+        ID3v2Pictures::PT_ILLUSTRATION, ID3v2Pictures::PT_BAND_LOGO, ID3v2Pictures::PT_PUBLISHER_LOGO,
+        ID3v2Pictures::PT_LEAFLET_PAGE,
+    };
+
+    if (i < pics.size()) {
+        // 删除
+        for (; i < pics.size(); i++) {
+            removeFrameByUID(pics[i]->frameUID);
+        }
     } else {
-        nFrameID = ID3V2_3_PICTURE;
-    }
+        // 添加
+        uint32_t nFrameID = isID3v2_2() ? ID3V2_2_PICTURE : ID3V2_3_PICTURE;
 
-    if (pic->frameUID != -1) {
-        pFrame = findFrameByUID(pic->frameUID, nFrameID);
-    }
-    if (!pFrame) {
-        // not found, so add it.
-        pFrame = new CID3v2Frame(nFrameID);
-        frameAdd(pFrame);
-    }
+        for (; i < picturesData.size(); i++) {
+            auto frame = new CID3v2Frame(nFrameID);
+            frameAdd(frame);
 
-    // do update
-    pFrame->m_frameData.clear();
-    nRet = parser.toFrame(this, pFrame, pic);
-    return nRet;
-}
+            ID3v2Pictures::ITEM pic;
+            pic.m_buffPic = picturesData[i];
+            pic.picExtToMime(guessPictureDataExt(picturesData[i]));
+            pic.m_picType = picTypes[i % CountOf(picTypes)];
 
-int CID3v2IF::removePicFrame(ID3v2FrameUID_t nFrameUID, uint32_t picType) {
-    CID3v2Frame *pFrame = nullptr;
-    FrameIterator it;
-    uint32_t nFrameID;
-
-    if (isID3v2_2()) {
-        nFrameID = ID3V2_2_PICTURE;
-    } else {
-        nFrameID = ID3V2_3_PICTURE;
-    }
-
-    for (it = frameBegin(); it != frameEnd(); ++it) {
-        pFrame = *it;
-
-        if (pFrame->m_framehdr.nFrameID == nFrameID) {
-            frameRemove(it);
-            return ERR_OK;
+            // do update
+            frame->m_frameData.clear();
+            parser.toFrame(this, frame, &pic);
         }
     }
-
-    return ERR_NOT_FOUND;
 }
 
 int CID3v2IF::updateTextFrame(uint32_t nFrameID, cstr_t szText) {
@@ -623,7 +589,7 @@ int CID3v2IF::updateTextFrame(uint32_t nFrameID, cstr_t szText) {
 CID3v2IF::FrameIterator CID3v2IF::getSyncLyricsFrame(cstr_t szName) {
     string language;
     int index;
-    if (!getEmbeddedLyricsNameInfo(szName, language, index)) {
+    if (!getEmbeddedLyricsUrlInfo(szName, language, index)) {
         return m_listFrames.end();
     }
 
@@ -653,7 +619,7 @@ CID3v2IF::FrameIterator CID3v2IF::getSyncLyricsFrame(cstr_t szName) {
 CID3v2IF::FrameIterator CID3v2IF::getUnsyncLyricsFrame(cstr_t szName) {
     string language;
     int index;
-    if (!getEmbeddedLyricsNameInfo(szName, language, index)) {
+    if (!getEmbeddedLyricsUrlInfo(szName, language, index)) {
         return m_listFrames.end();
     }
 

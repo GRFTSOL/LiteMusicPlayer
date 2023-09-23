@@ -208,7 +208,7 @@ void CLyricsOutPluginMgr::onEvent(const IEvent *pEvent) {
     if (pEvent->eventType == ET_LYRICS_CHANGED) {
         onLyricsChanged();
     } else if (pEvent->eventType == ET_LYRICS_DRAW_UPDATE) {
-        onPlayPos(g_LyricData.getPlayElapsedTime());
+        onPlayPos(g_currentLyrics.getPlayElapsedTime());
     } else if (pEvent->eventType == ET_PLAYER_CUR_MEDIA_CHANGED) {
         onSongChanged();
     }
@@ -229,7 +229,7 @@ void CLyricsOutPluginMgr::onPlayPos(int uPos) {
     }
 
     if (m_dwNotifyFlag & (ILyricsOut::NOTIF_CUR_LINE | ILyricsOut::NOTIF_HALF_CUR_LINE)) {
-        CLyricsLines &lyrLines = g_LyricData.getRawLyrics();
+        LyricsLines &lyrLines = g_currentLyrics.getLyricsLines();
         LyricsLine *pLine;
 
         int nCurLineOld = m_nCurLine;
@@ -237,20 +237,20 @@ void CLyricsOutPluginMgr::onPlayPos(int uPos) {
 
         if (uPos < m_nCLBegTime || uPos >= m_nNLBegTime || m_nCurLine == -1
             || m_nCurLine >= (int)lyrLines.size()) {
-            m_nCurLine = g_LyricData.getCurPlayLine(lyrLines);
+            m_nCurLine = g_currentLyrics.getCurPlayLine(lyrLines);
             if (m_nCurLine >= 0 && m_nCurLine < (int)lyrLines.size()) {
                 pLine = lyrLines[m_nCurLine];
 
-                m_nCLBegTime = pLine->nBegTime;
-                m_nCLendtime = pLine->nEndTime;
+                m_nCLBegTime = pLine->beginTime;
+                m_nCLendtime = pLine->endTime;
                 m_nCLHalftime = (m_nCLBegTime + m_nCLendtime) / 2;
 
                 if (m_nCurLine + 1 < (int)lyrLines.size()) {
                     pLine = lyrLines[m_nCurLine + 1];
-                    m_nNLBegTime = pLine->nBegTime;
-                    m_nNLEndtime = pLine->nEndTime;
+                    m_nNLBegTime = pLine->beginTime;
+                    m_nNLEndtime = pLine->endTime;
                 } else {
-                    m_nNLBegTime = m_nNLEndtime = pLine->nEndTime;
+                    m_nNLBegTime = m_nNLEndtime = pLine->endTime;
                 }
                 if (uPos >= m_nCLHalftime) {
                     m_bHalfOfCurLine = true;
@@ -270,7 +270,7 @@ void CLyricsOutPluginMgr::onPlayPos(int uPos) {
             string strLyrCurline;
             if (m_nCurLine != -1) {
                 pLine = lyrLines[m_nCurLine];
-                g_LyricData.lyricsLineToText(pLine, strLyrCurline);
+                g_currentLyrics.lyricsLineToText(pLine, strLyrCurline);
             }
 
             for (it = m_vPlugins.begin(); it != itEnd; ++it) {
@@ -328,34 +328,34 @@ void CLyricsOutPluginMgr::onLyricsChanged() {
 }
 
 int CLyricsOutPluginMgr::getLineCount() {
-    CLyricsLines &lyrLines = g_LyricData.getRawLyrics();
+    LyricsLines &lyrLines = g_currentLyrics.getLyricsLines();
     return lyrLines.size();
 }
 
-bool CLyricsOutPluginMgr::getLyricsOfLine(int nLine, char szLyrics[], int nBuffLen, int &nBegTime, int &nEndTime) {
-    CLyricsLines &lyrLines = g_LyricData.getRawLyrics();
+bool CLyricsOutPluginMgr::getLyricsOfLine(int nLine, char szLyrics[], int nBuffLen, int &beginTime, int &endTime) {
+    LyricsLines &lyrLines = g_currentLyrics.getLyricsLines();
     if (nLine < 0 || nLine >= (int)lyrLines.size()) {
         return false;
     }
 
     string str;
     LyricsLine *pLine = lyrLines[nLine];
-    g_LyricData.lyricsLineToText(pLine, str);
+    g_currentLyrics.lyricsLineToText(pLine, str);
     strcpy_safe(szLyrics, nBuffLen, str.c_str());
-    nBegTime = pLine->nBegTime;
-    nEndTime = pLine->nEndTime;
+    beginTime = pLine->beginTime;
+    endTime = pLine->endTime;
 
     return true;
 }
 
 int CLyricsOutPluginMgr::getCurLine() {
-    CLyricsLines &lyrLines = g_LyricData.getRawLyrics();
+    LyricsLines &lyrLines = g_currentLyrics.getLyricsLines();
 
-    return g_LyricData.getCurPlayLine(lyrLines);
+    return g_currentLyrics.getCurPlayLine(lyrLines);
 }
 
 int CLyricsOutPluginMgr::getPlayPos() {
-    return g_LyricData.getPlayElapsedTime();
+    return g_currentLyrics.getPlayElapsedTime();
 }
 
 bool CLyricsOutPluginMgr::getMediaFile(char szFile[], int nBuffLen) {

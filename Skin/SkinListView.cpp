@@ -300,7 +300,7 @@ void CSkinListView::onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar
         nPos--;
     }
 
-    assert(nPos >= 0 && nPos < (int)getRowCount());
+    assert(nPos >= 0 && nPos <= (int)getRowCount());
     if (nPos >= 0 && nPos < (int)getRowCount()) {
         m_nFirstVisibleRow = nPos;
         invalidate();
@@ -433,7 +433,7 @@ void CSkinListView::makeSureRowVisible(int nRow) {
     if (nRow < m_nFirstVisibleRow) {
         m_nFirstVisibleRow = nRow;
     } else {
-        m_nFirstVisibleRow = nRow - getLinesOfPerPage();
+        m_nFirstVisibleRow = nRow - getLinesOfPerPage() + 1;
         if (m_nFirstVisibleRow < 0) {
             m_nFirstVisibleRow = 0;
         }
@@ -527,11 +527,11 @@ void CSkinListView::setClickCursor() {
 }
 
 int CSkinListView::getLinesOfPerPage() const {
-    int n = m_rcContent.height() / m_nLineHeight - 1;
+    int n = m_rcContent.height() / m_nLineHeight;
     if (m_header && m_header->isVisible()) {
         n--;
     }
-    if (n < 0) {
+    if (n <= 0) {
         n = 1;
     }
     return n;
@@ -547,7 +547,8 @@ void CSkinListView::clearAllSelMark() {
 
 int CSkinListView::getLastVisibleRow() const {
     int n;
-    n = m_nFirstVisibleRow + getLinesOfPerPage();
+    n = m_nFirstVisibleRow + getLinesOfPerPage() - 1;
+    assert(n >= m_nFirstVisibleRow);
     if (n > (int)getRowCount() - 1) {
         n = (int)getRowCount() - 1;
     }
@@ -779,22 +780,34 @@ void CSkinListView::drawCell(int row, int col, CRect &rcCell, CRawGraph *canvas,
     } else if (colType == CColHeader::TYPE_IMAGE) {
         CRawImage *image = m_dataSource->getCellImage(row, col);
         if (image != nullptr) {
-            drawCellImage(*image, rcCell, canvas);
+            drawCellImage(*image, rcCell, canvas, header->drawTextAlignFlags);
         }
     } else {
         assert(0 && "Undefined column type.");
     }
 }
 
-void CSkinListView::drawCellImage(CRawImage &image, CRect &rcCell, CRawGraph *canvas) {
+void CSkinListView::drawCellImage(CRawImage &image, CRect &rcCell, CRawGraph *canvas, uint32_t drawFlags) {
     if (image.isValid()) {
         CRawGraph::CClipBoxAutoRecovery cbar(canvas);
 
         canvas->setClipBoundBox(rcCell);
 
-        int yDest = rcCell.top + (rcCell.bottom - rcCell.top - image.height()) / 2;
-
-        image.blt(canvas, rcCell.left, yDest);
+        if (rcCell.height() >= image.m_cy) {
+            // 图片小于显示区域
+            int yDest = rcCell.top + (rcCell.bottom - rcCell.top - image.height()) / 2;
+            int xDst = (drawFlags & DT_CENTER) ? rcCell.left + (rcCell.width() - image.m_cx) / 2 : rcCell.left;
+            image.blt(canvas, xDst, yDest);
+        } else {
+            // 图片太大，缩放
+            CRect rcSrc = image.getRect(), rcDst = rcCell;
+            getStretchDrawDstRect(rcSrc, rcDst, false);
+            if (!(drawFlags & DT_CENTER)) {
+                rcDst.offsetRect(rcCell.left - rcDst.left, 0);
+            }
+            image.stretchBlt(canvas, rcDst.left, rcDst.top, rcDst.width(), rcDst.height(),
+                             rcSrc.left, rcSrc.top, rcSrc.width(), rcSrc.height());
+        }
     }
 }
 

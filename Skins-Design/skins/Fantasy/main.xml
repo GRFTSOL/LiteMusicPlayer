@@ -80,15 +80,12 @@
 			<button ID="ID_FORWARD_LYRICS" Left="7" Continuous="TRUE"/>
 			<button ID="ID_RATE_LYR" Left="15"/>
 		</Toolbar>
-
-		<Toolbar ID="ID_TB_LYR_TXT" Rect="80,79,92,20" Image="lyr_scroll_actions_tb.png" enablehover="TRUE"
-				units_x="20" blank_x="-1" blank_cx="20" seperator_x="-1" seperator_cx="20" ButtonSpacesCX="3"
-				MarginX="0" MarginY="0" FullStatusImage="TRUE" Visible="false">
-			<button ID="ID_SEARCH_LYRICS" Left="5" />
-			<button ID="ID_LYR_SCROLL_ENABLE_RECORD" Left="0" CanCheck="TRUE" checked_left="1"/>
-			<button ID="ID_LYR_SCROLL_ENABLE_REPLAY" Left="2" CanCheck="TRUE" checked_left="3"/>
-			<button ID="ID_LYR_SCROLL_MENU" Left="4"/>
-		</Toolbar>
+    <Toolbar ID="ID_TB_LYR_TXT" Rect="80,78,70,22" Image="fl_buttons.png" enablehover="TRUE"
+        units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" ButtonSpacesCX="1"
+        Margin="8,1,0,0" MarginX="0" MarginY="0" FullStatusImage="TRUE">
+      <button ID="ID_SEARCH_LYRICS" Left="5" />
+      <button ID="CMD_LYR_EDITOR" Left="16"/>
+    </Toolbar>
 	  </Container>
     </LinearContainer>
 

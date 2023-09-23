@@ -67,6 +67,8 @@ protected:
     void bottomBtOnMouseMove(CPoint point);
     void trackOnMouseDrag(CPoint point);
 
+    bool increaseVirtualPos(int offset);
+
     virtual void onScroll(uint32_t nSBCode) = 0;
 
     virtual void adjustThumbSize() = 0;
@@ -78,15 +80,6 @@ protected:
 
     virtual int virtualPosToObjectPos(int nVirtualPos) = 0;
     virtual int objectPosToVirtualPos(int nThumbPos) = 0;
-
-    void xcreaseVirtualPos(int offset) {
-        m_nVirtualCurPos += offset;
-        if (m_nVirtualCurPos < m_nVirtualMin) {
-            m_nVirtualCurPos = m_nVirtualMin;
-        } else if (m_nVirtualCurPos > m_nVirtualMax) {
-            m_nVirtualCurPos = m_nVirtualMax;
-        }
-    }
 
 protected:
     IScrollNotify               *m_pScrollNotify;
@@ -110,8 +103,8 @@ protected:
 
     int                         m_nCursorToThumbBeg; // 鼠标点下位置距拖动ThumbBox 距离: point.y - m_rcObj.top - m_nHeightPushBt;
 
-    PUSH_DOWN_POS               m_PushDownPos;      // 鼠标按下的位置
-    PUSH_DOWN_POS               m_CursorPosLatest;  // 鼠标按下的位置
+    PUSH_DOWN_POS               m_pushDownPos;      // 鼠标按下的位置
+    PUSH_DOWN_POS               m_cursorPosLatest;  // 鼠标按下的位置
 
     string                      m_strBmpFile;       // 图片
 
