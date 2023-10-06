@@ -333,8 +333,6 @@ public:
 
     cstr_t getMenuName() { return m_strMenuName.c_str(); }
 
-    bool isWindowsAppearance() const { return m_bWindowsAppearance; }
-
     // after process WM_DESTORY, delete this.
     void setFreeOnDestory(bool bFreeOnDestory = true) { m_bFreeOnDestory = bFreeOnDestory; }
 
@@ -451,9 +449,6 @@ protected:
     //
     Cursor                      m_cursor;
     string                      m_strCusor;         // 光标文件
-
-    bool                        m_bWindowsAppearance;
-    bool                        m_bAeroGlass;
 
     CRect                       m_rcBoundBox;       // skin的矩形
 

@@ -60,6 +60,8 @@ public:
 
     string &getBuffer();
 
+    bool isEmpty() const { return m_vContentBlock.empty(); }
+
     bool saveAsFile(cstr_t szFile);
 
 protected:

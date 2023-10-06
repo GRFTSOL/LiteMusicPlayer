@@ -143,11 +143,20 @@ bool isUnicodeStr(const void *lpData) {
     return (szBuffer[0] == 0xFF && szBuffer[1] == 0xFE);
 }
 
-VecArgs parseArgs(const string &args) {
+StringView urlGetArgs(const StringView &url) {
+    int index = url.strchr('?');
+    if (index == -1) {
+        return stringViewEmpty;
+    }
+
+    return url.substr(index + 1);
+}
+
+VecArgs parseArgs(const StringView &args) {
     VecStrings listArgs;
     VecArgs outArgs;
 
-    strSplit(args.c_str(), '&', listArgs);
+    args.split('&', listArgs);
     for (auto &s : listArgs) {
         string name, value;
 
@@ -161,9 +170,9 @@ VecArgs parseArgs(const string &args) {
     return outArgs;
 }
 
-string *getArgsValue(VecArgs &args, const string &name) {
+string *getArgsValue(VecArgs &args, const StringView &name) {
     for (auto &arg : args) {
-        if (name.size() == arg.name.size() && strcasecmp(name.c_str(), arg.name.c_str()) == 0) {
+        if (name.iEqual(arg.name)) {
             return &arg.value;
         }
     }

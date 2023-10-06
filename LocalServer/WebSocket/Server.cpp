@@ -246,7 +246,6 @@ void Server::onMessage(connection_hdl hdl, message_ptr msg) {
 
     if (packet.type == MT_GET_PUBLIC_KEY) {
         // Client 请求 public key
-        rapidjson::Document json;
         rapidjson::StringBuffer buf;
         RapidjsonWriter writer(buf);
 

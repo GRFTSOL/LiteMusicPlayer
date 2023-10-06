@@ -19,7 +19,7 @@ LT_ELSE = 7
 LT_LOOP = 8
 LT_DO = 9
 
-class LineFeeder():
+class LineFeeder(object):
 
     def __init__(self, lines):
         self._lines = lines
@@ -41,7 +41,7 @@ def count_braces(text):
     return text.count('{'), text.count('}')
 
 
-class Line():
+class Line(object):
 
     def __init__(self, text):
         self.text_org_unstriped = text.strip('\r')

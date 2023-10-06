@@ -113,10 +113,10 @@ LyrTagParser::LyrTagParser(LyricsProperties &props) : _props(props) {
         { SZ_LRC_TI,        SZ_TXT_TI,          &props.title,       },
         { SZ_LRC_AL,        SZ_TXT_AL,          &props.album,       },
         { SZ_LRC_BY,        "",                 &props.by,          },
-        { SZ_LRC_OFFSET,    "",                 nullptr,                 },
+        { SZ_LRC_OFFSET,    "",                 nullptr,            },
         { SZ_LRC_LENGTH,    "",                 &props.mediaLength, },
         { SZ_LRC_ID,        SZ_TXT_ID,          &props.id,          },
-        { SZ_ENCODING,      SZ_ENCODING,        &_unused,                },
+        { SZ_ENCODING,      SZ_ENCODING,        &_unused,           },
     };
 }
 

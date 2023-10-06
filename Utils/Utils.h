@@ -28,6 +28,4 @@
 #include "win32/Event.h"
 #endif
 
-#include "Looper.h"
-
 #endif    // _HEADER_UTILS_H

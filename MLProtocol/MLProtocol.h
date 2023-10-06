@@ -59,7 +59,8 @@ enum MLMsgCmd {
     MC_BATCH_SEARCH,                 // search lyrics by batch
     MC_CAN_UPLOAD,                   // Deprecated command. return ERR_NOT_FOUND directly.
     MC_UPLOADV0,                     // Old version of upload lyrics.
-    MC_UPLOAD,                       // upload lyrics command
+    MC_UPLOAD,                       // 7.1 upload lyrics command
+    MC_ACTIVATE,
 
     // Admin messages
     MC_GET_LYR_UPDATE,
@@ -298,7 +299,6 @@ public:
     virtual int toXML(CXMLWriter &xmlFile);
 
 };
-typedef MLMsgRetSearch MLMsgRetUploadV0;
 
 // upload lyrics command 7.1 or later
 class MLMsgCmdUpload : public CXMLMsgCmd {
@@ -312,12 +312,11 @@ public:
     virtual int toXML(CXMLWriter &xmlFile);
 
 };
-typedef MLMsgRetSearch MLMsgRetUploadV0;
 
 // new version of upload lyrics command (since 7.1 or later)
-class MLMsgRetUpload : public MLMsgRetUploadV0 {
+class MLMsgRetUpload : public MLRetMsg {
 public:
-    string                      strLyricsId;        // Returned lyrics, this will be saved in the uploaded lyrics.
+    string                      strLyricsId;  // Returned lyrics ID, to be saved in lyrics file.
 
 public:
     virtual int fromXML(SXNode *pNode);

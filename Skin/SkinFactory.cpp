@@ -1083,13 +1083,7 @@ int CSkinFactory::createSkinWnd(SkinWndStartupInfo &skinWndStartupInfo) {
     assert(skinWndStartupInfo.pSkinWnd);
     skinWndStartupInfo.pSkinWnd->setFreeOnDestory(true);
     int nRet = skinWndStartupInfo.pSkinWnd->create(skinWndStartupInfo, this);
-    if (nRet == ERR_OK) {
-#ifdef _WIN32
-        if (!skinWndStartupInfo.bMainWnd && skinWndStartupInfo.pSkinWnd->isWindowsAppearance()) {
-            showAsAppWindow(skinWndStartupInfo.pSkinWnd->getHandle());
-        }
-#endif
-    } else {
+    if (nRet != ERR_OK) {
         delete skinWndStartupInfo.pSkinWnd;
     }
 

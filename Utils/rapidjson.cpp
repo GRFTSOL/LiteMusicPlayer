@@ -10,6 +10,9 @@
 
 std::string getMemberString(const rapidjson::Value &message, const char *key, const char *defVal) {
     assert(message.IsObject());
+    if (!message.IsObject()) {
+        return defVal;
+    }
 
     auto it = message.FindMember(key);
     if (it == message.MemberEnd()) {
@@ -26,6 +29,9 @@ std::string getMemberString(const rapidjson::Value &message, const char *key, co
 
 int getMemberInt(const rapidjson::Value &message, const char *key, int defVal) {
     assert(message.IsObject());
+    if (!message.IsObject()) {
+        return defVal;
+    }
 
     auto it = message.FindMember(key);
     if (it == message.MemberEnd()) {
@@ -39,6 +45,33 @@ int getMemberInt(const rapidjson::Value &message, const char *key, int defVal) {
         return atoi(val.GetString());
     } else if (val.IsBool()) {
         return val.GetBool();
+    } else if (val.IsNull()) {
+        return 0;
+    }
+
+    return defVal;
+}
+
+bool getMemberBool(const rapidjson::Value &message, const char *key, bool defVal) {
+    assert(message.IsObject());
+    if (!message.IsObject()) {
+        return defVal;
+    }
+
+    auto it = message.FindMember(key);
+    if (it == message.MemberEnd()) {
+        return defVal;
+    }
+
+    auto &val = (*it).value;
+    if (val.IsInt()) {
+        return val.GetInt() != 0;
+    } else if (val.IsBool()) {
+        return val.GetBool();
+    } else if (val.IsString()) {
+        return val.GetString()[0] != '\0';
+    } else {
+        return false;
     }
 
     return defVal;
@@ -46,6 +79,9 @@ int getMemberInt(const rapidjson::Value &message, const char *key, int defVal) {
 
 std::vector<int> getMemberIntArray(const rapidjson::Value &message, const char *key) {
     assert(message.IsObject());
+    if (!message.IsObject()) {
+        return {};
+    }
 
     std::vector<int> values;
     auto it = message.FindMember(key);

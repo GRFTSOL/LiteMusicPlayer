@@ -409,40 +409,40 @@ int CHttpRequestProtocol::parseHead() {
         if (!szEnd) {
             return ERR_HTTP_BAD_FORMAT;
         }
-        if (strncmp(szPos, "Host: ", 6) == 0) {
+        if (strncasecmp(szPos, "Host: ", 6) == 0) {
             szPos += 6;
             strncpy_safe(m_szHost, CountOf(m_szHost), szPos, size_t(szEnd - szPos));
             m_dwAvailProp |= RP_HOST;
-        } else if (strncmp(szPos, "Accept: ", 8) == 0) {
+        } else if (strncasecmp(szPos, "Accept: ", 8) == 0) {
             szPos += 8;
             strncpy_safe(m_szAccept, CountOf(m_szAccept), szPos, size_t(szEnd - szPos));
             m_dwAvailProp |= RP_ACCEPT;
-        } else if (strncmp(szPos, "Referer: ", 9) == 0) {
+        } else if (strncasecmp(szPos, "Referer: ", 9) == 0) {
             szPos += 9;
             strncpy_safe(m_szRefer, CountOf(m_szRefer), szPos, size_t(szEnd - szPos));
             m_dwAvailProp |= RP_REFERER;
-        } else if (strncmp(szPos, "Range: ", 7) == 0) {
+        } else if (strncasecmp(szPos, "Range: ", 7) == 0) {
             //assert(0);
             szPos += 7;
             // strncpy_safe(m_szHost, CountOf(m_szHost), szPos, size_t(szEnd - szPos));
             m_dwAvailProp |= RP_RANGE;
-        } else if (strncmp(szPos, SZ_HH_CONTENT_LENGTH, 16) == 0) {
+        } else if (strncasecmp(szPos, SZ_HH_CONTENT_LENGTH, 16) == 0) {
             szPos += 16;
             m_dwContentLen = atoi(szPos);
             m_dwAvailProp |= RP_CONTENT_LENGTH;
-        } else if (strncmp(szPos, "User-Agent: ", 12) == 0) {
+        } else if (strncasecmp(szPos, "User-Agent: ", 12) == 0) {
             szPos += 12;
             strncpy_safe(m_szUserAgent, CountOf(m_szUserAgent), szPos, size_t(szEnd - szPos));
             m_dwAvailProp |= RP_USER_AGENT;
-        } else if (strncmp(szPos, SZ_HH_CACHE_CONTROL, 15) == 0) {
+        } else if (strncasecmp(szPos, SZ_HH_CACHE_CONTROL, 15) == 0) {
             szPos += 15;
             strncpy_safe(m_szCacheControl, CountOf(m_szCacheControl), szPos, size_t(szEnd - szPos));
             m_dwAvailProp |= RP_CACHE_CONTROL;
-        } else if (strncmp(szPos, SZ_HH_CONNECTION, 12) == 0) {
+        } else if (strncasecmp(szPos, SZ_HH_CONNECTION, 12) == 0) {
             szPos += 12;
             strncpy_safe(m_szConnection, CountOf(m_szConnection), szPos, size_t(szEnd - szPos));
             m_dwAvailProp |= RP_CONNECTION;
-        } else if (strncmp(szPos, "Cookie: ", 8) == 0) {
+        } else if (strncasecmp(szPos, "Cookie: ", 8) == 0) {
             szPos += 8;
             m_strCookie = "";
             m_strCookie.append(szPos, szEnd);
@@ -954,7 +954,7 @@ int CHttpReturnProtocol::parseHead() {
     }
 
 #define IF_PROCESS_STR_FIELD(name, szValue, rpProperty)                        \
-    if (strncmp(szPos, name, CONST_STRLEN(name)) == 0)                        \
+    if (strncasecmp(szPos, name, CONST_STRLEN(name)) == 0)                        \
     {                                                                        \
         szPos += CONST_STRLEN(name);                                        \
         strncpy_safe(szValue, CountOf(szValue), szPos, size_t(szEnd - szPos));\
@@ -985,23 +985,23 @@ int CHttpReturnProtocol::parseHead() {
         else IF_PROCESS_STR_FIELD(SZ_HH_ETAG, m_szEtag, RP_ETAG)
         else IF_PROCESS_STR_FIELD(SZ_HH_CACHE_CONTROL, m_szCacheControl, RP_CACHE_CONTROL)
         else IF_PROCESS_STR_FIELD(SZ_HH_CONTENT_DISP_FILENAME, m_szContentFileName, RP_CONTENT_DISP_FILE)
-        else if (strncmp(szPos, SZ_HH_SET_COOKIE, CONST_STRLEN(SZ_HH_SET_COOKIE)) == 0)
+        else if (strncasecmp(szPos, SZ_HH_SET_COOKIE, CONST_STRLEN(SZ_HH_SET_COOKIE)) == 0)
         {
             szPos += CONST_STRLEN(SZ_HH_SET_COOKIE);
             m_strCookie = "";
             m_strCookie.append(szPos, szEnd);
             m_dwAvailProp |= RP_SET_COOKIE;
-        } else if (strncmp(szPos, SZ_HH_TRANSF_ENCODING, CONST_STRLEN(SZ_HH_TRANSF_ENCODING)) == 0) {
+        } else if (strncasecmp(szPos, SZ_HH_TRANSF_ENCODING, CONST_STRLEN(SZ_HH_TRANSF_ENCODING)) == 0) {
             szPos += CONST_STRLEN(SZ_HH_TRANSF_ENCODING);
             while (*szPos == ' ') {
                 szPos++;
             }
-            if (strncmp(szPos, SZ_TRANSF_ENC_CHUNKED, CONST_STRLEN(SZ_TRANSF_ENC_CHUNKED)) == 0) {
+            if (strncasecmp(szPos, SZ_TRANSF_ENC_CHUNKED, CONST_STRLEN(SZ_TRANSF_ENC_CHUNKED)) == 0) {
                 m_bTransfEncChunked = true;
             } else {
                 ERR_LOG0("!!! Unsupported transfer encoding.");
             }
-        } else if (strncmp(szPos, SZ_HH_CONTENT_LENGTH, CONST_STRLEN(SZ_HH_CONTENT_LENGTH)) == 0) {
+        } else if (strncasecmp(szPos, SZ_HH_CONTENT_LENGTH, CONST_STRLEN(SZ_HH_CONTENT_LENGTH)) == 0) {
             szPos += CONST_STRLEN(SZ_HH_CONTENT_LENGTH);
             m_dwContentLen = (uint32_t)atoi(szPos);
             m_dwAvailProp |= RP_CONTENT_LENGTH;

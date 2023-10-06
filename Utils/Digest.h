@@ -6,6 +6,7 @@
 void md5ToBinary(const void *input, size_t len, unsigned char digest[]);
 
 string md5ToString(const void *input, size_t len);
+inline string md5ToString(const StringView &input) { return md5ToString(input.data, input.len); }
 
 string md5ToString16(cstr_t szSource);
 

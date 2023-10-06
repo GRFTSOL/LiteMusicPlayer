@@ -15,6 +15,7 @@ enum Error {
     ERR_PARSE_XML               = 8,
 
     ERR_FILE_NOT_EXIST          = 9,
+    ERR_PARSE_JSON              = 10,
 
     ERR_EXIST                   = 12,
     ERR_NOT_FOUND               = 13,

@@ -100,7 +100,7 @@ CLyricsKeywordFilter::~CLyricsKeywordFilter() {
 
 }
 
-void CLyricsKeywordFilter::init(cstr_t dataDir) {
+void CLyricsKeywordFilter::init() {
     for (int i = 0; i < WORD_MAX; i++) {
         m_wTableUcs2[i] = (uint16_t)i;
     }

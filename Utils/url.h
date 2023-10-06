@@ -23,5 +23,7 @@ struct ArgsPair {
 
 typedef std::vector<ArgsPair>            VecArgs;
 
-VecArgs parseArgs(const string &args);
-string *getArgsValue(VecArgs &args, const string &name);
+StringView urlGetArgs(const StringView &url);
+
+VecArgs parseArgs(const StringView &args);
+string *getArgsValue(VecArgs &args, const StringView &name);

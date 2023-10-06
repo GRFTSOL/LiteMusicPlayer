@@ -142,9 +142,6 @@ CSkinWnd::CSkinWnd() {
     m_needRedraw = false;
     m_bInEditorMode = false;
 
-    m_bWindowsAppearance = false;
-    m_bAeroGlass = false;
-
     m_bActived = false;
     m_bMainAppWnd = false;
     m_bDialogWnd = false;
@@ -294,17 +291,6 @@ void CSkinWnd::closeSkin() {
         m_vm = nullptr;
     }
 
-#ifdef _WIN32_DESKTOP
-    if (m_bWindowsAppearance) {
-        SetWindowLong(m_hWnd, GWL_STYLE, GetWindowLong(m_hWnd, GWL_STYLE) & ~(WS_CAPTION | WS_THICKFRAME));
-        ::setWindowPos(m_hWnd, nullptr, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED | SWP_NOOWNERZORDER | SWP_NOMOVE);
-        m_bWindowsAppearance = false;
-    }
-    if (m_bAeroGlass) {
-        m_bAeroGlass = false;
-        extendIntoWholeClient(m_hWnd, false);
-    }
-#endif
     m_nAlpha = 255;
     m_nTranslucencyAlphaOnActive = -1;
     m_nTranslucencyAlphaOnHover = -1;
@@ -756,10 +742,6 @@ void CSkinWnd::onChar(uint32_t nChar) {
 }
 
 bool CSkinWnd::updateSkinProperty() {
-#ifdef _WIN32
-    setUseWindowsAppearance(m_bWindowsAppearance);
-#endif
-
     if (!m_cursor.isValid()) {
         m_cursor.loadStdCursor(Cursor::C_ARROW);
     }
@@ -774,23 +756,6 @@ bool CSkinWnd::updateSkinProperty() {
             m_nCurTranslucencyAlpha = m_nTranslucencyAlphaDefault;
         }
     }
-
-#ifdef _WIN32_DESKTOP
-    if (m_bWindowsAppearance) {
-        SetWindowLong(m_hWnd, GWL_STYLE, GetWindowLong(m_hWnd, GWL_STYLE) | WS_CAPTION | WS_THICKFRAME);
-        ::setWindowPos(m_hWnd, nullptr, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_DEFERERASE);
-    }
-
-    if (m_bAeroGlass) {
-        if (!extendIntoWholeClient(m_hWnd, true)) {
-            // Failed to set to Aero mode
-            m_bAeroGlass = false;
-        }
-        if (m_bAeroGlass) {
-            m_rootConainter.m_clrBg.setAlpha(0);
-        }
-    }
-#endif // #ifdef _WIN32_DESKTOP
 
     // init
     onSize(m_rcBoundBox.width(), m_rcBoundBox.height());
@@ -989,10 +954,6 @@ void CSkinWnd::onSize(int cx, int cy) {
             moveWindow(m_rcBoundBox);
         } else {
             m_rcBoundBox = rc;
-
-#ifdef _WIN32
-            setUseWindowsAppearance(m_bWindowsAppearance);
-#endif
 
             // recalculate all ui objects' position
             m_rootConainter.m_rcObj.setLTRB(0, 0, m_rcBoundBox.width(), m_rcBoundBox.height());
@@ -1205,10 +1166,6 @@ bool CSkinWnd::moveWindow(int X, int Y, int nWidth, int nHeight, bool bRepaint) 
     if (::getParent(m_hWnd)) {
         return true;
     }
-
-    if (m_bWindowsAppearance) {
-        return ::moveWindow(m_hWnd, X, Y, nWidth, nHeight, bRepaint);
-    }
 #endif
     return moveWindowSafely(X, Y, nWidth, nHeight);
 }
@@ -1276,16 +1233,9 @@ bool CSkinWnd::setProperty(cstr_t szProperty, cstr_t szValue) {
             invalidateRect();
         }
         return true;
-    }
-#ifdef _WIN32_DESKTOP
-    else if (isPropertyName(szProperty, "WindowsAppearance")) {
-        m_bWindowsAppearance = isTRUE(szValue);
-    } else if (isPropertyName(szProperty, "AeroGlass")) {
-        m_bAeroGlass = isTRUE(szValue);
     } else if (isPropertyName(szProperty, "EnableClickThrough")) {
         m_bEnableClickThrough = isTRUE(szValue);
     }
-#endif
     else if (isPropertyName(szProperty, "EnableTranslucency")) {
         m_bTranslucencyLayered = isTRUE(szValue);
         if (m_pmemGraph) {
@@ -1348,10 +1298,7 @@ void CSkinWnd::enumProperties(CUIObjProperties &listProperties) {
 
     listProperties.addPropStr("ContextMenu", m_rootConainter.m_strContextMenu.c_str(), !m_rootConainter.m_strContextMenu.empty());
 
-#ifdef _WIN32_DESKTOP
-    listProperties.addPropBoolStr("WindowsAppearance", m_bWindowsAppearance, m_bWindowsAppearance);
     listProperties.addPropBoolStr("EnableTransparentFeature", m_bEnableClickThrough, !m_bEnableClickThrough);
-#endif
     listProperties.addPropBoolStr("EnableTranslucency", m_bTranslucencyLayered, m_bTranslucencyLayered);
     listProperties.addPropInt("TranslucencyAlpha", m_nTranslucencyAlphaDefault, m_nTranslucencyAlphaDefault != 255);
     listProperties.addPropInt("TranslucencyAlphaOnActive", m_nTranslucencyAlphaOnActive, m_nTranslucencyAlphaOnActive != 255);
@@ -1636,9 +1583,6 @@ LRESULT CSkinWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
             //            fCalcValidRects = (bool) wParam;        // valid area flag
             //            lpncsp = (LPNCCALCSIZE_PARAMS) lParam;    // size calculation data    or
             //            OnNcCalcSize((bool)wParam, (LPNCCALCSIZE_PARAMS)lParam);
-            if (m_bWindowsAppearance) {
-                break;
-            }
             return 0;
         }
         //     case WM_CAPTURECHANGED:

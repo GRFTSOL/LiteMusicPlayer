@@ -71,21 +71,21 @@ cstr_t mLMsgCmd2Str(MLMsgCmd msgCmd) {
 }
 
 IdToString    __MlCmdResult2Str[] = {
-    { ERR_OK, "OK" },                                // 0
-    { ERR_FAILED, "FAILED" },                        // 1035
-    { ERR_BAD_XMLREQUEST, "BAD_XML_REQUEST" },    // 1036
-    { ERR_UPLOAD_EXIST, "UPLOAD_EXIST" },            // 1042
-    { ERR_USER_NOT_EXIST, "USER_NOT_FOUND" },        // 1043
-    { ERR_BAD_USERPWD, "BAD_USERPWD" },            // 1045
-    { ERR_BAD_CLIENT_VER, "BAD_CLIENT_VER" },        // 1047
-    { ERR_OBSOLETE_CLIENT_VER, "OBSOLETE_CLIENT_VER" },    // 1048
-    { ERR_NOT_FOUND, "NOT_FOUND" },                // 1049
-    { ERR_ACCESS_DENIED, "ACCESS_DENIED" },        // 1051
-    { ERR_CMD_NOT_MATCH, "CMD_NOT_MATCH" },        // 1053
-    { ERR_CMD_PARAM, "BAD_CMD_PARAM" },            // 1054
-    { ERR_UPLOAD_FILETYPE, "UPLOAD_FILETYPE" },    // 1056
-    { ERR_BAD_BASE64CONTENT, "BAD_BASE64CONTENT" },    // 1058
-    { ERR_BAD_FILE_CONTENT, "BAD_FILE_CONTENT" },    // 1059
+    { ERR_OK, "OK" },
+    { ERR_FAILED, "FAILED" },
+    { ERR_BAD_XMLREQUEST, "BAD_XML_REQUEST" },
+    { ERR_UPLOAD_EXIST, "UPLOAD_EXIST" },
+    { ERR_USER_NOT_EXIST, "USER_NOT_FOUND" },
+    { ERR_BAD_USERPWD, "BAD_USERPWD" },
+    { ERR_BAD_CLIENT_VER, "BAD_CLIENT_VER" },
+    { ERR_OBSOLETE_CLIENT_VER, "OBSOLETE_CLIENT_VER" },
+    { ERR_NOT_FOUND, "NOT_FOUND" },
+    { ERR_ACCESS_DENIED, "ACCESS_DENIED" },
+    { ERR_CMD_NOT_MATCH, "CMD_NOT_MATCH" },
+    { ERR_CMD_PARAM, "BAD_CMD_PARAM" },
+    { ERR_UPLOAD_FILETYPE, "UPLOAD_FILETYPE" },
+    { ERR_BAD_BASE64CONTENT, "BAD_BASE64CONTENT" },
+    { ERR_BAD_FILE_CONTENT, "BAD_FILE_CONTENT" },
     { ERR_NOT_AUTHORIZED, "NOT_AUTHORIZED" },
     { ERR_NOT_LOGIN, "NOT_LOGIN" },
     { ERR_LYR_NO_TAG_FOUND, "LYR_NO_TAG_FOUND" },
@@ -540,7 +540,7 @@ int MLMsgCmdUpload::toXML(CXMLWriter &xmlFile) {
 }
 
 int MLMsgRetUpload::fromXML(SXNode *pXmlNode) {
-    int nRet = MLMsgRetUploadV0::fromXML(pXmlNode);
+    int nRet = MLRetMsg::fromXML(pXmlNode);
     if (nRet != ERR_OK) {
         return nRet;
     }
@@ -950,8 +950,6 @@ MLMsgCmd CMLProtocol::getMsgCommand(CSimpleXML &xml) {
 
 #include "utils/unittest.h"
 
-
-#define CPPUNIT_ASSERT_STR_EQUAL(str1, str2) ASSERT_TRUE(strcmp(str1, str2) == 0)
 
 TEST(MLProtocol, ParseBinXml) {
     MLMsgRetBatchSearch msgRet;

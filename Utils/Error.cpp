@@ -19,6 +19,7 @@ static IdToString __ErrID2Str[] = {
     { ERR_PARSE_XML, "Failed to parse XML." },
 
     { ERR_FILE_NOT_EXIST, "File does not exist." },
+    { ERR_PARSE_JSON, "Failed to parse JSON string." },
 
     { ERR_EXIST, "Exist" },
     { ERR_NOT_FOUND, "Not found." },
