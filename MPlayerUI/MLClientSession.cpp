@@ -1,6 +1,5 @@
-#include "MPlayerApp.h"
 #include "MLClientSession.h"
-#include "../LyricsLib/MLEncrypt.h"
+#include "MLProfile.h"
 
 
 #define CUR_ACCOUNT_ID      4
@@ -10,6 +9,8 @@
 ServerCfg        g_LyrServers[SERVER_COUNT] = {
     { "", 80 },
 };
+
+extern CProfile g_profile;
 
 int g_nCurLyrServer = 0;
 int g_nPortSearchServer = 80;
@@ -23,24 +24,6 @@ void loadServerInfo() {
         g_LyrServers[nEngIndex].nPort = 80;
         strcpy_safe(g_LyrServers[nEngIndex].szServer,
             CountOf(g_LyrServers[nEngIndex].szServer), "search.crintsoft.com");
-
-#ifdef _DEBUG
-        //
-        // load server config from install.ini
-        //
-        CProfile file;
-        string str;
-        file.init("install.ini", "INSTALL");
-
-        str = file.getString("server1", "");
-        if (!str.empty()) {
-            strcpy_safe(g_LyrServers[0].szServer, CountOf(g_LyrServers[0].szServer), str.c_str());
-        }
-        str = file.getString("server1port", "");
-        if (!str.empty()) {
-            g_LyrServers[0].nPort = atoi(str.c_str());
-        }
-#endif
     }
 }
 

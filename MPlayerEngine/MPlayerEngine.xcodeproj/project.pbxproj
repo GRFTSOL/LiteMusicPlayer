@@ -189,6 +189,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					_MAC_OS,
 					"DEBUG=1",
+					UNIT_TEST,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;

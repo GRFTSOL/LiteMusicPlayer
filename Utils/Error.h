@@ -53,6 +53,7 @@ enum Error {
     ERR_NOT_FOUND_ID3V2         = 70,
     ERR_NOT_SUPPORT_ID3V2_VER   = 71,
     ERR_INVALID_ID3V2_FRAME     = 72,
+    ERR_BUSY                    = 73,
 
     ERR_SL_OPEN_DB,
     ERR_SL_CREATE_TABLE,

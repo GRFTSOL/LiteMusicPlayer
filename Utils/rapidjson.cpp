@@ -8,6 +8,22 @@
 #include "rapidjson.h"
 
 
+const rapidjson::Value &getMember(const rapidjson::Value &message, const char *key) {
+    static const rapidjson::Value defVal;
+
+    assert(message.IsObject());
+    if (!message.IsObject()) {
+        return defVal;
+    }
+
+    auto it = message.FindMember(key);
+    if (it == message.MemberEnd()) {
+        return defVal;
+    }
+
+    return (*it).value;
+}
+
 std::string getMemberString(const rapidjson::Value &message, const char *key, const char *defVal) {
     assert(message.IsObject());
     if (!message.IsObject()) {
@@ -27,7 +43,7 @@ std::string getMemberString(const rapidjson::Value &message, const char *key, co
     return defVal;
 }
 
-int getMemberInt(const rapidjson::Value &message, const char *key, int defVal) {
+int64_t getMemberInt64(const rapidjson::Value &message, const char *key, int64_t defVal) {
     assert(message.IsObject());
     if (!message.IsObject()) {
         return defVal;
@@ -39,8 +55,8 @@ int getMemberInt(const rapidjson::Value &message, const char *key, int defVal) {
     }
 
     auto &val = (*it).value;
-    if (val.IsInt()) {
-        return val.GetInt();
+    if (val.IsNumber()) {
+        return val.GetInt64();
     } else if (val.IsString()) {
         return atoi(val.GetString());
     } else if (val.IsBool()) {

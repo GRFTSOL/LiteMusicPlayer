@@ -22,6 +22,7 @@ enum ML_PROTOCAL_ERROR {
     ERR_NOT_AUTHORIZED          = 1061, // 未经授权的行为
     ERR_NOT_LOGIN               = 1062, // 未登陆，请登陆
     ERR_LYR_NO_TAG_FOUND        = 1064, // No lyrics tag is found in content.
+    ERR_DATABASE_ERROR          = 1065, // 内部数据库错误
 };
 
 #define SERVER_PORT_BEGIN   8000
@@ -61,11 +62,6 @@ enum MLMsgCmd {
     MC_UPLOADV0,                     // Old version of upload lyrics.
     MC_UPLOAD,                       // 7.1 upload lyrics command
     MC_ACTIVATE,
-
-    // Admin messages
-    MC_GET_LYR_UPDATE,
-    MC_SUBMIT_LYR_REVIEW,
-    MC_EXE_SVR_CMD,
 };
 
 MLMsgCmd mLMsgStr2Cmd(cstr_t szMLMsgCmd);

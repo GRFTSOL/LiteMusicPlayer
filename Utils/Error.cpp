@@ -48,6 +48,7 @@ static IdToString __ErrID2Str[] = {
     { ERR_NOT_FOUND_ID3V2, "Not found id3v2 tag." },
     { ERR_NOT_SUPPORT_ID3V2_VER, "Not supported id3v2 tag version." },
     { ERR_INVALID_ID3V2_FRAME, "Invalid id3v2 tag frame." },
+    { ERR_BUSY, "Busy, try again later." },
 
     { ERR_HTTP_BAD_REQUEST, "Invalid HTTP request." },        // 无效的HTTP请求
     { ERR_HTTP_BAD_FORMAT, "Invalid Http format." },        // 无效的HTTP格式

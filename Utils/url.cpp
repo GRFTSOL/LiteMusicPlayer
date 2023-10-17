@@ -41,7 +41,8 @@ bool urlParse(cstr_t szUrl, string &scheme, string &domain, int &port, string &p
     }
 
     if (p) {
-        path = p;
+        // path need '/'
+        path = p - 1;
     } else {
         path.clear();
     }
@@ -93,7 +94,8 @@ string uriUnquote(cstr_t str, bool isForm) {
 
 // COMMENT:
 //        将汉字、' '、'\t'等转换为 %20....等
-void uriQuote(const char *szLocal, string &strInet) {
+string uriQuote(const char *szLocal) {
+    string strInet;
     size_t i = 0;
     char szTemp[256];
 
@@ -125,14 +127,8 @@ void uriQuote(const char *szLocal, string &strInet) {
             i++;
         }
     }
-}
 
-void uriQuote(const char *szLocal, char *szInet, int nLenMax) {
-    string strTemp;
-
-    uriQuote(szLocal, strTemp);
-
-    strcpy_safe(szInet, nLenMax, strTemp.c_str());
+    return strInet;
 }
 
 bool isUnicodeStr(const void *lpData) {
@@ -213,14 +209,14 @@ TEST(url, UrlParse) {
     ASSERT_TRUE(urlParse(szUrl, scheme, domain, port, path));
     ASSERT_TRUE(scheme == "scheme");
     ASSERT_TRUE(domain == "domain");
-    ASSERT_TRUE(path == "path?query_string#fragment_id");
+    ASSERT_TRUE(path == "/path?query_string#fragment_id");
     ASSERT_TRUE(port == 10);
 
     szUrl = "scheme://domain/path?query_string#fragment_id";
     ASSERT_TRUE(urlParse(szUrl, scheme, domain, port, path));
     ASSERT_TRUE(scheme == "scheme");
     ASSERT_TRUE(domain == "domain");
-    ASSERT_TRUE(path == "path?query_string#fragment_id");
+    ASSERT_TRUE(path == "/path?query_string#fragment_id");
     ASSERT_TRUE(port == -1);
 
     szUrl = "scheme://domain";

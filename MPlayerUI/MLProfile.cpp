@@ -6,9 +6,11 @@
     Purpose  :    
 *********************************************************************/
 
-#include "../Skin/Skin.h"
 #include "MLProfile.h"
 
+
+const string &getAppResourceDir();
+extern CProfile g_profile;
 
 #define CHAR_WORKING_FOLDER '-'
 
@@ -84,14 +86,15 @@ cstr_t CMLProfile::inetGetBase64ProxyUserPass() {
 
 
 bool CMLProfile::writeDir(cstr_t szSectName, cstr_t szKeyName, cstr_t szDir) {
+#ifdef WIN32
     if (szDir[0] == getAppResourceDir()[0] && szDir[1] == ':') {
         // Lyrics folder is the same drive of Current working folder
         string str = szDir;
         str[0] = CHAR_WORKING_FOLDER;
         return g_profile.writeString(szSectName, szKeyName, str.c_str());
-    } else {
-        return g_profile.writeString(szSectName, szKeyName, szDir);
     }
+#endif
+    return g_profile.writeString(szSectName, szKeyName, szDir);
 }
 
 
@@ -100,9 +103,11 @@ string CMLProfile::getDir(cstr_t szSectName, cstr_t szKeyName, cstr_t szDefDir) 
 
     strDir = g_profile.getString(szSectName, szKeyName, szDefDir);
 
+#ifdef WIN32
     if (strDir.size() >= 2 && strDir[0] == CHAR_WORKING_FOLDER && strDir[1] == ':') {
         strDir[0] = getAppResourceDir()[0];
     }
+#endif
 
     return strDir;
 }

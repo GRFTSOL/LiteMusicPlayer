@@ -7,14 +7,6 @@
 #include "../MLProtocol/MLProtocol.h"
 
 
-//************************************************************
-// 网络设置定义
-//
-//************************************************************
-#define INET_CON_NONE       3
-#define INET_CON_DIALUP     2
-#define INET_CON_LAN        1
-
 #define HTTP_PROXY_NONE     1
 #define HTTP_PROXY_OURS     4
 

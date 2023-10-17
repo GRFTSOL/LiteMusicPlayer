@@ -42,6 +42,7 @@ static IdToString    __ErrID2Str[] = {
     { ERR_NOT_AUTHORIZED, "Unauthorized action." },
     { ERR_NOT_LOGIN, "Not signed in, please sign in." },
     { ERR_LYR_NO_TAG_FOUND, "Please fill in lyrics artist and title information." },
+    { ERR_DATABASE_ERROR, "Internal database error, please contact us to report this error." },
 
     { 0, nullptr}
 };
@@ -56,9 +57,6 @@ IdToString    __MlCmdIDStr[] = {
     { MC_SEARCH_V0, MZ_SEARCH_V0 },
     { MC_UPLOADV0, MZ_UPLOADV0 },
     { MC_UPLOAD, MZ_UPLOAD },
-    { MC_GET_LYR_UPDATE, MZ_GET_LYR_UPDATE },
-    { MC_SUBMIT_LYR_REVIEW, MZ_SUBMIT_LYR_REVIEW },
-    { MC_EXE_SVR_CMD, MZ_EXE_SVR_CMD },
     { MC_UNKNOWN, nullptr},
 };
 
@@ -948,7 +946,7 @@ MLMsgCmd CMLProtocol::getMsgCommand(CSimpleXML &xml) {
 
 #if UNIT_TEST
 
-#include "utils/unittest.h"
+#include "../TinyJS/utils/unittest.h"
 
 
 TEST(MLProtocol, ParseBinXml) {
@@ -957,7 +955,7 @@ TEST(MLProtocol, ParseBinXml) {
     msgRet.result = ERR_CMD_NOT_MATCH;
     msgRet.strMessage = "Msg";
 
-    string strFile = getAppDataDir();
+    string strFile = getUnittestTempDir();
     strFile += "unittest_save.txt";
     string bufContent = ";alskge\1,.zsm,ng\n;ea<>>\n";
     ASSERT_TRUE(writeFile(strFile.c_str(), bufContent.c_str(), bufContent.size()));
@@ -1006,12 +1004,10 @@ TEST(MLProtocol, ParseBinXml) {
 TEST(MLProtocol, MLMsgCmdSearch) {
     MLMsgCmdSearch msgSearch;
 
-    msgSearch.bOnlineVerified = false;
     msgSearch.nProductId = PRODUCT_ID_MINILYRICS;
     msgSearch.nRequestPage = 1;
     msgSearch.strArtist = "ar";
     msgSearch.strClient = "client xxx";
-    msgSearch.strDeviceID = "did";
     msgSearch.strTitle = "title";
 
     CMLBinXMLWriter xmlStream;
@@ -1025,18 +1021,15 @@ TEST(MLProtocol, MLMsgCmdSearch) {
     ret = msgFrom.fromXML(xml.m_pRoot);
     ASSERT_TRUE(ret == ERR_OK);
 
-    ASSERT_TRUE(msgFrom.bOnlineVerified == msgSearch.bOnlineVerified);
     ASSERT_TRUE(msgFrom.nRequestPage == msgSearch.nRequestPage);
     ASSERT_TRUE(msgFrom.strArtist == msgSearch.strArtist);
     ASSERT_TRUE(msgFrom.strClient == msgSearch.strClient);
-    ASSERT_TRUE(msgFrom.strDeviceID == msgSearch.strDeviceID);
     ASSERT_TRUE(msgFrom.strTitle == msgSearch.strTitle);
 }
 
 TEST(MLProtocol, MLMsgCmdUploadResult) {
     MLMsgRetUpload retUpload;
 
-    retUpload.bV0Protocol = false;
     retUpload.strLyricsId = "lyrics_id";
     retUpload.strMessage = "msg";
     retUpload.strOrgCmd = "org";
@@ -1052,7 +1045,6 @@ TEST(MLProtocol, MLMsgCmdUploadResult) {
     ret = retUpload2.fromXML(xml.m_pRoot);
     ASSERT_TRUE(ret == ERR_OK);
 
-    ASSERT_TRUE(retUpload2.bV0Protocol == retUpload.bV0Protocol);
     ASSERT_TRUE(retUpload2.strLyricsId == retUpload.strLyricsId);
     ASSERT_TRUE(retUpload2.strMessage == retUpload.strMessage);
     ASSERT_TRUE(retUpload2.strOrgCmd == retUpload.strOrgCmd);

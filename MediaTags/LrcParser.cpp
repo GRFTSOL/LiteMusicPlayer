@@ -9,10 +9,10 @@
 #include "LrcParser.h"
 #include "LrcParserHelper.h"
 #include "../TinyJS/utils/StringParser.hpp"
-#include "../Skin/SkinTypes.h"
 
 
 #define SZ_ENCODING            "encoding:"
+extern class CProfile g_profile;
 
 CharEncodingType g_defaultLyricsEncoding = ED_SYSDEF;
 

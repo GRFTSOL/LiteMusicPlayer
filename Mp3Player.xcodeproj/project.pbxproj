@@ -177,7 +177,6 @@
 		0EB710F7277AFFA1006929F1 /* MLProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB710F6277AFFA0006929F1 /* MLProfile.cpp */; };
 		0EB710FE277C0F5A006929F1 /* Digest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB710FB277C0F59006929F1 /* Digest.cpp */; };
 		0EB710FF277C0F5A006929F1 /* MLBinXMLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB710FD277C0F59006929F1 /* MLBinXMLParser.cpp */; };
-		0EB7110F277CAB54006929F1 /* Looper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7110D277CAB53006929F1 /* Looper.cpp */; };
 		0EB71113277CB16C006929F1 /* RegExTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB71111277CB16B006929F1 /* RegExTool.cpp */; };
 		0EB7111B277D8400006929F1 /* Event.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7111A277D83FF006929F1 /* Event.mm */; };
 		0EB71154277D9B93006929F1 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EB71153277D9B93006929F1 /* AVFoundation.framework */; };
@@ -316,6 +315,7 @@
 		C05D74002954775A00294F50 /* JsUIObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D73FF2954775A00294F50 /* JsUIObject.cpp */; };
 		C05D740429547A4500294F50 /* JsSkinDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D740229547A4500294F50 /* JsSkinDocument.cpp */; };
 		C05D740729553EBB00294F50 /* JsResizableLinearContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D740529553EBB00294F50 /* JsResizableLinearContainer.cpp */; };
+		C0A27E772AD7B25E00D248A4 /* IJsonWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0A27E752AD7B25E00D248A4 /* IJsonWriter.cpp */; };
 		C0A81FFF2ABDDFC200CDF309 /* libTinyJsStaticLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A81FFE2ABDDFBB00CDF309 /* libTinyJsStaticLib.a */; };
 		C0ADB9712AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0ADB96F2AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.cpp */; };
 /* End PBXBuildFile section */
@@ -346,7 +346,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0EB70F782776B58A006929F1 /* ThirdPartiesSDK.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 5F2BD53214963397003E7F5C;
+			remoteGlobalIDString = C0A278C32AC3EF1F00D248A4;
 			remoteInfo = ThirdPartiesSDK;
 		};
 		0EB70F892776B931006929F1 /* PBXContainerItemProxy */ = {
@@ -411,20 +411,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = C03E44422839CECC00864631;
 			remoteInfo = TinyJS;
-		};
-		C05D73DD2951592E00294F50 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C05D73D52951592D00294F50 /* TinyJS.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = C06C1615294EAFF70022ADCA;
-			remoteInfo = TinyJsLib;
-		};
-		C05D73FC2954316B00294F50 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C05D73D52951592D00294F50 /* TinyJS.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = C06C1614294EAFF70022ADCA;
-			remoteInfo = TinyJsLib;
 		};
 		C0A81FFD2ABDDFBB00CDF309 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -796,8 +782,6 @@
 		0EB710FB277C0F59006929F1 /* Digest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Digest.cpp; sourceTree = "<group>"; };
 		0EB710FC277C0F59006929F1 /* MLBinXMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLBinXMLParser.h; sourceTree = "<group>"; };
 		0EB710FD277C0F59006929F1 /* MLBinXMLParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MLBinXMLParser.cpp; sourceTree = "<group>"; };
-		0EB7110D277CAB53006929F1 /* Looper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Looper.cpp; sourceTree = "<group>"; };
-		0EB7110E277CAB54006929F1 /* Looper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Looper.h; sourceTree = "<group>"; };
 		0EB71111277CB16B006929F1 /* RegExTool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExTool.cpp; sourceTree = "<group>"; };
 		0EB71112277CB16C006929F1 /* RegExTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExTool.h; sourceTree = "<group>"; };
 		0EB71119277D83FF006929F1 /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
@@ -1010,6 +994,9 @@
 		C05D740329547A4500294F50 /* JsSkinDocument.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = JsSkinDocument.hpp; sourceTree = "<group>"; };
 		C05D740529553EBB00294F50 /* JsResizableLinearContainer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JsResizableLinearContainer.cpp; sourceTree = "<group>"; };
 		C05D740629553EBB00294F50 /* JsResizableLinearContainer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = JsResizableLinearContainer.hpp; sourceTree = "<group>"; };
+		C0A27E742AD7B25E00D248A4 /* RapidjsonWriter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RapidjsonWriter.hpp; sourceTree = "<group>"; };
+		C0A27E752AD7B25E00D248A4 /* IJsonWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IJsonWriter.cpp; sourceTree = "<group>"; };
+		C0A27E762AD7B25E00D248A4 /* IJsonWriter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IJsonWriter.hpp; sourceTree = "<group>"; };
 		C0ADB96F2AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DlgSaveEmbeddedLyrics.cpp; path = MPlayerUI/DlgSaveEmbeddedLyrics.cpp; sourceTree = "<group>"; };
 		C0ADB9702AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = DlgSaveEmbeddedLyrics.hpp; path = MPlayerUI/DlgSaveEmbeddedLyrics.hpp; sourceTree = "<group>"; };
 		C0E6A46227A3CEBB009FA5AF /* rapidjson */ = {isa = PBXFileReference; lastKnownFileType = folder; name = rapidjson; path = "third-parties/rapidjson/rapidjson"; sourceTree = "<group>"; };
@@ -1144,32 +1131,32 @@
 		0E56B98B273E116100032A3E /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				0EB71111277CB16B006929F1 /* RegExTool.cpp */,
-				0EB71112277CB16C006929F1 /* RegExTool.h */,
-				0EB7110D277CAB53006929F1 /* Looper.cpp */,
-				0EB7110E277CAB54006929F1 /* Looper.h */,
 				0EB710FB277C0F59006929F1 /* Digest.cpp */,
 				0EB710FA277C0F58006929F1 /* Digest.h */,
-				0EB710FD277C0F59006929F1 /* MLBinXMLParser.cpp */,
-				0EB710FC277C0F59006929F1 /* MLBinXMLParser.h */,
-				0EB710E1277A0DF8006929F1 /* Thread.cpp */,
-				0EB710DF277A0DF8006929F1 /* Thread.h */,
-				0EB710E0277A0DF8006929F1 /* url.cpp */,
-				0EB710DE277A0DF8006929F1 /* url.h */,
-				0EB710DA2778022D006929F1 /* LocalizeTool.cpp */,
-				0EB710DB2778022D006929F1 /* LocalizeTool.h */,
-				0EB710D527774CF4006929F1 /* FileEx.cpp */,
-				0EB710D627774CF4006929F1 /* FileEx.h */,
-				0E56BD28274DD1D100032A3E /* PrivateProfile.cpp */,
 				0E56BD1F274D386A00032A3E /* Error.cpp */,
 				0E56BD1E274D386A00032A3E /* Error.h */,
+				0EB710D527774CF4006929F1 /* FileEx.cpp */,
+				0EB710D627774CF4006929F1 /* FileEx.h */,
 				0E56BC242747F84600032A3E /* IdString.cpp */,
 				0E56BC282747F84600032A3E /* IdString.h */,
+				C0A27E752AD7B25E00D248A4 /* IJsonWriter.cpp */,
+				C0A27E762AD7B25E00D248A4 /* IJsonWriter.hpp */,
+				0EB710DA2778022D006929F1 /* LocalizeTool.cpp */,
+				0EB710DB2778022D006929F1 /* LocalizeTool.h */,
 				0E56BC262747F84600032A3E /* Log.cpp */,
 				0E56BC272747F84600032A3E /* Log.h */,
 				0E56BC292747F84600032A3E /* LogAlias.h */,
 				0E56BC482749E25100032A3E /* mac */,
+				0EB710FD277C0F59006929F1 /* MLBinXMLParser.cpp */,
+				0EB710FC277C0F59006929F1 /* MLBinXMLParser.h */,
+				0EB70F282773396C006929F1 /* MPAutoPtr.h */,
+				0E56BD28274DD1D100032A3E /* PrivateProfile.cpp */,
 				0E56BC302747F91000032A3E /* Profile.h */,
+				C04DC0322983DFEF00A0FCB1 /* rapidjson.cpp */,
+				C04DC0332983DFEF00A0FCB1 /* rapidjson.h */,
+				C0A27E742AD7B25E00D248A4 /* RapidjsonWriter.hpp */,
+				0EB71111277CB16B006929F1 /* RegExTool.cpp */,
+				0EB71112277CB16C006929F1 /* RegExTool.h */,
 				0E56BC2F2747F91000032A3E /* SimpleXML.cpp */,
 				0E56BC332747F91100032A3E /* SimpleXML.h */,
 				0E56BC382747F91100032A3E /* SimpleXMLParser.cpp */,
@@ -1177,13 +1164,14 @@
 				0E56BC64274B2CBB00032A3E /* StringIterator.h */,
 				0E56BC70274B479100032A3E /* TextFile.cpp */,
 				0E56BC6F274B479100032A3E /* TextFile.h */,
+				0EB710E1277A0DF8006929F1 /* Thread.cpp */,
+				0EB710DF277A0DF8006929F1 /* Thread.h */,
+				0EB710E0277A0DF8006929F1 /* url.cpp */,
+				0EB710DE277A0DF8006929F1 /* url.h */,
 				0E56BB072743FC5F00032A3E /* Utils.h */,
 				0E56BB0D2743FC5F00032A3E /* UtilsTypes.h */,
 				0E56BC352747F91100032A3E /* XMLWriter.cpp */,
 				0E56BC372747F91100032A3E /* XMLWriter.h */,
-				0EB70F282773396C006929F1 /* MPAutoPtr.h */,
-				C04DC0322983DFEF00A0FCB1 /* rapidjson.cpp */,
-				C04DC0332983DFEF00A0FCB1 /* rapidjson.h */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1816,7 +1804,6 @@
 			isa = PBXGroup;
 			children = (
 				C05D73DC2951592E00294F50 /* TinyJS */,
-				C05D73DE2951592E00294F50 /* libTinyJsLib.dylib */,
 				C0A81FFE2ABDDFBB00CDF309 /* libTinyJsStaticLib.a */,
 			);
 			name = Products;
@@ -1853,7 +1840,6 @@
 			);
 			dependencies = (
 				C0A820012ABDDFDC00CDF309 /* PBXTargetDependency */,
-				C05D73FD2954316B00294F50 /* PBXTargetDependency */,
 				0EB70FA62776C89C006929F1 /* PBXTargetDependency */,
 				0EB70FA82776C89C006929F1 /* PBXTargetDependency */,
 				0EB70FAA2776C89C006929F1 /* PBXTargetDependency */,
@@ -1975,13 +1961,6 @@
 			fileType = "compiled.mach-o.executable";
 			path = TinyJS;
 			remoteRef = C05D73DB2951592E00294F50 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C05D73DE2951592E00294F50 /* libTinyJsLib.dylib */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = libTinyJsLib.dylib;
-			remoteRef = C05D73DD2951592E00294F50 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		C0A81FFE2ABDDFBB00CDF309 /* libTinyJsStaticLib.a */ = {
@@ -2107,7 +2086,6 @@
 				0E56BC71274B479200032A3E /* TextFile.cpp in Sources */,
 				0E56BBE62745E53D00032A3E /* SkinLinearContainer.cpp in Sources */,
 				C04DBF7B297EB36200A0FCB1 /* bignum_mod.c in Sources */,
-				0EB7110F277CAB54006929F1 /* Looper.cpp in Sources */,
 				C04DBFF5297ECDA100A0FCB1 /* sha512.c in Sources */,
 				C04DBF72297EB36200A0FCB1 /* error.c in Sources */,
 				0E56BBE32745E53D00032A3E /* SkinCaption.cpp in Sources */,
@@ -2293,6 +2271,7 @@
 				0EB710B227773BB6006929F1 /* LyricShowTextEditObj.cpp in Sources */,
 				C04DBF7C297EB36200A0FCB1 /* lmots.c in Sources */,
 				C04DC014297ECDA100A0FCB1 /* ssl_tls13_keys.c in Sources */,
+				C0A27E772AD7B25E00D248A4 /* IJsonWriter.cpp in Sources */,
 				C04DBFF2297ECDA100A0FCB1 /* x509write_csr.c in Sources */,
 				0E56BBFE2745E53D00032A3E /* SkinFrameCtrl.cpp in Sources */,
 				0EB7109727773BB6006929F1 /* Player.cpp in Sources */,
@@ -2338,11 +2317,6 @@
 			isa = PBXTargetDependency;
 			name = Taglib;
 			targetProxy = 0EB70FAB2776C89C006929F1 /* PBXContainerItemProxy */;
-		};
-		C05D73FD2954316B00294F50 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = TinyJsLib;
-			targetProxy = C05D73FC2954316B00294F50 /* PBXContainerItemProxy */;
 		};
 		C0A820012ABDDFDC00CDF309 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

@@ -1,4 +1,4 @@
-#include "../Skin/SkinTypes.h"
+#include "../Utils/UtilsTypes.h"
 #include "LyricsKeywordFilter.h"
 
 
