@@ -1,3 +1,4 @@
+#include <cstdarg>
 #include "Utils.h"
 #include "MLBinXMLParser.h"
 #include "LogAlias.h"

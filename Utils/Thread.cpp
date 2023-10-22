@@ -1,5 +1,6 @@
 #include "Thread.h"
 #include <pthread.h>
+#include <signal.h>
 
 
 CThread::CThread() {

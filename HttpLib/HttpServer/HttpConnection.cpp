@@ -118,6 +118,8 @@ void HttpConnection::readCallback(uv_stream_t *handle, ssize_t nread, const uv_b
     HttpConnection *conn = data->connection.get();
     conn->_status = HttpConnection::IN_READING;
 
+    DLOG(INFO).write(buf->base, nread);
+
     if (nread >= 0) {
         http_parser_execute(&conn->_httpParser, &_parserSettings, buf->base, nread);
     } else {
@@ -187,6 +189,8 @@ int HttpConnection::onHeadersCompleteCb(http_parser *parser) {
     conn->_status = HttpConnection::IN_REQ_HEADER_HANDLING;
     conn->_reqHandler->onRequestHeader(conn->shared_from_this());
 
+    DLOG(INFO) << "onRequestHeader: " << conn->_request.uri << ", method: " << (HttpMethod)parser->method;
+
     return 0;
 }
 
@@ -202,6 +206,7 @@ int HttpConnection::onMessageCompleteCb(http_parser *parser) {
     HttpConnection *conn = (HttpConnection *)parser->data;
 
     if (conn->_response.statusCode == HttpStatusCode::INVALID) {
+        DLOG(INFO) << "onRequestBody: " << conn->_request.uri << ", method: " << (HttpMethod)parser->method;
         conn->_status = HttpConnection::IN_RESPONSE_HANDLING;
         conn->_reqHandler->onRequestBody(conn->shared_from_this());
     }

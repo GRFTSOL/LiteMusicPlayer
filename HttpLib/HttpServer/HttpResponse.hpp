@@ -7,6 +7,7 @@
 #ifndef HttpResponse_hpp
 #define HttpResponse_hpp
 
+#include <functional>
 #include "HttpRequest.hpp"
 
 

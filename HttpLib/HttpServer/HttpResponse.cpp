@@ -5,6 +5,7 @@
 #include "HttpResponse.hpp"
 #include "HttpConnection.hpp"
 #include "../../TinyJS/utils/StringEx.h"
+#include <glog/logging.h>
 
 
 const string HEADER_CONTENT_TYPE("Content-Type");
@@ -67,6 +68,14 @@ int HttpResponse::sendAll() {
 
     _connection->send(buffers, true);
 
+#ifdef DEBUG
+    string data;
+    for (auto &buf : buffers) {
+        data.append(buf.data, buf.len);
+    }
+    DLOG(INFO) << "HttpResponse: " << data;
+#endif
+
     return ERR_OK;
 }
 
@@ -82,6 +91,14 @@ int HttpResponse::sendAll(const VecConstBuffers &body) {
     buffers.insert(buffers.end(), body.begin(), body.end());
 
     _connection->send(buffers, true);
+
+#ifdef DEBUG
+    string data;
+    for (auto &buf : buffers) {
+        data.append(buf.data, buf.len);
+    }
+    DLOG(INFO) << "HttpResponse: " << data;
+#endif
 
     return ERR_OK;
 }

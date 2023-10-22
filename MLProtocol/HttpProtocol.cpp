@@ -97,27 +97,21 @@ int CHttpProtocol::readHead() {
     int nLastPos = 0;
     int i = 0;
 
-    int nHttpHeadEndTagLen = 4;
+    const int nHttpHeadEndTagLen = 4;
 
     while (1) {
         char *szData;
         int nRead;
         int nRet;
 
-        if (nLastPos > 4) {
-            nLastPos -= 4;
+        if (nLastPos > nHttpHeadEndTagLen) {
+            nLastPos -= nHttpHeadEndTagLen;
         }
 
-        szData = strnstr(m_buffHead.data() + nLastPos, "\r\n\r\n", m_buffHead.size() - nLastPos);
-        if (!szData) {
-            szData = strnstr(m_buffHead.data() + nLastPos, "\n\n", m_buffHead.size() - nLastPos);
-            if (szData) {
-                nHttpHeadEndTagLen = 2;
-            }
-        }
-        if (szData) {
-            m_nHeadEndPos = int(szData + nHttpHeadEndTagLen - m_buffHead.data());
-
+        StringView bufHead(m_buffHead);
+        m_nHeadEndPos = bufHead.strstr( "\r\n\r\n", nLastPos);
+        if (m_nHeadEndPos != -1) {
+            m_nHeadEndPos += nHttpHeadEndTagLen;
             return parseHead();
         }
         nLastPos = (int)m_buffHead.size();

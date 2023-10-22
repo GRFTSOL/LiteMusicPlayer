@@ -13,7 +13,7 @@
 #include <unistd.h>
 #endif
 #include <time.h>
-
+#include <cstdarg>
 #include "Log.h"
 
 /*

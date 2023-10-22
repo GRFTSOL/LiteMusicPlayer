@@ -5,6 +5,8 @@
 //  Created by henry_xiao on 2023/10/16.
 //
 
+#include <algorithm>
+#include <glog/logging.h>
 #include "StatusLog.hpp"
 #include "../../TinyJS/utils/os.h"
 
@@ -81,7 +83,9 @@ void StatusLog::_openFile() {
         _doLogRotate();
     }
 
-    _fp.open(_fn, "a+b");
+    if (!_fp.open(_fn, "a+b")) {
+        LOG(ERROR) << "Failed to open status log file: " << _fn;
+    }
 }
 
 void StatusLog::_doLogRotate() {

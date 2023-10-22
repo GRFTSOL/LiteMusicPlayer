@@ -7,6 +7,7 @@
 #ifndef IJsonWriter_hpp
 #define IJsonWriter_hpp
 
+#include <memory>
 #include "UtilsTypes.h"
 
 

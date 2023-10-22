@@ -5,6 +5,7 @@
 #ifndef HttpClient_hpp
 #define HttpClient_hpp
 
+#include <functional>
 #include "uv.h"
 #include "../../Utils/UtilsTypes.h"
 #include "../../Utils/url.h"
