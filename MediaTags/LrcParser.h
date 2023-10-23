@@ -36,6 +36,8 @@ string toLyricsBinary(const RawLyrics &rawLyrics);
 string toLyricsString(const RawLyrics &rawLyrics, bool isIncTags, bool isToTxtFormat);
 string toLyricsString(const RawLyrics &rawLyrics);
 
+bool compressLyrics(string &lyrics);
+
 class LyrTagParser {
 public:
     LyrTagParser(LyricsProperties &props);

@@ -6,6 +6,7 @@
     Purpose  :    
 *********************************************************************/
 
+#include <algorithm>
 #include "LrcParser.h"
 #include "LrcParserHelper.h"
 #include "../TinyJS/utils/StringParser.hpp"
@@ -663,6 +664,91 @@ string toLyricsString(const RawLyrics &rawLyrics) {
     return toLyricsString(rawLyrics, true, rawLyrics.contentType() <= LCT_TXT);
 }
 
+bool compressLyrics(string &lyrics) {
+    VecStringViews textLines;
+    StringView(lyrics).splitLines(textLines);
+
+    struct Line {
+        VecInts     timestamps;
+        StringView  text;
+    };
+
+    AllocatorPool pool;
+    vector<Line *> lines;
+    std::map<StringView, Line *, SizedStrCmpLess> mapLines;
+    LyricsProperties props;
+    LyrTagParser tagParser(props);
+    bool isCompressed = false;
+
+    for (auto textOrg : textLines) {
+        auto text = textOrg.trim();
+        if (tagParser.parseLrcTag(text)) {
+            continue;
+        }
+
+        Line *line = PoolNew(pool, Line);
+        int nextPos = 0, timestamp = 0;
+        while (parseLrcTimeTag(text.data, nextPos, timestamp)) {
+            line->timestamps.push_back(timestamp);
+        }
+
+        int emptyLines = 0; // 连续空行数量
+        if (nextPos > 0) {
+            // LRC lyrics line
+            line->text = text.substr(nextPos);
+            auto it = mapLines.find(line->text);
+            if (it == mapLines.end()) {
+                // No existing lyrics line
+                mapLines[line->text] = line;
+                lines.push_back(line);
+                emptyLines = 0;
+            } else {
+                // Found existing lyrics line
+                auto &oldTimestamps = (*it).second->timestamps;
+                oldTimestamps.insert(oldTimestamps.begin(), line->timestamps.begin(), line->timestamps.end());
+                isCompressed = true;
+            }
+        } else {
+            // text
+            line->text = textOrg;
+            if (text.len == 0) {
+                if (emptyLines >= 1) {
+                    // 只保留一行空行
+                    continue;
+                } else {
+                    emptyLines++;
+                }
+            } else {
+                emptyLines = 0;
+            }
+            lines.push_back(line);
+        }
+    }
+
+    if (!isCompressed) {
+        return false;
+    }
+
+    string out;
+
+    out.reserve(lyrics.size() + 50);
+    out.append(tagParser.toLrcTags());
+
+    for (auto line : lines) {
+        std::sort(line->timestamps.begin(), line->timestamps.end(), std::greater<int>());
+        for (auto t : line->timestamps) {
+            out.append(formatLrcTimeTag(t, t % 1000 != 0));
+        }
+        out.append(line->text.data, line->text.len);
+        out.push_back('\n');
+    }
+
+    out.resize(out.size() - 1);
+    lyrics.assign(out);
+
+    return true;
+}
+
 #if UNIT_TEST
 
 #include "utils/unittest.h"
@@ -1039,6 +1125,19 @@ TEST(lrcTag, CLrcTag_replaceInFile) {
     }
 
     deleteFile(fn.c_str());
+}
+
+TEST(lrcTag, compressLyrics) {
+    cstr_t LYR1 = "[ti: title中]\r\n\r\n[00:01.20]x\n[00:02.30][00:03.40]x\n[00:02.30]y\n\nx\ny\n[01:02.00]x\n";
+    cstr_t R_LYR1 = "[ti: title中]\n\n[01:02][00:03.40][00:02.30][00:01.20]x\n[00:02.30]y\n\nx\ny\n";
+
+    string lyrics = LYR1;
+    ASSERT_TRUE(compressLyrics(lyrics));
+    ASSERT_EQ(lyrics, R_LYR1);
+
+    cstr_t LYR2 = "[ti: title中]\r\n\r\n[00:01.20]x\n[00:02.30]x1\n[00:02.30]y\n\nx\ny\n[01:02.00]x2\n";
+    lyrics = LYR2;
+    ASSERT_FALSE(compressLyrics(lyrics));
 }
 
 #endif
