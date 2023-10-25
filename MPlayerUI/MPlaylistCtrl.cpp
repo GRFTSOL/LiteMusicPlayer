@@ -579,6 +579,8 @@ void CMPlaylistCtrl::playItem(int index) {
         g_player.setCurrentMediaInPlaylist(index);
         g_player.play();
     }
+
+    g_player.setPlaylistModified(true);
 }
 
 void CMPlaylistCtrl::updatePlaylist(bool isRedraw) {

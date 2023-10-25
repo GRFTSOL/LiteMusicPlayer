@@ -615,9 +615,23 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
         break;
     case CMD_UPLOAD_LYR:
         {
+            CMPlayerAppBase::getInstance()->getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_ON_SAVE_EDIT);
+
             if (!g_currentLyrics.hasLyricsOpened()) {
                 m_pSkinWnd->messageOut(_TLT("No Lyrics file was opened."));
                 break;
+            }
+
+            auto &props = g_currentLyrics.properties();
+            if (props.artist.empty()) { props.artist = g_player.getArtist(); }
+            if (props.title.empty()) { props.title = g_player.getTitle(); }
+            if (props.album.empty()) { props.album = g_player.getAlbum(); }
+            if (props.mediaLength.empty()) { props.setMediaLength(g_player.getMediaLength() / 1000); }
+
+            if (g_currentLyrics.doesChooseNewFileName()) {
+                if (!saveAsLyricsFile(m_pSkinWnd)) {
+                    return false;
+                }
             }
 
             // show upload lyrics dialog

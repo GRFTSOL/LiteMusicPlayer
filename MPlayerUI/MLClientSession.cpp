@@ -1,5 +1,6 @@
 #include "MLClientSession.h"
 #include "MLProfile.h"
+#include "../MediaTags/LrcParser.h"
 
 
 #define CUR_ACCOUNT_ID      4
@@ -238,6 +239,7 @@ int CMLClientSession::upload(const string &lyricsContent, string &strLyricsId, s
     cmdUpload.strLoginName = m_strLoginName;
     cmdUpload.strPwdMask = m_strPwdMask;
     cmdUpload.strFileContent = lyricsContent;
+    compressLyrics(cmdUpload.strFileContent);
 
     int nRet = sendXmlCommand(cmdUpload);
     if (nRet != ERR_OK) {

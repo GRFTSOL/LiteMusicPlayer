@@ -458,6 +458,8 @@ protected:
     void addLyrLines(vector<int> &vTimes, const StringView &text) {
         string buff;
 
+        std::sort(vTimes.begin(), vTimes.end());
+
         for (auto beginTime : vTimes) {
             LyricsLine line(beginTime, -1);
 
@@ -570,9 +572,26 @@ string toLrcString(const RawLyrics &lyrLines, bool isIncTags) {
         str.append(tagParser.toLrcTags());
     }
 
+    // 添加时间用于排序
+    auto lines = lyrLines.lines();
+    int timeLatest = 0x7ffffff;
+    for (auto it = lines.rbegin(); it != lines.rend(); ++it) {
+        auto &line = *it;
+        if (line.pieces.empty()) {
+            line.beginTime = timeLatest;
+        } else {
+            line.beginTime = timeLatest = line.pieces.front().beginTime;
+        }
+    }
+
+    // 按照时间顺序排序
+    std::stable_sort(lines.begin(), lines.end(), [](const LyricsLine &a, const LyricsLine &b) {
+        return a.beginTime < b.beginTime;
+    });
+
     // save every lyrics line
     string strBuff;
-    for (auto &line : lyrLines) {
+    for (auto &line : lines) {
         if (lyricsLineToLrcString(line, strBuff)) {
             str.append(strBuff);
             str.append(SZ_NEW_LINE);
