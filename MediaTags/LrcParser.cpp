@@ -679,6 +679,7 @@ bool compressLyrics(string &lyrics) {
     LyricsProperties props;
     LyrTagParser tagParser(props);
     bool isCompressed = false;
+    int emptyLines = 0; // 连续空行数量
 
     for (auto textOrg : textLines) {
         auto text = textOrg.trim();
@@ -692,7 +693,6 @@ bool compressLyrics(string &lyrics) {
             line->timestamps.push_back(timestamp);
         }
 
-        int emptyLines = 0; // 连续空行数量
         if (nextPos > 0) {
             // LRC lyrics line
             line->text = text.substr(nextPos);
