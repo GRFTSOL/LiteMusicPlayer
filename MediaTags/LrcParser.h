@@ -52,7 +52,7 @@ public:
     bool isTxtTag(const StringView &line);
     bool isLrcTag(const StringView &line);
 
-    void toTxtTags(string &headTagsOut, string &tailTagsOut);
+    void toTxtTags(string &headTagsOut, string &tailTagsOut, RawLyrics *rawLyrics = nullptr);
     string toLrcTags();
 
     string joinTagsLyrics(const StringView &lyrics, bool isLrcFormat);
@@ -77,5 +77,6 @@ protected:
     vector<Item>                _items;
     LyricsProperties            &_props;
     string                      _unused;
+    string                      _offsetTime;
 
 };

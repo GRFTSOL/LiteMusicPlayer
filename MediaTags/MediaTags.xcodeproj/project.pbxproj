@@ -40,6 +40,8 @@
 		C006BA852AAAEE790045EA52 /* LrcParserHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = C006BA842AAAEE790045EA52 /* LrcParserHelper.h */; };
 		C05D744F29613F4700294F50 /* MediaTagTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D744D29613F4700294F50 /* MediaTagTypes.cpp */; };
 		C05D745029613F4700294F50 /* MediaTagTypes.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C05D744E29613F4700294F50 /* MediaTagTypes.hpp */; };
+		C08AA9412AF0BE5400F5DE2D /* LyrTimestamps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C08AA93F2AF0BE5400F5DE2D /* LyrTimestamps.cpp */; };
+		C08AA9422AF0BE5400F5DE2D /* LyrTimestamps.h in Headers */ = {isa = PBXBuildFile; fileRef = C08AA9402AF0BE5400F5DE2D /* LyrTimestamps.h */; };
 		C0CBA42C2AAEF98A0061416F /* MP3FileTags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0CBA42A2AAEF98A0061416F /* MP3FileTags.cpp */; };
 		C0CBA42D2AAEF98A0061416F /* MP3FileTags.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C0CBA42B2AAEF98A0061416F /* MP3FileTags.hpp */; };
 		C0CBA4302AAF16FD0061416F /* Lyrics3v2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0CBA42E2AAF16FD0061416F /* Lyrics3v2.cpp */; };
@@ -82,6 +84,8 @@
 		C006BA842AAAEE790045EA52 /* LrcParserHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LrcParserHelper.h; sourceTree = "<group>"; };
 		C05D744D29613F4700294F50 /* MediaTagTypes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTagTypes.cpp; sourceTree = "<group>"; };
 		C05D744E29613F4700294F50 /* MediaTagTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MediaTagTypes.hpp; sourceTree = "<group>"; };
+		C08AA93F2AF0BE5400F5DE2D /* LyrTimestamps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LyrTimestamps.cpp; sourceTree = "<group>"; };
+		C08AA9402AF0BE5400F5DE2D /* LyrTimestamps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LyrTimestamps.h; sourceTree = "<group>"; };
 		C0CBA42A2AAEF98A0061416F /* MP3FileTags.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MP3FileTags.cpp; sourceTree = "<group>"; };
 		C0CBA42B2AAEF98A0061416F /* MP3FileTags.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MP3FileTags.hpp; sourceTree = "<group>"; };
 		C0CBA42E2AAF16FD0061416F /* Lyrics3v2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Lyrics3v2.cpp; sourceTree = "<group>"; };
@@ -148,6 +152,8 @@
 				C0CBA42F2AAF16FD0061416F /* Lyrics3v2.h */,
 				5FB59268154594E90071B204 /* LyricsData.cpp */,
 				5FB59269154594E90071B204 /* LyricsData.h */,
+				C08AA93F2AF0BE5400F5DE2D /* LyrTimestamps.cpp */,
+				C08AA9402AF0BE5400F5DE2D /* LyrTimestamps.h */,
 				5FB5926A154594E90071B204 /* M4aFileTags.cpp */,
 				5FB5926B154594E90071B204 /* M4aFileTags.hpp */,
 				5FB59271154594E90071B204 /* MediaTags.cpp */,
@@ -186,6 +192,7 @@
 				C006B8F52A9E25840045EA52 /* XiphComment.hpp in Headers */,
 				C05D745029613F4700294F50 /* MediaTagTypes.hpp in Headers */,
 				0EB71142277D84C1006929F1 /* ID3Helper.h in Headers */,
+				C08AA9422AF0BE5400F5DE2D /* LyrTimestamps.h in Headers */,
 				0EB7113E277D84C1006929F1 /* ID3v2.h in Headers */,
 				5FB59278154594EA0071B204 /* M4aFileTags.hpp in Headers */,
 				5FB5927A154594EA0071B204 /* MidiFileTags.h in Headers */,
@@ -254,6 +261,7 @@
 				0EB71143277D84C1006929F1 /* ID3v2.cpp in Sources */,
 				5FB59273154594EA0071B204 /* ID3v2IF.cpp in Sources */,
 				C006B8F02A9C4A310045EA52 /* FlacFileTags.cpp in Sources */,
+				C08AA9412AF0BE5400F5DE2D /* LyrTimestamps.cpp in Sources */,
 				5FB59275154594EA0071B204 /* LyricsData.cpp in Sources */,
 				C006BA802AAA14330045EA52 /* LrcParser.cpp in Sources */,
 				5FB59277154594EA0071B204 /* M4aFileTags.cpp in Sources */,

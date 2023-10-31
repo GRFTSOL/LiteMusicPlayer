@@ -9,6 +9,7 @@
 #include <algorithm>
 #include "LrcParser.h"
 #include "LrcParserHelper.h"
+#include "LyrTimestamps.h"
 #include "../TinyJS/utils/StringParser.hpp"
 
 
@@ -114,7 +115,7 @@ LyrTagParser::LyrTagParser(LyricsProperties &props) : _props(props) {
         { SZ_LRC_TI,        SZ_TXT_TI,          &props.title,       },
         { SZ_LRC_AL,        SZ_TXT_AL,          &props.album,       },
         { SZ_LRC_BY,        "",                 &props.by,          },
-        { SZ_LRC_OFFSET,    "",                 nullptr,            },
+        { SZ_LRC_OFFSET,    SZ_LRC_OFFSET,      &_offsetTime,       },
         { SZ_LRC_LENGTH,    "",                 &props.mediaLength, },
         { SZ_LRC_ID,        SZ_TXT_ID,          &props.id,          },
         { SZ_ENCODING,      SZ_ENCODING,        &_unused,           },
@@ -207,24 +208,31 @@ bool LyrTagParser::isLrcTag(const StringView &line) {
     return false;
 }
 
-void LyrTagParser::toTxtTags(string &headTagsOut, string &tailTagsOut) {
+void LyrTagParser::toTxtTags(string &headTagsOut, string &tailTagsOut, RawLyrics *rawLyrics) {
     headTagsOut.reserve(256);
+
+    if (rawLyrics && rawLyrics->properties().lyrContentType >= LCT_LRC) {
+        _offsetTime = LyrTimestamps::toString(*rawLyrics);
+    }
 
     for (auto &item : _items) {
         auto &name = item.txtName;
-        if (!name.empty()) {
-            if (item.value == &_props.id && !item.value->empty()) {
-                // 只有 ID 在尾部
-                tailTagsOut.append((char *)name.data, name.len);
-                tailTagsOut.append(" ");
-                tailTagsOut.append(*item.value);
-                tailTagsOut.append(SZ_NEW_LINE);
-            } else if (item.value && !item.value->empty() && item.value != &_unused) {
-                headTagsOut.append((char *)name.data, name.len);
-                headTagsOut.append(" ");
-                headTagsOut.append(*item.value);
-                headTagsOut.append(SZ_NEW_LINE);
+        assert(item.value);
+        if (!name.empty() && !item.value->empty()) {
+            string *output = nullptr;
+            if ((item.value == &_props.id || item.value == &_offsetTime)) {
+                // 只有 ID, offset 在尾部
+                output = &tailTagsOut;
+            } else if (item.value == &_unused) {
+                continue;
+            } else {
+                output = &headTagsOut;
             }
+
+            output->append((char *)name.data, name.len);
+            output->append(" ");
+            output->append(*item.value);
+            output->append(SZ_NEW_LINE);
         }
     }
 }
@@ -233,25 +241,19 @@ string LyrTagParser::toLrcTags() {
     string text;
     text.reserve(256);
 
+    if (_props.getOffsetTime() != 0) {
+        _offsetTime = _props.getOffsetTimeStr();
+    }
+
     for (auto &item : _items) {
         auto &name = item.lrcName;
-        if (!name.empty()) {
-            if (item.value == nullptr) {
-                // offset
-                if (_props.getOffsetTime() != 0) {
-                    text.append(1, '[');
-                    text.append((char *)name.data, name.len);
-                    text.append(" ");
-                    text.append(_props.getOffsetTimeStr());
-                    text.append("]" SZ_NEW_LINE);
-                }
-            } else if (!item.value->empty() && item.value != &_unused) {
-                text.append(1, '[');
-                text.append((char *)name.data, name.len);
-                text.append(" ");
-                text.append(*item.value);
-                text.append("]" SZ_NEW_LINE);
-            }
+        assert(item.value);
+        if (!name.empty() && !item.value->empty() && item.value != &_unused) {
+            text.append(1, '[');
+            text.append((char *)name.data, name.len);
+            text.append(" ");
+            text.append(*item.value);
+            text.append("]" SZ_NEW_LINE);
         }
     }
 
@@ -286,7 +288,7 @@ string LyrTagParser::joinTagsLyrics(const StringView &lyrics, bool isLrcFormat) 
 
 void LyrTagParser::setValue(Item &item, StringView value) {
     value = value.trim();
-    if (item.value == nullptr) {
+    if (item.value == &_offsetTime) {
         // Must be offset
         _props.setOffsetTime(value.toString().c_str());
     } else if (item.value->empty()) {
@@ -446,6 +448,8 @@ public:
             // parse as text lyrics
             parse(lyrics, true);
             _rawLyrics.properties().lyrContentType = LCT_TXT;
+
+            LyrTimestamps::parse(_rawLyrics.properties().getOffsetTimeStr().c_str(), _rawLyrics);
         }
 
         return ERR_OK;
@@ -1054,8 +1058,8 @@ TEST(lrcTag, parseLrcAllTags) {
 TEST(lrcTag, parseTxtAllTags) {
     // These are succeeded cases.
     cstr_t vTestTag[] = { "  Title:value\nArtist:val2\nTitle:title\nAlbum:  album\n",
-        "   Title:val ue\nTitle:title\nAlbum:ab\noffset:1",
-        "xx\n  Title:value\nartist:val\n\noffset:  33f" };
+        "   Title:val ue\nTitle:title\nAlbum:ab\noffset:a1",
+        "xx\n  Title:value\nartist:val\n\noffset:  @33f" };
     cstr_t vTitles[] = { "title", "title", "" };
     cstr_t vArtists[] = { "val2", "", "val" };
     cstr_t vAlbums[] = { "album", "ab", "" };

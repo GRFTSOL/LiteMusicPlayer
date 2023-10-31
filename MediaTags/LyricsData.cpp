@@ -61,8 +61,7 @@ void LyricsProperties::clear() {
 
 void LyricsProperties::setOffsetTime(int nOffsetTime) {
     _timeOffset = nOffsetTime;
-    assert(_strTimeOffset.empty() || isDigit(_strTimeOffset.c_str()[0]) || _strTimeOffset.c_str()[0] == '-');
-    _strTimeOffset = stringPrintf("%d", nOffsetTime).c_str();
+    _strTimeOffset = std::to_string(nOffsetTime);
 }
 
 void LyricsProperties::setMediaLength(int nMediaLength) {
