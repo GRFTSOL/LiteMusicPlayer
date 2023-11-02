@@ -386,11 +386,6 @@
           40115
         ], 
         [
-          "&Horizontal Scrolling style", 
-          "IDC_LDS_HORZ_SCROLL", 
-          40114
-        ], 
-        [
           "S&tatic Text Style", 
           "IDC_LDS_STATIC_TXT", 
           40112
@@ -757,6 +752,11 @@
           "separator"
         ], 
         [
+          "Lyrics &Editor...", 
+          "IDC_LYR_EDITOR", 
+          40172
+        ], 
+        [
           "&Edit with External Lyrics Editor...", 
           "IDC_EXTERNAL_LYR_EDIT", 
           40022
@@ -801,6 +801,29 @@
       "Fade out to Back&ground", 
       "IDC_LDO_FADEOUT_BG", 
       40121
+    ], 
+    [
+      "separator"
+    ], 
+    [
+      "&Vertical Scrolling Style", 
+      "IDC_LDS_MULTI_LINE", 
+      40111
+    ], 
+    [
+      "&Double Line Style", 
+      "IDC_LDS_TWO_LINE", 
+      40113
+    ], 
+    [
+      "Single &Line Style", 
+      "IDC_LDS_SINGLE_LINE", 
+      40115
+    ], 
+    [
+      "Movie S&ubtitle Style", 
+      "IDC_LDS_VOBSUB", 
+      40116
     ], 
     [
       "separator"

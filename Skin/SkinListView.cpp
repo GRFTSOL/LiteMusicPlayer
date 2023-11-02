@@ -22,13 +22,13 @@ CSkinListView::CSkinListView() {
 
     m_msgNeed = UO_MSG_WANT_RBUTTON | UO_MSG_WANT_LBUTTON | UO_MSG_WANT_MOUSEMOVE | UO_MSG_WANT_KEY | UO_MSG_WANT_MOUSEWHEEL;
 
-    // setBkColor(CColor(GetSysColor(COLOR_WINDOW)));
-    setBkColor(CColor(RGB(192, 192, 192)));
-    setSelRowBkColor(CColor(RGB(128, 128, 128)));
+    m_vColors[CN_BG] = CColor(RGB(192, 192, 192));
+    m_vColors[CN_SEL_BG] = CColor(RGB(128, 128, 128));
     m_vColors[CN_SEL_BG].set(RGB(128, 128, 128));
     m_vColors[CN_NOW_PLAYING_BG].set(RGB(0, 128, 0));
     m_vColors[CN_SEL_TEXT].set(RGB(255, 255, 255));
     m_vColors[CN_NOW_PLAYING_TEXT].set(RGB(255, 255, 255));
+    m_vColorsOrg = m_vColors;
 
     m_nLineHeightOrg = -1;
     m_nLineHeight = 16;
@@ -132,16 +132,16 @@ bool CSkinListView::setProperty(cstr_t szProperty, cstr_t szValue) {
         strSplit(szValue, ',', vColor);
         trimStr(vColor);
         if (vColor.size() > 0) {
-            getColorValue(getColor(CN_BG), vColor[0].c_str());
+            setColor(CN_BG, vColor[0].c_str());
+            m_clrBg = getColor(CN_BG);
+            m_bgType = BG_COLOR;
         }
         if (vColor.size() > 1) {
-            getColorValue(getColor(CN_ALTER_BG), vColor[1].c_str());
+            setColor(CN_ALTER_BG, vColor[1].c_str());
         } else {
-            getColor(CN_ALTER_BG) = getColor(CN_BG);
+            setColor(CN_ALTER_BG, getColor(CN_BG));
         }
 
-        m_clrBg = getColor(CN_BG);
-        m_bgType = BG_COLOR;
         return true;
     }
 
@@ -150,20 +150,19 @@ bool CSkinListView::setProperty(cstr_t szProperty, cstr_t szValue) {
     }
 
     if (strcasecmp(szProperty, "SelBgColor") == 0) {
-        getColorValue(getColor(CN_SEL_BG), szValue);
+        setColor(CN_SEL_BG, szValue);
     } else if (strcasecmp(szProperty, "SelTextColor") == 0) {
-        getColorValue(getColor(CN_SEL_TEXT), szValue);
+        setColor(CN_SEL_TEXT, szValue);
     } else if (strcasecmp(szProperty, "NowPlayingTextColor") == 0) {
-        getColorValue(getColor(CN_NOW_PLAYING_TEXT), szValue);
+        setColor(CN_NOW_PLAYING_TEXT, szValue);
     } else if (strcasecmp(szProperty, "NowPlayingBgColor") == 0) {
-        getColorValue(getColor(CN_NOW_PLAYING_BG), szValue);
+        setColor(CN_NOW_PLAYING_BG, szValue);
     } else if (isPropertyName(szProperty, SZ_CUSTOMIZED_CLR)) {
         VecStrings arr;
         strSplit(szValue, ',', arr);
         int i = 0;
         for (auto &str : arr) {
-            auto clr = getColorValue(str.c_str());
-            setColor(CN_CUSTOMIZED_START + i++, clr);
+            setColor(CN_CUSTOMIZED_START + i++, str.c_str());
         }
     } else if (m_font.setProperty(szProperty, szValue)) {
         return true;
@@ -189,9 +188,7 @@ bool CSkinListView::setProperty(cstr_t szProperty, cstr_t szValue) {
     } else if (isPropertyName(szProperty, "XMargin")) {
         m_nXMargin = atoi(szValue);
     } else if (isPropertyName(szProperty, "LineColor")) {
-        CColor clrPen(RGB(128, 128, 128));
-        getColorValue(clrPen, szValue);
-        m_penLine.createSolidPen(1, clrPen);
+        m_penLine.createSolidPen(1, parseColorString(szValue));
     } else if (isPropertyName(szProperty, "ImageSortedHeader")) {
         m_imageSortedHeader.loadFromSRM(m_pSkin, szValue);
     } else if (isPropertyName(szProperty, "ImageHeader")) {
@@ -282,6 +279,7 @@ void CSkinListView::onSize() {
 void CSkinListView::onAdjustHue(float hue, float saturation, float luminance) {
     CSkinScrollFrameCtrlBase::onAdjustHue(hue, saturation, luminance);
 
+    m_vColors = m_vColorsOrg;
     for (size_t i = 0; i < m_vColors.size(); i++) {
         m_pSkin->getSkinFactory()->getAdjustedHueResult(m_vColors[i]);
     }
@@ -312,16 +310,6 @@ void CSkinListView::onHScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar
     invalidate();
 }
 
-
-void CSkinListView::setBkColor(const CColor &clrBk) {
-    getColor(CN_BG) = clrBk;
-}
-
-
-void CSkinListView::setSelRowBkColor(const CColor &clrBk) {
-    getColor(CN_SEL_BG) = clrBk;
-}
-
 void CSkinListView::setColor(int nColorName, const CColor &clr) {
     assert(m_vColors.size() >= CN_CUSTOMIZED_START);
     if (nColorName >= (int)m_vColors.size()) {
@@ -329,15 +317,16 @@ void CSkinListView::setColor(int nColorName, const CColor &clr) {
             return;
         }
         m_vColors.resize(nColorName + 1);
+        m_vColorsOrg.resize(nColorName + 1);
     } else if (nColorName == CN_TEXT) {
         m_font.setProperty("TextColor", colorToStr(clr).c_str());
     }
 
-    m_vColors[nColorName] = clr;
+    m_vColorsOrg[nColorName] = m_vColors[nColorName] = clr;
 }
 
 
-CColor &CSkinListView::getColor(int nColorName) {
+const CColor &CSkinListView::getColor(int nColorName) {
     assert(m_vColors.size() >= CN_CUSTOMIZED_START);
     if (nColorName < 0 || nColorName >= (int)m_vColors.size()) {
         assert(0 && "Invalid color name ID");
@@ -763,7 +752,7 @@ bool CSkinListView::isClickedOn(int row, int col, CColHeader *pHeader, int x, in
     return false;
 }
 
-void CSkinListView::drawCell(int row, int col, CRect &rcCell, CRawGraph *canvas, CColor &clrText) {
+void CSkinListView::drawCell(int row, int col, CRect &rcCell, CRawGraph *canvas, const CColor &clrText) {
     auto header = m_vHeading[col];
     int colType = header->colType;
     if (colType == CColHeader::TYPE_TEXT) {

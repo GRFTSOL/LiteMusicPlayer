@@ -142,8 +142,8 @@ public:
 protected:
     virtual Item *newItem(int nCol);
 
-    virtual void drawCell(int row, int col, CRect &rcCell, CRawGraph *canvas, CColor &clrText) override;
-    void drawCellTextEx(ItemStringEx *item, CRect &rcItem, CRawGraph *canvas, CColor &clrText);
+    virtual void drawCell(int row, int col, CRect &rcCell, CRawGraph *canvas, const CColor &clrText) override;
+    void drawCellTextEx(ItemStringEx *item, CRect &rcItem, CRawGraph *canvas, const CColor &clrText);
 
 protected:
     typedef vector<Row *>                V_ROWS;

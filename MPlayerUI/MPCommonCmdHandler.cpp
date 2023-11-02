@@ -12,11 +12,7 @@
 #include "DlgAbout.h"
 #include "MPSkinMenu.h"
 #include "DownloadMgr.h"
-#ifdef _WIN32
-#include "win32/LyricsDownloader.h"
 #include "DlgAdjustHue.h"
-#endif
-
 #include "MPHelper.h"
 #include "MPFloatingLyrWnd.h"
 
@@ -156,12 +152,12 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             }
         }
         break;
+#endif // _WIN32_DESKTOP
     case CMD_ADJUST_HUE:
         {
             showAdjustHueDialog(m_pSkinWnd);
         }
         break;
-#endif // _WIN32_DESKTOP
 
     case CMD_FLOATING_LYRICS:
         {
@@ -178,7 +174,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
         showPreferenceDialog(m_pSkinWnd, m_etDispSettings != ET_LYRICS_FLOATING_SETTINGS);
         break;
     case CMD_DISPLAY_OPT:
-        showPreferenceDialog(m_pSkinWnd, m_etDispSettings != ET_LYRICS_FLOATING_SETTINGS, PAGE_LYR_DISPLAY);
+        showPreferenceDialog(m_pSkinWnd, m_etDispSettings == ET_LYRICS_FLOATING_SETTINGS, PAGE_LYR_DISPLAY);
         break;
 
     case CMD_WEBHOME:

@@ -3,7 +3,7 @@
 #include "MPSkinInfoTextCtrl.h"
 
 
-//////////////////////////////////////////////////////////////////////
+#define SZ_LYR_DISPLAY_STYLE "LyrDisplayStyle"
 
 UIOBJECT_CLASS_NAME_IMP(CLyricShowAgentObj, "LyricsShow")
 
@@ -11,7 +11,6 @@ CLyricShowAgentObj::CLyricShowAgentObj() {
     m_pLyricsShow = nullptr;
     m_bEnableStaticTextStyle = true;
 
-    m_strLyrDisplayStylePropName = "LyrDisplayStyle";
     m_bEnableToolbar = true;
     m_pToolbar = nullptr;
     m_bFloatingLyr = false;
@@ -21,50 +20,37 @@ CLyricShowAgentObj::CLyricShowAgentObj() {
 CLyricShowAgentObj::~CLyricShowAgentObj() {
 }
 
-void CLyricShowAgentObj::getLyrDispStylePropName(CSkinWnd *pSkinWnd, bool &bFloatingLyr, string &strLyrStylePropName) {
-    bFloatingLyr = false;
-
-    if (!pSkinWnd->getUnprocessedProperty("LyrDisplayStylePropName", strLyrStylePropName)) {
-        strLyrStylePropName = "LyrDisplayStyle";
-    }
-
-    if (strcasecmp("FloatingLyrDispStyle", strLyrStylePropName.c_str()) == 0) {
-        bFloatingLyr = true;
-        strLyrStylePropName = "LyrDisplayStyle";
-    }
+bool CLyricShowAgentObj::isFloatingLyrMode(CSkinWnd *pSkinWnd) {
+    string value;
+    return pSkinWnd->getUnprocessedProperty("IsFloatingLyrics", value) &&
+        isTRUE(value.c_str());
 }
 
 void CLyricShowAgentObj::getLyrDispStyleSettings(CSkinWnd *pSkinWnd, string &strLyrStyle) {
-    string strLyrStylePropName;
-    bool bFloatingLyr;
-
-    getLyrDispStylePropName(pSkinWnd, bFloatingLyr, strLyrStylePropName);
+    bool isFloatingLyr = isFloatingLyrMode(pSkinWnd);
 
     strLyrStyle = g_profile.getString(
-        CMPlayerApp::getInstance()->getCurLyrDisplaySettingName(bFloatingLyr),
-        strLyrStylePropName.c_str(),
+        CMPlayerApp::getInstance()->getCurLyrDisplaySettingName(isFloatingLyr),
+        SZ_LYR_DISPLAY_STYLE,
         strLyrStyle.c_str());
 }
 
 void CLyricShowAgentObj::setLyrDispStyleSettings(CSkinWnd *pSkinWnd, cstr_t szLyrStyle) {
-    string strLyrStylePropName;
-    bool bFloatingLyr;
-
-    getLyrDispStylePropName(pSkinWnd, bFloatingLyr, strLyrStylePropName);
+    bool isFloatingLyr = isFloatingLyrMode(pSkinWnd);
 
     CMPlayerSettings::setSettings(ET_UI_SETTINGS_CHANGED,
-        CMPlayerApp::getInstance()->getCurLyrDisplaySettingName(bFloatingLyr),
-        strLyrStylePropName.c_str(), szLyrStyle);
+        CMPlayerApp::getInstance()->getCurLyrDisplaySettingName(isFloatingLyr),
+        SZ_LYR_DISPLAY_STYLE, szLyrStyle);
 }
 
 void CLyricShowAgentObj::onCreate() {
     CSkinLinearContainer::onCreate();
 
-    getLyrDispStylePropName(m_pSkin, m_bFloatingLyr, m_strLyrDisplayStylePropName);
+    m_bFloatingLyr = isFloatingLyrMode(m_pSkin);
 
     m_strLyrDisplayStyleDefault = g_profile.getString(
         CMPlayerApp::getInstance()->getCurLyrDisplaySettingName(m_bFloatingLyr),
-        m_strLyrDisplayStylePropName.c_str(),
+        SZ_LYR_DISPLAY_STYLE,
         m_strLyrDisplayStyleDefault.c_str());
 
     registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_UI_SETTINGS_CHANGED, ET_LYRICS_CHANGED);
@@ -81,7 +67,7 @@ void CLyricShowAgentObj::onCreate() {
 
 void CLyricShowAgentObj::onEvent(const IEvent *pEvent) {
     if (pEvent->eventType == ET_UI_SETTINGS_CHANGED) {
-        if (strcasecmp(pEvent->name.c_str(), m_strLyrDisplayStylePropName.c_str()) == 0) {
+        if (strcasecmp(pEvent->name.c_str(), SZ_LYR_DISPLAY_STYLE) == 0) {
             getLyrDispStyleSettings(m_pSkin, m_strLyrDisplayStyleDefault);
             changeLyricsDisplayStyle(m_strLyrDisplayStyleDefault.c_str());
             m_pSkin->invalidateRect();
@@ -126,8 +112,7 @@ bool CLyricShowAgentObj::setProperty(cstr_t szProperty, cstr_t szValue) {
         return true;
     }
 
-    if (isPropertyName(szProperty, "LyrDisplayStyle")
-        || isPropertyName(szProperty, m_strLyrDisplayStylePropName.c_str())) {
+    if (isPropertyName(szProperty, "LyrDisplayStyle")) {
         m_strLyrDisplayStyleDefault = szValue;
     } else if (isPropertyName(szProperty, "EnableStaticTextStyle")) {
         m_bEnableStaticTextStyle = isTRUE(szValue);
@@ -150,8 +135,7 @@ void CLyricShowAgentObj::createInfoTextCtrl() {
     if (m_pInfoTextCtrl) {
         m_pInfoTextCtrl->setVisible(true, false);
     } else {
-        if (!isPropertyName(m_strLyrDisplayStylePropName.c_str(), "LyrDisplayStyle")
-            || m_bFloatingLyr || m_pSkin->m_bClickThrough) {
+        if (m_bFloatingLyr || m_pSkin->m_bClickThrough) {
             return;
         }
 

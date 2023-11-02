@@ -392,7 +392,7 @@ bool CSkinListCtrl::offsetAllSelectedRow(bool bDown) {
     return true;
 }
 
-void CSkinListCtrl::drawCell(int row, int col, CRect &rcCell, CRawGraph *canvas, CColor &clrText) {
+void CSkinListCtrl::drawCell(int row, int col, CRect &rcCell, CRawGraph *canvas, const CColor &clrText) {
     int colType = m_vHeading[col]->colType;
     if (colType == CColHeader::TYPE_TEXT_EX) {
         return drawCellTextEx((ItemStringEx*)m_vRows[row]->vItems[col], rcCell, canvas, clrText);
@@ -401,7 +401,7 @@ void CSkinListCtrl::drawCell(int row, int col, CRect &rcCell, CRawGraph *canvas,
     }
 }
 
-void CSkinListCtrl::drawCellTextEx(ItemStringEx *item, CRect &rcItem, CRawGraph *canvas, CColor &clrText) {
+void CSkinListCtrl::drawCellTextEx(ItemStringEx *item, CRect &rcItem, CRawGraph *canvas, const CColor &clrText) {
     string::size_type nPos = 0, nLen, i = 0;
     CRect rc = rcItem;
 

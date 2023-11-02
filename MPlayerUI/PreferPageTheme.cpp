@@ -141,7 +141,7 @@ public:
     void onInitialUpdate() override {
         CPagePfBase::onInitialUpdate();
 
-        if (getExPoolBool("FloatingLyrMode", false)) {
+        if (getExPoolBool(SZ_EX_POOL_PF_FLOATING_LYR, false)) {
             m_eventType = ET_LYRICS_FLOATING_SETTINGS;
         } else {
             m_eventType = ET_LYRICS_DISPLAY_SETTINGS;

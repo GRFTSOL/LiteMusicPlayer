@@ -116,11 +116,9 @@ public:
     void enumProperties(CUIObjProperties &listProperties);
 #endif // _SKIN_EDITOR_
 
-    void setBkColor(const CColor &clrBk);
-    void setSelRowBkColor(const CColor &clrBk);
-
     void setColor(int nColorName, const CColor &clr);
-    CColor &getColor(int nColorName);
+    void setColor(int nColorName, cstr_t clr) { setColor(nColorName, parseColorString(clr)); }
+    const CColor &getColor(int nColorName);
 
     virtual void addColumn(cstr_t szCol, int nWidth, int colType = CColHeader::TYPE_TEXT, bool bClickable = false, int drawTextAligns = DT_LEFT);
 
@@ -239,7 +237,7 @@ protected:
 
     virtual bool isClickedOn(int row, int col, CColHeader *pHeader, int x, int y);
 
-    virtual void drawCell(int row, int col, CRect &rcCell, CRawGraph *canvas, CColor &clrText);
+    virtual void drawCell(int row, int col, CRect &rcCell, CRawGraph *canvas, const CColor &clrText);
     virtual void drawCellImage(CRawImage &image, CRect &rcCell, CRawGraph *canvas, uint32_t drawFlags);
 
 public:
@@ -297,6 +295,7 @@ protected:
     string                      m_strImageList;
 
     vector<CColor>              m_vColors;
+    vector<CColor>              m_vColorsOrg;
     CSkinFontProperty           m_font;
     int                         m_nBegSelRow, m_nEndSelRow;
     bool                        m_bClickBtDown;

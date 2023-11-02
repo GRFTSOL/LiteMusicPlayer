@@ -1690,16 +1690,10 @@ void CSkinFactory::applyDefaultThemeOfSkin() {
         return;
     }
 
-    for (SXNode::iterator itSection = xml.m_pRoot->listChildren.begin();
-    itSection != xml.m_pRoot->listChildren.end(); ++itSection)
-        {
-        SXNode *pNodeSection = *itSection;
-        for (SXNode::iterator itValue = pNodeSection->listChildren.begin();
-        itValue != pNodeSection->listChildren.end(); ++itValue)
-            {
-            SXNode *pNodeValue = *itValue;
-            g_profile.writeString(pNodeSection->name.c_str(),
-                pNodeValue->name.c_str(), pNodeValue->strContent.c_str());
+    for (SXNode *nodeSection : xml.m_pRoot->listChildren) {
+        for (SXNode *nodeValue : nodeSection->listChildren) {
+            g_profile.writeString(nodeSection->name.c_str(),
+                                  nodeValue->name.c_str(), nodeValue->strContent.c_str());
         }
     }
 }

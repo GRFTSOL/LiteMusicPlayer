@@ -2,8 +2,8 @@
 <Theme>
   <LyrDispaly>
     <BgColor>#FFFFFF</BgColor>
-    <FgColor>#0080FF</FgColor>
-    <FgLowColor>#003060</FgLowColor>
+    <FgColor>#00D64C</FgColor>
+    <FgLowColor>#FFFFFF</FgLowColor>
     <OutlineLyrText>1</OutlineLyrText>
     <HilightOBM>3</HilightOBM>
     <HilightPattern>pattern05.jpg</HilightPattern>

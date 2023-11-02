@@ -270,6 +270,8 @@ void CSkinWnd::closeSkin() {
         saveWndPos();
     }
 
+    m_scriptFile.clear();
+
     killTimer(TIMER_ID_ANIMATION);
     m_listAnimations.clear();
 
@@ -346,7 +348,7 @@ void CSkinWnd::closeSkin() {
     m_nHeight = 0;
     m_bRememberSizePos = true;
 
-    m_fontProperty.create(FontInfoEx("Tohama", "", 14, FW_NORMAL, false, false));
+    m_fontProperty.setProperty("Font", "Tohama,14,normal,0,0,");
 
     m_timeLatestMouseMsg = 0;
     m_bMouseActive = false;
@@ -2183,7 +2185,7 @@ int CSkinWnd::fromXML(SXNode *pXmlNode) {
 
     m_rootConainter.m_rcObj = m_rcBoundBox;
 
-    m_fontProperty.create(FontInfoEx("Tohama", "", 14, FW_NORMAL, false, false));
+    m_fontProperty.setProperty("Font", "Tohama,14,normal,0,0,");
 
     SXNode *pNodeExtends = nullptr;
     cstr_t szExtends = pXmlNode->getProperty(SZ_PN_EXTENDS);
@@ -2196,6 +2198,8 @@ int CSkinWnd::fromXML(SXNode *pXmlNode) {
     }
 
     setProperies(pXmlNode->listProperties);
+
+    m_fontProperty.create();
 
     // load window size of skin
     onLoadWndSizePos();

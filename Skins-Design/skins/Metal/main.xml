@@ -15,7 +15,7 @@
 
 			<MenuBar Rect="124,8,w/2-25,20" Name="Menu"
 					 FontName="Verdana"
-			   FontHeight="14" FontBold="false" TextColor="#000000" TextOutlinedColor="#FFFFFF"
+			   FontHeight="13" FontBold="false" TextColor="#000000" TextOutlinedColor="#FFFFFF"
 			   TextOutlined="TRUE" TextColorHover="#202020" TextOutlinedColorHover="#FFFFFF"
 			   TextColorPressed="#FFFFFF" TextOutlinedColorPressed="#000000"
 			   BgColorPressed="#D0D0D0" BgPressedAlpha="127"/>

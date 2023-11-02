@@ -312,7 +312,6 @@ menufile_v2
     &Vertical Scrolling Style@IDC_LDS_MULTI_LINE
     &Double Line Style@IDC_LDS_TWO_LINE
     Single &Line Style@IDC_LDS_SINGLE_LINE
-    &Horizontal Scrolling style@IDC_LDS_HORZ_SCROLL
     S&tatic Text Style@IDC_LDS_STATIC_TXT
     Movie S&ubtitle Style@IDC_LDS_VOBSUB
     separator

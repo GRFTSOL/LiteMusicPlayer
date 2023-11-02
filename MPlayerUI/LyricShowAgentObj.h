@@ -27,7 +27,7 @@ public:
     bool setProperty(cstr_t szProperty, cstr_t szValue) override;
 
 public:
-    static void getLyrDispStylePropName(CSkinWnd *pSkinWnd, bool &bFloatingLyr, string &strLyrStylePropName);
+    static bool isFloatingLyrMode(CSkinWnd *pSkinWnd);
     static void getLyrDispStyleSettings(CSkinWnd *pSkinWnd, string &strLyrStyle);
     static void setLyrDispStyleSettings(CSkinWnd *pSkinWnd, cstr_t szLyrStyle);
 
@@ -41,10 +41,9 @@ protected:
 protected:
     CUIObject                   *m_pToolbar;
     bool                        m_bEnableToolbar;
-    class CMPSkinInfoTextCtrl    *m_pInfoTextCtrl;
+    class CMPSkinInfoTextCtrl   *m_pInfoTextCtrl;
 
     bool                        m_bFloatingLyr;
-    string                      m_strLyrDisplayStylePropName;
     string                      m_strLyrDisplayStyleDefault;
     string                      m_strLyrDisplayStyleCurrent;
     CLyricShowObj               *m_pLyricsShow;

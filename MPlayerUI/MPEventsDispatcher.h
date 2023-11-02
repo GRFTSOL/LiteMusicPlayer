@@ -63,7 +63,7 @@ struct CEventPlayerSettingChanged : public IEvent {
 
 struct CEventPlaylistChanged : public IEvent {
     IMPEvent::PlaylistChangeAction action;
-    int                                 nIndex, nIndexOld;
+    int                         nIndex, nIndexOld;
 };
 
 struct CEventPlayerEQChanged : public IEvent {
@@ -83,7 +83,7 @@ public:
     };
 
     DOWNLOAD_TYPE               downloadType;
-    class CDownloadTask    *pTask;
+    class CDownloadTask         *pTask;
 
 };
 

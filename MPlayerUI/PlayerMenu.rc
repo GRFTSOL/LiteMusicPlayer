@@ -374,7 +374,6 @@ BEGIN
             MENUITEM "&Vertical Scrolling Style",   IDC_LDS_MULTI_LINE
             MENUITEM "&Double Line Style",          IDC_LDS_TWO_LINE
             MENUITEM "Single &Line Style",          IDC_LDS_SINGLE_LINE
-            MENUITEM "&Horizontal Scrolling style", IDC_LDS_HORZ_SCROLL
             MENUITEM "S&tatic Text Style",          IDC_LDS_STATIC_TXT
             MENUITEM "Movie S&ubtitle Style",       IDC_LDS_VOBSUB
             MENUITEM SEPARATOR

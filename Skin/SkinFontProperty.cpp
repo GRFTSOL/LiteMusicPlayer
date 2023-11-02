@@ -41,6 +41,19 @@ void CSkinFontProperty::create(const FontInfoEx &font) {
     }
 }
 
+void CSkinFontProperty::create() {
+    if (m_pRawFont) {
+        delete m_pRawFont;
+        m_pRawFont = nullptr;
+    }
+
+    m_pRawFont = new CRawBmpFont;
+    if (!m_pRawFont->create(m_font, 2)) {
+        assert(0);
+        delete m_pRawFont;
+        m_pRawFont = nullptr;
+    }
+}
 
 void CSkinFontProperty::clear() {
     if (m_pRawFont) {

@@ -2,7 +2,7 @@
 <skinwnd Extends="WindowFrame" Name="Preferences.xml" Caption="Preferences"
          MinWidth="600" MinHeight="540" RememberSizePos="true">
   <PreferPage.Root Name="Preference Root" Rect="0,0,w,h">
-    <Toolbar ID="CID_TB_PREFERENCE" Left="20" Top="10" Width="w-40" Height="55" 
+    <Toolbar ID="CID_TB_PREFERENCE" Rect="20,10,w-40,55" 
              DrawBtText="true" 
              BgImageChecked="pf_toolbar_bg_checked.png"
              Image="preferences_btns.png" ImageHeight="34" units_x="34"

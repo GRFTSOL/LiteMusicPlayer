@@ -32,6 +32,7 @@ public:
     virtual ~CSkinFontProperty();
 
     void create(const FontInfoEx &font);
+    void create();
 
     void clear();
 

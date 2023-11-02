@@ -160,11 +160,9 @@ bool CMPlayerAppBase::init() {
         getMPSkinFactory()->setClickThrough(true);
     }
 
-#ifdef _MINILYRICS_WIN32
     if (g_profile.getBool("FloatingLyr", false)) {
         g_wndFloatingLyr.create();
     }
-#endif
 
     g_lyrOutPlguinMgr.init();
 
@@ -468,14 +466,6 @@ int CMPlayerAppBase::messageOut(cstr_t lpText, uint32_t uType, cstr_t lpCaption)
 
 int CMPlayerAppBase::changeSkinByUserCmd(cstr_t szSkin) {
     // set default page, when skin changes.
-#ifdef _MINILYRICS_WIN32
-    if (CMPlayerAppBase::getInstance()->isEmbeddedMode()) {
-        g_profile.writeInt("MPSkinMode", true);
-    }
-
-    CMPlayerAppBase::getInstance()->endEmbeddedSkin();
-#endif
-
     writeDefaultSkin(szSkin);
 
     return m_pSkinFactory->changeSkin(szSkin, "", "", true);

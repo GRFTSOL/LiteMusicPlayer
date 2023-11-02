@@ -442,13 +442,28 @@ void createLyrOverlayBlendingPattern(CLyricShowObj::TextOverlayBlending &tob, in
     }
 }
 
-bool profileGetLyricsFont(cstr_t szSectName, FontInfoEx &info) {
+bool profileGetLyricsFont(cstr_t sectName, FontInfoEx &info) {
     cstr_t defaultFont = "Verdana, 13, bold, 0, 0, Tahoma";
-    return info.parse(g_profile.getString(szSectName, "Font", defaultFont));
+    bool ret = info.parse(g_profile.getString(sectName, "Font", defaultFont));
+
+    // Font height is associated with current skin name.
+    auto skinName = CMPlayerApp::getInstance()->getSkinFactory()->getSkinName();
+    string keyFontHeight = string(sectName) + "FontHeight";
+    auto height = g_profile.getInt(skinName, keyFontHeight.c_str(), 0);
+    if (height > 0) {
+        info.height = height;
+    }
+
+    return ret;
 }
 
-void profileWriteLyricsFont(EventType etColorTheme, cstr_t szSectName, const FontInfoEx &info) {
-    CMPlayerSettings::setSettings(etColorTheme, szSectName, "Font", info.toString().c_str());
+void profileWriteLyricsFont(EventType etColorTheme, cstr_t sectName, const FontInfoEx &info) {
+    // Font height is associated with current skin name.
+    auto skinName = CMPlayerApp::getInstance()->getSkinFactory()->getSkinName();
+    string keyFontHeight = string(sectName) + "FontHeight";
+    g_profile.writeInt(skinName, keyFontHeight.c_str(), info.height);
+
+    CMPlayerSettings::setSettings(etColorTheme, sectName, "Font", info.toString().c_str());
 }
 
 
@@ -533,10 +548,8 @@ void CLyricShowObj::onCreate() {
 
     {
         // Is floating lyrics?
-        bool bFloatingLyr = false;
-        string strLyrStylePropName;
-        CLyricShowAgentObj::getLyrDispStylePropName(m_pSkin, bFloatingLyr, strLyrStylePropName);
-        CMPlayerApp::getInstance()->getCurLyrDisplaySettingName(bFloatingLyr, m_strSectName, m_etDispSettings);
+        bool isFloatingLyr = CLyricShowAgentObj::isFloatingLyrMode(m_pSkin);
+        CMPlayerApp::getInstance()->getCurLyrDisplaySettingName(isFloatingLyr, m_strSectName, m_etDispSettings);
     }
 
     loadAllSettings();
