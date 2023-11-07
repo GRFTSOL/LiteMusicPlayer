@@ -926,6 +926,36 @@
       40124
     ]
   ], 
+  "TrayIconMenu": [
+    [
+      "&Play/Pause", 
+      "IDC_PLAYPAUSE", 
+      40057
+    ], 
+    [
+      "Pr&evious", 
+      "IDC_PREV", 
+      40056
+    ], 
+    [
+      "&Next", 
+      "IDC_NEXT", 
+      40058
+    ], 
+    [
+      "separator"
+    ], 
+    [
+      "&Search Lyrics...", 
+      "IDC_OPEN_LYRICS", 
+      40110
+    ], 
+    [
+      "Show &Main Window", 
+      "IDC_SHOW_MAIN_WND", 
+      40110
+    ]
+  ], 
   "MainWndMenu": [
     [
       "&File", 

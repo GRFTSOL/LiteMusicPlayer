@@ -16,9 +16,6 @@ typedef int LPARAM;
 
 class Cursor;
 
-void showInFinder(cstr_t filename);
-void showInFinder(const VecStrings &files);
-
 class Window : public IWindow {
 public:
     Window();
@@ -103,6 +100,7 @@ public:
     bool isToolWindow();
     void setToolWindow(bool bToolWindow);
 
+    bool isForeground();
     bool setForeground();
 
     void setWindowPos(int x, int y);

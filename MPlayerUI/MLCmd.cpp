@@ -126,6 +126,7 @@ UIObjectIDDefinition g_uidDefinition[] = {
     { "ID_ALBUMART", ID_ALBUMART, 0, nullptr },
 
     { "CMD_TOGGLE_MP", CMD_TOGGLE_MP, 0, _TLM("Bring to front/Hide $Product$") },
+    { "CMD_SHOW_MAIN_WND", CMD_SHOW_MAIN_WND, 0, _TLM("Show Main Window") },
     { "CMD_PREFERENCES", CMD_PREFERENCES, IDC_PREFERENCE, _TLM("Preferences") },
     { "CMD_RELOAD_LYR", CMD_RELOAD_LYR, 0, _TLM("Reload lyrics") },
 

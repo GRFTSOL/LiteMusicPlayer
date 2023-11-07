@@ -5,15 +5,16 @@
 
 #ifdef _WIN32
 #include "win32/HotkeyCtrlEx.h"
+#include "win32/MLTrayIcon.h"
 #endif
 
 #ifdef _LINUX_GTK2
 #include "gtk2/HotkeyCtrlEx.h"
-
-
+#include "gtk2/MLTrayIcon.h"
 #endif
 
 #ifdef _MAC_OS
+#include "mac/MLTrayIcon.h"
 
 void formatHotkeyText(string &strText, uint32_t nVirtKey, uint32_t fsModifiers) {
     strText = stringPrintf("%d", nVirtKey).c_str();
@@ -83,7 +84,7 @@ public:
     }
 
     virtual string getValue() {
-        return stringPrintf("%d", getIntValue()).c_str();
+        return std::to_string(getIntValue());
     }
 
     virtual int getIntValue() {
@@ -382,6 +383,37 @@ public:
 
 };
 
+#ifdef _MAC_OS
+cstr_t SYSTEM_TRAY_TITLE = _TLM("System menu bar control");
+#else
+cstr_t SYSTEM_TRAY_TITLE = _TLM("System tray icon player control");
+#endif
+
+class CPfItemTrayIconPlayerCtrl : public CPfItemBool {
+public:
+    CPfItemTrayIconPlayerCtrl(cstr_t szName, int nPlayerCtrlIndex, bool defVal)
+    : CPfItemBool((string(_TL(SYSTEM_TRAY_TITLE)) + ": " + _TL(szName)).c_str(),
+        ET_NULL, SZ_SECT_UI, "", defVal) {
+        strValueName = stringPrintf("TrayIcon%d", nPlayerCtrlIndex);
+
+        this->nPlayerCtrlIndex = nPlayerCtrlIndex;
+    }
+
+    int getIntValue() override {
+        return g_sysTrayIconCmd[nPlayerCtrlIndex].isEnabled;
+    }
+
+    void setIntValue(int value) override {
+        g_profile.writeInt(strValueName.c_str(), value);
+
+        g_sysTrayIconCmd[nPlayerCtrlIndex].isEnabled = tobool(value);
+
+        CMPlayerAppBase::getMainWnd()->updatePlayerSysTrayIcon();
+    }
+
+    int                         nPlayerCtrlIndex;
+
+};
 
 
 #ifdef _WIN32_DESKTOP
@@ -416,32 +448,6 @@ public:
         CPfItemInt::setIntValue(value);
         CMPlayerAppBase::getMPSkinFactory()->allUpdateTransparent();
     }
-
-};
-
-class CPfItemTrayIconPlayerCtrl : public CPfItemBool {
-public:
-    CPfItemTrayIconPlayerCtrl(cstr_t szName, int nPlayerCtrlIndex)
-    : CPfItemBool((string(_TLT("System tray icon player control")) + ": " + _TL(szName)).c_str(),
-        ET_NULL, SZ_SECT_UI,
-        "", false) {
-        char szKey[128];
-
-        wsprintf(szKey, "TrayIcon%d", nPlayerCtrlIndex);
-        strValueName = szKey;
-
-        this->nPlayerCtrlIndex = nPlayerCtrlIndex;
-    }
-
-    virtual void setIntValue(int value) {
-        g_profile.writeInt(strValueName.c_str(), value);
-
-        g_SysTrayIconCmd[nPlayerCtrlIndex].bEnable = tobool(value);
-
-        CMPlayerAppBase::getMainWnd()->updatePlayerSysTrayIcon();
-    }
-
-    int                         nPlayerCtrlIndex;
 
 };
 
@@ -787,13 +793,14 @@ void CPagePfAdvanced::onInitialUpdate() {
     m_vPreferItems.push_back(new CPfItemLyrExternalEditor(m_pSkin));
     m_vPreferItems.push_back(new CPfItemLyrDefaultEncoding());
 
-#ifdef _WIN32
     //
     // Tray Icon controls
     //
     for (int i = 0; i < MAX_PLAYER_TRAY_ICON_CMD; i++) {
-        m_vPreferItems.push_back(new CPfItemTrayIconPlayerCtrl(g_SysTrayIconCmd[i].szCmd, i));
+        m_vPreferItems.push_back(new CPfItemTrayIconPlayerCtrl(g_sysTrayIconCmd[i].cmdText, i, g_sysTrayIconCmd[i].isEnabled));
     }
+
+#ifdef _WIN32
     m_vPreferItems.push_back(new CPfItemSystemTrayIcon());
 
     m_vPreferItems.push_back(new CPfItemBoolEnableGlobalHotkey());

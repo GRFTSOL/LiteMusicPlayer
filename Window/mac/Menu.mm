@@ -362,6 +362,7 @@ CMenu & CMenu::operator = (const CMenu &menu) {
     return *this;
 }
 
-void *CMenu::getHandle() {
+void *CMenu::getHandle(Window *window) {
+    [m_info->menuImp setBaseWnd:window];
     return m_info->menu;
 }

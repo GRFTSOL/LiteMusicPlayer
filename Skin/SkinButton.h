@@ -36,17 +36,6 @@ protected:
 
 };
 
-class CSkinActiveButton : public CSkinButton {
-    UIOBJECT_CLASS_NAME_DECLARE(CSkinButton)
-
-public:
-    void draw(CRawGraph *canvas) override;
-
-    CSkinActiveButton();
-    virtual ~CSkinActiveButton();
-
-};
-
 class CSkinImageButton : public CSkinButton {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinButton)
 public:
@@ -67,11 +56,12 @@ public:
     void buttonUpAction() override;
 
 protected:
-    int                         m_nContentMarginX, m_nContentMarginY;
+    int                         m_nContentMarginX = 5, m_nContentMarginY = 5;
     CSFImage                    m_contentImage;
     CColor                      m_clrContent;
-    bool                        m_bContentImage;
-    bool                        m_bAutoSelColor;
+    bool                        m_bContentImage = true;
+    bool                        m_isStretchContent = true;
+    bool                        m_bAutoSelColor = false;
 
 };
 

@@ -542,6 +542,7 @@ public:
             getUIObjectRect(CID_MORE, rc);
             m_pSkin->clientToScreen(rc);
             menu->trackPopupMenu(rc.left, rc.top, m_pSkin);
+            delete menu;
         } else if (nId == CID_NEXT_PAGE) {
             if (m_nCurPage >= m_nPageCount - 1) {
                 return true;

@@ -373,6 +373,7 @@
 #define IDC_EDIT_LYR_TAG                40199
 #define IDC_INSTRUMENTAL_MUSIC          40200
 #define IDC_SHOW_IN_FINDER              40201
+#define IDC_SHOW_MAIN_WND               40202
 
 // next default values for new objects
 // 

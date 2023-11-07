@@ -52,6 +52,7 @@ public:
 
     const RawImageDataPtr &getHandle() const { return m_image; }
 
+    void blt(CRawGraph *canvas, const CRect &rcDst, uint32_t drawFlags = DT_CENTER | DT_VCENTER, BlendPixMode bpm = BPM_BLEND);
     void blt(CRawGraph *canvas, int xDest, int yDest, BlendPixMode bpm = BPM_BLEND)
         { blt(canvas, xDest, yDest, m_cx, m_cy, m_x, m_y, bpm); }
     bool blt(CRawGraph *canvas, int xDest, int yDest, int widthDest, int heightDest, int xSrc, int ySrc, BlendPixMode bpm = BPM_BLEND);

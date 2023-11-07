@@ -19,7 +19,7 @@ CMPSkinMainWnd::~CMPSkinMainWnd() {
 void CMPSkinMainWnd::onCreate() {
     CMPSkinMainWndBase::onCreate();
 
-    registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_CUR_MEDIA_INFO_CHANGED);
+    registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_CUR_MEDIA_INFO_CHANGED, ET_PLAYER_STATUS_CHANGED);
 
     m_mlTrayIcon.init(this);
 }
@@ -34,17 +34,16 @@ void CMPSkinMainWnd::onEvent(const IEvent *pEvent) {
     if (pEvent->eventType == ET_PLAYER_CUR_MEDIA_CHANGED
         || pEvent->eventType == ET_PLAYER_CUR_MEDIA_INFO_CHANGED) {
         // update main window caption
-        char szCaption[512];
+        string caption;
 
         if (g_player.isMediaOpened()) {
-            snprintf(szCaption, CountOf(szCaption), "%s - %s", g_player.getFullTitle(), SZ_APP_NAME);
+            caption = stringPrintf("%s - %s", g_player.getFullTitle(), SZ_APP_NAME);
         } else {
-            strcpy_safe(szCaption, CountOf(szCaption), getAppNameLong().c_str());
+            caption = getAppNameLong();
         }
 
-        setTitle(szCaption);
-
-        m_mlTrayIcon.updateTrayIconText(szCaption);
+        setTitle(caption.c_str());
+        m_mlTrayIcon.updateTrayIconText(caption.c_str());
     } else if (pEvent->eventType == ET_UI_SETTINGS_CHANGED) {
         if (isPropertyName(pEvent->name.c_str(), "ShowIconOn")) {
             m_mlTrayIcon.updateShowIconPos();
@@ -53,5 +52,9 @@ void CMPSkinMainWnd::onEvent(const IEvent *pEvent) {
         }
     } else {
         CMPSkinMainWndBase::onEvent(pEvent);
+    }
+
+    if (pEvent->eventType == ET_PLAYER_CUR_MEDIA_CHANGED || pEvent->eventType == ET_PLAYER_STATUS_CHANGED) {
+        m_mlTrayIcon.updatePlayerSysTrayIcon();
     }
 }

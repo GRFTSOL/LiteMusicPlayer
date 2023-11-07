@@ -311,6 +311,23 @@ bool CRawImage::load(cstr_t szFile) {
     return m_image != nullptr;
 }
 
+void CRawImage::blt(CRawGraph *canvas, const CRect &rcDst, uint32_t drawFlags, BlendPixMode bpm) {
+    int xDst = rcDst.left, yDst = rcDst.top;
+    if (drawFlags & DT_CENTER) {
+        xDst = rcDst.left + (rcDst.width() - width()) / 2;
+    } else if (drawFlags & DT_RIGHT) {
+        xDst = rcDst.right - width();
+    }
+
+    if (drawFlags & DT_VCENTER) {
+        yDst = rcDst.top + (rcDst.height() - height()) / 2;
+    } else if (drawFlags & DT_BOTTOM) {
+        yDst = rcDst.bottom - height();
+    }
+
+    blt(canvas, xDst, yDst, m_cx, m_cy, m_x, m_y, bpm);
+}
+
 bool CRawImage::blt(CRawGraph *canvas, int xDest, int yDest, int widthDest, int heightDest, int xSrc, int ySrc, BlendPixMode bpm) {
     CRect rcDst;
     canvas->getClipBoundBox(rcDst);

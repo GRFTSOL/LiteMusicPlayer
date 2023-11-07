@@ -10,13 +10,13 @@
 #define IDN_PLAYER_CTRL     2
 #define IDN_PLAYER_CTRL_MAX        (2 + 5)
 
-SYSTRAY_ICON_CMD    g_SysTrayIconCmd[] = {
+SYSTRAY_ICON_CMD    g_sysTrayIconCmd[] = {
     { CMD_PREVIOUS, "Previous Track", IDI_PREV, nullptr, false },
     { CMD_PLAYPAUSE, "play/pause", IDI_PLAY, nullptr, false },
     { CMD_NEXT,    "next Track", IDI_NEXT,    nullptr, false },
 };
 
-int MAX_PLAYER_TRAY_ICON_CMD = CountOf(g_SysTrayIconCmd);
+int MAX_PLAYER_TRAY_ICON_CMD = CountOf(g_sysTrayIconCmd);
 
 
 CMLTrayIcon::CMLTrayIcon() {
@@ -38,8 +38,8 @@ void CMLTrayIcon::init(Window *pWnd) {
         char szKey[128];
 
         wsprintf(szKey, "TrayIcon%d", i);
-        g_SysTrayIconCmd[i].bEnable = g_profile.getBool(szKey, false);
-        g_SysTrayIconCmd[i].hIcon = (HICON)::LoadImage(getAppInstance(), MAKEINTRESOURCE(g_SysTrayIconCmd[i].uIconID), IMAGE_ICON, 16, 16, LR_VGACOLOR);
+        g_sysTrayIconCmd[i].bEnable = g_profile.getBool(szKey, false);
+        g_sysTrayIconCmd[i].hIcon = (HICON)::LoadImage(getAppInstance(), MAKEINTRESOURCE(g_sysTrayIconCmd[i].uIconID), IMAGE_ICON, 16, 16, LR_VGACOLOR);
     }
 
     m_hIconTray = (HICON)::LoadImage(getAppInstance(), MAKEINTRESOURCE(IDI_MPLAYER), IMAGE_ICON, 16, 16, LR_VGACOLOR);
@@ -63,8 +63,8 @@ void CMLTrayIcon::quit() {
     for (int i = 0; i < MAX_PLAYER_TRAY_ICON_CMD; i++) {
         CShellNotifyIcon::delIcon(m_pWnd, IDN_PLAYER_CTRL + i);
 
-        if (g_SysTrayIconCmd[i].hIcon) {
-            DestroyIcon(g_SysTrayIconCmd[i].hIcon);
+        if (g_sysTrayIconCmd[i].hIcon) {
+            DestroyIcon(g_sysTrayIconCmd[i].hIcon);
         }
     }
 }
@@ -132,11 +132,11 @@ void CMLTrayIcon::updatePlayerSysTrayIcon() {
         CShellNotifyIcon::delIcon(m_pWnd, IDN_PLAYER_CTRL + i);
     }
     for (i = 0; i < MAX_PLAYER_TRAY_ICON_CMD; i++) {
-        if (g_SysTrayIconCmd[i].bEnable) {
+        if (g_sysTrayIconCmd[i].bEnable) {
             // add icon in tray bar
             CShellNotifyIcon::addIcon(m_pWnd, IDN_PLAYER_CTRL + i,
-                _TL(g_SysTrayIconCmd[i].szCmd),
-                g_SysTrayIconCmd[i].hIcon, MPWM_TRAYICN);
+                _TL(g_sysTrayIconCmd[i].szCmd),
+                g_sysTrayIconCmd[i].hIcon, MPWM_TRAYICN);
         }
     }
 }
@@ -188,7 +188,7 @@ void CMLTrayIcon::onMyNotifyIcon(WPARAM wParam, LPARAM lParam) {
                 //
                 //                 trackPopupMenu(hMenuPlayer, TPM_RIGHTBUTTON | TPM_LEFTALIGN, pt.x, pt.y, 0, m_pWnd->getHandle(), nullptr);
             } else if (lParam == WM_LBUTTONUP) {
-                CMPlayerAppBase::getMainWnd()->postShortcutKeyCmd(g_SysTrayIconCmd[i].dwCmd);
+                CMPlayerAppBase::getMainWnd()->postShortcutKeyCmd(g_sysTrayIconCmd[i].dwCmd);
             } else if (lParam == WM_LBUTTONDBLCLK) {
                 // 激活播放器窗口
                 activateWindow(CMPlayerAppBase::getMainWnd()->getHandle());

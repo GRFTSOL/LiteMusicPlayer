@@ -3,8 +3,8 @@
 #ifndef MPlayerUI_mac_MLTrayIcon_h
 #define MPlayerUI_mac_MLTrayIcon_h
 
+#include "Skin/Skin.h"
 
-#define MPWM_TRAYICN        (WM_USER + 10)
 
 enum SHOW_ICON_ON {
     SHOW_ICON_ON_TASKBAR        = 0,
@@ -14,13 +14,12 @@ enum SHOW_ICON_ON {
 };
 
 struct SYSTRAY_ICON_CMD {
-    uint32_t                    dwCmd;
-    cstr_t                      szCmd;
-    uint32_t                    uIconID;
-    bool                        bEnable;
+    uint32_t                    cmdId;
+    cstr_t                      cmdText;
+    bool                        isEnabled;
 };
 
-extern SYSTRAY_ICON_CMD g_SysTrayIconCmd[];
+extern SYSTRAY_ICON_CMD g_sysTrayIconCmd[];
 extern int MAX_PLAYER_TRAY_ICON_CMD;
 
 class CMLTrayIcon {
@@ -39,6 +38,7 @@ public:
     void forceShow(bool bForceShow);
 
 protected:
+    struct MLtrayIconPrivate        *_data = nullptr;
 
 };
 

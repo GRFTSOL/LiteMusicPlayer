@@ -51,6 +51,8 @@ public:
 
     void getAdjustHueParam(float &hue, float &saturation, float &luminance);
 
+    VecStrings getResourcesWithNames(cstr_t name);
+
 #ifdef DEBUG
     void dbgOutLoadedImages();
 #endif

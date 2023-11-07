@@ -14,6 +14,7 @@ class CSkinContainer;
 
 #include "SkinResMgr.h"
 #include "SkinWndDrag.h"
+#include "SkinIcons.h"
 #include "../third-parties/rapidjson/rapidjson/document.h"
 
 
@@ -163,7 +164,11 @@ public:
     SXNode *getClassNode(cstr_t szClassName) const;
 
 protected:
-    SXNode::LIST_CHILDREN       m_listStyleNodes;
+    void addStyle(SXNode *nodeStyle);
+
+    using MapStyles = std::map<string, SXNode *>;
+
+    MapStyles                       m_mapStyles;
 
 };
 
@@ -293,6 +298,8 @@ public:
 
     SXNode *getExtendsStyle(cstr_t szExtendsSkinWnd) const;
 
+    SkinIcons &getIcons() { return m_icons; }
+
     // resource
     virtual bool loadMenu(CSkinWnd *pWnd, CMenu **ppMenu, cstr_t szMenu);
     virtual void showPopupMenu(CSkinWnd *pWnd, cstr_t menuName);
@@ -343,6 +350,8 @@ protected:
 
     // Skin styles
     CSkinStyles                 m_skinStyle;
+
+    SkinIcons                   m_icons;
 
     // Menus
     rapidjson::Document         m_menus;

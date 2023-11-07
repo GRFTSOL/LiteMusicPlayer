@@ -118,6 +118,7 @@ public:
     bool isToolWindow();
     void setToolWindow(bool bToolWindow);
 
+    bool isForeground();
     bool setForeground();
 
     void setWindowPos(int x, int y);

@@ -77,6 +77,8 @@ public:
     // Can't be inherited.
     ~CSimpleXML();
 
+    SXNode *root() { return m_pRoot; }
+
     void New(cstr_t szRootName);
 
     bool parseFile(cstr_t szXmlFile, bool bNoProlog = false);

@@ -353,21 +353,19 @@ CSkinStyles::CSkinStyles() {
 }
 
 CSkinStyles::~CSkinStyles() {
-    m_listStyleNodes.clear();
+    m_mapStyles.clear();
 }
 
 int CSkinStyles::fromXML(SXNode *pNodeSkin) {
-    m_listStyleNodes.clear();
+    m_mapStyles.clear();
 
-    for (SXNode::iterator it = pNodeSkin->listChildren.begin();
-    it != pNodeSkin->listChildren.end(); ++it)
-        {
-        SXNode *pNode = *it;
-
+    for (SXNode *pNode : pNodeSkin->listChildren) {
         if (isPropertyName(pNode->name.c_str(), "styles")) {
-            m_listStyleNodes.insert(m_listStyleNodes.end(), pNode->listChildren.begin(), pNode->listChildren.end());
+            for (auto style : pNode->listChildren) {
+                addStyle(style);
+            }
         } else if (isPropertyName(pNode->name.c_str(), "style")) {
-            m_listStyleNodes.insert(m_listStyleNodes.begin(), pNode);
+            addStyle(pNode);
         }
     }
 
@@ -375,29 +373,50 @@ int CSkinStyles::fromXML(SXNode *pNodeSkin) {
 }
 
 void CSkinStyles::free() {
-    m_listStyleNodes.clear();
+    m_mapStyles.clear();
 }
 
-SXNode *CSkinStyles::getClassNode(cstr_t szClassName) const {
-    for (SXNode::LIST_CHILDREN::const_iterator itStyle = m_listStyleNodes.begin();
-    itStyle != m_listStyleNodes.end(); ++itStyle)
-        {
-        SXNode *pNodeStyle = *itStyle;
+SXNode *CSkinStyles::getClassNode(cstr_t className) const {
+    auto it = m_mapStyles.find(className);
+    if (it == m_mapStyles.end()) {
+        return nullptr;
+    }
 
-        for (SXNode::iterator it = pNodeStyle->listChildren.begin();
-        it != pNodeStyle->listChildren.end(); ++it)
-            {
-            SXNode *pNode = *it;
+    return (*it).second;
+}
 
-            if (isPropertyName(pNode->name.c_str(), szClassName)) {
-                return pNode;
+void CSkinStyles::addStyle(SXNode *nodeStyle) {
+    for (auto node : nodeStyle->listChildren) {
+        auto it = m_mapStyles.find(node->name);
+        if (it != m_mapStyles.end()) {
+            ERR_LOG1("Redifinition of style name: %s", node->name.c_str());
+            continue;
+        }
+
+        m_mapStyles[node->name] = node;
+
+        auto extends = node->getProperty(SZ_PN_EXTENDS);
+        if (extends) {
+            auto it = m_mapStyles.find(extends);
+            if (it != m_mapStyles.end()) {
+                // extends from another style, must copy all its properties.
+                auto nodeFrom = (*it).second;
+                for (auto &prop : nodeFrom->listProperties) {
+                    if (node->getProperty(prop.name.c_str()) == nullptr) {
+                        // Add not existed property.
+                        node->listProperties.push_back(prop);
+                    }
+                }
+
+                auto orgExtends = nodeFrom->getProperty(SZ_PN_EXTENDS);
+                assert(orgExtends != nullptr);
+                if (orgExtends != nullptr) {
+                    node->setProperty(SZ_PN_EXTENDS, orgExtends);
+                }
             }
         }
     }
-
-    return nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // CDynamicCmds class
@@ -510,7 +529,6 @@ CSkinFactory::~CSkinFactory() {
 
 int CSkinFactory::init() {
     AddUIObjNewer(CSkinButton);
-    AddUIObjNewer(CSkinActiveButton);
     AddUIObjNewer(CSkinImageButton);
     AddUIObjNewer(CSkinImage);
     AddUIObjNewer(CSkinNStatusImage);
@@ -901,6 +919,7 @@ int CSkinFactory::openSkinFile(cstr_t szSkinFile) {
     expandIncludeNode(m_skinFile.getRootNode());
 
     m_skinStyle.fromXML(m_skinFile.getRootNode());
+    m_icons.load(&m_resourceMgr);
 
     pNode = m_skinFile.getDynamicCmdsNode();
     if (pNode) {
@@ -960,6 +979,7 @@ if (xmlStream.saveAsFile(szFile))
 }
 
 void CSkinFactory::close(bool bQuit) {
+    m_icons.clear();
     m_skinStyle.free();
     m_dynamicCmds.free();
     m_skinFile.close();

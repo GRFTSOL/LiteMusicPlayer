@@ -88,7 +88,7 @@ NSMenuItem *duplicateMenuItem(NSMenuItem *org) {
         _menu->updateMenuStatus(pApp->getMainWnd());
 
         NSMenu *mainMenu = [NSApp mainMenu];
-        NSMenu *menu = (NSMenu*)_menu->getHandle();
+        NSMenu *menu = (NSMenu*)_menu->getHandle(pApp->getMainWnd());
 
         for (int i = 0; i < [menu numberOfItems]; i++) {
             NSMenuItem *item = duplicateMenuItem([menu itemAtIndex:i]);

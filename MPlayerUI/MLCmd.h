@@ -134,6 +134,7 @@ enum ML_CUSTOM_COMMAND {
 
     // other cmd
     CMD_TOGGLE_MP,
+    CMD_SHOW_MAIN_WND,
     CMD_PREFERENCES,
 
     CMD_RELOAD_LYR,

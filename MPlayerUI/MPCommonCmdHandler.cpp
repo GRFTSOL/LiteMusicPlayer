@@ -139,20 +139,21 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
         }
         break;
 
-#ifdef _WIN32_DESKTOP
+    case CMD_SHOW_MAIN_WND:
+        m_pSkinWnd->activateWindow();
+        break;
     case CMD_TOGGLE_MP:
         {
-            if (m_pSkinWnd->isIconic() || ::GetForegroundWindow() != m_pSkinWnd->getHandle()) {
+            if (m_pSkinWnd->isIconic() || !m_pSkinWnd->isForeground()) {
                 m_pSkinWnd->activateWindow();
             } else {
-                m_pSkinWnd->showWindow(SW_MINIMIZE);
+                m_pSkinWnd->minimizeNoActivate();
                 if (m_pSkinWnd->isToolWindow()) {
-                    m_pSkinWnd->showWindow(SW_HIDE);
+                    m_pSkinWnd->hide();
                 }
             }
         }
         break;
-#endif // _WIN32_DESKTOP
     case CMD_ADJUST_HUE:
         {
             showAdjustHueDialog(m_pSkinWnd);

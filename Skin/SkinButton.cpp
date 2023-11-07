@@ -118,53 +118,9 @@ void CSkinButton::buttonUpAction() {
     CSkinNStatusButton::buttonUpAction();
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// class CSkinActiveButton
-// set classname
-UIOBJECT_CLASS_NAME_IMP(CSkinActiveButton, "ActiveButton")
-
-CSkinActiveButton::CSkinActiveButton() {
-}
-
-CSkinActiveButton::~CSkinActiveButton() {
-
-}
-
-void CSkinActiveButton::draw(CRawGraph *canvas) {
-    if (m_vBtStatImg.empty()) {
-        return;
-    }
-
-    if (m_nCurStatus < 0 || m_nCurStatus >= (int)m_vBtStatImg.size()) {
-        m_nCurStatus = 0;
-    }
-
-    BtStatImg *btimg = m_vBtStatImg[m_nCurStatus];
-
-    if (m_enable && m_btnState == BS_NORMAL) {
-        if (m_pSkin->isWndActive()) {
-            if (m_imgMask.isValid()) {
-                btimg->imgHover.maskBlt(canvas, m_rcObj.left, m_rcObj.top, &m_imgMask, m_bpm);
-            } else {
-                btimg->imgHover.blt(canvas, m_rcObj.left, m_rcObj.top, m_bpm);
-            }
-            return;
-        }
-    }
-
-    CSkinNStatusButton::draw(canvas);
-}
-
-// class CSkinActiveButton
-///////////////////////////////////////////////////////////////////////////////
-
 UIOBJECT_CLASS_NAME_IMP(CSkinImageButton, "ImageButton")
 
 CSkinImageButton::CSkinImageButton() {
-    m_bContentImage = true;
-    m_bAutoSelColor = false;
-    m_nContentMarginX = 5;
-    m_nContentMarginY = 5;
 }
 
 CSkinImageButton::~CSkinImageButton() {
@@ -179,7 +135,11 @@ void CSkinImageButton::draw(CRawGraph *canvas) {
     if (m_bContentImage) {
         // DrawImage
         if (m_contentImage.isValid()) {
-            m_contentImage.stretchBlt(canvas, rc.left, rc.top, rc.width(), rc.height());
+            if (m_isStretchContent) {
+                m_contentImage.stretchBlt(canvas, rc.left, rc.top, rc.width(), rc.height());
+            } else {
+                m_contentImage.blt(canvas, rc, DT_CENTER | DT_VCENTER);
+            }
         }
     } else {
         // Fill with color
@@ -196,6 +156,11 @@ bool CSkinImageButton::setProperty(cstr_t szProperty, cstr_t szValue) {
         m_nContentMarginX = atoi(szValue);
     } else if (isPropertyName(szProperty, "ContentMarginY")) {
         m_nContentMarginY = atoi(szValue);
+    } else if (isPropertyName(szProperty, "ContentImage")) {
+        m_bContentImage = true;
+        m_contentImage.loadFromSRM(m_pSkin, szValue);
+    } else if (isPropertyName(szProperty, "StretchContent")) {
+        m_isStretchContent = isTRUE(szValue);
     } else {
         return false;
     }

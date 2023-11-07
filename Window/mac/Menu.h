@@ -74,7 +74,7 @@ public:
     CMenu & operator = (const CMenu &menu);
 
     // For Mac
-    void *getHandle();
+    void *getHandle(Window *window);
 
 protected:
     struct MLMenuInfo    *m_info;

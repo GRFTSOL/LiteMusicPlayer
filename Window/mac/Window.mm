@@ -29,6 +29,11 @@ void showInFinder(const VecStrings &files) {
     [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs:fileURLs];
 }
 
+float getScreenScaleFactor() {
+    auto screen = [NSScreen mainScreen];
+    return [screen backingScaleFactor];
+}
+
 Window::Window() {
     m_handleHolder = new WindowHandleHolder();
     m_handleHolder->window = nullptr;
@@ -454,6 +459,10 @@ void Window::setToolWindow(bool bToolWindow) {
     } else {
         [m_handleHolder->window setLevel: NSNormalWindowLevel];
     }
+}
+
+bool Window::isForeground() {
+    return false;
 }
 
 bool Window::setForeground() {

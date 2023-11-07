@@ -55,12 +55,21 @@ void CSFImage::copyFrom(const CSFImage &src) {
 }
 
 bool CSFImage::loadFromSRM(CSkinWnd *skinWnd, cstr_t resName) {
+    assert(skinWnd);
+
+    if (skinWnd->getSkinFactory()->getIcons().getImage(resName, *this)) {
+        return true;
+    }
+
+    return loadFromSRM(skinWnd->getSkinFactory()->getResourceMgr(), resName, skinWnd->getScaleFactor());
+}
+
+bool CSFImage::loadFromSRM(CSkinResMgr *resMgr, cstr_t resName, int scaleFactor) {
     detach();
 
-    assert(skinWnd);
-    m_skinResMgr = skinWnd->getSkinFactory()->getResourceMgr();
+    m_skinResMgr = resMgr;
     m_resName = resName;
-    m_scaleFactor = skinWnd->getScaleFactor();
+    m_scaleFactor = scaleFactor;
 
     auto image = m_skinResMgr->loadBitmap(resName, m_scaleFactor);
     if (image) {

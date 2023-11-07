@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <styles>
+	<include Name="StyleBase.xml"/>
+
 	<style>
 		<WindowFrame EnableTranslucency="true" TranslucencyAlpha="255"
 			 MinWidth="100" MinHeight="100" Width="330" Height="400"

@@ -75,7 +75,7 @@ RawImageDataPtr CSkinResMgr::loadBitmap(cstr_t resName, float scaleFactor) {
         res.image = image;
         res.scaleFactor = scaleFactor;
         res.fileScaleFactor = fileScale;
-        m_mapBitmap[file.c_str()] = res;
+        m_mapBitmap[key.c_str()] = res;
     }
 
     return image;
@@ -120,6 +120,19 @@ bool CSkinResMgr::getResourcePathName(cstr_t szResName, string &fileNameOut) con
 
     ERR_LOG1("Resource File: %s does NOT exist!", szResName);
     return false;
+}
+
+VecStrings CSkinResMgr::getResourcesWithNames(cstr_t name) {
+    VecStrings files;
+
+    for (auto &path : m_vResSearchDirs) {
+        auto file = path + name;
+        if (isFileExist(file.c_str())) {
+            files.push_back(file);
+        }
+    }
+
+    return files;
 }
 
 string CSkinResMgr::getResourcePathName(cstr_t szResName) const {

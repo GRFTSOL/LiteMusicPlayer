@@ -19,6 +19,7 @@ public:
     CSFImage &operator=(const CSFImage &src);
 
     bool loadFromSRM(CSkinWnd *skinWnd, cstr_t resName);
+    bool loadFromSRM(CSkinResMgr *resMgr, cstr_t resName, int scaleFactor);
 
     virtual void attach(const RawImageDataPtr &image) override;
     virtual void detach() override;

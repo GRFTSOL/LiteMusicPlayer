@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<style>
+    <CompactImageBtn Extends="ImageButton" ContentMarginX="3" ContentMarginY="1" StretchContent="false"
+		Height="24" Padding="0,0" TabFocus="true"
+		Image="button.png" ImageSize="40,24" ExtendPos="3,36"
+		ImagePos="0,72" ImageSelPos="0,120" ImageFocusPos="0,96"/>
+    <CompactImageCheckBtn  Extends="CompactImageBtn"
+		S1_Image="button.png" S1_ImageSize="40,24" S1_ExtendPos="3,36"
+		S1_ImagePos="0,120"/>
+
+</style>

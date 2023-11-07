@@ -50,17 +50,17 @@
 	</Toolbar>
 	<LinearContainer Name="EditorFrame" ID="CID_EDITOR_FRAME" Rect="5,26+5,w-10,h-26-10" Orientation="Vertical">
 		<Container Name="Find" ID="CID_C_FIND" Height="35" LayoutParams="match_parent_width" Visible="false" FixedHeight="TRUE" >
-			<NormalTextBt ID="CID_FIND_PREV" Text="Find &amp;Previous" Rect="10,5,100,"/>
-			<NormalTextBt ID="CID_FIND_NEXT" Text="Find &amp;Next" Rect="130,5,100,"/>
-			<NormalText Text="Find what:" Rect="230,10,100," AlignText="AT_RIGHT | AT_VCENTER"/>
-			<NormalEdit ID="CID_E_FIND" Rect="340,10,w-340-160,"/>
-			<NormalCheckBox ID="CID_MATCHCASE" Text="Match &amp;case" Rect="w-150,8,130,"/>
+			<NormalText Text="Find what:" Rect="10,10,90," AlignText="AT_RIGHT | AT_VCENTER"/>
+			<NormalEdit ID="CID_E_FIND" Rect="110,10,w-150-100," PlaceHolder="Find what"/>
+			<CompactImageBtn ID="CID_FIND_PREV" ContentImage="arrow-up" Rect="w-130,5,26,"/>
+			<CompactImageBtn ID="CID_FIND_NEXT" ContentImage="arrow-down" Rect="w-130+28,5,26,"/>
+			<CompactImageCheckBtn ID="CID_MATCHCASE" ContentImage="case-sensitive" Rect="w-130+28*2,5,26,"/>
 		</Container>
 		<Container Name="Replace" ID="CID_C_REPLACE" Height="35" LayoutParams="match_parent_width" Visible="false" FixedHeight="TRUE" >
-			<NormalTextBt ID="CID_REPLACE" Text="&amp;Replace" Rect="10,5,100,"/>
-			<NormalTextBt ID="CID_REPLACE_ALL" Text="Replace &amp;All" Rect="130,5,100,"/>
-			<NormalText Text="Replace with:" Rect="230,10,100," AlignText="AT_RIGHT | AT_VCENTER"/>
-			<NormalEdit ID="CID_E_REPLACE" Rect="340,8,w-340-160,"/>
+			<NormalText Text="Replace with:" Rect="5,10,95," AlignText="AT_RIGHT | AT_VCENTER"/>
+			<NormalEdit ID="CID_E_REPLACE" Rect="110,10,w-150-100," PlaceHolder="Replace with"/>
+			<CompactImageBtn ID="CID_REPLACE" ContentImage="replace" Rect="w-130,5,26,"/>
+			<CompactImageBtn ID="CID_REPLACE_ALL" ContentImage="replace-all" Rect="w-130+28,5,26,"/>
 		</Container>
 	
 		<Container Name="Editor" ID="CID_C_EDITOR" MinWidth="220" MinHeight="104" Width="200" LayoutParams="match_parent_width" Weight="1">

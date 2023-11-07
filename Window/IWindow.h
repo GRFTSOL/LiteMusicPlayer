@@ -14,6 +14,10 @@
 #include "IScrollBar.h"
 
 
+void showInFinder(cstr_t filename);
+void showInFinder(const VecStrings &files);
+float getScreenScaleFactor();
+
 //
 // The Window size state definition
 //
