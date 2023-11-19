@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PreferPage.ThemeRoot Name="Theme" Visible="false" Rect="0,65,w,h-65">
   <NormalFrame Rect="10,10,w-20,h-20"/>
-  <NormalTabButton ID="CID_TOOLBAR_THEME"  Rect="30,10,w-30,">
+  <NormalTabButton ID="CID_TOOLBAR_THEME"  Rect="30,8,w-30,">
     <button ID="CMD_THEME_THEME" Text="Themes"/>
     <button ID="CMD_THEME_LYR_DISPLAY" Text="Lyrics Display"/>
     <button ID="CMD_THEME_LYR_BG_PIC" Text="Lyrics Background Picture"/>

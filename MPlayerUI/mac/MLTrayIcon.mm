@@ -12,6 +12,7 @@
 #include "MLTrayIcon.h"
 #include "MLCmd.h"
 #include "MPlayerApp.h"
+#include "../MPFloatingLyrWnd.h"
 
 
 @implementation _StatusbarCtrl
@@ -26,6 +27,10 @@
 
 - (void)onClicked {
     if (self->cmdId != UID_INVALID) {
+        if (g_wndFloatingLyr.isValid()) {
+            g_wndFloatingLyr.m_ignoreOneActivate = true;
+        }
+
         CMPlayerApp::getInstance()->getMainWnd()->postCustomCommandMsg(self->cmdId);
     }
 }

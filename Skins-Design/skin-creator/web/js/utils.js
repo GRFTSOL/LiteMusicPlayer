@@ -76,6 +76,15 @@ function copyProperties(dst, src) {
     }
 }
 
+function copyPropertiesIfNotExist(dst, src) {
+    for (let name in src) {
+        const v = dst[name], sv = src[name];
+        if (v === undefined || typeof v != typeof sv) {
+            dst[name] = src[name];
+        }
+    }
+}
+
 function strPartition(s, withStr) {
     var pos = s.indexOf(withStr);
     if (pos === -1) {

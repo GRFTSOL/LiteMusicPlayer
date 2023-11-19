@@ -106,30 +106,6 @@
     <TitleText Extends="Text" Height="25" FontName="Verdana" FontHeight="20" TextColor="#FFFFFF" AlignText="AT_CENTER"/>
     <ErrorText Extends="Text" Height="15" FontName="Verdana" FontHeight="13" TextColor="#FF8080"/>
     <NormalLink Extends="TxtLink" Height="15" FontName="Verdana" FontHeight="13" TextColor="#FFFF00"/>
-    <NormalTextBt Extends="TextButton" FontName="Verdana" FontHeight="13" TextColor="#000000" TabFocus="true"
-          Height="22" Padding="5,3" TextLeftMargin="8" TextRightMargin="8"
-          Image="s_txt_button.png" ImageSize="70,28" ExtendPos="20,50"
-          ImagePos="0,0" ImageSelPos="0,56" ImageFocusPos="0,28" ImageDisabledPos="0,84"/>
-    <NormalImageBt Extends="ImageButton" ContentMarginX="9" ContentMarginY="7"
-          Height="20" Padding="5,4" TabFocus="true"
-          Image="s_image_button.png" ImageSize="70,28" ExtendPos="20,50"
-          ImagePos="0,0" ImageSelPos="0,56" ImageFocusPos="0,28"/>
-    <NormalCheckBox Extends="TextButton" FontName="Verdana" FontHeight="13" TextColor="#FFFFFF" DisabledTextColor="#C4C4C4"
-          Height="20" Padding="3,2" TextLeftMargin="25" AlignText="AT_LEFT | AT_VCENTER"
-          CheckBox="true" TabFocus="true"
-          Image="s_checkbox.png" ImageSize="20,20"
-          ImagePos="20,0" ImageSelPos="20,20" ImageFocusPos="20,40" ImageDisabledPos="20,60"
-          S1_Image="s_checkbox.png" S1_ImageSize="20,20"
-          S1_ImagePos="0,0" S1_ImageSelPos="0,20" S1_ImageFocusPos="0,40" S1_ImageDisabledPos="0,60"/>
-    <NormalRadioBt Extends="TextButton" FontName="Verdana" FontHeight="13" TextColor="#FFFFFF" DisabledTextColor="#C4C4C4"
-          Height="20" Padding="3,2" TextLeftMargin="25" AlignText="AT_LEFT | AT_VCENTER"
-           Radio="true" TabFocus="true"
-          Image="s_radio_button.png" ImageSize="20,20"
-          ImagePos="20,0" ImageSelPos="20,20" ImageFocusPos="20,40" ImageDisabledPos="20,60"
-          S1_Image="s_radio_button.png" S1_ImageSize="20,20"
-          S1_ImagePos="0,0" S1_ImageSelPos="0,20" S1_ImageFocusPos="0,40" S1_ImageDisabledPos="0,60"/>
-    <NormalEdit Extends="EditCtrl" Height="18" FontName="Verdana" FontHeight="13" TextColor="#000000"
-          XMargin="5" YMargin="0"/>
     <NormalListCtrl Extends="ListCtrl" BgColor="#FFFFFF,#EDF3FE" SelBgColor="#3875D7" 
           TextColor="#000000" SelTextColor="#FFFFFF" 
           FontName="Verdana" FontHeight="13" LineHeight="22"
@@ -140,22 +116,10 @@
           ImageList="imagelist.png" 
           HeaderHeight="17" LineColor="#808080" ImageSortedHeader="s_listctrl_sorted_header.png"
           ImageHeader="s_listctrl_header.png" ImageSortFlag="s_listctrl_sort_flag.png"/>
-    <NormalTabButton Extends="TabButton" Height="22" 
-          FontName="Verdana" FontHeight="13" TextColor="#000000"
-          Image="s_tab_button.png" SperatorLineWidth="1" ButtunBorderWidth="6" 
-          MarginX="0" MarginY="0" />
-    <NormalComboBox Extends="ComboBox" FontName="Verdana" FontHeight="13" TextColor="#000000" DisabledTextColor="#C4C4C4" TabFocus="true"
-          Height="22" Padding="5,4" AlignText="AT_LEFT" TextLeftMargin="14" TextRightMargin="30"
-          Image="s_combobox.png" ImageSize="70,28" ExtendPos="20,40"
-          ImagePos="0,0" ImageSelPos="0,56" ImageFocusPos="0,28" ImageDisabledPos="0,84"/>
-    <NormalFrame Extends="Frame" Image="s_tab_frame.png" RoundWidth="6" ThickWidth="1"
-          XBorder="0" YBorder="10" FontName="Verdana" FontHeight="13" TextColor="#FFFFFF"/>
     <Slider Extends="SeekCtrl" Height="12" EndWidth="3" ImageThumb="seek_thumb.png" ImageTrack="seek_track.png"/>
     <Progress Extends="SeekCtrl" Height="20" EndWidth="8" ImageThumb="s_progress_null_thumb.png" ImageTrack="s_progress.png"/>
     <ListCtrlFrame Extends="Frame" Image="s_listctrl_frame.png" ImageFocus="s_listctrl_frame_focus.png"
           RoundWidth="4" ThickWidth="4" XBorder="0" YBorder="0"/>
-    <EditCtrlFrame Extends="Frame" Image="s_edit_box_frame.png" ImageFocus="s_edit_box_frame_focus.png"
-          RoundWidth="7" ThickWidth="5" XBorder="0" YBorder="0"/>
     <WndFrameCaption Extends="Text" ID="ID_CAPTION" Rect="30,4,w-60,20" Text="About DH Player" FontHeight="16" FontBold="false" TextColor="#FFFFFF" TextOutlinedColor="#000000" TextOutlined="true" LeftMargin="0" AlignText="AT_CENTER | AT_VCENTER"/>
     <VScrollBar Width="14" PushBtHeight="14" ThumbHeight="28" TrackHeight="28" ScrollBarWidth="14" Image="vscrollbar.png" ScalableThumb="TRUE" />
     <HScrollBar Height="14" PushBtWidth="14" ThumbWidth="28" TrackWidth="28" ScrollBarHeight="14" Image="hscrollbar.png" ScalableThumb="TRUE" />

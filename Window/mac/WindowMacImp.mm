@@ -223,15 +223,27 @@ backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
 }
 
 - (void)windowDidBecomeKey:(NSNotification *)notification {
+    // MLTrayIcon onClicked is followed after this event, so delay 0.1 second
+    // to make sure m_ignoreOneActivate flag is set by onClick.
+    [self performSelector:@selector(postWindowDidBecomeKey) withObject:self afterDelay:0.1];
+}
+
+- (void)postWindowDidBecomeKey {
+    if (mBaseWnd->m_ignoreOneActivate) {
+        // Click menubar button will cause window become key unneccessary, revoke the side effect.
+        [self resignKeyWindow];
+        mBaseWnd->m_ignoreOneActivate = false;
+        return;
+    }
+
     mBaseWnd->onActivate(true);
     mBaseWnd->onSetFocus();
-    [self setStyleMask:NSWindowStyleMaskResizable];
-
+    // [self setStyleMask:NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable];
 }
 
 - (void)windowDidResignKey:(NSNotification *)notification {
     mBaseWnd->onKillFocus();
-    [self setStyleMask:NSWindowStyleMaskBorderless];
+    // [self setStyleMask:NSWindowStyleMaskBorderless | NSWindowStyleMaskMiniaturizable];
     mBaseWnd->onActivate(false);
     mBaseWnd->m_bMouseCaptured = false;
 }
@@ -244,7 +256,9 @@ backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
 
 //- (void)windowWillMiniaturize:(NSNotification *)notification;
 //- (void)windowDidMiniaturize:(NSNotification *)notification;
-//- (void)windowDidDeminiaturize:(NSNotification *)notification;
+- (void)windowDidDeminiaturize:(NSNotification *)notification {
+    mBaseWnd->invalidateRect();
+}
 //- (void)windowDidUpdate:(NSNotification *)notification;
 //- (void)windowDidChangeScreen:(NSNotification *)notification;
 //- (void)windowDidChangeScreenProfile:(NSNotification *)notification;

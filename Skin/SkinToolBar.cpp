@@ -52,6 +52,8 @@ CSkinToolbar::CSkinToolbar() {
 
     m_bFadein = true;
     m_timeBeginFadein = 0;
+
+    m_clrTextSelected.setAlpha(0);
 }
 
 CSkinToolbar::~CSkinToolbar() {
@@ -190,6 +192,10 @@ void CSkinToolbar::onCreate() {
     m_font.setParent(m_pSkin);
     if (m_nImageHeight == 0) {
         m_nImageHeight = atoi(m_formHeight.getFormula());
+    }
+
+    if (m_clrTextSelected.getAlpha() == 0) {
+        m_clrTextSelected = m_font.getTextColor();
     }
 }
 
@@ -529,6 +535,8 @@ bool CSkinToolbar::setProperty(cstr_t szProperty, cstr_t szValue) {
         m_nMarginX = atoi(szValue);
     } else if (strcasecmp(szProperty, "MarginY") == 0) {
         m_nMarginY = atoi(szValue);
+    } else if (isPropertyName(szProperty, "SelTextColor")) {
+        m_clrTextSelected = parseColorString(szValue);
     } else if (strcasecmp(szProperty, "ButtonSpacesCX") == 0) {
         m_nBtSpacesCX = atoi(szValue);
     } else if (strcasecmp(szProperty, "FullStatusImage") == 0) {
@@ -772,7 +780,8 @@ void CSkinToolbar::drawButton(CRawGraph *canvas, int nButton, BT_DRAW_STATE btDr
     // draw Button text
     if (m_bDrawBtText && bt.strText.size()) {
         CRect rcText(x, y + m_nImageHeight, x + bt.nWidth, y + nHeight);
-
+        CColor clrText = btDrawState == ROW_DOWN ? m_clrTextSelected : m_font.getTextColor(m_enable);
+        canvas->setTextColor(clrText);
         canvas->drawText(bt.strText.c_str(), bt.strText.size(), rcText, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     }
 

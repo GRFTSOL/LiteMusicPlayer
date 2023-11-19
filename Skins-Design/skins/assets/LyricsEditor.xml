@@ -52,15 +52,15 @@
 		<Container Name="Find" ID="CID_C_FIND" Height="35" LayoutParams="match_parent_width" Visible="false" FixedHeight="TRUE" >
 			<NormalText Text="Find what:" Rect="10,10,90," AlignText="AT_RIGHT | AT_VCENTER"/>
 			<NormalEdit ID="CID_E_FIND" Rect="110,10,w-150-100," PlaceHolder="Find what"/>
-			<CompactImageBtn ID="CID_FIND_PREV" ContentImage="arrow-up" Rect="w-130,5,26,"/>
-			<CompactImageBtn ID="CID_FIND_NEXT" ContentImage="arrow-down" Rect="w-130+28,5,26,"/>
-			<CompactImageCheckBtn ID="CID_MATCHCASE" ContentImage="case-sensitive" Rect="w-130+28*2,5,26,"/>
+			<FlatImageBtn ID="CID_FIND_PREV" ContentImage="arrow-up" Rect="w-130,5,26,"/>
+			<FlatImageBtn ID="CID_FIND_NEXT" ContentImage="arrow-down" Rect="w-130+28,5,26,"/>
+			<FlatImageCheckBtn ID="CID_MATCHCASE" ContentImage="case-sensitive" Rect="w-130+28*2,5,26,"/>
 		</Container>
 		<Container Name="Replace" ID="CID_C_REPLACE" Height="35" LayoutParams="match_parent_width" Visible="false" FixedHeight="TRUE" >
 			<NormalText Text="Replace with:" Rect="5,10,95," AlignText="AT_RIGHT | AT_VCENTER"/>
 			<NormalEdit ID="CID_E_REPLACE" Rect="110,10,w-150-100," PlaceHolder="Replace with"/>
-			<CompactImageBtn ID="CID_REPLACE" ContentImage="replace" Rect="w-130,5,26,"/>
-			<CompactImageBtn ID="CID_REPLACE_ALL" ContentImage="replace-all" Rect="w-130+28,5,26,"/>
+			<FlatImageBtn ID="CID_REPLACE" ContentImage="replace" Rect="w-130,5,26,"/>
+			<FlatImageBtn ID="CID_REPLACE_ALL" ContentImage="replace-all" Rect="w-130+28,5,26,"/>
 		</Container>
 	
 		<Container Name="Editor" ID="CID_C_EDITOR" MinWidth="220" MinHeight="104" Width="200" LayoutParams="match_parent_width" Weight="1">

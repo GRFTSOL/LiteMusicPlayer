@@ -4,9 +4,9 @@
 
   <style>
     <WindowFrame EnableTranslucency="true" TranslucencyAlpha="255"
-         MinWidth="100" MinHeight="100" Width="330" Height="400"
-         BgColor="#FFFFFF" EnableClickThrough="false"
-         FontName="Verdana" FontHeight="13" TextColor="#000000" IsDialog="true">
+        MinWidth="100" MinHeight="100" Width="330" Height="400"
+        BgColor="#FFFFFF" EnableClickThrough="false"
+        FontName="Verdana" FontHeight="13" TextColor="#000000" IsDialog="true">
 
 		<Frame Name="Frame" Rect="0,27,w,h-27" Image="frame.png" ImageRect="0,27,425,123"
 			RoundWidthTop="4" RoundWidthBottom="4" ThickWidth="4" BlendPixMode="copy"/>
@@ -18,9 +18,9 @@
 
 			<Text ID="ID_CAPTION" Rect="24,8,w-80,20" CaptionText="true" FontName="Verdana" FontHeight="16" FontBold="false" TextColor="#FFFFFF" TextOutlinedColor="#000000" TextOutlined="true" LeftMargin="0" AlignText="AT_LEFT | AT_VCENTER"/>
 			<Toolbar ID="CID_TB_SYSBT" Rect="w-10-20,10,20,16" TranslucencyWithSkin="TRUE"
-				 Image="caption_btn.png" enablehover="TRUE" units_x="16"
-				 blank_x="-1" blank_cx="16" seperator_x="0" seperator_cx="10"
-				 MarginX="0" MarginY="0" ButtonSpacesCX="5" FullStatusImage="TRUE">
+                Image="caption_btn.png" enablehover="TRUE" units_x="16"
+                blank_x="-1" blank_cx="16" seperator_x="0" seperator_cx="10"
+                MarginX="0" MarginY="0" ButtonSpacesCX="5" FullStatusImage="TRUE">
 			  <button ID="ID_CLOSE" Left="4" />
 			</Toolbar>
 		</Container>
@@ -29,8 +29,8 @@
 	</WindowFrame>
 
     <MenuWindowFrame EnableTranslucency="true" TranslucencyAlpha="255" BgColor="#EBEBEB"
-         MinWidth="100" MinHeight="100" Width="330" Height="400" EnableClickThrough="false"
-         FontName="Verdana" FontHeight="13" TextColor="#000000" >
+        MinWidth="100" MinHeight="100" Width="330" Height="400" EnableClickThrough="false"
+        FontName="Verdana" FontHeight="13" TextColor="#000000" >
 
 		<Frame Name="Frame" Rect="0,27,w,h-27" Image="frame.png" ImageRect="0,27,425,123"
 			RoundWidthTop="4" RoundWidthBottom="4" ThickWidth="4" BlendPixMode="copy"/>
@@ -49,9 +49,9 @@
 			
 			<Text ID="ID_CAPTION" Rect="w/2,8,w/2-10-60-10,20" CaptionText="true" FontName="Verdana" FontHeight="16" FontBold="false" TextColor="#FFFFFF" TextOutlinedColor="#000000" TextOutlined="true" LeftMargin="0" AlignText="AT_LEFT | AT_VCENTER"/>
 			<Toolbar ID="CID_TB_SYSBT" Rect="w-10-60,10,60,16" TranslucencyWithSkin="TRUE"
-				 Image="caption_btn.png" enablehover="TRUE" units_x="16"
-				 blank_x="-1" blank_cx="16" seperator_x="0" seperator_cx="10"
-				 MarginX="0" MarginY="0" ButtonSpacesCX="5" FullStatusImage="TRUE">
+                Image="caption_btn.png" enablehover="TRUE" units_x="16"
+                blank_x="-1" blank_cx="16" seperator_x="0" seperator_cx="10"
+                MarginX="0" MarginY="0" ButtonSpacesCX="5" FullStatusImage="TRUE">
 				<button ID="ID_MINIMIZE" Left="1" />
 				<button ID="ID_MAXIMIZE" Left="2" CanCheck="TRUE" checked_left="3"/>
       			<button ID="ID_CLOSE" Left="4" />
@@ -65,15 +65,15 @@
          FixedWidth="true" FixedHeight="true"
          BgColor="#ece9d8" EnableClickThrough="false">
       <XScaleImage Left="0" Top="0" Width="w" Height="5" Name="Top border"
-                   Image="menu_frame.png" ImageRect="0,0,50,5"
-                   ImageScaleXStart="10" ImageScaleXEnd="40" BlendPixMode="copy"/>
+            Image="menu_frame.png" ImageRect="0,0,50,5"
+            ImageScaleXStart="10" ImageScaleXEnd="40" BlendPixMode="copy"/>
       <XScaleImage Left="0" Top="h-5" Width="w" Height="5" Name="Bottom border"
-                   Image="menu_frame.png" ImageRect="0,15,50,5"
-                   ImageScaleXStart="10" ImageScaleXEnd="40" BlendPixMode="copy"/>
+            Image="menu_frame.png" ImageRect="0,15,50,5"
+            ImageScaleXStart="10" ImageScaleXEnd="40" BlendPixMode="copy"/>
       <Image Left="0" Top="5" Width="1" Height="h-10" Name="left frame" 
-             Image="menu_frame.png" ImageRect="0,5,1,10" BltMode="tile"/>
+            Image="menu_frame.png" ImageRect="0,5,1,10" BltMode="tile"/>
       <Image Left="w-1" Top="5" Width="1" Height="h-10" Name="left frame"
-             Image="menu_frame.png" ImageRect="49,5,1,10" BltMode="tile"/>
+            Image="menu_frame.png" ImageRect="49,5,1,10" BltMode="tile"/>
       <ClientArea Rect="1, 5, w-2, h-5-5"/>
     </PopupWndFrame>
 	<NormalToolbar Extends="Container" Height="24" >
@@ -86,15 +86,15 @@
 		</Toolbar>
 
             <Toolbar ID="ID_TB_LYR_TXT" Rect="8,2,56,22" Image="fl_buttons.png" enablehover="TRUE"
-                        units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" ButtonSpacesCX="1"
-                        Margin="8,1,0,0" MarginX="0" MarginY="0" FullStatusImage="TRUE">
-                  <button ID="ID_SEARCH_LYRICS" Left="5" />
-                  <button ID="CMD_LYR_EDITOR" Left="16"/>
+                units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" ButtonSpacesCX="1"
+                Margin="8,1,0,0" MarginX="0" MarginY="0" FullStatusImage="TRUE">
+                <button ID="ID_SEARCH_LYRICS" Left="5" />
+                <button ID="CMD_LYR_EDITOR" Left="16"/>
             </Toolbar>
 
 		<Toolbar Rect="86,1,w-88,22" Image="fl_buttons.png" enablehover="TRUE"
-				units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" ButtonSpacesCX="1"
-				MarginX="0" MarginY="0" FullStatusImage="TRUE">
+            units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" ButtonSpacesCX="1"
+            MarginX="0" MarginY="0" FullStatusImage="TRUE">
 			<seperator/>
 			<button ID="ID_FONT_SIZE_INC" Left="8"/>
 			<button ID="ID_FONT_SIZE_DEC" Left="9"/>
@@ -111,59 +111,22 @@
     <TitleText Extends="Text" Height="25" FontName="Verdana" FontHeight="20" TextColor="#000000" AlignText="AT_CENTER"/>
     <ErrorText Extends="Text" Height="15" FontName="Verdana" FontHeight="13" TextColor="#FF0000"/>
     <NormalLink Extends="TxtLink" Height="15" FontName="Verdana" FontHeight="13" TextColor="#0000FF"/>
-    <NormalTextBt Extends="TextButton" FontName="Verdana" FontHeight="13" TextColor="#000000" DisabledTextColor="#808080" TabFocus="true"
-          Height="22" Padding="5,3" TextLeftMargin="8" TextRightMargin="8"
-          Image="s_txt_button.png" ImageSize="70,28" ExtendPos="20,50"
-          ImagePos="0,0" ImageSelPos="0,56" ImageFocusPos="0,28" ImageDisabledPos="0,84"/>
-    <NormalImageBt Extends="ImageButton" ContentMarginX="9" ContentMarginY="7"
-          Height="20" Padding="5,4" TabFocus="true"
-          Image="s_image_button.png" ImageSize="70,28" ExtendPos="20,50"
-          ImagePos="0,0" ImageSelPos="0,56" ImageFocusPos="0,28"/>
     <MenuItemsContainer FontName="Verdana" FontHeight="13" FontBold="false" TextColor="#000000" BgColor="#E0E0E0"
-          TextColorHover="#000000" BgColorHover="#558ff3" FrameColor="#A0A0A0" DisabledTextColor="#808080" BgColorInactive="#C0C0C0"
-          ImageChecked="menu-check.png" ImageSubmenu="menu-right.png" ImageUpArrow="expand_less.png" ImageDownArrow="expand_more.png"/>
-    <NormalCheckBox Extends="TextButton" FontName="Verdana" FontHeight="13" TextColor="#000000" DisabledTextColor="#808080"
-          Height="20" Padding="3,2" TextLeftMargin="25" AlignText="AT_LEFT"
-          CheckBox="true" TabFocus="true"
-          Image="s_checkbox.png" ImageSize="20,20"
-          ImagePos="20,0" ImageSelPos="20,20" ImageFocusPos="20,40" ImageDisabledPos="20,60"
-          S1_Image="s_checkbox.png" S1_ImageSize="20,20"
-          S1_ImagePos="0,0" S1_ImageSelPos="0,20" S1_ImageFocusPos="0,40" S1_ImageDisabledPos="0,60"/>
-    <NormalRadioBt Extends="TextButton" FontName="Verdana" FontHeight="13" TextColor="#000000" DisabledTextColor="#808080"
-          Height="20" Padding="3,2" TextLeftMargin="25" AlignText="AT_LEFT"
-           Radio="true" TabFocus="true"
-          Image="s_radio_button.png" ImageSize="20,20"
-          ImagePos="20,0" ImageSelPos="20,20" ImageFocusPos="20,40" ImageDisabledPos="20,60"
-          S1_Image="s_radio_button.png" S1_ImageSize="20,20"
-          S1_ImagePos="0,0" S1_ImageSelPos="0,20" S1_ImageFocusPos="0,40" S1_ImageDisabledPos="0,60"/>
-    <NormalEdit Extends="EditCtrl" Height="18" FontName="Verdana" FontHeight="13" TextColor="#000000"
-          XMargin="5" YMargin="0"/>
+        TextColorHover="#000000" BgColorHover="#558ff3" FrameColor="#A0A0A0" DisabledTextColor="#808080" BgColorInactive="#C0C0C0"
+        ImageChecked="menu-check.png" ImageSubmenu="menu-right.png" ImageUpArrow="expand_less.png" ImageDownArrow="expand_more.png"/>
+    
     <NormalListCtrl Extends="ListCtrl" BgColor="#FFFFFF,#EDF3FE" SelBgColor="#3875D7" 
-          TextColor="#000000" SelTextColor="#FFFFFF" 
-          FontName="Verdana" FontHeight="13" LineHeight="22"
-          HeaderHeight="22" LineColor="#808080" ImageSortedHeader="s_listctrl_sorted_header.png"
-          ImageHeader="s_listctrl_header.png" ImageSortFlag="s_listctrl_sort_flag.png"/>
+        TextColor="#000000" SelTextColor="#FFFFFF" 
+        FontName="Verdana" FontHeight="13" LineHeight="22"
+        HeaderHeight="22" LineColor="#808080" ImageSortedHeader="s_listctrl_sorted_header.png"
+        ImageHeader="s_listctrl_header.png" ImageSortFlag="s_listctrl_sort_flag.png"/>
     <NormalPlaylist Extends="Playlist" ID="ID_PLAYLIST" BgColor="#FFFFFF,#EDF3FE" SelBgColor="#3875D7" 
-          NowPlayingBgColor="#007F00" NowPlayingTextColor="#FFFFFF" CustomizedColors="#FF7F00,#A9A9A9"
-          TextColor="#000000" SelTextColor="#FFFFFF" FontName="Verdana" FontHeight="14" LineHeight="24"
-          HeaderHeight="17" LineColor="#808080" ImageSortedHeader="s_listctrl_sorted_header.png"
-          ImageHeader="s_listctrl_header.png" ImageSortFlag="s_listctrl_sort_flag.png"/>
-    <NormalTabButton Extends="TabButton" Height="22" 
-          FontName="Verdana" FontHeight="13" TextColor="#000000"
-          Image="s_tab_button.png" SperatorLineWidth="1" ButtunBorderWidth="6" 
-          MarginX="0" MarginY="0" />
-    <NormalComboBox Extends="ComboBox" FontName="Verdana" FontHeight="13" TextColor="#000000" DisabledTextColor="#808080" TabFocus="true"
-          Height="22" Padding="5,4" AlignText="AT_LEFT" TextLeftMargin="14" TextRightMargin="30"
-          Image="s_combobox.png" ImageSize="70,28" ExtendPos="20,40"
-          ImagePos="0,0" ImageSelPos="0,56" ImageFocusPos="0,28" ImageDisabledPos="0,84"/>
-    <NormalFrame Extends="Frame" Image="s_tab_frame.png" RoundWidth="6" ThickWidth="1"
-          XBorder="0" YBorder="10" FontName="Verdana" FontHeight="13" TextColor="#000000"/>
+        NowPlayingBgColor="#007F00" NowPlayingTextColor="#FFFFFF" CustomizedColors="#FF7F00,#A9A9A9"
+        TextColor="#000000" SelTextColor="#FFFFFF" FontName="Verdana" FontHeight="14" LineHeight="24"
+        HeaderHeight="17" LineColor="#808080" ImageSortedHeader="s_listctrl_sorted_header.png"
+        ImageHeader="s_listctrl_header.png" ImageSortFlag="s_listctrl_sort_flag.png"/>
     <Slider Extends="SeekCtrl" EndWidth="3" Height="12" ImageThumb="seek_thumb.png" ImageTrack="seek_track.png"/>
     <Progress Extends="SeekCtrl" Height="20" EndWidth="8" ImageThumb="s_progress_null_thumb.png" ImageTrack="s_progress.png"/>
-    <ListCtrlFrame Extends="Frame" Image="s_listctrl_frame.png" ImageFocus="s_listctrl_frame_focus.png"
-          RoundWidth="4" ThickWidth="4" XBorder="0" YBorder="0"/>
-    <EditCtrlFrame Extends="Frame" Image="s_edit_box_frame.png" ImageFocus="s_edit_box_frame_focus.png"
-          RoundWidth="7" ThickWidth="5" XBorder="0" YBorder="0"/>
     <WndFrameCaption Extends="Text" ID="ID_CAPTION" Rect="30,4,w-60,20" Text="About DH Player" FontHeight="16" FontBold="true" TextColor="#000000" TextOutlinedColor="#000000" TextOutlined="true" LeftMargin="0" AlignText="AT_CENTER | AT_VCENTER"/>
     <VScrollBar Width="15" PushBtHeight="15" ThumbHeight="20" TrackHeight="20" ScrollBarWidth="15" Image="s_vscrollbar.png" ScalableThumb="TRUE" />
     <HScrollBar Height="15" PushBtWidth="15" ThumbWidth="20" TrackWidth="20" ScrollBarHeight="15" Image="s_hscrollbar.png" ScalableThumb="TRUE" />

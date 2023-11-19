@@ -35,14 +35,13 @@ void CSkinTabButton::drawButton(CRawGraph *canvas, int nButton, BT_DRAW_STATE bt
     int nBtImageTop = m_nImageHeight * btDrawState;
     int nButtonWidth = bt.nWidth;
 
+    nBtImageLeft = 0;
     if (nButton != m_vButtons.size() - 1) {
         nButtonWidth--;
     }
 
     if (bt.nCurStatus == Button::STATUS_CHECKED) {
-        nBtImageLeft = m_image.m_cx / 2;
-    } else {
-        nBtImageLeft = 0;
+        nBtImageTop += m_nImageHeight * ROW_MAX;
     }
 
     // draw button left border
@@ -63,7 +62,7 @@ void CSkinTabButton::drawButton(CRawGraph *canvas, int nButton, BT_DRAW_STATE bt
     // draw button right border
     int nRightBorderLeft = nBtImageLeft;
     if (nButton == m_vButtons.size() - 1) {
-        nRightBorderLeft += m_image.m_cx / 2 - m_nMarginX - m_nButtonBorderWidth;
+        nRightBorderLeft += m_image.m_cx - m_nMarginX - m_nButtonBorderWidth;
     } else {
         nRightBorderLeft += m_nMarginX + m_nButtonBorderWidth + m_nButtonFaceWidth;
     }
@@ -73,9 +72,9 @@ void CSkinTabButton::drawButton(CRawGraph *canvas, int nButton, BT_DRAW_STATE bt
     // draw button sepeartor
     if (nButton != m_vButtons.size() - 1) {
         // If next button is checked, draw seperator highlight.
-        if (m_vButtons[nButton + 1].nCurStatus == Button::STATUS_CHECKED) {
-            nBtImageLeft = m_image.m_cx / 2;
-        }
+//        if (m_vButtons[nButton + 1].nCurStatus == Button::STATUS_CHECKED) {
+//            nBtImageLeft = m_image.m_cx;
+//        }
         int nSeperatorLeft = nBtImageLeft + m_nMarginX
         + m_nButtonBorderWidth * 2 + m_nButtonFaceWidth;
         m_image.blt(canvas, x, y, m_nSperatorLineWidth, nHeight, nSeperatorLeft, nBtImageTop);
@@ -84,6 +83,11 @@ void CSkinTabButton::drawButton(CRawGraph *canvas, int nButton, BT_DRAW_STATE bt
     // draw Button text
     if (bt.strText.size()) {
         CRect rcText(xOrg, y, xOrg + bt.nWidth, y + nHeight);
+        CColor clrText = m_font.getTextColor(m_enable);
+        if (btDrawState == ROW_DOWN || bt.nCurStatus == Button::STATUS_CHECKED) {
+            clrText = m_clrTextSelected;
+        }
+        canvas->setTextColor(clrText);
 
         canvas->drawText(bt.strText.c_str(), (int)bt.strText.size(), rcText, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     }
@@ -94,10 +98,8 @@ void CSkinTabButton::onCreate() {
 
     m_nBlankX = -1;
 
-    m_nImageHeight = m_image.m_cy / 3;
-
     // 2 * ( <MarginX> <ButtonBorder> <ButtonFace> <ButtonBorder> <SperatorLine> <ButtonBorder> <ButtonFace> <ButtonBorder> <MarginX>)
-    m_nButtonFaceWidth = (m_image.m_cx / 2 - m_nMarginX * 2 - m_nSperatorLineWidth) / 2
+    m_nButtonFaceWidth = (m_image.m_cx - m_nMarginX * 2 - m_nSperatorLineWidth) / 2
     - m_nButtonBorderWidth * 2;
 
     for (int i = 0; i < (int)m_vButtons.size(); i++) {

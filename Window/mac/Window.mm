@@ -50,9 +50,9 @@ Window::~Window() {
 bool Window::createForSkin(cstr_t szClassName, cstr_t szCaption, int x, int y, int nWidth, int nHeight, Window *pWndParent, bool bToolWindow, bool bTopmost, bool bVisible) {
     NSRect frame = NSMakeRect(x, y, nWidth, nHeight);
     WindowMacImp* w = [[WindowMacImp alloc] initWithContentRect:frame
-        //                                              styleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable
-                                                      styleMask:NSWindowStyleMaskResizable
-                                                        backing:NSBackingStoreBuffered
+        styleMask: NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable
+                                                    // styleMask:NSWindowStyleMaskResizable
+                                                    backing:NSBackingStoreBuffered
                                                           defer:NO];
     [w setOwnerBaseWnd:this];
 

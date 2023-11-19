@@ -154,6 +154,12 @@ public:
     // void *getHandle();
     void setHasShadow(bool hasShadow);
 
+#ifdef _MAC_OS
+    // Mac has a known bug: when click system menubar button, the floating
+    // lyrics window will become active.
+    bool                        m_ignoreOneActivate = false;
+#endif
+
 protected:
     WndSizeMode                 m_WndSizeMode;
     Window                      *m_parent;

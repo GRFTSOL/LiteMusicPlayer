@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PreferPage.SystemRoot Name="System" Visible="false" Rect="0,65,w,h-65">
   <NormalFrame Rect="10,10,w-20,h-20"/>
-  <NormalTabButton ID="CID_TOOLBAR_SYSTEM"  Rect="30,10,w-30,">
+  <NormalTabButton ID="CID_TOOLBAR_SYSTEM"  Rect="30,8,w-30,">
     <button ID="CMD_SYSTEM_INTERNET" Text="Internet"/>
     <button ID="CMD_SYSTEM_STARTUP" Text="Startup"/>
   </NormalTabButton>

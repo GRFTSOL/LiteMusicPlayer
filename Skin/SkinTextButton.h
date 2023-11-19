@@ -34,6 +34,7 @@ protected:
 
     int                         m_nTextLeftMargin, m_nTextRightMargin;
 
+    CColor                      m_clrTextSelected;
     CSkinFontProperty           m_font;
 
 };

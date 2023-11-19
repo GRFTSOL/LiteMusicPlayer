@@ -32,10 +32,9 @@
         >
             <q-tab name="colors" label="Colors"></q-tab>
             <q-tab name="icons" label="Icons"></q-tab>
-            <q-tab name="button" label="Button"></q-tab>
             <q-tab name="button-group" label="Button Group"></q-tab>
             <q-tab name="combo-box" label="Combo Box"></q-tab>
-            <q-tab name="edit" label="Edit"></q-tab>
+            <q-tab v-for="frame in frames" :name="frame.name" :label="frame.title"></q-tab>
             <q-tab name="checks" label="Checks"></q-tab>
             <q-tab name="progress" label="Progress"></q-tab>
             <q-tab name="thumb" label="Thumb"></q-tab>
@@ -48,25 +47,33 @@
         <q-tab-panels v-model="tab.name" animated>
             <q-tab-panel name="colors">
                 <!-- Tab: 颜色表 -->
-                <div class="row q-gutter-md">
-                    <q-chip v-for="color, index in colors"
-                        square clickable removable
-                        :style="{ background: color, width: 60+'px'}"
-                        @click="chooseColorX(color, c => colors[index] = c)"
-                        @remove="removePresetColor(index)"
-                    >
-                    {{ index + 1 }}
-                    </q-chip>
-                    <q-btn dense color="primary" @click="chooseColorX(color, c => { colors.push(c); bgColors.push('#FFFFFF');})" icon="add"></q-btn>
-                </div>
-                <div class="row q-gutter-md">
-                    <q-chip v-for="color, index in bgColors"
-                        square clickable removable
-                        :style="{ background: color, width: 60+'px', 'border-style': 'solid', 'border-color': '#DDD'}"
-                        @click="chooseColorX(color, c => bgColors[index] = c)"
-                        @remove="bgColors[index] = ''"
-                    >
-                    </q-chip>
+                <div class="row q-gutter-sm">
+                    <div class="column q-gutter-sm">
+                        <div style="width: 70px; height: 32px"></div>
+                        <div style="width: 70px; height: 16px">Edge</div>
+                        <div style="width: 70px; height: 16px">Background</div>
+                        <div style="width: 70px; height: 16px">Foreground</div>
+                    </div>
+                    <div v-for="color, index in colors" class="column q-gutter-sm">
+                        <q-input dense outlined v-model="colorNames[index]" style="width: 80px; margin: 0"></q-input>
+                        <q-chip square clickable removable
+                            :style="{ background: color, width: 80+'px', 'border-style': 'solid', 'border-color': '#DDD', 'margin': 0}"
+                            @click="showColorDialog(color, c => colors[index] = c)"
+                            @remove="removePresetColor(index)"
+                        ></q-chip>
+                        <q-chip square clickable removable
+                            :style="{ background: bgColors[index], width: 80+'px', 'border-style': 'solid', 'border-color': '#DDD', 'margin': 0}"
+                            @click="showColorDialog(bgColors[index], c => bgColors[index] = c)"
+                            @remove="bgColors[index] = ''"
+                        ></q-chip>
+                        <q-chip square clickable removable
+                            :style="{ background: fgColors[index], width: 80+'px', 'border-style': 'solid', 'border-color': '#DDD', 'margin': 0}"
+                            @click="showColorDialog(fgColors[index], c => fgColors[index] = c)"
+                            @remove="fgColors[index] = ''"
+                        ></q-chip>
+                    </div>
+
+                    <q-btn dense color="primary" @click="showColorDialog(color, c => { colors.push(c); bgColors.push('#FFFFFF');})" icon="add"></q-btn>
                 </div>
             </q-tab-panel>
 
@@ -101,14 +108,16 @@
                         </div>
         
                         <div class="row">
-                            <div id="choosen_icon">
+                            <div>
                                 <div
-                                    v-for="i, index in tab.chars"
-                                    @click="removeChoosenIconText(tab.chars, index)"
-                                    @drop="ev => onDropIcon(ev, tab.chars, index)" @dragover="ev => ev.preventDefault()" draggable="true"
+                                    v-for="item, index in tab.icons"
+                                    @click="removeChoosenIconText(tab.icons, index)"
+                                    @drop="ev => onDropIcon(ev, tab.icons, index)" @dragover="ev => ev.preventDefault()" draggable="true"
                                     @dragstart="ev => ev.dataTransfer.setData('index', index)"
-                                    :style="{margin: tab.marginY + 'px ' + tab.marginX + 'px', 'font-family': i.font, 'font-size': tab.fontSize+'px', 'font-weight': tab.fontWeight, width: tab.fontSize+'px', display: 'inline'}"
-                                >{{ i.char }}
+                                    :style="{margin: tab.marginY + 'px ' + tab.marginX + 'px', 'font-family': item.type, 'font-size': tab.fontSize+'px', 'font-weight': tab.fontWeight, width: tab.fontSize+'px', display: 'inline'}"
+                                >
+                                    <image v-if="item.type == '_image_'" :src="'images/' + item.icon"></image>
+                                    <template v-else>{{ item.icon }}</template>
                                 </div>
                             </div>
                             <q-btn class="q-ml-md" color="primary" no-caps icon="add" @click="showAddIconsDialog(tab)"></q-btn>
@@ -117,103 +126,46 @@
                 </q-tab-panels>
             </q-tab-panel>
 
-            <q-tab-panel name="button">
-                <div class="row q-gutter-md q-mb-md">
-                    <q-btn color="primary" no-caps label="Save" @click="saveCanvas('button')"></q-btn>
-                    <q-input dense outlined type="number" debounce="500" v-model="bt.height" label="Height (No Edge)"></q-input>
-                    <q-input dense outlined type="number" debounce="500" v-model="bt.width" label="Width (No Edge)"></q-input>
-                    <q-input dense outlined type="number" debounce="500" v-model="bt.cornerRadius" label="Corner Radius"></q-input>
-                    <q-input dense outlined type="number" debounce="500" v-model="bt.edge1" label="Edge1"></q-input>
-                    <q-input dense outlined type="number" debounce="500" v-model="bt.edge2" label="Edge2"></q-input>
-                    <q-input dense outlined type="number" debounce="500" v-model="bt.margin" label="Margin"></q-input>
-                </div>
-                <div class="row q-gutter-md q-mb-md">
-                    <q-checkbox v-for="color, index in colors"
-                        v-model="bt.colors[index]" :style="{background: color}">
-                        <q-chip square :style="{ background: bgColors[index], width: 20+'px'}"></q-chip>
-                    </q-checkbox>
-                </div>
-                <!-- <div class="row q-gutter-md q-mb-md">
-                    <q-card v-for="item, index in bt.items">
-                        <q-card-section>
-                            <q-input dense outlined type="number" debounce="500" v-model="item.edge" style="width: 85px" label="Edge"></q-input>
-                            <q-chip clickable removable
-                                @click="chooseColorX(item.fillColor, color => item.fillColor=color)"
-                                :style="{ background: item.fillColor, width: 80+'px'}"
-                                @remove="item.edgeColor=''"
-                                >
-                            Fill
-                            </q-chip>
-                            <br>
-                            <q-chip clickable removable
-                                @click="chooseColorX(item.edgeColor, color => item.edgeColor=color)"
-                                :style="{ background: item.edgeColor, width: 80+'px'}"
-                                @remove="bt.items.splice(index, 1)"
-                                >
-                            Edge
-                            </q-chip>
-                        </q-card-section>
-                    </q-card>
-
-                    <q-btn dense color="primary" icon="add"
-                        @click="chooseColorX('#FFFFFF', color => bt.items.push({ edgeColor: color, fillColor: color, edge: 1}))"
-                    ></q-btn>
-                </div> -->
-            </q-tab-panel>
-
             <q-tab-panel name="button-group">
                 <div class="row q-gutter-md q-mb-md">
                     <q-btn color="primary" no-caps label="Save" @click="saveCanvas('button-group')"></q-btn>
-                    <q-input dense outlined type="number" debounce="500" v-model="btg.height" label="Height (No Edge)"></q-input>
-                    <q-input dense outlined type="number" debounce="500" v-model="btg.width" label="Width (No Edge)"></q-input>
+                    <q-input dense outlined type="number" debounce="500" v-model="btg.height" label="Height"></q-input>
+                    <q-input dense outlined type="number" debounce="500" v-model="btg.width" label="Width"></q-input>
                     <q-input dense outlined type="number" debounce="500" v-model="btg.cornerRadius" label="Corner Radius"></q-input>
-                    <q-input dense outlined type="number" debounce="500" v-model="btg.edge1" label="Edge1"></q-input>
-                    <q-input dense outlined type="number" debounce="500" v-model="btg.edge2" label="Edge2"></q-input>
+                    <q-input dense outlined type="number" debounce="500" v-model="btg.edge" label="Edge"></q-input>
                     <q-input dense outlined type="number" debounce="500" v-model="btg.margin" label="Margin"></q-input>
                 </div>
-                <div class="row q-gutter-md q-mb-md">
-                    <q-checkbox v-for="color, index in colors"
-                        v-model="btg.colors[index]" :style="{background: color}">
-                        <q-chip square :style="{ background: bgColors[index], width: 20+'px'}"></q-chip>
-                    </q-checkbox>
-                </div>
+                <template color-model-name="btg.colors"></template>
             </q-tab-panel>
 
             <q-tab-panel name="combo-box">
                 <div class="row q-gutter-md q-mb-md">
-                    <q-btn color="primary" no-caps label="Save" @click="saveCanvas('button-group')"></q-btn>
-                    <q-input dense outlined type="number" width="80px" debounce="500" v-model="cb.height" label="Height (No Edge)" style="width: 120px;"></q-input>
-                    <q-input dense outlined type="number" width="80px" debounce="500" v-model="cb.width" label="Width (No Edge)" style="width: 120px;"></q-input>
+                    <q-btn color="primary" no-caps label="Save" @click="saveCanvas('combo-box')"></q-btn>
+                    <q-input dense outlined type="number" width="80px" debounce="500" v-model="cb.height" label="Height" style="width: 120px;"></q-input>
+                    <q-input dense outlined type="number" width="80px" debounce="500" v-model="cb.width" label="Width" style="width: 120px;"></q-input>
                     <q-input dense outlined type="number" width="80px" debounce="500" v-model="cb.cornerRadius" label="Corner Radius" style="width: 120px;"></q-input>
-                    <q-input dense outlined type="number" width="80px" debounce="500" v-model="cb.edge1" label="Edge1" style="width: 120px;"></q-input>
-                    <q-input dense outlined type="number" width="80px" debounce="500" v-model="cb.edge2" label="Edge2" style="width: 120px;"></q-input>
+                    <q-input dense outlined type="number" width="80px" debounce="500" v-model="cb.edge" label="Edge" style="width: 120px;"></q-input>
                     <q-input dense outlined type="number" width="80px" debounce="500" v-model="cb.margin" label="Margin" style="width: 120px;"></q-input>
                     <q-input dense outlined type="number" width="80px" debounce="500" v-model="cb.fontSize" label="Icon Size" style="width: 120px;"></q-input>
                     <q-input dense outlined debounce="500" v-model="cb.icon" label="Drop Icon"></q-input>
                 </div>
-                <div class="row q-gutter-md q-mb-md">
-                    <q-checkbox v-for="color, index in colors"
-                        v-model="cb.colors[index]" :style="{background: color}">
-                        <q-chip square :style="{ background: bgColors[index], width: 20+'px'}"></q-chip>
-                    </q-checkbox>
-                </div>
+                <template color-model-name="cb.colors"></template>
+                <template></template><!-- Do NOT remove this empty template, it will cause next preprocessChooseColors failed. -->
             </q-tab-panel>
 
-            <q-tab-panel name="edit">
-                <div class="row q-gutter-md q-mb-md">
-                    <q-btn color="primary" no-caps label="Save" @click="saveCanvas('edit')"></q-btn>
-                    <q-input dense outlined type="number" debounce="500" v-model="edit.height" label="Height (No Edge)"></q-input>
-                    <q-input dense outlined type="number" debounce="500" v-model="edit.width" label="Width (No Edge)"></q-input>
-                    <q-input dense outlined type="number" debounce="500" v-model="edit.cornerRadius" label="Corner Radius"></q-input>
-                    <q-input dense outlined type="number" debounce="500" v-model="edit.edge" label="Edge"></q-input>
-                </div>
-                <div class="row q-gutter-md q-mb-md">
-                    <q-checkbox v-for="color, index in colors"
-                        v-model="edit.colors[index]" :style="{background: color}">
-                        <q-chip square :style="{ background: bgColors[index], width: 20+'px'}"></q-chip>
-                    </q-checkbox>
-                </div>
-            </q-tab-panel>
+            <template v-for="frame in frames">
+                <q-tab-panel :name="frame.name">
+                    <div class="row q-gutter-md q-mb-md">
+                        <q-btn color="primary" no-caps label="Save" @click="saveCanvas(frame.name)"></q-btn>
+                        <q-input dense outlined type="number" debounce="500" v-model="frame.height" label="Height"></q-input>
+                        <q-input dense outlined type="number" debounce="500" v-model="frame.width" label="Width"></q-input>
+                        <q-input dense outlined type="number" debounce="500" v-model="frame.cornerRadius" label="Corner Radius"></q-input>
+                        <q-input dense outlined type="number" debounce="500" v-model="frame.edge" label="Edge"></q-input>
+                        <q-input dense outlined type="number" debounce="500" v-model="frame.margin" label="Margin"></q-input>
+                    </div>
+                    <template color-model-name="frame.colors"></template>
+                </q-tab-panel>
+            </template>
 
             <q-tab-panel name="checks">
                 <div class="row q-gutter-md q-mb-md">
@@ -223,12 +175,7 @@
                     <q-input dense outlined type="number" debounce="500" v-model="checks.fontSize" label="Font Size"></q-input>
                     <q-input dense outlined debounce="500" v-model="checks.icons" label="Icons(hex)"></q-input>
                 </div>
-                <div class="row q-gutter-md q-mb-md">
-                    <q-checkbox v-for="color, index in colors"
-                        v-model="checks.colors[index]" :style="{background: color}">
-                        <q-chip square :style="{ background: bgColors[index], width: 20+'px'}"></q-chip>
-                    </q-checkbox>
-                </div>
+                <template color-model-name="checks.colors"></template>
             </q-tab-panel>
 
             <q-tab-panel name="progress">
@@ -240,12 +187,7 @@
                     <q-input dense outlined type="number" debounce="500" v-model="progress.marginY" label="Margin Y"></q-input>
                     <q-input dense outlined type="number" debounce="500" v-model="progress.cornerRadius" label="Corner Radius"></q-input>
                 </div>
-                <div class="row q-gutter-md q-mb-md">
-                    <q-checkbox v-for="color, index in colors"
-                        v-model="progress.colors[index]" :style="{background: color}">
-                        <q-chip square :style="{ background: bgColors[index], width: 20+'px'}"></q-chip>
-                    </q-checkbox>
-                </div>
+                <template color-model-name="progress.colors"></template>
             </q-tab-panel>
 
             <q-tab-panel name="thumb">
@@ -261,32 +203,22 @@
                     <q-input dense outlined type="number" width="80px" debounce="500" v-model="thumb.cornerRadius2" label="Radius2" style="width: 120px;"></q-input>
                     <q-input dense outlined width="80px" debounce="500" v-model="thumb.alpha2" label="Alpha2(0~1.0)" style="width: 120px;"></q-input>
                 </div>
-                <div class="row q-gutter-md q-mb-md">
-                    <q-checkbox v-for="color, index in colors"
-                        v-model="thumb.colors[index]" :style="{background: color}">
-                        <q-chip square :style="{ background: bgColors[index], width: 20+'px'}"></q-chip>
-                    </q-checkbox>
-                </div>
+                <template color-model-name="thumb.colors"></template>
             </q-tab-panel>
 
             <q-tab-panel name="scrollbar">
                 <div class="row q-gutter-md q-mb-md">
                     <q-btn color="primary" no-caps label="Save" @click="saveCanvas('scrollbar-horz', 'scrollbar-vert')"></q-btn>
-                    <q-input dense outlined type="number" width="80px" debounce="500" v-model="sb.width" label="Height (No Edge)" style="width: 120px;"></q-input>
-                    <q-input dense outlined type="number" width="80px" debounce="500" v-model="sb.height" label="Width (No Edge)" style="width: 120px;"></q-input>
-                    <q-input dense outlined type="number" width="80px" debounce="500" v-model="sb.btnSize" label="Corner Radius" style="width: 120px;"></q-input>
-                    <q-input dense outlined type="number" width="80px" debounce="500" v-model="sb.thumbSize" label="Edge1" style="width: 120px;"></q-input>
-                    <q-input dense outlined type="number" width="80px" debounce="500" v-model="sb.cornerRadius" label="Edge2" style="width: 120px;"></q-input>
-                    <q-input dense outlined type="number" width="80px" debounce="500" v-model="sb.fontSize" label="Icon Size" style="width: 120px;"></q-input>
+                    <q-input dense outlined type="number" width="80px" debounce="500" v-model="sb.width" label="Widdth" style="width: 120px;"></q-input>
+                    <q-input dense outlined type="number" width="80px" debounce="500" v-model="sb.height" label="Height" style="width: 120px;"></q-input>
+                    <q-input dense outlined type="number" width="80px" debounce="500" v-model="sb.btnSize" label="Button Size" style="width: 120px;"></q-input>
+                    <q-input dense outlined type="number" width="80px" debounce="500" v-model="sb.thumbSize" label="Thumb Size" style="width: 120px;"></q-input>
+                    <q-input dense outlined type="number" width="80px" debounce="500" v-model="sb.cornerRadius" label="Corner Radius" style="width: 120px;"></q-input>
+                    <q-input dense outlined type="number" width="80px" debounce="500" v-model="sb.fontSize" label="Arrow Size" style="width: 120px;"></q-input>
+                    <q-input dense outlined debounce="500" v-model="sb.icon" label="Arrow Icon" style="width: 120px;"></q-input>
                     <q-input dense outlined width="80px" debounce="500" v-model="sb.alpha" label="Alpha(0~1.0)" style="width: 120px;"></q-input>
-                    <q-input dense outlined debounce="500" v-model="sb.icon" label="Drop Icon"></q-input>
                 </div>
-                <div class="row q-gutter-md q-mb-md">
-                    <q-checkbox v-for="color, index in colors"
-                        v-model="sb.colors[index]" :style="{background: color}">
-                        <q-chip square :style="{ background: bgColors[index], width: 20+'px'}"></q-chip>
-                    </q-checkbox>
-                </div>
+                <template color-model-name="sb.colors"></template>
             </q-tab-panel>
 
             <q-tab-panel name="conf">
@@ -297,7 +229,7 @@
                         style="width: 250px;"
                     >
                         <template v-slot:prepend>
-                          <q-icon name="settings" />
+                          <q-icon name="settings"></q-icon>
                         </template>
                     </q-file>
                 </div>
@@ -305,19 +237,11 @@
 
         </q-tab-panels>
 
-        <div class="q-pa-md row q-mb-md">
-            <div class="q-mr-md">
-                <canvas id="canvasCtrls"></canvas>
-            </div>
-            <div>
-                <canvas id="canvasCtrls2x"></canvas>
-            </div>
-            <div class="q-mr-md">
-                <canvas id="canvasCtrlsVert"></canvas>
-            </div>
-            <div>
-                <canvas id="canvasCtrlsVert2x"></canvas>
-            </div>
+        <div class="row q-gutter-md q-mx-sm">
+            <div><canvas id="canvasCtrls"></canvas></div>
+            <div><canvas id="canvasCtrls2x"></canvas></div>
+            <div><canvas id="canvasCtrlsVert"></canvas></div>
+            <div><canvas id="canvasCtrlsVert2x"></canvas></div>
         </div>
 
         <q-dialog v-model="colorDialog.show">
@@ -327,7 +251,7 @@
                 </q-card-section>
 
                 <q-card-section class="q-pb-none">
-                    <q-chip v-for="color in colors"
+                    <q-chip v-for="color in histColors"
                         square clickable
                         :style="{ background: color, width: 20+'px'}"
                         @click="colorDialog.color = color"
@@ -336,7 +260,7 @@
                 </q-card-section>
 
                 <q-card-actions align="right">
-                    <q-btn flat label="OK" @click="colorDialog.callback(colorDialog.color)" color="primary" v-close-popup></q-btn>
+                    <q-btn flat label="OK" @click="onColorChoosed(colorDialog.color)" color="primary" v-close-popup></q-btn>
                     <q-btn flat label="Cancel" color="primary" v-close-popup></q-btn>
                 </q-card-actions>
             </q-card>
@@ -351,6 +275,7 @@
                     class="text-grey" active-color="primary" indicator-color="primary" align="left"
                 >
                     <q-tab v-for="font in fonts" :name="font.name" :label="font.name"></q-tab>
+                    <q-tab name="image" label="Image"></q-tab>
                 </q-tabs>
         
                 <q-separator></q-separator>
@@ -358,11 +283,11 @@
                 <q-tab-panels v-model="iconDialog.tabName" animated>
                     <q-tab-panel v-for="font in fonts" :name="font.name">
                         <div class="row q-gutter-md q-pb-md">
-                            <q-input dense outlined v-model="font.char" label="Icon(hex)"></q-input>
+                            <q-input dense outlined v-model="font.icon" label="Icon(hex)"></q-input>
                             <q-btn color="primary" flat no-caps label="Add Icon" @click="addIconByHexCode(font)"></q-btn>
-                                <div :style="{'font-family': font.name, 'font-size': '30px'}">
-                                    {{ String.fromCodePoint(parseInt(font.char, 16)) }}
-                                </div>
+                            <div :style="{'font-family': font.name, 'font-size': '30px'}">
+                                {{ String.fromCodePoint(parseInt(font.icon, 16)) }}
+                            </div>
                         </div>
 
                         <a v-if="font.url" :href="font.url" target="_blank">Search Icons</a>
@@ -373,11 +298,65 @@
                         >
                         </q-btn>
                     </q-tab-panel>
+                    <q-tab-panel name="image">
+                        <div class="row q-gutter-md q-pb-md">
+                            <q-input dense outlined v-model="iconDialog.image" label="Image path(put under folder: skin-creator/web/images)" style="width: 300px;"></q-input>
+                            <q-checkbox  v-model="iconDialog.replaceColor" label="Replace Color"></q-checkbox>
+                            <q-btn color="primary" flat no-caps label="Add Image" @click="iconDialog.callback(iconDialog.image, '_image_', iconDialog.replaceColor)"></q-btn>
+                        </div>
+                        <image v-if="iconDialog.image" :src="'images/' + iconDialog.image"></image>
+                    </q-tab-panel>
                 </q-tab-panels>
             </q-card-section>
             </q-card>
         </q-dialog>
     </div>
+
+    <div id="choose_colors" style="display: none;">
+        <div class="row q-gutter-sm">
+            <div v-for="color, index in colors" class="column">
+                <q-chip :style="{ width: 80+'px', 'margin': '0px'}" square>
+                    {{ colorNames[index] }}
+                </q-chip>
+                <q-checkbox v-model="$1[index]" :style="{background: color, width: 80+'px'}">
+                    <q-chip square :style="{ background: bgColors[index], width: 20+'px'}"></q-chip>
+                </q-checkbox>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // This won't replace all templates.
+        // function preprocessChooseColors() {
+        //     const el = document.getElementById('choose_colors');
+        //     let text = el.innerHTML;
+        //     const els = document.getElementsByTagName('template');
+        //     for (e of els) {
+        //         console.log(e.outerHTML);
+        //         e.outerHTML = e.outerHTML.replace(/<template color-model-name="(.*)"><\/template>/, text);
+        //     }
+        // }
+        function preprocessChooseColors() {
+            const el = document.getElementById('choose_colors');
+            let text = el.innerHTML;
+
+            next(document.body, '');
+
+            function next(node, indent) {
+                if (node.firstChild) next(node.firstChild, ' ' + indent);
+                if (node.nextSibling) next(node.nextSibling, indent);
+
+                if (node.tagName && node.tagName.toLowerCase() === 'template') {
+                    // console.log(node.outerHTML);
+                    node.outerHTML = node.outerHTML.replace(/<template color-model-name="(.*)"><\/template>/, text);
+                }
+            }
+        }
+
+        preprocessChooseColors();
+
+    </script>
 
     <script src="js/utils.js"></script>
     <script src="js/main.js"></script>

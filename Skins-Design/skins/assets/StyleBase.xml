@@ -1,11 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <style>
-    <CompactImageBtn Extends="ImageButton" ContentMarginX="3" ContentMarginY="1" StretchContent="false"
-		Height="24" Padding="0,0" TabFocus="true"
-		Image="button.png" ImageSize="40,24" ExtendPos="3,36"
-		ImagePos="0,72" ImageSelPos="0,120" ImageFocusPos="0,96"/>
-    <CompactImageCheckBtn  Extends="CompactImageBtn"
-		S1_Image="button.png" S1_ImageSize="40,24" S1_ExtendPos="3,36"
-		S1_ImagePos="0,120"/>
+    <FlatImageBtn Extends="ImageButton" ContentMarginX="3" ContentMarginY="1" StretchContent="false"
+		Height="26" Padding="0,0" TabFocus="true"
+		Image="button-flat.png" ImageSize="40,26" ExtendPos="8,24"
+		ImagePos="0,0" ImageSelPos="0,52" ImageFocusPos="0,26"/>
+    <FlatImageCheckBtn  Extends="FlatImageBtn"
+		S1_Image="button-flat.png" S1_ImageSize="40,26" S1_ExtendPos="8,24"
+		S1_ImagePos="0,78" S1_ImageSelPos="0,130" S1_ImageFocusPos="0,104"/>
+
+    <NormalTextBt Extends="TextButton" FontName="Verdana" FontHeight="13" 
+		TextColor="#000000" SelTextColor="#FFFFFF" DisabledTextColor="#808080" TabFocus="true"
+		Height="21" Padding="5,3" TextLeftMargin="8" TextRightMargin="8"
+		Image="button.png" ImageSize="40,26" ExtendPos="8,24"
+		ImagePos="0,26" ImageSelPos="0,78" ImageFocusPos="0,52" ImageDisabledPos="0,0"/>
+    <NormalImageBt Extends="ImageButton" ContentMarginX="4" ContentMarginY="4"
+        Height="22" Padding="0,2" TabFocus="true"
+        Image="button.png" ImageSize="40,26" ExtendPos="8,24"
+		ImagePos="0,26" ImageSelPos="0,78" ImageFocusPos="0,52" ImageDisabledPos="0,0"/>
+
+    <NormalCheckBox Extends="TextButton" FontName="Verdana" FontHeight="13" TextColor="#000000" DisabledTextColor="#808080"
+		Height="24" Padding="3,2" TextLeftMargin="26" AlignText="AT_LEFT" CheckBox="true" TabFocus="true"
+		Image="checks.png" ImageSize="26,26"
+		ImagePos="0,26" ImageSelPos="0,52" ImageFocusPos="0,78" ImageDisabledPos="0,0"
+		S1_Image="checks.png" S1_ImageSize="26,26"
+		S1_ImagePos="26,26" S1_ImageSelPos="26,52" S1_ImageFocusPos="26,78" S1_ImageDisabledPos="26,0"/>
+    <NormalRadioBt Extends="TextButton" FontName="Verdana" FontHeight="13" TextColor="#000000" DisabledTextColor="#808080"
+		Height="24" Padding="3,2" TextLeftMargin="26" AlignText="AT_LEFT"
+		Radio="true" TabFocus="true"
+		Image="checks.png" ImageSize="26,26"
+		ImagePos="52,26" ImageSelPos="52,52" ImageFocusPos="52,78" ImageDisabledPos="52,0"
+		S1_Image="checks.png" S1_ImageSize="26,26"
+		S1_ImagePos="78,26" S1_ImageSelPos="78,52" S1_ImageFocusPos="78,78" S1_ImageDisabledPos="78,0"/>
+
+	<NormalEdit Extends="EditCtrl" Height="20" FontName="Verdana" FontHeight="13" TextColor="#000000"
+        XMargin="5" YMargin="0"/>
+    <EditCtrlFrame Extends="Frame" Image="edit.png" ImageSize="40,26"
+		ImagePos="0,26" ImageFocusPos="0,52" ImageHoverPos="0,52"
+		RoundWidth="4" ThickWidth="2" XBorder="0" YBorder="0"/>
+    <ListCtrlFrame Extends="Frame" Image="listctrl-frame.png" ImageSize="40,26"
+		ImagePos="0,0" ImageFocusPos="0,26" ImageHoverPos="0,26"
+		RoundWidth="4" ThickWidth="2" XBorder="0" YBorder="0"/>
+    <NormalComboBox Extends="ComboBox" FontName="Verdana" FontHeight="13" TextColor="#000000" DisabledTextColor="#808080" TabFocus="true"
+		Height="22" Padding="5,4" AlignText="AT_LEFT" TextLeftMargin="14" TextRightMargin="30"
+		Image="combo-box.png" ImageSize="60,26" ExtendPos="10,40"
+		ImagePos="0,26" ImageSelPos="0,78" ImageFocusPos="0,52" ImageDisabledPos="0,0"/>
+    <NormalTabButton Extends="TabButton" Height="24" ImageHeight="24"
+        FontName="Verdana" FontHeight="13" TextColor="#000000" SelTextColor="#FFFFFF"
+        Image="button-group.png" SperatorLineWidth="2" ButtunBorderWidth="13" 
+        MarginX="0" MarginY="0" />
+
+    <NormalFrame Extends="Frame" Image="frame-ctrl.png" RoundWidth="6" ThickWidth="2"
+        XBorder="0" YBorder="10" FontName="Verdana" FontHeight="13" TextColor="#000000"/>
 
 </style>

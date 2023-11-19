@@ -4,24 +4,47 @@ let colorDialog = Vue.reactive({
     callback: (clr) => {},
 });
 
-let colors = getPref('colors', []);
-let bgColors = getPref('bgColors', []);
-if (!(colors instanceof Array)) {
-    g_prefs['colors'] = colors = [];
-    g_prefs['bgColors'] = bgColors = [];
+let histColors = Vue.reactive(getPref('hist-colors'));
+if (!(histColors instanceof Array)) {
+    histColors = histColors = [];
 }
-bgColors.length = colors.length;
-colors = Vue.reactive(colors);
-bgColors = Vue.reactive(bgColors);
-for (let i in colors) {
-    if (bgColors[i] == null) {
-        bgColors[i] = '#FFFFFF';
-    }
-}
+let colors = loadColors('colors', 0);
+let bgColors = loadColors('bgColors', colors.length);
+let fgColors = loadColors('fgColors', colors.length);
 
 let tabChangedCallbacks = {};
 function addTabChangedCallback(name, cb) {
     tabChangedCallbacks[name] = cb;
+}
+
+function loadColors(name, length) {
+    let colors = getPref(name);
+    if (!(colors instanceof Array)) {
+        g_prefs[name] = colors = [];
+    }
+
+    for (let i = 0; i < length; i++) {
+        if (colors[i] == null) {
+            colors[i] = '#FFFFFF';
+        } else {
+            addHistoryColor(colors[i]);
+        }
+    }
+
+    return Vue.reactive(colors);
+}
+
+function addHistoryColor(color) {
+    if (!color.startsWith('#')) return;
+    for (const c of histColors) {
+        if (c === color) {
+            return;
+        }
+    }
+    histColors.push(color);
+    if (histColors.length > 20) {
+        histColors.splice(0, histColors.length - 20);
+    }
 }
 
 function countOfChoosedColors(flags) {
@@ -86,6 +109,7 @@ function saveCanvas(name, nameVert) {
 
 function initAppCtrl(name, ctrlDefValue, drawCtrl, drawCtrlVert) {
     const ctrl = Vue.reactive(getPref(name, ctrlDefValue));
+    copyPropertiesIfNotExist(ctrl, ctrlDefValue);
 
     Vue.watch(ctrl, updateCanvas);
     tabChangedCallbacks[name] = updateCanvas;
@@ -113,7 +137,8 @@ function appIcons() {
     const iconDialog = Vue.reactive({
         show: false,
         tabName: 'codicon',
-        callback: (char, font) => {},
+        replaceColor: true,
+        callback: (icon, type, replaceColor) => {},
     });
 
     let codiconText = [];
@@ -124,13 +149,29 @@ function appIcons() {
     codiconText = codiconText.join('');
 
     const fonts = Vue.reactive([
-        { name: 'codicon', char: 'ea60', text: codiconText },
-        { name: 'Material Icons', char: 'e8b6', text: '', url: 'https://fonts.google.com/icons?icon.set=Material+Icons&icon.platform=web&icon.query=delete' },
+        { name: 'codicon', icon: 'ea60', text: codiconText },
+        { name: 'Material Icons', icon: 'e8b6', text: '', url: 'https://fonts.google.com/icons?icon.set=Material+Icons&icon.platform=web&icon.query=delete' },
     ]);
 
-    function removeChoosenIconText(chars, index) {
+    const images = {};
+    for (let tab of ctrl.tabs) {
+        for (let item of tab.icons) {
+            addImage(item);
+        }
+    }
+
+    function removeChoosenIconText(icons, index) {
         if (confirm("Click 'OK' to remove this icon.")) {
-            chars.splice(index, 1);
+            icons.splice(index, 1);
+        }
+    }
+
+    function addImage(item, onload) {
+        if (item.type == '_image_' && !images[item.icon]) {
+            const image = new Image();
+            image.src = 'images/' + item.icon;
+            image.onload = onload;
+            images[item.icon] = image;
         }
     }
 
@@ -151,15 +192,26 @@ function appIcons() {
         const widthItem = tab.fontSize + tab.marginX * 2;
         const heightItem = tab.fontSize + tab.marginY * 2;
 
-        canvas.width = widthItem * tab.chars.length;
+        canvas.width = widthItem * tab.icons.length;
         canvas.height = heightItem * countColors;
+
+        for (let item of tab.icons) {
+            addImage(item, () => drawCtrl(canvasId, ctrl));
+        }
 
         let y = 0;
         for (let i in colors) {
             if (tab.colors[i]) {
                 let x = 0;
-                for (let {char, font} of tab.chars) {
-                    drawTextCenter(ctx, x, y, widthItem, heightItem, char, tab.fontSize, colors[i], 0, font);
+                for (let item of tab.icons) {
+                    if (item.type == '_image_') {
+                        const image = images[item.icon];
+                        if (image) {
+                            drawImage(ctx, image, x, y, widthItem, heightItem, item.replaceColor, colors[i]);
+                        }
+                    } else {
+                        drawTextCenter(ctx, x, y, widthItem, heightItem, item.icon, tab.fontSize, colors[i], 0, item.type);
+                    }
                     x += widthItem;
                 }
 
@@ -168,32 +220,32 @@ function appIcons() {
         }
     }
 
-    function onDropIcon(ev, chars, curIndex) {
+    function onDropIcon(ev, icons, curIndex) {
         ev.preventDefault();
         var index = ev.dataTransfer.getData("index");
         if (parseInt(index) == index) {
-            const text = chars[index];
-            chars.splice(index, 1);
-            chars.splice(curIndex, 0, text);
+            const item = icons[index];
+            icons.splice(index, 1);
+            icons.splice(curIndex, 0, item);
         }
     }
 
     function showAddIconsDialog(tab) {
         iconDialog.show = true;
-        iconDialog.callback = (char, font) => {
-            for (let i = 0; i < tab.chars.length; i++) {
-                const item = tab.chars[i];
-                if (item.char == char && item.font == font) {
+        iconDialog.callback = (icon, type, replaceColor) => {
+            for (let i = 0; i < tab.icons.length; i++) {
+                const item = tab.icons[i];
+                if (item.icon == icon && item.type == type) {
                     return;
                 }
             }
-    
-            tab.chars.push({ char, font });
+
+            tab.icons.push({ icon, type, replaceColor });
         };
     }
 
     function addIconByHexCode(font) {
-        const n = parseInt(font.char, 16);
+        const n = parseInt(font.icon, 16);
         if (!n) {
             return;
         }
@@ -209,7 +261,7 @@ function appIcons() {
             marginY: 0,
             fontSize: 40,
             fontWeight: 400,
-            chars: [],
+            icons: [],
             colors: [],
         });
         ctrl.tabName = name;
@@ -255,7 +307,7 @@ function fillRoundRect(ctx, x, y, width, height, radius, color) {
 }
 
 function fillEdgeRoundRect(ctx, x, y, width, height, radius, colorFill, colorEdge, lineWidth) {
-    fillRoundRect(ctx, x, y, width, height, radius, colorFill);
+    fillRoundRect(ctx, x, y, width, height, radius + (lineWidth > 0) * 2, colorFill);
     if (lineWidth > 0) {
         roundRect(ctx, x, y, width, height, radius, colorEdge, lineWidth);
     }
@@ -306,13 +358,31 @@ function drawTextCenter(ctx, x, y, width, height, text, fontSize, textColor, rot
     ctx.restore();
 }
 
+function drawImage(ctx, image, x, y, width, height, replaceColor, color) {
+    ctx.drawImage(image, x, y, width, height);
+    if (replaceColor) {
+        const r = parseInt(color.substr(1, 2), 16);
+        const g = parseInt(color.substr(3, 2), 16);
+        const b = parseInt(color.substr(5, 2), 16);
+        const imageData = ctx.getImageData(x, y, width, height);
+        const data = imageData.data;
+        const length = width * height * 4;
+        for (let i = 0; i < length; i += 4) {
+            if (data[i + 3]) {
+                data[i] = r; data[i + 1] = g; data[i + 2] = b;
+            }
+        }
+
+        ctx.putImageData(imageData, x, y);
+    }
+}
+
 function appButton() {
     const ctrl = initAppCtrl('button', {
         width: 40,
         height: 26,
         cornerRadius: 3,
-        edge1: 2,
-        edge2: 3,
+        edge: 2,
         margin: 2,
         colors: [],
     }, drawCtrl);
@@ -323,7 +393,7 @@ function appButton() {
         const countColors = countOfChoosedColors(ctrl.colors);
         const width = ctrl.width - ctrl.margin * 2, height = ctrl.height - ctrl.margin * 2;
 
-        canvas.width = ctrl.width * 3;
+        canvas.width = ctrl.width;
         canvas.height = ctrl.height * countColors;
 
         let x = ctrl.margin, y = ctrl.margin;
@@ -336,17 +406,7 @@ function appButton() {
         }
 
         function drawItem(x, y, color, bgColor) {
-            fillRoundRect(ctx, x, y, width, height, ctrl.cornerRadius, color);
-
-            {
-                // edge 1 rect
-                let x = ctrl.width + ctrl.margin;
-                fillEdgeRoundRect(ctx, x, y, width, height, ctrl.cornerRadius, bgColor, color, ctrl.edge1);
-
-                // edge 2 rect
-                x += ctrl.width;
-                fillEdgeRoundRect(ctx, x, y, width, height, ctrl.cornerRadius, bgColor, color, ctrl.edge2);
-            }
+            fillEdgeRoundRect(ctx, x, y, width, height, ctrl.cornerRadius, bgColor, color, ctrl.edge);
         }
     }
 
@@ -357,12 +417,11 @@ function appButton() {
 
 function appButtonGroup() {
     const ctrl = initAppCtrl('button-group', {
-        width: 40,
-        height: 26,
-        cornerRadius: 3,
-        edge1: 2,
-        edge2: 3,
-        margin: 2,
+        width: 60,
+        height: 24,
+        cornerRadius: 10,
+        edge: 2,
+        margin: 0,
         colors: [],
     }, drawCtrl);
 
@@ -371,18 +430,13 @@ function appButtonGroup() {
         const ctx = canvas.getContext("2d");
         const countColors = countOfChoosedColors(ctrl.colors);
         const width = ctrl.width - ctrl.margin * 2, height = ctrl.height - ctrl.margin * 2;
-        canvas.width = ctrl.width * 3;
+        canvas.width = ctrl.width;
         canvas.height = ctrl.height * countColors;
 
         let x = ctrl.margin, y = ctrl.margin;
         for (let i in colors) {
             if (ctrl.colors[i]) {
-                drawItem(x, y, colors[i], null, 0);
-
-                let xx = x + ctrl.width;
-                drawItem(xx, y, bgColors[i], colors[i], ctrl.edge1);
-                xx = xx + ctrl.width;
-                drawItem(xx, y, bgColors[i], colors[i], ctrl.edge2);
+                drawItem(x, y, bgColors[i], colors[i], ctrl.edge);
 
                 y += ctrl.height;
             }
@@ -406,8 +460,7 @@ function appComboBox() {
         width: 60,
         height: 26,
         cornerRadius: 3,
-        edge1: 2,
-        edge2: 3,
+        edge: 2,
         margin: 2,
         fontSize: 20,
         icon: 'e5c5',
@@ -420,7 +473,7 @@ function appComboBox() {
         const countColors = countOfChoosedColors(ctrl.colors);
         const width = ctrl.width - ctrl.margin * 2, height = ctrl.height - ctrl.margin * 2;
 
-        canvas.width = ctrl.width * 3;
+        canvas.width = ctrl.width;
         canvas.height = ctrl.height * countColors;
 
         const iconText = String.fromCodePoint(parseInt(ctrl.icon, 16) || '?'.charCodeAt(0));
@@ -428,27 +481,15 @@ function appComboBox() {
         let x = ctrl.margin, y = ctrl.margin;
         for (let i in colors) {
             if (ctrl.colors[i]) {
-                drawItem(x, y, colors[i], bgColors[i], 0);
+                drawItem(x, y, colors[i], bgColors[i], fgColors[i]);
 
                 y += ctrl.height;
             }
         }
 
-        function drawItem(x, y, color, bgColor, edge) {
-            fillEdgeRoundRect(ctx, x, y, width, height, ctrl.cornerRadius, color, '', edge);
-            drawTextCenter(ctx, x + width - height - edge, y, height, height, iconText, ctrl.fontSize, '#000000');
-
-            {
-                // edge 1 rect
-                let x = ctrl.width + ctrl.margin;
-                fillEdgeRoundRect(ctx, x, y, width, height, ctrl.cornerRadius, bgColor, color, ctrl.edge1);
-                drawTextCenter(ctx, x + width - height - ctrl.edge1, y, height, height, iconText, ctrl.fontSize, '#000000');
-
-                // edge 2 rect
-                x += ctrl.width;
-                fillEdgeRoundRect(ctx, x, y, width, height, ctrl.cornerRadius, bgColor, color, ctrl.edge2);
-                drawTextCenter(ctx, x + width - height - ctrl.edge2, y, height, height, iconText, ctrl.fontSize, '#000000');
-            }
+        function drawItem(x, y, color, bgColor, fgColor) {
+            fillEdgeRoundRect(ctx, x, y, width, height, ctrl.cornerRadius, bgColor, color, ctrl.edge);
+            drawTextCenter(ctx, x + width - height - ctrl.edge, y, height, height, iconText, ctrl.fontSize, fgColor);
         }
     }
 
@@ -457,12 +498,15 @@ function appComboBox() {
     };
 }
 
-function appEdit() {
-    const ctrl = initAppCtrl('edit', {
+function appFrame(name, title) {
+    const ctrl = initAppCtrl(name, {
+        name,
+        title,
         width: 40,
         height: 26,
         cornerRadius: 3,
         edge: 2,
+        margin: 0,
         colors: [],
     }, drawCtrl);
 
@@ -470,12 +514,12 @@ function appEdit() {
         const canvas = document.getElementById(canvasId);
         const ctx = canvas.getContext("2d");
         const countColors = countOfChoosedColors(ctrl.colors);
-        const width = ctrl.width, height = ctrl.height;
+        const width = ctrl.width - ctrl.margin * 2, height = ctrl.height - ctrl.margin * 2;
 
         canvas.width = ctrl.width;
         canvas.height = ctrl.height * countColors;
 
-        let x = 0, y = 0;
+        let x = ctrl.margin, y = ctrl.margin;
         for (let i in colors) {
             if (ctrl.colors[i]) {
                 fillEdgeRoundRect(ctx, x, y, width, height, ctrl.cornerRadius, bgColors[i], colors[i], ctrl.edge);
@@ -485,9 +529,7 @@ function appEdit() {
         }
     }
 
-    return {
-        edit: ctrl,
-    };
+    return ctrl;
 }
 
 function appChecks() {
@@ -518,7 +560,7 @@ function appChecks() {
             let x = 0;
             if (ctrl.colors[i]) {
                 for (let icon of icons) {
-                    ctx.fillStyle = colors[i];
+                    ctx.fillStyle = bgColors[i];
                     const n = parseInt(icon, 16) || '?'.charCodeAt(0);
                     ctx.fillText(String.fromCodePoint(n), x + width / 2, y + height / 2);
 
@@ -557,18 +599,8 @@ function appProgress() {
         let x = ctrl.marginX, y = ctrl.marginY;
         for (let i in colors) {
             if (ctrl.colors[i]) {
-                fillEdgeRoundRect(ctx, x, y, width, height, ctrl.cornerRadius, colors[i], null, 0);
+                fillEdgeRoundRect(ctx, x, y, width, height, ctrl.cornerRadius, bgColors[i], colors[i], 0);
 
-                {
-                    // edge 1 rect
-                    let x = ctrl.width + ctrl.marginX;
-                    fillEdgeRoundRect(ctx, x, y, width, height, ctrl.cornerRadius, bgColors[i], colors[i], ctrl.edge1);
-    
-                    // edge 2 rect
-                    x += ctrl.width;
-                    fillEdgeRoundRect(ctx, x, y, width, height, ctrl.cornerRadius, bgColors[i], colors[i], ctrl.edge2);
-                }
-    
                 y += ctrl.height;
             }
         }
@@ -608,18 +640,19 @@ function appThumb() {
         for (let i in colors) {
             if (ctrl.colors[i]) {
                 let x = 0;
-                fillRoundRect(ctx, x + (width - width1) / 2, y + (height - height1) / 2, width1, height1, ctrl.cornerRadius1, colors[i]);
+                const color = bgColors[i];
+                fillRoundRect(ctx, x + (width - width1) / 2, y + (height - height1) / 2, width1, height1, ctrl.cornerRadius1, color);
 
                 // two rect
                 x += ctrl.width;
                 ctx.globalAlpha = alpha2;
-                fillRoundRect(ctx, x + (width - width2) / 2, y + (height - height2) / 2, width2, height2, ctrl.cornerRadius2, bgColors[i]);
+                fillRoundRect(ctx, x + (width - width2) / 2, y + (height - height2) / 2, width2, height2, ctrl.cornerRadius2, colors[i]);
                 ctx.globalAlpha = 1;
-                fillRoundRect(ctx, x + (width - width1) / 2, y + (height - height1) / 2, width1, height1, ctrl.cornerRadius1, colors[i]);
+                fillRoundRect(ctx, x + (width - width1) / 2, y + (height - height1) / 2, width1, height1, ctrl.cornerRadius1, color);
     
                 // larger one
                 x += ctrl.width;
-                fillRoundRect(ctx, x + (width - width2) / 2, y + (height - height2) / 2, width2, height2, ctrl.cornerRadius2, colors[i]);
+                fillRoundRect(ctx, x + (width - width2) / 2, y + (height - height2) / 2, width2, height2, ctrl.cornerRadius2, color);
     
                 y += ctrl.height;
             }
@@ -664,17 +697,18 @@ function appScrollBar() {
         for (let i in colors) {
             if (ctrl.colors[i]) {
                 // draw with color, no edge
-                drawItem(0, y, colors[i]);
+                drawItem(0, y, bgColors[i], fgColors[i]);
 
                 y += height;
             }
         }
 
-        function drawItem(x, y, color) {
+        function drawItem(x, y, color, fgColor) {
             if (ctrl.btnSize > 0) {
                 // button
                 fillEdgeRoundRect(ctx, x, y, ctrl.btnSize, height, 0, color, null, 0);
-                drawTextCenter(ctx, x, y, ctrl.btnSize, height, iconText, ctrl.fontSize, '#000000', 90);
+                if (fgColor)
+                    drawTextCenter(ctx, x, y, ctrl.btnSize, height, iconText, ctrl.fontSize, fgColor, 90);
                 x += ctrl.btnSize;
             }
 
@@ -689,7 +723,8 @@ function appScrollBar() {
             if (ctrl.btnSize > 0) {
                 // button
                 fillEdgeRoundRect(ctx, x, y, ctrl.btnSize, height, 0, color, null, 0);
-                drawTextCenter(ctx, x, y, ctrl.btnSize, height, iconText, ctrl.fontSize, '#000000', 270);
+                if (fgColor)
+                    drawTextCenter(ctx, x, y, ctrl.btnSize, height, iconText, ctrl.fontSize, fgColor, 270);
             }
         }
     }
@@ -711,17 +746,18 @@ function appScrollBar() {
         for (let i in colors) {
             if (ctrl.colors[i]) {
                 // draw with color, no edge
-                drawItem(x, 0, colors[i]);
+                drawItem(x, 0, colors[i], fgColors[i]);
 
                 x += width;
             }
         }
 
-        function drawItem(x, y, color) {
+        function drawItem(x, y, color, fgColor) {
             if (ctrl.btnSize > 0) {
                 // button
                 fillEdgeRoundRect(ctx, x, y, width, ctrl.btnSize, 0, color, null, 0);
-                drawTextCenter(ctx, x, y, width, ctrl.btnSize, iconText, ctrl.fontSize, '#000000', 180);
+                if (fgColor)
+                    drawTextCenter(ctx, x, y, width, ctrl.btnSize, iconText, ctrl.fontSize, fgColor, 180);
                 y += ctrl.btnSize;
             }
 
@@ -736,7 +772,8 @@ function appScrollBar() {
             if (ctrl.btnSize > 0) {
                 // button
                 fillEdgeRoundRect(ctx, x, y, width, ctrl.btnSize, 0, color, null, 0);
-                drawTextCenter(ctx, x, y, width, ctrl.btnSize, iconText, ctrl.fontSize, '#000000', 0);
+                if (fgColor)
+                    drawTextCenter(ctx, x, y, width, ctrl.btnSize, iconText, ctrl.fontSize, fgColor, 0);
             }
         }
     }
@@ -752,6 +789,8 @@ const app = Vue.createApp({
             name: 'button',
         }));
 
+        const colorNames = Vue.reactive(getPref('colorNames', ['Disabled', 'Normal', 'Hover/Focus', 'Pressed', 'Checked', 'C-Hover/Foucs', 'C-Pressed', 'Positive', 'Negative', 'Info', 'Warning', 'Dark']));
+
         Vue.watch(tab, () => {
             callUpdateCanvas();
         });
@@ -765,6 +804,14 @@ const app = Vue.createApp({
             callUpdateCanvas();
         }, 100);
 
+        const frames = [
+            appFrame('button', 'Button'),
+            appFrame('button-flat', 'Flat Button'),
+            appFrame('edit', 'Edit'),
+            appFrame('listctrl-frame', 'ListCtrl'),
+            appFrame('frame-ctrl', 'Frame'),
+        ];
+
         function callUpdateCanvas() {
             const canvas = document.getElementById('canvasCtrls');
             if (!canvas) {
@@ -777,6 +824,8 @@ const app = Vue.createApp({
             } else {
                 clearCanvas("canvasCtrls");
                 clearCanvas("canvasCtrls2x");
+                clearCanvas("canvasCtrlsVert");
+                clearCanvas("canvasCtrlsVert2x");
             }
         }
 
@@ -785,10 +834,15 @@ const app = Vue.createApp({
             bgColors.splice(index, 1);
         }
 
-        function chooseColorX(color, callback) {
+        function showColorDialog(color, callback) {
             colorDialog.show = true;
             colorDialog.color = color;
             colorDialog.callback = callback;
+        }
+
+        function onColorChoosed(color) {
+            addHistoryColor(color);
+            colorDialog.callback(color);
         }
 
         let confFileToLoad = Vue.ref('');
@@ -822,21 +876,25 @@ const app = Vue.createApp({
             tab,
             colors,
             bgColors,
+            fgColors,
+            histColors,
+            colorNames,
             removePresetColor,
 
             colorDialog,
-            chooseColorX,
+            showColorDialog,
+            onColorChoosed,
 
             saveCanvas,
 
             downloadConf,
             confFileToLoad,
 
+            frames,
             ...appIcons(),
             ...appButton(),
             ...appButtonGroup(),
             ...appComboBox(),
-            ...appEdit(),
             ...appChecks(),
             ...appProgress(),
             ...appThumb(),

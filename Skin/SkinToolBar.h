@@ -105,8 +105,9 @@ protected:
 
     enum BT_DRAW_STATE {
         ROW_NORMAL,
-        ROW_DOWN,
         ROW_HOVER,
+        ROW_DOWN,
+        ROW_MAX,
     };
 
     void calculateBtWidth(CRawGraph *canvas, Button &bt);
@@ -119,6 +120,8 @@ protected:
     string                      m_strImageFile;
     CSFImage                    m_image;
     int                         m_nImageHeight;
+
+    CColor                      m_clrTextSelected;
 
     // Background image of normal state, and background image of checked button.
     string                      m_strImageBgFile, m_strImageBgCheckedFile;

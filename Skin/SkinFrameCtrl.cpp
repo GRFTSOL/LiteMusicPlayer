@@ -126,12 +126,15 @@ bool CSkinFrameCtrl::setProperty(cstr_t szProperty, cstr_t szValue) {
 
     if (isPropertyName(szProperty, SZ_PN_IMAGE)) {
         m_image.loadFromSRM(m_pSkin, szValue);
+    } else if (isPropertyName(szProperty, SZ_PN_IMAGE_SIZE)) {
+        scan2IntX(szValue, m_image.m_cx, m_image.m_cy);
+    } else if (isPropertyName(szProperty, SZ_PN_IMAGE_POS)) {
+        scan2IntX(szValue, m_image.m_x, m_image.m_y);
     } else if (isPropertyName(szProperty, SZ_PN_IMAGERECT)) {
         getRectValue(szValue, m_image);
-    } else if (isPropertyName(szProperty, "ImageFocus")) {
-        m_imageFocus.loadFromSRM(m_pSkin, szValue);
-    } else if (isPropertyName(szProperty, "ImageFocusRect")) {
-        getRectValue(szValue, m_imageFocus);
+    } else if (isPropertyName(szProperty, "ImageFocusPos")) {
+        m_imageFocus = m_image;
+        scan2IntX(szValue, m_imageFocus.m_x, m_imageFocus.m_y);
     } else if (isPropertyName(szProperty, "BlendPixMode")) {
         m_bpm = blendPixModeFromStr(szValue);
     } else if (isPropertyName(szProperty, "RoundWidth")) {

@@ -9,7 +9,7 @@
     <NormalEdit ID="CID_E_TITLE" Rect="70,52,w-70-20-80-20,"/>
     <NormalTextBt ID="CID_GOOGLE" Rect="w-90-10,20,30," ResizeToContent="true"
             ImageContent="google.png"/>
-    <NormalTextBt ID="CID_SEARCH" Text="&amp;Search" Rect="w-90-10,50,90,"/>
+    <NormalTextBt ID="CID_SEARCH" Text="&amp;Search" Rect="w-90-10,52,90,"/>
 
     <NormalListCtrl ID="CID_L_LYRICS" Rect="10,85,w-20,h-85-45" EnableHeader="true"
          EnableSort="true" DrawBorder="true" ImageList="LyrFileType.png"/>

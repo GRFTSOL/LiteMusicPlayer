@@ -10,6 +10,7 @@ CSkinTextButton::CSkinTextButton() {
     m_bResizeToContent = false;
     m_nTextLeftMargin = m_nTextRightMargin = 0;
     m_chMenuKey = 0;
+    m_clrTextSelected.setAlpha(0);
 }
 
 CSkinTextButton::~CSkinTextButton() {
@@ -55,7 +56,7 @@ void CSkinTextButton::draw(CRawGraph *canvas) {
 
     // draw button text
     if (m_strText.size()) {
-        CColor clrText = m_font.getTextColor(m_enable);
+        CColor clrText = m_btnState == BS_PRESSED ? m_clrTextSelected : m_font.getTextColor(m_enable);
 
         if (m_font.isOutlined()) {
             canvas->drawTextClipOutlined(m_strText.c_str(), (int)m_strText.size(), rc,
@@ -69,6 +70,9 @@ void CSkinTextButton::draw(CRawGraph *canvas) {
 
 void CSkinTextButton::onCreate() {
     m_font.setParent(m_pSkin);
+    if (m_clrTextSelected.getAlpha() == 0) {
+        m_clrTextSelected = m_font.getTextColor();
+    }
 
     CSkinButton::onCreate();
 }
@@ -94,6 +98,8 @@ bool CSkinTextButton::setProperty(cstr_t szProperty, cstr_t szValue) {
 
     if (isPropertyName(szProperty, "AlignText")) {
         m_dwAlignTextFlags = alignTextFromStr(szValue);
+    } else if (isPropertyName(szProperty, "SelTextColor")) {
+        m_clrTextSelected = parseColorString(szValue);
     } else if (isPropertyName(szProperty, "ResizeToContent")) {
         m_bResizeToContent = isTRUE(szValue);
     } else if (isPropertyName(szProperty, "ImageContent")) {
