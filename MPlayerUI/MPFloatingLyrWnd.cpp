@@ -25,8 +25,6 @@ int CMPFloatingLyrWnd::create() {
         "floatinglyr.xml", nullptr);
     CMPSkinWnd::create(skinWndStartupInfo, CMPlayerAppBase::getMPSkinFactory());
 
-    m_cursor.loadCursorFromRes(IDC_MLHAND);
-
     return ERR_OK;
 }
 

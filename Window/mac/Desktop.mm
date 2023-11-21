@@ -18,13 +18,6 @@ CPoint getCursorPos() {
     return CPoint(pt.x, pt.y);
 }
 
-// set new cursor, and return the old cursor.
-bool setCursor(Cursor &Cursor) {
-#pragma warning("Unplememented method: ");
-
-    return true;
-}
-
 Window *findWindow(cstr_t szClassName, cstr_t szWindowName) {
 #pragma warning("Unplememented method: ");
 

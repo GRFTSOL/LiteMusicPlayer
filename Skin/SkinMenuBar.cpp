@@ -95,6 +95,13 @@ void CSkinMenuBar::draw(CRawGraph *canvas) {
 
         x += item.nWidth;
     }
+
+    if (isMenuPopuped()) {
+        // Need mouse wheel message only when child menu popuped.
+        m_msgNeed |= UO_MSG_WANT_MOUSEWHEEL;
+    } else {
+        m_msgNeed &= ~UO_MSG_WANT_MOUSEWHEEL;
+    }
 }
 
 bool CSkinMenuBar::onLButtonDown(uint32_t nFlags, CPoint point) {

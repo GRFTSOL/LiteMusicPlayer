@@ -697,32 +697,32 @@ function appScrollBar() {
         for (let i in colors) {
             if (ctrl.colors[i]) {
                 // draw with color, no edge
-                drawItem(0, y, bgColors[i], fgColors[i]);
+                drawItem(0, y, colors[i], bgColors[i], fgColors[i]);
 
                 y += height;
             }
         }
 
-        function drawItem(x, y, color, fgColor) {
+        function drawItem(x, y, thumbColor, fillColor, fgColor) {
             if (ctrl.btnSize > 0) {
                 // button
-                fillEdgeRoundRect(ctx, x, y, ctrl.btnSize, height, 0, color, null, 0);
+                fillEdgeRoundRect(ctx, x, y, ctrl.btnSize, height, 0, fillColor, null, 0);
                 if (fgColor)
                     drawTextCenter(ctx, x, y, ctrl.btnSize, height, iconText, ctrl.fontSize, fgColor, 90);
                 x += ctrl.btnSize;
             }
 
             // Thumb
-            fillEdgeRoundRect(ctx, x, y, ctrl.thumbSize, height, ctrl.cornerRadius, color, null, 0);
+            fillEdgeRoundRect(ctx, x, y, ctrl.thumbSize, height, ctrl.cornerRadius, thumbColor, null, 0);
             x += ctrl.thumbSize;
 
             // Track
-            fillEdgeRoundRect(ctx, x, y, trackSize, height, 0, color, null, 0);
+            fillEdgeRoundRect(ctx, x, y, trackSize, height, 0, fillColor, null, 0);
             x += trackSize;
 
             if (ctrl.btnSize > 0) {
                 // button
-                fillEdgeRoundRect(ctx, x, y, ctrl.btnSize, height, 0, color, null, 0);
+                fillEdgeRoundRect(ctx, x, y, ctrl.btnSize, height, 0, fillColor, null, 0);
                 if (fgColor)
                     drawTextCenter(ctx, x, y, ctrl.btnSize, height, iconText, ctrl.fontSize, fgColor, 270);
             }
@@ -746,32 +746,32 @@ function appScrollBar() {
         for (let i in colors) {
             if (ctrl.colors[i]) {
                 // draw with color, no edge
-                drawItem(x, 0, colors[i], fgColors[i]);
+                drawItem(x, 0, colors[i], bgColors[i], fgColors[i]);
 
                 x += width;
             }
         }
 
-        function drawItem(x, y, color, fgColor) {
+        function drawItem(x, y, thumbColor, fillColor, fgColor) {
             if (ctrl.btnSize > 0) {
                 // button
-                fillEdgeRoundRect(ctx, x, y, width, ctrl.btnSize, 0, color, null, 0);
+                fillEdgeRoundRect(ctx, x, y, width, ctrl.btnSize, 0, fillColor, null, 0);
                 if (fgColor)
                     drawTextCenter(ctx, x, y, width, ctrl.btnSize, iconText, ctrl.fontSize, fgColor, 180);
                 y += ctrl.btnSize;
             }
 
             // Thumb
-            fillEdgeRoundRect(ctx, x, y, width, ctrl.thumbSize, ctrl.cornerRadius, color, null, 0);
+            fillEdgeRoundRect(ctx, x, y, width, ctrl.thumbSize, ctrl.cornerRadius, thumbColor, null, 0);
             y += ctrl.thumbSize;
 
             // Track
-            fillEdgeRoundRect(ctx, x, y, width, trackSize, 0, color, null, 0);
+            fillEdgeRoundRect(ctx, x, y, width, trackSize, 0, fillColor, null, 0);
             y += trackSize;
 
             if (ctrl.btnSize > 0) {
                 // button
-                fillEdgeRoundRect(ctx, x, y, width, ctrl.btnSize, 0, color, null, 0);
+                fillEdgeRoundRect(ctx, x, y, width, ctrl.btnSize, 0, fillColor, null, 0);
                 if (fgColor)
                     drawTextCenter(ctx, x, y, width, ctrl.btnSize, iconText, ctrl.fontSize, fgColor, 0);
             }

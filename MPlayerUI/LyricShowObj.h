@@ -271,8 +271,6 @@ protected:
 
     bool                        m_bEnableAutoResize;
 
-    Cursor                      m_Cursor;
-
     //
     // Lyrics vertical align position
     //

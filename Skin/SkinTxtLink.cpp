@@ -91,7 +91,7 @@ void CSkinTxtLink::onCreate() {
     m_font.setParent(m_pSkin);
     m_font.setProperty("FontUnderLine", "1");
 
-    m_Cursor.loadStdCursor(Cursor::C_HAND);
+    m_cursor.loadStdCursor(Cursor::C_HAND);
 }
 
 void CSkinTxtLink::onSize() {
@@ -115,19 +115,19 @@ bool CSkinTxtLink::onLButtonUp(uint32_t nFlags, CPoint point) {
         m_pSkin->postCustomCommandMsg(m_id);
     }
 
-    setCursor(m_Cursor);
+    setCursor(m_cursor);
 
     return true;
 }
 
 bool CSkinTxtLink::onLButtonDown(uint32_t nFlags, CPoint point) {
-    setCursor(m_Cursor);
+    setCursor(m_cursor);
 
     return true;
 }
 
 bool CSkinTxtLink::onMouseMove(CPoint point) {
-    setCursor(m_Cursor);
+    setCursor(m_cursor);
 
     return true;
 }

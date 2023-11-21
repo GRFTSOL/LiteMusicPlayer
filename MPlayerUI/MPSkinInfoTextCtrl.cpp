@@ -23,7 +23,7 @@ void CMPSkinInfoTextCtrl::onCreate() {
     registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_LYRICS_CHANGED);
 
     updateShowDefaultInfo();
-    m_Cursor.loadStdCursor(Cursor::C_HAND);
+    m_cursor.loadStdCursor(Cursor::C_HAND);
 }
 
 void CMPSkinInfoTextCtrl::onEvent(const IEvent *pEvent) {
@@ -51,7 +51,7 @@ bool CMPSkinInfoTextCtrl::onMouseMove(CPoint point) {
         return false;
     }
 
-    setCursor(m_Cursor);
+    setCursor(m_cursor);
 
     return true;
 }
@@ -88,7 +88,7 @@ bool CMPSkinInfoTextCtrl::onLButtonUp(uint32_t nFlags, CPoint point) {
         openUrl(m_pSkin, m_strCmd.c_str());
     }
 
-    setCursor(m_Cursor);
+    setCursor(m_cursor);
 
     return true;
 }
@@ -98,7 +98,7 @@ bool CMPSkinInfoTextCtrl::onLButtonDown(uint32_t nFlags, CPoint point) {
         return false;
     }
 
-    setCursor(m_Cursor);
+    setCursor(m_cursor);
 
     return true;
 }

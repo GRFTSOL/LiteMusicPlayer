@@ -256,6 +256,10 @@ float Window::getScaleFactor() {
     return m_scaleFactor;
 }
 
+void Window::setCursor(Cursor *cursor) {
+    [m_handleHolder->view setCursor:cursor];
+}
+
 void Window::setParent(Window *pWndParent) {
     m_parent = pWndParent;
 

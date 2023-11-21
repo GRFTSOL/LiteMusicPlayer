@@ -120,10 +120,7 @@ void CSkinListView::onCreate() {
         return;
     }
 
-    string curFile;
-    if (m_pSkin->getSkinFactory()->getResourceMgr()->getResourcePathName("list_ctrl_resize_col.cur", curFile)) {
-        m_curResizeCol.loadCursorFromFile(curFile.c_str());
-    }
+    m_curResizeCol.loadStdCursor(Cursor::C_SIZEWE);
 }
 
 bool CSkinListView::setProperty(cstr_t szProperty, cstr_t szValue) {
@@ -516,7 +513,12 @@ void CSkinListView::setClickCursor() {
 }
 
 int CSkinListView::getLinesOfPerPage() const {
-    int n = m_rcContent.height() / m_nLineHeight;
+    int height = m_rcContent.height();
+    if (m_bDrawHeader) {
+        height -= m_nHeaderHeight;
+    }
+
+    int n = height / m_nLineHeight;
     if (m_header && m_header->isVisible()) {
         n--;
     }

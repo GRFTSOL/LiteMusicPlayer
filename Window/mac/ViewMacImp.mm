@@ -10,6 +10,7 @@
 #import "WindowTypes.h"
 #import "ViewMacImp.h"
 #import "Window.h"
+#import "Cursor.h"
 
 
 @implementation ViewMacImp
@@ -17,6 +18,8 @@
 - (id)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
     mBaseWnd = nil;
+    mCursorToSet = nullptr;
+    mCursorDefault = [NSCursor arrowCursor];
     mIsTextInputMode = false;
     mIsMarkedText = false;
     mMagnification = 0;
@@ -147,6 +150,35 @@
         NSPointToCPoint([theEvent locationInWindow], [self frame].size.height));
 }
 
+- (void) rightMouseDown:(NSEvent *)theEvent {
+    uint32_t flags = (uint32_t)[theEvent modifierFlags];
+    CPoint point = NSPointToCPoint([theEvent locationInWindow], [self frame].size.height);
+
+    mBaseWnd->onRButtonDown(flags, point);
+}
+
+- (void) rightMouseUp:(NSEvent *)theEvent {
+    mBaseWnd->onRButtonUp((uint32_t)[theEvent modifierFlags],
+        NSPointToCPoint([theEvent locationInWindow], [self frame].size.height));
+}
+
+- (void) setCursor:(Cursor *)cursor {
+    mCursorToSet = cursor;
+}
+
+- (void) mouseMoved:(NSEvent *)theEvent {
+    bool isCursorChanged = mCursorToSet != nullptr;
+    mCursorToSet = nullptr;
+
+    mBaseWnd->onMouseMove(NSPointToCPoint([theEvent locationInWindow], [self frame].size.height));
+
+    if (mCursorToSet) {
+        mCursorToSet->set();
+    } else if (isCursorChanged) {
+        [mCursorDefault set];
+    }
+}
+
 - (void) mouseDragged:(NSEvent *)theEvent {
     if (mIsTextInputMode && [[self inputContext] handleEvent:theEvent]) {
         return;
@@ -156,8 +188,17 @@
     uint32_t flags = (uint32_t)[theEvent modifierFlags];
     flags |= MK_LBUTTON;
 
+    bool isCursorChanged = mCursorToSet != nullptr;
+    mCursorToSet = nullptr;
+
     mBaseWnd->onMouseDrag(flags,
         NSPointToCPoint([theEvent locationInWindow], [window frame].size.height));
+
+    if (mCursorToSet) {
+        mCursorToSet->set();
+    } else if (isCursorChanged) {
+        [mCursorDefault set];
+    }
 
 /* 拖动窗口位置.
     NSRect screenVisibleFrame = [[NSScreen mainScreen] visibleFrame];

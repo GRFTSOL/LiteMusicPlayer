@@ -27,7 +27,7 @@ protected:
     string                      m_strLink;
     uint32_t                    m_dwAlignText;
     CSkinFontProperty           m_font;
-    Cursor                      m_Cursor;
+    Cursor                      m_cursor;
     bool                        m_bNeedResize;
 
 };

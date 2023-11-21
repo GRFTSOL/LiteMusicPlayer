@@ -208,25 +208,6 @@ bool CSkinContainer::onMouseMove(CPoint point) {
         CUIObject *pObj = m_vUIObjs[i];
 
         bool isMouseIn = pObj->isPtIn(point);
-        if (pObj->m_isMouseIn != isMouseIn) {
-            pObj->m_isMouseIn = isMouseIn;
-            if (isMouseIn) {
-                pObj->onMouseEnter(point);
-                if (pObj->m_onMouseEnterListener.isFunction()) {
-                    m_pSkin->callVMFunction(pObj->m_onMouseEnterListener);
-                }
-            } else {
-                pObj->onMouseLeave(point);
-                if (pObj->m_onMouseLeaveListener.isFunction()) {
-                    m_pSkin->callVMFunction(pObj->m_onMouseLeaveListener);
-                }
-
-                if (pObj->isContainer()) {
-                    pObj->getContainerIf()->callChildMouseLeave(point);
-                }
-            }
-        }
-
         if ((pObj->needMsgMouseMove() || pObj->isContainer()) && pObj->isVisible()
             && pObj->isEnable() && isMouseIn) {
             if (pObj->onMouseMove(point)) {
@@ -742,6 +723,37 @@ void CSkinContainer::checkToolbarButton(int nToolbarId, int nButtonId, bool bChe
         nToolbarId, CSkinToolbar::className());
     if (pToolbar) {
         pToolbar->setCheck(nButtonId, bCheck);
+    }
+}
+
+void CSkinContainer::processMouseEnterLeave(CPoint point) {
+    for (int i = (int)m_vUIObjs.size() - 1; i >= 0; i--) {
+        CUIObject *obj = m_vUIObjs[i];
+
+        bool isMouseIn = obj->isPtIn(point);
+        if (obj->m_isMouseIn != isMouseIn) {
+            obj->m_isMouseIn = isMouseIn;
+            if (isMouseIn) {
+                obj->onMouseEnter(point);
+                if (obj->m_onMouseEnterListener.isFunction()) {
+                    m_pSkin->callVMFunction(obj->m_onMouseEnterListener);
+                }
+            } else {
+                obj->onMouseLeave(point);
+                if (obj->m_onMouseLeaveListener.isFunction()) {
+                    m_pSkin->callVMFunction(obj->m_onMouseLeaveListener);
+                }
+
+                if (obj->isContainer()) {
+                    obj->getContainerIf()->callChildMouseLeave(point);
+                }
+            }
+        }
+
+        if (obj->isContainer() && (obj->m_isMouseIn != isMouseIn || isMouseIn)) {
+            // obj's children should process it.
+            obj->getContainerIf()->processMouseEnterLeave(point);
+        }
     }
 }
 

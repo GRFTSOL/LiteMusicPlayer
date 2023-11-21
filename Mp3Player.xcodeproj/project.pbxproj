@@ -14,7 +14,7 @@
 		0E56B989273E115500032A3E /* WndDrag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56B970273E115500032A3E /* WndDrag.cpp */; };
 		0E56BA96273FCEAB00032A3E /* IWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BA94273FCEAB00032A3E /* IWindow.cpp */; };
 		0E56BB1D2743FCBE00032A3E /* WindowMacImp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BB152743FCBE00032A3E /* WindowMacImp.mm */; };
-		0E56BB1E2743FCBE00032A3E /* Cursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BB172743FCBE00032A3E /* Cursor.cpp */; };
+		0E56BB1E2743FCBE00032A3E /* Cursor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BB172743FCBE00032A3E /* Cursor.mm */; };
 		0E56BB202743FCBE00032A3E /* Desktop.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BB1A2743FCBE00032A3E /* Desktop.mm */; };
 		0E56BB212743FCBE00032A3E /* ViewMacImp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BB1B2743FCBE00032A3E /* ViewMacImp.mm */; };
 		0E56BB222743FCBE00032A3E /* Window.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0E56BB1C2743FCBE00032A3E /* Window.mm */; };
@@ -462,7 +462,7 @@
 		0E56BB142743FCBD00032A3E /* ViewMacImp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewMacImp.h; sourceTree = "<group>"; };
 		0E56BB152743FCBE00032A3E /* WindowMacImp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WindowMacImp.mm; sourceTree = "<group>"; };
 		0E56BB162743FCBE00032A3E /* Cursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cursor.h; sourceTree = "<group>"; };
-		0E56BB172743FCBE00032A3E /* Cursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cursor.cpp; sourceTree = "<group>"; };
+		0E56BB172743FCBE00032A3E /* Cursor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Cursor.mm; sourceTree = "<group>"; };
 		0E56BB192743FCBE00032A3E /* WindowMacImp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindowMacImp.h; sourceTree = "<group>"; };
 		0E56BB1A2743FCBE00032A3E /* Desktop.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Desktop.mm; sourceTree = "<group>"; };
 		0E56BB1B2743FCBE00032A3E /* ViewMacImp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewMacImp.mm; sourceTree = "<group>"; };
@@ -1151,7 +1151,7 @@
 				0E56BC68274B3B8400032A3E /* Menu.mm */,
 				0E56BC69274B3B8400032A3E /* WndResizer.cpp */,
 				0E56BC67274B3B8400032A3E /* WndResizer.h */,
-				0E56BB172743FCBE00032A3E /* Cursor.cpp */,
+				0E56BB172743FCBE00032A3E /* Cursor.mm */,
 				0E56BB162743FCBE00032A3E /* Cursor.h */,
 				0E56BB1A2743FCBE00032A3E /* Desktop.mm */,
 				0E56BB142743FCBD00032A3E /* ViewMacImp.h */,
@@ -2341,7 +2341,7 @@
 				C04DBFFA297ECDA100A0FCB1 /* ssl_tls13_client.c in Sources */,
 				0EB710BF27773BB6006929F1 /* MLTrayIcon.mm in Sources */,
 				C04DC018297ECDA100A0FCB1 /* padlock.c in Sources */,
-				0E56BB1E2743FCBE00032A3E /* Cursor.cpp in Sources */,
+				0E56BB1E2743FCBE00032A3E /* Cursor.mm in Sources */,
 				C04DBF82297EB36200A0FCB1 /* asn1parse.c in Sources */,
 				C04DBFE3297ECDA100A0FCB1 /* pk.c in Sources */,
 				C04DBF6E297EB36200A0FCB1 /* cipher.c in Sources */,

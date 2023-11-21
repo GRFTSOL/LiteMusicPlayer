@@ -154,6 +154,8 @@ public:
     void dumpUIObject(int &nDeep, CPoint *pt);
 #endif
 
+    void processMouseEnterLeave(CPoint point);
+
 protected:
     bool isPageAtLeft(CSkinContainer *pPage, CSkinContainer *pPage2);
 

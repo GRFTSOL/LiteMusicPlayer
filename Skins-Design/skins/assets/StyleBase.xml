@@ -52,4 +52,7 @@
     <NormalFrame Extends="Frame" Image="frame-ctrl.png" RoundWidth="6" ThickWidth="2"
         XBorder="0" YBorder="10" FontName="Verdana" FontHeight="13" TextColor="#000000"/>
 
+    <VScrollBar Width="15" PushBtHeight="15" ThumbHeight="30" TrackHeight="20" ScrollBarWidth="15" Image="scrollbar-vert.png" ScalableThumb="TRUE" />
+    <HScrollBar Height="15" PushBtWidth="15" ThumbWidth="30" TrackWidth="20" ScrollBarHeight="15" Image="scrollbar-horz.png" ScalableThumb="TRUE" />
+
 </style>

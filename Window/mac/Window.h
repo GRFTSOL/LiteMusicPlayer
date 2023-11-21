@@ -69,6 +69,8 @@ public:
 
     float getScaleFactor() override;
 
+    void setCursor(Cursor *cursor) override;
+
     void setParent(Window *pWndParent);
     Window *getParent();
 

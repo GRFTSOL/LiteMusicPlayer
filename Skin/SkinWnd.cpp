@@ -338,9 +338,6 @@ void CSkinWnd::closeSkin() {
 
     m_listUnprocessedProperties.clear();
 
-    m_cursor.destroy();
-
-    m_strCusor.resize(0);
     // Remember skin window name, it can be used to reload it.
     // m_strSkinWndName.resize(0);
 
@@ -398,9 +395,7 @@ void CSkinWnd::processMouseMove(CPoint point) {
     }
 #endif    // _TRANSLUCENCY_ENABLED
 
-    if (m_cursor.isValid()) {
-        setCursor(m_cursor);
-    }
+    m_rootConainter.processMouseEnterLeave(point);
 }
 
 void CSkinWnd::onMouseDrag(uint32_t nFlags, CPoint point) {
@@ -464,10 +459,6 @@ void CSkinWnd::onMouseMove(CPoint point) {
 void CSkinWnd::onLButtonDown(uint32_t nFlags, CPoint point) {
     onMouseActiveMsg();
 
-    if (m_cursor.isValid()) {
-        setCursor(m_cursor);
-    }
-
     setFocus();
 
     // first send message to ui objects that captured the mouse!
@@ -494,10 +485,6 @@ void CSkinWnd::onLButtonDown(uint32_t nFlags, CPoint point) {
 
 void CSkinWnd::onLButtonDblClk(uint32_t nFlags, CPoint point) {
     onMouseActiveMsg();
-
-    if (m_cursor.isValid()) {
-        setCursor(m_cursor);
-    }
 
     setFocus();
 
@@ -545,10 +532,6 @@ void CSkinWnd::onMagnify(float magnification) {
 }
 
 void CSkinWnd::onLButtonUp(uint32_t nFlags, CPoint point) {
-    if (m_cursor.isValid()) {
-        setCursor(m_cursor);
-    }
-
     if (m_wndResizer.isSizing()) {
         m_wndResizer.onMouseMessage(nFlags, point);
         //        bMsgProceed = true;
@@ -578,10 +561,6 @@ void CSkinWnd::onLButtonUp(uint32_t nFlags, CPoint point) {
 }
 
 void CSkinWnd::onRButtonDown(uint32_t nFlags, CPoint point) {
-    if (m_cursor.isValid()) {
-        setCursor(m_cursor);
-    }
-
     // first send message to ui objects that captured the mouse!
     if (m_pUIObjCapMouse) {
         if (isMouseCaptured() && m_pUIObjCapMouse->needMsgRButton()) {
@@ -599,10 +578,6 @@ void CSkinWnd::onRButtonDown(uint32_t nFlags, CPoint point) {
 }
 
 void CSkinWnd::onRButtonUp(uint32_t nFlags, CPoint point) {
-    if (m_cursor.isValid()) {
-        setCursor(m_cursor);
-    }
-
     // first send message to ui objects that captured the mouse!
     if (m_pUIObjCapMouse) {
         if (isMouseCaptured() && m_pUIObjCapMouse->needMsgRButton()) {
@@ -744,13 +719,6 @@ void CSkinWnd::onChar(uint32_t nChar) {
 }
 
 bool CSkinWnd::updateSkinProperty() {
-    if (!m_cursor.isValid()) {
-        m_cursor.loadStdCursor(Cursor::C_ARROW);
-    }
-    if (m_cursor.isValid()) {
-        setCursor(m_cursor);
-    }
-
     if (m_bTranslucencyLayered) {
         if (m_bActived) {
             m_nCurTranslucencyAlpha = m_nTranslucencyAlphaOnActive;
@@ -943,8 +911,6 @@ void CSkinWnd::onMove(int x, int y) {
 }
 
 void CSkinWnd::onSize(int cx, int cy) {
-    // uint32_t        dwStyle = GetWindowLong(m_hWnd, GWL_STYLE);
-    // bool        bCaption = isFlagSet(dwStyle, WS_CAPTION);
     if (!isIconic()) {
         CAutoRedrawLock redrawLock(this);
 
@@ -1202,17 +1168,6 @@ bool CSkinWnd::setProperty(cstr_t szProperty, cstr_t szValue) {
         m_nHeight = atoi(szValue);
     } else if (isPropertyName(szProperty, "RememberSizePos")) {
         m_bRememberSizePos = isTRUE(szValue);
-    } else if (strcasecmp(szProperty, "Cursor") == 0) {
-        m_cursor.destroy();
-        m_strCusor = szValue;
-        if (!m_strCusor.empty()) {
-            string fileName;
-            if (m_pSkinFactory->getResourceMgr()->getResourcePathName(szValue, fileName)) {
-                m_cursor.loadCursorFromFile(fileName.c_str());
-            } else {
-                ERR_LOG1("Can't load cursor file: %s", szValue);
-            }
-        }
     } else if (strcasecmp(szProperty, "fixedWidth") == 0) {
         m_wndResizer.fixedWidth(isTRUE(szValue));
     } else if (strcasecmp(szProperty, "fixedHeight") == 0) {

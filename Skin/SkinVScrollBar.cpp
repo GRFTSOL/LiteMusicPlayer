@@ -30,6 +30,10 @@ CSkinSrollBarBase::CSkinSrollBarBase() {
     m_cursorPosLatest = PUSH_DOWN_NONE;
 
     m_nLinesPerWheel = 1;
+
+#ifdef _MAC_OS
+    m_isHidePushBtn = true;
+#endif
 }
 
 CSkinSrollBarBase::~CSkinSrollBarBase() {
@@ -268,16 +272,14 @@ void CSkinSrollBarBase::trackOnLButtonUp(uint32_t nFlags, CPoint point) {
 }
 
 void CSkinSrollBarBase::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) {
-    if (nMkeys == 0) {
-        if (!increaseVirtualPos(m_nVirtualLine * nWheelDistance * m_nLinesPerWheel)) {
-            invalidate();
-            return;
-        }
-
-        onScroll(SB_THUMBPOSITION);
-
+    if (!increaseVirtualPos(m_nVirtualLine * nWheelDistance * m_nLinesPerWheel)) {
         invalidate();
+        return;
     }
+
+    onScroll(SB_THUMBPOSITION);
+
+    invalidate();
 }
 
 bool CSkinSrollBarBase::onMouseDrag(CPoint point) {
@@ -324,6 +326,11 @@ bool CSkinSrollBarBase::onMouseMove(CPoint point) {
     }
 
     return true;
+}
+
+void CSkinSrollBarBase::onMouseLeave(CPoint point) {
+    m_cursorPosLatest = PUSH_DOWN_NONE;
+    invalidate();
 }
 
 void CSkinSrollBarBase::topBtOnMouseMove(CPoint point) {
@@ -506,32 +513,32 @@ CSkinVScrollBar::~CSkinVScrollBar() {
 }
 
 void CSkinVScrollBar::draw(CRawGraph *canvas) {
-    int y;
     CSFImage *pImg;
 
     if (m_strBmpFile.size() <= 0) {
         return;
     }
 
-    // 1、绘窗口上面的按钮
-    if (m_pushDownPos != PUSH_DOWN_TOPBT) {
-        if (m_cursorPosLatest == PUSH_DOWN_TOPBT) {
-            pImg = &m_imgTopBtFocus; // 光标 hover 在上面的按钮上
+    int y = m_rcObj.top;
+    if (!m_isHidePushBtn) {
+        // 1、绘窗口上面的按钮
+        if (m_pushDownPos != PUSH_DOWN_TOPBT) {
+            if (m_cursorPosLatest == PUSH_DOWN_TOPBT) {
+                pImg = &m_imgTopBtFocus; // 光标 hover 在上面的按钮上
+            } else {
+                pImg = &m_imgTopBtNormal; // 普通
+            }
         } else {
-            pImg = &m_imgTopBtNormal; // 普通
+            if (m_cursorPosLatest == PUSH_DOWN_TOPBT) {
+                pImg = &m_imgTopBtPushDown; // 按下状态
+            } else {
+                pImg = &m_imgTopBtNormal; // 普通
+            }
         }
-    } else {
-        if (m_cursorPosLatest == PUSH_DOWN_TOPBT) {
-            pImg = &m_imgTopBtPushDown; // 按下状态
-        } else {
-            pImg = &m_imgTopBtNormal; // 普通
-        }
+
+        pImg->blt(canvas, m_rcObj.left, y);
+        y += m_nHeightPushBt;
     }
-
-    y = m_rcObj.top;
-    pImg->blt(canvas, m_rcObj.left, y);
-    y += m_nHeightPushBt;
-
 
     // 2、绘窗口中的空白区域
     if (m_nPosThumb > 0) {
@@ -577,21 +584,23 @@ void CSkinVScrollBar::draw(CRawGraph *canvas) {
     }
 
     // 4、绘窗口下面的按钮
-    if (m_pushDownPos != PUSH_DOWN_BOTTOMBT) {
-        if (m_cursorPosLatest == PUSH_DOWN_BOTTOMBT) {
-            pImg = &m_imgBottomBtFocus; // 光标 hover 在上面的按钮上
+    if (!m_isHidePushBtn) {
+        if (m_pushDownPos != PUSH_DOWN_BOTTOMBT) {
+            if (m_cursorPosLatest == PUSH_DOWN_BOTTOMBT) {
+                pImg = &m_imgBottomBtFocus; // 光标 hover 在上面的按钮上
+            } else {
+                pImg = &m_imgBottomBtNormal; // 普通
+            }
         } else {
-            pImg = &m_imgBottomBtNormal; // 普通
+            if (m_cursorPosLatest == PUSH_DOWN_BOTTOMBT) {
+                pImg = &m_imgBottomBtPushDown; // 按下状态
+            } else {
+                pImg = &m_imgBottomBtNormal; // 普通
+            }
         }
-    } else {
-        if (m_cursorPosLatest == PUSH_DOWN_BOTTOMBT) {
-            pImg = &m_imgBottomBtPushDown; // 按下状态
-        } else {
-            pImg = &m_imgBottomBtNormal; // 普通
-        }
-    }
 
-    pImg->blt(canvas, m_rcObj.left, y);
+        pImg->blt(canvas, m_rcObj.left, y);
+    }
 }
 
 bool CSkinVScrollBar::setProperty(cstr_t szProperty, cstr_t szValue) {
@@ -659,6 +668,10 @@ bool CSkinVScrollBar::setProperty(cstr_t szProperty, cstr_t szValue) {
         m_imgTrack.m_y = m_nHeightPushBt + m_nHeightThumb;
         m_imgTrack.m_cx = m_nSBWidth;
         m_imgTrack.m_cy = m_nHeightTrack;
+
+        if (m_isHidePushBtn) {
+            m_nHeightPushBt = 0;
+        }
     }
 
     return true;
@@ -806,32 +819,32 @@ CSkinHScrollBar::~CSkinHScrollBar() {
 }
 
 void CSkinHScrollBar::draw(CRawGraph *canvas) {
-    int x;
     CSFImage *pImg;
 
     if (m_strBmpFile.size() <= 0) {
         return;
     }
 
-    // 1、绘窗口上面的按钮
-    if (m_pushDownPos != PUSH_DOWN_TOPBT) {
-        if (m_cursorPosLatest == PUSH_DOWN_TOPBT) {
-            pImg = &m_imgTopBtFocus; // 光标 hover 在上面的按钮上
+    int x = m_rcObj.left;
+    if (!m_isHidePushBtn) {
+        // 1、绘窗口上面的按钮
+        if (m_pushDownPos != PUSH_DOWN_TOPBT) {
+            if (m_cursorPosLatest == PUSH_DOWN_TOPBT) {
+                pImg = &m_imgTopBtFocus; // 光标 hover 在上面的按钮上
+            } else {
+                pImg = &m_imgTopBtNormal; // 普通
+            }
         } else {
-            pImg = &m_imgTopBtNormal; // 普通
+            if (m_cursorPosLatest == PUSH_DOWN_TOPBT) {
+                pImg = &m_imgTopBtPushDown; // 按下状态
+            } else {
+                pImg = &m_imgTopBtNormal; // 普通
+            }
         }
-    } else {
-        if (m_cursorPosLatest == PUSH_DOWN_TOPBT) {
-            pImg = &m_imgTopBtPushDown; // 按下状态
-        } else {
-            pImg = &m_imgTopBtNormal; // 普通
-        }
+
+        pImg->blt(canvas, x, m_rcObj.top);
+        x += m_nWidthPushBt;
     }
-
-    x = m_rcObj.left;
-    pImg->blt(canvas, x, m_rcObj.top);
-    x += m_nWidthPushBt;
-
 
     // 2、绘窗口中的空白区域
     if (m_nPosThumb > 0) {
@@ -876,21 +889,23 @@ void CSkinHScrollBar::draw(CRawGraph *canvas) {
     }
 
     // 4、绘窗口下面的按钮
-    if (m_pushDownPos != PUSH_DOWN_BOTTOMBT) {
-        if (m_cursorPosLatest == PUSH_DOWN_BOTTOMBT) {
-            pImg = &m_imgBottomBtFocus; // 光标 hover 在上面的按钮上
+    if (!m_isHidePushBtn) {
+        if (m_pushDownPos != PUSH_DOWN_BOTTOMBT) {
+            if (m_cursorPosLatest == PUSH_DOWN_BOTTOMBT) {
+                pImg = &m_imgBottomBtFocus; // 光标 hover 在上面的按钮上
+            } else {
+                pImg = &m_imgBottomBtNormal; // 普通
+            }
         } else {
-            pImg = &m_imgBottomBtNormal; // 普通
+            if (m_cursorPosLatest == PUSH_DOWN_BOTTOMBT) {
+                pImg = &m_imgBottomBtPushDown; // 按下状态
+            } else {
+                pImg = &m_imgBottomBtNormal; // 普通
+            }
         }
-    } else {
-        if (m_cursorPosLatest == PUSH_DOWN_BOTTOMBT) {
-            pImg = &m_imgBottomBtPushDown; // 按下状态
-        } else {
-            pImg = &m_imgBottomBtNormal; // 普通
-        }
-    }
 
-    pImg->blt(canvas, x, m_rcObj.top);
+        pImg->blt(canvas, x, m_rcObj.top);
+    }
 }
 
 bool CSkinHScrollBar::setProperty(cstr_t szProperty, cstr_t szValue) {
@@ -958,6 +973,10 @@ bool CSkinHScrollBar::setProperty(cstr_t szProperty, cstr_t szValue) {
         m_imgTrack.m_x = m_nWidthPushBt + m_nWidthThumb;
         m_imgTrack.m_cy = m_nSBHeight;
         m_imgTrack.m_cx = m_nWidthTrack;
+
+        if (m_isHidePushBtn) {
+            m_nWidthPushBt = 0;
+        }
     }
 
     return true;

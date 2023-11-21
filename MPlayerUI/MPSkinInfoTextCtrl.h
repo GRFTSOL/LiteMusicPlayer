@@ -19,8 +19,8 @@ public:
 
     bool onMouseMove(CPoint point) override;
 
-    virtual bool onLButtonUp(uint32_t nFlags, CPoint point) override;
-    virtual bool onLButtonDown(uint32_t nFlags, CPoint point) override;
+    bool onLButtonUp(uint32_t nFlags, CPoint point) override;
+    bool onLButtonDown(uint32_t nFlags, CPoint point) override;
 
     void onTimer(int nId) override;
 
@@ -32,7 +32,7 @@ protected:
 protected:
     int                         m_nTimerIDHideInfo;
     string                      m_strCmd;
-    Cursor                      m_Cursor;
+    Cursor                      m_cursor;
 
 };
 

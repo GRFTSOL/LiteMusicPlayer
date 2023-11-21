@@ -21,10 +21,8 @@ class Cursor {
 public:
 
     enum STD_CURSOR_TYPE {
-        C_HOURGLASS                 = (int)(int64_t)IDC_WAIT,
         C_ARROW                     = (int)(int64_t)IDC_ARROW,
         C_CROSS                     = (int)(int64_t)IDC_CROSS,
-        C_HELP                      = (int)(int64_t)IDC_HELP,
         C_SIZEALL                   = (int)(int64_t)IDC_SIZEALL,
         C_SIZENESW                  = (int)(int64_t)IDC_SIZENESW,
         C_SIZENS                    = (int)(int64_t)IDC_SIZENS,
@@ -35,20 +33,22 @@ public:
         C_HAND                      = (int)(int64_t)IDC_HAND,
     };
 
+    Cursor(const Cursor &) = delete;
+    Cursor &operator=(const Cursor &) = delete;
+
     Cursor(void);
     virtual ~Cursor(void);
 
-    bool isValid() const { return m_cursor != nullptr; }
+    bool isValid() const;
 
-    bool loadStdCursor(STD_CURSOR_TYPE cusorType);
-
+    bool loadStdCursor(STD_CURSOR_TYPE cursorType);
     bool loadCursorFromFile(cstr_t szFile);
-
-    bool loadCursorFromRes(int nID);
 
     void destroy();
 
+    void set();
+
 public:
-    void                        *m_cursor;
+    struct _CursorInternal       *_data = nullptr;
 
 };

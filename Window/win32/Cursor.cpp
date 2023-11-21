@@ -19,11 +19,6 @@ bool Cursor::loadCursorFromFile(cstr_t szFile) {
     return m_cursor != nullptr;
 }
 
-bool Cursor::loadCursorFromRes(int nID) {
-    m_cursor = ::loadCursor(getAppInstance(), MAKEINTRESOURCE(nID));
-    return m_cursor != nullptr;
-}
-
 void Cursor::destroy() {
     if (m_cursor) {
         m_cursor = nullptr;

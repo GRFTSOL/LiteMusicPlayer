@@ -27,6 +27,7 @@ backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
         [self setDelegate: self];
     }
 
+    mBaseWnd = nullptr;
     mYScroll = 0;
     mXScroll = 0;
 
@@ -42,22 +43,6 @@ backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
     }
 }
 
-- (void) rightMouseDown:(NSEvent *)theEvent {
-    uint32_t flags = (uint32_t)[theEvent modifierFlags];
-    CPoint point = NSPointToCPoint([theEvent locationInWindow], [self frame].size.height);
-
-    mBaseWnd->onRButtonDown(flags, point);
-}
-
-- (void) rightMouseUp:(NSEvent *)theEvent {
-    mBaseWnd->onRButtonUp((uint32_t)[theEvent modifierFlags],
-        NSPointToCPoint([theEvent locationInWindow], [self frame].size.height));
-}
-
-- (void) mouseMoved:(NSEvent *)theEvent {
-    mBaseWnd->onMouseMove(NSPointToCPoint([theEvent locationInWindow], [self frame].size.height));
-}
-
 - (void)scrollWheel:(NSEvent *)theEvent {
     CPoint pt = NSPointToCPoint([theEvent locationInWindow], [self frame].size.height);
 
@@ -65,7 +50,7 @@ backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag {
 
     uint32_t modifierFlags = [theEvent modifierFlags] & NSEventModifierFlagDeviceIndependentFlagsMask;
 
-    float scrollingDeltaX = [theEvent scrollingDeltaX];
+    float scrollingDeltaX = -[theEvent scrollingDeltaX];
     mXScroll += scrollingDeltaX / PER_SCROOLL;
     if (abs(mXScroll) >= 1) {
         mBaseWnd->onMouseWheel((int)(mXScroll), modifierFlags| MK_SHIFT, pt);

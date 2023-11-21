@@ -11,6 +11,7 @@
 #import <Cocoa/Cocoa.h>
 
 class Window;
+class Cursor;
 
 inline void NSRectToRect(const NSRect &nsrc, CRect &rc) {
     rc.left = nsrc.origin.x;
@@ -36,6 +37,9 @@ inline CPoint NSPointToCPoint(const NSPoint &nsPoint, int wndHeight) {
 @interface ViewMacImp : NSView<NSTextInputClient> {
     Window *mBaseWnd;
 
+    Cursor *mCursorToSet;
+    NSCursor *mCursorDefault;
+
     // 输入法输入需要的成员
     bool mIsTextInputMode;
     bool mIsMarkedText;
@@ -46,6 +50,7 @@ inline CPoint NSPointToCPoint(const NSPoint &nsPoint, int wndHeight) {
 }
 
 - (void)setOwnerBaseWnd:(Window*)baseWnd;
+- (void)setCursor:(Cursor *)cursor;
 
 // 在编辑框开始/结束编辑时需要调用
 - (void)startTextInput;

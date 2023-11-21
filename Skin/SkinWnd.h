@@ -447,9 +447,6 @@ protected:
     //
     // properties
     //
-    Cursor                      m_cursor;
-    string                      m_strCusor;         // 光标文件
-
     CRect                       m_rcBoundBox;       // skin的矩形
 
     CSkinFontProperty           m_fontProperty;     // Default font property.

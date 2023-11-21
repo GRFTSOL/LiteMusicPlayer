@@ -525,9 +525,7 @@ CLyricShowObj::CLyricShowObj() {
 
     m_nextPicInFolder = 0;
 
-    m_Cursor.loadCursorFromRes(IDC_MLHAND);
-
-    m_curAdjustVertAlign.loadCursorFromRes(IDC_MLHAND);
+    m_curAdjustVertAlign.loadStdCursor(Cursor::C_HAND);
     m_yBeginDrag = -1;
     m_bEnableAdjustVertAlign = true;
     m_bEnableAdjustVertAlignUser = g_profile.getBool(SZ_SECT_LYR_DISPLAY, "enableAdjustVertAlign", false);

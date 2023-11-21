@@ -14,6 +14,8 @@
 #include "IScrollBar.h"
 
 
+class Cursor;
+
 void showInFinder(cstr_t filename);
 void showInFinder(const VecStrings &files);
 float getScreenScaleFactor();
@@ -79,6 +81,8 @@ public:
     virtual void onLanguageChanged() { }
 
     virtual float getScaleFactor() = 0;
+
+    virtual void setCursor(Cursor *cursor) = 0;
 
 public:
     CRawGraph *getMemGraphics();

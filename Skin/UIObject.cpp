@@ -861,6 +861,10 @@ bool CUIObject::isOnFocus() {
     return m_pSkin->getFocusUIObj() == this;
 }
 
+void CUIObject::setCursor(Cursor &cursor) {
+    m_pSkin->setCursor(&cursor);
+}
+
 bool CUIObject::isPtIn(CPoint pt) {
     if (!m_rcObj.ptInRect(pt)) {
         return false;

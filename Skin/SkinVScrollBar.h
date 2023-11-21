@@ -25,30 +25,31 @@ public:
         MARGIN_THUMB                = 3
     };
 
-    void setScrollInfo(int nMin, int nMax, int nPage, int nPos = 0, int nLine = 1, bool bRedraw = true);
-    int setScrollPos(int nPos, bool bRedraw = true);
+    void setScrollInfo(int nMin, int nMax, int nPage, int nPos = 0, int nLine = 1, bool bRedraw = true) override;
+    int setScrollPos(int nPos, bool bRedraw = true) override;
 
-    int getScrollPos() const { return m_nVirtualCurPos; }
-    int getPage() const { return m_nVirtualPage; }
-    int getMin() const { return m_nVirtualMin; }
-    int getMax() const;
-    int getID() const { return m_id; }
+    int getScrollPos() const override { return m_nVirtualCurPos; }
+    int getPage() const override { return m_nVirtualPage; }
+    int getMin() const override { return m_nVirtualMin; }
+    int getMax() const override;
+    int getID() const override { return m_id; }
 
-    void setScrollNotify(IScrollNotify *pNofity);
+    void setScrollNotify(IScrollNotify *pNofity) override;
 
-    virtual bool isEnabled() const;
-    virtual void disableScrollBar();
-    virtual bool handleScrollCode(uint32_t nSBCode, int nPos) { return true; }
+    virtual bool isEnabled() const override;
+    virtual void disableScrollBar() override;
+    virtual bool handleScrollCode(uint32_t nSBCode, int nPos) override { return true; }
 
 public:
-    void onSize();
+    void onSize() override;
 
-    bool onLButtonDown(uint32_t nFlags, CPoint point);
-    bool onLButtonUp(uint32_t nFlags, CPoint point);
-    bool onMouseDrag(CPoint point);
-    bool onMouseMove(CPoint point);
-    void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt);
-    void onTimer(int nId);
+    bool onLButtonDown(uint32_t nFlags, CPoint point) override;
+    bool onLButtonUp(uint32_t nFlags, CPoint point) override;
+    bool onMouseDrag(CPoint point) override;
+    bool onMouseMove(CPoint point) override;
+    void onMouseLeave(CPoint point) override;
+    void onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) override;
+    void onTimer(int nId) override;
 
 protected:
     void unregisterTimer();
@@ -97,6 +98,8 @@ protected:
 
     int                         m_nClickDelayTimerId; // 登记的点击后延迟的TIMER的ID
     int                         m_nRepeatTimerId;   // 登记的重复滚动TIMER的ID
+
+    bool                        m_isHidePushBtn = false;
 
     bool                        m_bStretchedThumb;  // Can the thumb be stretched?
     int                         m_nSizeThumbStretched;

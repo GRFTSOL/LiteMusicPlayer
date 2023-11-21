@@ -75,7 +75,6 @@ protected:
     ListResizeArea              m_listResizeArea;
 
     bool                        m_fixedWidth, m_fixedHeight;
-    bool                        m_bInstanceResizing;
     bool                        m_bResizingAutoCloseto; // 是否在调整大小时, 自动靠近指定窗口
 
     bool                        m_bResizing;        // 是否在拖动窗口

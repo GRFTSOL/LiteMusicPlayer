@@ -337,6 +337,8 @@ public:
     void setFocus();
     bool isOnFocus();
 
+    void setCursor(Cursor &cursor);
+
     inline int getID() const { return m_id; }
 
     virtual bool isPtIn(CPoint pt);

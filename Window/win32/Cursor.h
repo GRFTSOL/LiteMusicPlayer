@@ -20,10 +20,8 @@ class Cursor {
 public:
 
     enum STD_CURSOR_TYPE {
-        C_HOURGLASS                 = (int)(int64_t)IDC_WAIT,
         C_ARROW                     = (int)(int64_t)IDC_ARROW,
         C_CROSS                     = (int)(int64_t)IDC_CROSS,
-        C_HELP                      = (int)(int64_t)IDC_HELP,
         C_SIZEALL                   = (int)(int64_t)IDC_SIZEALL,
         C_SIZENESW                  = (int)(int64_t)IDC_SIZENESW,
         C_SIZENS                    = (int)(int64_t)IDC_SIZENS,
@@ -42,8 +40,6 @@ public:
     bool loadStdCursor(STD_CURSOR_TYPE cusorType);
 
     bool loadCursorFromFile(cstr_t szFile);
-
-    bool loadCursorFromRes(int nID);
 
     void destroy();
 

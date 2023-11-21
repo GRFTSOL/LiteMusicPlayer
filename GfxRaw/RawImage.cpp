@@ -643,6 +643,9 @@ void CRawImage::xScaleBlt(CRawGraph *canvas, int xDest, int yDest, int nWidthDes
         return;
     }
 
+    xExtendStart += m_x;
+    xExtendEnd += m_x;
+
     int x = xDest;
     int xSrc = m_x;
 
