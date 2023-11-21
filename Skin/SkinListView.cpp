@@ -22,7 +22,8 @@ CSkinListView::CSkinListView() {
 
     m_msgNeed = UO_MSG_WANT_RBUTTON | UO_MSG_WANT_LBUTTON | UO_MSG_WANT_MOUSEMOVE | UO_MSG_WANT_KEY | UO_MSG_WANT_MOUSEWHEEL;
 
-    m_vColors[CN_BG] = CColor(RGB(192, 192, 192));
+    m_vColors[CN_BG_STRIPE_A] = CColor(RGB(0, 0, 0), 0);
+    m_vColors[CN_BG_STRIPE_B] = CColor(RGB(0, 0, 0), 0);
     m_vColors[CN_SEL_BG] = CColor(RGB(128, 128, 128));
     m_vColors[CN_SEL_BG].set(RGB(128, 128, 128));
     m_vColors[CN_NOW_PLAYING_BG].set(RGB(0, 128, 0));
@@ -124,24 +125,6 @@ void CSkinListView::onCreate() {
 }
 
 bool CSkinListView::setProperty(cstr_t szProperty, cstr_t szValue) {
-    if (isPropertyName(szProperty, "BgColor")) {
-        VecStrings vColor;
-        strSplit(szValue, ',', vColor);
-        trimStr(vColor);
-        if (vColor.size() > 0) {
-            setColor(CN_BG, vColor[0].c_str());
-            m_clrBg = getColor(CN_BG);
-            m_bgType = BG_COLOR;
-        }
-        if (vColor.size() > 1) {
-            setColor(CN_ALTER_BG, vColor[1].c_str());
-        } else {
-            setColor(CN_ALTER_BG, getColor(CN_BG));
-        }
-
-        return true;
-    }
-
     if (CSkinScrollFrameCtrlBase::setProperty(szProperty, szValue)) {
         return true;
     }
@@ -150,6 +133,13 @@ bool CSkinListView::setProperty(cstr_t szProperty, cstr_t szValue) {
         setColor(CN_SEL_BG, szValue);
     } else if (strcasecmp(szProperty, "SelTextColor") == 0) {
         setColor(CN_SEL_TEXT, szValue);
+    } else if (strcasecmp(szProperty, "StripeColor") == 0) {
+        string c1, c2;
+        if (strSplit(szValue, ',', c1, c2)) {
+            trimStr(c1); trimStr(c2);
+            setColor(CN_BG_STRIPE_A, c1.c_str());
+            setColor(CN_BG_STRIPE_B, c2.c_str());
+        }
     } else if (strcasecmp(szProperty, "NowPlayingTextColor") == 0) {
         setColor(CN_NOW_PLAYING_TEXT, szValue);
     } else if (strcasecmp(szProperty, "NowPlayingBgColor") == 0) {
@@ -213,7 +203,6 @@ bool CSkinListView::setProperty(cstr_t szProperty, cstr_t szValue) {
 void CSkinListView::enumProperties(CUIObjProperties &listProperties) {
     CSkinScrollFrameCtrlBase::enumProperties(listProperties);
 
-    listProperties.addPropColor("BgColor", getColor(CN_BG));
     listProperties.addPropColor("SelBgColor", getColor(CN_SEL_BG));
     listProperties.addPropColor("SelTextColor", getColor(CN_SEL_TEXT));
     m_font.enumProperties(listProperties);
@@ -803,8 +792,6 @@ void CSkinListView::drawCellImage(CRawImage &image, CRect &rcCell, CRawGraph *ca
 }
 
 void CSkinListView::draw(CRawGraph *canvas) {
-    CSkinScrollFrameCtrlBase::draw(canvas);
-
     int nImageCx = 0;
 
     if (m_font.isGood()) {
@@ -829,15 +816,14 @@ void CSkinListView::draw(CRawGraph *canvas) {
     }
 
     // draw background color
-    if (isUseParentBg()) {
-        m_pContainer->redrawBackground(canvas, rcContent);
-    } else {
+    if (getColor(CN_BG_STRIPE_A).getAlpha() > 0) {
+        // Draw stripe
         int alpha = m_translucencyWithSkin ? m_pSkin->m_nCurTranslucencyAlpha : 255;
 
-        CColor clrBg1 = getColor(CN_BG);
+        CColor clrBg1 = getColor(CN_BG_STRIPE_A);
         clrBg1.setAlpha(alpha);
 
-        CColor clrBg2 = getColor(CN_ALTER_BG);
+        CColor clrBg2 = getColor(CN_BG_STRIPE_B);
         clrBg2.setAlpha(alpha);
 
         if (m_nFirstVisibleRow % 2 == 1) {
@@ -856,6 +842,8 @@ void CSkinListView::draw(CRawGraph *canvas) {
             rcItem.top = rcItem.bottom;
             rcItem.bottom += m_nLineHeight;
         }
+    } else {
+        redrawBackground(canvas, m_rcObj);
     }
 
     CRect rc = rcContent;
@@ -936,6 +924,12 @@ void CSkinListView::draw(CRawGraph *canvas) {
     if (m_bDrawBorder) {
         canvas->rectangle(rcContent.left, rcContent.top, rcContent.width(), rcContent.height());
     }
+
+    autoCBR.recover();
+    auto oldBgType = m_bgType;
+    m_bgType = BG_NONE;
+    CSkinScrollFrameCtrlBase::draw(canvas);
+    m_bgType = oldBgType;
 }
 
 bool CSkinListView::onLButtonDown(uint32_t nFlags, CPoint point) {

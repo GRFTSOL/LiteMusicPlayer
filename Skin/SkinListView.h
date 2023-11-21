@@ -82,7 +82,8 @@ class CSkinListView : public CSkinScrollFrameCtrlBase {
 public:
     enum ColorName {
         CN_BG,
-        CN_ALTER_BG,
+        CN_BG_STRIPE_A,
+        CN_BG_STRIPE_B,
         CN_TEXT,
         CN_SEL_BG,
         CN_SEL_TEXT,

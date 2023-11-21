@@ -55,4 +55,15 @@
     <VScrollBar Width="15" PushBtHeight="15" ThumbHeight="30" TrackHeight="20" ScrollBarWidth="15" Image="scrollbar-vert.png" ScalableThumb="TRUE" />
     <HScrollBar Height="15" PushBtWidth="15" ThumbWidth="30" TrackWidth="20" ScrollBarHeight="15" Image="scrollbar-horz.png" ScalableThumb="TRUE" />
 
+    <NormalListCtrl Extends="ListCtrl" StripeColor="#FFFFFF,#EDF3FE" SelBgColor="#3875D7" 
+        TextColor="#000000" SelTextColor="#FFFFFF" 
+        FontName="Verdana" FontHeight="13" LineHeight="22"
+        HeaderHeight="22" LineColor="#808080" ImageSortedHeader="s_listctrl_sorted_header.png"
+        ImageHeader="s_listctrl_header.png" ImageSortFlag="s_listctrl_sort_flag.png"/>
+    <NormalPlaylist Extends="Playlist" ID="ID_PLAYLIST" StripeColor="#FFFFFF,#EDF3FE" SelBgColor="#3875D7" 
+        NowPlayingBgColor="#007F00" NowPlayingTextColor="#FFFFFF" CustomizedColors="#FF7F00,#A9A9A9"
+        TextColor="#000000" SelTextColor="#FFFFFF" FontName="Verdana" FontHeight="14" LineHeight="24"
+        HeaderHeight="17" LineColor="#808080" ImageSortedHeader="s_listctrl_sorted_header.png"
+        ImageHeader="s_listctrl_header.png" ImageSortFlag="s_listctrl_sort_flag.png"/>
+
 </style>

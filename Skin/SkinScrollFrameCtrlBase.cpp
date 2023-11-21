@@ -55,8 +55,8 @@ void CSkinScrollFrameCtrlBase::onSize() {
     m_rcContent.right -= m_rcPadding.right;
     m_rcContent.bottom -= m_rcPadding.bottom;
 
-    m_rcContent.right -= m_nWidthVertScrollBar;
-    m_rcContent.bottom -= m_nHeightHorzScrollBar;
+    // m_rcContent.right -= m_nWidthVertScrollBar;
+    // m_rcContent.bottom -= m_nHeightHorzScrollBar;
 }
 
 void CSkinScrollFrameCtrlBase::onKillFocus() {
@@ -171,7 +171,7 @@ void CSkinScrollFrameCtrlBase::createVertScrollbar() {
 
     if (m_bVertScrollBar) {
         m_nWidthVertScrollBar = nWidth;
-        m_rcContent.right -= nWidth;
+        // m_rcContent.right -= nWidth;
     }
 }
 
@@ -211,5 +211,5 @@ void CSkinScrollFrameCtrlBase::createHorzScrollbar() {
     m_pHorzScrollBar = (CSkinVScrollBar*)m_pObjHorzScrollBar;
     m_pHorzScrollBar->setScrollNotify(this);
 
-    m_rcContent.bottom -= m_nHeightHorzScrollBar;
+    // m_rcContent.bottom -= m_nHeightHorzScrollBar;
 }
