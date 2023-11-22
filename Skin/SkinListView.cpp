@@ -42,7 +42,7 @@ CSkinListView::CSkinListView() {
     m_nHeaderHeight = 16;
     CColor clrPen(RGB(128, 128, 128));
     m_penLine.createSolidPen(1, clrPen);
-    m_nSortedCol = 0;
+    m_nSortedCol = -1;
     m_bAscending = false;
     m_bAdjustColWidth = false;
 
@@ -176,10 +176,12 @@ bool CSkinListView::setProperty(cstr_t szProperty, cstr_t szValue) {
         m_nXMargin = atoi(szValue);
     } else if (isPropertyName(szProperty, "LineColor")) {
         m_penLine.createSolidPen(1, parseColorString(szValue));
-    } else if (isPropertyName(szProperty, "ImageSortedHeader")) {
-        m_imageSortedHeader.loadFromSRM(m_pSkin, szValue);
     } else if (isPropertyName(szProperty, "ImageHeader")) {
         m_imageHeader.loadFromSRM(m_pSkin, szValue);
+        auto height = m_imageHeader.m_cy / 2;
+        m_imageSortedHeader.loadFromSRM(m_pSkin, szValue);
+        m_imageSortedHeader.m_cy = m_imageHeader.m_cy = height;
+        m_imageSortedHeader.m_y += height;
     } else if (isPropertyName(szProperty, "ImageSortFlag")) {
         m_imageAscending.loadFromSRM(m_pSkin, szValue);
         m_imageAscending.setWidth(m_imageAscending.width() / 2);
@@ -669,7 +671,7 @@ void CSkinListView::drawHeader(CRawGraph *canvas) {
     for (int i = 0; i < (int)m_vHeading.size(); i++) {
         if (i != 0) {
             // Header 的分割线
-            canvas->line(x - 1, y, x - 1, y + m_nHeaderHeight);
+            canvas->line(x - 1, y + 2, x - 1, y + m_nHeaderHeight - 4);
         }
 
         CColHeader *pColHeader = m_vHeading[i];
@@ -701,7 +703,7 @@ void CSkinListView::drawHeader(CRawGraph *canvas) {
 
         // sort flag
         if (pImageSortFlag && pImageSortFlag->isValid()) {
-            pImageSortFlag->blt(canvas, x + pColHeader->nWidth - 2 - pImageSortFlag->width(),
+            pImageSortFlag->blt(canvas, x + pColHeader->nWidth - 8 - pImageSortFlag->width(),
                 y + (m_nHeaderHeight - pImageSortFlag->height()) / 2);
         }
 
@@ -811,7 +813,9 @@ void CSkinListView::draw(CRawGraph *canvas) {
 
     auto rcContent = m_rcContent;
     if (m_header && m_pVertScrollBar && m_header->isVisible()) {
-        // 第一行为 header
+        // 第一行为 header, 需要填充背景色
+        canvas->fillRect(makeRectLTWH(rcContent.left, rcContent.top, rcContent.width(), m_header->m_rcObj.height()), getColor(CN_BG_STRIPE_B));
+
         rcContent.top = m_header->m_rcObj.bottom;
     }
 

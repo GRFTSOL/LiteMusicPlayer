@@ -245,16 +245,6 @@ void CSkinSeekCtrl::thumbOnMouseMove(CPoint point) {
 }
 
 void CSkinSeekCtrl::draw(CRawGraph *canvas) {
-    if (m_imgSimple.isValid()) {
-        int nHeight = m_imgSimple.height() / 2;
-
-        m_imgSimple.blt(canvas, m_rcObj.left, m_rcObj.top, m_nPosThumb, nHeight, 0, 0);
-
-        m_imgSimple.blt(canvas, m_rcObj.left + m_nPosThumb, m_rcObj.top, m_rcObj.width() - m_nPosThumb, nHeight, m_nPosThumb, nHeight);
-
-        return;
-    }
-
     int nTrackHeight = m_imgTrackNormal.height();
     int nThumbHeight = m_imgThumb.height() / 3;
 
@@ -266,7 +256,7 @@ void CSkinSeekCtrl::draw(CRawGraph *canvas) {
         // draw left
         CRawGraph::CClipBoxAutoRecovery clipAR(canvas);
 
-        canvas->setClipBoundBox(CRect(x, y, x + m_nPosThumb, y + nTrackHeight));
+        canvas->setClipBoundBox(CRect(x, y, x + m_nPosThumb + m_nWidthThumb / 2, y + nTrackHeight));
         m_imgTrackPlayed.xScaleBlt(canvas, x, y,
             m_rcObj.width(), nTrackHeight,
             m_nWidthEnd, m_imgTrackPlayed.width() - m_nWidthEnd,
@@ -277,7 +267,7 @@ void CSkinSeekCtrl::draw(CRawGraph *canvas) {
         // draw right
         CRawGraph::CClipBoxAutoRecovery clipAR(canvas);
 
-        canvas->setClipBoundBox(CRect(x + m_nPosThumb, y, m_rcObj.right, y + nTrackHeight));
+        canvas->setClipBoundBox(CRect(x + m_nPosThumb + m_nWidthThumb / 2, y, m_rcObj.right, y + nTrackHeight));
         m_imgTrackNormal.xScaleBlt(canvas, x, y,
             m_rcObj.width(), nTrackHeight,
             m_nWidthEnd, m_imgTrackNormal.width() - m_nWidthEnd,
@@ -310,8 +300,6 @@ bool CSkinSeekCtrl::setProperty(cstr_t szProperty, cstr_t szValue) {
 
     if (strcasecmp(szProperty, "EndWidth") == 0) {
         m_nWidthEnd = atoi(szValue);
-    } else if (strcasecmp(szProperty, "ImageSimple") == 0) {
-        m_imgSimple.loadFromSRM(m_pSkin, szValue);
     } else if (isPropertyName(szProperty, "ImageTrack")) {
         m_strImageTrack = szValue;
 

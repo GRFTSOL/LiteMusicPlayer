@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <style>
     <FlatImageBtn Extends="ImageButton" ContentMarginX="3" ContentMarginY="1" StretchContent="false"
-		Height="26" Padding="0,0" TabFocus="true"
-		Image="button-flat.png" ImageSize="40,26" ExtendPos="8,24"
-		ImagePos="0,0" ImageSelPos="0,52" ImageFocusPos="0,26"/>
+		Height="24" Padding="0,0" TabFocus="true"
+		Image="button-flat.png" ImageSize="40,24" ExtendPos="8,24"
+		ImagePos="0,0" ImageSelPos="0,48" ImageFocusPos="0,24"/>
     <FlatImageCheckBtn  Extends="FlatImageBtn"
-		S1_Image="button-flat.png" S1_ImageSize="40,26" S1_ExtendPos="8,24"
-		S1_ImagePos="0,78" S1_ImageSelPos="0,130" S1_ImageFocusPos="0,104"/>
+		S1_Image="button-flat.png" S1_ImageSize="40,24" S1_ExtendPos="8,24"
+		S1_ImagePos="0,72" S1_ImageSelPos="0,120" S1_ImageFocusPos="0,96"/>
 
     <NormalTextBt Extends="TextButton" FontName="Verdana" FontHeight="13" 
 		TextColor="#000000" SelTextColor="#FFFFFF" DisabledTextColor="#808080" TabFocus="true"
@@ -32,11 +32,11 @@
 		S1_Image="checks.png" S1_ImageSize="26,26"
 		S1_ImagePos="78,26" S1_ImageSelPos="78,52" S1_ImageFocusPos="78,78" S1_ImageDisabledPos="78,0"/>
 
-	<NormalEdit Extends="EditCtrl" Height="20" FontName="Verdana" FontHeight="13" TextColor="#000000"
+	<NormalEdit Extends="EditCtrl" Height="20" FontName="Verdana" FontHeight="13" TextColor="#000000" PlaceHolderColor="#8c8c8c"
         XMargin="5" YMargin="0"/>
     <EditCtrlFrame Extends="Frame" Image="edit.png" ImageSize="40,26"
 		ImagePos="0,26" ImageFocusPos="0,52" ImageHoverPos="0,52"
-		RoundWidth="4" ThickWidth="2" XBorder="0" YBorder="0"/>
+		RoundWidth="4" ThickWidth="3" XBorder="0" YBorder="0"/>
     <ListCtrlFrame Extends="Frame" Image="listctrl-frame.png" ImageSize="40,26"
 		ImagePos="0,0" ImageFocusPos="0,26" ImageHoverPos="0,26"
 		RoundWidth="4" ThickWidth="2" XBorder="0" YBorder="0"/>
@@ -58,12 +58,19 @@
     <NormalListCtrl Extends="ListCtrl" StripeColor="#FFFFFF,#EDF3FE" SelBgColor="#3875D7" 
         TextColor="#000000" SelTextColor="#FFFFFF" 
         FontName="Verdana" FontHeight="13" LineHeight="22"
-        HeaderHeight="22" LineColor="#808080" ImageSortedHeader="s_listctrl_sorted_header.png"
-        ImageHeader="s_listctrl_header.png" ImageSortFlag="s_listctrl_sort_flag.png"/>
+        HeaderHeight="22" LineColor="#808080"
+        ImageHeader="listctrl-header.png"/>
     <NormalPlaylist Extends="Playlist" ID="ID_PLAYLIST" StripeColor="#FFFFFF,#EDF3FE" SelBgColor="#3875D7" 
         NowPlayingBgColor="#007F00" NowPlayingTextColor="#FFFFFF" CustomizedColors="#FF7F00,#A9A9A9"
         TextColor="#000000" SelTextColor="#FFFFFF" FontName="Verdana" FontHeight="14" LineHeight="24"
-        HeaderHeight="17" LineColor="#808080" ImageSortedHeader="s_listctrl_sorted_header.png"
-        ImageHeader="s_listctrl_header.png" ImageSortFlag="s_listctrl_sort_flag.png"/>
+        HeaderHeight="24" LineColor="#808080"
+        ImageHeader="listctrl-header.png"/>
+
+    <Slider Extends="SeekCtrl" Height="15" EndWidth="8" ImageThumb="thumb.png" ImageTrack="progress.png"/>
+    <Progress Extends="SeekCtrl" Height="20" EndWidth="8" ImageThumb="thumb-none.png" ImageTrack="progress.png"/>
+
+    <MenuItemsContainer FontName="Verdana" FontHeight="13" FontBold="false" TextColor="#000000" BgColor="#E0E0E0"
+        TextColorHover="#000000" BgColorHover="#558ff3" FrameColor="#A0A0A0" DisabledTextColor="#808080" BgColorInactive="#C0C0C0"
+        ImageChecked="menu-check.png" ImageSubmenu="menu-expand-right" ImageUpArrow="menu-expand-up" ImageDownArrow="menu-expand-down"/>
 
 </style>

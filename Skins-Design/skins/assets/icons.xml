@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <icons>
-    <file filename="icon.png" cx="22" cy="22" names="arrow-down-lg,arrow-up-lg,arrow-down,arrow-up,arrow-left,arrow-right,expand-down,expand-left,expand-right,expand-up,close,max,min,replace-all,replace,match-whole,case-sensitive,check"/>
+    <file filename="icons.png" cx="22" cy="22" names="arrow-down,arrow-up,arrow-left,arrow-right,expand-down,expand-left,expand-right,expand-up,close,max,min,replace-all,replace,match-whole,case-sensitive,check"/>
+    <file filename="menu.png" cx="18" cy="18" names="menu-check,menu-expand-down,menu-expand-up,menu-expand-right"/>
 </icons>

@@ -47,9 +47,7 @@
 					ImageFocusPos="40,40" />
 					
 				<Image Name="Volume" Rect="180,25,14,14" Image="volume.png" />
-				<SeekCtrl Name="Volume" ID="ID_VOLUME" 
-						  Rect="200,26,100,12" EndWidth="3" ImageThumb="seek_thumb.png"
-						  ImageTrack="seek_track.png"/>
+				<Slider Name="Volume" ID="ID_VOLUME" Rect="200,25,100,"/>
 			</Container>
 
 			<Container Rect="435,35,w-435-44,70" Name="Media Info">
@@ -63,9 +61,7 @@
 
 					<PlayingTime Rect="10,50,50,11" 
 						AlignText="AT_CENTER" CharWidth="8" TextImage="shade-numfont.png" ImageChars="0123456789 -:" />
-					<SeekCtrl Name="Seek" ID="ID_SEEK" 
-							  Rect="65,50,w-65-10,12" EndWidth="3" ImageThumb="seek_thumb.png"
-							  ImageTrack="seek_track.png"/>
+					<Slider Name="Seek" ID="ID_SEEK" Rect="65,48,w-65-10,"/>
 				</Container>
 			</Container>
 
@@ -87,8 +83,8 @@
 						  XBorder="0" YBorder="0"/>
 					<NormalPlaylist Rect="5,5,w-10,h-10" EnableHeader="false" EnableBorder="false" KeywordEdit="CID_E_SEARCH_MUSIC">
 						<Container ID="CID_SEARCH_BAR" Rect="0,0,w-15,30" BgColor="#EDF3FE">
-							<Image Name="Volume" Rect="10,3,22,22" Image="fl_buttons.png" ImageRect="110,0,22,22"/>
-							<NormalEdit ID="CID_E_SEARCH_MUSIC" Text="" Hint="Type to search music" Rect="42,6,w-52,"/>
+							<Image Name="Search" Rect="10,3,22,22" Image="fl_buttons.png" ImageRect="110,0,22,22"/>
+							<NormalEdit ID="CID_E_SEARCH_MUSIC" Text="" PlaceHolder="Search music" Rect="42,6,w-52,"/>
 						</Container>
 					</NormalPlaylist>
 				</Container>

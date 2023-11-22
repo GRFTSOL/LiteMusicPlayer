@@ -237,7 +237,10 @@ bool CSkinContainer::onLButtonDown(uint32_t nFlags, CPoint point) {
         if ((pObj->needMsgLButton() || pObj->isContainer()) && pObj->isVisible()
             && pObj->isEnable() && pObj->isPtIn(point)) {
             if (pObj->needMsgKey()) {
-                pObj->setFocus();
+                if (m_pSkin->getFocusUIObj() && !m_pSkin->getFocusUIObj()->isPtIn(point)) {
+                    // The edit control in Playlist need these condition check
+                    pObj->setFocus();
+                }
             }
             if (pObj->onLButtonDown(nFlags, point)) {
                 return true;
@@ -256,7 +259,8 @@ bool CSkinContainer::onLButtonDblClk(uint32_t nFlags, CPoint point) {
 
         if ((pObj->needMsgLButton() || pObj->isContainer()) && pObj->isVisible()
             && pObj->isEnable() && pObj->isPtIn(point)) {
-            if (pObj->needMsgKey()) {
+            if (m_pSkin->getFocusUIObj() && !m_pSkin->getFocusUIObj()->isPtIn(point)) {
+                // The edit control in Playlist need these condition check
                 pObj->setFocus();
             }
             if (pObj->onLButtonDblClk(nFlags, point)) {

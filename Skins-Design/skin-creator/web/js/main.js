@@ -207,10 +207,10 @@ function appIcons() {
                     if (item.type == '_image_') {
                         const image = images[item.icon];
                         if (image) {
-                            drawImage(ctx, image, x, y, widthItem, heightItem, item.replaceColor, colors[i]);
+                            drawImage(ctx, image, x, y, widthItem, heightItem, item.replaceColor, bgColors[i]);
                         }
                     } else {
-                        drawTextCenter(ctx, x, y, widthItem, heightItem, item.icon, tab.fontSize, colors[i], 0, item.type);
+                        drawTextCenter(ctx, x, y, widthItem, heightItem, item.icon, tab.fontSize, bgColors[i], 0, item.type);
                     }
                     x += widthItem;
                 }
@@ -631,30 +631,29 @@ function appThumb() {
         const countColors = countOfChoosedColors(ctrl.colors);
         const width = ctrl.width, height = ctrl.height;
 
-        canvas.width = ctrl.width * 3;
-        canvas.height = ctrl.height * countColors;
+        canvas.width = ctrl.width * countColors;
+        canvas.height = ctrl.height * 3;
 
         const width1 = ctrl.width1, height1 = ctrl.height1, width2 = ctrl.width2, height2 = ctrl.height2;
         const alpha2 = ctrl.alpha2;
-        let y = 0;
+        let x = 0;
         for (let i in colors) {
             if (ctrl.colors[i]) {
-                let x = 0;
-                const color = bgColors[i];
-                fillRoundRect(ctx, x + (width - width1) / 2, y + (height - height1) / 2, width1, height1, ctrl.cornerRadius1, color);
+                let y = 0;
+                fillRoundRect(ctx, x + (width - width1) / 2, y + (height - height1) / 2, width1, height1, ctrl.cornerRadius1, colors[i]);
 
                 // two rect
-                x += ctrl.width;
-                ctx.globalAlpha = alpha2;
-                fillRoundRect(ctx, x + (width - width2) / 2, y + (height - height2) / 2, width2, height2, ctrl.cornerRadius2, colors[i]);
-                ctx.globalAlpha = 1;
-                fillRoundRect(ctx, x + (width - width1) / 2, y + (height - height1) / 2, width1, height1, ctrl.cornerRadius1, color);
-    
-                // larger one
-                x += ctrl.width;
-                fillRoundRect(ctx, x + (width - width2) / 2, y + (height - height2) / 2, width2, height2, ctrl.cornerRadius2, color);
-    
                 y += ctrl.height;
+                ctx.globalAlpha = alpha2;
+                fillRoundRect(ctx, x + (width - width2) / 2, y + (height - height2) / 2, width2, height2, ctrl.cornerRadius2, bgColors[i]);
+                ctx.globalAlpha = 1;
+                fillRoundRect(ctx, x + (width - width1) / 2, y + (height - height1) / 2, width1, height1, ctrl.cornerRadius1, fgColors[i]);
+
+                // larger one
+                y += ctrl.height;
+                fillRoundRect(ctx, x + (width - width2) / 2, y + (height - height2) / 2, width2, height2, ctrl.cornerRadius2, fgColors[i]);
+
+                x += ctrl.width;
             }
         }
     }
@@ -809,6 +808,7 @@ const app = Vue.createApp({
             appFrame('button-flat', 'Flat Button'),
             appFrame('edit', 'Edit'),
             appFrame('listctrl-frame', 'ListCtrl'),
+            appFrame('listctrl-header', 'ListCtrl Header'),
             appFrame('frame-ctrl', 'Frame'),
         ];
 

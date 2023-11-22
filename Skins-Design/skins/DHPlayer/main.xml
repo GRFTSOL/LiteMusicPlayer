@@ -32,9 +32,7 @@
 				<PlayingTimeText Visible="false" Name="PlayingTime" Rect="10,100,50,18" AlignText="AT_CENTER | AT_VCENTER"
 				   FontName="Verdana" FontHeight="13" FontBold="TRUE" TextOutlined="TRUE" TextColor="#FFFFFF"
 				   TextOutlinedColor="#000000" LeftMargin="0" Text=""/>
-				<SeekCtrl Name="Seek" ID="ID_SEEK" 
-						  Rect="10+50+8,100,w-10-50-10-8,12" EndWidth="3" ImageThumb="seek_thumb.png"
-						  ImageTrack="seek_track.png"/>
+				<Slider Name="Seek" ID="ID_SEEK" Rect="10+50+6,100,w-10-50-10-8,"/>
 			</Container>
 		</Container>
 
@@ -51,11 +49,9 @@
 			<Button Rect="125,10,40,40" ID="ID_NEXT"
 				Image="prev_next.png" ImageSize="40,40" ImagePos="40,0" ImageSelPos="40,80"
 				ImageFocusPos="40,40" TranslucencyWithSkin="TRUE"/>
-				
+
 			<Image Name="Volume" Rect="w-110-14-5,25,14,14" Image="volume.png" />
-			<SeekCtrl Name="Volume" ID="ID_VOLUME" 
-					  Rect="w-110,26,100,12" EndWidth="3" ImageThumb="seek_thumb.png"
-					  ImageTrack="seek_track.png"/>
+			<Slider Name="Volume" ID="ID_VOLUME" Rect="w-110,25,100,"/>
 		</Container>
 
 		<DecorativeContainer ID="CID_LYRICS" Name="Lyrics" Rect="325,5,w-320-10,190">

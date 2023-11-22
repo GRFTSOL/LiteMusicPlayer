@@ -445,6 +445,9 @@ public:
 protected:
     uint32_t                    m_nEditorStyles;
 
+    string                      m_placeHolder;
+    CColor                      m_clrPlaceHolder;
+
     CVLines                     m_vLines;
 
     // scroll bar info

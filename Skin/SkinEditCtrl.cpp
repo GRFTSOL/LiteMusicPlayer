@@ -274,7 +274,7 @@ CSkinEditCtrl::CSkinEditCtrl() {
     m_nIDTimerCaret = 0;
     m_cursor.loadStdCursor(Cursor::C_IBEAM);
 
-    m_msgNeed = UO_MSG_WANT_MOUSEMOVE | UO_MSG_WANT_LBUTTON | UO_MSG_WANT_RBUTTON | UO_MSG_WANT_KEY | UO_MSG_WANT_MOUSEWHEEL;
+    m_msgNeed = UO_MSG_WANT_MOUSEMOVE | UO_MSG_WANT_LBUTTON | UO_MSG_WANT_RBUTTON | UO_MSG_WANT_KEY;
 
     m_xMargin = m_yMargin = 0;
 }
@@ -720,6 +720,7 @@ void CSkinEditCtrl::sortSelectPos(int &nBegSelRow, int &nBegSelCol, int &nEndSel
 void CSkinEditCtrl::onCreate() {
     if (isFlagSet(m_nEditorStyles, S_MULTILINE)) {
         m_bHorzScrollBar = m_bVertScrollBar = true;
+        m_msgNeed |= UO_MSG_WANT_MOUSEWHEEL;
     }
 
     CSkinScrollFrameCtrlBase::onCreate();
@@ -773,23 +774,27 @@ void CSkinEditCtrl::draw(CRawGraph *canvas) {
         sortSelectPos(nBegSelRow, nBegSelCol, nEndSelRow, nEndSelCol, bSelectedEmpty);
     }
 
-    if (m_vLines.empty()) {
-        m_caret.draw(canvas);
-        return;
-    }
-
     CRect rcClip = rc;
 
     CRawGraph::CClipBoxAutoRecovery autoCBR(canvas);
     canvas->setClipBoundBox(rcClip);
 
-    int x, y, xStart, xMax, yMax;
-    int i;
+    if (m_vLines.empty() || (m_vLines.size() == 1 && m_vLines[0]->size() == 0)) {
+        if (!isOnFocus()) {
+            // Draw place holder
+            canvas->setTextColor(m_clrPlaceHolder);
+            canvas->drawText(m_placeHolder, rc, DT_SINGLELINE | DT_LEFT | DT_VCENTER);
+            return;
+        }
 
-    xStart = rcClip.left;
-    y = rcClip.top;
-    xMax = rcClip.right;
-    yMax = rcClip.bottom;
+        m_caret.draw(canvas);
+        return;
+    }
+
+    int xStart = rcClip.left;
+    int y = rcClip.top;
+    int xMax = rcClip.right;
+    int yMax = rcClip.bottom;
     assert(m_nTopVisibleLine >= 0 && m_nTopVisibleLine < (int)m_vLines.size());
 
     if (!isFlagSet(m_nEditorStyles, S_MULTILINE)) {
@@ -812,7 +817,7 @@ void CSkinEditCtrl::draw(CRawGraph *canvas) {
     }
 
     // draw lines before selection
-    for (i = m_nTopVisibleLine; i < nBegSelRow; i++) {
+    for (int i = m_nTopVisibleLine; i < nBegSelRow; i++) {
         if (y + getLineDy() > yMax && i > m_nTopVisibleLine) {
             break;
         }
@@ -823,7 +828,7 @@ void CSkinEditCtrl::draw(CRawGraph *canvas) {
     }
 
     // draw lines at selection
-    for (i = nBegSelRow; i <= nEndSelRow; i++) {
+    for (int i = nBegSelRow; i <= nEndSelRow; i++) {
         if (i < m_nTopVisibleLine) {
             continue;
         }
@@ -846,7 +851,7 @@ void CSkinEditCtrl::draw(CRawGraph *canvas) {
             nEndSelColCurLine = (int)pLine->size();
         }
 
-        x = xStart - m_nScrollPosx;
+        int x = xStart - m_nScrollPosx;
 
         fillSelectedLineBg(canvas, x, y, pLine, nBegSelColCurLine, nEndSelColCurLine);
 
@@ -886,7 +891,7 @@ void CSkinEditCtrl::draw(CRawGraph *canvas) {
     }
 
     //    canvas->setTextColor(m_clrText);
-    for (i = nEndSelRow + 1; i < (int)m_vLines.size(); i++) {
+    for (int i = nEndSelRow + 1; i < (int)m_vLines.size(); i++) {
         if (i < m_nTopVisibleLine) {
             continue;
         }
@@ -2734,6 +2739,10 @@ bool CSkinEditCtrl::setProperty(cstr_t szProperty, cstr_t szValue) {
         m_yMargin = atoi(szValue);
     } else if (isPropertyName(szProperty, "Style")) {
         m_nEditorStyles = getCombinationValue(__EditStyleText, szValue);
+    } else if (isPropertyName(szProperty, "PlaceHolder")) {
+        m_placeHolder = szValue;
+    } else if (isPropertyName(szProperty, "PlaceHolderColor")) {
+        m_clrPlaceHolder = parseColorString(szValue);
     } else {
         return false;
     }

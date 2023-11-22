@@ -98,8 +98,6 @@ protected:
     PUSH_DOWN_POS               m_pushDownPos;      // 鼠标按下的位置
     PUSH_DOWN_POS               m_cursorPosLatest;  // 鼠标按下的位置
 
-    CSFImage                    m_imgSimple;
-
     CSFImage                    m_imgTrackNormal, m_imgTrackPlayed;
     CSFImage                    m_imgThumb;
     string                      m_strImageTrack, m_strImageThumb;

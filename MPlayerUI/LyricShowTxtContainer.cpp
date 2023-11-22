@@ -6,7 +6,6 @@
 UIOBJECT_CLASS_NAME_IMP(CLyricShowTxtContainer, "LyricShowTxtContainer")
 
 CLyricShowTxtContainer::CLyricShowTxtContainer() {
-    m_bVertical = false;
     m_pLyricsShow = nullptr;
     m_pObjScrollBar = nullptr;
 }
@@ -15,7 +14,7 @@ CLyricShowTxtContainer::~CLyricShowTxtContainer() {
 }
 
 void CLyricShowTxtContainer::onCreate() {
-    CSkinLinearContainer::onCreate();
+    CSkinContainer::onCreate();
 
     //
     // create Scrollbar
@@ -26,18 +25,17 @@ void CLyricShowTxtContainer::onCreate() {
     }
 
     m_pObjScrollBar->setProperty("LinesPerWheel", "1");
-    m_pObjScrollBar->setProperty(SZ_PN_LAYOUT_PARAMS, "match_parent_height");
+    cstr_t scrollBarWidth = m_pObjScrollBar->m_formWidth.getFormula();
+    m_pObjScrollBar->setProperty(SZ_PN_RECT, stringPrintf("w-%s,0,%s,h", scrollBarWidth, scrollBarWidth).c_str());
 
     addUIObject(m_pObjScrollBar);
-
 
     m_pLyricsShow = m_pSkin->createUIObject(CLyricShowTxtObj::className(), this);
     if (!m_pLyricsShow) {
         return;
     }
 
-    m_pLyricsShow->setProperty(SZ_PN_RECT, "0,0,0,h");
-    m_pLyricsShow->setProperty(SZ_PN_WEIGHT, "1");
+    m_pLyricsShow->setProperty(SZ_PN_RECT, "0,0,w,h");
     m_pLyricsShow->setProperties(m_vProperties);
 
     insertUIObjectAt(m_pObjScrollBar, m_pLyricsShow);
@@ -48,7 +46,7 @@ bool CLyricShowTxtContainer::setProperty(cstr_t szProperty, cstr_t szValue) {
         m_pLyricsShow->setProperty(szProperty, szValue);
     }
 
-    if (CSkinLinearContainer::setProperty(szProperty, szValue)) {
+    if (CSkinContainer::setProperty(szProperty, szValue)) {
         return true;
     }
 

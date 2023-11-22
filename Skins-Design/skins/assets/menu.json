@@ -50,11 +50,6 @@
           40165
         ], 
         [
-          "Open &URL...", 
-          "IDC_OPENDIR", 
-          40165
-        ], 
-        [
           "separator"
         ], 
         [
@@ -66,11 +61,6 @@
           "Add F&older...", 
           "IDC_ADDDIR", 
           40152
-        ], 
-        [
-          "Add UR&L...", 
-          "IDC_OPENDIR", 
-          40165
         ], 
         [
           "separator"
@@ -971,11 +961,6 @@
           40165
         ], 
         [
-          "Open &URL...", 
-          "IDC_OPENDIR", 
-          40165
-        ], 
-        [
           "separator"
         ], 
         [
@@ -987,11 +972,6 @@
           "Add F&older...", 
           "IDC_ADDDIR", 
           40152
-        ], 
-        [
-          "Add UR&L...", 
-          "IDC_OPENDIR", 
-          40165
         ], 
         [
           "separator"

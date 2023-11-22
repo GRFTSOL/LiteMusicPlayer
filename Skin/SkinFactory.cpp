@@ -389,8 +389,7 @@ void CSkinStyles::addStyle(SXNode *nodeStyle) {
     for (auto node : nodeStyle->listChildren) {
         auto it = m_mapStyles.find(node->name);
         if (it != m_mapStyles.end()) {
-            ERR_LOG1("Redifinition of style name: %s", node->name.c_str());
-            continue;
+            DBG_LOG1("Overwrite style name: %s", node->name.c_str());
         }
 
         m_mapStyles[node->name] = node;

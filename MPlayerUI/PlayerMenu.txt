@@ -130,11 +130,9 @@ menufile_v2
   popup@&File
     &Open File...@IDC_OPENFILE
     Open &Folder...@IDC_OPENDIR
-    Open &URL...@IDC_OPENDIR
     separator
     &Add File...@IDC_ADDFILE
     Add F&older...@IDC_ADDDIR
-    Add UR&L...@IDC_OPENDIR
     separator
     &New Playlist@IDC_NEW_PL
     Open &Playlist@IDC_OPEN_PL
@@ -232,11 +230,9 @@ menufile_v2
   popup@&File
     &Open File...@IDC_OPENFILE
     Open &Folder...@IDC_OPENDIR
-    Open &URL...@IDC_OPENDIR
     separator
     &Add File...@IDC_ADDFILE
     Add F&older...@IDC_ADDDIR
-    Add UR&L...@IDC_OPENDIR
     separator
     &New Playlist@IDC_NEW_PL
     Open &Playlist@IDC_OPEN_PL

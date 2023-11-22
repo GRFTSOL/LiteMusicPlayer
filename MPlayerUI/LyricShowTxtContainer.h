@@ -3,8 +3,8 @@
 #include "../Skin/SkinLinearContainer.h"
 
 
-class CLyricShowTxtContainer : public CSkinLinearContainer {
-    UIOBJECT_CLASS_NAME_DECLARE(CSkinLinearContainer)
+class CLyricShowTxtContainer : public CSkinContainer {
+    UIOBJECT_CLASS_NAME_DECLARE(CSkinContainer)
 public:
     CLyricShowTxtContainer();
     virtual ~CLyricShowTxtContainer();
