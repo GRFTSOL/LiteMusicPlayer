@@ -4,7 +4,8 @@
 #include "UIObject.h"
 
 
-class CMenu;
+class CSkinMenu;
+using SkinMenuPtr = std::shared_ptr<CSkinMenu>;
 
 class CSkinContainer : public CUIObject {
     UIOBJECT_CLASS_NAME_DECLARE(CUIObject)
@@ -107,7 +108,7 @@ public:
     virtual void recalculateUIObjSizePos(CUIObject *pObj);
     bool recalculateVarValue(CFormula &form, int &nRetValue);
 
-    CMenu *getMenu() { return m_pMenu; }
+    CSkinMenu *getMenu() { return m_pMenu.get(); }
 
     //
     // CSkinContainer API
@@ -178,7 +179,7 @@ protected:
 
     bool                        m_bClipChildren;
     string                      m_strContextMenu;
-    CMenu                       *m_pMenu;
+    SkinMenuPtr                 m_pMenu;
 
     // Status for Page view
     struct PageViewItem {

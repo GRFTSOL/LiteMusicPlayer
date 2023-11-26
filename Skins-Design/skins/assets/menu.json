@@ -838,7 +838,7 @@
       "IDC_SHOW_IN_FINDER", 
       40201
     ], 
-[
+    [
       "&Open File...", 
       "IDC_OPENFILE", 
       40163
@@ -875,6 +875,21 @@
       40159
     ], 
     [
+      "Add &to Playlist", 
+      [
+        [
+          "Create New Playlist",
+          "IDC_ADD_SELECTED_TO_PLAYLIST_NEW", 
+          40231
+        ],
+        [
+          "Playlist",
+          "IDC_ADD_SELECTED_TO_PLAYLIST_START", 
+          40220
+        ]
+      ]
+    ],
+    [
       "separator"
     ], 
     [
@@ -888,10 +903,18 @@
       40154
     ], 
     [
+      "separator"
+    ], 
+    [
       "&Remove From Playlist", 
-      "IDC_REMOVE", 
+      "IDC_REMOVE_FROM_PLAYLIST", 
       40155
     ], 
+    [
+      "Remove from Library", 
+      "IDC_REMOVE_FROM_LIBRARY", 
+      40208
+    ],
     [
       "separator"
     ], 
@@ -1031,17 +1054,22 @@
           40137
         ], 
         [
-          "&Repeat", 
-          "IDC_REPEAT_OFF", 
-          40138
-        ], 
-        [
           "separator"
         ], 
         [
-          "E&qualizer", 
-          "IDC_EQ", 
-          40151
+          "&Repeat All", 
+          "IDC_REPEAT_ALL", 
+          40138
+        ], 
+        [
+          "Repeat Track", 
+          "IDC_REPEAT_TRACK", 
+          40139
+        ], 
+        [
+          "Repeat Off", 
+          "IDC_REPEAT_OFF", 
+          40140
         ]
       ]
     ], 
@@ -1344,8 +1372,8 @@
       [
         [
           "INSERT_SKIN_POS", 
-          "IDC_SKIN_POS", 
-          40146
+          "IDC_SKIN_0", 
+          40006
         ], 
         [
           "separator"
@@ -1861,6 +1889,90 @@
       "Rate These Lyrics: 5 (High)", 
       "IDC_RATE_LYR_5", 
       40192
+    ]
+  ],
+  "PlaylistSearchCtx": [
+    [
+      "Show in Fin&der", 
+      "IDC_SHOW_IN_FINDER", 
+      40201
+    ], 
+    [
+      "Play Selected &file", 
+      "IDC_PLAY_SELECTED_FILE", 
+      40203
+    ], 
+    [
+      "separator"
+    ], 
+    [
+      "&Replace Now Playing", 
+      "IDC_REPLACE_NOW_PLAYING_WITH_RESULTS", 
+      40204
+    ], 
+    [
+      "R&eplace Now Playing with Selected", 
+      "IDC_REPLACE_NOW_PLAYING_WITH_SELECTED", 
+      40205
+    ], 
+    [
+      "separator"
+    ], 
+    [
+      "&Add All to Now Playing", 
+      "IDC_ADD_RESULTS_TO_NOW_PLAYING", 
+      40206
+    ], 
+    [
+      "Add Selected &to Now Playing", 
+      "IDC_ADD_SELECTED_TO_NOW_PLAYING", 
+      40207
+    ],
+    [
+      "separator"
+    ], 
+    [
+      "&Add All to Playlist", 
+      [
+        [
+          "Create New Playlist",
+          "IDC_ADD_RESULTS_TO_PLAYLIST_NEW", 
+          40230
+        ],
+        [
+          "Playlist",
+          "IDC_ADD_RESULTS_TO_PLAYLIST_START", 
+          40210
+        ]
+      ]
+    ], 
+    [
+      "Add Selected &to Playlist", 
+      [
+        [
+          "Create New Playlist",
+          "IDC_ADD_SELECTED_TO_PLAYLIST_NEW", 
+          40231
+        ],
+        [
+          "Playlist",
+          "IDC_ADD_SELECTED_TO_PLAYLIST_START", 
+          40220
+        ]
+      ]
+    ],
+    [
+      "separator"
+    ], 
+    [
+      "&Remove From Playlist", 
+      "IDC_REMOVE_FROM_PLAYLIST", 
+      40155
+    ], 
+    [
+      "Remove from Library", 
+      "IDC_REMOVE_FROM_LIBRARY", 
+      40208
     ]
   ]
 }

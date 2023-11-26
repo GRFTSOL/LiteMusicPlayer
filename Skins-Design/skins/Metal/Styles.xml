@@ -111,9 +111,6 @@
     <TitleText Extends="Text" Height="25" FontName="Verdana" FontHeight="20" TextColor="#000000" AlignText="AT_CENTER"/>
     <ErrorText Extends="Text" Height="15" FontName="Verdana" FontHeight="13" TextColor="#FF0000"/>
     <NormalLink Extends="TxtLink" Height="15" FontName="Verdana" FontHeight="13" TextColor="#0000FF"/>
-    <MenuItemsContainer FontName="Verdana" FontHeight="13" FontBold="false" TextColor="#000000" BgColor="#E0E0E0"
-        TextColorHover="#000000" BgColorHover="#558ff3" FrameColor="#A0A0A0" DisabledTextColor="#808080" BgColorInactive="#C0C0C0"
-        ImageChecked="menu-check.png" ImageSubmenu="menu-expand-right" ImageUpArrow="menu-expand-up" ImageDownArrow="menu-expand-down"/>
 
     <WndFrameCaption Extends="Text" ID="ID_CAPTION" Rect="30,4,w-60,20" Text="About DH Player" FontHeight="16" FontBold="true" TextColor="#000000" TextOutlinedColor="#000000" TextOutlined="true" LeftMargin="0" AlignText="AT_CENTER | AT_VCENTER"/>
     <InfoText Name="InfoText" Rect="0,h-26,w,26" FontName="Verdana" FontHeight="16" FontItalic="1" TextColor="#0000FF" LeftMargin="10" TranslucencyWithSkin="TRUE"/>

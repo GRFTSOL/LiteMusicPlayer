@@ -413,7 +413,7 @@ menufile_v2
   separator
   Move &Up@IDC_MOVE_UP
   &Move Down@IDC_MOVE_DOWN
-  &Remove From Playlist@IDC_REMOVE
+  &Remove From Playlist@IDC_REMOVE_FROM_PLAYLIST
   separator
   &Clear Now Playing@IDC_CLEAR
   separator

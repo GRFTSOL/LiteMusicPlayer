@@ -94,15 +94,12 @@ public:
 
     CMediaLibrary *getMediaLibrary() { return m_mediaLib; }
 
-    void clearPlaylist();
-    void newCurrentPlaylist();
+    void clearNowPlaying();
+    void newNowPlaying();
 
-    string getCurrentPlaylistFile() { return m_currentPlaylistFn; }
+    void addDirToNowPlaying(cstr_t szDir, bool bIncSubDir = true);
+    void addToNowPlaying(cstr_t szMedia);
 
-    void addDirToPlaylist(cstr_t szDir, bool bIncSubDir = true);
-    void addToPlaylist(cstr_t szMedia);
-
-    void loadPlaylist(cstr_t szFile, bool bClear = true);
     bool isMediaInPlaylist(cstr_t szMedia);
 
     void addFileToMediaLib(cstr_t szMedia);
@@ -114,6 +111,9 @@ public:
 
     int getCurrentMediaIndex() { return m_idxCurrentMedia; }
 
+    bool isCurrentMediaTempPlaying();
+
+    void playMedia(MediaPtr &media);
     void playMedia(int nPlaylistIndex);
 
     void getFileOpenDlgExtention(string &strExtentions) const;
@@ -122,7 +122,7 @@ public:
     bool isExtAudioFile(cstr_t szExt);
     static bool isExtPlaylistFile(cstr_t szExt);
 
-    void setPlaylistModified(bool bModified) { m_isPlaylistModified = bModified; }
+    void setNowPlayingModified(bool bModified) { m_isNowPlayingModified = bModified; }
 
     static string formatMediaTitle(Media *media);
 
@@ -141,7 +141,6 @@ public:
     void getCurMediaAttribute(MediaAttribute mediaAttr, string &strValue);
 
     void saveCurrentPlaylist();
-    void saveCurrentPlaylistAs(cstr_t szFile);
 
     void setLyrDrawUpdateFast(bool bFast);
 
@@ -166,6 +165,8 @@ public:
 
     void setCurrentPlaylist(const PlaylistPtr &playlist);
 
+    void updateMediaInfo(Media *media);
+
     // Reload Media tag info: artist, title, bitarte, bps, etc.
     ResultCode loadMediaTagInfo(Media *media);
 
@@ -184,6 +185,7 @@ public:
     void notifyPlaylistChanged(Playlist *playlist, IMPEvent::PlaylistChangeAction action, int nIndex, int nIndexOld);
 
 protected:
+    void setCurrentMedia(MediaPtr &media);
     void currentMediaChanged();
     void generateShuffleMediaQueue();
     ResultCode doNext(bool bLoop);
@@ -204,9 +206,8 @@ protected:
     PlayerState                 m_state;
 
 protected:
-    // For DHPlayer
-    string                      m_currentPlaylistFn;
-    bool                        m_isPlaylistModified;
+    int                         m_currentPlaylistId;
+    bool                        m_isNowPlayingModified;
     int                         m_ratingFilterMin = 3;
 
     IPlayerCore                 *m_playerCore = nullptr;

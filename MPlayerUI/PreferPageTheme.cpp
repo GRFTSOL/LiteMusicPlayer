@@ -76,7 +76,7 @@ public:
 
         dlg.setInitFolder(CMLProfile::getDir(SZ_SECT_LYR_DISPLAY, "BgPicFolder", "").c_str());
         if (dlg.doBrowse(m_pSkin)) {
-            CMPlayerSettings::setSettings(ET_LYRICS_DISPLAY_SETTINGS, SZ_SECT_LYR_DISPLAY, "UseBgImage", SZ_TRUE);
+            CMPlayerSettings::setSettings(ET_LYRICS_DISPLAY_SETTINGS, SZ_SECT_LYR_DISPLAY, "UseBgImage", true);
             CMPlayerSettings::setSettings(ET_LYRICS_DISPLAY_SETTINGS, SZ_SECT_LYR_DISPLAY, "BgPicFolder", dlg.getFolder());
             CMLProfile::writeDir(SZ_SECT_LYR_DISPLAY, "BgPicFolder", dlg.getFolder());
         }

@@ -3,6 +3,7 @@
 #include "MPHelper.h"
 #include "DlgMediaInfo.h"
 #include "MPlaylistCtrl.h"
+#include "DlgNewPlaylist.hpp"
 
 
 CMPPlaylistCmdHandler::CMPPlaylistCmdHandler() {
@@ -17,15 +18,10 @@ CMPPlaylistCmdHandler::~CMPPlaylistCmdHandler() {
 bool CMPPlaylistCmdHandler::onCommand(int nId) {
     switch (nId) {
     case IDC_OPEN_PL:
-        {
-            CFileOpenDlg dlg("open Playlist", g_player.getCurrentPlaylistFile().c_str(), "M3u file\0*.m3u\0All Files\0*.*\0\0", 0);
-            if (dlg.doModal(m_pSkinWnd) == IDOK) {
-                g_player.loadPlaylist(dlg.getOpenFile(), true);
-            }
-        }
+        showOpenPlaylistDialog(m_pSkinWnd);
         break;
     case IDC_CLEAR:
-        g_player.clearPlaylist();
+        g_player.clearNowPlaying();
         break;
     default:
         return false;
@@ -36,19 +32,11 @@ bool CMPPlaylistCmdHandler::onCommand(int nId) {
 
 bool CMPPlaylistCmdHandler::onCustomCommand(int nID) {
     switch (nID) {
+    case CMD_PL_NEW:
+        showNewPlaylistDialog(m_pSkinWnd, g_player.newPlaylist());
+        break;
     case CMD_PL_SAVE:
-        {
-            CFileSaveDlg dlg("save Playlist", g_player.getCurrentPlaylistFile().c_str(), "M3u file\0*.m3u\0All Files\0*.*\0\0", 0);
-            if (dlg.doModal(m_pSkinWnd) == IDOK) {
-                if (isEmptyString(fileGetExt(dlg.getSaveFile()))) {
-                    string file = dlg.getSaveFile();
-                    fileSetExt(file, dlg.getSelectedExt());
-                    g_player.saveCurrentPlaylistAs(file.c_str());
-                } else {
-                    g_player.saveCurrentPlaylistAs(dlg.getSaveFile());
-                }
-            }
-        }
+        showSavePlaylistDialog(m_pSkinWnd, g_player.getCurrentPlaylist());
         break;
     case CMD_PL_DEL:
         {

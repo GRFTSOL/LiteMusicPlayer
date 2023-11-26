@@ -259,7 +259,7 @@ bool CSkinContainer::onLButtonDblClk(uint32_t nFlags, CPoint point) {
 
         if ((pObj->needMsgLButton() || pObj->isContainer()) && pObj->isVisible()
             && pObj->isEnable() && pObj->isPtIn(point)) {
-            if (m_pSkin->getFocusUIObj() && !m_pSkin->getFocusUIObj()->isPtIn(point)) {
+            if (pObj->needMsgKey() && m_pSkin->getFocusUIObj() && !m_pSkin->getFocusUIObj()->isPtIn(point)) {
                 // The edit control in Playlist need these condition check
                 pObj->setFocus();
             }
@@ -366,10 +366,7 @@ void CSkinContainer::onSize() {
 
 void CSkinContainer::onLanguageChanged() {
     if (m_pMenu) {
-        delete m_pMenu;
-        m_pMenu = nullptr;
-
-        m_pSkin->getSkinFactory()->loadMenu(m_pSkin, &m_pMenu, m_strContextMenu.c_str());
+        m_pMenu = m_pSkin->getSkinFactory()->loadMenu(m_pSkin, m_strContextMenu.c_str());
     }
 
     for (CUIObject *pObj : m_vUIObjs) {
@@ -479,13 +476,8 @@ bool CSkinContainer::setProperty(cstr_t szProperty, cstr_t szValue) {
     }
 
     if (strcasecmp(szProperty, "ContextMenu") == 0) {
-        if (m_pMenu) {
-            delete m_pMenu;
-            m_pMenu = nullptr;
-        }
-
         m_strContextMenu = szValue;
-        m_pSkin->getSkinFactory()->loadMenu(m_pSkin, &m_pMenu, szValue);
+        m_pMenu = m_pSkin->getSkinFactory()->loadMenu(m_pSkin, szValue);
     } else if (isPropertyName(szProperty, "ClipChildren")) {
         m_bClipChildren = isTRUE(szValue);
     } else if (isPropertyName(szProperty, "DefaultPage")) {
@@ -512,10 +504,7 @@ void CSkinContainer::enumProperties(CUIObjProperties &listProperties) {
 #endif // _SKIN_EDITOR_
 
 void CSkinContainer::destroy() {
-    if (m_pMenu) {
-        delete m_pMenu;
-        m_pMenu = nullptr;
-    }
+    m_pMenu = nullptr;
 
     while (!m_vUIObjs.empty()) {
         CUIObject *pObj = m_vUIObjs.back();

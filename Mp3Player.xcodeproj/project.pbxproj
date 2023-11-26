@@ -332,6 +332,7 @@
 		C08AA9932AFA62AE00F5DE2D /* play-disabled.png in Resources */ = {isa = PBXBuildFile; fileRef = C08AA98F2AFA62AE00F5DE2D /* play-disabled.png */; };
 		C08AA9942AFA62AE00F5DE2D /* pause.png in Resources */ = {isa = PBXBuildFile; fileRef = C08AA9902AFA62AE00F5DE2D /* pause.png */; };
 		C08AA9952AFA62AE00F5DE2D /* pause@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C08AA9912AFA62AE00F5DE2D /* pause@2x.png */; };
+		C08AA99B2B12480B00F5DE2D /* DlgNewPlaylist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C08AA9992B12480B00F5DE2D /* DlgNewPlaylist.cpp */; };
 		C0A27E772AD7B25E00D248A4 /* IJsonWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0A27E752AD7B25E00D248A4 /* IJsonWriter.cpp */; };
 		C0A81FFF2ABDDFC200CDF309 /* libTinyJsStaticLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A81FFE2ABDDFBB00CDF309 /* libTinyJsStaticLib.a */; };
 		C0ADB9712AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0ADB96F2AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.cpp */; };
@@ -1029,6 +1030,8 @@
 		C08AA98F2AFA62AE00F5DE2D /* play-disabled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "play-disabled.png"; sourceTree = "<group>"; };
 		C08AA9902AFA62AE00F5DE2D /* pause.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pause.png; sourceTree = "<group>"; };
 		C08AA9912AFA62AE00F5DE2D /* pause@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pause@2x.png"; sourceTree = "<group>"; };
+		C08AA9992B12480B00F5DE2D /* DlgNewPlaylist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgNewPlaylist.cpp; path = MPlayerUI/DlgNewPlaylist.cpp; sourceTree = "<group>"; };
+		C08AA99A2B12480B00F5DE2D /* DlgNewPlaylist.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = DlgNewPlaylist.hpp; path = MPlayerUI/DlgNewPlaylist.hpp; sourceTree = "<group>"; };
 		C0A27E742AD7B25E00D248A4 /* RapidjsonWriter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RapidjsonWriter.hpp; sourceTree = "<group>"; };
 		C0A27E752AD7B25E00D248A4 /* IJsonWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IJsonWriter.cpp; sourceTree = "<group>"; };
 		C0A27E762AD7B25E00D248A4 /* IJsonWriter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IJsonWriter.hpp; sourceTree = "<group>"; };
@@ -1422,6 +1425,8 @@
 				0EB70FE927773BB0006929F1 /* DlgAdjustHue.h */,
 				0EB70FD627773BAF006929F1 /* DlgMediaInfo.cpp */,
 				0EB7106F27773BB6006929F1 /* DlgMediaInfo.h */,
+				C08AA9992B12480B00F5DE2D /* DlgNewPlaylist.cpp */,
+				C08AA99A2B12480B00F5DE2D /* DlgNewPlaylist.hpp */,
 				C0ADB96F2AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.cpp */,
 				C0ADB9702AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.hpp */,
 				0EB7103127773BB4006929F1 /* DlgSearchLyrics.cpp */,
@@ -2103,6 +2108,7 @@
 				C04DBFEE297ECDA100A0FCB1 /* x509_create.c in Sources */,
 				C04DC01A297ECDA100A0FCB1 /* pkwrite.c in Sources */,
 				C04DC03C298D619300A0FCB1 /* MediaLibrary.cpp in Sources */,
+				C08AA99B2B12480B00F5DE2D /* DlgNewPlaylist.cpp in Sources */,
 				0EB7107B27773BB6006929F1 /* DlgUpload.cpp in Sources */,
 				0EB70F7427759E23006929F1 /* FileSaveDlg.mm in Sources */,
 				0EB710A927773BB6006929F1 /* MPlayerAppBase.cpp in Sources */,

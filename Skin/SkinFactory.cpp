@@ -1374,10 +1374,8 @@ static SXNode *getMenuOfMenus(SXNode *pNodeMenus, cstr_t szMenuName) {
     return nullptr;
 }
 
-bool CSkinFactory::loadMenu(CSkinWnd *pWnd, CMenu **ppMenu, cstr_t szMenu) {
-    CSkinMenu *pSkinMenu = nullptr;
-
-    *ppMenu = nullptr;
+SkinMenuPtr CSkinFactory::loadMenu(CSkinWnd *pWnd, cstr_t szMenu) {
+    SkinMenuPtr menu;
 
     // load menu from xml
     SXNode *pNodeMenus = m_skinFile.getMenusNode();
@@ -1386,42 +1384,34 @@ bool CSkinFactory::loadMenu(CSkinWnd *pWnd, CMenu **ppMenu, cstr_t szMenu) {
         if (pNode) {
             cstr_t szFromMenu = pNode->getProperty("From");
             if (szFromMenu) {
-                pSkinMenu = loadPresetMenu(pWnd, szFromMenu);
+                menu = loadPresetMenu(pWnd, szFromMenu);
             }
 
-            if (!pSkinMenu) {
-                pSkinMenu = new CSkinMenu();
+            if (!menu) {
+                menu = std::make_shared<CSkinMenu>();
             }
 
-            pSkinMenu->fromXML(pNode, pSkinMenu->getOrgAppendPos());
+            menu->fromXML(pNode, menu->getOrgAppendPos());
         }
     }
 
-    if (!pSkinMenu) {
+    if (!menu) {
         // is this a preset menu?
-        pSkinMenu = loadPresetMenu(pWnd, szMenu);
-        if (pSkinMenu) {
-            *ppMenu = pSkinMenu;
-            return true;
-        }
+        menu = loadPresetMenu(pWnd, szMenu);
     }
 
-    *ppMenu = pSkinMenu;
-
-    return pSkinMenu != nullptr;
+    return menu;
 }
 
 void CSkinFactory::showPopupMenu(CSkinWnd *pWnd, cstr_t menuName) {
-    CMenu *menu = nullptr;
-
-    if (loadMenu(pWnd, &menu, menuName)) {
+    auto menu = loadMenu(pWnd, menuName);
+    if (menu) {
         CPoint pt = getCursorPos();
         menu->trackPopupMenu(pt.x, pt.y, pWnd, nullptr);
-        delete menu;
     }
 }
 
-CSkinMenu *CSkinFactory::loadPresetMenu(CSkinWnd *pWnd, cstr_t szMenu) {
+SkinMenuPtr CSkinFactory::loadPresetMenu(CSkinWnd *pWnd, cstr_t szMenu) {
     if (m_menus.IsNull()) {
         string fn = CSkinApp::getInstance()->getSkinFactory()->getResourceMgr()->getResourcePathName("menu.json");
         string content;

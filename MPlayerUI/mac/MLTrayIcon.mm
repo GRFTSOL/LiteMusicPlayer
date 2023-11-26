@@ -58,7 +58,7 @@ NSString *ICON_MENU = @"menu-logo";
 
 struct TrayItem {
     NSStatusItem            *statusItem = nullptr;
-    CMenu                   *menu = nullptr;
+    SkinMenuPtr             menu;
     cstr_t                  iconName = nullptr;
 };
 
@@ -137,9 +137,11 @@ void CMLTrayIcon::updatePlayerSysTrayIcon() {
                 [statusItem setImage:[NSImage imageNamed:getStatusItemIcon(setting.cmdId)]];
                 if (setting.cmdId == UID_INVALID) {
                     // Menu
-                    CMPlayerApp::getInstance()->getSkinFactory()->loadMenu(CMPlayerApp::getMainWnd(), &item.menu, "TrayIconMenu");
-
-                    [statusItem setMenu:(NSMenu *)item.menu->getHandle(CMPlayerApp::getMainWnd())];
+                    item.menu = CMPlayerApp::getInstance()->getSkinFactory()->loadMenu(
+                        CMPlayerApp::getMainWnd(), "TrayIconMenu");
+                    if (item.menu) {
+                        [statusItem setMenu:(NSMenu *)item.menu->getHandle(CMPlayerApp::getMainWnd())];
+                    }
                 } else {
                     auto statusCtrl = [[_StatusbarCtrl alloc] init:setting.cmdId];
                     auto button = [statusItem button];

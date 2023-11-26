@@ -317,15 +317,14 @@
 #define IDC_EDIT_FIND                   40135
 #define IDC_EDIT_REPLACE                40136
 #define IDC_SHUFFLE                     40137
-#define IDC_REPEAT_OFF                  40138
-#define IDC_REPEAT_ALL                  40139
-#define IDC_REPEAT_TRACK                40140
+#define IDC_REPEAT_ALL                  40138
+#define IDC_REPEAT_TRACK                40139
+#define IDC_REPEAT_OFF                  40140
 #define IDC_BACKWARD2SEC                40141
 #define IDC_FORWARD2SEC                 40142
 #define IDC_INSERT_TAG                  40143
 #define IDC_INSERT_TAG_AND_MOVE_DOWN    40144
 #define IDC_JUMP_TO_CURRENT_LINE        40145
-#define IDC_SKIN_POS                    40146
 #define IDC_NEW_MENU_POS                40147
 #define IDC_TAG_COLOR                   40148
 #define IDC_EDIT_LINE_COLOR             40149
@@ -334,7 +333,7 @@
 #define IDC_ADDDIR                      40152
 #define IDC_MOVE_UP                     40153
 #define IDC_MOVE_DOWN                   40154
-#define IDC_REMOVE                      40155
+#define IDC_REMOVE_FROM_PLAYLIST        40155
 #define IDC_CLEAR                       40156
 #define IDC_NOWPLAYING                  40157
 #define IDC_MEDIALIB                    40158
@@ -374,6 +373,21 @@
 #define IDC_INSTRUMENTAL_MUSIC          40200
 #define IDC_SHOW_IN_FINDER              40201
 #define IDC_SHOW_MAIN_WND               40202
+#define IDC_PLAY_SELECTED_FILE          40203
+#define IDC_REPLACE_NOW_PLAYING_WITH_RESULTS 40204
+#define IDC_REPLACE_NOW_PLAYING_WITH_SELECTED 40205
+#define IDC_ADD_RESULTS_TO_NOW_PLAYING  40206
+#define IDC_ADD_SELECTED_TO_NOW_PLAYING 40207
+#define IDC_REMOVE_FROM_LIBRARY         40208
+
+#define IDC_ADD_RESULTS_TO_PLAYLIST_START   40210
+#define IDC_ADD_RESULTS_TO_PLAYLIST_END     40219
+
+#define IDC_ADD_SELECTED_TO_PLAYLIST_START  40220
+#define IDC_ADD_SELECTED_TO_PLAYLIST_END    40229
+
+#define IDC_ADD_RESULTS_TO_PLAYLIST_NEW     40230
+#define IDC_ADD_SELECTED_TO_PLAYLIST_NEW    40231
 
 // next default values for new objects
 // 

@@ -111,8 +111,8 @@ bool CMediaLibTreeProvider::chToChild(int nIndex) {
             m_tree.addChild(newitem);
         }
     } else if (item.folderType == FT_PLAYLIST_FILE) {
-        g_player.clearPlaylist();
-        g_player.addToPlaylist(item.name.c_str());
+        g_player.clearNowPlaying();
+        g_player.addToNowPlaying(item.name.c_str());
         g_player.saveCurrentPlaylist();
     } else if (item.folderType == FT_ALL_SONGS_BY_ARTIST) {
         playlist = m_mediaLib->getAll(MLOB_ARTIST, -1);
@@ -458,8 +458,8 @@ bool CMPMediaLibCmdHandler::onUIObjNotify(IUIObjNotify *pNotify) {
                         // play selected playlist
                         string strFile;
                         if (m_mediaLibTree.getCurNodePlaylistFile(nSel, strFile)) {
-                            g_player.clearPlaylist();
-                            g_player.addToPlaylist(strFile.c_str());
+                            g_player.clearNowPlaying();
+                            g_player.addToNowPlaying(strFile.c_str());
                             g_player.saveCurrentPlaylist();
                             g_player.play();
                         }

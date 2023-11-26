@@ -889,15 +889,15 @@ void CMPSkinWnd::onDropFiles(HDROP hDrop) {
         }
     }
 
-    g_player.clearPlaylist();
+    g_player.clearNowPlaying();
 
     for (int i = 0; i < n; ++i) {
         DragQueryFile(hDrop, i, szFile, CountOf(szFile));
 
         if (isDirExist(szFile)) {
-            g_player.addDirToPlaylist(szFile);
+            g_player.addDirToNowPlaying(szFile);
         } else {
-            g_player.addToPlaylist(szFile);
+            g_player.addToNowPlaying(szFile);
         }
     }
 

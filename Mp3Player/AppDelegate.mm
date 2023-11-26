@@ -44,7 +44,7 @@ void CallMenuCommand(int cmd) {
 
 @synthesize window;
 
-CMPSkinMenu *_menu;
+SkinMenuPtr _menu;
 MainMenuHandler *_mainMenuHandler = [MainMenuHandler alloc];
 
 NSMenuItem *duplicateMenuItem(NSMenuItem *org) {
@@ -77,6 +77,10 @@ NSMenuItem *duplicateMenuItem(NSMenuItem *org) {
     return item;
 }
 
+- (void)menuWillOpen:(NSMenu *)menu {
+    _menu->updateMenuStatus(CMPlayerAppBase::getInstance()->getMainWnd());
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     // Insert code here to initialize your application
@@ -84,7 +88,8 @@ NSMenuItem *duplicateMenuItem(NSMenuItem *org) {
     pApp->init();
 
     const char *szMenu = "MainWndMenu";
-    if (pApp->getSkinFactory()->loadMenu(pApp->getMainWnd(), (CMenu **)&_menu, szMenu)) {
+    _menu = pApp->getSkinFactory()->loadMenu(pApp->getMainWnd(), szMenu);
+    if (_menu) {
         _menu->updateMenuStatus(pApp->getMainWnd());
 
         NSMenu *mainMenu = [NSApp mainMenu];
@@ -92,9 +97,14 @@ NSMenuItem *duplicateMenuItem(NSMenuItem *org) {
 
         for (int i = 0; i < [menu numberOfItems]; i++) {
             NSMenuItem *item = duplicateMenuItem([menu itemAtIndex:i]);
+            if ([item hasSubmenu]) {
+                [item submenu].delegate = self;
+            }
             [mainMenu addItem:item];
             [item release];
         }
+
+        _menu->attachHandle(mainMenu);
     }
 }
 

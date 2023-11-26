@@ -465,6 +465,8 @@ void CDlgMediaInfo::onOK() {
         return;
     }
 
+    g_player.updateMediaInfo(_media.get());
+
     CMPSkinWnd::onOK();
 }
 

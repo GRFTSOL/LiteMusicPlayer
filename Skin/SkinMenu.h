@@ -63,4 +63,6 @@ protected:
 
 };
 
+using SkinMenuPtr = std::shared_ptr<CSkinMenu>;
+
 #endif // !defined(Skin_SkinMenu_h)

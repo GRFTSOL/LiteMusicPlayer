@@ -40,7 +40,6 @@ public:
     virtual void updateMenuStatus(Window *window) { }
 
     virtual void trackPopupMenu(int x, int y, Window *pWnd, CRect *prcNotOverlap = nullptr);
-
     virtual void trackPopupSubMenu(int x, int y, int nSubMenu, Window *pWnd, CRect *prcNotOverlap = nullptr);
 
     void enableItem(int nID, bool bEnable);
@@ -60,6 +59,9 @@ public:
     CMenu insertSubmenu(int nPos, cstr_t szText);
 
     void removeItem(int nPos);
+    void removeAllItems();
+
+    void replaceAllItems(int idStartWith, const VecStrings &names);
 
     bool getMenuItemText(uint32_t item, string &strText, bool byPosition);
 
@@ -71,10 +73,14 @@ public:
     bool hasSubmenu(int nPos);
     CMenu getSubmenu(int nPos);
 
+    // Find submenu if its first submenu id is same.
+    CMenu getSubmenuByPlaceHolderID(uint32_t id);
+
     CMenu & operator = (const CMenu &menu);
 
     // For Mac
     void *getHandle(Window *window);
+    void attachHandle(void *handle);
 
 protected:
     struct MLMenuInfo    *m_info;

@@ -99,13 +99,13 @@ void CMPSkinMainWnd::onCopyData(WPARAM wParam, PCOPYDATASTRUCT pCopyData) {
         g_player.saveCurrentPlaylist();
 
         g_player.m_currentPlaylistFn = vCmdLine[0];
-        g_player.setPlaylistModified(false);
+        g_player.setNowPlayingModified(false);
     } else {
         getDefaultPlaylistName(g_player.m_currentPlaylistFn);
-        g_player.setPlaylistModified(true);
+        g_player.setNowPlayingModified(true);
     }
 
-    g_player.clearPlaylist();
+    g_player.clearNowPlaying();
 
     for (i = 0; i < (int)vCmdLine.size(); i++) {
         g_player.addToPlaylist(vCmdLine[i].c_str());

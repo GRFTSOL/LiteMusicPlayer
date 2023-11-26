@@ -28,7 +28,7 @@
 #define IDC_NAME                        1014
 #define IDC_INFO                        1015
 #define IDC_GENRE                       1017
-#define IDC_REMOVE                      1020
+#define IDC_REMOVE_FROM_PLAYLIST        1020
 #define IDC_UPDATE                      1021
 #define IDC_ID3V1                       1030
 #define IDC_RESERVE                     1032

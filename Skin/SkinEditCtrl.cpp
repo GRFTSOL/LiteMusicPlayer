@@ -1307,36 +1307,36 @@ int CSkinEditCtrl::getEndColPosOfLine(int nLine) {
     return (int)pLine->size();
 }
 
-void CSkinEditCtrl::nextPos(int &Row, int &nCol) {
-    if (nCol >= getEndColPosOfLine(Row)) {
-        if (Row < (int)m_vLines.size() - 1) {
-            Row++;
+void CSkinEditCtrl::nextPos(int &row, int &nCol) {
+    if (nCol >= getEndColPosOfLine(row)) {
+        if (row < (int)m_vLines.size() - 1) {
+            row++;
             nCol = 0;
         } else {
-            nCol = getEndColPosOfLine(Row);
+            nCol = getEndColPosOfLine(row);
         }
     } else {
         nCol++;
     }
 }
 
-void CSkinEditCtrl::prevPos(int &Row, int &nCol) {
+void CSkinEditCtrl::prevPos(int &row, int &nCol) {
     if (nCol > 0) {
         nCol--;
     } else {
-        if (Row > 0) {
-            Row--;
-            nCol = getEndColPosOfLine(Row);
+        if (row > 0) {
+            row--;
+            nCol = getEndColPosOfLine(row);
         }
     }
 }
 
-void CSkinEditCtrl::nextWord(int &Row, int &nCol) {
+void CSkinEditCtrl::nextWord(int &row, int &nCol) {
     bool bAlpha, bBegAlpha;
     COneLine *pLine;
     bool bMoved = false;
 
-    pLine = m_vLines[Row];
+    pLine = m_vLines[row];
 
     if (nCol == pLine->size()) {
         bBegAlpha = false;
@@ -1345,7 +1345,7 @@ void CSkinEditCtrl::nextWord(int &Row, int &nCol) {
     }
 
     while (1) {
-        pLine = m_vLines[Row];
+        pLine = m_vLines[row];
 
         if (nCol == pLine->size()) {
             bAlpha = false;
@@ -1368,9 +1368,9 @@ void CSkinEditCtrl::nextWord(int &Row, int &nCol) {
                 break; // End at the end of line.
             }
 
-            if (Row < (int)m_vLines.size() - 1) {
+            if (row < (int)m_vLines.size() - 1) {
                 // End at next line
-                Row++;
+                row++;
                 nCol = 0;
                 return;
             } else {
@@ -1384,14 +1384,17 @@ void CSkinEditCtrl::nextWord(int &Row, int &nCol) {
     }
 }
 
-void CSkinEditCtrl::prevWord(int &Row, int &nCol) {
+void CSkinEditCtrl::prevWord(int &row, int &nCol) {
     bool bAlpha, bBegAlpha;
     COneLine *pLine;
     bool bBegSpace;
 
-    prevPos(Row, nCol);
+    prevPos(row, nCol);
+    if (row < 0 || row >= m_vLines.size()) {
+        return;
+    }
 
-    pLine = m_vLines[Row];
+    pLine = m_vLines[row];
 
     if (nCol == pLine->size()) {
         bBegAlpha = false;
@@ -1415,7 +1418,7 @@ void CSkinEditCtrl::prevWord(int &Row, int &nCol) {
     }
 
     while (1) {
-        pLine = m_vLines[Row];
+        pLine = m_vLines[row];
 
         if (nCol == pLine->size()) {
             bAlpha = false;
@@ -1424,7 +1427,7 @@ void CSkinEditCtrl::prevWord(int &Row, int &nCol) {
         }
 
         if (bAlpha != bBegAlpha) {
-            nextWord(Row, nCol);
+            nextWord(row, nCol);
             break;
         }
 
@@ -1432,10 +1435,10 @@ void CSkinEditCtrl::prevWord(int &Row, int &nCol) {
             nCol--;
         } else {
             break;
-            //             if (Row > 0)
+            //             if (row > 0)
             //             {
-            //                 Row--;
-            //                 nCol = m_vLines[Row]->size();
+            //                 row--;
+            //                 nCol = m_vLines[row]->size();
             //                 break;
             //             }
             //             else
@@ -2428,13 +2431,28 @@ bool CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
             if (!isReadOnly()) {
                 if (isSelected()) {
                     removeSel();
-                } else {
+                } else if (m_nCaretRow != 0 || m_nCaretCol != 0) {
                     string strToDel;
+                    StashSelectionCaret selectionCaretBefore(this);
 
-                    prevPos(m_nCaretRow, m_nCaretCol);
-                    getStrAtPos(m_nCaretRow, m_nCaretCol, strToDel);
-                    m_undoMgr.addAction(new EditorDelAction(this, m_nCaretRow, m_nCaretCol, strToDel.c_str()));
-                    removeChar(m_nCaretRow, m_nCaretCol);
+                    if (ctrl) {
+                        m_nBegSelRow = m_nCaretRow;
+                        m_nBegSelCol = m_nCaretCol;
+                        m_nEndSelRow = m_nCaretRow;
+                        m_nEndSelCol = m_nCaretCol;
+                        prevWord(m_nEndSelRow, m_nEndSelCol);
+
+                        selectionToText(strToDel);
+                        removeSelected(nBegSelRow, nBegSelCol);
+                        m_nBegSelRow = -1;
+                    } else {
+                        prevPos(m_nCaretRow, m_nCaretCol);
+                        getStrAtPos(m_nCaretRow, m_nCaretCol, strToDel);
+                        removeChar(m_nCaretRow, m_nCaretCol);
+                    }
+                    auto action = new EditorDelAction(this, m_nCaretRow, m_nCaretCol, strToDel.c_str());
+                    action->setStashSelectionCaretBefore(selectionCaretBefore);
+                    m_undoMgr.addAction(action);
                 }
                 updater.setNeedUpdate();
             }

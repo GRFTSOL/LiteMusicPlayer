@@ -29,9 +29,6 @@ CSkinMenuBar::CSkinMenuBar() {
 }
 
 CSkinMenuBar::~CSkinMenuBar() {
-    if (m_pMenu) {
-        delete m_pMenu;
-    }
 }
 
 void CSkinMenuBar::onCreate() {
@@ -254,16 +251,12 @@ void CSkinMenuBar::enumProperties(CUIObjProperties &listProperties) {
 
 
 void CSkinMenuBar::onLanguageChanged() {
-    if (m_pMenu) {
-        delete m_pMenu;
-        m_pMenu = nullptr;
-    }
     m_vSubMenus.clear();
 
     if (m_strMenu.size()) {
-        m_pSkin->getSkinFactory()->loadMenu(m_pSkin, &m_pMenu, m_strMenu.c_str());
+        m_pMenu = m_pSkin->getSkinFactory()->loadMenu(m_pSkin, m_strMenu.c_str());
     } else if (!isEmptyString(m_pSkin->getMenuName())) {
-        m_pSkin->getSkinFactory()->loadMenu(m_pSkin, &m_pMenu,
+        m_pMenu = m_pSkin->getSkinFactory()->loadMenu(m_pSkin,
             m_pSkin->getMenuName());
     }
 

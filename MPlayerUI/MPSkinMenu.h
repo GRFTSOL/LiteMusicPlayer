@@ -40,6 +40,8 @@ public:
         m_nInsertNewItemPos = 0;
     }
 
+    void clear();
+
     void initProcSubMenu(CMenu &menu);
 
     void updateMenuCheckStatus();

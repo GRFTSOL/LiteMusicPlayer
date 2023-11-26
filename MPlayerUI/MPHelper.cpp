@@ -21,13 +21,13 @@ bool onSongOpenFileCmd(Window *pWndParent, bool bOpen) {
         dlg.getOpenFile(vFiles);
 
         if (bOpen) {
-            g_player.newCurrentPlaylist();
+            g_player.newNowPlaying();
         } else {
-            g_player.setPlaylistModified(true);
+            g_player.setNowPlayingModified(true);
         }
 
         for (int i = 0; i < (int)vFiles.size(); i++) {
-            g_player.addToPlaylist(vFiles[i].c_str());
+            g_player.addToNowPlaying(vFiles[i].c_str());
         }
         g_player.saveCurrentPlaylist();
         if (bOpen) {
@@ -51,12 +51,12 @@ bool onSongOpenDirCmd(Window *pWndParent, bool bOpen) {
         g_profile.writeString("Last open Dir", strFolder.c_str());
 
         if (bOpen) {
-            g_player.clearPlaylist();
+            g_player.clearNowPlaying();
         } else {
-            g_player.setPlaylistModified(true);
+            g_player.setNowPlayingModified(true);
         }
 
-        g_player.addDirToPlaylist(strFolder.c_str(), true);
+        g_player.addDirToNowPlaying(strFolder.c_str(), true);
         g_player.saveCurrentPlaylist();
         if (bOpen) {
             g_player.play();

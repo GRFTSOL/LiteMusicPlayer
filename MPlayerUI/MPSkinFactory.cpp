@@ -90,8 +90,8 @@ CSkinWnd *CMPSkinFactory::newSkinWnd(cstr_t szSkinWndName, bool bMainWnd) {
     }
 }
 
-CSkinMenu *CMPSkinFactory::newSkinMenu(CSkinWnd *pWnd, const rapidjson::Value &items) {
-    CMPSkinMenu *menu = new CMPSkinMenu();
+SkinMenuPtr CMPSkinFactory::newSkinMenu(CSkinWnd *pWnd, const rapidjson::Value &items) {
+    auto menu = std::make_shared<CMPSkinMenu>();
     menu->addUICheckStatusIf(pWnd);
     menu->loadMenu(items);
     return menu;

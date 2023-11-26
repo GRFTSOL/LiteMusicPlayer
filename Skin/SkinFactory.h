@@ -11,6 +11,8 @@ class CSkinMenu;
 class CUIObject;
 class CSkinContainer;
 
+using SkinMenuPtr = std::shared_ptr<CSkinMenu>;
+
 
 #include "SkinResMgr.h"
 #include "SkinWndDrag.h"
@@ -301,7 +303,7 @@ public:
     SkinIcons &getIcons() { return m_icons; }
 
     // resource
-    virtual bool loadMenu(CSkinWnd *pWnd, CMenu **ppMenu, cstr_t szMenu);
+    virtual SkinMenuPtr loadMenu(CSkinWnd *pWnd, cstr_t szMenu);
     virtual void showPopupMenu(CSkinWnd *pWnd, cstr_t menuName);
 
     virtual int onDynamicCmd(int nCmdID, CSkinWnd *pSkinWnd);
@@ -326,9 +328,9 @@ public:
 protected:
     virtual int openSkinFile(cstr_t szSkinFile);
 
-    virtual CSkinMenu *newSkinMenu(CSkinWnd *pWnd, const rapidjson::Value &items) { return nullptr; }
+    virtual SkinMenuPtr newSkinMenu(CSkinWnd *pWnd, const rapidjson::Value &items) { return nullptr; }
 
-    CSkinMenu *loadPresetMenu(CSkinWnd *pWnd, cstr_t szMenu);
+    SkinMenuPtr loadPresetMenu(CSkinWnd *pWnd, cstr_t szMenu);
 
     void expandIncludeNode(SXNode *pNodeRoot);
 

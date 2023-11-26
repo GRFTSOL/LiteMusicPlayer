@@ -105,7 +105,7 @@ UIObjectIDDefinition g_uidDefinition[] = {
     { "ID_PL_OPEN_FILE", CMD_PL_OPEN_FILE, IDC_OPENFILE, "open File" },
     { "ID_PL_OPEN_DIR", CMD_PL_OPEN_DIR, IDC_OPENDIR, "open Folder" },
     { "ID_PL_OPEN_URL", CMD_PL_OPEN_URL, 0, "open Url" },
-    { "ID_PL_DEL", CMD_PL_DEL, IDC_REMOVE, "delete" },
+    { "ID_PL_DEL", CMD_PL_DEL, IDC_REMOVE_FROM_PLAYLIST, "delete" },
     { "ID_PL_PROPERTY", CMD_PL_PROPERTY, IDC_MEDIA_INFO, "Property" },
     { "ID_PL_NEW", CMD_PL_NEW, IDC_NEW_PL, "new Playlist" },
     { "ID_PL_LOAD", CMD_PL_LOAD, 0, "load Playlist" },

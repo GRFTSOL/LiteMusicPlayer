@@ -55,7 +55,6 @@ int encodingIdToCmd(CharEncodingType nEncodingId) {
 
 MenuItemCheck _menuItemsCheck[] = {
     { IDC_SHUFFLE, SZ_SECT_PLAYER, "shuffle", "1", },
-    { IDC_SETTOPMOST, nullptr, nullptr, nullptr, },
     { IDC_ANTIAlIAS, SZ_SECT_UI, "Antialias", "1", },
     { IDC_CLICK_THROUGH, nullptr, nullptr, "1",  },
     { IDC_SETTOPMOST, nullptr, nullptr, "1",  },
@@ -64,9 +63,9 @@ MenuItemCheck _menuItemsCheck[] = {
 };
 
 MenuRadioGroupIDName    _MenuRadioLoop[] = {
-    { IDC_REPEAT_OFF, "off" },
     { IDC_REPEAT_ALL, "all" },
     { IDC_REPEAT_TRACK, "track" },
+    { IDC_REPEAT_OFF, "off" },
     { 0, nullptr },
 };
 
@@ -131,14 +130,17 @@ static uint32_t getCharEncodingCheckMenuID() {
 }
 
 MenuRadioGroup _menuRadioGroup[] = {
-#ifdef _MPLAYER
-    //    { SZ_SECT_PLAYER, "repeat", _MenuRadioLoop, nullptr, 0, 0 },
-#endif
+    { 0, 0, _MenuRadioLoop, },
     { 0, 0, _MenuRadioLyrDrawOpt, },
     { 0, 0, _MenuRadioCharEncoding, },
     { 0, 0, _MenuRadioOpaque, },
     { 0, 0, _MenuRadioLyrDisplayStyle, },
 };
+
+void CMenuAutoCheck::clear() {
+    m_vMenuItemsCheck.clear();
+    m_vMenuItemsRadio.clear();
+}
 
 void CMenuAutoCheck::initProcSubMenu(CMenu &menu) {
     int nInRadioGroupIndex = -1;
@@ -149,22 +151,15 @@ void CMenuAutoCheck::initProcSubMenu(CMenu &menu) {
         MenuItemInfo info;
 
         if (!menu.getMenuItemInfo(i, true, info)) {
-            if (nInRadioGroupIndex != -1) {
-                m_vMenuItemsRadio.push_back(radioGroup);
-            }
             break;
         }
 
         if (info.isSubmenu) {
-            if (nInRadioGroupIndex != -1) {
-                m_vMenuItemsRadio.push_back(radioGroup);
-                nInRadioGroupIndex = -1;
-            }
             CMenu subMenu = menu.getSubmenu(i);
             initProcSubMenu(subMenu);
         } else {
             int nID = info.id;
-            if (nID == IDC_SKIN_POS) {
+            if (nID == IDC_SKIN_0) {
                 m_hInsertSkinsMenu = menu;
                 m_nInsertSkinsPos = i;
                 continue;
@@ -177,11 +172,6 @@ void CMenuAutoCheck::initProcSubMenu(CMenu &menu) {
             int k;
             for (k = 0; k < CountOf(_menuItemsCheck); k++) {
                 if (nID == _menuItemsCheck[k].nID) {
-                    if (nInRadioGroupIndex != -1) {
-                        m_vMenuItemsRadio.push_back(radioGroup);
-                        nInRadioGroupIndex = -1;
-                    }
-
                     MenuItemCheck item = _menuItemsCheck[k];
 
                     item.menu = menu;
@@ -216,6 +206,10 @@ void CMenuAutoCheck::initProcSubMenu(CMenu &menu) {
                 }
             }
         }
+    }
+
+    if (nInRadioGroupIndex != -1) {
+        m_vMenuItemsRadio.push_back(radioGroup);
     }
 }
 
@@ -258,11 +252,11 @@ void CMenuAutoCheck::updateMenuCheckStatus() {
                 // user function
                 uint32_t nID;
                 nID = getCharEncodingCheckMenuID();
-                item.menu.checkRadioItem(item.nRadioStartID, item.nRadioEndID, nID);
+                item.menu.checkRadioItem(nID, item.nRadioStartID, item.nRadioEndID);
             } else {
                 uint32_t nIDChecked;
                 if (getRadioChecked(item.idNames, nIDChecked)) {
-                    item.menu.checkRadioItem(item.nRadioStartID, item.nRadioEndID, nIDChecked);
+                    item.menu.checkRadioItem(nIDChecked, item.nRadioStartID, item.nRadioEndID);
                 }
             }
         }
@@ -316,6 +310,8 @@ CMPSkinMenu::~CMPSkinMenu() {
 }
 
 void CMPSkinMenu::onLoadMenu() {
+    m_autoCheckMenu.clear();
+
     m_autoCheckMenu.initProcSubMenu(*this);
     if (m_autoCheckMenu.m_nInsertNewItemPos != -1) {
         setOrgAppendPos(m_autoCheckMenu.m_nInsertNewItemPos);
@@ -347,21 +343,15 @@ static int        __vSkinMenuId[] = {IDC_SKIN_0, IDC_SKIN_1, IDC_SKIN_2, IDC_SKI
     IDC_SKIN_6, IDC_SKIN_7, IDC_SKIN_8, IDC_SKIN_9, IDC_SKIN_10, IDC_SKIN_11, IDC_SKIN_12,
     IDC_SKIN_13, IDC_SKIN_14, IDC_SKIN_15, IDC_SKIN_16, IDC_SKIN_17, IDC_SKIN_18, IDC_SKIN_19,
     IDC_SKIN_20 };
-    #define __SkinMenuCount CountOf(__vSkinMenuId)
 
-    void CMPSkinMenu::insertSkinMenu(CMenu &menuSkin, int nPosStart) {
+#define __SkinMenuCount CountOf(__vSkinMenuId)
+
+void CMPSkinMenu::insertSkinMenu(CMenu &menuSkin, int nPosStart) {
     // 取得上次加载的Skin
     string strDefaultSkin = CSkinApp::getInstance()->getDefaultSkin();
 
     // 取得原来的SKIN子菜单，并且删除之
-    {
-        for (int i = 0; i < 32; i++) {
-            if (!menuSkin.hasItem(0)) {
-                break;
-            }
-            menuSkin.removeItem(0);
-        }
-    }
+    menuSkin.removeAllItems();
 
     // 查找所有的Skin，并且添加到菜单中
     vector<string> vSkins;

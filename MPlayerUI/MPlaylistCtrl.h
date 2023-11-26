@@ -17,6 +17,9 @@ public:
     bool onKeyDown(uint32_t nChar, uint32_t nFlags) override;
     bool onHandleKeyDown(uint32_t nChar, uint32_t nFlags) override;
 
+    bool onRButtonUp(uint32_t nFlags, CPoint point) override;
+    void onLanguageChanged() override;
+
     void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override;
 
     void sendNotifyEvent(CSkinListCtrlEventNotify::Command cmd, int nClickedRow, int nClickedCol) override;
@@ -46,15 +49,25 @@ protected:
 
     void onCurrentPlaylistEvent(CEventPlaylistChanged *pEventPlaylistChanged = nullptr);
 
-    void setItemMediaDuration(int index, int seconds);
-
-    void playItem(int index);
+    void setItemMediaDuration(int index, int ms);
 
     void updatePlaylist(bool isRedraw);
     void doSearch(cstr_t keyword);
     void showHideEditorSearch(int row);
 
+    PlaylistPtr getSelected();
+    PlaylistPtr getSelectedSearchResult(MediaPtr &firstSelectedOut);
+    PlaylistPtr getAllSearchResult(MediaPtr &firstSelectedOut);
+
+    void popupSearchResultMenu(CPoint pt);
+
 protected:
+    string                      m_menuSearchResultName;
+    SkinMenuPtr                 m_menuSearchResult;
+    CMenu                       m_submenuAddResultToPlaylist;
+    CMenu                       m_submenuAddSelectedToPlaylist;
+    VecPlaylistNames            m_playlistNames;
+
     string                      m_idEditorSearch;
     CSkinEditCtrl               *m_editorSearch;
     int                         m_timerIdBeginSearch;

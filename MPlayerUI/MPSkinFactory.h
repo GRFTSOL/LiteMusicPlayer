@@ -54,7 +54,7 @@ protected:
     bool                        m_bClickThrough;
 
 protected:
-    virtual CSkinMenu *newSkinMenu(CSkinWnd *pWnd, const rapidjson::Value &items) override;
+    virtual SkinMenuPtr newSkinMenu(CSkinWnd *pWnd, const rapidjson::Value &items) override;
 
     SXNode *getMenuOfMenus(SXNode *pNodeMenus, cstr_t szMenuName);
 

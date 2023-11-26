@@ -70,6 +70,10 @@ public:
         { return getInt(szAppName, szKeyName, nDefault) != 0; }
     bool getBool(cstr_t szKeyName, int nDefault)
         { return getInt(m_strDefAppName.c_str(), szKeyName, nDefault) != 0; }
+    bool writeBool(cstr_t szAppName, cstr_t szKeyName, bool value)
+        { return writeInt(szAppName, szKeyName, value); }
+    bool writeBool(cstr_t szKeyName, bool value)
+        { return writeInt(m_strDefAppName.c_str(), szKeyName, value); }
 
     // 无需输入 szAppName 的函数
     cstr_t getString(cstr_t szKeyName, cstr_t szDefault)

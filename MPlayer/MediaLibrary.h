@@ -42,21 +42,12 @@ using VecMediaCategories = vector<MediaCategory>;
 
 cstr_t mediaCategoryTypeToString(MediaCategory::Type type);
 
-/**
- * 存储在数据库中的 playlist 信息.
- */
-struct PlaylistInfo {
+struct PlaylistName {
     int                         id;
     string                      name;
-    int                         duration; // 总时长，单位秒
-    int                         count;
-    int                         rating;
-    bool                        isUpToDate; // 是否 duration, count 已经更新.
-    vector<int>                 mediaIds;
-
+    int64_t                     orderBy = 0;
 };
-
-using VecPlaylistInfo = vector<PlaylistInfo>;
+using VecPlaylistNames = vector<PlaylistName>;
 
 enum MediaLibOrderBy {
     MLOB_NONE,
@@ -81,6 +72,9 @@ public:
     VecStrings getAllGenre();
     VecStrings getAlbumOfArtist(cstr_t szArtist);
 
+    VecPlaylistNames getAllPlaylistNames();
+    VecPlaylistNames getRecentPlaylistNames();
+
     uint32_t getMediaCount();
 
     MediaPtr getMediaByUrl(cstr_t szUrl);
@@ -95,10 +89,17 @@ public:
     ResultCode updateMediaInfo(Media *media);
 
     // removes the specified item from the media library
-    ResultCode remove(Media *media, bool bDeleteFile);
+    ResultCode remove(Media *media, bool isDeleteFile = false);
+    ResultCode remove(const VecMediaPtrs &medias, bool isDeleteFile = false);
 
     // If the media file was removed temporarily, set this flag on.
     ResultCode setDeleted(Media *media);
+
+    PlaylistPtr newPlaylist(cstr_t name);
+    PlaylistPtr getPlaylist(int playlistId);
+
+    ResultCode savePlaylist(const PlaylistPtr &playlist);
+    ResultCode addToPlaylist(int idPlaylist, const PlaylistPtr &other);
 
     const PlaylistPtr &getAll();
 
@@ -150,8 +151,6 @@ public:
     string getSettingValue(cstr_t name);
     void setSettingValue(cstr_t name, cstr_t value);
 
-    PlaylistPtr newPlaylist();
-
 protected:
     ResultCode doAddMedia(const MediaPtr &media);
 
@@ -162,9 +161,12 @@ protected:
     int upgradeCheck();
 
     void loadPlaylists();
-    int savePlaylist(const PlaylistInfo &playlist);
-    PlaylistPtr getPlaylist(int playlistId);
+    int savePlaylistInDb(const PlaylistInfo &playlist);
+    PlaylistInfo *getMemPlaylistInfoById(int id);
+
+    PlaylistPtr getPlaylist(PlaylistInfo &info);
     void deltePlaylist(int playlistId);
+
     void updateMediaCategories();
     PlaylistPtr queryPlaylist(cstr_t SQL);
     PlaylistPtr queryPlaylist(cstr_t szSQL, cstr_t szClause);

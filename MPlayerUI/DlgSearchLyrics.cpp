@@ -530,19 +530,18 @@ public:
                 }
             }
 
-            CMenu *menu = nullptr;
-            m_pSkin->getSkinFactory()->loadMenu(m_pSkin, &menu, "OpenLyricsDlgMenu");
+            auto menu = m_pSkin->getSkinFactory()->loadMenu(m_pSkin, "OpenLyricsDlgMenu");
+            if (menu) {
+                menu->enableItem(IDC_EXTERNAL_LYR_EDIT, bLocalLyrFile);
+                menu->enableItem(IDC_DEL_FILE, bLocalLyr);
+                menu->enableItem(IDC_RENAME, bLocalLyrFile);
+                menu->checkItem(IDC_NO_PROMPT,
+                    !g_profile.getBool(SZ_SECT_LYR_DL, "DownLrcUserSelect", false));
 
-            menu->enableItem(IDC_EXTERNAL_LYR_EDIT, bLocalLyrFile);
-            menu->enableItem(IDC_DEL_FILE, bLocalLyr);
-            menu->enableItem(IDC_RENAME, bLocalLyrFile);
-            menu->checkItem(IDC_NO_PROMPT,
-                !g_profile.getBool(SZ_SECT_LYR_DL, "DownLrcUserSelect", false));
-
-            getUIObjectRect(CID_MORE, rc);
-            m_pSkin->clientToScreen(rc);
-            menu->trackPopupMenu(rc.left, rc.top, m_pSkin);
-            delete menu;
+                getUIObjectRect(CID_MORE, rc);
+                m_pSkin->clientToScreen(rc);
+                menu->trackPopupMenu(rc.left, rc.top, m_pSkin);
+            }
         } else if (nId == CID_NEXT_PAGE) {
             if (m_nCurPage >= m_nPageCount - 1) {
                 return true;

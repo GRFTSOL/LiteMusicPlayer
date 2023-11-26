@@ -73,7 +73,7 @@ protected:
     int                         m_nSelSubMenu;
 
     SkinMenuItemsContainer      *m_popupMenu;
-    CMenu                       *m_pMenu;
+    SkinMenuPtr                 m_pMenu;
 
 };
 

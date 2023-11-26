@@ -250,6 +250,31 @@ void CMenu::removeItem(int nPos) {
     [m_info->menu removeItemAtIndex:nPos];
 }
 
+void CMenu::removeAllItems() {
+    [m_info->menu removeAllItems];
+}
+
+void CMenu::replaceAllItems(int idStartWith, const VecStrings &names) {
+    int count = getItemCount();
+    int i = 0;
+    for (i = 0; i < count; i++) {
+        MenuItemInfo info;
+        if (getMenuItemInfo(i, true, info)) {
+            if (info.id == idStartWith) {
+                break;
+            }
+        }
+    }
+
+    for (; i < count; count--) {
+        removeItem(i);
+    }
+
+    for (auto &name : names) {
+        appendItem(idStartWith++, name.c_str());
+    }
+}
+
 bool CMenu::getMenuItemText(uint32_t index, string &strText, bool byPosition) {
     MenuItemInfo info;
 
@@ -352,7 +377,22 @@ CMenu CMenu::getSubmenu(int nPos) {
     return menu;
 }
 
-CMenu & CMenu::operator = (const CMenu &menu) {
+CMenu CMenu::getSubmenuByPlaceHolderID(uint32_t id) {
+    int count = getItemCount();
+    for (int i = 0; i < count; i++) {
+        if (hasSubmenu(i)) {
+            CMenu menu = getSubmenu(i);
+            MenuItemInfo info;
+            if (menu.getMenuItemInfo(0, true, info) && info.id == id) {
+                return menu;
+            }
+        }
+    }
+
+    return CMenu();
+}
+
+CMenu &CMenu::operator = (const CMenu &menu) {
     m_info->menu = menu.m_info->menu;
     m_info->menuImp = menu.m_info->menuImp;
 
@@ -365,4 +405,15 @@ CMenu & CMenu::operator = (const CMenu &menu) {
 void *CMenu::getHandle(Window *window) {
     [m_info->menuImp setBaseWnd:window];
     return m_info->menu;
+}
+
+void CMenu::attachHandle(void *handle) {
+    [m_info->menu release];
+    m_info->menu = (NSMenu *)handle;
+
+    if (handle) {
+        [m_info->menu retain];
+
+        onLoadMenu();
+    }
 }

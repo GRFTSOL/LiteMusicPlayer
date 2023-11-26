@@ -350,24 +350,27 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
         {
             bool bMute = !g_player.isMute();
             g_player.setMute(bMute);
-            CMPlayerAppBase::getInstance()->dispatchInfoText(_TL(bMute ? "Mute On" : "Mute Off"));
+            CMPlayerAppBase::getInstance()->dispatchInfoText(bMute ? _TL("Mute On") : _TL("Mute Off"));
         }
         break;
     case CMD_SHUFFLE:
         {
             bool bShuffle = !g_player.isShuffle();
             g_player.setShuffle(bShuffle);
-            CMPlayerAppBase::getInstance()->dispatchInfoText(_TL(bShuffle ? "Shuffle On" : "Shuffle Off"));
+            CMPlayerAppBase::getInstance()->dispatchInfoText(bShuffle ? _TL("Shuffle On") : _TL("Shuffle Off"));
         }
         break;
     case CMD_LOOP_OFF:
         g_player.setLoop(MP_LOOP_OFF);
+        CMPlayerAppBase::getInstance()->dispatchInfoText(_TL("Repeat Off"));
         break;
     case CMD_LOOP_ALL:
         g_player.setLoop(MP_LOOP_ALL);
+        CMPlayerAppBase::getInstance()->dispatchInfoText(_TL("Repeat All"));
         break;
     case CMD_LOOP_TRACK:
         g_player.setLoop(MP_LOOP_TRACK);
+        CMPlayerAppBase::getInstance()->dispatchInfoText(_TL("Repeat Track"));
         break;
     case CMD_LOOP:
         {
@@ -376,11 +379,11 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             string str;
             LoopMode loopMode = g_player.getLoop();
             if (loopMode == MP_LOOP_OFF) {
-                str = "Repeat Off";
+                str = _TL("Repeat Off");
             } else if (loopMode == MP_LOOP_TRACK) {
-                str =  "Repeat Track";
+                str = _TL("Repeat Track");
             } else {
-                str =  "Repeat All";
+                str = _TL("Repeat All");
             }
 
             CMPlayerAppBase::getInstance()->dispatchInfoText(str.c_str());
@@ -721,20 +724,17 @@ bool CMPCommonCmdHandler::getRadioChecked(vector<uint32_t> &vIDs, uint32_t &nIDC
             }
         }
         break;
-        //     case IDC_ALIGN_LYRICS_LEFT:
-        //     case IDC_ALIGN_LYRICS_CENTER:
-        //     case IDC_ALIGN_LYRICS_RIGHT:
-        //         {
-        //             string        strAlign;
-        //             strAlign = g_profile.getString(m_strSectName.c_str(), "LyrAlign", "center");
-        //             if (strcasecmp(strAlign.c_str(), "left") == 0)
-        //                 nIDChecked = IDC_ALIGN_LYRICS_LEFT;
-        //             else if (strcasecmp(strAlign.c_str(), "right") == 0)
-        //                 nIDChecked = IDC_ALIGN_LYRICS_RIGHT;
-        //             else
-        //                 nIDChecked = IDC_ALIGN_LYRICS_CENTER;
-        //         }
-        //         break;
+    case IDC_REPEAT_OFF:
+    case IDC_REPEAT_ALL:
+    case IDC_REPEAT_TRACK:
+        {
+            switch (g_player.getLoop()) {
+                case MP_LOOP_ALL: nIDChecked = IDC_REPEAT_ALL; break;
+                case MP_LOOP_TRACK: nIDChecked = IDC_REPEAT_TRACK; break;
+                case MP_LOOP_OFF: nIDChecked = IDC_REPEAT_OFF; break;
+            }
+            break;
+        }
     default:
         return false;
     }

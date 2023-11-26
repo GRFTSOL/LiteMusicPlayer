@@ -1055,9 +1055,8 @@ bool CSkinListView::onLButtonDblClk(uint32_t nFlags, CPoint point) {
 
     int nClickedRow = -1, nClickedCol = -1;
     getRowColAtPoint(point, nClickedRow, nClickedCol);
-    m_nEndSelRow = nClickedRow;
+    m_nBegSelRow = m_nEndSelRow = nClickedRow;
 
-    m_nBegSelRow = m_nEndSelRow;
     reverseSelectStatOfRow((nFlags & MK_CONTROL) != MK_CONTROL, m_nEndSelRow);
 
     updater.setUpdateFlag(selChecher.isSelectChanged());
