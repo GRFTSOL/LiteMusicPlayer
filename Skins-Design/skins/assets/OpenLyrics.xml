@@ -21,7 +21,7 @@
     <NormalTextBt ID="CID_MORE" Text="&amp;More &gt;&gt;" Rect="w/2+20,h-10-20,100,"/>
     <NormalTextBt ID="ID_CANCEL" Text="Cancel" Rect="w-110,h-10-20,100,"/>
   </Container.SearchLyr>
-  <Container.RenameLyr ID="CID_C_RENAME" Visible="false" Name="Rename lyrics file" Rect="0,0,w,h" visible="false">
+  <Container.RenameLyr ID="CID_C_RENAME" Visible="false" Name="Rename lyrics file" Rect="0,0,w,h">
     <NormalText ID="CID_S_FILENAME" Text="File Name:" Rect="30,h/2-20-20,120,"/>
     <NormalEdit ID="CID_E_FILENAME" Rect="150,h/2-20-20,w-20-150,"/>
     <NormalTextBt ID="ID_OK" Text="OK" Rect="w/2-100-20,h/2+15,100,"/>

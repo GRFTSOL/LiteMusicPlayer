@@ -62,6 +62,7 @@
 #define IDC_BROWSE                      1010
 #define IDC_DEL_FILE                    1011
 #define IDC_RENAME                      1012
+#define IDC_DELETE                      1013
 #define IDC_PLAY                        1014
 #define IDC_TAB                         1015
 #define IDC_LIST                        1016

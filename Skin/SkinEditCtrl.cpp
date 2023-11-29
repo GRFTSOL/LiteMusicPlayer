@@ -2484,6 +2484,10 @@ bool CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
                         return m_pEditNotification->onEditorKeyDown(nChar, nFlags);
                     }
                 }
+
+                if (m_cmdSubmit != UID_INVALID) {
+                    m_pSkin->postCustomCommandMsg(m_cmdSubmit);
+                }
                 break;
             }
 
@@ -2761,6 +2765,14 @@ bool CSkinEditCtrl::setProperty(cstr_t szProperty, cstr_t szValue) {
         m_placeHolder = szValue;
     } else if (isPropertyName(szProperty, "PlaceHolderColor")) {
         m_clrPlaceHolder = parseColorString(szValue);
+    } else if (isPropertyName(szProperty, "SubmitCmd")) {
+        if (isTRUE(szValue)) {
+            m_cmdSubmit = CMD_OK;
+        } else if (strIsSame(szValue, SZ_FALSE)) {
+            m_cmdSubmit = UID_INVALID;
+        } else {
+            m_cmdSubmit = getIDByName(szValue);
+        }
     } else {
         return false;
     }

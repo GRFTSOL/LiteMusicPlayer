@@ -2,27 +2,6 @@
 #include "IdString.h"
 
 
-uint32_t stringToID(ID_TO_STRING_A Ids[], cstr_t szID, uint32_t dwDefault) {
-    for (ID_TO_STRING_A *ptr = Ids; ptr->szId != nullptr; ptr++) {
-        if (strcasecmp(szID, ptr->szId) == 0) {
-            return ptr->dwId;
-        }
-    }
-
-    return dwDefault;
-}
-
-cstr_t iDToString(ID_TO_STRING_A Ids[], uint32_t nID, cstr_t szDefaultID) {
-    for (ID_TO_STRING_A *ptr = Ids; ptr->szId != nullptr; ptr++) {
-        if (nID == ptr->dwId) {
-            return ptr->szId;
-        }
-    }
-
-    return szDefaultID;
-}
-
-
 uint32_t stringToID(IdToString Ids[], cstr_t szID, uint32_t dwDefault) {
     for (IdToString *ptr = Ids; ptr->szId != nullptr; ptr++) {
         if (strcasecmp(szID, ptr->szId) == 0) {
@@ -33,7 +12,7 @@ uint32_t stringToID(IdToString Ids[], cstr_t szID, uint32_t dwDefault) {
     return dwDefault;
 }
 
-cstr_t iDToString(IdToString Ids[], uint32_t nID, cstr_t szDefaultID) {
+cstr_t idToString(IdToString Ids[], uint32_t nID, cstr_t szDefaultID) {
     for (IdToString *ptr = Ids; ptr->szId != nullptr; ptr++) {
         if (nID == ptr->dwId) {
             return ptr->szId;

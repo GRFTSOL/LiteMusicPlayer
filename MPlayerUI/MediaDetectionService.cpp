@@ -48,7 +48,6 @@ void CMediaDetectionService::addMediaInDir(cstr_t szDir) {
 }
 
 void CMediaDetectionService::addMedia(vector<string> &vFiles) {
-    int nRet;
     //char                        szMsg[256];
     int n = 0;
 

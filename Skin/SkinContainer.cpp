@@ -909,7 +909,17 @@ void CSkinContainer::switchToPage(CSkinContainer *toActivate, bool bWaitResultOf
     }
 
     PageViewItem pvToHide(nullptr, false, 0);
-    if (!m_vStackPageView.empty()) {
+    if (m_vStackPageView.empty()) {
+        for (auto child : m_vUIObjs) {
+            if (child->isVisible() && child->isContainer()) {
+                pvToHide.pContainerPage = child->getContainerIf();
+                break;
+            }
+        }
+        if (pvToHide.pContainerPage) {
+            m_vStackPageView.push(pvToHide);
+        }
+    } else {
         pvToHide = m_vStackPageView.top();
     }
 

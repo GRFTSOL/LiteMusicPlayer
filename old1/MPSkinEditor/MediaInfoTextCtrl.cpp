@@ -97,7 +97,7 @@ void CMediaInfoTextCtrl::enumProperties(CUIObjProperties &listProperties)
     prop.name = "MediaInfoType";
     for (i = 0; i < m_vInfoType.size(); i++)
     {
-        prop.strValue += iDToString(__mediaInfoType, m_vInfoType[i], "Title");
+        prop.strValue += idToString(__mediaInfoType, m_vInfoType[i], "Title");
         prop.strValue += "|";
     }
     if (!prop.strValue.empty())
@@ -120,6 +120,6 @@ void CMediaInfoTextCtrl::updateShowTrackInfo()
         m_nCurrentItem = 0;
     MediaAttribute        infoType = m_vInfoType[m_nCurrentItem];
 
-    m_strText = iDToString(__mediaInfoType, infoType, "");
+    m_strText = idToString(__mediaInfoType, infoType, "");
     m_strText += ": ";
 }

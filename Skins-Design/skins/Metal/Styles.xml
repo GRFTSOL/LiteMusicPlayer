@@ -3,10 +3,12 @@
   <include Name="StyleBase.xml"/>
 
   <style>
-    <WindowFrame EnableTranslucency="true" TranslucencyAlpha="255"
-        MinWidth="100" MinHeight="100" Width="330" Height="400"
-        BgColor="#FFFFFF" EnableClickThrough="false"
-        FontName="Verdana" FontHeight="13" TextColor="#000000" IsDialog="true">
+	<Window ToolTipBgColor="#000000" ToolTipTextColor="#FFFFFF" ToolTipFontName="Verdana" ToolTipFontHeight="13"
+		FontName="Verdana" FontHeight="13" TextColor="#000000" BgColor="#EBEBEB"
+		EnableTranslucency="true" TranslucencyAlpha="255"
+	/>
+    <WindowFrame Extends="Window"
+        MinWidth="100" MinHeight="100" Width="330" Height="400" IsDialog="true">
 
 		<Frame Name="Frame" Rect="0,27,w,h-27" Image="frame.png" ImageRect="0,27,425,123"
 			RoundWidthTop="4" RoundWidthBottom="4" ThickWidth="4" BlendPixMode="copy"/>
@@ -28,9 +30,8 @@
 		<ClientArea Rect="10,32,w-20,h-31-12" ClipChildren="true"/>
 	</WindowFrame>
 
-    <MenuWindowFrame EnableTranslucency="true" TranslucencyAlpha="255" BgColor="#EBEBEB"
-        MinWidth="100" MinHeight="100" Width="330" Height="400" EnableClickThrough="false"
-        FontName="Verdana" FontHeight="13" TextColor="#000000" >
+    <MenuWindowFrame Extends="Window"
+        MinWidth="100" MinHeight="100" Width="330" Height="400">
 
 		<Frame Name="Frame" Rect="0,27,w,h-27" Image="frame.png" ImageRect="0,27,425,123"
 			RoundWidthTop="4" RoundWidthBottom="4" ThickWidth="4" BlendPixMode="copy"/>
@@ -61,21 +62,6 @@
 		<ClientArea Rect="6,32,w-12,h-31-6" ClipChildren="true"/>
     </MenuWindowFrame>
 
-    <PopupWndFrame EnableTranslucency="true" TranslucencyAlpha="255"
-         FixedWidth="true" FixedHeight="true"
-         BgColor="#ece9d8" EnableClickThrough="false">
-      <XScaleImage Left="0" Top="0" Width="w" Height="5" Name="Top border"
-            Image="menu_frame.png" ImageRect="0,0,50,5"
-            ImageScaleXStart="10" ImageScaleXEnd="40" BlendPixMode="copy"/>
-      <XScaleImage Left="0" Top="h-5" Width="w" Height="5" Name="Bottom border"
-            Image="menu_frame.png" ImageRect="0,15,50,5"
-            ImageScaleXStart="10" ImageScaleXEnd="40" BlendPixMode="copy"/>
-      <Image Left="0" Top="5" Width="1" Height="h-10" Name="left frame" 
-            Image="menu_frame.png" ImageRect="0,5,1,10" BltMode="tile"/>
-      <Image Left="w-1" Top="5" Width="1" Height="h-10" Name="left frame"
-            Image="menu_frame.png" ImageRect="49,5,1,10" BltMode="tile"/>
-      <ClientArea Rect="1, 5, w-2, h-5-5"/>
-    </PopupWndFrame>
 	<NormalToolbar Extends="Container" Height="24" >
 		<Toolbar ID="ID_TB_LYR_SYNC" Rect="8,1,78,22" Image="fl_buttons.png" enablehover="TRUE"
 				units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" ButtonSpacesCX="1"

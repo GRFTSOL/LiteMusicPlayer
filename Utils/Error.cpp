@@ -125,7 +125,7 @@ cstr_t Error2Str::c_str() {
 
     for (it = g_err2StrHeader; it != nullptr; it = it->m_pNext) {
         IdToString *pid2str = it->m_err2Str;
-        szError = iDToString(pid2str, m_nError, nullptr);
+        szError = idToString(pid2str, m_nError, nullptr);
         if (szError) {
             return szError;
         }

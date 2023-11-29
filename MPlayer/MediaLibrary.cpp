@@ -1,6 +1,7 @@
 #include "../Skin/Skin.h"
 #include "MediaLibrary.h"
 #include "Player.h"
+#include "Utils/rapidjson.h"
 
 
 #define ALBUM_ARTIST_SEP        "~@~"
@@ -75,7 +76,6 @@ DROP INDEX IF EXISTS mli_music_hash;"
 #define SQL_ADD_MEDIA_FAST    "INSERT INTO medialib (url, artist, title, filesize, time_added, format) VALUES (?, ?, ?, ?, ?, ?);"
 
 #define SQL_QUERY_MEDIA_BY_URL  "select * from medialib where url=? "
-#define SQL_QUERY_MEDIA_BY_ID   "select * from medialib where id=? "
 
 #define SQL_UPDATE_MEDIA_PLAY_TIME "update medialib set count_played=count_played+1, time_played=? where id=?"
 
@@ -97,7 +97,7 @@ DROP INDEX IF EXISTS mli_music_hash;"
 
 #define SQL_QUERY_ALL_PLAYLISTS     "SELECT * FROM playlists"
 #define SQL_ADD_PLAYLIST            "INSERT INTO playlists (name, duration, count, rating, is_up_to_date, time_modified, media_ids) VALUES (?, ?, ?, ?, ?, ?, ?);"
-#define SQL_UPDATE_PLAYLIST_BY_ID   "UPDATE playlists SET name=?, duration=?, count=?, rating=?, is_up_to_date=?, time_modified=?, media_ids=?"
+#define SQL_UPDATE_PLAYLIST_BY_ID   "UPDATE playlists SET name=?, duration=?, count=?, rating=?, is_up_to_date=?, time_modified=?, media_ids=? WHERE id=?"
 #define SQL_DELETE_PLAYLIST_BY_ID   "DELETE FROM playlists WHERE id=?"
 
 #define SQLITE3_BIND_TEXT(sqlstmt, strData)            \
@@ -328,25 +328,25 @@ VecStrings CMediaLibrary::getAlbumOfArtist(cstr_t szArtist) {
     return results;
 }
 
-VecPlaylistNames CMediaLibrary::getAllPlaylistNames() {
-    VecPlaylistNames names;
+VecPlaylistBriefs CMediaLibrary::getAllPlaylistBriefs() {
+    VecPlaylistBriefs names;
 
     for (auto &item : m_playlists) {
-        names.push_back({item.id, item.name});
+        names.push_back(item);
     }
 
     return names;
 }
 
-VecPlaylistNames CMediaLibrary::getRecentPlaylistNames() {
-    VecPlaylistNames names;
+VecPlaylistBriefs CMediaLibrary::getRecentPlaylistBriefs() {
+    VecPlaylistBriefs names;
 
     for (auto &item : m_playlists) {
-        names.push_back({item.id, item.name, item.timeModified});
+        names.push_back(item);
     }
 
-    std::sort(names.begin(), names.begin(), [](const PlaylistName &a, const PlaylistName &b) {
-        return a.orderBy > b.orderBy;
+    std::sort(names.begin(), names.begin(), [](const PlaylistBrief &a, const PlaylistBrief &b) {
+        return a.timeModified > b.timeModified;
     });
 
     return names;
@@ -383,26 +383,17 @@ MediaPtr CMediaLibrary::getMediaByUrl(cstr_t szUrl) {
 }
 
 MediaPtr CMediaLibrary::getMediaByID(int id) {
-    if (!isOK()) {
-        return nullptr;
-    }
-
     RMutexAutolock autolock(m_mutexDataAccess);
 
-    m_stmtQueryByID.bindInt(1, id);
-
-    MediaPtr media;
-    int ret = m_stmtQueryByID.step();
-    if (ret == ERR_SL_OK_ROW) {
-        media = sqliteQueryMedia(m_stmtQueryByID);
+    auto it = m_mapMedias.find(id);
+    if (it != m_mapMedias.end()) {
+        auto media = (*it).second;
         if (!media->isFileDeleted) {
-            media = nullptr;
+            return media;
         }
     }
 
-    m_stmtQueryByID.reset();
-
-    return media;
+    return nullptr;
 }
 
 PlaylistPtr CMediaLibrary::getMediaByIDs(const VecInts &ids) {
@@ -414,17 +405,13 @@ PlaylistPtr CMediaLibrary::getMediaByIDs(const VecInts &ids) {
     RMutexAutolock autolock(m_mutexDataAccess);
 
     for (auto id : ids) {
-        m_stmtQueryByID.bindInt(1, id);
-
-        MediaPtr media;
-        int ret = m_stmtQueryByID.step();
-        if (ret == ERR_SL_OK_ROW) {
-            media = sqliteQueryMedia(m_stmtQueryByID);
+        auto it = m_mapMedias.find(id);
+        if (it != m_mapMedias.end()) {
+            auto media = (*it).second;
             if (!media->isFileDeleted) {
                 playlist->insertItem(-1, media);
             }
         }
-        m_stmtQueryByID.reset();
     }
 
     return playlist;
@@ -552,27 +539,12 @@ RET_FAILED:
 }
 
 // removes the specified item from the media library
-ResultCode CMediaLibrary::remove(Media *media, bool isDeleteFile) {
+ResultCode CMediaLibrary::remove(const MediaPtr &media, bool isDeleteFile) {
     if (!isOK()) {
         return m_nInitResult;
     }
 
-    removeMediaInMem(media);
-
-    RMutexAutolock autolock(m_mutexDataAccess);
-    CSqlite3Stmt sqlQuery;
-
-    sqlQuery.prepare(&m_db, "delete from medialib where id=?");
-
-    sqlQuery.bindInt(1, media->ID);
-    int ret = sqlQuery.step();
-    if (ret == ERR_OK) {
-        if (isDeleteFile) {
-            deleteFile(media->url.c_str());
-        }
-    }
-
-    return ERR_OK;
+    return remove({media}, isDeleteFile);
 }
 
 bool removeIDs(VecInts &ids, const VecInts &toRemove) {
@@ -638,6 +610,12 @@ ResultCode CMediaLibrary::remove(const VecMediaPtrs &medias, bool isDeleteFile) 
         savePlaylistInDb(info);
     }
 
+    //
+    // Remove from NowPlaying
+    //
+    m_nowPlaying->removeItems(medias);
+    saveNowPlaying();
+
     return ERR_OK;
 }
 
@@ -676,14 +654,12 @@ ResultCode CMediaLibrary::addToPlaylist(int idPlaylist, const PlaylistPtr &other
         return ERR_NOT_FOUND;
     }
 
-    if (!existing->playlist->append(other.get())) {
+    if (!getPlaylist(*existing)->append(other.get())) {
         // Not modified.
         return ERR_OK;
     }
 
-    existing->refreshTimeModified();
-    existing->count = (int)existing->mediaIds.size();
-    
+    *existing = existing->playlist->toPlaylistInfo();
 
     savePlaylistInDb(*existing);
 
@@ -879,9 +855,6 @@ int CMediaLibrary::init() {
     m_nInitResult = m_sqlQueryByUrl.prepare(&m_db, SQL_QUERY_MEDIA_BY_URL);
     assert(m_nInitResult == ERR_OK);
 
-    m_nInitResult = m_stmtQueryByID.prepare(&m_db, SQL_QUERY_MEDIA_BY_ID);
-    assert(m_nInitResult == ERR_OK);
-
     // 创建 playlists 的 table
     m_nInitResult = m_db.exec(SQL_CREATE_TABLE_PLAYLIST);
     if (m_nInitResult != ERR_OK) {
@@ -894,6 +867,12 @@ int CMediaLibrary::init() {
     if (m_nInitResult != ERR_OK) {
         goto INIT_FAILED;
     }
+    for (auto &media : m_allMedias->getAll()) {
+        m_mapMedias[media->ID] = media;
+    }
+
+    m_fnNowPlaying = getAppDataDir() + "now-playing.json";
+    loadNowPlaying();
 
     return m_nInitResult;
 
@@ -906,7 +885,6 @@ void CMediaLibrary::close() {
     m_sqlAdd.finalize();
     m_sqlAddFast.finalize();
     m_sqlQueryByUrl.finalize();
-    m_stmtQueryByID.finalize();
     m_db.close();
 }
 
@@ -1066,6 +1044,48 @@ RET_FAILED:
     return ret;
 }
 
+PlaylistPtr CMediaLibrary::getNowPlaying() {
+    return m_nowPlaying;
+}
+
+void CMediaLibrary::loadNowPlaying() {
+    m_nowPlaying = std::make_shared<Playlist>();
+
+    string data;
+    if (!readFile(m_fnNowPlaying.c_str(), data)) {
+        return;
+    }
+
+    rapidjson::Document doc;
+    doc.Parse(data.c_str());
+    if (doc.HasParseError() || !doc.IsObject()) {
+        return;
+    }
+
+    PlaylistInfo info;
+
+    try {
+        info.id = getMemberInt(doc, "id", -1);
+        info.mediaIds = getMemberIntArray(doc, "media_ids");
+    } catch (std::exception &e) {
+        return;
+    }
+
+    m_nowPlaying = getPlaylist(info);
+}
+
+void CMediaLibrary::saveNowPlaying() {
+    auto info = m_nowPlaying->toPlaylistInfo();
+
+    RapidjsonWriterEx writer;
+    writer.startObject();
+    writer.writePropInt("id", info.id);
+    writer.writePropIntArray("media_ids", info.mediaIds);
+    writer.endObject();
+
+    writeFile(m_fnNowPlaying.c_str(), writer.getStringView());
+}
+
 PlaylistPtr CMediaLibrary::newPlaylist(cstr_t name) {
     auto pl = make_shared<Playlist>();
     pl->name = name;
@@ -1073,7 +1093,7 @@ PlaylistPtr CMediaLibrary::newPlaylist(cstr_t name) {
 
     auto info = pl->toPlaylistInfo();
     RMutexAutolock autolock(m_mutexDataAccess);
-    pl->id = savePlaylistInDb(info);
+    info.id = pl->id = savePlaylistInDb(info);
     m_playlists.push_back(info);
     return pl;
 }
@@ -1188,7 +1208,7 @@ int CMediaLibrary::savePlaylistInDb(const PlaylistInfo &playlist) {
         assert(ret == ERR_OK);
     }
 
-    string ids = strJoin(playlist.mediaIds.begin(), playlist.mediaIds.end(), ",");
+    string ids = strJoin(playlist.mediaIds.begin(), playlist.mediaIds.end(), "%d", ",");
 
     int idx = 1;
     auto ret = stmt.bindStaticText(idx++, playlist.name.c_str()); assert(ret == ERR_OK);
@@ -1198,6 +1218,10 @@ int CMediaLibrary::savePlaylistInDb(const PlaylistInfo &playlist) {
     ret = stmt.bindInt(idx++, playlist.isUpToDate); assert(ret == ERR_OK);
     ret = stmt.bindInt64(idx++, playlist.timeModified); assert(ret == ERR_OK);
     ret = stmt.bindStaticText(idx++, ids.c_str()); assert(ret == ERR_OK);
+
+    if (playlist.id != -1) {
+        ret = stmt.bindInt(idx++, playlist.id); assert(ret == ERR_OK);
+    }
 
     ret = stmt.step();
     assert(ret == ERR_OK);
@@ -1234,20 +1258,16 @@ PlaylistPtr CMediaLibrary::getPlaylist(PlaylistInfo &info) {
         return info.playlist;
     }
 
-    auto playlist = std::make_shared<Playlist>(info);
-    for (auto id : info.mediaIds) {
-        auto media = getMediaByID(id);
-        if (media) {
-            playlist->insertItem(-1, media);
-        }
-    }
-
+    auto playlist = getMediaByIDs(info.mediaIds);
+    playlist->setInfo(info);
     info.playlist = playlist;
     return playlist;
 }
 
 void CMediaLibrary::deltePlaylist(int playlistId) {
     string str = stringPrintf("DELETE FROM playlists WHERE id=%d", playlistId);
+
+    RMutexAutolock autolock(m_mutexDataAccess);
 
     auto ret = m_db.exec(str.c_str());
     assert(ret == ERR_OK);
@@ -1331,7 +1351,7 @@ void CMediaLibrary::updateMediaCategories() {
 
     for (auto &info : m_playlists) {
         m_mediaCategories.push_back(MediaCategory(MediaCategory::PLAYLIST,
-            info.name.c_str(), info.name.c_str(), info.count, info.duration));
+            info.name.c_str(), std::to_string(info.id).c_str(), info.count, info.duration));
     }
 
     unordered_map<string, MediaCategory> byArtist;

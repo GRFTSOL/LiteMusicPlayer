@@ -329,7 +329,7 @@ IdToString g_idsLyrDisplayOpt[] = {
 };
 
 cstr_t displayOptToStr(DISPLAY_OPTIONS displayOpt) {
-    return iDToString(g_idsLyrDisplayOpt, displayOpt, g_idsLyrDisplayOpt[DO_AUTO].szId);
+    return idToString(g_idsLyrDisplayOpt, displayOpt, g_idsLyrDisplayOpt[DO_AUTO].szId);
 }
 
 DISPLAY_OPTIONS displayOptFromStr(cstr_t szDisplayOpt) {

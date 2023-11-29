@@ -56,9 +56,6 @@ MPHotKeySection        g_vHotkeySections[] = {
 #define VK_MEDIA_PLAY_PAUSE 0xB3
 #endif
 
-#define MOD_ALT             0x0001
-#define MOD_CONTROL         0x0002
-#define MOD_SHIFT           0x0004
 
 CMPHotkey::CmdAccKey            g_vDefAccKey[] = {
     { CMD_PLAYPAUSE, true, VK_MEDIA_PLAY_PAUSE, 0, 0 },
@@ -66,37 +63,35 @@ CMPHotkey::CmdAccKey            g_vDefAccKey[] = {
     { CMD_NEXT, true, VK_MEDIA_NEXT_TRACK, 0, 0 },
     { CMD_PREVIOUS, true, VK_MEDIA_PREV_TRACK, 0, 0 },
 
-    { CMD_BACKWARD_LYRICS, false, VK_UP, MOD_CONTROL | MOD_SHIFT, 0 },
-    { CMD_FORWARD_LYRICS, false, VK_DOWN, MOD_CONTROL | MOD_SHIFT, 0 },
-    { CMD_TOPMOST, true, 'T', MOD_CONTROL | MOD_SHIFT, 0 },
-    { CMD_TOGGLE_MP, true, 'M', MOD_CONTROL | MOD_ALT, 0 },
+    { CMD_BACKWARD_LYRICS, false, VK_UP, MK_CONTROL | MK_SHIFT, 0 },
+    { CMD_FORWARD_LYRICS, false, VK_DOWN, MK_CONTROL | MK_SHIFT, 0 },
+    { CMD_TOPMOST, true, VK_T, MK_CONTROL | MK_SHIFT, 0 },
+    { CMD_TOGGLE_MP, true, VK_M, MK_CONTROL | MK_ALT, 0 },
 
     { CMD_HELP, false, VK_F1, 0, 0 },
 
-    { CMD_OPEN_LRC, false, 'D', MOD_CONTROL, 0 },
+    { CMD_OPEN_LRC, false, VK_D, MK_CONTROL, 0 },
     { CMD_RELOAD_LYR, false, VK_F5, 0, 0 },
 
-    { CMD_LYR_EDITOR, false, 'E', MOD_CONTROL, 0 },
-    { CMD_NEW_LRC, false, 'N', MOD_CONTROL, 0 },
-    { CMD_OPEN_LRC, false, 'O', MOD_CONTROL, 0 },
-    { CMD_SAVE_LRC, false, 'S', MOD_CONTROL, 0 },
-    { CMD_JUMP, false, 'J', MOD_CONTROL, 0 },
+    { CMD_LYR_EDITOR, false, VK_E, MK_CONTROL, 0 },
+    { CMD_NEW_LRC, false, VK_N, MK_CONTROL, 0 },
+    { CMD_OPEN_LRC, false, VK_O, MK_CONTROL, 0 },
+    { CMD_SAVE_LRC, false, VK_S, MK_CONTROL, 0 },
+    { CMD_JUMP, false, VK_J, MK_CONTROL, 0 },
     { CMD_FORWARD_REMAIN_LINES, false, VK_F11, 0, 0 },
     { CMD_BACKWARD_REMAIN_LINES, false, VK_F12, 0, 0 },
     { CMD_INSERTTAG_DOWN, false, VK_F7, 0, 0 },
-    { CMD_INSERTTAG, false, VK_F7, MOD_CONTROL, 0 },
-    { CMD_FORWARD_CUR_LINE, false, VK_ADD, MOD_CONTROL, 0 },
-    { CMD_FORWARD_CUR_LINE, false, 187, MOD_CONTROL, 0 },
-    { CMD_BACKWARD_CUR_LINE, false, VK_SUBTRACT, MOD_CONTROL, 0 },
-    { CMD_BACKWARD_CUR_LINE, false, 189, MOD_CONTROL, 0 },
+    { CMD_INSERTTAG, false, VK_F7, MK_CONTROL, 0 },
+    { CMD_FORWARD_CUR_LINE, false, VK_ADD, MK_CONTROL, 0 },
+    { CMD_BACKWARD_CUR_LINE, false, VK_SUBTRACT, MK_CONTROL, 0 },
 
-    { CMD_FORWARD, false, VK_NEXT, MOD_CONTROL, 0 },
-    { CMD_BACKWARD, false, VK_PRIOR, MOD_CONTROL, 0 },
+    { CMD_FORWARD, false, VK_NEXT, MK_CONTROL, 0 },
+    { CMD_BACKWARD, false, VK_PRIOR, MK_CONTROL, 0 },
 
-    { CMD_MINIMIZE, false, 'M', MOD_CONTROL, 0 },
-    { CMD_TOPMOST, false, 'T', MOD_CONTROL, 0 },
+    { CMD_MINIMIZE, false, VK_M, MK_CONTROL, 0 },
+    { CMD_TOPMOST, false, VK_T, MK_CONTROL, 0 },
 
-    { CMD_PREFERENCES, false, 'P', MOD_CONTROL, 0 },
+    { CMD_PREFERENCES, false, VK_P, MK_CONTROL, 0 },
 
 };
 
@@ -104,11 +99,153 @@ CMPHotkey::CmdAccKey            g_vDefAccKey[] = {
 #define SZ_HOTKEY_FILE_HEADER   "HotkeysV1.1"
 #define SZ_HOTKEY_FILENAME      "hotkeys.cfg"
 
-inline int makeHotkeyID(int nModifier, int button) {
-    return 0xC000 | (nModifier << 8) | button;
+inline uint32_t makeHotkeyID(uint32_t nModifier, uint32_t button) {
+    return nModifier | button;
 }
 
+cstr_t keyCodeToText(uint32_t key) {
+    static IdToString KEY_NAMES[] = {
+        { VK_A, "A" },
+        { VK_S, "S" },
+        { VK_D, "D" },
+        { VK_F, "F" },
+        { VK_H, "H" },
+        { VK_G, "G" },
+        { VK_Z, "Z" },
+        { VK_X, "X" },
+        { VK_C, "C" },
+        { VK_V, "V" },
+        { VK_B, "B" },
+        { VK_Q, "Q" },
+        { VK_W, "W" },
+        { VK_E, "E" },
+        { VK_R, "R" },
+        { VK_Y, "Y" },
+        { VK_T, "T" },
+        { VK_1, "1" },
+        { VK_2, "2" },
+        { VK_3, "3" },
+        { VK_4, "4" },
+        { VK_6, "6" },
+        { VK_5, "5" },
+        { VK_EQUAL, "=" },
+        { VK_9, "9" },
+        { VK_7, "7" },
+        { VK_MINUS, "-" },
+        { VK_8, "8" },
+        { VK_0, "0" },
+        { VK_RIGHT_BRACKET, "]" },
+        { VK_O, "O" },
+        { VK_U, "U" },
+        { VK_LEFT_BRACKET, "[" },
+        { VK_I, "I" },
+        { VK_P, "P" },
+        { VK_L, "L" },
+        { VK_J, "J" },
+        { VK_QUOTE, "\"" },
+        { VK_K, "K" },
+        { VK_SEMI_COLON, ";" },
+        { VK_BACK_SLASH, "\\" },
+        { VK_COMMA, "," },
+        { VK_SLASH, "/" },
+        { VK_N, "N" },
+        { VK_M, "M" },
+        { VK_PERIOD, "." },
+        { VK_GRAVE, "`" },
+        { VK_KEYPAD_DECIMAL, "Keypad ." },
+        { VK_KEYPAD_MULTIPLY, "Keypad *" },
+        { VK_KEYPAD_PLUS, "Keypad +" },
+        { VK_KEYPAD_CLEAR, "Keypad Esc" },
+        { VK_KEYPAD_DIVIDE, "Keypad /" },
+        { VK_KEYPAD_ENTER, "Keypad Enter" },
+        { VK_KEYPAD_MINUS, "Keypad -" },
+        { VK_KEYPAD_EQUAL, "Keypad =" },
+        { VK_KEYPAD_0, "Keypad 0" },
+        { VK_KEYPAD_1, "Keypad 1" },
+        { VK_KEYPAD_2, "Keypad 2" },
+        { VK_KEYPAD_3, "Keypad 3" },
+        { VK_KEYPAD_4, "Keypad 4" },
+        { VK_KEYPAD_5, "Keypad 5" },
+        { VK_KEYPAD_6, "Keypad 6" },
+        { VK_KEYPAD_7, "Keypad 7" },
+        { VK_KEYPAD_8, "Keypad 8" },
+        { VK_KEYPAD_9, "Keypad 9" },
 
+        { VK_RETURN, "Enter" },
+        { VK_TAB, "Tab" },
+        { VK_SPACE, "space" },
+        { VK_DELETE, "Del" },
+        { VK_ESCAPE, "Esc" },
+        { VK_COMMAND, "Command" },
+        { VK_SHIFT, "Shift" },
+        { VK_CAPS_LOCK, "Caps" },
+        { VK_OPTION, "Option" },
+        { VK_CONTROL, "Ctrl" },
+        { VK_RIGHT_COMMAND, "Right Command" },
+        { VK_RIGHT_SHIFT, "Right Shift" },
+        { VK_RIGHT_OPTION, "Right Option" },
+        { VK_RIGHT_CONTROL, "Right Ctrl" },
+        { VK_FUNCTION, "Fn" },
+        { VK_F17, "F17" },
+        { VK_VOLUME_UP, "Volume Up" },
+        { VK_VOLUME_DOWN, "Volume Down" },
+        { VK_MUTE, "Mute" },
+        { VK_F18, "F18" },
+        { VK_F19, "F19" },
+        { VK_F20, "F20" },
+        { VK_F5, "F5" },
+        { VK_F6, "F6" },
+        { VK_F7, "F7" },
+        { VK_F3, "F3" },
+        { VK_F8, "F8" },
+        { VK_F9, "F9" },
+        { VK_F11, "F11" },
+        { VK_F13, "F13" },
+        { VK_F16, "F16" },
+        { VK_F14, "F14" },
+        { VK_F10, "F10" },
+        { VK_F12, "F12" },
+        { VK_F15, "F15" },
+        { VK_HELP, "Help" },
+        { VK_HOME, "Home" },
+        { VK_PAGE_UP, "Page Up" },
+        { VK_FORWARD_DELETE, "Delete" },
+        { VK_F4, "F4" },
+        { VK_END, "End" },
+        { VK_F2, "F2" },
+        { VK_PAGE_DOWN, "Page Down" },
+        { VK_F1, "F1" },
+        { VK_LEFT, "Left Arrow" },
+        { VK_RIGHT, "Right Arrow" },
+        { VK_DOWN, "Down Arrow" },
+        { VK_UP, "Up Arrow" },
+        { 0, nullptr },
+    };
+
+    return idToString(KEY_NAMES, key, "Unkown");
+}
+
+void formatHotkeyText(string &strText, uint32_t key, uint32_t fsModifiers) {
+    strText.clear();
+
+    if (isFlagSet(fsModifiers, MK_COMMAND)) {
+        strText += _TLT("Command+");
+    }
+    if (isFlagSet(fsModifiers, MK_FUNCTION)) {
+        strText += _TLT("Fn+");
+    }
+    if (isFlagSet(fsModifiers, MK_CONTROL)) {
+        strText += _TLT("Ctrl+");
+    }
+    if (isFlagSet(fsModifiers, MK_SHIFT)) {
+        strText += _TLT("Shift+");
+    }
+    if (isFlagSet(fsModifiers, MK_ALT)) {
+        strText += _TLT("Alt+");
+    }
+
+    strText += keyCodeToText(key);
+}
 
 CMPHotkey::CMPHotkey() {
     m_bGlobalHotkeyEnabled = false;
@@ -182,7 +319,7 @@ void CMPHotkey::restoreDefaults() {
     saveSettings();
 }
 
-void CMPHotkey::onHotKey(int nId, uint32_t fuModifiers, uint32_t uVirtKey) {
+void CMPHotkey::onHotKey(uint32_t nId, uint32_t fuModifiers, uint32_t uVirtKey) {
     for (int i = 0; i < (int)m_vAccKey.size(); i++) {
         CmdAccKey &cmdKey = m_vAccKey[i];
 
@@ -199,24 +336,7 @@ void CMPHotkey::onHotKey(int nId, uint32_t fuModifiers, uint32_t uVirtKey) {
 bool CMPHotkey::onKeyDown(CMPSkinWnd *pWnd, uint32_t nChar, uint32_t nFlags) {
     assert(pWnd);
 
-    bool ctrl = isModifierKeyPressed(MK_CONTROL, nFlags);
-    bool shift = isModifierKeyPressed(MK_SHIFT, nFlags);
-    bool alt = isModifierKeyPressed(MK_ALT, nFlags);
-
-    int nModifiers = 0;
-    int nIDKeyPressed;
-
-    if (ctrl) {
-        nModifiers |= MOD_CONTROL;
-    }
-    if (shift) {
-        nModifiers |= MOD_SHIFT;
-    }
-    if (alt) {
-        nModifiers |= MOD_ALT;
-    }
-
-    nIDKeyPressed = makeHotkeyID(nModifiers, nChar);
+    auto nIDKeyPressed = makeHotkeyID(nFlags, nChar);
 
     for (int i = 0; i < (int)m_vAccKey.size(); i++) {
         CmdAccKey &cmdKey = m_vAccKey[i];
@@ -366,6 +486,7 @@ bool CMPHotkey::getHotkeyText(int cmd, string &strKey) {
         CmdAccKey &cmdKey = m_vAccKey[i];
 
         if (cmdKey.cmd == cmd) {
+            formatHotkeyText(strKey, cmdKey.button, cmdKey.fsModifiers);
             return true;
         }
     }
@@ -460,7 +581,7 @@ int CMPHotkey::saveSettings() {
     strFile = getAppDataDir();
     strFile += SZ_HOTKEY_FILENAME;
 
-    if (file.open(strFile.c_str(), false, ED_SYSDEF) != ERR_OK) {
+    if (file.open(strFile.c_str(), true, ED_SYSDEF) != ERR_OK) {
         ERR_LOG1("Failed to open hotkey config file: %s", strFile.c_str());
         return ERR_OPEN_FILE;
     }

@@ -96,7 +96,7 @@ void CMPSkinMainWnd::onCopyData(WPARAM wParam, PCOPYDATASTRUCT pCopyData) {
 
     if (vCmdLine.size() == 1 && fileIsExtSame(vCmdLine[0].c_str(), ".m3u")) {
         // open playlist
-        g_player.saveCurrentPlaylist();
+        g_player.saveNowPlaying();
 
         g_player.m_currentPlaylistFn = vCmdLine[0];
         g_player.setNowPlayingModified(false);

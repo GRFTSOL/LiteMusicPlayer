@@ -94,11 +94,11 @@ cstr_t lyrSrcTypeToName(LRC_SOURCE_TYPE lst) {
     if (lst == LST_NONE) {
         return NONE_LYRCS;
     }
-    return iDToString(__id2strLyrSrcType, lst, "Unknown");
+    return idToString(__id2strLyrSrcType, lst, "Unknown");
 }
 
 cstr_t lyrSrcTypeToDesc(LRC_SOURCE_TYPE lst) {
-    return iDToString(__id2strLyrSrcTypeDesc, lst, "Unknown");
+    return idToString(__id2strLyrSrcTypeDesc, lst, "Unknown");
 }
 
 bool getEmbeddedLyricsUrlInfo(cstr_t szName, string &language, int &index) {

@@ -1,7 +1,7 @@
 #include "MPlayerAppBase.h"
 #include "MPlaylistCtrl.h"
 #include "PlayListFile.h"
-#include "DlgNewPlaylist.hpp"
+#include "DlgPlaylist.hpp"
 
 
 void splitKeywords(cstr_t keyword, VecStrings &vKeywords) {
@@ -167,19 +167,14 @@ CMPlaylistCtrl::~CMPlaylistCtrl() {
 }
 
 bool CMPlaylistCtrl::setProperty(cstr_t szProperty, cstr_t szValue) {
-    if (CSkinListCtrl::setProperty(szProperty, szValue)) {
-        return true;
-    }
-
     if (isPropertyName(szProperty, "KeywordEdit")) {
         m_idEditorSearch = szValue;
     } else if (strcasecmp(szProperty, "SearchResultMenu") == 0) {
         m_menuSearchResultName = szValue;
-        m_menuSearchResult = m_pSkin->getSkinFactory()->loadMenu(m_pSkin, szValue);
-        m_submenuAddResultToPlaylist = m_menuSearchResult->getSubmenuByPlaceHolderID(IDC_ADD_RESULTS_TO_PLAYLIST_NEW);
-        m_submenuAddSelectedToPlaylist = m_menuSearchResult->getSubmenuByPlaceHolderID(IDC_ADD_SELECTED_TO_PLAYLIST_NEW);
+    } else if (strcasecmp(szProperty, "ContextMenu") == 0) {
+        m_menuCtxName = szValue;
     } else {
-        return false;
+        return CSkinListCtrl::setProperty(szProperty, szValue);
     }
 
     return true;
@@ -187,6 +182,8 @@ bool CMPlaylistCtrl::setProperty(cstr_t szProperty, cstr_t szValue) {
 
 void CMPlaylistCtrl::onCreate() {
     CSkinListCtrl::onCreate();
+
+    loadMenu();
 
     m_editorSearch = (CSkinEditCtrl *)m_pSkin->getUIObjectById(m_idEditorSearch, CSkinEditCtrl::className());
     if (m_editorSearch) {
@@ -252,7 +249,7 @@ void CMPlaylistCtrl::onEvent(const IEvent *pEvent) {
         invalidate();
     } else if (pEvent->eventType == ET_PLAYER_MEDIA_INFO_CHANGED) {
         auto id = atoi(pEvent->strValue.c_str());
-        auto playlist = g_player.getCurrentPlaylist();
+        auto playlist = g_player.getNowPlaying();
         int row = 0;
         auto media = playlist->getItemByID(id, &row);
         if (media && row < getRowCount()) {
@@ -307,33 +304,37 @@ bool CMPlaylistCtrl::onCommand(int nId) {
         case IDC_REPLACE_NOW_PLAYING_WITH_RESULTS: {
             MediaPtr firstSelected;
             auto playlist = getAllSearchResult(firstSelected);
-            g_player.setCurrentPlaylist(playlist);
+            g_player.setNowPlaying(playlist);
             g_player.setNowPlayingModified(true);
             g_player.playMedia(firstSelected);
+            g_player.saveNowPlaying();
             return true;
         }
         case IDC_REPLACE_NOW_PLAYING_WITH_SELECTED: {
             MediaPtr firstSelected;
             auto playlist = getSelectedSearchResult(firstSelected);
-            g_player.setCurrentPlaylist(playlist);
+            g_player.setNowPlaying(playlist);
             g_player.setNowPlayingModified(true);
             g_player.playMedia(firstSelected);
+            g_player.saveNowPlaying();
             return true;
         }
         case IDC_ADD_RESULTS_TO_NOW_PLAYING: {
             MediaPtr firstSelected;
             auto playlist = getAllSearchResult(firstSelected);
-            auto curPl = g_player.getCurrentPlaylist();
+            auto curPl = g_player.getNowPlaying();
             curPl->insert(-1, playlist.get());
             g_player.setNowPlayingModified(true);
+            g_player.saveNowPlaying();
             return true;
         }
         case IDC_ADD_SELECTED_TO_NOW_PLAYING: {
             MediaPtr firstSelected;
             auto playlist = getSelectedSearchResult(firstSelected);
-            auto curPl = g_player.getCurrentPlaylist();
+            auto curPl = g_player.getNowPlaying();
             curPl->insert(-1, playlist.get());
             g_player.setNowPlayingModified(true);
+            g_player.saveNowPlaying();
             return true;
         }
         case IDC_ADD_RESULTS_TO_PLAYLIST_NEW: {
@@ -349,7 +350,7 @@ bool CMPlaylistCtrl::onCommand(int nId) {
         }
         case IDC_REMOVE_FROM_PLAYLIST: {
             auto playlist = getSelected();
-            auto nowplaying = g_player.getCurrentPlaylist();
+            auto nowplaying = g_player.getNowPlaying();
             nowplaying->removeItems(playlist->getAll());
             return true;
         }
@@ -357,7 +358,7 @@ bool CMPlaylistCtrl::onCommand(int nId) {
             auto playlist = getSelected();
             auto medias = playlist->getAll();
             auto mediaLib = g_player.getMediaLibrary();
-            g_player.getCurrentPlaylist()->removeItems(medias);
+            g_player.getNowPlaying()->removeItems(medias);
             mediaLib->remove(medias, false);
             return true;
         }
@@ -411,31 +412,21 @@ bool CMPlaylistCtrl::onHandleKeyDown(uint32_t code, uint32_t flags) {
 }
 
 bool CMPlaylistCtrl::onRButtonUp(uint32_t nFlags, CPoint point) {
-    auto backup = m_pMenu;
     if (m_searchResults) {
-        // Don't show context menu when searching
-        m_pMenu = nullptr;
-    }
-    bool bMsgProceed = CSkinListCtrl::onRButtonUp(nFlags, point);
-    m_pMenu = backup;
-    if (bMsgProceed) {
+        if (m_menuSearchResult) {
+            popupSearchResultMenu(getCursorPos());
+            return true;
+        }
+    } else if (m_menuCtx) {
+        popupContexMenu(getCursorPos());
         return true;
     }
 
-    if (m_menuSearchResult && m_searchResults) {
-        popupSearchResultMenu(getCursorPos());
-        return true;
-    }
-
-    return false;
+    return CSkinListCtrl::onRButtonUp(nFlags, point);
 }
 
 void CMPlaylistCtrl::onLanguageChanged() {
-    if (m_menuSearchResult) {
-        m_menuSearchResult = m_pSkin->getSkinFactory()->loadMenu(m_pSkin, m_menuSearchResultName.c_str());
-        m_submenuAddResultToPlaylist = m_menuSearchResult->getSubmenuByPlaceHolderID(IDC_ADD_RESULTS_TO_PLAYLIST_NEW);
-        m_submenuAddSelectedToPlaylist = m_menuSearchResult->getSubmenuByPlaceHolderID(IDC_ADD_SELECTED_TO_PLAYLIST_NEW);
-    }
+    loadMenu();
 
     CSkinListCtrl::onLanguageChanged();
 }
@@ -493,7 +484,7 @@ void CMPlaylistCtrl::deleteSelectedItems() {
         return;
     }
 
-    auto playlist = g_player.getCurrentPlaylist();
+    auto playlist = g_player.getNowPlaying();
     if (deleteSelectedItemsInPlaylist(playlist.get(), vSelItems)) {
         nItem = vSelItems[0];
         if (nItem >= getItemCount()) {
@@ -503,6 +494,7 @@ void CMPlaylistCtrl::deleteSelectedItems() {
             setItemSelectionState(nItem, true);
         }
         g_player.setNowPlayingModified(true);
+        g_player.saveNowPlaying();
     }
 }
 
@@ -518,10 +510,11 @@ void CMPlaylistCtrl::offsetAllSelectedItems(bool bMoveDown) {
         vSelItems.push_back(nItem);
     }
 
-    auto playlist = g_player.getCurrentPlaylist();
+    auto playlist = g_player.getNowPlaying();
     if (offsetAllSelectedRowInPlaylist(playlist.get(), vSelItems, bMoveDown)) {
         // UpdateButtonState();
         g_player.setNowPlayingModified(true);
+        g_player.saveNowPlaying();
     }
 }
 
@@ -601,7 +594,7 @@ void CMPlaylistCtrl::onCurrentPlaylistEvent(CEventPlaylistChanged *pEventPlaylis
     } else if (pEventPlaylistChanged->action == IMPEvent::PCA_CLEAR) {
         deleteAllItems();
     } else if (pEventPlaylistChanged->action == IMPEvent::PCA_INSERT) {
-        auto playlist = g_player.getCurrentPlaylist();
+        auto playlist = g_player.getNowPlaying();
         insertMedia(playlist, pEventPlaylistChanged->nIndex, false);
         updateMediaIndex();
     } else if (pEventPlaylistChanged->action == IMPEvent::PCA_MOVE) {
@@ -665,7 +658,7 @@ void CMPlaylistCtrl::updatePlaylist(bool isRedraw) {
     if (m_searchResults) {
         playlist = m_searchResults;
     } else {
-        playlist = g_player.getCurrentPlaylist();
+        playlist = g_player.getNowPlaying();
     }
 
     deleteAllItems(false);
@@ -792,7 +785,7 @@ PlaylistPtr CMPlaylistCtrl::getSelected() {
         return getSelectedSearchResult(firstSelected);
     }
 
-    auto nowplaying = g_player.getCurrentPlaylist();
+    auto nowplaying = g_player.getNowPlaying();
     auto playlist = g_player.newPlaylist();
     int i = -1;
     while (true) {
@@ -820,7 +813,9 @@ PlaylistPtr CMPlaylistCtrl::getSelectedSearchResult(MediaPtr &firstSelectedOut) 
         if (i >= 0) {
             if (i < m_categoriesResults.size()) {
                 auto pl = mediaLib->getMediaCategory(m_categoriesResults[i]);
-                playlist->insert(-1, pl.get());
+                if (pl) {
+                    playlist->insert(-1, pl.get());
+                }
             } else {
                 int index = i - (int)m_categoriesResults.size();
                 if (index < (int)m_searchResults->getCount()) {
@@ -852,6 +847,23 @@ PlaylistPtr CMPlaylistCtrl::getAllSearchResult(MediaPtr &firstSelectedOut) {
     return playlist;
 }
 
+void CMPlaylistCtrl::loadMenu() {
+    if (!m_menuSearchResultName.empty()) {
+        m_menuSearchResult = m_pSkin->getSkinFactory()->loadMenu(m_pSkin, m_menuSearchResultName.c_str());
+        if (m_menuSearchResult) {
+            m_submenuAddResultToPlaylist = m_menuSearchResult->getSubmenuByPlaceHolderID(IDC_ADD_RESULTS_TO_PLAYLIST_NEW);
+            m_submenuAddSelectedToPlaylist = m_menuSearchResult->getSubmenuByPlaceHolderID(IDC_ADD_SELECTED_TO_PLAYLIST_NEW);
+        }
+    }
+
+    if (!m_menuCtxName.empty()) {
+        m_menuCtx = m_pSkin->getSkinFactory()->loadMenu(m_pSkin, m_menuCtxName.c_str());
+        if (m_menuCtx) {
+            m_ctxSubmenuAddToPlaylist = m_menuCtx->getSubmenuByPlaceHolderID(IDC_ADD_SELECTED_TO_PLAYLIST_NEW);
+        }
+    }
+}
+
 void CMPlaylistCtrl::popupSearchResultMenu(CPoint pt) {
     int count = getSelectedCount();
 
@@ -861,7 +873,7 @@ void CMPlaylistCtrl::popupSearchResultMenu(CPoint pt) {
     const int MAX_COUNT = 10;
     VecStrings names;
 
-    m_playlistNames = g_player.getMediaLibrary()->getRecentPlaylistNames();
+    m_playlistNames = g_player.getMediaLibrary()->getRecentPlaylistBriefs();
     if (m_playlistNames.size() > MAX_COUNT) {
         m_playlistNames.resize(MAX_COUNT);
     }
@@ -878,4 +890,29 @@ void CMPlaylistCtrl::popupSearchResultMenu(CPoint pt) {
     }
 
     m_menuSearchResult->trackPopupMenu(pt.x, pt.y, m_pSkin);
+}
+
+void CMPlaylistCtrl::popupContexMenu(CPoint pt) {
+    int count = getSelectedCount();
+
+    m_menuCtx->enableItem(IDC_SHOW_IN_FINDER, count > 0);
+    m_menuCtx->enableItem(IDC_PLAY_SELECTED_FILE, count > 0);
+
+    const int MAX_COUNT = 10;
+    VecStrings names;
+
+    m_playlistNames = g_player.getMediaLibrary()->getRecentPlaylistBriefs();
+    if (m_playlistNames.size() > MAX_COUNT) {
+        m_playlistNames.resize(MAX_COUNT);
+    }
+
+    for (auto &name : m_playlistNames) {
+        names.push_back(name.name);
+    }
+
+    if (m_ctxSubmenuAddToPlaylist.isValid()) {
+        m_ctxSubmenuAddToPlaylist.replaceAllItems(IDC_ADD_SELECTED_TO_PLAYLIST_START, names);
+    }
+
+    m_menuCtx->trackPopupMenu(pt.x, pt.y, m_pSkin);
 }

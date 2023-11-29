@@ -33,15 +33,6 @@ public:
         }
         if (isEmptyString(szCmdLine)) {
             // load default playlist
-            string strCurrentPlaylist;
-
-            strCurrentPlaylist = g_profile.getString("Latest Playlist", "");
-            if (!g_player.loadPlaylist(strCurrentPlaylist.c_str(), true)) {
-                g_player.newNowPlaying();
-            }
-
-            int nNowPlaying = g_profile.getInt(SZ_SECT_PLAYER, "NowPlayingIdx", 0);
-            g_player.setCurrentMediaInPlaylist(nNowPlaying);
         } else {
             // excute cmdline
             sendCommandLine(CMPlayerAppBase::getMainWnd()->getHandle(), szCmdLine);

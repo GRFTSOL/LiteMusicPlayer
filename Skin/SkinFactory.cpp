@@ -36,9 +36,9 @@ SkinWndStartupInfo::SkinWndStartupInfo(cstr_t szClassName, cstr_t szCaptionText,
 }
 
 UIObjectIDDefinition g_uidBaseDefinition[] = {
-    { "ID_MINIMIZE", CMD_MINIMIZE, 0, _TLM("minimize") },
+    { "ID_MINIMIZE", CMD_MINIMIZE, 0, _TLM("Minimize") },
     { "ID_MAXIMIZE", CMD_MAXIMIZE, 0, _TLM("Maximize") },
-    { "ID_CLOSE", CMD_CLOSE, IDCLOSE, _TLM("close") },
+    { "ID_CLOSE", CMD_CLOSE, IDCLOSE, _TLM("Close") },
     { "ID_QUIT", CMD_QUIT, 0, _TLM("quit") },
     { "ID_MENU", CMD_MENU, 0, _TLM("Menu") },
     { "ID_OK", CMD_OK, IDOK, nullptr },
@@ -408,7 +408,6 @@ void CSkinStyles::addStyle(SXNode *nodeStyle) {
                 }
 
                 auto orgExtends = nodeFrom->getProperty(SZ_PN_EXTENDS);
-                assert(orgExtends != nullptr);
                 if (orgExtends != nullptr) {
                     node->setProperty(SZ_PN_EXTENDS, orgExtends);
                 }

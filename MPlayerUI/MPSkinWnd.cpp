@@ -540,13 +540,6 @@ void CMPSkinWnd::onUIObjNotify(IUIObjNotify *pNotify) {
 }
 
 bool CMPSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags) {
-    CMPSkinMainWnd *pMainWnd = CMPlayerAppBase::getMainWnd();
-    if (pMainWnd) {
-        if (CMPlayerAppBase::getHotkey().onKeyDown(this, nChar, nFlags)) {
-            return true;
-        }
-    }
-
     if (CSkinWnd::onKeyDown(nChar, nFlags)) {
         return true;
     }
@@ -560,6 +553,13 @@ bool CMPSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags) {
             return true;
         } else if (nChar == VK_RIGHT) {
             g_player.next();
+            return true;
+        }
+    }
+
+    CMPSkinMainWnd *pMainWnd = CMPlayerAppBase::getMainWnd();
+    if (pMainWnd) {
+        if (CMPlayerAppBase::getHotkey().onKeyDown(this, nChar, nFlags)) {
             return true;
         }
     }

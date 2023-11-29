@@ -2,10 +2,10 @@
 <skin defmainwnd="MainWnd" mainwnds="MainWnd" ExtraResouceFolder="DHPlayer">
 	<include Name="Styles.xml"/>
 
-	<skinwnd Name="MainWnd" EnableTranslucency="true" EnableClickThrough="false"
-			 MinWidth="640" MinHeight="120" Width="700" Height="400" Menu="MainWndMenu"
-			 CmdHandler="ch_common,ch_playlist,ch_medialib" Script="main.js" 
-			 ContextMenu="MainContextMenu" TranslucencyAlpha="255">
+	<skinwnd Extends="Window" Name="MainWnd"
+			MinWidth="640" MinHeight="120" Width="700" Height="400" Menu="MainWndMenu"
+			CmdHandler="ch_common,ch_playlist,ch_medialib" Script="main.js" 
+			ContextMenu="MainContextMenu">
 
 		<Frame Name="Frame" Rect="0,110,w,h-110" Image="frame.png" ImageRect="0,110,425,40"
 			RoundWidthTop="8" RoundWidthBottom="8" ThickWidth="8" BlendPixMode="copy"/>
@@ -65,8 +65,8 @@
 				</Container>
 			</Container>
 
-			<Button Rect="w-24-10,35,24,24" ID="CID_HIDE_PLAYLIST" Image="playlist.png" ImageSize="24,24"/>
-			<Button Rect="w-24-10,85,24,24" ID="CID_HIDE_BOTTOM" Image="bottom.png" ImageSize="24,24"/>
+			<Button Rect="w-24-10,35,24,24" ID="CID_HIDE_PLAYLIST" Image="playlist.png" ImageSize="24,24" ToolTip="Switch between playlist and lyrics"/>
+			<Button Rect="w-24-10,85,24,24" ID="CID_HIDE_BOTTOM" Image="bottom.png" ImageSize="24,24" ToolTip="Hide/show body"/>
 
 		</Container>
 
@@ -78,7 +78,7 @@
 				RoundWidthTop="1" RoundWidthBottom="1" ThickWidth="1" BlendPixMode="copy"/>
 
 			<ResizableLinearContainer ID="CID_PLAYLIST_LYRICS" Name="Body" Rect="1,1,w-2,h-2" BgColor="#7F7F7F" SeparatorThickness="4" Orientation="Horizontal">
-				<Container ID="CID_PLAYLIST" Rect=",,200,108" ContextMenu="PlaylistMenu" LayoutParams="match_parent_height" Weight="1">
+				<Container ID="CID_PLAYLIST" Rect=",,200,108" LayoutParams="match_parent_height" Weight="1">
 					<Frame Image="panel-frame.png" Rect="0,0,w,h" RoundWidth="5" ThickWidth="5"
 						  XBorder="0" YBorder="0"/>
 					<NormalPlaylist Rect="5,5,w-10,h-10" EnableHeader="false" EnableBorder="false" KeywordEdit="CID_E_SEARCH_MUSIC">

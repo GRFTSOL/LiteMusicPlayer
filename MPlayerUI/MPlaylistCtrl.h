@@ -59,14 +59,24 @@ protected:
     PlaylistPtr getSelectedSearchResult(MediaPtr &firstSelectedOut);
     PlaylistPtr getAllSearchResult(MediaPtr &firstSelectedOut);
 
+    void loadMenu();
     void popupSearchResultMenu(CPoint pt);
+    void popupContexMenu(CPoint pt);
 
 protected:
+    // Context menu
+    string                      m_menuCtxName;
+    SkinMenuPtr                 m_menuCtx;
+    CMenu                       m_ctxSubmenuAddToPlaylist;
+
+    // Search result menu.
     string                      m_menuSearchResultName;
     SkinMenuPtr                 m_menuSearchResult;
     CMenu                       m_submenuAddResultToPlaylist;
     CMenu                       m_submenuAddSelectedToPlaylist;
-    VecPlaylistNames            m_playlistNames;
+
+    // Popup menu playlist names.
+    VecPlaylistBriefs            m_playlistNames;
 
     string                      m_idEditorSearch;
     CSkinEditCtrl               *m_editorSearch;

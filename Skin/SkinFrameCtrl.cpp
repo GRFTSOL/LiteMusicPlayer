@@ -52,7 +52,9 @@ void CSkinFrameCtrl::draw(CRawGraph *canvas) {
 
     CSFImage *pImage = &m_image;
     if (m_pObjFocusIndicator) {
-        if (m_imageFocus.isValid() && m_pSkin->getFocusUIObj() == m_pObjFocusIndicator) {
+        if (!m_pObjFocusIndicator->isEnable()) {
+            pImage = &m_imageDisabled;
+        } else if (m_imageFocus.isValid() && m_pSkin->getFocusUIObj() == m_pObjFocusIndicator) {
             pImage = &m_imageFocus;
         }
     } else if (m_imageFocus.isValid() && m_pSkin->isWndActive()) {
@@ -135,6 +137,9 @@ bool CSkinFrameCtrl::setProperty(cstr_t szProperty, cstr_t szValue) {
     } else if (isPropertyName(szProperty, "ImageFocusPos")) {
         m_imageFocus = m_image;
         scan2IntX(szValue, m_imageFocus.m_x, m_imageFocus.m_y);
+    } else if (isPropertyName(szProperty, "ImageDisabled")) {
+        m_imageDisabled = m_image;
+        scan2IntX(szValue, m_imageDisabled.m_x, m_imageDisabled.m_y);
     } else if (isPropertyName(szProperty, "BlendPixMode")) {
         m_bpm = blendPixModeFromStr(szValue);
     } else if (isPropertyName(szProperty, "RoundWidth")) {

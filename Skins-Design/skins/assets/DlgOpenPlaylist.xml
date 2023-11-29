@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skinwnd Extends="WindowFrame" Name="NewPlaylist.xml" Caption="Open Playlist"
+        FixedWidth="true" FixedHeight="true" Width="800" Height="400">
+    <Container Visible="true" Name="Rename playlist" Rect="0,0,w,h">
+        <NormalListCtrl ID="CID_PLAYLIST_CTRL" Rect="10,20,w-20,h-20-45" EnableHeader="true" SubmitCmd="true"/>
+
+        <NormalTextBt ID="ID_OK" Text="&amp;Open" Rect="w/2-120,h-10-20,100,"/>
+        <NormalTextBt ID="CID_MORE" Text="&amp;More &gt;&gt;" Rect="w/2+20,h-10-20,100,"/>
+        <NormalTextBt ID="ID_CANCEL" Text="Cancel" Rect="w-110,h-10-20,100,"/>
+    </Container>
+
+    <Container ID="CID_C_RENAME" Visible="false" Name="Rename playlist" Rect="0,0,w,h">
+        <NormalEdit ID="CID_E_NAME" Rect="20,h/2-20-20,w-20-20," PlaceHolder="Playlist name" SubmitCmd="CID_DO_RENAME"/>
+        <NormalTextBt ID="CID_DO_RENAME" Text="Rename" Rect="w/2-100-20,h/2+15,100,"/>
+        <NormalTextBt ID="CID_CANCEL_RENAME" Text="Cancel" Rect="w/2+20,h/2+15,100,"/>
+    </Container>
+</skinwnd>

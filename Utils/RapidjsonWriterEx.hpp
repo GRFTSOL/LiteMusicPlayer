@@ -41,6 +41,7 @@ public:
     virtual const size_t getSize() override { return _buf.GetSize(); }
 
     rapidjson::StringBuffer &getStringBuffer() { return _buf; }
+    StringView getStringView() { return {_buf.GetString(), _buf.GetSize()}; }
 
 private:
     rapidjson::StringBuffer                             _buf;

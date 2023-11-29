@@ -127,9 +127,6 @@ enum ML_CUSTOM_COMMAND {
     CMD_ML_BACK,
     ID_ML_MEDIA_LIST,
 
-    ID_AD_TXT_LINK,
-    ID_AD_IMG_LINK,
-
     ID_ALBUMART,                     // album art control
 
     // other cmd

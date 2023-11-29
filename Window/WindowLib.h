@@ -15,7 +15,6 @@
 #include "win32/MLMenu.h"
 #include "win32/WndResizer.h"
 #include "win32/DlgChooseColor.h"
-#include "win32/SkinToolTip.h"
 #endif
 
 #ifdef _LINUX_GTK2
@@ -32,7 +31,6 @@
 #include "mac/Menu.h"
 #include "mac/WndResizer.h"
 #include "mac/DlgChooseColor.h"
-#include "mac/SkinToolTip.h"
 #endif
 
 #include "WndDrag.h"

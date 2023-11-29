@@ -104,6 +104,8 @@ public:
 
     int getItemText(int nItem, int nSubItem, char * lpszText, int nLen);
     int getItemText(int nItem, int nSubItem, string &strText);
+    string getItemText(int row, int subItem)
+        {string text; getItemText(row, subItem, text); return text; }
     virtual bool setItemText(int row, int col, cstr_t text, bool isRedraw = true);
     bool setItemText(int row, int col, const string &text, bool isRedraw = true)
         { return setItemText(row, col, text.c_str(), isRedraw); }
@@ -111,7 +113,9 @@ public:
 
     virtual bool setItemImage(int nItem, int nSubItem, const RawImageDataPtr &image, bool bRedraw = true);
 
-    virtual int insertItem(int nItem, cstr_t lpszItem, int nImageIndex = 0, uint32_t nItemData = 0, bool bRedraw = true);
+    virtual int insertItem(int index, cstr_t lable, int idxImage = 0, uint32_t itemData = 0, bool isRedraw = true);
+    int appendItem(cstr_t lable, int idxImage = 0, uint32_t itemData = 0, bool isRedraw = true)
+        { return insertItem(getItemCount(), lable, idxImage, itemData, isRedraw); }
     uint32_t getItemCount() const { return (uint32_t)m_vRows.size(); }
 
     bool deleteItem(int nItem, bool bRedraw = true);

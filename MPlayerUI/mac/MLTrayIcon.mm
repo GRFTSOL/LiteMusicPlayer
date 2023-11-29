@@ -73,7 +73,7 @@ NSString *getStatusItemIcon(uint32_t cmd) {
         return ICON_MENU;
     }
 
-    auto playlist = g_player.getCurrentPlaylist();
+    auto playlist = g_player.getNowPlaying();
     if (!playlist || playlist->getCount() == 0) {
         if (cmd == CMD_PLAYPAUSE) {
             return ICON_PLAY_DISABLED;

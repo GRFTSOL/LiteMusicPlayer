@@ -3,13 +3,15 @@
 #ifndef MPlayerEngine_MediaLibrary_h
 #define MPlayerEngine_MediaLibrary_h
 
-
+#include <unordered_map>
 #include "../third-parties/sqlite/Sqlite3.hpp"
 
 #include "Playlist.h"
 
 
 class CPlayer;
+
+using MapMedias = std::unordered_map<int, MediaPtr>;
 
 /**
  * 按照分类统计出媒体库的歌曲.
@@ -42,13 +44,6 @@ using VecMediaCategories = vector<MediaCategory>;
 
 cstr_t mediaCategoryTypeToString(MediaCategory::Type type);
 
-struct PlaylistName {
-    int                         id;
-    string                      name;
-    int64_t                     orderBy = 0;
-};
-using VecPlaylistNames = vector<PlaylistName>;
-
 enum MediaLibOrderBy {
     MLOB_NONE,
     MLOB_ARTIST,
@@ -72,8 +67,8 @@ public:
     VecStrings getAllGenre();
     VecStrings getAlbumOfArtist(cstr_t szArtist);
 
-    VecPlaylistNames getAllPlaylistNames();
-    VecPlaylistNames getRecentPlaylistNames();
+    VecPlaylistBriefs getAllPlaylistBriefs();
+    VecPlaylistBriefs getRecentPlaylistBriefs();
 
     uint32_t getMediaCount();
 
@@ -89,14 +84,18 @@ public:
     ResultCode updateMediaInfo(Media *media);
 
     // removes the specified item from the media library
-    ResultCode remove(Media *media, bool isDeleteFile = false);
+    ResultCode remove(const MediaPtr &media, bool isDeleteFile = false);
     ResultCode remove(const VecMediaPtrs &medias, bool isDeleteFile = false);
 
     // If the media file was removed temporarily, set this flag on.
     ResultCode setDeleted(Media *media);
 
+    PlaylistPtr getNowPlaying();
+    void saveNowPlaying();
+
     PlaylistPtr newPlaylist(cstr_t name);
     PlaylistPtr getPlaylist(int playlistId);
+    void deltePlaylist(int playlistId);
 
     ResultCode savePlaylist(const PlaylistPtr &playlist);
     ResultCode addToPlaylist(int idPlaylist, const PlaylistPtr &other);
@@ -160,12 +159,12 @@ protected:
 
     int upgradeCheck();
 
+    void loadNowPlaying();
     void loadPlaylists();
     int savePlaylistInDb(const PlaylistInfo &playlist);
     PlaylistInfo *getMemPlaylistInfoById(int id);
 
     PlaylistPtr getPlaylist(PlaylistInfo &info);
-    void deltePlaylist(int playlistId);
 
     void updateMediaCategories();
     PlaylistPtr queryPlaylist(cstr_t SQL);
@@ -177,6 +176,10 @@ protected:
     friend class CMLQueryPlaylist;
 
     PlaylistPtr                 m_allMedias;
+    MapMedias                   m_mapMedias;
+
+    PlaylistPtr                 m_nowPlaying;
+    string                      m_fnNowPlaying;
 
     VecPlaylistInfo             m_playlists;
     VecMediaCategories          m_mediaCategories;
@@ -186,7 +189,7 @@ protected:
     std::recursive_mutex        m_mutexDataAccess;
 
     CSqlite3Stmt                m_stmtUpdateMediaPlayTime, m_stmtUpdateMediaInfo;
-    CSqlite3Stmt                m_sqlAdd, m_sqlAddFast, m_sqlQueryByUrl, m_stmtQueryByID;
+    CSqlite3Stmt                m_sqlAdd, m_sqlAddFast, m_sqlQueryByUrl;
     int                         m_nInitResult;
 
 };

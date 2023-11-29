@@ -84,7 +84,7 @@ void writeMedia(RapidjsonWriter &writer, Media *media) {
 void writeCurPlaylist(RapidjsonWriter &writer) {
     writer.Key("cur_playlist");
 
-    auto playlist = g_player.getCurrentPlaylist();
+    auto playlist = g_player.getNowPlaying();
 
     writer.StartArray();
     int count = playlist->getCount();

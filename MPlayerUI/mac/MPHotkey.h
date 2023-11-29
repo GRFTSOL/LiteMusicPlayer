@@ -4,6 +4,7 @@
 #define MPlayerUI_mac_MPHotkey_h
 
 
+void formatHotkeyText(string &strText, uint32_t nVirtKey, uint32_t fsModifiers);
 
 struct MPHotKeySection {
     cstr_t                      szName;
@@ -20,8 +21,8 @@ public:
         int                         cmd = 0;
         bool                        bGlobal = false;
         uint16_t                    button = 0;
-        uint16_t                    fsModifiers = 0;
-        uint16_t                    idHotKey = 0;
+        uint32_t                    fsModifiers = 0;
+        uint32_t                    idHotKey = 0;
         EventHotKeyRef              hotKeyRef = nullptr;
     };
     typedef vector<CmdAccKey>        VecCmAccKeys;
@@ -32,16 +33,15 @@ public:
     virtual ~CMPHotkey();
 
     void init();
+    void quit();
 
     void setEventWnd(Window *pWnd);
-
-    void quit();
 
     void enableGlobalHotkey(bool bEnable);
 
     void restoreDefaults();
 
-    void onHotKey(int nId, uint32_t fuModifiers, uint32_t uVirtKey);
+    void onHotKey(uint32_t nId, uint32_t fuModifiers, uint32_t uVirtKey);
 
     // If this key was processed, return true.
     bool onKeyDown(CMPSkinWnd *pWnd, uint32_t nChar, uint32_t nFlags);

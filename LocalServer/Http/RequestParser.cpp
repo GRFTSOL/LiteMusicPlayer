@@ -255,7 +255,7 @@ RequestParser::ResultType RequestParser::consume(Request& req, char input) {
 
 std::string RequestParser::resultTypeToString(ResultType result) {
     static std::string values[] = { "GOT_HEADER", "GOT_BODY", "BAD", "CONTINUE" };
-    assert(result >= 0 && result < CountOf(values));
+    assert(result >= 0 && (int)result < CountOf(values));
     return values[result];
 }
 

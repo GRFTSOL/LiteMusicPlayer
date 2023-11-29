@@ -21,7 +21,7 @@ bool onSongOpenFileCmd(Window *pWndParent, bool bOpen) {
         dlg.getOpenFile(vFiles);
 
         if (bOpen) {
-            g_player.newNowPlaying();
+            g_player.clearNowPlaying();
         } else {
             g_player.setNowPlayingModified(true);
         }
@@ -29,7 +29,7 @@ bool onSongOpenFileCmd(Window *pWndParent, bool bOpen) {
         for (int i = 0; i < (int)vFiles.size(); i++) {
             g_player.addToNowPlaying(vFiles[i].c_str());
         }
-        g_player.saveCurrentPlaylist();
+        g_player.saveNowPlaying();
         if (bOpen) {
             g_player.play();
         }
@@ -57,7 +57,7 @@ bool onSongOpenDirCmd(Window *pWndParent, bool bOpen) {
         }
 
         g_player.addDirToNowPlaying(strFolder.c_str(), true);
-        g_player.saveCurrentPlaylist();
+        g_player.saveNowPlaying();
         if (bOpen) {
             g_player.play();
         }

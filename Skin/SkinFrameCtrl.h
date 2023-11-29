@@ -21,7 +21,7 @@ public:
     void setFocusIndicator(CUIObject *pObjFocusIndicator) { m_pObjFocusIndicator = pObjFocusIndicator; }
 
 protected:
-    CSFImage                    m_image, m_imageFocus;
+    CSFImage                    m_image, m_imageFocus, m_imageDisabled;
     BlendPixMode                m_bpm;
     int16_t                     m_nRoundWidthTop, m_nRoundWidthBottom;
     int16_t                     m_nThickLeft, m_nThickTop, m_nThickRight, m_nThickBottom;

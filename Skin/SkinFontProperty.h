@@ -2,6 +2,7 @@
 
 
 class CUIObjProperties;
+class CSkinWnd;
 
 //
 // This class is used to manage font properties of skin window and skin controls.

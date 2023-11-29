@@ -23,7 +23,7 @@
     <cmd ID="CMD_SHOW_INFO_TEXT"       func="set_ctrl_property"    param="CID_TOGGLE_LYR_PL,CmdToggle,CID_INFOTEXT" />
   </DynCmds>
   <include Name="FloatingLyrMode.xml"/>
-  <skinwnd Name="lyrbar" EnableTranslucency="true" TranslucencyAlpha="228" MinWidth="275" MinHeight="20" Width="400" Height="200" BgColor="#183C7B" ContextMenu="LyrBarMode">
+  <skinwnd Name="lyrbar" Extends="Window" TranslucencyAlpha="228" MinWidth="275" MinHeight="20" Width="400" Height="200" BgColor="#183C7B" ContextMenu="LyrBarMode">
     <Image Rect="0,0,10,10" Image="fl_border_mask.png" ImageRect="0, 0, 10, 10" BlendPixMode="alpha_mask"/>
     <Image Rect="w-10,0,10,10" Image="fl_border_mask.png" ImageRect="10, 0, 10, 10" BlendPixMode="alpha_mask"/>
     <Image Rect="0,h-10,10,10" Image="fl_border_mask.png" ImageRect="0, 10, 10, 10" BlendPixMode="alpha_mask"/>
@@ -38,8 +38,8 @@
       </Toolbar>
     </DecorativeContainer>
   </skinwnd>
-  <skinwnd Name="MainWnd" EnableTranslucency="true" TranslucencyAlpha="228" 
-       MinWidth="330" MinHeight="300" Width="330" Height="400" BgColor="#576C91"
+  <skinwnd Name="MainWnd" Extends="Window" TranslucencyAlpha="228" 
+       MinWidth="330" MinHeight="300" Width="330" Height="400"
        ContextMenu="NormalMode" CmdHandler="ch_common,ch_playlist,ch_medialib">
     <Image Name="TopLeftCorner" Rect="0,0,20,20" Image="frame.png" ImageRect="0, 0, 20, 20" BlendPixMode="alpha_mask"/>
     <Image Name="LeftBottomCorner" Rect="0,h-20,20,20" Image="frame.png" ImageRect="0, 55, 20, 20" BlendPixMode="alpha_mask"/>

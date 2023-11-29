@@ -87,6 +87,15 @@ public:
         endArray();
     }
 
+    void writePropIntArray(const char *name, const VecInts &arr) {
+        writeKey(name);
+        startArray();
+        for (auto &n : arr) {
+            writeInt(n);
+        }
+        endArray();
+    }
+
 };
 
 typedef std::shared_ptr<IJsonWriter> IJsonWriterPtr;

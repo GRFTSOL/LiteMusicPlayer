@@ -131,6 +131,7 @@ public:
 
     uint32_t getSelectedCount() const;
     int getNextSelectedItem(int nPos = -1) const;
+    VecInts getSelectedItems();
 
     void setItemSelectionState(int nIndex, bool bSelected);
     void clearAllSelMark();
@@ -316,5 +317,8 @@ protected:
 
     // 插入到 ListView 的 header 和 footer 控件
     CUIObject                   *m_header, *m_footer;
+
+    // DoubleClick or Enter will post (CMD_OK) message
+    int                         m_cmdSubmit = UID_INVALID;
 
 };

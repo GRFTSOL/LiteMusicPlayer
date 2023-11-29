@@ -157,7 +157,7 @@ void CMenuAutoCheck::initProcSubMenu(CMenu &menu) {
         if (info.isSubmenu) {
             CMenu subMenu = menu.getSubmenu(i);
             initProcSubMenu(subMenu);
-        } else {
+        } else if (!info.isSeparator) {
             int nID = info.id;
             if (nID == IDC_SKIN_0) {
                 m_hInsertSkinsMenu = menu;

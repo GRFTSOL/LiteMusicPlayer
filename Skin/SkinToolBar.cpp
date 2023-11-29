@@ -873,8 +873,8 @@ void CSkinToolbar::addTooltip() {
                 rcBt.right = m_rcObj.right;
             }
 
-            m_pSkin->delTool(bt.nAutoUniID);
-            m_pSkin->addTool(_TL(bt.strTooltip.c_str()), &rcBt, bt.nAutoUniID);
+            m_pSkin->delToolTip(bt.nAutoUniID);
+            m_pSkin->addToolTip(_TL(bt.strTooltip.c_str()), rcBt, bt.nAutoUniID);
         }
 
         rcBt.left += bt.nWidth + m_nBtSpacesCX;
@@ -888,7 +888,7 @@ void CSkinToolbar::delTooltip() {
     for (int i = 0; i < (int)m_vButtons.size(); i++) {
         Button &bt = m_vButtons[i];
         if (bt.strTooltip.size()) {
-            m_pSkin->delTool(bt.nAutoUniID);
+            m_pSkin->delToolTip(bt.nAutoUniID);
         }
     }
 }

@@ -117,5 +117,5 @@ int CLrcUploadDB::add(LrcUploadFileInfo &lrcUpload) {
 }
 
 cstr_t CLrcUploadDB::uploadStateToStr(uint32_t dwUploadState) {
-    return iDToString(_id2sUploadState, dwUploadState, "Unknown");
+    return idToString(_id2sUploadState, dwUploadState, "Unknown");
 }

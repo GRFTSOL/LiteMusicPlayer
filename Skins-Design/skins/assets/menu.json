@@ -22,10 +22,10 @@
       "separator"
     ], 
     [
-      "&Remove from Media Library", 
-      "IDC_NEW_PL", 
-      40161
-    ], 
+      "Remove from Media Library", 
+      "IDC_REMOVE_FROM_LIBRARY", 
+      40208
+    ],
     [
       "separator"
     ], 
@@ -64,11 +64,6 @@
         ], 
         [
           "separator"
-        ], 
-        [
-          "&New Playlist", 
-          "IDC_NEW_PL", 
-          40161
         ], 
         [
           "Open &Playlist", 
@@ -329,7 +324,7 @@
         [
           "INSERT_SKIN_POS", 
           "IDC_SKIN_POS", 
-          40146
+          40006
         ], 
         [
           "separator"
@@ -865,11 +860,6 @@
       "separator"
     ], 
     [
-      "&New Playlist", 
-      "IDC_NEW_PL", 
-      40161
-    ], 
-    [
       "&Save Playlist...", 
       "IDC_SAVE_PL", 
       40159
@@ -911,7 +901,7 @@
       40155
     ], 
     [
-      "Remove from Library", 
+      "Remove from Media Library", 
       "IDC_REMOVE_FROM_LIBRARY", 
       40208
     ],
@@ -998,11 +988,6 @@
         ], 
         [
           "separator"
-        ], 
-        [
-          "&New Playlist", 
-          "IDC_NEW_PL", 
-          40161
         ], 
         [
           "Open &Playlist", 
@@ -1970,9 +1955,21 @@
       40155
     ], 
     [
-      "Remove from Library", 
+      "Remove from Media Library", 
       "IDC_REMOVE_FROM_LIBRARY", 
       40208
+    ]
+  ],
+  "OpenSavePlaylistMenu": [
+    [
+      "Delete Playlist", 
+      "IDC_DELETE", 
+      1013
+    ], 
+    [
+      "Rename Playlist", 
+      "IDC_RENAME", 
+      1012
     ]
   ]
 }

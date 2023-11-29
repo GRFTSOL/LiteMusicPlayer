@@ -91,7 +91,6 @@
 		0EB70F7027759E22006929F1 /* DlgChooseColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70F6327759E22006929F1 /* DlgChooseColor.mm */; };
 		0EB70F7127759E22006929F1 /* FolderDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70F6427759E22006929F1 /* FolderDialog.mm */; };
 		0EB70F7227759E22006929F1 /* ScrollBarHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70F6527759E22006929F1 /* ScrollBarHandler.cpp */; };
-		0EB70F7327759E22006929F1 /* SkinToolTip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70F6727759E22006929F1 /* SkinToolTip.cpp */; };
 		0EB70F7427759E23006929F1 /* FileSaveDlg.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0EB70F6927759E22006929F1 /* FileSaveDlg.mm */; };
 		0EB70F822776B59C006929F1 /* libThirdPartiesSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EB70F7D2776B58A006929F1 /* libThirdPartiesSDK.a */; };
 		0EB70FAD2776C8B2006929F1 /* libMLLibMac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EB70F922776B952006929F1 /* libMLLibMac.a */; };
@@ -332,7 +331,8 @@
 		C08AA9932AFA62AE00F5DE2D /* play-disabled.png in Resources */ = {isa = PBXBuildFile; fileRef = C08AA98F2AFA62AE00F5DE2D /* play-disabled.png */; };
 		C08AA9942AFA62AE00F5DE2D /* pause.png in Resources */ = {isa = PBXBuildFile; fileRef = C08AA9902AFA62AE00F5DE2D /* pause.png */; };
 		C08AA9952AFA62AE00F5DE2D /* pause@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C08AA9912AFA62AE00F5DE2D /* pause@2x.png */; };
-		C08AA99B2B12480B00F5DE2D /* DlgNewPlaylist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C08AA9992B12480B00F5DE2D /* DlgNewPlaylist.cpp */; };
+		C08AA99B2B12480B00F5DE2D /* DlgPlaylist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C08AA9992B12480B00F5DE2D /* DlgPlaylist.cpp */; };
+		C08AA99E2B15DD6800F5DE2D /* SkinToolTip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C08AA99C2B15DD6700F5DE2D /* SkinToolTip.cpp */; };
 		C0A27E772AD7B25E00D248A4 /* IJsonWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0A27E752AD7B25E00D248A4 /* IJsonWriter.cpp */; };
 		C0A81FFF2ABDDFC200CDF309 /* libTinyJsStaticLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A81FFE2ABDDFBB00CDF309 /* libTinyJsStaticLib.a */; };
 		C0ADB9712AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0ADB96F2AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.cpp */; };
@@ -624,12 +624,10 @@
 		0EB70F6427759E22006929F1 /* FolderDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FolderDialog.mm; sourceTree = "<group>"; };
 		0EB70F6527759E22006929F1 /* ScrollBarHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollBarHandler.cpp; sourceTree = "<group>"; };
 		0EB70F6627759E22006929F1 /* DlgChooseColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DlgChooseColor.h; sourceTree = "<group>"; };
-		0EB70F6727759E22006929F1 /* SkinToolTip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkinToolTip.cpp; sourceTree = "<group>"; };
 		0EB70F6827759E22006929F1 /* ScrollBarHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBarHandler.h; sourceTree = "<group>"; };
 		0EB70F6927759E22006929F1 /* FileSaveDlg.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSaveDlg.mm; sourceTree = "<group>"; };
 		0EB70F6A27759E22006929F1 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		0EB70F6B27759E22006929F1 /* FileOpenDlg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileOpenDlg.h; sourceTree = "<group>"; };
-		0EB70F6C27759E22006929F1 /* SkinToolTip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkinToolTip.h; sourceTree = "<group>"; };
 		0EB70F6D27759E22006929F1 /* FileSaveDlg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSaveDlg.h; sourceTree = "<group>"; };
 		0EB70F6E27759E22006929F1 /* FolderDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FolderDialog.h; sourceTree = "<group>"; };
 		0EB70F782776B58A006929F1 /* ThirdPartiesSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ThirdPartiesSDK.xcodeproj; path = "third-parties/ThirdPartiesSDK.xcodeproj"; sourceTree = "<group>"; };
@@ -1030,8 +1028,10 @@
 		C08AA98F2AFA62AE00F5DE2D /* play-disabled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "play-disabled.png"; sourceTree = "<group>"; };
 		C08AA9902AFA62AE00F5DE2D /* pause.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pause.png; sourceTree = "<group>"; };
 		C08AA9912AFA62AE00F5DE2D /* pause@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pause@2x.png"; sourceTree = "<group>"; };
-		C08AA9992B12480B00F5DE2D /* DlgNewPlaylist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgNewPlaylist.cpp; path = MPlayerUI/DlgNewPlaylist.cpp; sourceTree = "<group>"; };
-		C08AA99A2B12480B00F5DE2D /* DlgNewPlaylist.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = DlgNewPlaylist.hpp; path = MPlayerUI/DlgNewPlaylist.hpp; sourceTree = "<group>"; };
+		C08AA9992B12480B00F5DE2D /* DlgPlaylist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgPlaylist.cpp; path = MPlayerUI/DlgPlaylist.cpp; sourceTree = "<group>"; };
+		C08AA99A2B12480B00F5DE2D /* DlgPlaylist.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = DlgPlaylist.hpp; path = MPlayerUI/DlgPlaylist.hpp; sourceTree = "<group>"; };
+		C08AA99C2B15DD6700F5DE2D /* SkinToolTip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkinToolTip.cpp; sourceTree = "<group>"; };
+		C08AA99D2B15DD6800F5DE2D /* SkinToolTip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkinToolTip.h; sourceTree = "<group>"; };
 		C0A27E742AD7B25E00D248A4 /* RapidjsonWriter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RapidjsonWriter.hpp; sourceTree = "<group>"; };
 		C0A27E752AD7B25E00D248A4 /* IJsonWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IJsonWriter.cpp; sourceTree = "<group>"; };
 		C0A27E762AD7B25E00D248A4 /* IJsonWriter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IJsonWriter.hpp; sourceTree = "<group>"; };
@@ -1146,8 +1146,6 @@
 				0EB70F6427759E22006929F1 /* FolderDialog.mm */,
 				0EB70F6527759E22006929F1 /* ScrollBarHandler.cpp */,
 				0EB70F6827759E22006929F1 /* ScrollBarHandler.h */,
-				0EB70F6727759E22006929F1 /* SkinToolTip.cpp */,
-				0EB70F6C27759E22006929F1 /* SkinToolTip.h */,
 				0EB70F6127759E22006929F1 /* WidgetLiteMac.h */,
 				0EB70F332774AE0B006929F1 /* WindowHandleHolder.h */,
 				0E56BC66274B3B8300032A3E /* Menu.h */,
@@ -1317,6 +1315,8 @@
 				0E56BBB62745E53D00032A3E /* SkinToggleCtrlContainer.h */,
 				0E56BBBA2745E53D00032A3E /* SkinToolBar.cpp */,
 				0E56BB8D2745E53C00032A3E /* SkinToolBar.h */,
+				C08AA99C2B15DD6700F5DE2D /* SkinToolTip.cpp */,
+				C08AA99D2B15DD6800F5DE2D /* SkinToolTip.h */,
 				0E56BB7B2745E53C00032A3E /* SkinTxtLink.cpp */,
 				0E56BBBF2745E53D00032A3E /* SkinTxtLink.h */,
 				0E56BC1F27469FD900032A3E /* SkinTypes.h */,
@@ -1425,8 +1425,8 @@
 				0EB70FE927773BB0006929F1 /* DlgAdjustHue.h */,
 				0EB70FD627773BAF006929F1 /* DlgMediaInfo.cpp */,
 				0EB7106F27773BB6006929F1 /* DlgMediaInfo.h */,
-				C08AA9992B12480B00F5DE2D /* DlgNewPlaylist.cpp */,
-				C08AA99A2B12480B00F5DE2D /* DlgNewPlaylist.hpp */,
+				C08AA9992B12480B00F5DE2D /* DlgPlaylist.cpp */,
+				C08AA99A2B12480B00F5DE2D /* DlgPlaylist.hpp */,
 				C0ADB96F2AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.cpp */,
 				C0ADB9702AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.hpp */,
 				0EB7103127773BB4006929F1 /* DlgSearchLyrics.cpp */,
@@ -2108,7 +2108,7 @@
 				C04DBFEE297ECDA100A0FCB1 /* x509_create.c in Sources */,
 				C04DC01A297ECDA100A0FCB1 /* pkwrite.c in Sources */,
 				C04DC03C298D619300A0FCB1 /* MediaLibrary.cpp in Sources */,
-				C08AA99B2B12480B00F5DE2D /* DlgNewPlaylist.cpp in Sources */,
+				C08AA99B2B12480B00F5DE2D /* DlgPlaylist.cpp in Sources */,
 				0EB7107B27773BB6006929F1 /* DlgUpload.cpp in Sources */,
 				0EB70F7427759E23006929F1 /* FileSaveDlg.mm in Sources */,
 				0EB710A927773BB6006929F1 /* MPlayerAppBase.cpp in Sources */,
@@ -2231,7 +2231,6 @@
 				0EB710C627773BB6006929F1 /* HelperMac.cpp in Sources */,
 				0EB70F5F27759DF5006929F1 /* SplashScreenWnd.cpp in Sources */,
 				0EB7109627773BB6006929F1 /* PreferenceDlg.cpp in Sources */,
-				0EB70F7327759E22006929F1 /* SkinToolTip.cpp in Sources */,
 				C04DBF70297EB36200A0FCB1 /* ecp.c in Sources */,
 				0E56BBE22745E53D00032A3E /* SkinNStatusButton.cpp in Sources */,
 				0E56BBE12745E53D00032A3E /* SkinAnimation.cpp in Sources */,
@@ -2276,6 +2275,7 @@
 				0EB7108C27773BB6006929F1 /* MPSkinWnd.cpp in Sources */,
 				0E56BBF22745E53D00032A3E /* SFImage.cpp in Sources */,
 				C04DBF64297EB36200A0FCB1 /* aes.c in Sources */,
+				C08AA99E2B15DD6800F5DE2D /* SkinToolTip.cpp in Sources */,
 				C04DBF7F297EB36200A0FCB1 /* bignum.c in Sources */,
 				C04DBF5E297EB36200A0FCB1 /* bignum_mod_raw.c in Sources */,
 				0E56BBE72745E53D00032A3E /* SkinResMgr.cpp in Sources */,
@@ -2438,7 +2438,7 @@
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
@@ -2509,7 +2509,7 @@
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;

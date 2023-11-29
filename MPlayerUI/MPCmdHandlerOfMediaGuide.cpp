@@ -45,7 +45,7 @@ bool CMPCmdHandlerOfMediaGuide::onCommand(int nId) {
 
             auto playlist = m_mediaTree.getCurNodePlaylist();
             if (playlist) {
-                auto curPl = g_player.getCurrentPlaylist();
+                auto curPl = g_player.getNowPlaying();
                 int nSel = -1;
                 while (1) {
                     nSel = pMediaList->getNextSelectedItem(nSel);
@@ -57,7 +57,7 @@ bool CMPCmdHandlerOfMediaGuide::onCommand(int nId) {
                         curPl->insertItem(-1, media);
                     }
                 }
-                g_player.saveCurrentPlaylist();
+                g_player.saveNowPlaying();
             }
         }
         break;
@@ -65,7 +65,7 @@ bool CMPCmdHandlerOfMediaGuide::onCommand(int nId) {
         {
             auto playlist = m_mediaTree.getCurNodePlaylist();
             if (playlist) {
-                auto curPl = g_player.getCurrentPlaylist();
+                auto curPl = g_player.getNowPlaying();
                 int nCount = playlist->getCount();
                 for (int i = 0; i < nCount; i++) {
                     auto media = playlist->getItem(i);
@@ -73,7 +73,7 @@ bool CMPCmdHandlerOfMediaGuide::onCommand(int nId) {
                         curPl->insertItem(-1, media);
                     }
                 }
-                g_player.saveCurrentPlaylist();
+                g_player.saveNowPlaying();
             }
         }
         break;
@@ -170,14 +170,14 @@ bool CMPCmdHandlerOfMediaGuide::onUIObjNotify(IUIObjNotify *pNotify) {
             if (pListCtrlNotify->cmd == CSkinListCtrlEventNotify::C_DBL_CLICK ||
                 pListCtrlNotify->cmd == CSkinListCtrlEventNotify::C_ENTER) {
                 if (pNode->m_playlist.p) {
-                    g_player.setCurrentPlaylist(pNode->m_playlist);
-                    g_player.setCurrentMediaInPlaylist(nSel);
+                    g_player.setNowPlaying(pNode->m_playlist);
+                    g_player.setCurrentMediaInNowPlaying(nSel);
                     g_player.play();
-                    g_player.saveCurrentPlaylist();
+                    g_player.saveNowPlaying();
                     return true;
                 }
                 if (pNode->nodeType == MGNT_NOW_PLAYING) {
-                    g_player.setCurrentMediaInPlaylist(nSel);
+                    g_player.setCurrentMediaInNowPlaying(nSel);
                 }
             }
         }

@@ -17,6 +17,8 @@ struct CPoint {
 
 };
 
+using VecPoints = std::vector<CPoint>;
+
 struct CSize {
     int                         cx;
     int                         cy;

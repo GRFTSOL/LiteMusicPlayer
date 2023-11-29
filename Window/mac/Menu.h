@@ -40,6 +40,8 @@ public:
     virtual void updateMenuStatus(Window *window) { }
 
     virtual void trackPopupMenu(int x, int y, Window *pWnd, CRect *prcNotOverlap = nullptr);
+    void trackPopupMenu(CPoint pos, Window *pWnd, CRect *prcNotOverlap = nullptr)
+        { trackPopupMenu(pos.x, pos.y, pWnd, prcNotOverlap); }
     virtual void trackPopupSubMenu(int x, int y, int nSubMenu, Window *pWnd, CRect *prcNotOverlap = nullptr);
 
     void enableItem(int nID, bool bEnable);

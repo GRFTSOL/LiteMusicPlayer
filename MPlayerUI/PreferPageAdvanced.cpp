@@ -15,11 +15,6 @@
 
 #ifdef _MAC_OS
 #include "mac/MLTrayIcon.h"
-
-void formatHotkeyText(string &strText, uint32_t nVirtKey, uint32_t fsModifiers) {
-    strText = stringPrintf("%d", nVirtKey).c_str();
-}
-
 #endif
 
 #define DURATION_SEARCH     500
@@ -802,6 +797,7 @@ void CPagePfAdvanced::onInitialUpdate() {
 
 #ifdef _WIN32
     m_vPreferItems.push_back(new CPfItemSystemTrayIcon());
+#endif
 
     m_vPreferItems.push_back(new CPfItemBoolEnableGlobalHotkey());
 
@@ -824,7 +820,6 @@ void CPagePfAdvanced::onInitialUpdate() {
                 pSect->vHotkeys[k]));
         }
     }
-#endif
 
     listAllItems();
 

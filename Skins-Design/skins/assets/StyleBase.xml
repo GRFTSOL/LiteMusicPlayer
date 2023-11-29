@@ -1,49 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <style>
     <FlatImageBtn Extends="ImageButton" ContentMarginX="3" ContentMarginY="1" StretchContent="false"
-		Height="24" Padding="0,0" TabFocus="true"
-		Image="button-flat.png" ImageSize="40,24" ExtendPos="8,24"
-		ImagePos="0,0" ImageSelPos="0,48" ImageFocusPos="0,24"/>
+        Height="24" Padding="0,0" TabFocus="true"
+        Image="button-flat.png" ImageSize="40,24" ExtendPos="8,24"
+        ImagePos="0,0" ImageSelPos="0,48" ImageFocusPos="0,24"/>
     <FlatImageCheckBtn  Extends="FlatImageBtn"
-		S1_Image="button-flat.png" S1_ImageSize="40,24" S1_ExtendPos="8,24"
-		S1_ImagePos="0,72" S1_ImageSelPos="0,120" S1_ImageFocusPos="0,96"/>
+        S1_Image="button-flat.png" S1_ImageSize="40,24" S1_ExtendPos="8,24"
+        S1_ImagePos="0,72" S1_ImageSelPos="0,120" S1_ImageFocusPos="0,96"/>
 
     <NormalTextBt Extends="TextButton" FontName="Verdana" FontHeight="13" 
-		TextColor="#000000" SelTextColor="#FFFFFF" DisabledTextColor="#808080" TabFocus="true"
-		Height="21" Padding="5,3" TextLeftMargin="8" TextRightMargin="8"
-		Image="button.png" ImageSize="40,26" ExtendPos="8,24"
-		ImagePos="0,26" ImageSelPos="0,78" ImageFocusPos="0,52" ImageDisabledPos="0,0"/>
+        TextColor="#000000" SelTextColor="#FFFFFF" DisabledTextColor="#808080" TabFocus="true"
+        Height="21" Padding="5,3" TextLeftMargin="8" TextRightMargin="8"
+        Image="button.png" ImageSize="40,26" ExtendPos="8,24"
+        ImagePos="0,26" ImageSelPos="0,78" ImageFocusPos="0,52" ImageDisabledPos="0,0"/>
     <NormalImageBt Extends="ImageButton" ContentMarginX="4" ContentMarginY="4"
         Height="22" Padding="0,2" TabFocus="true"
         Image="button.png" ImageSize="40,26" ExtendPos="8,24"
-		ImagePos="0,26" ImageSelPos="0,78" ImageFocusPos="0,52" ImageDisabledPos="0,0"/>
+        ImagePos="0,26" ImageSelPos="0,78" ImageFocusPos="0,52" ImageDisabledPos="0,0"/>
 
     <NormalCheckBox Extends="TextButton" FontName="Verdana" FontHeight="13" TextColor="#000000" DisabledTextColor="#808080"
-		Height="24" Padding="3,2" TextLeftMargin="26" AlignText="AT_LEFT" CheckBox="true" TabFocus="true"
-		Image="checks.png" ImageSize="26,26"
-		ImagePos="0,26" ImageSelPos="0,52" ImageFocusPos="0,78" ImageDisabledPos="0,0"
-		S1_Image="checks.png" S1_ImageSize="26,26"
-		S1_ImagePos="26,26" S1_ImageSelPos="26,52" S1_ImageFocusPos="26,78" S1_ImageDisabledPos="26,0"/>
+        Height="24" Padding="3,2" TextLeftMargin="26" AlignText="AT_LEFT" CheckBox="true" TabFocus="true"
+        Image="checks.png" ImageSize="26,26"
+        ImagePos="0,26" ImageSelPos="0,52" ImageFocusPos="0,78" ImageDisabledPos="0,0"
+        S1_Image="checks.png" S1_ImageSize="26,26"
+        S1_ImagePos="26,26" S1_ImageSelPos="26,52" S1_ImageFocusPos="26,78" S1_ImageDisabledPos="26,0"/>
     <NormalRadioBt Extends="TextButton" FontName="Verdana" FontHeight="13" TextColor="#000000" DisabledTextColor="#808080"
-		Height="24" Padding="3,2" TextLeftMargin="26" AlignText="AT_LEFT"
-		Radio="true" TabFocus="true"
-		Image="checks.png" ImageSize="26,26"
-		ImagePos="52,26" ImageSelPos="52,52" ImageFocusPos="52,78" ImageDisabledPos="52,0"
-		S1_Image="checks.png" S1_ImageSize="26,26"
-		S1_ImagePos="78,26" S1_ImageSelPos="78,52" S1_ImageFocusPos="78,78" S1_ImageDisabledPos="78,0"/>
+        Height="24" Padding="3,2" TextLeftMargin="26" AlignText="AT_LEFT"
+        Radio="true" TabFocus="true"
+        Image="checks.png" ImageSize="26,26"
+        ImagePos="52,26" ImageSelPos="52,52" ImageFocusPos="52,78" ImageDisabledPos="52,0"
+        S1_Image="checks.png" S1_ImageSize="26,26"
+        S1_ImagePos="78,26" S1_ImageSelPos="78,52" S1_ImageFocusPos="78,78" S1_ImageDisabledPos="78,0"/>
 
-	<NormalEdit Extends="EditCtrl" Height="20" FontName="Verdana" FontHeight="13" TextColor="#000000" PlaceHolderColor="#8c8c8c"
+    <NormalEdit Extends="EditCtrl" Height="20" FontName="Verdana" FontHeight="13" TextColor="#000000" PlaceHolderColor="#8c8c8c"
         XMargin="5" YMargin="0"/>
     <EditCtrlFrame Extends="Frame" Image="edit.png" ImageSize="40,26"
-		ImagePos="0,26" ImageFocusPos="0,52" ImageHoverPos="0,52"
-		RoundWidth="4" ThickWidth="3" XBorder="0" YBorder="0"/>
+        ImagePos="0,26" ImageFocusPos="0,52" ImageHoverPos="0,52" ImageDisabled="0,0"
+        RoundWidth="4" ThickWidth="3" XBorder="0" YBorder="0"/>
     <ListCtrlFrame Extends="Frame" Image="listctrl-frame.png" ImageSize="40,26"
-		ImagePos="0,0" ImageFocusPos="0,26" ImageHoverPos="0,26"
-		RoundWidth="4" ThickWidth="2" XBorder="0" YBorder="0"/>
+        ImagePos="0,0" ImageFocusPos="0,26" ImageHoverPos="0,26"
+        RoundWidth="2" ThickWidth="2" XBorder="0" YBorder="0"/>
     <NormalComboBox Extends="ComboBox" FontName="Verdana" FontHeight="13" TextColor="#000000" DisabledTextColor="#808080" TabFocus="true"
-		Height="22" Padding="5,4" AlignText="AT_LEFT" TextLeftMargin="14" TextRightMargin="30"
-		Image="combo-box.png" ImageSize="60,26" ExtendPos="10,40"
-		ImagePos="0,26" ImageSelPos="0,78" ImageFocusPos="0,52" ImageDisabledPos="0,0"/>
+        Height="22" Padding="5,4" AlignText="AT_LEFT" TextLeftMargin="14" TextRightMargin="30"
+        Image="combo-box.png" ImageSize="60,26" ExtendPos="10,40"
+        ImagePos="0,26" ImageSelPos="0,78" ImageFocusPos="0,52" ImageDisabledPos="0,0"/>
     <NormalTabButton Extends="TabButton" Height="24" ImageHeight="24"
         FontName="Verdana" FontHeight="13" TextColor="#000000" SelTextColor="#FFFFFF"
         Image="button-group.png" SperatorLineWidth="2" ButtunBorderWidth="13" 
@@ -63,7 +63,7 @@
     <NormalPlaylist Extends="Playlist" ID="ID_PLAYLIST" StripeColor="#FFFFFF,#EDF3FE" SelBgColor="#3875D7" 
         NowPlayingBgColor="#007F00" NowPlayingTextColor="#FFFFFF" CustomizedColors="#FF7F00,#A9A9A9"
         TextColor="#000000" SelTextColor="#FFFFFF" FontName="Verdana" FontHeight="14" LineHeight="24"
-        HeaderHeight="24" LineColor="#808080" SearchResultMenu="PlaylistSearchCtx"
+        HeaderHeight="24" LineColor="#808080" SearchResultMenu="PlaylistSearchCtx" ContextMenu="PlaylistMenu"
         ImageHeader="listctrl-header.png"/>
 
     <Slider Extends="SeekCtrl" Height="15" EndWidth="8" ImageThumb="thumb.png" ImageTrack="progress.png"/>
@@ -72,5 +72,22 @@
     <MenuItemsContainer FontName="Verdana" FontHeight="13" FontBold="false" TextColor="#000000" BgColor="#E0E0E0"
         TextColorHover="#000000" BgColorHover="#558ff3" FrameColor="#A0A0A0" DisabledTextColor="#808080" BgColorInactive="#C0C0C0"
         ImageChecked="menu-check.png" ImageSubmenu="menu-expand-right" ImageUpArrow="menu-expand-up" ImageDownArrow="menu-expand-down"/>
+
+
+    <PopupWndFrame EnableTranslucency="true" TranslucencyAlpha="255"
+         FixedWidth="true" FixedHeight="true"
+         BgColor="#ece9d8" EnableClickThrough="false">
+        <XScaleImage Left="0" Top="0" Width="w" Height="5" Name="Top border"
+            Image="menu_frame.png" ImageRect="0,0,50,5"
+            ImageScaleXStart="10" ImageScaleXEnd="40" BlendPixMode="copy"/>
+        <XScaleImage Left="0" Top="h-5" Width="w" Height="5" Name="Bottom border"
+            Image="menu_frame.png" ImageRect="0,15,50,5"
+            ImageScaleXStart="10" ImageScaleXEnd="40" BlendPixMode="copy"/>
+        <Image Left="0" Top="5" Width="1" Height="h-10" Name="left frame" 
+            Image="menu_frame.png" ImageRect="0,5,1,10" BltMode="tile"/>
+        <Image Left="w-1" Top="5" Width="1" Height="h-10" Name="left frame"
+            Image="menu_frame.png" ImageRect="49,5,1,10" BltMode="tile"/>
+        <ClientArea Rect="1, 5, w-2, h-5-5"/>
+    </PopupWndFrame>
 
 </style>

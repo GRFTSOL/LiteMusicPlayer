@@ -12,7 +12,7 @@
 #pragma once
 
 #include "UIObject.h"
-#include "SkinFontProperty.h"
+#include "SkinToolTip.h"
 #include "SkinContainer.h"
 #include "interpreter/VirtualMachine.hpp"
 
@@ -94,6 +94,8 @@ public:
     virtual int openSkin(cstr_t szSkinWndName);
     virtual void closeSkin();
 
+    int getIDByName(cstr_t szId) { return m_pSkinFactory->getIDByName(szId); }
+
     virtual CUIObject *createUIObject(cstr_t className, CSkinContainer *container);
 
     //
@@ -132,6 +134,8 @@ public:
         { return getUIObjectText(m_pSkinFactory->getIDByName(szId)); }
 
     void setUIObjectText(int nId, cstr_t szText, bool bRedraw = true);
+    void setUIObjectText(int id, const string &text, bool isRedraw = true)
+        { setUIObjectText(id, text.c_str(), isRedraw); }
     void setUIObjectText(cstr_t szId, cstr_t szText, bool bRedraw = true)
         { setUIObjectText(m_pSkinFactory->getIDByName(szId), szText, bRedraw); }
 
@@ -345,8 +349,8 @@ public:
 
     void trackMove(Window *pWnd, int x, int y);
 
-    void addTool(cstr_t szText, CRect *lpRectTool = nullptr, uint32_t nIDTool = 0);
-    void delTool(uint32_t nIDTool);
+    void addToolTip(const StringView &text, CRect &rc, uint32_t idTooltip);
+    void delToolTip(uint32_t nIDTool);
 
 
     bool registerUIObjNotifyHandler(int nIDUIObj, IUIObjNotifyHandler *pHandler);
@@ -435,7 +439,7 @@ protected:
 
     string                      m_strMenuName;
 
-    CSkinToolTip                m_wndToolTip;
+    CSkinToolTip                m_skinToolTip;
 
     //
     // Status

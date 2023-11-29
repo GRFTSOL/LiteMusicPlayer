@@ -491,4 +491,7 @@ protected:
     int                         m_xMargin, m_yMargin;
     vector<CColor>              m_vClrTable;
 
+    // Enter will post (CMD_OK) message
+    int                         m_cmdSubmit = UID_INVALID;
+
 };

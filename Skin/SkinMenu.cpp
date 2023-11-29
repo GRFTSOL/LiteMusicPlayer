@@ -61,6 +61,8 @@ int CSkinMenu::loadMenu(const rapidjson::Value &items) {
 
     loadMenu(items, *this);
 
+    onLoadMenu();
+
     return ERR_OK;
 }
 
@@ -87,8 +89,6 @@ void CSkinMenu::loadMenu(const rapidjson::Value &items, CMenu &menu) {
             menu.appendItem(nID, _TL(name.c_str()), shortcut.c_str());
         }
     }
-
-    onLoadMenu();
 }
 
 void CSkinMenu::updateMenuStatus(Window *window) {

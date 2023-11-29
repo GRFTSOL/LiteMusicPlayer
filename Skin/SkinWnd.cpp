@@ -19,6 +19,7 @@
 
 
 #define TIMER_ID_BEG_ALLOC  120
+#define TIMER_ID_TOOLTIP 115
 #define TIMER_ID_TINY_JS_VM 116
 #define TIMER_ID_ANIMATION  117
 #define TIMER_ID_DYNAMIC_TRANS  118
@@ -133,7 +134,7 @@ int getMenuKey(cstr_t szText) {
 
 //////////////////////////////////////////////////////////////////////
 
-CSkinWnd::CSkinWnd() {
+CSkinWnd::CSkinWnd() : m_skinToolTip(this, TIMER_ID_TOOLTIP) {
     m_bFreeOnDestory = false;
     m_bManageBySkinFactory = true;
 
@@ -400,6 +401,7 @@ void CSkinWnd::processMouseMove(CPoint point) {
 
 void CSkinWnd::onMouseDrag(uint32_t nFlags, CPoint point) {
     processMouseMove(point);
+    m_skinToolTip.onMouseDrag(nFlags, point);
 
     if (m_wndResizer.isSizing()) {
         m_wndResizer.onMouseMessage(nFlags, point);
@@ -432,6 +434,7 @@ void CSkinWnd::onMouseDrag(uint32_t nFlags, CPoint point) {
 
 void CSkinWnd::onMouseMove(CPoint point) {
     processMouseMove(point);
+    m_skinToolTip.onMouseMove(point);
 
     // first send message to ui objects that captured the mouse
     if (m_pUIObjCapMouse) {
@@ -458,6 +461,7 @@ void CSkinWnd::onMouseMove(CPoint point) {
 
 void CSkinWnd::onLButtonDown(uint32_t nFlags, CPoint point) {
     onMouseActiveMsg();
+    m_skinToolTip.onLButtonDown(nFlags, point);
 
     setFocus();
 
@@ -485,6 +489,7 @@ void CSkinWnd::onLButtonDown(uint32_t nFlags, CPoint point) {
 
 void CSkinWnd::onLButtonDblClk(uint32_t nFlags, CPoint point) {
     onMouseActiveMsg();
+    m_skinToolTip.onLButtonDblClk(nFlags, point);
 
     setFocus();
 
@@ -561,6 +566,9 @@ void CSkinWnd::onLButtonUp(uint32_t nFlags, CPoint point) {
 }
 
 void CSkinWnd::onRButtonDown(uint32_t nFlags, CPoint point) {
+    onMouseActiveMsg();
+    m_skinToolTip.onRButtonDown(nFlags, point);
+
     // first send message to ui objects that captured the mouse!
     if (m_pUIObjCapMouse) {
         if (isMouseCaptured() && m_pUIObjCapMouse->needMsgRButton()) {
@@ -615,6 +623,7 @@ bool CSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         }
     }
 #endif
+    m_skinToolTip.onKeyDown(nChar, nFlags);
 
     CUIObject *pObjFocus = getFocusUIObj();
     if (pObjFocus) {
@@ -755,6 +764,7 @@ void CSkinWnd::onPaint(CRawGraph *canvas, CRect *rcClip) {
 
         // draw every UI objects on back buffer one by one
         m_rootConainter.draw(canvas);
+        m_skinToolTip.onPaint(canvas);
     }
 
     canvas->drawToWindow(rcClip->left, rcClip->top, rcClip->width(), rcClip->height(), rcClip->left, rcClip->top);
@@ -772,15 +782,12 @@ CColor CSkinWnd::getTranslucencyColor(const CColor &clr) const {
     }
 }
 
-void CSkinWnd::addTool(cstr_t szText, CRect *lpRectTool, uint32_t nIDTool) {
-    assert(!isEmptyString(szText));
-    m_wndToolTip.addTool(szText, lpRectTool, nIDTool);
+void CSkinWnd::addToolTip(const StringView &text, CRect &rc, uint32_t idTooltip) {
+    m_skinToolTip.addToolTip(text, rc, idTooltip);
 }
 
-void CSkinWnd::delTool(uint32_t nIDTool) {
-    if (m_wndToolTip.isValid()) {
-        m_wndToolTip.delTool(nIDTool);
-    }
+void CSkinWnd::delToolTip(uint32_t nIDTool) {
+    m_skinToolTip.delToolTip(nIDTool);
 }
 
 void CSkinWnd::invalidateUIObject(CUIObject *pObj) {
@@ -1228,6 +1235,9 @@ bool CSkinWnd::setProperty(cstr_t szProperty, cstr_t szValue) {
         m_animateDuration = atoi(szValue);
     } else if (isPropertyName(szProperty, "Script")) {
         m_scriptFile = szValue;
+    } else if (iStartsWith(szProperty, SZ_PN_TOOLTIP) &&
+            szProperty[ConstStrLen(SZ_PN_TOOLTIP)] != '\0') {
+        return m_skinToolTip.setProperty(szProperty + ConstStrLen(SZ_PN_TOOLTIP), szValue);
     } else if (m_rootConainter.setProperty(szProperty, szValue)) {
         DBG_LOG2("Property is set to Root Container: %s, %s", szProperty, szValue);
         return true;
@@ -1352,7 +1362,7 @@ bool CSkinWnd::removeUIObject(CUIObject *pObj, bool bFree) {
 void CSkinWnd::onDestroy() {
     closeSkin();
 
-    m_wndToolTip.destroy();
+    m_skinToolTip.onDestroy();
 
     Window::onDestroy();
 
@@ -1372,9 +1382,7 @@ void CSkinWnd::onCreate() {
     m_bOnDestroy = false;
 
     Window::onCreate();
-
-    //assert(!m_wndToolTip.isValid());
-    m_wndToolTip.create(this);
+    m_skinToolTip.onCreate();
 
     if (m_bManageBySkinFactory) {
         m_pSkinFactory->onSkinWndCreate(this);
@@ -1483,16 +1491,7 @@ void CSkinWnd::updateMemGraphicsToScreen(const CRect* lpRect) {
 int CSkinWnd::ms_msgIDCustomCommand = RegisterWindowMessage("SkinWndCustomMsgID");
 
 LRESULT CSkinWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
-    if (message >= WM_MOUSEFIRST && message <= WM_MOUSELAST && m_wndToolTip.isValid()) {
-        MSG msgRelay;
-
-        msgRelay.hwnd = m_hWnd;
-        msgRelay.message = message;
-        msgRelay.lParam = lParam;
-        msgRelay.wParam = wParam;
-
-        m_wndToolTip.relayEvent(&msgRelay);
-    } else if (message == WM_NOTIFY) {
+    if (message == WM_NOTIFY) {
         NMHDR *pnmh = (NMHDR *)lParam;
 
         if (pnmh->code == TTN_GETDISPINFO) {
@@ -1641,6 +1640,7 @@ void CSkinWnd::invalidateRectOfLayeredWindow(const CRect* lpRect) {
 
     // draw every ui objects on back buffer one by one
     m_rootConainter.draw(memCanvas);
+    m_skinToolTip.onPaint(memCanvas);
 
     updateLayeredWindowUsingMemGraph(memCanvas);
 }
@@ -2047,6 +2047,9 @@ void CSkinWnd::onTimer(uint32_t nIDEvent) {
         return;
     } else if (nIDEvent == TIMER_ID_ANIMATION) {
         onTimerAnimation();
+        return;
+    } else if (nIDEvent == TIMER_ID_TOOLTIP) {
+        m_skinToolTip.onTimer(nIDEvent);
         return;
     }
 

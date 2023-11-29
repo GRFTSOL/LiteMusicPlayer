@@ -122,6 +122,7 @@ public:
     void rectangle(float x, float y, float width, float height);
     void roundedRect(float x, float y, float width, float height, float radius);
     void fillRoundedRect(float x, float y, float width, float height, float radius, const CColor &clrFill);
+    void fillPath(const VecPoints &points, const CColor &clrFill);
 
     void setPen(const CRawPen &pen);
 

@@ -10,10 +10,7 @@ class Playlist;
 using PlaylistPtr = std::shared_ptr<Playlist>;
 using VecPlaylistPtrs = std::vector<PlaylistPtr>;
 
-/**
- * 存储在数据库中的 playlist 信息.
- */
-struct PlaylistInfo {
+struct PlaylistBrief {
     int                         id = -1;
     string                      name;
     int                         duration = 0; // 总时长，单位秒
@@ -21,6 +18,13 @@ struct PlaylistInfo {
     int                         rating = 0;
     bool                        isUpToDate = false; // 是否 duration, count 已经更新.
     int64_t                     timeModified = 0;
+};
+using VecPlaylistBriefs = vector<PlaylistBrief>;
+
+/**
+ * 存储在数据库中的 playlist 信息.
+ */
+struct PlaylistInfo : public PlaylistBrief {
     vector<int>                 mediaIds;
 
     PlaylistPtr                 playlist;
@@ -36,6 +40,8 @@ public:
     Playlist();
     Playlist(PlaylistInfo &info);
     virtual ~Playlist();
+
+    void setInfo(const PlaylistInfo &info);
 
     uint32_t getCount();
 

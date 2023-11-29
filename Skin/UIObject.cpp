@@ -226,7 +226,7 @@ void CUIObjProperties::addPropBltMode(cstr_t szName, BLT_MODE bltMode, bool bToX
     CUIObjProperty property;
 
     property.name = szName;
-    property.strValue = iDToString(__idszBltMode, bltMode, __idszBltMode[0].szId);
+    property.strValue = idToString(__idszBltMode, bltMode, __idszBltMode[0].szId);
     property.valueType = CUIObjProperty::VT_COMB_STR;
     property.bToXmlAttrib = bToXmlAttrib;
     property.options.clear();
@@ -242,7 +242,7 @@ void CUIObjProperties::addPropBlendPixMode(cstr_t szName, BlendPixMode bpm, bool
     CUIObjProperty property;
 
     property.name = szName;
-    property.strValue = iDToString(__idszBlendPixMode, bpm, __idszBlendPixMode[0].szId);
+    property.strValue = idToString(__idszBlendPixMode, bpm, __idszBlendPixMode[0].szId);
     property.valueType = CUIObjProperty::VT_COMB_STR;
     property.bToXmlAttrib = bToXmlAttrib;
     property.options.clear();
@@ -426,7 +426,7 @@ CUIObject::~CUIObject() {
         }
 
         if (m_strTooltip.size() > 0 && m_id != UID_INVALID) {
-            m_pSkin->delTool(m_autoUniID);
+            m_pSkin->delToolTip(m_autoUniID);
         }
 
         m_pSkin->unregisterTimerObject(this);
@@ -538,8 +538,8 @@ void CUIObject::onSize() {
     m_rcContent.bottom = m_rcObj.bottom - m_rcPadding.bottom;
 
     if (!m_strTooltip.empty() && m_visible) {
-        m_pSkin->delTool(m_autoUniID);
-        m_pSkin->addTool(_TL(m_strTooltip.c_str()), &m_rcObj, m_autoUniID);
+        m_pSkin->delToolTip(m_autoUniID);
+        m_pSkin->addToolTip(_TL(m_strTooltip.c_str()), m_rcObj, m_autoUniID);
     }
 }
 
@@ -788,9 +788,9 @@ void CUIObject::setVisible(bool bVisible, bool bRedraw) {
     m_visible = bVisible;
     if (m_strTooltip.size()) {
         if (bVisible) {
-            m_pSkin->addTool(_TL(m_strTooltip.c_str()), &m_rcObj, m_autoUniID);
+            m_pSkin->addToolTip(_TL(m_strTooltip.c_str()), m_rcObj, m_autoUniID);
         } else {
-            m_pSkin->delTool(m_autoUniID);
+            m_pSkin->delToolTip(m_autoUniID);
         }
     }
 

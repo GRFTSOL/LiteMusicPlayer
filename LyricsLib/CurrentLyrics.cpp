@@ -102,9 +102,10 @@ int CurrentLyrics::openLyrics(cstr_t mediaFile, int nMediaLength, cstr_t szLrcSo
     m_lrcSourceType = lyrSrcTypeFromName(mediaFile);
     m_strSongFile = mediaFile;
     m_strLrcSource = szLrcSource;
-    m_isUsedSpecifiedEncoding = bUseSpecifiedEncoding;
 
     resetModificationFlag();
+
+    m_isUsedSpecifiedEncoding = bUseSpecifiedEncoding;
 
     return ret;
 }

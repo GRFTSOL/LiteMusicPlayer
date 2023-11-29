@@ -113,7 +113,7 @@ bool CMediaLibTreeProvider::chToChild(int nIndex) {
     } else if (item.folderType == FT_PLAYLIST_FILE) {
         g_player.clearNowPlaying();
         g_player.addToNowPlaying(item.name.c_str());
-        g_player.saveCurrentPlaylist();
+        g_player.saveNowPlaying();
     } else if (item.folderType == FT_ALL_SONGS_BY_ARTIST) {
         playlist = m_mediaLib->getAll(MLOB_ARTIST, -1);
     } else if (item.folderType == FT_ALL_ARTIST) {
@@ -357,7 +357,7 @@ bool CMPMediaLibCmdHandler::onCommand(int nId) {
             if (playlist) {
                 auto media = playlist->getItem(nSel);
                 if (media) {
-                    auto curPl = g_player.getCurrentPlaylist();
+                    auto curPl = g_player.getNowPlaying();
                     curPl->insertItem(-1, media);
                 }
             }
@@ -398,7 +398,7 @@ bool CMPMediaLibCmdHandler::onCommand(int nId) {
                         auto media = playlist->getItem(nSel);
                         if (media) {
                             auto mediaLib = g_player.getMediaLibrary();
-                            mediaLib->remove(media.get(), false);
+                            mediaLib->remove(media, false);
                             playlist->removeItem(nSel);
                             pMediaList->deleteItem(nSel, true);
                             m_mediaLibTree.eraseChild(nSel);
@@ -448,8 +448,8 @@ bool CMPMediaLibCmdHandler::onUIObjNotify(IUIObjNotify *pNotify) {
                         // play current music...
                         auto playlist = m_mediaLibTree.getCurNodePlaylist();
                         if (playlist) {
-                            g_player.setCurrentPlaylist(playlist);
-                            g_player.setCurrentMediaInPlaylist(nSel);
+                            g_player.setNowPlaying(playlist);
+                            g_player.setCurrentMediaInNowPlaying(nSel);
                             g_player.play();
                         }
                     }
@@ -460,7 +460,7 @@ bool CMPMediaLibCmdHandler::onUIObjNotify(IUIObjNotify *pNotify) {
                         if (m_mediaLibTree.getCurNodePlaylistFile(nSel, strFile)) {
                             g_player.clearNowPlaying();
                             g_player.addToNowPlaying(strFile.c_str());
-                            g_player.saveCurrentPlaylist();
+                            g_player.saveNowPlaying();
                             g_player.play();
                         }
                     }

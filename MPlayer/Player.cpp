@@ -173,13 +173,10 @@ void CPlayer::onInit() {
     m_volume = g_profile.getInt(SZ_SECT_PLAYER, "volume", 30);
 
     // Load current playlist
-    auto playlist = m_mediaLib->getPlaylist(g_profile.getInt("LatestPlaylist", -1));
-    if (playlist) {
-        setCurrentPlaylist(playlist);
-    }
+    m_currentPlaylist = m_mediaLib->getNowPlaying();
 
     // current playing music
-    setCurrentMediaInPlaylist(g_profile.getInt(SZ_SECT_PLAYER, "NowPlayingIdx", 0));
+    setCurrentMediaInNowPlaying(g_profile.getInt(SZ_SECT_PLAYER, "NowPlayingIdx", 0));
 
     g_playerEventDispatcher.init();
 
@@ -191,7 +188,7 @@ void CPlayer::onInit() {
 void CPlayer::onQuit() {
     g_playerEventDispatcher.quit();
 
-    saveCurrentPlaylist();
+    saveNowPlaying();
 
     // save latest playing song file
     g_profile.writeInt(SZ_SECT_PLAYER, "NowPlayingIdx", m_idxCurrentMedia);
@@ -214,20 +211,24 @@ void CPlayer::play() {
 
             m_playerCore->play(m_currentMedia->url.c_str(), m_currentMedia.get());
 
-            notifyPlayStateChanged();
-
             // TODO: 标记/删除不存在的文件...
             // if (ret == ERR_MI_NOT_FOUND && media->ID != MEDIA_ID_INVALID) {
             //     // the source can't be opened, set it as deleted.
             //     m_mediaLib->setDeleted(&media);
             // }
+        } else {
+            next();
+            if (m_currentMedia) {
+                play();
+            }
         }
     } else {
         // paused
         m_state = PS_PLAYING;
         m_playerCore->unpause();
-        notifyPlayStateChanged();
     }
+
+    notifyPlayStateChanged();
 }
 
 void CPlayer::pause() {
@@ -427,12 +428,6 @@ void CPlayer::clearNowPlaying() {
     m_currentPlaylist->clear();
 }
 
-void CPlayer::newNowPlaying() {
-    clearNowPlaying();
-
-    m_currentPlaylistId = -1;
-}
-
 void CPlayer::addDirToNowPlaying(cstr_t szDir, bool bIncSubDir) {
     FileFind find;
 
@@ -465,36 +460,14 @@ void CPlayer::addToNowPlaying(cstr_t szMedia) {
 
     if (isExtPlaylistFile(szExt)) {
         auto playlist = ::loadPlaylist(szMedia);
-
         m_currentPlaylist->append(playlist.get());
-        return;
+    } if (isExtAudioFile(szExt)) {
+        m_currentPlaylist->insertItem(-1, newMedia(szMedia));
     }
-
-    if (!isExtAudioFile(szExt)) {
-        return;
-    }
-
-    // do not add repeated item.
-    if (isMediaInPlaylist(szMedia)) {
-        return;
-    }
-
-    m_currentPlaylist->insertItem(-1, newMedia(szMedia));
 }
 
-bool CPlayer::isMediaInPlaylist(cstr_t szMedia) {
-    auto playlist = m_currentPlaylist;
-    auto nCount = playlist->getCount();
-    for (int i = 0; i < nCount; i++) {
-        auto media = playlist->getItem(i);
-        if (media) {
-            if (strcmp(szMedia, media->url.c_str()) == 0) {
-                return true;
-            }
-        }
-    }
-
-    return false;
+void CPlayer::addToNowPlaying(const PlaylistPtr &playlist) {
+    m_currentPlaylist->append(playlist.get());
 }
 
 bool CPlayer::isCurrentMediaFileExist() {
@@ -521,7 +494,7 @@ void CPlayer::playMedia(MediaPtr &media) {
 
 void CPlayer::playMedia(int index) {
     stop();
-    setCurrentMediaInPlaylist(index);
+    setCurrentMediaInNowPlaying(index);
     play();
 }
 
@@ -611,11 +584,7 @@ void CPlayer::addDirToMediaLib(cstr_t szDir, bool bIncSubDir) {
 
 void CPlayer::addFileToMediaLib(cstr_t szMedia) {
     auto szExt = fileGetExt(szMedia);
-    if (isEmptyString(szExt)) {
-        return;
-    }
-
-    if (!isExtAudioFile(szExt)) {
+    if (isEmptyString(szExt) || !isExtAudioFile(szExt)) {
         return;
     }
 
@@ -625,10 +594,7 @@ void CPlayer::addFileToMediaLib(cstr_t szMedia) {
         return;
     }
 
-    media = m_mediaLib->add(szMedia);
-    if (media) {
-        m_currentPlaylist->insertItem(-1, media);
-    }
+    m_mediaLib->add(szMedia);
 }
 
 string CPlayer::formatMediaTitle(Media *media) {
@@ -681,14 +647,13 @@ void CPlayer::getCurMediaAttribute(MediaAttribute mediaAttr, string &strValue) {
     }
 }
 
-void CPlayer::saveCurrentPlaylist() {
+void CPlayer::saveNowPlaying() {
     if (!m_isNowPlayingModified) {
         return;
     }
 
-    m_mediaLib->savePlaylist(m_currentPlaylist);
+    m_mediaLib->saveNowPlaying();
     setNowPlayingModified(false);
-    g_profile.writeInt("LatestPlaylist", m_currentPlaylist->id);
 }
 
 void CPlayer::onUISeekbarSeek(int nPos) {
@@ -761,7 +726,7 @@ PlaylistPtr CPlayer::newPlaylist() {
     return make_shared<Playlist>();
 }
 
-ResultCode CPlayer::setCurrentMediaInPlaylist(int index) {
+ResultCode CPlayer::setCurrentMediaInNowPlaying(int index) {
     RMutexAutolock autolock(m_mutexDataAccess);
 
     if (index >= 0 && index < (int)m_currentPlaylist->getCount()) {
@@ -774,8 +739,9 @@ ResultCode CPlayer::setCurrentMediaInPlaylist(int index) {
     }
 }
 
-void CPlayer::setCurrentPlaylist(const PlaylistPtr &playlist) {
-    m_currentPlaylist = newPlaylist();
+void CPlayer::setNowPlaying(const PlaylistPtr &playlist) {
+    m_isNowPlayingModified = true;
+    m_currentPlaylist->clear();
     m_currentPlaylist->clone(playlist.get());
     m_idxCurrentMedia = 0;
 

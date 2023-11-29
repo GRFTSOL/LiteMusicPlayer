@@ -65,7 +65,7 @@ MLMsgCmd mLMsgStr2Cmd(cstr_t szMLMsgCmd) {
 }
 
 cstr_t mLMsgCmd2Str(MLMsgCmd msgCmd) {
-    return iDToString(__MlCmdIDStr, msgCmd, "Not found");
+    return idToString(__MlCmdIDStr, msgCmd, "Not found");
 }
 
 IdToString    __MlCmdResult2Str[] = {
@@ -152,7 +152,7 @@ int MLRetMsg::toXML(CXMLWriter &xmlFile) {
 
 void MLRetMsg::toXMLAttribute(CXMLWriter &xmlFile) {
     xmlFile.writeAttribute(MZ_ORG_CMD, strOrgCmd.c_str());
-    xmlFile.writeAttribute(MZ_CMD_RESULT, iDToString(__MlCmdResult2Str, result, "UNTRANSLATED"));
+    xmlFile.writeAttribute(MZ_CMD_RESULT, idToString(__MlCmdResult2Str, result, "UNTRANSLATED"));
 
     if (strMessage.size()) {
         xmlFile.writeAttribute("msg", strMessage.c_str()); // msg is for search and upload

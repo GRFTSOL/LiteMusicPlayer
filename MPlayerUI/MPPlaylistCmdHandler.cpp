@@ -3,7 +3,7 @@
 #include "MPHelper.h"
 #include "DlgMediaInfo.h"
 #include "MPlaylistCtrl.h"
-#include "DlgNewPlaylist.hpp"
+#include "DlgPlaylist.hpp"
 
 
 CMPPlaylistCmdHandler::CMPPlaylistCmdHandler() {
@@ -36,7 +36,7 @@ bool CMPPlaylistCmdHandler::onCustomCommand(int nID) {
         showNewPlaylistDialog(m_pSkinWnd, g_player.newPlaylist());
         break;
     case CMD_PL_SAVE:
-        showSavePlaylistDialog(m_pSkinWnd, g_player.getCurrentPlaylist());
+        showSavePlaylistDialog(m_pSkinWnd, g_player.getNowPlaying());
         break;
     case CMD_PL_DEL:
         {
@@ -69,7 +69,7 @@ bool CMPPlaylistCmdHandler::onCustomCommand(int nID) {
                     break;
                 }
 
-                auto playlist = g_player.getCurrentPlaylist();
+                auto playlist = g_player.getNowPlaying();
                 media = playlist->getItem(nSel);
             } else {
                 media = g_player.getCurrentMedia();

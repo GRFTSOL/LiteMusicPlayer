@@ -191,6 +191,36 @@ void CRawGraph::fillRoundedRect(float x, float y, float width, float height, flo
     agg::render_scanlines_aa_solid(ras, sl, rb, clr);
 }
 
+void CRawGraph::fillPath(const VecPoints &points, const CColor &clrFill) {
+    typedef agg::scanline_p8 scanline_type;
+
+    agg::path_storage path;
+    scanline_type sl;
+    agg::rasterizer_scanline_aa<> ras;
+
+    path.move_to(mapAndScaleX(points[0].x), mapAndScaleX(points[0].y));
+    for (int i = 1; i < points.size(); i++) {
+        path.line_to(mapAndScaleX(points[i].x), mapAndScaleX(points[i].y));
+    }
+    path.close_polygon();
+
+    ras.add_path(path);
+
+    assert(m_imageData.bitCount == 32);
+    typedef agg::pixfmt_rgba32 pixfmt;
+    typedef agg::renderer_mclip<pixfmt> renderer_mclip;
+
+    agg::rendering_buffer buf(m_imageData.buff, m_imageData.width, m_imageData.height, m_imageData.stride);
+    pixfmt pixf(buf);
+    renderer_mclip rb(pixf);
+    rb.add_clip_box(m_rcClipScaleMaped.left, m_rcClipScaleMaped.top, m_rcClipScaleMaped.right, m_rcClipScaleMaped.bottom);
+
+    agg::rgba clr(clrFill.r() / (double)255, clrFill.g() / (double)255,
+        clrFill.b() / (double)255, clrFill.a() * m_nOpacityPainting / 255 / (double)255);
+
+    agg::render_scanlines_aa_solid(ras, sl, rb, clr);
+}
+
 void CRawGraph::setPen(const CRawPen &pen) {
     m_pen = pen;
     m_pen.m_nWidth *= m_scaleFactor;

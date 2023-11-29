@@ -94,13 +94,17 @@ public:
 
     CMediaLibrary *getMediaLibrary() { return m_mediaLib; }
 
+    PlaylistPtr getNowPlaying() { return m_currentPlaylist; }
+    void setNowPlaying(const PlaylistPtr &playlist);
     void clearNowPlaying();
-    void newNowPlaying();
 
     void addDirToNowPlaying(cstr_t szDir, bool bIncSubDir = true);
     void addToNowPlaying(cstr_t szMedia);
+    void addToNowPlaying(const PlaylistPtr &playlist);
 
-    bool isMediaInPlaylist(cstr_t szMedia);
+    void saveNowPlaying();
+
+    void setNowPlayingModified(bool bModified) { m_isNowPlayingModified = bModified; }
 
     void addFileToMediaLib(cstr_t szMedia);
     void addDirToMediaLib(cstr_t szDir, bool bIncSubDir);
@@ -109,6 +113,8 @@ public:
 
     bool isMediaOpened() { return m_currentMedia != nullptr; }
 
+    MediaPtr getCurrentMedia() { return m_currentMedia; }
+    ResultCode setCurrentMediaInNowPlaying(int index);
     int getCurrentMediaIndex() { return m_idxCurrentMedia; }
 
     bool isCurrentMediaTempPlaying();
@@ -121,8 +127,6 @@ public:
     bool isExtSupported(cstr_t szExt);
     bool isExtAudioFile(cstr_t szExt);
     static bool isExtPlaylistFile(cstr_t szExt);
-
-    void setNowPlayingModified(bool bModified) { m_isNowPlayingModified = bModified; }
 
     static string formatMediaTitle(Media *media);
 
@@ -140,8 +144,6 @@ public:
 
     void getCurMediaAttribute(MediaAttribute mediaAttr, string &strValue);
 
-    void saveCurrentPlaylist();
-
     void setLyrDrawUpdateFast(bool bFast);
 
     //
@@ -151,23 +153,15 @@ public:
     void setUseSeekTimeAsPlayingTime(bool bUseSeekTimeAsPlayingTime) { m_isUseSeekTimeAsPlayingTime = bUseSeekTimeAsPlayingTime; }
     bool isUseSeekTimeAsPlayingTime() const { return m_isUseSeekTimeAsPlayingTime; }
 
-    void onMediaChanged();
-
     string getTitleFilterFile();
 
     MediaPtr newMedia(cstr_t szUrl);
     PlaylistPtr newPlaylist();
 
-    PlaylistPtr getCurrentPlaylist() { return m_currentPlaylist; }
-    MediaPtr getCurrentMedia() { return m_currentMedia; }
-
-    ResultCode setCurrentMediaInPlaylist(int index);
-
-    void setCurrentPlaylist(const PlaylistPtr &playlist);
-
+    // loadMediaTagInfo and save in media library
     void updateMediaInfo(Media *media);
 
-    // Reload Media tag info: artist, title, bitarte, bps, etc.
+    // Load Media tag info: artist, title, bitarte, bps, etc.
     ResultCode loadMediaTagInfo(Media *media);
 
     void registerVisualizer(IEventHandler *eventHandler);
@@ -185,6 +179,7 @@ public:
     void notifyPlaylistChanged(Playlist *playlist, IMPEvent::PlaylistChangeAction action, int nIndex, int nIndexOld);
 
 protected:
+    void onMediaChanged();
     void setCurrentMedia(MediaPtr &media);
     void currentMediaChanged();
     void generateShuffleMediaQueue();
@@ -206,7 +201,6 @@ protected:
     PlayerState                 m_state;
 
 protected:
-    int                         m_currentPlaylistId;
     bool                        m_isNowPlayingModified;
     int                         m_ratingFilterMin = 3;
 

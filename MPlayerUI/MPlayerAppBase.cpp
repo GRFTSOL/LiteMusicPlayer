@@ -232,7 +232,7 @@ void CMPlayerAppBase::postQuitMessage() {
 
     g_autoProcessEmbeddedLyrics.onPostQuit();
 
-    g_player.saveCurrentPlaylist();
+    g_player.saveNowPlaying();
 
     CSkinApp::postQuitMessage();
 }

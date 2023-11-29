@@ -7,13 +7,17 @@ Playlist::Playlist() {
 }
 
 Playlist::Playlist(PlaylistInfo &info) {
+    setInfo(info);
+}
+
+Playlist::~Playlist() {
+}
+
+void Playlist::setInfo(const PlaylistInfo &info) {
     id = info.id;
     name = info.name;
     rating = info.rating;
     timeModified = info.timeModified;
-}
-
-Playlist::~Playlist() {
 }
 
 uint32_t Playlist::getCount() {
