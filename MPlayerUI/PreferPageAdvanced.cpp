@@ -4,12 +4,10 @@
 #include "../MediaTags/LrcParser.h"
 
 #ifdef _WIN32
-#include "win32/HotkeyCtrlEx.h"
 #include "win32/MLTrayIcon.h"
 #endif
 
 #ifdef _LINUX_GTK2
-#include "gtk2/HotkeyCtrlEx.h"
 #include "gtk2/MLTrayIcon.h"
 #endif
 
@@ -498,60 +496,6 @@ public:
 
 };
 
-#ifdef _WIN32
-class CDlgShortcutKey : public CBaseDialog {
-public:
-    CDlgShortcutKey(cstr_t szCaption) : CBaseDialog(IDD_SET_HOTKEY) {
-        m_strCaption = szCaption;
-        m_nVirtualKey = 0;
-        m_fsModifiers = 0;
-    }
-    bool onInitDialog() {
-        CBaseDialog::onInitDialog();
-
-        m_hotkey.init(this, IDC_HOTKEY);
-        setWindowText(m_strCaption.c_str());
-
-        return true;
-    }
-
-    void onOK() {
-        m_hotkey.getHotkey(m_nVirtualKey, m_fsModifiers);
-
-        CBaseDialog::onOK();
-    }
-
-    uint32_t                    m_nVirtualKey, m_fsModifiers;
-
-protected:
-    CHotkeyCtrlEx               m_hotkey;
-    string                      m_strCaption;
-
-};
-
-#else // #ifdef _WIN32
-
-class CDlgShortcutKey {
-public:
-    CDlgShortcutKey(cstr_t szCaption) {
-        m_strCaption = szCaption;
-        m_nVirtualKey = 0;
-        m_fsModifiers = 0;
-    }
-
-    int doModal(Window *pWndParent) {
-        return IDCANCEL;
-    }
-
-    uint32_t                    m_nVirtualKey, m_fsModifiers;
-
-protected:
-    string                      m_strCaption;
-
-};
-#endif // #ifdef _WIN32
-
-
 static string getCmdIDDescription(int nCmd) {
     string strTooltip;
     CMPlayerAppBase::getMPSkinFactory()->getTooltip(nCmd, strTooltip);
@@ -569,6 +513,89 @@ static string getCmdIDDescription(int nCmd) {
     }
 
     return strTooltip;
+}
+
+class DlgShortcutKey : public CSkinWnd {
+public:
+    DlgShortcutKey(uint32_t cmd, bool isGlobal) : cmd(cmd), isGlobal(isGlobal) {
+    }
+
+    void onCreate() override {
+        CSkinWnd::onCreate();
+
+        GET_ID_BY_NAME(CID_E_NAME);
+
+        CMPlayerAppBase::getHotkey().enableGlobalHotkey(false);
+    }
+
+    bool onCustomCommand(int nId) override {
+        if (nId != CMD_OK) {
+            return CSkinWnd::onCustomCommand(nId);
+        }
+
+        auto &hotKeys = CMPlayerAppBase::getHotkey();
+
+        // Is this hotkey already being used?
+        int usedCmdIndex = hotKeys.getByKey(key, modifiers);
+        if (usedCmdIndex != -1) {
+            // Same one is self?
+            if (hotKeys.get(usedCmdIndex)->cmd == cmd) {
+                return CSkinWnd::onCustomCommand(nId);
+            }
+
+            auto strCmd = getCmdIDDescription(hotKeys.get(usedCmdIndex)->cmd);
+
+            auto strMsg = stringPrintf(_TLT("This hotkey is currently used by action: %s."), _TL(strCmd.c_str()));
+            strMsg += "\r\n";
+            strMsg += _TLT("Do you want to replace it?");
+            if (messageOut(strMsg.c_str(), MB_ICONINFORMATION | MB_YESNO) != IDYES) {
+                return true;
+            }
+
+            hotKeys.remove(usedCmdIndex);
+        }
+
+        hotKeys.add(cmd, isGlobal, key, modifiers);
+
+        if (isGlobal) {
+            hotKeys.enableGlobalHotkey(true);
+        }
+
+        return CSkinWnd::onCustomCommand(nId);
+    }
+
+    bool onKeyDown(uint32_t nChar, uint32_t nFlags) override {
+        auto obj = getFocusUIObj();
+        if (obj && obj->getID() == CID_E_NAME) {
+            key = nChar;
+            modifiers = nFlags;
+            auto text = formatHotkeyText(key, modifiers);
+            obj->setText(text.c_str());
+            obj->invalidate();
+            return true;
+        }
+
+        return CSkinWnd::onKeyDown(nChar, nFlags);
+    }
+
+    // Do nothing for text input mode.
+    void startTextInput() override { }
+
+    int                         CID_E_NAME = -1;
+    bool                        isGlobal = false;
+    uint32_t                    cmd = 0, key = 0, modifiers = 0;
+
+};
+
+void showShortcutKeyDialog(CSkinWnd *parent, uint32_t cmd, bool isGlobal) {
+
+    SkinWndStartupInfo skinWndStartupInfo(_SZ_SKINWND_CLASS_NAME, _SZ_SKINWND_CLASS_NAME,
+        "DlgShortCutKey.xml", parent);
+
+    auto *window = new DlgShortcutKey(cmd, isGlobal);
+    skinWndStartupInfo.pSkinWnd = window;
+
+    CSkinApp::getInstance()->getSkinFactory()->activeOrCreateSkinWnd(skinWndStartupInfo);
 }
 
 class CPfItemBoolEnableGlobalHotkey : public CPfItemBool {
@@ -631,7 +658,7 @@ public:
             pCmdKey = CMPlayerAppBase::getHotkey().get(nIndex);
             if (pCmdKey) {
                 Hotkey hotkey;
-                formatHotkeyText(hotkey.strHotkey, pCmdKey->button, pCmdKey->fsModifiers);
+                hotkey.strHotkey = formatHotkeyText(pCmdKey->button, pCmdKey->fsModifiers);
                 hotkey.bGlobal = pCmdKey->bGlobal;
                 vHotkeys.push_back(hotkey);
             }
@@ -660,42 +687,8 @@ public:
     virtual void setOption(int nIndex) {
         if (nIndex == 0 || nIndex == 1) {
             // add new shortcut key:
-            CDlgShortcutKey dlg(m_strName.c_str());
-            bool bGloal = (nIndex == 1);
-
-            if (dlg.doModal(m_pWndParent->getSkinWnd()) == IDOK) {
-                // Is this hotkey already being used?
-                int nUsedCmdIndex;
-                nUsedCmdIndex = CMPlayerAppBase::getHotkey().getByKey(dlg.m_nVirtualKey, dlg.m_fsModifiers);
-                if (nUsedCmdIndex != -1) {
-                    string strCmd;
-                    string strMsg;
-
-                    // Same one is self?
-                    if (CMPlayerAppBase::getHotkey().get(nUsedCmdIndex)->cmd == m_nCmd) {
-                        return;
-                    }
-
-                    strCmd = getCmdIDDescription(CMPlayerAppBase::getHotkey().get(nUsedCmdIndex)->cmd);
-
-                    strMsg = stringPrintf(_TLT("This hotkey is currently used by action: %s."), _TL(strCmd.c_str())).c_str();
-                    strMsg += "\r\n";
-                    strMsg += _TLT("Do you want to replace it?");
-                    if (m_pWndParent->getSkinWnd()->messageOut(strMsg.c_str(), MB_ICONINFORMATION | MB_YESNO) != IDYES) {
-                        return;
-                    }
-
-                    CMPlayerAppBase::getHotkey().remove(nUsedCmdIndex);
-
-                    m_pWndParent->updateValues();
-                }
-
-                if (bGloal) {
-                    CMPlayerAppBase::getHotkey().enableGlobalHotkey(true);
-                }
-
-                CMPlayerAppBase::getHotkey().add(m_nCmd, bGloal, dlg.m_nVirtualKey, dlg.m_fsModifiers);
-            }
+            bool isGloal = (nIndex == 1);
+            showShortcutKeyDialog(m_pWndParent->getSkinWnd(), m_nCmd, isGloal);
         } else {
             // remove shortcut key
             int nShortcutIndex = -1;

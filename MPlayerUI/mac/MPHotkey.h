@@ -4,7 +4,7 @@
 #define MPlayerUI_mac_MPHotkey_h
 
 
-void formatHotkeyText(string &strText, uint32_t nVirtKey, uint32_t fsModifiers);
+string formatHotkeyText(uint32_t key, uint32_t modifiers);
 
 struct MPHotKeySection {
     cstr_t                      szName;

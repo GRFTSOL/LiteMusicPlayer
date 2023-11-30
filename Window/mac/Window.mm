@@ -121,6 +121,9 @@ void Window::onPaint(CRawGraph *surface, CRect *rc) {
 }
 
 void Window::activateWindow() {
+    // [m_handleHolder->window orderFrontRegardless];
+    [NSApp activateIgnoringOtherApps:YES];
+    [m_handleHolder->window makeKeyAndOrderFront:m_handleHolder->window];
 }
 
 void Window::showNoActivate() {
@@ -160,6 +163,7 @@ void Window::restore() {
 }
 
 void Window::minimizeNoActivate() {
+    minimize();
 }
 //bool Window::showWindow(int nCmdShow)
 //{

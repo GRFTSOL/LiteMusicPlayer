@@ -124,8 +124,8 @@ public:
     // 输入法相关的处理
     //
     // 在编辑框开始/结束编辑时需要调用
-    void startTextInput();
-    void endTextInput();
+    virtual void startTextInput();
+    virtual void endTextInput();
 
     // 编辑控件的光标位置改变后需要调用此函数
     void caretPositionChanged(const CPoint &point);

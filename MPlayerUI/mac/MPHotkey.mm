@@ -15,25 +15,6 @@ OSStatus hotKeyHandler(EventHandlerCallRef nextHandler, EventRef event, void *us
     return noErr;
 }
 
-
-void setupGlobalHotkey() {
-    EventHandlerUPP hotKeyFunction = NewEventHandlerUPP(hotKeyHandler);
-    EventTypeSpec eventType;
-    eventType.eventClass = kEventClassKeyboard;
-    eventType.eventKind = kEventHotKeyReleased;
-
-    InstallApplicationEventHandler(hotKeyFunction, 1, &eventType, nullptr, NULL);
-
-    UInt32 keyCode = VK_F10;
-    EventHotKeyRef theRef = NULL;
-    EventHotKeyID keyID;
-    keyID.signature = 'FOO '; //arbitrary string
-    keyID.id = 1;
-
-    RegisterEventHotKey(keyCode, 0, keyID, GetApplicationEventTarget(), 0, &theRef);
-}
-
-
 int g_hcPlayback[] = { CMD_PLAY, CMD_PLAYPAUSE, CMD_STOP, CMD_PREVIOUS, CMD_NEXT, CMD_FORWARD, CMD_BACKWARD, CMD_J_PREV_LINE, CMD_J_NEXT_LINE, 0 };
 int g_hcGeneral[] = { CMD_HELP, CMD_QUIT, CMD_CLOSE, CMD_MENU, CMD_PREFERENCES, CMD_DISPLAY_OPT, 0 };
 int g_hcUI[] = { CMD_FONT_SIZE_INC, CMD_FONT_SIZE_DEC, CMD_CLR_PREV_HUE, CMD_CLR_NEXT_HUE, CMD_TOGGLE_MP, CMD_MINIMIZE, CMD_TOPMOST, CMD_CLICK_THROUGH, 0 };
@@ -225,26 +206,27 @@ cstr_t keyCodeToText(uint32_t key) {
     return idToString(KEY_NAMES, key, "Unkown");
 }
 
-void formatHotkeyText(string &strText, uint32_t key, uint32_t fsModifiers) {
-    strText.clear();
+string formatHotkeyText(uint32_t key, uint32_t modifiers) {
+    string text;
 
-    if (isFlagSet(fsModifiers, MK_COMMAND)) {
-        strText += _TLT("Command+");
+    if (isFlagSet(modifiers, MK_COMMAND)) {
+        text += _TLT("Command+");
     }
-    if (isFlagSet(fsModifiers, MK_FUNCTION)) {
-        strText += _TLT("Fn+");
+    if (isFlagSet(modifiers, MK_FUNCTION)) {
+        text += _TLT("Fn+");
     }
-    if (isFlagSet(fsModifiers, MK_CONTROL)) {
-        strText += _TLT("Ctrl+");
+    if (isFlagSet(modifiers, MK_CONTROL)) {
+        text += _TLT("Ctrl+");
     }
-    if (isFlagSet(fsModifiers, MK_SHIFT)) {
-        strText += _TLT("Shift+");
+    if (isFlagSet(modifiers, MK_SHIFT)) {
+        text += _TLT("Shift+");
     }
-    if (isFlagSet(fsModifiers, MK_ALT)) {
-        strText += _TLT("Alt+");
+    if (isFlagSet(modifiers, MK_ALT)) {
+        text += _TLT("Alt+");
     }
 
-    strText += keyCodeToText(key);
+    text += keyCodeToText(key);
+    return text;
 }
 
 CMPHotkey::CMPHotkey() {
@@ -272,6 +254,10 @@ void CMPHotkey::init() {
             m_vAccKey.push_back(g_vDefAccKey[i]);
             m_vAccKey.back().idHotKey = makeHotkeyID(g_vDefAccKey[i].fsModifiers, g_vDefAccKey[i].button);
         }
+    }
+
+    if (m_bGlobalHotkeyEnabled) {
+        registerAllGlobalHotKeys();
     }
 }
 
@@ -486,7 +472,7 @@ bool CMPHotkey::getHotkeyText(int cmd, string &strKey) {
         CmdAccKey &cmdKey = m_vAccKey[i];
 
         if (cmdKey.cmd == cmd) {
-            formatHotkeyText(strKey, cmdKey.button, cmdKey.fsModifiers);
+            strKey = formatHotkeyText(cmdKey.button, cmdKey.fsModifiers);
             return true;
         }
     }
@@ -513,7 +499,7 @@ int CMPHotkey::loadSettings() {
     strFile += SZ_HOTKEY_FILENAME;
 
     CTextFile file;
-    if (file.open(strFile.c_str(), true, ED_SYSDEF) != ERR_OK) {
+    if (file.open(strFile.c_str(), false, ED_SYSDEF) != ERR_OK) {
         ERR_LOG1("Failed to open hotkey config file: %s", strFile.c_str());
         return ERR_OPEN_FILE;
     }
@@ -559,12 +545,12 @@ int CMPHotkey::loadSettings() {
 
         // keycode
         if (index < vValues.size()) {
-            cmdKey.button = (uint16_t)stringToInt(vValues[index++].c_str());
+            cmdKey.button = (uint32_t)stringToInt(vValues[index++].c_str());
         }
 
         // modifier
         if (index < vValues.size()) {
-            cmdKey.fsModifiers = (uint16_t)stringToInt(vValues[index++].c_str());
+            cmdKey.fsModifiers = (uint32_t)stringToInt(vValues[index++].c_str());
         }
 
         cmdKey.idHotKey = makeHotkeyID(cmdKey.fsModifiers, cmdKey.button);
@@ -612,17 +598,32 @@ int CMPHotkey::saveSettings() {
     return ERR_OK;
 }
 
+// Cocoa and Carbon uses different modifiers consts.
+uint32_t cocoaModifiersToCarbon(uint32_t modifers) {
+    // Event.h
+    uint32_t flags = 0;
+    if (modifers & MK_SHIFT) { flags |= shiftKey; }
+    if (modifers & MK_CONTROL) { flags |= controlKey; }
+    if (modifers & MK_ALT) { flags |= optionKey; }
+    if (modifers & MK_COMMAND) { flags |= cmdKey; }
+    // if (modifers & MK_FUNCTION) { flags |= shiftKey; }
+    return flags;
+}
+
 void CMPHotkey::registerAllGlobalHotKeys() {
     for (CmdAccKey &cmdKey : m_vAccKey) {
-        cmdKey.idHotKey = makeHotkeyID(cmdKey.fsModifiers, cmdKey.button);
-        cmdKey.hotKeyRef = NULL;
+        if (cmdKey.bGlobal) {
+            cmdKey.idHotKey = makeHotkeyID(cmdKey.fsModifiers, cmdKey.button);
+            cmdKey.hotKeyRef = NULL;
 
-        UInt32 keyCode = VK_F10;
-        EventHotKeyID keyID;
-        keyID.signature = 'DHPL';
-        keyID.id = cmdKey.idHotKey;
+            UInt32 keyCode = cmdKey.button;
+            EventHotKeyID keyID;
+            keyID.signature = 'DHPL';
+            keyID.id = cmdKey.idHotKey;
 
-        RegisterEventHotKey(keyCode, 0, keyID, GetApplicationEventTarget(), 0, &cmdKey.hotKeyRef);
+            RegisterEventHotKey(keyCode, cocoaModifiersToCarbon(cmdKey.fsModifiers), keyID, GetApplicationEventTarget(), 0, &cmdKey.hotKeyRef);
+            //assert(err == noErr);
+        }
     }
 }
 
