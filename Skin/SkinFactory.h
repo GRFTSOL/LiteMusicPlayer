@@ -35,8 +35,7 @@ struct SkinWndStartupInfo {
 // UIObject ID text to int
 struct UIObjectIDDefinition {
     const char                  *szId;
-    uint16_t                    nId;
-    uint16_t                    nIdMenu;
+    uint32_t                    nId;
     const char                  *szToolTip;
 };
 
@@ -49,22 +48,37 @@ public:
 
 typedef set<UIObjectIDDefinition *, UIObjectIDDefinitionLessCmp> SetUIObjectIDDefinition;
 
+#define SKIN_BASE_IDS                                       \
+DEFINE_CMD_ID_TIP(ID_MINIMIZE,      _TLM("Minimize"))       \
+DEFINE_CMD_ID_TIP(ID_MAXIMIZE,      _TLM("Maximize"))       \
+DEFINE_CMD_ID_TIP(ID_CLOSE,         _TLM("Close"))          \
+DEFINE_CMD_ID_TIP(ID_QUIT,          _TLM("Quit"))           \
+DEFINE_CMD_ID_TIP(ID_MENU,          _TLM("Menu"))           \
+DEFINE_CMD_ID_TIP(ID_EDIT_UNDO,     _TLM("Undo"))           \
+DEFINE_CMD_ID_TIP(ID_EDIT_REDO,     _TLM("Redo"))           \
+DEFINE_CMD_ID_TIP(ID_EDIT_CUT,      _TLM("Cut"))            \
+DEFINE_CMD_ID_TIP(ID_EDIT_COPY,     _TLM("Copy"))           \
+DEFINE_CMD_ID_TIP(ID_EDIT_PASTE,    _TLM("Paste"))          \
+DEFINE_CMD_ID_TIP(ID_EDIT_DELETE,   _TLM("Delete"))         \
+DEFINE_CMD_ID(ID_OK)                                        \
+DEFINE_CMD_ID(ID_CANCEL)                                    \
+DEFINE_CMD_ID(ID_EXEC_FUNCTION)                             \
+
+#undef DEFINE_CMD_ID
+#define DEFINE_CMD_ID(uid) uid,
+
+#undef DEFINE_CMD_ID_TIP
+#define DEFINE_CMD_ID_TIP(uid, tooltip)   uid,
+
 enum UIObjectId {
-    UID_INVALID                 = 0,
-    CMD_MINIMIZE                = 1,
-    CMD_MAXIMIZE,
-    CMD_CLOSE,
-    CMD_QUIT,
-    CMD_MENU,
+    ID_INVALID                 = 0,
 
-    // Skin Dialog
-    CMD_OK,
-    CMD_CANCEL,
+    ID_SYSTEM_END              = 10,
 
-    CMD_EXEC_FUNCTION,
+    SKIN_BASE_IDS
 
-    CMD_BASE_END,
-    CMD_ID_CUSTOM_BASE          = 1000, // system alloc id begins from here
+    ID_BASE_END,
+    ID_ID_USER_BASE          = 1000, // system alloc id begins from here
 
 };
 
@@ -223,17 +237,11 @@ public:
     int getIDByNameEx(cstr_t szId, string *pstrToolTip);
     virtual int getIDByNameEx(cstr_t szId, string &strToolTip)
         { return getIDByNameEx(szId, &strToolTip); }
-    virtual void getTooltip(int nUID, string &strToolTip);
-
-    int getMenuIDByUID(int nUID, bool bAllocIfInexistence = false);
-    bool setMenuIDByUID(int nUID, int nMenuId);
-    int getUIDByMenuID(int nMenuID);
+    virtual string getTooltip(int nUID);
 
 #ifdef DEBUG
     void dumpUID();
 #endif
-
-    UIObjectIDDefinition *getUidDef(int nUID);
 
     int allocUID();
     string getStringOfID(int nID);
@@ -273,7 +281,7 @@ public:
     virtual CUIObject *createUIObject(CSkinWnd *pSkin, cstr_t szClassName, CSkinContainer *pContainer);
 
     //
-    virtual CUIObject *createDynamicCtrl(CSkinContainer *pContainer, cstr_t szClassName, int nIDAssign = UID_INVALID, cstr_t szLeft = nullptr, cstr_t szTop = nullptr, cstr_t szWidth = nullptr, cstr_t szHeight = nullptr);
+    virtual CUIObject *createDynamicCtrl(CSkinContainer *pContainer, cstr_t szClassName, int nIDAssign = ID_INVALID, cstr_t szLeft = nullptr, cstr_t szTop = nullptr, cstr_t szWidth = nullptr, cstr_t szHeight = nullptr);
 
     //
     // Skin root dir, and extra dir. resource files search order: SkinDir > SkinRootDir > Extra Dir
@@ -362,14 +370,14 @@ protected:
     // Dynamic commands define
     CDynamicCmds                m_dynamicCmds;
 
+    using MapStringToUInt = std::map<string, uint32_t>;
+    MapStringToUInt             m_mapUserUIDs;
+    uint32_t                    m_userCmdIDNext;
     SetUIObjectIDDefinition     m_setUIDDefinition;
-    AllocatorPool               m_allocator;
-    int                         m_nCustomCmdIDNext;
-    int                         m_nMenuIDNext;
 
     MapUIObjNewer               m_mapUIObjNewer;
 
-    typedef    list<CSkinWnd*>        ListSkinWnds;
+    using ListSkinWnds = list<CSkinWnd*>;
 
     ListSkinWnds                m_listSkinWnds;
 

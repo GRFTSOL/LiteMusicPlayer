@@ -196,9 +196,9 @@ bool CSkinListView::setProperty(cstr_t szProperty, cstr_t szValue) {
         m_bHoverMouseSel = isTRUE(szValue);
     } else if (isPropertyName(szProperty, "SubmitCmd")) {
         if (isTRUE(szValue)) {
-            m_cmdSubmit = CMD_OK;
+            m_cmdSubmit = ID_OK;
         } else if (strIsSame(szValue, SZ_FALSE)) {
-            m_cmdSubmit = UID_INVALID;
+            m_cmdSubmit = ID_INVALID;
         } else {
             m_cmdSubmit = getIDByName(szValue);
         }
@@ -1090,7 +1090,7 @@ bool CSkinListView::onLButtonDblClk(uint32_t nFlags, CPoint point) {
 
     sendNotifyEvent(CSkinListCtrlEventNotify::C_DBL_CLICK, nClickedRow, nClickedCol);
 
-    if (m_cmdSubmit != UID_INVALID) {
+    if (m_cmdSubmit != ID_INVALID) {
         m_pSkin->postCustomCommandMsg(m_cmdSubmit);
     }
 
@@ -1108,7 +1108,7 @@ bool CSkinListView::onHandleKeyDown(uint32_t nChar, uint32_t nFlags) {
 
     if (nChar == VK_RETURN) {
         sendNotifyEvent(CSkinListCtrlEventNotify::C_ENTER);
-        if (m_cmdSubmit != UID_INVALID) {
+        if (m_cmdSubmit != ID_INVALID) {
             m_pSkin->postCustomCommandMsg(m_cmdSubmit);
         }
         return true;

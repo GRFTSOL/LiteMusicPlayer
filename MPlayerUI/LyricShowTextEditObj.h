@@ -83,7 +83,7 @@ public:
 
     virtual void onEvent(const IEvent *pEvent) override;
 
-    virtual bool onCustomCommand(int nId) override;
+    virtual bool onCommand(uint32_t nId) override;
 
     virtual void onSaveLyrics();
 

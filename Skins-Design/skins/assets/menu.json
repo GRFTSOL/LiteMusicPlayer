@@ -1,1975 +1,1699 @@
 {
   "MediaLibMenu": [
     [
-      "&Queue Up", 
-      "IDC_QUEUE_UP", 
-      40164
-    ], 
+      "&Queue Up",
+      "ID_QUEUE_UP"
+    ],
     [
-      "&Queue Up All", 
-      "IDC_QUEUE_UP_ALL", 
-      40169
-    ], 
-    [
-      "separator"
-    ], 
-    [
-      "&Add Folder to Media Library", 
-      "IDC_ADD_DIR_TO_ML", 
-      40166
-    ], 
-    [
-      "separator"
-    ], 
-    [
-      "Remove from Media Library", 
-      "IDC_REMOVE_FROM_LIBRARY", 
-      40208
+      "&Queue Up All",
+      "ID_QUEUE_UP_ALL"
     ],
     [
       "separator"
-    ], 
+    ],
     [
-      "&Now Playing", 
-      "IDC_NOWPLAYING", 
-      40157
+      "&Add Folder to Media Library",
+      "ID_ADD_DIR_TO_ML"
+    ],
+    [
+      "separator"
+    ],
+    [
+      "Remove from Media Library",
+      "ID_REMOVE_FROM_LIBRARY"
+    ],
+    [
+      "separator"
+    ],
+    [
+      "&Now Playing",
+      "ID_NOWPLAYING"
     ]
-  ], 
+  ],
   "MainContextMenu": [
     [
-      "&File", 
+      "&File",
       [
         [
-          "&Open File...", 
-          "IDC_OPENFILE", 
-          40163
-        ], 
+          "&Open File...",
+          "ID_PL_OPEN_FILE"
+        ],
         [
-          "Open &Folder...", 
-          "IDC_OPENDIR", 
-          40165
-        ], 
+          "Open &Folder...",
+          "ID_PL_OPEN_DIR"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "&Add File...", 
-          "IDC_ADDFILE", 
-          40171
-        ], 
+          "&Add File...",
+          "ID_PL_ADD_FILE"
+        ],
         [
-          "Add F&older...", 
-          "IDC_ADDDIR", 
-          40152
-        ], 
+          "Add F&older...",
+          "ID_PL_ADD_DIR"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Open &Playlist", 
-          "IDC_OPEN_PL", 
-          40150
-        ], 
+          "Open &Playlist...",
+          "ID_OPEN_PL"
+        ],
         [
-          "&Save Playlist...", 
-          "IDC_SAVE_PL", 
-          40159
-        ], 
+          "&Save Playlist...",
+          "ID_PL_SAVE"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Media &Information", 
-          "IDC_MEDIA_INFO", 
-          40168
+          "Media &Information",
+          "ID_PL_PROPERTY"
         ]
       ]
-    ], 
+    ],
     [
-      "&Search Lyrics...", 
-      "IDC_OPEN_LYRICS", 
-      40110
-    ], 
+      "&Search Lyrics...",
+      "ID_OPEN_LRC"
+    ],
     [
-      "&Lyrics", 
+      "&Lyrics",
       [
         [
-          "Ra&te These Lyrics", 
+          "Ra&te These Lyrics",
           [
             [
-              "5 (High)", 
-              "IDC_RATE_LYR_5", 
-              40192
-            ], 
+              "5 (High)",
+              "ID_RATE_LYR_5"
+            ],
             [
-              "4", 
-              "IDC_RATE_LYR_4", 
-              40191
-            ], 
+              "4",
+              "ID_RATE_LYR_4"
+            ],
             [
-              "3", 
-              "IDC_RATE_LYR_3", 
-              40190
-            ], 
+              "3",
+              "ID_RATE_LYR_3"
+            ],
             [
-              "2", 
-              "IDC_RATE_LYR_2", 
-              40189
-            ], 
+              "2",
+              "ID_RATE_LYR_2"
+            ],
             [
-              "1 (Low)", 
-              "IDC_RATE_LYR_1", 
-              40188
+              "1 (Low)",
+              "ID_RATE_LYR_1"
             ]
           ]
-        ], 
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Save Lyrics in &Song File...", 
-          "IDC_EMBEDDED_LYRICS", 
-          40178
-        ], 
-        [
-          "separator"
-        ], 
-        [
-          "&Save Lyrics", 
-          "IDC_SAVE_LYRICS", 
-          40019
-        ], 
-        [
-          "Save Lyrics &As...", 
-          "IDC_SAVE_LYRICS_AS", 
-          40020
-        ], 
+          "Save Lyrics in &Song File...",
+          "ID_SAVE_LYR_IN_SONG_FILE"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "&Upload Lyrics...", 
-          "IDC_UPLOAD_LYRICS", 
-          40059
-        ], 
+          "&Save Lyrics",
+          "ID_SAVE_LRC"
+        ],
         [
-          "Sign in Via &Web Browser...", 
-          "IDC_LOGIN_VIA_IE", 
-          40096
-        ], 
-        [
-          "&Sign up Free...", 
-          "IDC_APPLY_ACCOUNT", 
-          1000
-        ], 
+          "Save Lyrics &As...",
+          "ID_SAVE_LRC_AS"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "&Character Encoding", 
+          "&Upload Lyrics...",
+          "ID_UPLOAD_LYR"
+        ],
+        [
+          "Sign in Via &Web Browser...",
+          "ID_LOGIN_VIA_IE"
+        ],
+        [
+          "&Sign up Free...",
+          "ID_APPLY_ACCOUNT"
+        ],
+        [
+          "separator"
+        ],
+        [
+          "&Character Encoding",
           [
             [
-              "&Default", 
-              "IDC_ENC_DEFAULT", 
-              40024
-            ], 
+              "&Default",
+              "ID_ENC_DEFAULT"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Arabic", 
-              "IDC_ENC_ARABIC", 
-              40025
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "Baltic", 
-              "IDC_ENC_BALTIC", 
-              40026
-            ], 
+              "Arabic",
+              "ID_ENC_ARABIC"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Cyrillic", 
-              "IDC_ENC_CYRILLIC", 
-              40027
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "Central European", 
-              "IDC_ENC_CENTRAL_EUROPE", 
-              40028
-            ], 
+              "Baltic",
+              "ID_ENC_BALTIC"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Western European", 
-              "IDC_ENC_WEST_EUROPE", 
-              40029
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "Greek", 
-              "IDC_ENC_GREEK", 
-              40030
-            ], 
+              "Cyrillic",
+              "ID_ENC_CYRILLIC"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Hebrew", 
-              "IDC_ENC_HEBREW", 
-              40031
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "&Japanese", 
-              "IDC_ENC_JAPANESE", 
-              40032
-            ], 
+              "Central European",
+              "ID_ENC_CENTRAL_EUROPE"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "&Korean", 
-              "IDC_ENC_KOREAN", 
-              40033
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "Latin 9 (ISO)", 
-              "IDC_ENC_LATIN9_ISO", 
-              40036
-            ], 
+              "Western European",
+              "ID_ENC_WEST_EUROPE"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "&Simplified Chinese (GB)", 
-              "IDC_ENC_CHS", 
-              40034
-            ], 
-            [
-              "&Traditional Chinese (Big5)", 
-              "IDC_ENC_CHT", 
-              40037
-            ], 
+              "Greek",
+              "ID_ENC_GREEK"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Thai", 
-              "IDC_ENC_THAI", 
-              40035
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "Turkish", 
-              "IDC_ENC_TURKISH", 
-              40039
-            ], 
+              "Hebrew",
+              "ID_ENC_HEBREW"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "&Unicode", 
-              "IDC_ENC_UNICODE", 
-              40041
-            ], 
-            [
-              "Utf-&8", 
-              "IDC_ENC_UTF8", 
-              40043
-            ], 
+              "&Japanese",
+              "ID_ENC_JAPANESE"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Vietnamese", 
-              "IDC_ENC_VIETNAMESE", 
-              40045
+              "&Korean",
+              "ID_ENC_KOREAN"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "Latin 9 (ISO)",
+              "ID_ENC_LATIN9_ISO"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "&Simplified Chinese (GB)",
+              "ID_ENC_CHS"
+            ],
+            [
+              "&Traditional Chinese (Big5)",
+              "ID_ENC_CHT"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "Thai",
+              "ID_ENC_THAI"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "Turkish",
+              "ID_ENC_TURKISH"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "&Unicode",
+              "ID_ENC_UNICODE"
+            ],
+            [
+              "Utf-&8",
+              "ID_ENC_UTF8"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "Vietnamese",
+              "ID_ENC_VIETNAMESE"
             ]
           ]
-        ], 
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "&Edit with External Lyrics Editor...", 
-          "IDC_EXTERNAL_LYR_EDIT", 
-          40022
+          "&Edit with External Lyrics Editor...",
+          "ID_EXTERNAL_LYR_EDIT"
         ]
       ]
-    ], 
+    ],
     [
       "separator"
-    ], 
+    ],
     [
-      "S&kins", 
+      "S&kins",
       [
         [
-          "INSERT_SKIN_POS", 
-          "IDC_SKIN_POS", 
-          40006
-        ], 
-        [
-          "separator"
+          "INSERT_SKIN_POS",
+          "ID_SKIN_START"
         ]
       ]
-    ], 
+    ],
     [
-      "Display &Options", 
+      "Display &Options",
       [
         [
-          "Dis&play Options...", 
-          "IDC_LYR_DISPLAY_OPT", 
-          40122
-        ], 
+          "Dis&play Options...",
+          "ID_LYR_DISPLAY_OPT"
+        ],
         [
-          "Ad&just Hue...", 
-          "IDC_ADJUST_HUE", 
-          40131
-        ], 
+          "Ad&just Hue...",
+          "ID_ADJUST_HUE"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Mouse &Click Through", 
-          "IDC_CLICK_THROUGH", 
-          1007
-        ], 
-        [
-          "separator"
-        ], 
-        [
-          "&Vertical Scrolling Style", 
-          "IDC_LDS_MULTI_LINE", 
-          40111
-        ], 
-        [
-          "&Double Line Style", 
-          "IDC_LDS_TWO_LINE", 
-          40113
-        ], 
-        [
-          "Single &Line Style", 
-          "IDC_LDS_SINGLE_LINE", 
-          40115
-        ], 
-        [
-          "S&tatic Text Style", 
-          "IDC_LDS_STATIC_TXT", 
-          40112
-        ], 
-        [
-          "Movie S&ubtitle Style", 
-          "IDC_LDS_VOBSUB", 
-          40116
-        ], 
+          "Mouse &Click Through",
+          "ID_CLICK_THROUGH"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "&Karaoke", 
-          "IDC_LDO_KARAOKE", 
-          40117
-        ], 
+          "&Vertical Scrolling Style",
+          "ID_LDS_MULTI_LINE"
+        ],
         [
-          "separator"
-        ], 
+          "&Double Line Style",
+          "ID_LDS_TWO_LINE"
+        ],
         [
-          "&Automatic", 
-          "IDC_LDO_AUTO", 
-          40118
-        ], 
+          "Single &Line Style",
+          "ID_LDS_SINGLE_LINE"
+        ],
         [
-          "Norma&l", 
-          "IDC_LDO_NORMAL", 
-          40119
-        ], 
+          "S&tatic Text Style",
+          "ID_LDS_STATIC_TXT"
+        ],
         [
-          "&Fade in Lyrics", 
-          "IDC_LDO_FADE_IN", 
-          40120
-        ], 
-        [
-          "Fade out to Back&ground", 
-          "IDC_LDO_FADEOUT_BG", 
-          40121
-        ], 
+          "Movie S&ubtitle Style",
+          "ID_LDS_VOBSUB"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Ant&ialiasing", 
-          "IDC_ANTIAlIAS", 
-          40061
+          "&Karaoke",
+          "ID_LDO_KARAOKE"
+        ],
+        [
+          "separator"
+        ],
+        [
+          "&Automatic",
+          "ID_LDO_AUTO"
+        ],
+        [
+          "Norma&l",
+          "ID_LDO_NORMAL"
+        ],
+        [
+          "&Fade in Lyrics",
+          "ID_LDO_FADE_IN"
+        ],
+        [
+          "Fade out to Back&ground",
+          "ID_LDO_FADEOUT_BG"
+        ],
+        [
+          "separator"
+        ],
+        [
+          "Ant&ialiasing",
+          "ID_ANTIAlIAS"
         ]
       ]
-    ], 
+    ],
     [
-      "&Preferences...", 
-      "IDC_PREFERENCE", 
-      40005
-    ], 
-    [
-      "separator"
-    ], 
-    [
-      "&Floating Lyrics...", 
-      "IDC_FLOATING_LYRICS", 
-      40133
-    ], 
-    [
-      "Lyrics &Editor...", 
-      "IDC_LYR_EDITOR", 
-      40172
-    ], 
-    [
-      "INSERT_NEW_MENU_POS", 
-      "IDC_NEW_MENU_POS", 
-      40147
-    ], 
+      "&Preferences...",
+      "ID_PREFERENCES"
+    ],
     [
       "separator"
-    ], 
+    ],
     [
-      "&Help and Support", 
+      "&Floating Lyrics...",
+      "ID_FLOATING_LYRICS"
+    ],
+    [
+      "Lyrics &Editor...",
+      "ID_LYR_EDITOR"
+    ],
+    [
+      "INSERT_NEW_MENU_POS",
+      "ID_NEW_MENU_POS"
+    ],
+    [
+      "separator"
+    ],
+    [
+      "&Help and Support",
       [
         [
-          "A&bout $Product$...", 
-          "IDC_ABOUT", 
-          40004
-        ], 
+          "A&bout $Product$...",
+          "ID_ABOUT"
+        ],
         [
-          "$Product$ &Help", 
-          "IDC_ML_HELP", 
-          40023
-        ], 
+          "$Product$ &Help",
+          "ID_HELP"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "$Product$ &Website", 
-          "IDC_WEBHOME", 
-          40066
-        ], 
+          "$Product$ &Website",
+          "ID_WEBHOME"
+        ],
         [
-          "&Report to Author", 
-          "IDC_EMAIL", 
-          40067
+          "&Report to Author",
+          "ID_EMAIL"
         ]
       ]
-    ], 
+    ],
     [
       "separator"
-    ], 
+    ],
     [
-      "Always on &Top", 
-      "IDC_SETTOPMOST", 
-      40001
-    ], 
+      "Always on &Top",
+      "ID_TOPMOST"
+    ],
     [
       "separator"
-    ], 
+    ],
     [
-      "E&xit", 
-      "IDC_EXIT", 
-      40003
+      "E&xit",
+      "ID_QUIT"
     ]
-  ], 
+  ],
   "OpenLyricsDlgMenu": [
     [
-      "&Browse File...", 
-      "IDC_BROWSE", 
-      1010
-    ], 
+      "&Browse File...",
+      "ID_BROWSE"
+    ],
     [
-      "&No Suitable Lyrics for the Song File", 
-      "IDC_NOT_MATCH", 
-      1024
-    ], 
+      "&No Suitable Lyrics for the Song File",
+      "ID_NO_SUITTABLE_LYRICS"
+    ],
     [
-      "&Edit with External Lyrics Editor...", 
-      "IDC_EXTERNAL_LYR_EDIT", 
-      40022
-    ], 
+      "&Edit with External Lyrics Editor...",
+      "ID_EXTERNAL_LYR_EDIT"
+    ],
     [
       "separator"
-    ], 
+    ],
     [
-      "&Delete File", 
-      "IDC_DEL_FILE", 
-      1011
-    ], 
+      "&Delete File",
+      "ID_DEL_FILE"
+    ],
     [
-      "&Rename File", 
-      "IDC_RENAME", 
-      1012
-    ], 
+      "&Rename File",
+      "ID_RENAME"
+    ],
     [
       "separator"
-    ], 
+    ],
     [
-      "Don't &Pop up This Window Automatically", 
-      "IDC_NO_PROMPT", 
-      1009
+      "Don't &Pop up This Window Automatically",
+      "ID_NO_PROMPT"
     ]
-  ], 
+  ],
   "LyricsMenu": [
     [
-      "&Search Lyrics...", 
-      "IDC_OPEN_LYRICS", 
-      40110
-    ], 
+      "&Search Lyrics...",
+      "ID_OPEN_LRC"
+    ],
     [
-      "&Lyrics", 
+      "&Lyrics",
       [
         [
-          "Ra&te These Lyrics", 
+          "Ra&te These Lyrics",
           [
             [
-              "5 (High)", 
-              "IDC_RATE_LYR_5", 
-              40192
-            ], 
+              "5 (High)",
+              "ID_RATE_LYR_5"
+            ],
             [
-              "4", 
-              "IDC_RATE_LYR_4", 
-              40191
-            ], 
+              "4",
+              "ID_RATE_LYR_4"
+            ],
             [
-              "3", 
-              "IDC_RATE_LYR_3", 
-              40190
-            ], 
+              "3",
+              "ID_RATE_LYR_3"
+            ],
             [
-              "2", 
-              "IDC_RATE_LYR_2", 
-              40189
-            ], 
+              "2",
+              "ID_RATE_LYR_2"
+            ],
             [
-              "1 (Low)", 
-              "IDC_RATE_LYR_1", 
-              40188
+              "1 (Low)",
+              "ID_RATE_LYR_1"
             ]
           ]
-        ], 
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Save Lyrics in &Song File...", 
-          "IDC_EMBEDDED_LYRICS", 
-          40178
-        ], 
-        [
-          "separator"
-        ], 
-        [
-          "&Save Lyrics", 
-          "IDC_SAVE_LYRICS", 
-          40019
-        ], 
-        [
-          "Save Lyrics &As...", 
-          "IDC_SAVE_LYRICS_AS", 
-          40020
-        ], 
+          "Save Lyrics in &Song File...",
+          "ID_SAVE_LYR_IN_SONG_FILE"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "&Character Encoding", 
+          "&Save Lyrics",
+          "ID_SAVE_LRC"
+        ],
+        [
+          "Save Lyrics &As...",
+          "ID_SAVE_LRC_AS"
+        ],
+        [
+          "separator"
+        ],
+        [
+          "&Character Encoding",
           [
             [
-              "&Default", 
-              "IDC_ENC_DEFAULT", 
-              40024
-            ], 
+              "&Default",
+              "ID_ENC_DEFAULT"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Arabic", 
-              "IDC_ENC_ARABIC", 
-              40025
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "Baltic", 
-              "IDC_ENC_BALTIC", 
-              40026
-            ], 
+              "Arabic",
+              "ID_ENC_ARABIC"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Cyrillic", 
-              "IDC_ENC_CYRILLIC", 
-              40027
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "Central European", 
-              "IDC_ENC_CENTRAL_EUROPE", 
-              40028
-            ], 
+              "Baltic",
+              "ID_ENC_BALTIC"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Western European", 
-              "IDC_ENC_WEST_EUROPE", 
-              40029
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "Greek", 
-              "IDC_ENC_GREEK", 
-              40030
-            ], 
+              "Cyrillic",
+              "ID_ENC_CYRILLIC"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Hebrew", 
-              "IDC_ENC_HEBREW", 
-              40031
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "&Japanese", 
-              "IDC_ENC_JAPANESE", 
-              40032
-            ], 
+              "Central European",
+              "ID_ENC_CENTRAL_EUROPE"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "&Korean", 
-              "IDC_ENC_KOREAN", 
-              40033
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "Latin 9 (ISO)", 
-              "IDC_ENC_LATIN9_ISO", 
-              40036
-            ], 
+              "Western European",
+              "ID_ENC_WEST_EUROPE"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "&Simplified Chinese (GB)", 
-              "IDC_ENC_CHS", 
-              40034
-            ], 
-            [
-              "&Traditional Chinese (Big5)", 
-              "IDC_ENC_CHT", 
-              40037
-            ], 
+              "Greek",
+              "ID_ENC_GREEK"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Thai", 
-              "IDC_ENC_THAI", 
-              40035
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "Turkish", 
-              "IDC_ENC_TURKISH", 
-              40039
-            ], 
+              "Hebrew",
+              "ID_ENC_HEBREW"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "&Unicode", 
-              "IDC_ENC_UNICODE", 
-              40041
-            ], 
-            [
-              "Utf-&8", 
-              "IDC_ENC_UTF8", 
-              40043
-            ], 
+              "&Japanese",
+              "ID_ENC_JAPANESE"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Vietnamese", 
-              "IDC_ENC_VIETNAMESE", 
-              40045
+              "&Korean",
+              "ID_ENC_KOREAN"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "Latin 9 (ISO)",
+              "ID_ENC_LATIN9_ISO"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "&Simplified Chinese (GB)",
+              "ID_ENC_CHS"
+            ],
+            [
+              "&Traditional Chinese (Big5)",
+              "ID_ENC_CHT"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "Thai",
+              "ID_ENC_THAI"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "Turkish",
+              "ID_ENC_TURKISH"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "&Unicode",
+              "ID_ENC_UNICODE"
+            ],
+            [
+              "Utf-&8",
+              "ID_ENC_UTF8"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "Vietnamese",
+              "ID_ENC_VIETNAMESE"
             ]
           ]
-        ], 
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Lyrics &Editor...", 
-          "IDC_LYR_EDITOR", 
-          40172
-        ], 
+          "Lyrics &Editor...",
+          "ID_LYR_EDITOR"
+        ],
         [
-          "&Edit with External Lyrics Editor...", 
-          "IDC_EXTERNAL_LYR_EDIT", 
-          40022
+          "&Edit with External Lyrics Editor...",
+          "ID_EXTERNAL_LYR_EDIT"
         ]
       ]
-    ], 
+    ],
     [
       "separator"
-    ], 
+    ],
     [
-      "Dis&play Options...", 
-      "IDC_LYR_DISPLAY_OPT", 
-      40122
-    ], 
-    [
-      "separator"
-    ], 
-    [
-      "Mouse &Click Through", 
-      "IDC_CLICK_THROUGH", 
-      1007
-    ], 
+      "Dis&play Options...",
+      "ID_LYR_DISPLAY_OPT"
+    ],
     [
       "separator"
-    ], 
+    ],
     [
-      "&Automatic", 
-      "IDC_LDO_AUTO", 
-      40118
-    ], 
-    [
-      "Norma&l", 
-      "IDC_LDO_NORMAL", 
-      40119
-    ], 
-    [
-      "&Fade in Lyrics", 
-      "IDC_LDO_FADE_IN", 
-      40120
-    ], 
-    [
-      "Fade out to Back&ground", 
-      "IDC_LDO_FADEOUT_BG", 
-      40121
-    ], 
+      "Mouse &Click Through",
+      "ID_CLICK_THROUGH"
+    ],
     [
       "separator"
-    ], 
+    ],
     [
-      "&Vertical Scrolling Style", 
-      "IDC_LDS_MULTI_LINE", 
-      40111
-    ], 
+      "&Automatic",
+      "ID_LDO_AUTO"
+    ],
     [
-      "&Double Line Style", 
-      "IDC_LDS_TWO_LINE", 
-      40113
-    ], 
+      "Norma&l",
+      "ID_LDO_NORMAL"
+    ],
     [
-      "Single &Line Style", 
-      "IDC_LDS_SINGLE_LINE", 
-      40115
-    ], 
+      "&Fade in Lyrics",
+      "ID_LDO_FADE_IN"
+    ],
     [
-      "Movie S&ubtitle Style", 
-      "IDC_LDS_VOBSUB", 
-      40116
-    ], 
+      "Fade out to Back&ground",
+      "ID_LDO_FADEOUT_BG"
+    ],
     [
       "separator"
-    ], 
+    ],
     [
-      "Always on &Top", 
-      "IDC_SETTOPMOST", 
-      40001
-    ], 
+      "&Vertical Scrolling Style",
+      "ID_LDS_MULTI_LINE"
+    ],
+    [
+      "&Double Line Style",
+      "ID_LDS_TWO_LINE"
+    ],
+    [
+      "Single &Line Style",
+      "ID_LDS_SINGLE_LINE"
+    ],
+    [
+      "Movie S&ubtitle Style",
+      "ID_LDS_VOBSUB"
+    ],
     [
       "separator"
-    ], 
+    ],
     [
-      "&Close", 
-      "IDCLOSE", 
-      8
+      "Always on &Top",
+      "ID_TOPMOST"
+    ],
+    [
+      "separator"
+    ],
+    [
+      "&Close",
+      "ID_CLOSE"
     ]
-  ], 
+  ],
   "PlaylistMenu": [
     [
-      "Show in Fin&der", 
-      "IDC_SHOW_IN_FINDER", 
-      40201
-    ], 
+      "Show in Fin&der",
+      "ID_SHOW_IN_FINDER"
+    ],
     [
-      "&Open File...", 
-      "IDC_OPENFILE", 
-      40163
-    ], 
+      "&Open File...",
+      "ID_PL_OPEN_FILE"
+    ],
     [
-      "Open &Folder...", 
-      "IDC_OPENDIR", 
-      40165
-    ], 
+      "Open &Folder...",
+      "ID_PL_OPEN_DIR"
+    ],
     [
-      "separator"
-    ], 
-    [
-      "&Add File...", 
-      "IDC_ADDFILE", 
-      40171
-    ], 
-    [
-      "Add F&older...", 
-      "IDC_ADDDIR", 
-      40152
-    ], 
+      "Open &Playlist...",
+      "ID_OPEN_PL"
+    ],
     [
       "separator"
-    ], 
+    ],
     [
-      "&Save Playlist...", 
-      "IDC_SAVE_PL", 
-      40159
-    ], 
+      "&Add File...",
+      "ID_PL_ADD_FILE"
+    ],
     [
-      "Add &to Playlist", 
+      "Add F&older...",
+      "ID_PL_ADD_DIR"
+    ],
+    [
+      "separator"
+    ],
+    [
+      "&Save Playlist...",
+      "ID_PL_SAVE"
+    ],
+    [
+      "Add &to Playlist",
       [
         [
           "Create New Playlist",
-          "IDC_ADD_SELECTED_TO_PLAYLIST_NEW", 
-          40231
+          "ID_ADD_SELECTED_TO_PLAYLIST_NEW"
         ],
         [
           "Playlist",
-          "IDC_ADD_SELECTED_TO_PLAYLIST_START", 
-          40220
+          "ID_ADD_SELECTED_TO_PLAYLIST_START"
         ]
       ]
     ],
     [
       "separator"
-    ], 
+    ],
     [
-      "Move &Up", 
-      "IDC_MOVE_UP", 
-      40153
-    ], 
+      "Move &Up",
+      "ID_PL_UP"
+    ],
     [
-      "&Move Down", 
-      "IDC_MOVE_DOWN", 
-      40154
-    ], 
-    [
-      "separator"
-    ], 
-    [
-      "&Remove From Playlist", 
-      "IDC_REMOVE_FROM_PLAYLIST", 
-      40155
-    ], 
-    [
-      "Remove from Media Library", 
-      "IDC_REMOVE_FROM_LIBRARY", 
-      40208
+      "&Move Down",
+      "ID_PL_DOWN"
     ],
     [
       "separator"
-    ], 
+    ],
     [
-      "&Clear Now Playing", 
-      "IDC_CLEAR", 
-      40156
-    ], 
+      "&Remove From Playlist",
+      "ID_PL_DEL"
+    ],
+    [
+      "Remove from Media Library",
+      "ID_REMOVE_FROM_LIBRARY"
+    ],
     [
       "separator"
-    ], 
+    ],
     [
-      "Media &Information", 
-      "IDC_MEDIA_INFO", 
-      40168
+      "&Clear Now Playing",
+      "ID_CLEAR"
+    ],
+    [
+      "separator"
+    ],
+    [
+      "Media &Information",
+      "ID_PL_PROPERTY"
     ]
-  ], 
+  ],
   "AlbumArtMenu": [
     [
-      "Browse Album Art...", 
-      "IDC_BR_ALBUM_ART", 
-      40124
+      "Browse Album Art...",
+      "ID_BR_ALBUM_ART"
     ]
-  ], 
+  ],
   "TrayIconMenu": [
     [
-      "&Play/Pause", 
-      "IDC_PLAYPAUSE", 
-      40057
-    ], 
+      "&Play/Pause",
+      "ID_PLAYPAUSE"
+    ],
     [
-      "Pr&evious", 
-      "IDC_PREV", 
-      40056
-    ], 
+      "Pr&evious",
+      "ID_PREVIOUS"
+    ],
     [
-      "&Next", 
-      "IDC_NEXT", 
-      40058
-    ], 
+      "&Next",
+      "ID_NEXT"
+    ],
     [
       "separator"
-    ], 
+    ],
     [
-      "&Search Lyrics...", 
-      "IDC_OPEN_LYRICS", 
-      40110
-    ], 
+      "&Search Lyrics...",
+      "ID_OPEN_LRC"
+    ],
     [
-      "Show &Main Window", 
-      "IDC_SHOW_MAIN_WND", 
-      40110
+      "Show &Main Window",
+      "ID_SHOW_MAIN_WND"
     ]
-  ], 
+  ],
   "MainWndMenu": [
     [
-      "&File", 
+      "&File",
       [
         [
-          "&Open File...", 
-          "IDC_OPENFILE", 
-          40163
-        ], 
+          "&Open File...",
+          "ID_PL_OPEN_FILE"
+        ],
         [
-          "Open &Folder...", 
-          "IDC_OPENDIR", 
-          40165
-        ], 
+          "Open &Folder...",
+          "ID_PL_OPEN_DIR"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "&Add File...", 
-          "IDC_ADDFILE", 
-          40171
-        ], 
+          "&Add File...",
+          "ID_PL_ADD_FILE"
+        ],
         [
-          "Add F&older...", 
-          "IDC_ADDDIR", 
-          40152
-        ], 
+          "Add F&older...",
+          "ID_PL_ADD_DIR"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Open &Playlist", 
-          "IDC_OPEN_PL", 
-          40150
-        ], 
+          "Open &Playlist...",
+          "ID_OPEN_PL"
+        ],
         [
-          "&Save Playlist...", 
-          "IDC_SAVE_PL", 
-          40159
-        ], 
+          "&Save Playlist...",
+          "ID_PL_SAVE"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Media &Information", 
-          "IDC_MEDIA_INFO", 
-          40168
+          "Media &Information",
+          "ID_PL_PROPERTY"
         ]
       ]
-    ], 
+    ],
     [
-      "Play&back", 
+      "Play&back",
       [
         [
-          "&Play/Pause", 
-          "IDC_PLAYPAUSE", 
-          40057
-        ], 
+          "&Play/Pause",
+          "ID_PLAYPAUSE"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Pr&evious", 
-          "IDC_PREV", 
-          40056
-        ], 
+          "Pr&evious",
+          "ID_PREVIOUS"
+        ],
         [
-          "&Next", 
-          "IDC_NEXT", 
-          40058
-        ], 
+          "&Next",
+          "ID_NEXT"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "&Shuffle", 
-          "IDC_SHUFFLE", 
-          40137
-        ], 
+          "&Shuffle",
+          "ID_SHUFFLE"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "&Repeat All", 
-          "IDC_REPEAT_ALL", 
-          40138
-        ], 
+          "&Repeat All",
+          "ID_LOOP_ALL"
+        ],
         [
-          "Repeat Track", 
-          "IDC_REPEAT_TRACK", 
-          40139
-        ], 
+          "Repeat Track",
+          "ID_LOOP_TRACK"
+        ],
         [
-          "Repeat Off", 
-          "IDC_REPEAT_OFF", 
-          40140
+          "Repeat Off",
+          "ID_LOOP_OFF"
         ]
       ]
-    ], 
+    ],
     [
-      "&Lyrics", 
+      "&Lyrics",
       [
         [
-          "&Search Lyrics...", 
-          "IDC_OPEN_LYRICS", 
-          40110
-        ], 
+          "&Search Lyrics...",
+          "ID_OPEN_LRC"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Ra&te These Lyrics", 
+          "Ra&te These Lyrics",
           [
             [
-              "5 (High)", 
-              "IDC_RATE_LYR_5", 
-              40192
-            ], 
+              "5 (High)",
+              "ID_RATE_LYR_5"
+            ],
             [
-              "4", 
-              "IDC_RATE_LYR_4", 
-              40191
-            ], 
+              "4",
+              "ID_RATE_LYR_4"
+            ],
             [
-              "3", 
-              "IDC_RATE_LYR_3", 
-              40190
-            ], 
+              "3",
+              "ID_RATE_LYR_3"
+            ],
             [
-              "2", 
-              "IDC_RATE_LYR_2", 
-              40189
-            ], 
+              "2",
+              "ID_RATE_LYR_2"
+            ],
             [
-              "1 (Low)", 
-              "IDC_RATE_LYR_1", 
-              40188
+              "1 (Low)",
+              "ID_RATE_LYR_1"
             ]
           ]
-        ], 
+        ],
         [
-          "&Upload Lyrics", 
+          "&Upload Lyrics",
           [
             [
-              "&Upload Lyrics...", 
-              "IDC_UPLOAD_LYRICS", 
-              40059
-            ], 
+              "&Upload Lyrics...",
+              "ID_UPLOAD_LYR"
+            ],
             [
-              "Sign in Via &Web Browser...", 
-              "IDC_LOGIN_VIA_IE", 
-              40096
-            ], 
+              "Sign in Via &Web Browser...",
+              "ID_LOGIN_VIA_IE"
+            ],
             [
-              "&Sign up Free...", 
-              "IDC_APPLY_ACCOUNT", 
-              1000
+              "&Sign up Free...",
+              "ID_APPLY_ACCOUNT"
             ]
           ]
-        ], 
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Save Lyrics in &Song File...", 
-          "IDC_EMBEDDED_LYRICS", 
-          40178
-        ], 
-        [
-          "separator"
-        ], 
-        [
-          "&Save Lyrics", 
-          "IDC_SAVE_LYRICS", 
-          40019
-        ], 
-        [
-          "Save Lyrics &As...", 
-          "IDC_SAVE_LYRICS_AS", 
-          40020
-        ], 
+          "Save Lyrics in &Song File...",
+          "ID_SAVE_LYR_IN_SONG_FILE"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "&Character Encoding", 
+          "&Save Lyrics",
+          "ID_SAVE_LRC"
+        ],
+        [
+          "Save Lyrics &As...",
+          "ID_SAVE_LRC_AS"
+        ],
+        [
+          "separator"
+        ],
+        [
+          "&Character Encoding",
           [
             [
-              "&Default", 
-              "IDC_ENC_DEFAULT", 
-              40024
-            ], 
+              "&Default",
+              "ID_ENC_DEFAULT"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Arabic", 
-              "IDC_ENC_ARABIC", 
-              40025
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "Baltic", 
-              "IDC_ENC_BALTIC", 
-              40026
-            ], 
+              "Arabic",
+              "ID_ENC_ARABIC"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Cyrillic", 
-              "IDC_ENC_CYRILLIC", 
-              40027
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "Central European", 
-              "IDC_ENC_CENTRAL_EUROPE", 
-              40028
-            ], 
+              "Baltic",
+              "ID_ENC_BALTIC"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Western European", 
-              "IDC_ENC_WEST_EUROPE", 
-              40029
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "Greek", 
-              "IDC_ENC_GREEK", 
-              40030
-            ], 
+              "Cyrillic",
+              "ID_ENC_CYRILLIC"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Hebrew", 
-              "IDC_ENC_HEBREW", 
-              40031
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "&Japanese", 
-              "IDC_ENC_JAPANESE", 
-              40032
-            ], 
+              "Central European",
+              "ID_ENC_CENTRAL_EUROPE"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "&Korean", 
-              "IDC_ENC_KOREAN", 
-              40033
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "Latin 9 (ISO)", 
-              "IDC_ENC_LATIN9_ISO", 
-              40036
-            ], 
+              "Western European",
+              "ID_ENC_WEST_EUROPE"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "&Simplified Chinese (GB)", 
-              "IDC_ENC_CHS", 
-              40034
-            ], 
-            [
-              "&Traditional Chinese (Big5)", 
-              "IDC_ENC_CHT", 
-              40037
-            ], 
+              "Greek",
+              "ID_ENC_GREEK"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Thai", 
-              "IDC_ENC_THAI", 
-              40035
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "Turkish", 
-              "IDC_ENC_TURKISH", 
-              40039
-            ], 
+              "Hebrew",
+              "ID_ENC_HEBREW"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "&Unicode", 
-              "IDC_ENC_UNICODE", 
-              40041
-            ], 
-            [
-              "Utf-&8", 
-              "IDC_ENC_UTF8", 
-              40043
-            ], 
+              "&Japanese",
+              "ID_ENC_JAPANESE"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Vietnamese", 
-              "IDC_ENC_VIETNAMESE", 
-              40045
+              "&Korean",
+              "ID_ENC_KOREAN"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "Latin 9 (ISO)",
+              "ID_ENC_LATIN9_ISO"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "&Simplified Chinese (GB)",
+              "ID_ENC_CHS"
+            ],
+            [
+              "&Traditional Chinese (Big5)",
+              "ID_ENC_CHT"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "Thai",
+              "ID_ENC_THAI"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "Turkish",
+              "ID_ENC_TURKISH"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "&Unicode",
+              "ID_ENC_UNICODE"
+            ],
+            [
+              "Utf-&8",
+              "ID_ENC_UTF8"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "Vietnamese",
+              "ID_ENC_VIETNAMESE"
             ]
           ]
-        ], 
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "&Edit with External Lyrics Editor...", 
-          "IDC_EXTERNAL_LYR_EDIT", 
-          40022
+          "&Edit with External Lyrics Editor...",
+          "ID_EXTERNAL_LYR_EDIT"
         ]
       ]
-    ], 
+    ],
     [
-      "&View", 
+      "&View",
       [
         [
-          "Lyrics &Editor...", 
-          "IDC_LYR_EDITOR", 
-          40172
-        ], 
+          "Lyrics &Editor...",
+          "ID_LYR_EDITOR"
+        ],
         [
-          "&Floating Lyrics...", 
-          "IDC_FLOATING_LYRICS", 
-          40133
-        ], 
+          "&Floating Lyrics...",
+          "ID_FLOATING_LYRICS"
+        ],
         [
-          "&Preferences...", 
-          "IDC_PREFERENCE", 
-          40005
-        ], 
+          "&Preferences...",
+          "ID_PREFERENCES"
+        ],
         [
-          "INSERT_NEW_MENU_POS", 
-          "IDC_NEW_MENU_POS", 
-          40147
-        ], 
+          "INSERT_NEW_MENU_POS",
+          "ID_NEW_MENU_POS"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Ad&just Hue...", 
-          "IDC_ADJUST_HUE", 
-          40131
-        ], 
-        [
-          "separator"
-        ], 
-        [
-          "&Vertical Scrolling Style", 
-          "IDC_LDS_MULTI_LINE", 
-          40111
-        ], 
-        [
-          "S&tatic Text Style", 
-          "IDC_LDS_STATIC_TXT", 
-          40112
-        ], 
+          "Ad&just Hue...",
+          "ID_ADJUST_HUE"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Mouse &Click Through", 
-          "IDC_CLICK_THROUGH", 
-          1007
-        ], 
+          "&Vertical Scrolling Style",
+          "ID_LDS_MULTI_LINE"
+        ],
         [
-          "Always on &Top", 
-          "IDC_SETTOPMOST", 
-          40001
+          "S&tatic Text Style",
+          "ID_LDS_STATIC_TXT"
+        ],
+        [
+          "separator"
+        ],
+        [
+          "Mouse &Click Through",
+          "ID_CLICK_THROUGH"
+        ],
+        [
+          "Always on &Top",
+          "ID_TOPMOST"
         ]
       ]
-    ], 
+    ],
     [
-      "S&kins", 
+      "S&kins",
       [
         [
-          "INSERT_SKIN_POS", 
-          "IDC_SKIN_0", 
-          40006
-        ], 
+          "INSERT_SKIN_POS",
+          "ID_SKIN_START"
+        ],
         [
           "separator"
         ]
       ]
-    ], 
+    ],
     [
-      "&Help", 
+      "&Help",
       [
         [
-          "A&bout $Product$...", 
-          "IDC_ABOUT", 
-          40004
-        ], 
+          "A&bout $Product$...",
+          "ID_ABOUT"
+        ],
         [
-          "$Product$ &Help", 
-          "IDC_ML_HELP", 
-          40023
-        ], 
+          "$Product$ &Help",
+          "ID_HELP"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "$Product$ &Website", 
-          "IDC_WEBHOME", 
-          40066
+          "$Product$ &Website",
+          "ID_WEBHOME"
         ]
       ]
     ]
-  ], 
+  ],
   "LyrEditorMenu": [
     [
-      "&File", 
+      "&File",
       [
         [
-          "&Upload Lyrics", 
+          "&Upload Lyrics",
           [
             [
-              "&Upload Lyrics...", 
-              "IDC_UPLOAD_LYRICS", 
-              40059
-            ], 
+              "&Upload Lyrics...",
+              "ID_UPLOAD_LYR"
+            ],
             [
-              "Sign in Via &Web Browser...", 
-              "IDC_LOGIN_VIA_IE", 
-              40096
-            ], 
+              "Sign in Via &Web Browser...",
+              "ID_LOGIN_VIA_IE"
+            ],
             [
-              "&Sign up Free...", 
-              "IDC_APPLY_ACCOUNT", 
-              1000
+              "&Sign up Free...",
+              "ID_APPLY_ACCOUNT"
             ]
           ]
-        ], 
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "&New Lyrics", 
-          "IDC_NEW_LYRICS", 
-          40197
-        ], 
+          "&New Lyrics",
+          "ID_NEW_LRC"
+        ],
         [
-          "Open &Lyrics...", 
-          "IDC_OPEN_LYRICS", 
-          40110
-        ], 
+          "Open &Lyrics...",
+          "ID_OPEN_LRC"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Save Lyrics in &Song File...", 
-          "IDC_EMBEDDED_LYRICS", 
-          40178
-        ], 
-        [
-          "separator"
-        ], 
-        [
-          "&Save Lyrics", 
-          "IDC_SAVE_LYRICS", 
-          40019
-        ], 
-        [
-          "Save Lyrics &As...", 
-          "IDC_SAVE_LYRICS_AS", 
-          40020
-        ], 
+          "Save Lyrics in &Song File...",
+          "ID_SAVE_LYR_IN_SONG_FILE"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "&Character Encoding", 
+          "&Save Lyrics",
+          "ID_SAVE_LRC"
+        ],
+        [
+          "Save Lyrics &As...",
+          "ID_SAVE_LRC_AS"
+        ],
+        [
+          "separator"
+        ],
+        [
+          "&Character Encoding",
           [
             [
-              "&Default", 
-              "IDC_ENC_DEFAULT", 
-              40024
-            ], 
+              "&Default",
+              "ID_ENC_DEFAULT"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Arabic", 
-              "IDC_ENC_ARABIC", 
-              40025
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "Baltic", 
-              "IDC_ENC_BALTIC", 
-              40026
-            ], 
+              "Arabic",
+              "ID_ENC_ARABIC"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Cyrillic", 
-              "IDC_ENC_CYRILLIC", 
-              40027
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "Central European", 
-              "IDC_ENC_CENTRAL_EUROPE", 
-              40028
-            ], 
+              "Baltic",
+              "ID_ENC_BALTIC"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Western European", 
-              "IDC_ENC_WEST_EUROPE", 
-              40029
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "Greek", 
-              "IDC_ENC_GREEK", 
-              40030
-            ], 
+              "Cyrillic",
+              "ID_ENC_CYRILLIC"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Hebrew", 
-              "IDC_ENC_HEBREW", 
-              40031
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "&Japanese", 
-              "IDC_ENC_JAPANESE", 
-              40032
-            ], 
+              "Central European",
+              "ID_ENC_CENTRAL_EUROPE"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "&Korean", 
-              "IDC_ENC_KOREAN", 
-              40033
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "Latin 9 (ISO)", 
-              "IDC_ENC_LATIN9_ISO", 
-              40036
-            ], 
+              "Western European",
+              "ID_ENC_WEST_EUROPE"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "&Simplified Chinese (GB)", 
-              "IDC_ENC_CHS", 
-              40034
-            ], 
-            [
-              "&Traditional Chinese (Big5)", 
-              "IDC_ENC_CHT", 
-              40037
-            ], 
+              "Greek",
+              "ID_ENC_GREEK"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Thai", 
-              "IDC_ENC_THAI", 
-              40035
-            ], 
-            [
-              "separator"
-            ], 
-            [
-              "Turkish", 
-              "IDC_ENC_TURKISH", 
-              40039
-            ], 
+              "Hebrew",
+              "ID_ENC_HEBREW"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "&Unicode", 
-              "IDC_ENC_UNICODE", 
-              40041
-            ], 
-            [
-              "Utf-&8", 
-              "IDC_ENC_UTF8", 
-              40043
-            ], 
+              "&Japanese",
+              "ID_ENC_JAPANESE"
+            ],
             [
               "separator"
-            ], 
+            ],
             [
-              "Vietnamese", 
-              "IDC_ENC_VIETNAMESE", 
-              40045
+              "&Korean",
+              "ID_ENC_KOREAN"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "Latin 9 (ISO)",
+              "ID_ENC_LATIN9_ISO"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "&Simplified Chinese (GB)",
+              "ID_ENC_CHS"
+            ],
+            [
+              "&Traditional Chinese (Big5)",
+              "ID_ENC_CHT"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "Thai",
+              "ID_ENC_THAI"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "Turkish",
+              "ID_ENC_TURKISH"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "&Unicode",
+              "ID_ENC_UNICODE"
+            ],
+            [
+              "Utf-&8",
+              "ID_ENC_UTF8"
+            ],
+            [
+              "separator"
+            ],
+            [
+              "Vietnamese",
+              "ID_ENC_VIETNAMESE"
             ]
           ]
-        ], 
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "&Close", 
-          "IDCLOSE", 
-          8
+          "&Close",
+          "ID_CLOSE"
         ]
       ]
-    ], 
+    ],
     [
-      "&Play", 
+      "&Play",
       [
         [
-          "&Play/Pause", 
-          "IDC_PLAYPAUSE", 
-          40057
-        ], 
+          "&Play/Pause",
+          "ID_PLAYPAUSE"
+        ],
         [
-          "&Stop", 
-          "IDC_STOP", 
-          40002
-        ], 
+          "&Stop",
+          "ID_STOP"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Pr&evious", 
-          "IDC_PREV", 
-          40056
-        ], 
+          "Pr&evious",
+          "ID_PREVIOUS"
+        ],
         [
-          "&Next", 
-          "IDC_NEXT", 
-          40058
-        ], 
+          "&Next",
+          "ID_NEXT"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "&Backward 2 Seconds", 
-          "IDC_BACKWARD2SEC", 
-          40141
-        ], 
+          "&Backward 2 Seconds",
+          "ID_BACKWARD"
+        ],
         [
-          "&Forward 2 Seconds", 
-          "IDC_FORWARD2SEC", 
-          40142
-        ], 
+          "&Forward 2 Seconds",
+          "ID_FORWARD"
+        ],
         [
-          "Jump to current line", 
-          "IDC_JUMP_TO_CURRENT_LINE", 
-          40145
+          "Jump to current line",
+          "ID_JUMP_TO_CUR_LINE"
         ]
       ]
-    ], 
+    ],
     [
-      "&Edit", 
+      "&Edit",
       [
         [
-          "&Undo", 
-          "IDC_EDIT_UNDO", 
-          40126
-        ], 
+          "&Undo",
+          "ID_EDIT_UNDO"
+        ],
         [
-          "&Redo", 
-          "IDC_EDIT_REDO", 
-          40127
-        ], 
+          "&Redo",
+          "ID_EDIT_REDO"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Cu&t", 
-          "IDC_EDIT_CUT", 
-          40128
-        ], 
+          "Cu&t",
+          "ID_EDIT_CUT"
+        ],
         [
-          "&Copy", 
-          "IDC_EDIT_COPY", 
-          40125
-        ], 
+          "&Copy",
+          "ID_EDIT_COPY"
+        ],
         [
-          "&Paste", 
-          "IDC_EDIT_PASTE", 
-          40129
-        ], 
+          "&Paste",
+          "ID_EDIT_PASTE"
+        ],
         [
-          "&Delete", 
-          "IDC_EDIT_DELETE", 
-          40130
-        ], 
+          "&Delete",
+          "ID_EDIT_DELETE"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "&Find...", 
-          "IDC_EDIT_FIND", 
-          40135
-        ], 
+          "&Find...",
+          "ID_EDIT_FIND"
+        ],
         [
-          "&Replace...", 
-          "IDC_EDIT_REPLACE", 
-          40136
+          "&Replace...",
+          "ID_EDIT_REPLACE"
         ]
       ]
-    ], 
+    ],
     [
-      "&Lyrics", 
+      "&Lyrics",
       [
         [
-          "Synchronize the current line and move to next line", 
-          "IDC_INSERT_TAG_AND_MOVE_DOWN", 
-          40144
-        ], 
+          "Synchronize the current line and move to next line",
+          "ID_INSERTTAG_DOWN"
+        ],
         [
-          "Synchronize the current line", 
-          "IDC_INSERT_TAG", 
-          40143
-        ], 
+          "Synchronize the current line",
+          "ID_INSERTTAG"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Auto fill artist, album and title info", 
-          "IDC_AUTO_FILL_LYRICS_INFO", 
-          40109
-        ], 
-        [
-          "separator"
-        ], 
-        [
-          "Forward the timestamp of this line 0.2s", 
-          "IDC_FORWARD_CUR_LINE", 
-          40104
-        ], 
-        [
-          "Backward the timestamp of this line 0.2s", 
-          "IDC_BACKWARD_CUR_LINE", 
-          40105
-        ], 
+          "Auto fill artist, album and title info",
+          "ID_AUTO_FILL_LYR_INFO"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Forward the remaining lyrics 0.2s", 
-          "IDC_FORWARD_REMAIN_LINES", 
-          40106
-        ], 
+          "Forward the timestamp of this line 0.2s",
+          "ID_FORWARD_CUR_LINE"
+        ],
         [
-          "Backward the remaining lyrics 0.2s", 
-          "IDC_BACKWARD_REMAIN_LINES", 
-          40107
-        ], 
+          "Backward the timestamp of this line 0.2s",
+          "ID_BACKWARD_CUR_LINE"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Trim Leading and Trailing Whitespace of All Lines", 
-          "IDC_TRIM_SPACE", 
-          40102
-        ], 
+          "Forward the remaining lyrics 0.2s",
+          "ID_FORWARD_REMAIN_LINES"
+        ],
         [
-          "Remove All Timestamps", 
-          "IDC_REMOVE_ALL_TAG", 
-          40100
-        ], 
-        [
-          "Remove All Blank Lines", 
-          "IDC_REMOVE_BLANK_LINE", 
-          40101
-        ], 
-        [
-          "Remove All Unsynchronized Lines", 
-          "IDC_REMOVE_UNSYNC_LINE", 
-          40103
-        ], 
+          "Backward the remaining lyrics 0.2s",
+          "ID_BACKWARD_REMAIN_LINES"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Capitalize the Leading Letter of All Lines", 
-          "IDC_CAPITALIZE_LEADING_LETTER", 
-          40108
-        ], 
+          "Trim Leading and Trailing Whitespace of All Lines",
+          "ID_TRIM_WHITESPACE"
+        ],
         [
-          "Convert All Lyrics Characters to Lower Case", 
-          "IDC_TO_LOWER_CASE", 
-          40123
+          "Remove All Timestamps",
+          "ID_REMOVE_ALL_TAG"
+        ],
+        [
+          "Remove All Blank Lines",
+          "ID_REMOVE_BLANK_LINE"
+        ],
+        [
+          "Remove All Unsynchronized Lines",
+          "ID_REMOVE_UNSYNC_LINES"
+        ],
+        [
+          "separator"
+        ],
+        [
+          "Capitalize the Leading Letter of All Lines",
+          "ID_CAPITALIZE_LEADING_LETTER"
+        ],
+        [
+          "Convert All Lyrics Characters to Lower Case",
+          "ID_LYRICS_TO_LOWERCASE"
         ]
       ]
-    ], 
+    ],
     [
-      "&Options", 
+      "&Options",
       [
         [
-          "&Lyrics Color...", 
-          "IDC_EDITOR_LYR_COLOR", 
-          40184
-        ], 
+          "&Lyrics Color...",
+          "ID_EDITOR_LYR_COLOR"
+        ],
         [
-          "&Highlight Lyrics Color...", 
-          "IDC_EDITOR_HIGH_COLOR", 
-          40185
-        ], 
+          "&Highlight Lyrics Color...",
+          "ID_EDITOR_HIGH_COLOR"
+        ],
         [
-          "&Tag Color...", 
-          "IDC_TAG_COLOR", 
-          40148
-        ], 
+          "&Tag Color...",
+          "ID_TAG_COLOR"
+        ],
         [
-          "&Background Color of Edited Line...", 
-          "IDC_EDIT_LINE_COLOR", 
-          40149
-        ], 
+          "&Background Color of Edited Line...",
+          "ID_EDIT_LINE_COLOR"
+        ],
         [
-          "Back&ground Color...", 
-          "IDC_EDITOR_BG_COLOR", 
-          40186
-        ], 
+          "Back&ground Color...",
+          "ID_EDITOR_BG_COLOR"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "Edit Lyrics &Tag", 
-          "IDC_EDIT_LYR_TAG", 
-          40199
+          "Edit Lyrics &Tag",
+          "ID_EDIT_LYR_TAG"
         ]
       ]
-    ], 
+    ],
     [
-      "&Help", 
+      "&Help",
       [
         [
-          "A&bout $Product$...", 
-          "IDC_ABOUT", 
-          40004
-        ], 
+          "A&bout $Product$...",
+          "ID_ABOUT"
+        ],
         [
-          "$Product$ &Help", 
-          "IDC_ML_HELP", 
-          40023
-        ], 
+          "$Product$ &Help",
+          "ID_HELP"
+        ],
         [
           "separator"
-        ], 
+        ],
         [
-          "$Product$ &Website", 
-          "IDC_WEBHOME", 
-          40066
-        ], 
+          "$Product$ &Website",
+          "ID_WEBHOME"
+        ],
         [
-          "&Report to Author", 
-          "IDC_EMAIL", 
-          40067
+          "&Report to Author",
+          "ID_EMAIL"
         ]
       ]
     ]
-  ], 
+  ],
   "RateMenu": [
     [
-      "Rate These Lyrics: 1 (Low)", 
-      "IDC_RATE_LYR_1", 
-      40188
-    ], 
+      "Rate These Lyrics: 1 (Low)",
+      "ID_RATE_LYR_1"
+    ],
     [
-      "Rate These Lyrics: 2", 
-      "IDC_RATE_LYR_2", 
-      40189
-    ], 
+      "Rate These Lyrics: 2",
+      "ID_RATE_LYR_2"
+    ],
     [
-      "Rate These Lyrics: 3", 
-      "IDC_RATE_LYR_3", 
-      40190
-    ], 
+      "Rate These Lyrics: 3",
+      "ID_RATE_LYR_3"
+    ],
     [
-      "Rate These Lyrics: 4", 
-      "IDC_RATE_LYR_4", 
-      40191
-    ], 
+      "Rate These Lyrics: 4",
+      "ID_RATE_LYR_4"
+    ],
     [
-      "Rate These Lyrics: 5 (High)", 
-      "IDC_RATE_LYR_5", 
-      40192
+      "Rate These Lyrics: 5 (High)",
+      "ID_RATE_LYR_5"
     ]
   ],
   "PlaylistSearchCtx": [
     [
-      "Show in Fin&der", 
-      "IDC_SHOW_IN_FINDER", 
-      40201
-    ], 
+      "Show in Fin&der",
+      "ID_SHOW_IN_FINDER"
+    ],
     [
-      "Play Selected &file", 
-      "IDC_PLAY_SELECTED_FILE", 
-      40203
-    ], 
-    [
-      "separator"
-    ], 
-    [
-      "&Replace Now Playing", 
-      "IDC_REPLACE_NOW_PLAYING_WITH_RESULTS", 
-      40204
-    ], 
-    [
-      "R&eplace Now Playing with Selected", 
-      "IDC_REPLACE_NOW_PLAYING_WITH_SELECTED", 
-      40205
-    ], 
-    [
-      "separator"
-    ], 
-    [
-      "&Add All to Now Playing", 
-      "IDC_ADD_RESULTS_TO_NOW_PLAYING", 
-      40206
-    ], 
-    [
-      "Add Selected &to Now Playing", 
-      "IDC_ADD_SELECTED_TO_NOW_PLAYING", 
-      40207
+      "Play Selected &file",
+      "ID_PLAY_SELECTED_FILE"
     ],
     [
       "separator"
-    ], 
+    ],
     [
-      "&Add All to Playlist", 
+      "&Replace Now Playing",
+      "ID_REPLACE_NOW_PLAYING_WITH_RESULTS"
+    ],
+    [
+      "R&eplace Now Playing with Selected",
+      "ID_REPLACE_NOW_PLAYING_WITH_SELECTED"
+    ],
+    [
+      "separator"
+    ],
+    [
+      "&Add All to Now Playing",
+      "ID_ADD_RESULTS_TO_NOW_PLAYING"
+    ],
+    [
+      "Add Selected &to Now Playing",
+      "ID_ADD_SELECTED_TO_NOW_PLAYING"
+    ],
+    [
+      "separator"
+    ],
+    [
+      "&Add All to Playlist",
       [
         [
           "Create New Playlist",
-          "IDC_ADD_RESULTS_TO_PLAYLIST_NEW", 
-          40230
+          "ID_ADD_RESULTS_TO_PLAYLIST_NEW"
         ],
         [
           "Playlist",
-          "IDC_ADD_RESULTS_TO_PLAYLIST_START", 
-          40210
+          "ID_ADD_RESULTS_TO_PLAYLIST_START"
         ]
       ]
-    ], 
+    ],
     [
-      "Add Selected &to Playlist", 
+      "Add Selected &to Playlist",
       [
         [
           "Create New Playlist",
-          "IDC_ADD_SELECTED_TO_PLAYLIST_NEW", 
-          40231
+          "ID_ADD_SELECTED_TO_PLAYLIST_NEW"
         ],
         [
           "Playlist",
-          "IDC_ADD_SELECTED_TO_PLAYLIST_START", 
-          40220
+          "ID_ADD_SELECTED_TO_PLAYLIST_START"
         ]
       ]
     ],
     [
       "separator"
-    ], 
+    ],
     [
-      "&Remove From Playlist", 
-      "IDC_REMOVE_FROM_PLAYLIST", 
-      40155
-    ], 
+      "&Remove From Playlist",
+      "ID_PL_DEL"
+    ],
     [
-      "Remove from Media Library", 
-      "IDC_REMOVE_FROM_LIBRARY", 
-      40208
+      "Remove from Media Library",
+      "ID_REMOVE_FROM_LIBRARY"
     ]
   ],
   "OpenSavePlaylistMenu": [
     [
-      "Delete Playlist", 
-      "IDC_DELETE", 
-      1013
-    ], 
+      "Delete Playlist",
+      "ID_DELETE"
+    ],
     [
-      "Rename Playlist", 
-      "IDC_RENAME", 
-      1012
+      "Rename Playlist",
+      "ID_RENAME"
     ]
   ]
 }

@@ -100,7 +100,6 @@ int CHttpProtocol::readHead() {
     const int nHttpHeadEndTagLen = 4;
 
     while (1) {
-        char *szData;
         int nRead;
         int nRet;
 

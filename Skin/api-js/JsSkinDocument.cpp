@@ -119,7 +119,7 @@ CSkinWnd *documentGetSkinWnd(VMContext *ctx, const JsValue &thiz) {
 }
 
 int getIdFromArg0(CSkinWnd *skinWnd, VMContext *ctx, const Arguments &args) {
-    int id = UID_INVALID;
+    int id = ID_INVALID;
     auto idVal = args.getAt(0);
     if (idVal.type == JDT_INT32) {
         id = getJsValueInt32(idVal);
@@ -128,9 +128,9 @@ int getIdFromArg0(CSkinWnd *skinWnd, VMContext *ctx, const Arguments &args) {
         id = skinWnd->getSkinFactory()->getIDByName(str.toString().c_str());
     }
 
-    if (id == UID_INVALID) {
+    if (id == ID_INVALID) {
         ctx->throwExceptionFormatJsValue(JE_TYPE_ERROR, "Invalid UIObject Id: %.*s", idVal);
-        return UID_INVALID;
+        return ID_INVALID;
     }
 
     return id;
@@ -199,7 +199,7 @@ void document_startAnimation(VMContext *ctx, const JsValue &thiz, const Argument
     ctx->retValue = jsValueUndefined;
 
     int id = getIdFromArg0(skinWnd, ctx, args);
-    if (id != UID_INVALID) {
+    if (id != ID_INVALID) {
         skinWnd->startAnimation(id);
     }
 }
@@ -213,7 +213,7 @@ void document_stopAnimation(VMContext *ctx, const JsValue &thiz, const Arguments
     ctx->retValue = jsValueUndefined;
 
     int id = getIdFromArg0(skinWnd, ctx, args);
-    if (id != UID_INVALID) {
+    if (id != ID_INVALID) {
         skinWnd->stopAnimation(id);
     }
 }

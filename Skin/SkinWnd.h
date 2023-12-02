@@ -197,7 +197,7 @@ public:
 
     virtual void onContexMenu(int xPos, int yPos) override;
 
-    virtual void onCommand(uint32_t uID, uint32_t nNotifyCode) override;
+    virtual void onCommand(uint32_t id) override;
 
     virtual void onOK();
     virtual void onCancel();
@@ -238,7 +238,6 @@ public:
     virtual bool moveWindow(int X, int Y, int nWidth, int nHeight, bool bRepaint = true);
     virtual bool moveWindow(CRect &rc, bool bRepaint = true);
 
-    virtual bool onCustomCommand(int nId);
     virtual void postCustomCommandMsg(int nId);
     virtual void postShortcutKeyCmd(int nId);
 
@@ -259,8 +258,6 @@ public:
     virtual void updateMemGraphicsToScreen(const CRect* lpRect);
 
 #ifdef _WIN32
-    static int                  ms_msgIDCustomCommand;
-
     virtual LRESULT wndProc(uint32_t message, WPARAM wParam, LPARAM lParam);
 #endif
 

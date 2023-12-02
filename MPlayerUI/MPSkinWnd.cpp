@@ -271,8 +271,8 @@ public:
         bCheck = g_player.getPlayerState() == PS_PLAYING;
 
         m_pToolbar = pToolbar;
-        if (m_pToolbar->isCheck(CMD_PLAYPAUSE) != bCheck) {
-            m_pToolbar->setCheck(CMD_PLAYPAUSE, bCheck, false);
+        if (m_pToolbar->isCheck(ID_PLAYPAUSE) != bCheck) {
+            m_pToolbar->setCheck(ID_PLAYPAUSE, bCheck, false);
         }
         registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_STATUS_CHANGED);
     }
@@ -282,8 +282,8 @@ public:
             bool bCheck;
 
             bCheck = g_player.getPlayerState() == PS_PLAYING;
-            if (m_pToolbar->isCheck(CMD_PLAYPAUSE) != bCheck) {
-                m_pToolbar->setCheck(CMD_PLAYPAUSE, bCheck);
+            if (m_pToolbar->isCheck(ID_PLAYPAUSE) != bCheck) {
+                m_pToolbar->setCheck(ID_PLAYPAUSE, bCheck);
             }
         }
     }
@@ -298,12 +298,12 @@ public:
     CPlayerShuffleRepeatToolbarHandler(CSkinToolbar *pToolbar) {
         m_pToolbar = pToolbar;
 
-        if (g_player.isShuffle() != tobool(pToolbar->getBtStatus(CMD_SHUFFLE))) {
-            pToolbar->setBtStatus(CMD_SHUFFLE, g_player.isShuffle() ? 1 : 0, false);
+        if (g_player.isShuffle() != tobool(pToolbar->getBtStatus(ID_SHUFFLE))) {
+            pToolbar->setBtStatus(ID_SHUFFLE, g_player.isShuffle() ? 1 : 0, false);
         }
 
-        if (g_player.getLoop() != m_pToolbar->getBtStatus(CMD_LOOP)) {
-            m_pToolbar->setBtStatus(CMD_LOOP, g_player.getLoop(), false);
+        if (g_player.getLoop() != m_pToolbar->getBtStatus(ID_LOOP)) {
+            m_pToolbar->setBtStatus(ID_LOOP, g_player.getLoop(), false);
         }
 
         registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_SETTING_CHANGED);
@@ -313,12 +313,12 @@ public:
         if (pEvent->eventType == ET_PLAYER_SETTING_CHANGED) {
             CEventPlayerSettingChanged *pSettingEvt = (CEventPlayerSettingChanged *)pEvent;
             if (pSettingEvt->settingType == IMPEvent::MPS_SHUFFLE) {
-                if (pSettingEvt->value != m_pToolbar->getBtStatus(CMD_SHUFFLE)) {
-                    m_pToolbar->setBtStatus(CMD_SHUFFLE, g_player.isShuffle() ? 1 : 0, true);
+                if (pSettingEvt->value != m_pToolbar->getBtStatus(ID_SHUFFLE)) {
+                    m_pToolbar->setBtStatus(ID_SHUFFLE, g_player.isShuffle() ? 1 : 0, true);
                 }
             } else if (pSettingEvt->settingType == IMPEvent::MPS_LOOP) {
-                if (pSettingEvt->value != m_pToolbar->getBtStatus(CMD_LOOP)) {
-                    m_pToolbar->setBtStatus(CMD_LOOP, g_player.getLoop(), true);
+                if (pSettingEvt->value != m_pToolbar->getBtStatus(ID_LOOP)) {
+                    m_pToolbar->setBtStatus(ID_LOOP, g_player.getLoop(), true);
                 }
             }
         }
@@ -426,84 +426,61 @@ void CMPSkinWnd::onCreate() {
 #endif
 }
 
-void CMPSkinWnd::onCommand(uint32_t uID, uint32_t nNotifyCode) {
+void CMPSkinWnd::onCommand(uint32_t id) {
+    switch (id) {
 #ifdef _WIN32_DESKTOP
-    switch (uID) {
-    case IDC_SET_OPAQUE_100:
-    case IDC_SET_OPAQUE_90:
-    case IDC_SET_OPAQUE_80:
-    case IDC_SET_OPAQUE_70:
-    case IDC_SET_OPAQUE_60:
-    case IDC_SET_OPAQUE_50:
-    case IDC_SET_OPAQUE_40:
-    case IDC_SET_OPAQUE_30:
-    case IDC_SET_OPAQUE_20:
-    case IDC_SET_OPAQUE_10:
+    case ID_SET_OPAQUE_100:
+    case ID_SET_OPAQUE_90:
+    case ID_SET_OPAQUE_80:
+    case ID_SET_OPAQUE_70:
+    case ID_SET_OPAQUE_60:
+    case ID_SET_OPAQUE_50:
+    case ID_SET_OPAQUE_40:
+    case ID_SET_OPAQUE_30:
+    case ID_SET_OPAQUE_20:
+    case ID_SET_OPAQUE_10:
         {
             int nPercent = 100;
 
-            if (uID == IDC_SET_OPAQUE_100)    nPercent = 100;
-            else if (uID == IDC_SET_OPAQUE_100)    nPercent = 100;
-            else if (uID == IDC_SET_OPAQUE_90)    nPercent = 90;
-            else if (uID == IDC_SET_OPAQUE_80)    nPercent = 80;
-            else if (uID == IDC_SET_OPAQUE_70)    nPercent = 70;
-            else if (uID == IDC_SET_OPAQUE_60)    nPercent = 60;
-            else if (uID == IDC_SET_OPAQUE_50)    nPercent = 50;
-            else if (uID == IDC_SET_OPAQUE_40)    nPercent = 40;
-            else if (uID == IDC_SET_OPAQUE_30)    nPercent = 30;
-            else if (uID == IDC_SET_OPAQUE_20)    nPercent = 20;
-            else if (uID == IDC_SET_OPAQUE_10)    nPercent = 10;
+            if (id == ID_SET_OPAQUE_100)    nPercent = 100;
+            else if (id == ID_SET_OPAQUE_100)    nPercent = 100;
+            else if (id == ID_SET_OPAQUE_90)    nPercent = 90;
+            else if (id == ID_SET_OPAQUE_80)    nPercent = 80;
+            else if (id == ID_SET_OPAQUE_70)    nPercent = 70;
+            else if (id == ID_SET_OPAQUE_60)    nPercent = 60;
+            else if (id == ID_SET_OPAQUE_50)    nPercent = 50;
+            else if (id == ID_SET_OPAQUE_40)    nPercent = 40;
+            else if (id == ID_SET_OPAQUE_30)    nPercent = 30;
+            else if (id == ID_SET_OPAQUE_20)    nPercent = 20;
+            else if (id == ID_SET_OPAQUE_10)    nPercent = 10;
 
             settingSetOpaquePercent(nPercent);
         }
         return;
-    default:
-        break;
-    }
 #endif
-
-    CSkinWnd::onCommand(uID, nNotifyCode);
-
-    LIST_SKINCMDHANDLER::iterator it, itEnd;
-
-    itEnd = m_listSkinCmdHandler.end();
-    for (it = m_listSkinCmdHandler.begin(); it != itEnd; ++it) {
-        ISkinCmdHandler *pHandler = *it;
-        if (pHandler->onCommand(uID)) {
-            return;
-        }
-    }
-}
-
-bool CMPSkinWnd::onCustomCommand(int nId) {
-    if (CSkinWnd::onCustomCommand(nId)) {
-        return true;
-    }
-
-    switch (nId) {
-    case CMD_TOPMOST:
+    case ID_TOPMOST:
         settingReverseTopmost();
-        return true;
-    case CMD_CLICK_THROUGH:
+        return;
+    case ID_CLICK_THROUGH:
         settingReverseClickThrough();
-        return true;
-    case CMD_LDS_MULTI_LINE:
-    case CMD_LDS_STATIC_TXT:
-    case CMD_LDS_TWO_LINE:
-    case CMD_LDS_SINGLE_LINE:
-    case CMD_LDS_VOBSUB:
+        return;
+    case ID_LDS_MULTI_LINE:
+    case ID_LDS_STATIC_TXT:
+    case ID_LDS_TWO_LINE:
+    case ID_LDS_SINGLE_LINE:
+    case ID_LDS_VOBSUB:
         {
             // special lyrics display style
             string name;
-            if (nId == CMD_LDS_MULTI_LINE) {
+            if (id == ID_LDS_MULTI_LINE) {
                 name = CLyricShowMultiRowObj::className();
-            } else if (nId == CMD_LDS_STATIC_TXT) {
+            } else if (id == ID_LDS_STATIC_TXT) {
                 name = SZ_TXT_LYR_CONTAINER;
-            } else if (nId == CMD_LDS_TWO_LINE) {
+            } else if (id == ID_LDS_TWO_LINE) {
                 name = CLyricShowTwoRowObj::className();
-            } else if (nId == CMD_LDS_SINGLE_LINE) {
+            } else if (id == ID_LDS_SINGLE_LINE) {
                 name = CLyricShowSingleRowObj::className();
-            } else if (nId == CMD_LDS_VOBSUB) {
+            } else if (id == ID_LDS_VOBSUB) {
                 name = CLyricShowVobSub::className();
             } else {
                 assert(0);
@@ -511,20 +488,20 @@ bool CMPSkinWnd::onCustomCommand(int nId) {
 
             CLyricShowAgentObj::setLyrDispStyleSettings(this, name.c_str());
         }
-        return true;
+        return;
+    default:
+        break;
     }
 
-    LIST_SKINCMDHANDLER::iterator it, itEnd;
-
-    itEnd = m_listSkinCmdHandler.end();
-    for (it = m_listSkinCmdHandler.begin(); it != itEnd; ++it) {
+    auto itEnd = m_listSkinCmdHandler.end();
+    for (auto it = m_listSkinCmdHandler.begin(); it != itEnd; ++it) {
         ISkinCmdHandler *pHandler = *it;
-        if (pHandler->onCustomCommand(nId)) {
-            return true;
+        if (pHandler->onCommand(id)) {
+            return;
         }
     }
 
-    return false;
+    CSkinWnd::onCommand(id);
 }
 
 void CMPSkinWnd::onUIObjNotify(IUIObjNotify *pNotify) {
@@ -580,7 +557,7 @@ void CMPSkinWnd::onSizeModeChanged(WndSizeMode sizeMode) {
             pLyrObj->onEvent(&evt);
         }
 
-        CSkinNStatusButton *pMaximizeBt = (CSkinNStatusButton *)getUIObjectById(CMD_MAXIMIZE, CSkinNStatusButton::className());
+        CSkinNStatusButton *pMaximizeBt = (CSkinNStatusButton *)getUIObjectById(ID_MAXIMIZE, CSkinNStatusButton::className());
         if (pMaximizeBt) {
             pMaximizeBt->setStatus(0);
         }
@@ -590,7 +567,7 @@ void CMPSkinWnd::onSizeModeChanged(WndSizeMode sizeMode) {
             hide();
         }
     } else {
-        CSkinNStatusButton *pMaximizeBt = (CSkinNStatusButton *)getUIObjectById(CMD_MAXIMIZE, CSkinNStatusButton::className());
+        CSkinNStatusButton *pMaximizeBt = (CSkinNStatusButton *)getUIObjectById(ID_MAXIMIZE, CSkinNStatusButton::className());
         if (pMaximizeBt) {
             pMaximizeBt->setStatus(1);
         }
@@ -598,13 +575,13 @@ void CMPSkinWnd::onSizeModeChanged(WndSizeMode sizeMode) {
 }
 
 void CMPSkinWnd::onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) {
-    if (pScrollBar->getID() == CMD_VOLUME) {
+    if (pScrollBar->getID() == ID_VOLUME) {
         // set volume
         g_player.setVolume(pScrollBar->getScrollPos());
         long vol = g_player.getVolume();
 
         CMPlayerAppBase::getInstance()->dispatchInfoText(stringPrintf("%s %d%%", _TLT("set Volume"), vol).c_str());
-    } else if (pScrollBar->getID() == CMD_SEEK) {
+    } else if (pScrollBar->getID() == ID_SEEK) {
         int nPos, nPercent, nMediaLength;
         char szPos[256], szLength[256];
 
@@ -644,13 +621,13 @@ void CMPSkinWnd::onSkinLoaded() {
     CSkinNStatusButton *pBt;
 
     // maximize button status
-    pBt = (CSkinNStatusButton *)getUIObjectById(CMD_MAXIMIZE, CSkinNStatusButton::className());
+    pBt = (CSkinNStatusButton *)getUIObjectById(ID_MAXIMIZE, CSkinNStatusButton::className());
     if (pBt && isZoomed()) {
         pBt->setStatus(1);
     }
 
     // topmost button status
-    pBt = (CSkinNStatusButton *)getUIObjectById(CMD_TOPMOST, CSkinNStatusButton::className());
+    pBt = (CSkinNStatusButton *)getUIObjectById(ID_TOPMOST, CSkinNStatusButton::className());
     if (pBt && isTopmost()) {
         pBt->setStatus(1);
     }
@@ -660,34 +637,34 @@ void CMPSkinWnd::onAddUIObj(CUIObject *pObj) {
     CSkinWnd::onAddUIObj(pObj);
 
     int nID = pObj->getID();
-    if (nID == CMD_PLAYPAUSE) {
+    if (nID == ID_PLAYPAUSE) {
         if (pObj->isKindOf(CSkinNStatusButton::className())) {
             CPlayerPlayPauseBtHandler *pHandler = new CPlayerPlayPauseBtHandler((CSkinNStatusButton*)pObj);
             m_mapEventHandlers[pObj] = pHandler;
         }
-    } else if (nID == CMD_SEEK) {
+    } else if (nID == ID_SEEK) {
         if (pObj->isKindOf(CSkinSeekCtrl::className())) {
             CPlayerSeekEventHandler *pHandler = new CPlayerSeekEventHandler((CSkinSeekCtrl*)pObj);
             m_mapEventHandlers[pObj] = pHandler;
         }
-    } else if (nID == CMD_VOLUME) {
+    } else if (nID == ID_VOLUME) {
         if (pObj->isKindOf(CSkinSeekCtrl::className())) {
             CPlayerVolumeEventHandler *pHandler = new CPlayerVolumeEventHandler((CSkinSeekCtrl*)pObj);
             m_mapEventHandlers[pObj] = pHandler;
         }
-    } else if (nID == CMD_SHUFFLE) {
+    } else if (nID == ID_SHUFFLE) {
         if (pObj->isKindOf(CSkinNStatusButton::className())) {
             CPlayerShuffleEventHandler *pHandler = new CPlayerShuffleEventHandler((CSkinNStatusButton*)pObj);
             m_mapEventHandlers[pObj] = pHandler;
         }
-    } else if (nID == CMD_LOOP) {
+    } else if (nID == ID_LOOP) {
         if (pObj->isKindOf(CSkinNStatusButton::className())) {
             CPlayerLoopEventHandler *pHandler = new CPlayerLoopEventHandler((CSkinNStatusButton*)pObj);
             m_mapEventHandlers[pObj] = pHandler;
         }
     }
 #ifdef _MPLAYER
-    else if (nID == CMD_RATE) {
+    else if (nID == ID_RATE) {
         if (pObj->isKindOf(CSkinRateCtrl::className())) {
             CPlayerMediaChangedRateEventHandler *pHandler = new CPlayerMediaChangedRateEventHandler((CSkinRateCtrl*)pObj);
             m_mapEventHandlers[pObj] = pHandler;
@@ -703,12 +680,12 @@ void CMPSkinWnd::onAddUIObj(CUIObject *pObj) {
         if (pObj->isKindOf(CSkinToolbar::className())) {
             CSkinToolbar *pToolBar = (CSkinToolbar*)pObj;
 
-            if (pToolBar->isButtonExist(CMD_PLAYPAUSE)) {
+            if (pToolBar->isButtonExist(ID_PLAYPAUSE)) {
                 CPlayerPlayPauseToolbarHandler *pHandler = new CPlayerPlayPauseToolbarHandler(pToolBar);
                 m_mapEventHandlers[pObj] = pHandler;
             }
 
-            if (pToolBar->isButtonExist(CMD_SHUFFLE) || pToolBar->isButtonExist(CMD_LOOP)) {
+            if (pToolBar->isButtonExist(ID_SHUFFLE) || pToolBar->isButtonExist(ID_LOOP)) {
                 CPlayerShuffleRepeatToolbarHandler *pHandler = new CPlayerShuffleRepeatToolbarHandler(pToolBar);
                 m_mapEventHandlers[pObj] = pHandler;
             }
@@ -760,10 +737,10 @@ void CMPSkinWnd::closeSkin() {
 // IUICheckStatus interface
 bool CMPSkinWnd::getChecked(uint32_t nID, bool &bChecked) {
     switch (nID) {
-    case IDC_SETTOPMOST:
+    case ID_TOPMOST:
         bChecked = isTopmost();
         break;
-    case IDC_CLICK_THROUGH:
+    case ID_CLICK_THROUGH:
         bChecked = m_bClickThrough;
         break;
     default:
@@ -790,37 +767,37 @@ bool CMPSkinWnd::getRadioChecked(vector<uint32_t> &vIDs, uint32_t &nIDChecked) {
         return false;
     }
 
-    if (vIDs[0] == IDC_SET_OPAQUE_100) {
+    if (vIDs[0] == ID_SET_OPAQUE_100) {
         int nPercent = settingGetOpaquePercent();
-        if (nPercent >= 95) nIDChecked = IDC_SET_OPAQUE_100;
-        else if (nPercent >= 85) nIDChecked = IDC_SET_OPAQUE_90;
-        else if (nPercent >= 75) nIDChecked = IDC_SET_OPAQUE_80;
-        else if (nPercent >= 65) nIDChecked = IDC_SET_OPAQUE_70;
-        else if (nPercent >= 55) nIDChecked = IDC_SET_OPAQUE_60;
-        else if (nPercent >= 45) nIDChecked = IDC_SET_OPAQUE_50;
-        else if (nPercent >= 35) nIDChecked = IDC_SET_OPAQUE_40;
-        else if (nPercent >= 25) nIDChecked = IDC_SET_OPAQUE_30;
-        else if (nPercent >= 15) nIDChecked = IDC_SET_OPAQUE_20;
-        else nIDChecked = IDC_SET_OPAQUE_10;
+        if (nPercent >= 95) nIDChecked = ID_SET_OPAQUE_100;
+        else if (nPercent >= 85) nIDChecked = ID_SET_OPAQUE_90;
+        else if (nPercent >= 75) nIDChecked = ID_SET_OPAQUE_80;
+        else if (nPercent >= 65) nIDChecked = ID_SET_OPAQUE_70;
+        else if (nPercent >= 55) nIDChecked = ID_SET_OPAQUE_60;
+        else if (nPercent >= 45) nIDChecked = ID_SET_OPAQUE_50;
+        else if (nPercent >= 35) nIDChecked = ID_SET_OPAQUE_40;
+        else if (nPercent >= 25) nIDChecked = ID_SET_OPAQUE_30;
+        else if (nPercent >= 15) nIDChecked = ID_SET_OPAQUE_20;
+        else nIDChecked = ID_SET_OPAQUE_10;
 
         return true;
-    } else if (vIDs[0] == IDC_LDS_MULTI_LINE) {
+    } else if (vIDs[0] == ID_LDS_MULTI_LINE) {
         string name;
 
         CLyricShowAgentObj::getLyrDispStyleSettings(this, name);
 
         if (isPropertyName(name.c_str(), CLyricShowMultiRowObj::className())) {
-            nIDChecked = IDC_LDS_MULTI_LINE;
+            nIDChecked = ID_LDS_MULTI_LINE;
         } else if (isPropertyName(name.c_str(), SZ_TXT_LYR_CONTAINER)) {
-            nIDChecked = IDC_LDS_STATIC_TXT;
+            nIDChecked = ID_LDS_STATIC_TXT;
         } else if (isPropertyName(name.c_str(), CLyricShowTwoRowObj::className())) {
-            nIDChecked = IDC_LDS_TWO_LINE;
+            nIDChecked = ID_LDS_TWO_LINE;
         } else if (isPropertyName(name.c_str(), CLyricShowSingleRowObj::className())) {
-            nIDChecked = IDC_LDS_SINGLE_LINE;
+            nIDChecked = ID_LDS_SINGLE_LINE;
         } else if (isPropertyName(name.c_str(), CLyricShowVobSub::className())) {
-            nIDChecked = IDC_LDS_VOBSUB;
+            nIDChecked = ID_LDS_VOBSUB;
         } else {
-            nIDChecked = IDC_LDS_MULTI_LINE;
+            nIDChecked = ID_LDS_MULTI_LINE;
         }
 
         return true;

@@ -20,7 +20,7 @@
 class CPagePfLyrDownload : public CPagePfBase {
     UIOBJECT_CLASS_NAME_DECLARE(CPagePfBase)
 public:
-    CPagePfLyrDownload() : CPagePfBase(PAGE_LYR_DOWNLOAD, "CMD_LYR_DOWNLOAD") {
+    CPagePfLyrDownload() : CPagePfBase(PAGE_LYR_DOWNLOAD, "ID_LYR_DOWNLOAD") {
         CID_DOWN_DIR = 0;
         CID_C_SAVE_IN_SONG_DIR = 0;
         CID_C_SAVE_IN_DIR = 0;
@@ -86,7 +86,7 @@ public:
         initCheckButtons();
     }
 
-    bool onCustomCommand(int nId)override {
+    bool onCommand(uint32_t nId) override {
         if (nId == CID_C_SAVE_IN_SONG_DIR
             || nId == CID_C_SAVE_IN_DIR) {
             DOWN_SAVE_DIR DownSaveDir;
@@ -137,7 +137,7 @@ public:
                 }
             }
         } else {
-            return CPagePfBase::onCustomCommand(nId);
+            return CPagePfBase::onCommand(nId);
         }
 
         return true;
@@ -157,7 +157,7 @@ UIOBJECT_CLASS_NAME_IMP(CPagePfLyrDownload, "PreferPage.LyrDownload")
 class CPagePfLyrSaveOpt : public CPagePfBase {
     UIOBJECT_CLASS_NAME_DECLARE(CPagePfBase)
 public:
-    CPagePfLyrSaveOpt() : CPagePfBase(PAGE_LYR_SAVE_OPTIONS, "CMD_LYR_SAVE_OPT") {
+    CPagePfLyrSaveOpt() : CPagePfBase(PAGE_LYR_SAVE_OPTIONS, "ID_LYR_SAVE_OPT") {
     }
 
     void onInitialUpdate() override {
@@ -177,7 +177,7 @@ UIOBJECT_CLASS_NAME_IMP(CPagePfLyrSaveOpt, "PreferPage.LyrSaveOptions")
 class CPagePfLyrOutputPlugin : public CPagePfBase {
     UIOBJECT_CLASS_NAME_DECLARE(CPagePfBase)
 public:
-    CPagePfLyrOutputPlugin() : CPagePfBase(PAGE_LYR_OUTPUT_PLUGINS, "CMD_LYR_OUTPUT_PLUGIN") {
+    CPagePfLyrOutputPlugin() : CPagePfBase(PAGE_LYR_OUTPUT_PLUGINS, "ID_LYR_OUTPUT_PLUGIN") {
         m_pListPlugins = nullptr;
         CID_LO_PLUGIN_LIST = 0;
     }
@@ -207,9 +207,9 @@ public:
         enablePluginBtns();
     }
 
-    bool onCustomCommand(int nId) override {
+    bool onCommand(uint32_t nId) override {
         if (!m_pListPlugins) {
-            return CPagePfBase::onCustomCommand(nId);
+            return CPagePfBase::onCommand(nId);
         }
 
         if (nId == getIDByName("CID_UNINST_PLUG")) {
@@ -228,7 +228,7 @@ public:
                 g_lyrOutPlguinMgr.aboutPlugin(n, m_pSkin);
             }
         } else {
-            return CPagePfBase::onCustomCommand(nId);
+            return CPagePfBase::onCommand(nId);
         }
 
         return true;
@@ -264,7 +264,7 @@ UIOBJECT_CLASS_NAME_IMP(CPagePfLyrOutputPlugin, "PreferPage.LyrOutputPlugin")
 
 UIOBJECT_CLASS_NAME_IMP(CPagePfLyricsRoot, "PreferPage.LyricsRoot")
 
-CPagePfLyricsRoot::CPagePfLyricsRoot() : CPagePfBase(PAGE_UNKNOWN, "CMD_ROOT_LYRICS") {
+CPagePfLyricsRoot::CPagePfLyricsRoot() : CPagePfBase(PAGE_UNKNOWN, "ID_ROOT_LYRICS") {
 }
 
 void CPagePfLyricsRoot::onInitialUpdate() {

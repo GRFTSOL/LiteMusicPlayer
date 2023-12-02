@@ -497,8 +497,7 @@ public:
 };
 
 static string getCmdIDDescription(int nCmd) {
-    string strTooltip;
-    CMPlayerAppBase::getMPSkinFactory()->getTooltip(nCmd, strTooltip);
+    string strTooltip = CMPlayerAppBase::getMPSkinFactory()->getTooltip(nCmd);
     if (strTooltip.empty()) {
         return "";
     }
@@ -528,9 +527,9 @@ public:
         CMPlayerAppBase::getHotkey().enableGlobalHotkey(false);
     }
 
-    bool onCustomCommand(int nId) override {
-        if (nId != CMD_OK) {
-            return CSkinWnd::onCustomCommand(nId);
+    void onCommand(uint32_t nId) override {
+        if (nId != ID_OK) {
+            return CSkinWnd::onCommand(nId);
         }
 
         auto &hotKeys = CMPlayerAppBase::getHotkey();
@@ -540,7 +539,7 @@ public:
         if (usedCmdIndex != -1) {
             // Same one is self?
             if (hotKeys.get(usedCmdIndex)->cmd == cmd) {
-                return CSkinWnd::onCustomCommand(nId);
+                return CSkinWnd::onCommand(nId);
             }
 
             auto strCmd = getCmdIDDescription(hotKeys.get(usedCmdIndex)->cmd);
@@ -549,7 +548,7 @@ public:
             strMsg += "\r\n";
             strMsg += _TLT("Do you want to replace it?");
             if (messageOut(strMsg.c_str(), MB_ICONINFORMATION | MB_YESNO) != IDYES) {
-                return true;
+                return;
             }
 
             hotKeys.remove(usedCmdIndex);
@@ -561,7 +560,7 @@ public:
             hotKeys.enableGlobalHotkey(true);
         }
 
-        return CSkinWnd::onCustomCommand(nId);
+        CSkinWnd::onCommand(nId);
     }
 
     bool onKeyDown(uint32_t nChar, uint32_t nFlags) override {
@@ -722,7 +721,7 @@ public:
 
 UIOBJECT_CLASS_NAME_IMP(CPagePfAdvanced, "PreferPage.Advanced")
 
-CPagePfAdvanced::CPagePfAdvanced() : CPagePfBase(PAGE_ADVANCED, "CMD_ROOT_ADVANCED") {
+CPagePfAdvanced::CPagePfAdvanced() : CPagePfBase(PAGE_ADVANCED, "ID_ROOT_ADVANCED") {
     m_nMenuIdEnd = m_nMenuIdStart = 0;
     m_bIgnoreSettingListNotify = false;
     CID_LIST_SETTINGS = 0;
@@ -800,8 +799,7 @@ void CPagePfAdvanced::onInitialUpdate() {
     MPHotKeySection *pSect = g_vHotkeySections;
     for (; pSect->szName != nullptr; pSect++) {
         for (int k = 0; pSect->vHotkeys[k] != 0; k++) {
-            string strTooltip;
-            CMPlayerAppBase::getMPSkinFactory()->getTooltip(pSect->vHotkeys[k], strTooltip);
+            string strTooltip = CMPlayerAppBase::getMPSkinFactory()->getTooltip(pSect->vHotkeys[k]);
             if (strTooltip.empty()) {
                 continue;
             }
@@ -904,7 +902,7 @@ void CPagePfAdvanced::onTimer(int nId) {
     m_pListItems->invalidate();
 }
 
-bool CPagePfAdvanced::onCustomCommand(int nId) {
+bool CPagePfAdvanced::onCommand(uint32_t nId) {
     if (nId == getIDByName("CID_CUSTOMIZE")) {
         CRect rc;
 
@@ -912,15 +910,7 @@ bool CPagePfAdvanced::onCustomCommand(int nId) {
         m_pSkin->clientToScreen(rc);
 
         showCustomizeMenu(rc.left, rc.top);
-    } else {
-        return CPagePfBase::onCustomCommand(nId);
-    }
-
-    return true;
-}
-
-bool CPagePfAdvanced::onCommand(int nId) {
-    if ((int)nId >= m_nMenuIdStart && (int)nId <= m_nMenuIdEnd) {
+    } else if ((int)nId >= m_nMenuIdStart && (int)nId <= m_nMenuIdEnd) {
         if (nId == m_nMenuIdEnd) {
             // reset selected settings
             int nSel = -1;
@@ -953,9 +943,11 @@ bool CPagePfAdvanced::onCommand(int nId) {
         m_pListItems->invalidate();
 
         return true;
+    } else {
+        return CPagePfBase::onCommand(nId);
     }
 
-    return false;
+    return true;
 }
 
 void CPagePfAdvanced::updateValues() {

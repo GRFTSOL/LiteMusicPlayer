@@ -72,6 +72,8 @@ protected:
     bool                        m_bGlobalHotkeyEnabled;
     VecCmAccKeys                m_vAccKey;
 
+    struct _HotKeyPrivate       *m_data;
+
 };
 
 

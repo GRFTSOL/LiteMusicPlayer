@@ -18,7 +18,7 @@
 
 			<Property Name="BgImage" Image="media_info_bg.png" HorzExtendPos="1,4" VertExtendPos="100,121"/>
 
-			<NormalLink Rect="0,0,w,h" ID="UID_INSTRUCTION" Text="Please click here to add media files." Link="cmd://CMD_IMPORT"
+			<NormalLink Rect="0,0,w,h" ID="UID_INSTRUCTION" Text="Please click here to add media files." Link="cmd://ID_IMPORT"
 				Visible="false" FontHeight="16" FontBold="true" TextColor="#FF8040" AlignText="AT_CENTER|AT_VCENTER"/>
 			
 			<Container Rect="0,0,w,h" ID="UID_MEDIA_INFO" Name="Info">
@@ -64,7 +64,7 @@
 				<Toolbar ID="ID_TB_LYR_SYNC" Rect="12,4,70,22" Image="fl_buttons.png" enablehover="TRUE"
 						units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" ButtonSpacesCX="2"
 						MarginX="0" MarginY="0" FullStatusImage="TRUE">
-					<button ID="ID_SEARCH_LYRICS" Left="5" />
+					<button ID="ID_OPEN_LRC" Left="5" />
 					<button ID="ID_BACKWARD_LYRICS" Left="6" Continuous="TRUE"/>
 					<button ID="ID_FORWARD_LYRICS" Left="7" Continuous="TRUE"/>
 				</Toolbar>
@@ -72,8 +72,8 @@
 				<Toolbar ID="ID_TB_LYR_TXT" Rect="12,4,50,22" Image="fl_buttons.png" enablehover="TRUE"
 						units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" ButtonSpacesCX="1"
 						Margin="8,1,0,0" MarginX="0" MarginY="0" FullStatusImage="TRUE">
-					<button ID="ID_SEARCH_LYRICS" Left="5" />
-					<button ID="CMD_LYR_EDITOR" Left="16"/>
+					<button ID="ID_OPEN_LRC" Left="5" />
+					<button ID="ID_LYR_EDITOR" Left="16"/>
 				</Toolbar>
 			</Container>
 

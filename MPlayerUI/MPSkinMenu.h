@@ -36,7 +36,6 @@ struct MenuRadioGroup {
 class CMenuAutoCheck {
 public:
     CMenuAutoCheck() {
-        m_nInsertSkinsPos = 0;
         m_nInsertNewItemPos = 0;
     }
 
@@ -62,7 +61,6 @@ protected:
 
 public:
     CMenu                       m_hInsertSkinsMenu;
-    int                         m_nInsertSkinsPos;
 
     CMenu                       m_hInsertNewItemMenu;
     int                         m_nInsertNewItemPos;
@@ -80,9 +78,9 @@ public:
     void addUICheckStatusIf(IUICheckStatus *pIfUICheckStatus) { m_autoCheckMenu.addUICheckStatusIf(pIfUICheckStatus); }
 
 protected:
-    virtual bool getShortcutKey(int nMenuID, string &strShortcut) override;
+    virtual bool getShortcutKey(int id, string &strShortcut) override;
 
-    void insertSkinMenu(CMenu &menu, int nPosStart);
+    void insertSkinMenu(CMenu &menu);
 
 protected:
     CMenuAutoCheck              m_autoCheckMenu;

@@ -14,19 +14,19 @@ public:
 
     int create();
 
-    virtual bool onCustomCommand(int nId);
+    void onCommand(uint32_t nId) override;
 
 protected:
     //
     // Special settings for different kind of winodw (Floating lyrics and Normal window).
     //
-    virtual bool settingGetTopmost();
-    virtual int settingGetOpaquePercent();
-    virtual bool settingGetClickThrough();
+    bool settingGetTopmost() override;
+    int settingGetOpaquePercent() override;
+    bool settingGetClickThrough() override;
 
-    virtual void settingReverseTopmost();
-    virtual void settingSetOpaquePercent(int nPercent);
-    virtual void settingReverseClickThrough();
+    void settingReverseTopmost() override;
+    void settingSetOpaquePercent(int nPercent) override;
+    void settingReverseClickThrough() override;
 
 };
 

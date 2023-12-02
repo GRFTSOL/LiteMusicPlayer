@@ -19,9 +19,7 @@ public:
     virtual void onCreate() override;
     virtual void onEvent(const IEvent *pEvent) override { };
 
-    void onCommand(uint32_t uID, uint32_t nNotifyCode) override;
-
-    bool onCustomCommand(int nId) override;
+    void onCommand(uint32_t id) override;
 
     void onUIObjNotify(IUIObjNotify *pNotify) override;
 

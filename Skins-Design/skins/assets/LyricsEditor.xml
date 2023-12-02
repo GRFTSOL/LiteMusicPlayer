@@ -19,7 +19,7 @@
            Image="lyr-tb.png" enablehover="TRUE" units_x="22" blank_x="858" blank_cx="22"
            seperator_x="858" seperator_cx="10" MarginX="5" MarginY="3" Visible="false">
 		<seperator/>
-		<button ID="ID_SEARCH_LYRICS" Left="20" />
+		<button ID="ID_OPEN_LRC" Left="20" />
 		<button ID="ID_NEW_LRC" Left="0" />
 		<button ID="ID_OPEN_LRC" Left="1" />
 		<button ID="ID_SAVE_LRC" Left="2" />
@@ -29,7 +29,7 @@
 		<button ID="ID_PAUSE" Left="5" />
 		<button ID="ID_BACKWARD" Left="9" />
 		<button ID="ID_FORWARD" Left="10" />
-		<button ID="ID_JUMP" Left="11" />
+		<button ID="ID_JUMP_TO_CURRENT_LINE" Left="11" />
 		<seperator/>
 		<button ID="ID_EDIT_CUT" Left="26" disabled_Left="35" />
 		<button ID="ID_EDIT_COPY" Left="27" disabled_Left="36" />

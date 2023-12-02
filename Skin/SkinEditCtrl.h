@@ -391,7 +391,7 @@ public:
     virtual void onChar(uint32_t nChar) override;
 
     virtual void onContexMenu(int xPos, int yPos);
-    virtual bool onCommand(int nId) override;
+    virtual bool onCommand(uint32_t nId) override;
 
     virtual void onTimer(int nId) override;
 
@@ -491,7 +491,7 @@ protected:
     int                         m_xMargin, m_yMargin;
     vector<CColor>              m_vClrTable;
 
-    // Enter will post (CMD_OK) message
-    int                         m_cmdSubmit = UID_INVALID;
+    // Enter will post (ID_OK) message
+    int                         m_cmdSubmit = ID_INVALID;
 
 };

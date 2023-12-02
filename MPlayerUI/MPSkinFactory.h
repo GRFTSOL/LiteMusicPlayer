@@ -25,7 +25,7 @@ public:
     void restoreAll();
 
     virtual int getIDByNameEx(cstr_t szId, string &strToolTip) override;
-    virtual void getTooltip(int nId, string &strToolTip) override;
+    virtual string getTooltip(int nId) override;
 
     virtual void adjustHue(float hue, float saturation = 0.5, float luminance = 0.5) override;
 

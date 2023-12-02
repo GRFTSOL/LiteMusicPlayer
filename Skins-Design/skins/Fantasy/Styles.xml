@@ -63,7 +63,7 @@
             <Toolbar ID="ID_TB_LYR_SYNC" Rect="8,1,78,22" Image="fl_buttons.png" enablehover="TRUE"
                 units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" ButtonSpacesCX="1"
                 MarginX="0" MarginY="0" FullStatusImage="TRUE">
-                <button ID="ID_SEARCH_LYRICS" Left="5" />
+                <button ID="ID_OPEN_LRC" Left="5" />
                 <button ID="ID_BACKWARD_LYRICS" Left="6" Continuous="TRUE"/>
                 <button ID="ID_FORWARD_LYRICS" Left="7" Continuous="TRUE"/>
             </Toolbar>
@@ -71,8 +71,8 @@
                 <Toolbar ID="ID_TB_LYR_TXT" Rect="8,1,56,22" Image="fl_buttons.png" enablehover="TRUE"
                             units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" ButtonSpacesCX="1"
                             Margin="8,1,0,0" MarginX="0" MarginY="0" FullStatusImage="TRUE">
-                    <button ID="ID_SEARCH_LYRICS" Left="5" />
-                    <button ID="CMD_LYR_EDITOR" Left="16"/>
+                    <button ID="ID_OPEN_LRC" Left="5" />
+                    <button ID="ID_LYR_EDITOR" Left="16"/>
                 </Toolbar>
 
             <Toolbar Rect="86,1,w-88,22" Image="fl_buttons.png" enablehover="TRUE"

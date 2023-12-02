@@ -8,7 +8,7 @@
 class CPagePfInternet : public CPagePfBase {
     UIOBJECT_CLASS_NAME_DECLARE(CPagePfBase)
 public:
-    CPagePfInternet() : CPagePfBase(PAGE_INET, "CMD_SYSTEM_INTERNET") {
+    CPagePfInternet() : CPagePfBase(PAGE_INET, "ID_SYSTEM_INTERNET") {
         m_bInitailed = false;
     }
 
@@ -50,7 +50,7 @@ public:
         CPagePfBase::onDestroy();
     }
 
-    bool onCustomCommand(int nId) override {
+    bool onCommand(uint32_t nId) override {
         if (nId == getIDByName("CID_LOAD_IE_PROXY")) {
             bool bUseProxy;
             string strSvr;
@@ -80,7 +80,7 @@ public:
             }
             g_profile.writeInt("ProxyType", nHttpProxyType);
         } else {
-            return CPagePfBase::onCustomCommand(nId);
+            return CPagePfBase::onCommand(nId);
         }
 
         return true;
@@ -123,7 +123,7 @@ UIOBJECT_CLASS_NAME_IMP(CPagePfInternet, "Container.Inet")
 class CPagePfStartup: public CPagePfBase {
     UIOBJECT_CLASS_NAME_DECLARE(CPagePfBase)
 public:
-    CPagePfStartup() : CPagePfBase(PAGE_STARTUP, "CMD_SYSTEM_STARTUP") {
+    CPagePfStartup() : CPagePfBase(PAGE_STARTUP, "ID_SYSTEM_STARTUP") {
         m_bInitailed = false;
     }
 
@@ -135,10 +135,6 @@ public:
         addOptBool(ET_NULL, SZ_SECT_UI, "CheckNewVer", true, "CID_C_CHECK_NEW_VERSION");
 
         initCheckButtons();
-    }
-
-    bool onCustomCommand(int nId) override {
-        return CPagePfBase::onCustomCommand(nId);
     }
 
     void onDestroy() override {
@@ -156,7 +152,7 @@ UIOBJECT_CLASS_NAME_IMP(CPagePfStartup, "Container.Startup")
 
 UIOBJECT_CLASS_NAME_IMP(CPagePfSystemRoot, "PreferPage.SystemRoot")
 
-CPagePfSystemRoot::CPagePfSystemRoot() : CPagePfBase(PAGE_UNKNOWN, "CMD_ROOT_SYSTEM") {
+CPagePfSystemRoot::CPagePfSystemRoot() : CPagePfBase(PAGE_UNKNOWN, "ID_ROOT_SYSTEM") {
 }
 
 void CPagePfSystemRoot::onInitialUpdate() {

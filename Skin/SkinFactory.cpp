@@ -35,16 +35,15 @@ SkinWndStartupInfo::SkinWndStartupInfo(cstr_t szClassName, cstr_t szCaptionText,
     this->pSkinWnd = nullptr;
 }
 
-UIObjectIDDefinition g_uidBaseDefinition[] = {
-    { "ID_MINIMIZE", CMD_MINIMIZE, 0, _TLM("Minimize") },
-    { "ID_MAXIMIZE", CMD_MAXIMIZE, 0, _TLM("Maximize") },
-    { "ID_CLOSE", CMD_CLOSE, IDCLOSE, _TLM("Close") },
-    { "ID_QUIT", CMD_QUIT, 0, _TLM("quit") },
-    { "ID_MENU", CMD_MENU, 0, _TLM("Menu") },
-    { "ID_OK", CMD_OK, IDOK, nullptr },
-    { "ID_CANCEL", CMD_CANCEL, IDCANCEL, nullptr },
+#undef DEFINE_CMD_ID
+#define DEFINE_CMD_ID(uid) { #uid, uid, nullptr },
 
-    { nullptr, 0, 0, nullptr },
+#undef DEFINE_CMD_ID_TIP
+#define DEFINE_CMD_ID_TIP(uid, tooltip)   { #uid, uid, tooltip },
+
+UIObjectIDDefinition g_uidBaseDefinition[] = {
+    SKIN_BASE_IDS
+    { nullptr, 0, nullptr },
 };
 
 /*
@@ -505,8 +504,7 @@ CSkinFactory::CSkinFactory(CSkinApp *pApp, UIObjectIDDefinition uidDefinition[])
     m_pApp = pApp;
 
     m_strSkinFileName = _SZ_SKIN_FILE_NAME;
-    m_nCustomCmdIDNext = CMD_ID_CUSTOM_BASE;
-    m_nMenuIDNext = MENU_ID_CUSTOM_BASE;
+    m_userCmdIDNext = ID_ID_USER_BASE;
     m_dynamicCmds.init(this);
 
     assert(uidDefinition);
@@ -581,7 +579,7 @@ void CSkinFactory::quit() {
 int CSkinFactory::getIDByNameEx(cstr_t szId, string *pstrToolTip) {
     assert(szId);
     if (isEmptyString(szId)) {
-        return UID_INVALID;
+        return ID_INVALID;
     }
 
     if (pstrToolTip) {
@@ -600,65 +598,34 @@ int CSkinFactory::getIDByNameEx(cstr_t szId, string *pstrToolTip) {
         return p->nId;
     }
 
-    m_nCustomCmdIDNext++;
-
-    UIObjectIDDefinition *p = (UIObjectIDDefinition *)m_allocator.allocate(sizeof(UIObjectIDDefinition));
-    p->szId = m_allocator.duplicate(szId);
-    p->nIdMenu = 0;
-    p->szToolTip = nullptr;
-    p->nId = m_nCustomCmdIDNext;
-    m_setUIDDefinition.insert(p);
-
-    return m_nCustomCmdIDNext;
-}
-
-void CSkinFactory::getTooltip(int nUID, string &strToolTip) {
-    UIObjectIDDefinition *p = getUidDef(nUID);
-    if (p && p->szToolTip) {
-        strToolTip = p->szToolTip;
-    } else {
-        strToolTip.resize(0);
-    }
-}
-
-int CSkinFactory::getMenuIDByUID(int nUID, bool bAllocIfInexistence) {
-    UIObjectIDDefinition *p = getUidDef(nUID);
-    if (!p) {
-        return 0;
-    }
-
-    if (p->nIdMenu == 0) {
-        p->nIdMenu = ++m_nMenuIDNext;
-    }
-    return p->nIdMenu;
-}
-
-bool CSkinFactory::setMenuIDByUID(int nUID, int nMenuId) {
-    UIObjectIDDefinition *p = getUidDef(nUID);
-    if (!p) {
-        return false;
-    }
-
-    assert(p->nIdMenu == 0 || p->nIdMenu == nMenuId);
-    p->nIdMenu = nMenuId;
-    return true;
-}
-
-int CSkinFactory::getUIDByMenuID(int nMenuID) {
-    if (nMenuID == 0) {
-        return UID_INVALID;
-    }
-
-    for (SetUIObjectIDDefinition::iterator it = m_setUIDDefinition.begin();
-    it != m_setUIDDefinition.end(); ++it)
-        {
-        UIObjectIDDefinition *p = *it;
-        if (p->nIdMenu == nMenuID) {
-            return p->nId;
+    //
+    // Find in user defined UIDs
+    //
+    {
+        auto it = m_mapUserUIDs.find(szId);
+        if (it != m_mapUserUIDs.end()) {
+            return (*it).second;
         }
     }
 
-    return UID_INVALID;
+    auto id = m_userCmdIDNext++;
+    m_mapUserUIDs[szId] = id;
+
+    return id;
+}
+
+string CSkinFactory::getTooltip(int nUID) {
+    for (auto p : m_setUIDDefinition) {
+        if (p->nId == nUID) {
+            if (p->szToolTip) {
+                return p->szToolTip;
+            } else {
+                break;
+            }
+        }
+    }
+
+    return string();
 }
 
 #ifdef DEBUG
@@ -667,59 +634,44 @@ void CSkinFactory::dumpUID() {
 
     MapInt2String mapUID;
 
-    for (SetUIObjectIDDefinition::iterator it = m_setUIDDefinition.begin();
-    it != m_setUIDDefinition.end(); ++it)
-        {
-        UIObjectIDDefinition *p = *it;
-        // MapInt2String::iterator i = mapUID.find(p->nId);
-        // assert(i == mapUID.end());
+    for (auto p : m_setUIDDefinition) {
         mapUID[p->nId] = string(p->szId);
     }
 
     for (MapInt2String::iterator it = mapUID.begin(); it != mapUID.end(); ++it) {
         DBG_LOG2("UID: %04X, %s", (*it).first, (*it).second.c_str());
     }
+
+    for (auto &item : m_mapUserUIDs) {
+        DBG_LOG2("User UID: %04X, %s", item.second, item.first.c_str());
+    }
 }
 #endif
 
-UIObjectIDDefinition *CSkinFactory::getUidDef(int nUID) {
-    if (nUID == UID_INVALID) {
-        return nullptr;
-    }
-
-    for (SetUIObjectIDDefinition::iterator it = m_setUIDDefinition.begin();
-    it != m_setUIDDefinition.end(); ++it)
-        {
-        UIObjectIDDefinition *p = *it;
-        if (p->nId == nUID) {
-            return p;
-        }
-    }
-
-    return nullptr;
-}
-
 int CSkinFactory::allocUID() {
-    m_nCustomCmdIDNext++;
-    assert(m_nCustomCmdIDNext <= uint16_t(-1));
-    if (m_nCustomCmdIDNext >= uint16_t(-1)) {
-        m_nCustomCmdIDNext = CMD_ID_CUSTOM_BASE + 1000;
+    m_userCmdIDNext++;
+    assert(m_userCmdIDNext <= uint16_t(-1));
+    if (m_userCmdIDNext >= uint16_t(-1)) {
+        m_userCmdIDNext = ID_ID_USER_BASE + 1000;
     }
 
-    return m_nCustomCmdIDNext;
+    return m_userCmdIDNext;
 }
 
-string CSkinFactory::getStringOfID(int nID) {
-    for (SetUIObjectIDDefinition::iterator it = m_setUIDDefinition.begin();
-    it != m_setUIDDefinition.end(); ++it)
-        {
-        UIObjectIDDefinition *p = *it;
-        if (p->nId == nID) {
+string CSkinFactory::getStringOfID(int id) {
+    for (auto p : m_setUIDDefinition) {
+        if (p->nId == id) {
             return p->szId;
         }
     }
 
-    return "";
+    for (auto &item : m_mapUserUIDs) {
+        if (item.second == id) {
+            return item.first;
+        }
+    }
+
+    return string();
 }
 
 int CSkinFactory::openSkin(cstr_t szSkinName, cstr_t szSkinDir, cstr_t szExtraDir) {
@@ -1017,20 +969,8 @@ void CSkinFactory::close(bool bQuit) {
     m_resourceMgr.onClose();
 
     // Recover the original UIDs.
-    m_nCustomCmdIDNext = CMD_ID_CUSTOM_BASE;
-    m_nMenuIDNext = MENU_ID_CUSTOM_BASE;
-    for (SetUIObjectIDDefinition::iterator it = m_setUIDDefinition.begin();
-    it != m_setUIDDefinition.end();)
-        {
-        UIObjectIDDefinition *p = *it;
-        if (p->nId >= CMD_ID_CUSTOM_BASE) {
-            SetUIObjectIDDefinition::iterator itRemove = it;
-            ++it;
-            m_setUIDDefinition.erase(itRemove);
-        } else {
-            ++it;
-        }
-    }
+    m_userCmdIDNext = ID_ID_USER_BASE;
+    m_mapUserUIDs.clear();
 }
 
 CSkinWnd *CSkinFactory::newSkinWnd(cstr_t szSkinWndName, bool bMainWnd) {
@@ -1221,7 +1161,7 @@ CUIObject *CSkinFactory::createDynamicCtrl(CSkinContainer *pContainer, cstr_t sz
     pObj = createUIObject(pContainer->getSkinWnd(), szClassName, pContainer);
     assert(pObj);
     if (pObj) {
-        if (nIDAssign == UID_INVALID) {
+        if (nIDAssign == ID_INVALID) {
             nIDAssign = pContainer->getSkinWnd()->allocUIObjID();
         }
         pObj->m_id = nIDAssign;

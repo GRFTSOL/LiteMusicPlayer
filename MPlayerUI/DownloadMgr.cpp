@@ -113,7 +113,7 @@ bool CDownloadMgr::searchInCacheResult(bool bShowInfoText) {
             str = _TLT("Failed to get searching lyrics results.");
             str += " ";
             str += _TLT("Please contact us to report this issue.");
-            CMPlayerAppBase::getInstance()->dispatchLongErrorText(str.c_str(), CMD_EMAIL);
+            CMPlayerAppBase::getInstance()->dispatchLongErrorText(str.c_str(), ID_EMAIL);
         }
         return false;
     }
@@ -122,7 +122,7 @@ bool CDownloadMgr::searchInCacheResult(bool bShowInfoText) {
         if (bShowInfoText) {
             string str;
             str = _TLT("search returned no results.");
-            int cmds[] = { CMD_NO_SUITTABLE_LYRICS, CMD_INSTRUMENTAL_MUSIC, CMD_SEARCH_LYR_SUGGESTIONS };
+            int cmds[] = { ID_NO_SUITTABLE_LYRICS, ID_INSTRUMENTAL_MUSIC, ID_SEARCH_LYR_SUGGESTIONS };
             string strCmd = "cmd://";
             for (int i = 0; i < CountOf(cmds); i++) {
                 if (i != 0) {
@@ -191,15 +191,15 @@ bool CDownloadMgr::searchInCacheResult(bool bShowInfoText) {
 
         if (bShowInfoText) {
             CMPlayerAppBase::getInstance()->dispatchLongErrorText(
-                _TLT("Found lyrics, please select the lyrics in the popup dialog."), CMD_OPEN_LRC);
+                _TLT("Found lyrics, please select the lyrics in the popup dialog."), ID_OPEN_LRC);
         }
 
-        CMPlayerAppBase::getMainWnd()->onCustomCommand(CMD_OPEN_LRC);
+        CMPlayerAppBase::getMainWnd()->onCommand(ID_OPEN_LRC);
         return true;
     } else {
         if (bShowInfoText) {
             CMPlayerAppBase::getInstance()->dispatchLongErrorText(
-                _TLT("Found some similar lyrics, please choose them in 'search Lyrics' window."), CMD_OPEN_LRC);
+                _TLT("Found some similar lyrics, please choose them in 'search Lyrics' window."), ID_OPEN_LRC);
         }
     }
 
@@ -373,7 +373,7 @@ void CDownloadMgr::onEndDownload(CDownloadTask *pTask) {
                 // show rate link
                 if (!g_profile.getBool(SZ_SECT_UI, "HideRateLink", false)) {
                     if (g_currentLyrics.properties().id.size()) {
-                        CMPlayerApp::getInstance()->dispatchLongErrorText(_TLT("Are these lyrics correct to the song? rate them!"), CMD_RATE_LYR);
+                        CMPlayerApp::getInstance()->dispatchLongErrorText(_TLT("Are these lyrics correct to the song? rate them!"), ID_RATE_LYR);
                     }
                 }
             }

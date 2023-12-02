@@ -51,7 +51,6 @@ ThemeItem    g_themeItems[] = {
         "LyrColors",
         __vLyrClrProperties,
         CountOf(__vLyrClrProperties),
-        IDC_C_LYR_COLORS,
         true,
     },
     {
@@ -59,7 +58,6 @@ ThemeItem    g_themeItems[] = {
         "LyrFont",
         __LyrFontProperties,
         CountOf(__LyrFontProperties),
-        IDC_C_LYR_FONT,
         true,
     },
     {
@@ -67,7 +65,6 @@ ThemeItem    g_themeItems[] = {
         "LyrStyle",
         __LyrStyleProperties,
         CountOf(__LyrStyleProperties),
-        IDC_C_LYR_STYLE,
         true,
     },
     {
@@ -75,7 +72,6 @@ ThemeItem    g_themeItems[] = {
         "LyrBgPic",
         __LyrBgPicProperties,
         CountOf(__LyrBgPicProperties),
-        IDC_C_LYR_BG_PIC,
         false,
     },
 };

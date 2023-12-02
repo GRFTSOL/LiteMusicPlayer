@@ -85,7 +85,7 @@ public:
 
     void onDestroy() override;
 
-    bool onCustomCommand(int nId) override;
+    bool onCommand(uint32_t nId) override;
 
     void addOptBool(EventType evtType, cstr_t szSection, cstr_t szSettingName, bool bDefValue, cstr_t szCtrlId);
     void addOptComboStr(OptComboStr &optComboStr) { m_vOptComboStr.push_back(optComboStr); }

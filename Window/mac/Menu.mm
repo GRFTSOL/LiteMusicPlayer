@@ -19,7 +19,7 @@
 @implementation MLMenuImp
 
 - (void) onCommand:(NSMenuItem *)item {
-    mBaseWnd->onCommand((uint32_t)[item tag], 0);
+    mBaseWnd->onCommand((uint32_t)[item tag]);
 }
 
 -(BOOL) validateMenuItem:(NSMenuItem *)item {

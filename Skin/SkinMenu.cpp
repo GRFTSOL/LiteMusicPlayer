@@ -27,14 +27,12 @@ int CSkinMenu::Item::fromXML(CSkinFactory *pSkinFactory, SXNode *pNode) {
         } else {
             action = A_INSERT_BY_ID;
             nPos = pSkinFactory->getIDByName(pNode->getPropertySafe("Position"));
-            nPos = pSkinFactory->getMenuIDByUID(nPos, false);
         }
 
         name = pNode->getPropertySafe("Name");
         bCanCheck = isTRUE(pNode->getPropertySafe("CanCheck"));
         nIDCmd = pSkinFactory->getIDByName(pNode->getPropertySafe("IDCmd"));
         nIDCmdIsChecked = pSkinFactory->getIDByName(pNode->getPropertySafe("IsCheckedCmd"));
-        nMenuID = pSkinFactory->getMenuIDByUID(nIDCmd, true);
     } else if (strcasecmp(szValue, "remove") == 0) {
         action = A_REMOVE;
         nPos = pNode->getPropertyInt("Position");
@@ -76,17 +74,19 @@ void CSkinMenu::loadMenu(const rapidjson::Value &items, CMenu &menu) {
         if (item.Size() == 1) {
             // Separator
             menu.appendSeperator();
-        } else if (item.Size() == 2) {
-            // Popup
-            CMenu subMenu = menu.appendSubmenu(_TL(item[0].GetString()));
-            loadMenu(item[1], subMenu);
         } else {
             // Menu item
-            assert(item.Size() == 3);
-            string name = item[0].GetString(), shortcut;
-            int nID = item[2].GetInt();
-            getShortcutKey(nID, shortcut);
-            menu.appendItem(nID, _TL(name.c_str()), shortcut.c_str());
+            assert(item.Size() == 2);
+            if (item[1].IsArray()) {
+                // Popup
+                CMenu subMenu = menu.appendSubmenu(_TL(item[0].GetString()));
+                loadMenu(item[1], subMenu);
+            } else {
+                string name = item[0].GetString(), shortcut;
+                auto id = CSkinApp::getInstance()->getSkinFactory()->getIDByName(item[1].GetString());
+                getShortcutKey(id, shortcut);
+                menu.appendItem(id, _TL(name.c_str()), shortcut.c_str());
+            }
         }
     }
 }
@@ -95,9 +95,9 @@ void CSkinMenu::updateMenuStatus(Window *window) {
     CSkinFactory *pSkinFactory = CSkinApp::getInstance()->getSkinFactory();
 
     for (Item &item : m_listItems) {
-        if (item.nIDCmdIsChecked != UID_INVALID && item.bCanCheck) {
+        if (item.nIDCmdIsChecked != ID_INVALID && item.bCanCheck) {
             int ret = pSkinFactory->onDynamicCmd(item.nIDCmdIsChecked, (CSkinWnd *)window);
-            checkItem(item.nMenuID, ret == ERR_OK);
+            checkItem(item.nIDCmd, ret == ERR_OK);
         }
     }
 }
@@ -127,7 +127,7 @@ int CSkinMenu::fromXML(SXNode *pNodeMenu, int nAppendPos) {
 
             m_listItems.push_back(item);
             if (item.action == A_APPEND) {
-                insertItem(m_nAppendPosition, item.nMenuID,
+                insertItem(m_nAppendPosition, item.nIDCmd,
                     _TL(item.name.c_str()));
                 m_nAppendPosition++;
             } else if (item.action == A_REMOVE) {
@@ -136,7 +136,7 @@ int CSkinMenu::fromXML(SXNode *pNodeMenu, int nAppendPos) {
                     m_nAppendPosition--;
                 }
             } else  if (item.action == A_INSERT_BY_ID) {
-                insertItemByID(item.nPos, item.nMenuID,
+                insertItemByID(item.nPos, item.nIDCmd,
                     _TL(item.name.c_str()));
             }
         }

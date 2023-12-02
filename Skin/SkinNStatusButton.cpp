@@ -61,12 +61,12 @@ void CSkinNStatusButton::onTimer(int nId) {
         m_pSkin->screenToClient(pt);
 
         if (isPtIn(pt)) {
-            if (m_id != UID_INVALID) {
+            if (m_id != ID_INVALID) {
                 m_pSkin->postCustomCommandMsg(m_id);
             }
 
             if (m_nCurStatus >= 0 && m_nCurStatus < (int)m_vBtStatImg.size()) {
-                if (m_vBtStatImg[m_nCurStatus]->nIDCmd != UID_INVALID) {
+                if (m_vBtStatImg[m_nCurStatus]->nIDCmd != ID_INVALID) {
                     m_pSkin->postCustomCommandMsg(m_vBtStatImg[m_nCurStatus]->nIDCmd);
                 }
             }
@@ -365,7 +365,7 @@ void CSkinNStatusButton::enumProperties(CUIObjProperties &listProperties) {
         strNameRect = strPrefix + "ImageDisabledRect";
         listProperties.addPropImage(name.c_str(), strNameRect.c_str(), btimg->strDisabledFile.c_str(), btimg->imgDisabled, !btimg->strDisabledFile.empty());
 
-        listProperties.addPropID("IDCmd", m_pSkin->getSkinFactory()->getStringOfID(btimg->nIDCmd).c_str(), btimg->nIDCmd != UID_INVALID);
+        listProperties.addPropID("IDCmd", m_pSkin->getSkinFactory()->getStringOfID(btimg->nIDCmd).c_str(), btimg->nIDCmd != ID_INVALID);
     }
 
     listProperties.addPropBoolStr("Continuous", m_bContinuousCmd, m_bContinuousCmd);
@@ -430,11 +430,11 @@ void CSkinNStatusButton::buttonUpAction() {
 
     changeButtonState(BS_HOVER);
 
-    if (m_id != UID_INVALID) {
+    if (m_id != ID_INVALID) {
         m_pSkin->postCustomCommandMsg(m_id);
     }
 
-    if (m_vBtStatImg[m_nCurStatus]->nIDCmd != UID_INVALID) {
+    if (m_vBtStatImg[m_nCurStatus]->nIDCmd != ID_INVALID) {
         m_pSkin->postCustomCommandMsg(m_vBtStatImg[m_nCurStatus]->nIDCmd);
     }
 }

@@ -7,8 +7,8 @@ UIOBJECT_CLASS_NAME_IMP(CSkinToggleCtrlContainer, "ToggleCtrlContainer")
 
 CSkinToggleCtrlContainer::CSkinToggleCtrlContainer(void) : m_memGraph(1.0) {
     m_nAnimateDuration = 800;
-    m_nToggleToCtrl = UID_INVALID;
-    m_nActiveCtrl = UID_INVALID;
+    m_nToggleToCtrl = ID_INVALID;
+    m_nActiveCtrl = ID_INVALID;
     m_nIDTimerAnimation = 0;
     m_timeBeginAni = 0;
 }
@@ -107,7 +107,7 @@ bool CSkinToggleCtrlContainer::setProperty(cstr_t szProperty, cstr_t szValue) {
 
             m_timeBeginAni = getTickCount();
         } else {
-            m_nToggleToCtrl = UID_INVALID;
+            m_nToggleToCtrl = ID_INVALID;
         }
     } else {
         return false;
@@ -136,7 +136,7 @@ void CSkinToggleCtrlContainer::onTimer(int nId) {
                     pObj->setVisible(false);
                 }
             }
-            m_nActiveCtrl = UID_INVALID;
+            m_nActiveCtrl = ID_INVALID;
 
             // show new object
             CUIObject *pObj = getUIObjectById(m_nToggleToCtrl, nullptr);

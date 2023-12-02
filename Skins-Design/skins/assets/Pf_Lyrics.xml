@@ -2,9 +2,9 @@
 <PreferPage.LyricsRoot ID="CID_C_LYR_ROOT" Name="Lyrics" Rect="0,65,w,h-65" Visible="false">
   <NormalFrame Rect="10,10,w-20,h-20"/>
   <NormalTabButton ID="CID_TOOLBAR_LYR"  Rect="30,8,w-30,">
-    <button ID="CMD_LYR_DOWNLOAD" Text="Lyrics Download"/>
-    <button ID="CMD_LYR_SAVE_OPT" Text="Lyrics Saving Options"/>
-    <button ID="CMD_LYR_OUTPUT_PLUGIN" Text="Lyrics Output Plug-ins"/>
+    <button ID="ID_LYR_DOWNLOAD" Text="Lyrics Download"/>
+    <button ID="ID_LYR_SAVE_OPT" Text="Lyrics Saving Options"/>
+    <button ID="ID_LYR_OUTPUT_PLUGIN" Text="Lyrics Output Plug-ins"/>
   </NormalTabButton>
   <Container Name="Content" Rect="10,0,w-20,h" ClipChildren="true">
     <PreferPage.LyrDownload ID="CID_C_LYR_DOWNLOAD" Visible="false" Name="Lyrics Download" Rect="0,30,w,h-30-10">

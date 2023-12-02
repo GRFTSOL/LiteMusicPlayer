@@ -269,11 +269,11 @@ public:
         return false;
     }
 
-    bool onCustomCommand(int nId) override {
-        if (nId == CID_CHANGE_ACCOUNT) {
+    bool onCommand(uint32_t id) override {
+        if (id == CID_CHANGE_ACCOUNT) {
             m_pContainer->switchToPage(CPageLogin::className(), false, 0, true);
         } else {
-            return CSkinContainer::onCommand(nId);
+            return CSkinContainer::onCommand(id);
         }
 
         return true;
@@ -313,13 +313,13 @@ public:
             }
 
             if (getExPoolStr(SZ_EX_POOL_WORK_MSG).size()) {
-                m_pSkin->postCustomCommandMsg(CMD_SHOW_ERR_RESULT);
+                m_pSkin->postCustomCommandMsg(ID_SHOW_ERR_RESULT);
             }
         }
     }
 
-    bool onCustomCommand(int nId) override {
-        if (nId == CMD_SHOW_ERR_RESULT) {
+    bool onCommand(uint32_t nId) override {
+        if (nId == ID_SHOW_ERR_RESULT) {
             assert(getExPoolStr(SZ_EX_POOL_WORK_MSG).size());
             m_pSkin->messageOut(getExPoolStr(SZ_EX_POOL_WORK_MSG).c_str());
         } else if (nId == CID_TRY_AGAIN) {
@@ -332,7 +332,7 @@ public:
                     ((CSkinWndUploadLyr *)m_pSkin)->getUploadWorkObj());
             }
         } else {
-            return CSkinContainer::onCustomCommand(nId);
+            return CSkinContainer::onCommand(nId);
         }
 
         return true;

@@ -10,8 +10,6 @@ public:
 
     void onInitialUpdate() override;
 
-    // bool onCustomCommand(int nId);
-
 };
 
 void registerPfSystemPages(CSkinFactory *pSkinFactory);

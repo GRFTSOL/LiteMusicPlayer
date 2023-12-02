@@ -41,7 +41,7 @@ public:
 
     virtual void onActivate(bool bActived) { }
     virtual bool onClose() { return true; }
-    virtual void onCommand(uint32_t uID, uint32_t nNotifyCode) { }
+    virtual void onCommand(uint32_t id) { }
     virtual void onContexMenu(int xPos, int yPos) { }
     virtual void onCreate();
     virtual void onDestroy() { }

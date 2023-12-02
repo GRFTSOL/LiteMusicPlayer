@@ -28,12 +28,12 @@ int CMPFloatingLyrWnd::create() {
     return ERR_OK;
 }
 
-bool CMPFloatingLyrWnd::onCustomCommand(int nId) {
-    if (nId == CMD_CLOSE) {
+void CMPFloatingLyrWnd::onCommand(uint32_t nId) {
+    if (nId == ID_CLOSE) {
         g_profile.writeInt("FloatingLyr", false);
     }
 
-    return CMPSkinWnd::onCustomCommand(nId);
+    return CMPSkinWnd::onCommand(nId);
 }
 
 bool CMPFloatingLyrWnd::settingGetTopmost() {

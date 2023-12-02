@@ -45,8 +45,8 @@ public:
         }
     }
 
-    bool onCustomCommand(int nId) override {
-        if (nId == CMD_OK) {
+    void onCommand(uint32_t id) override {
+        if (id == ID_OK) {
             VecStrings choosedUrls;
             for (int i = 0; i < _embeddedLyrUrls.size() && i < _checkIds.size(); i++) {
                 if (m_rootConainter.isButtonChecked(_checkIds[i])) {
@@ -55,11 +55,11 @@ public:
             }
 
             if (saveEmbeddedLyrics(_mediaFile.c_str(), _lyrics, choosedUrls, this) != ERR_OK) {
-                return true;
+                return;
             }
         }
 
-        return CMPSkinWnd::CSkinWnd::onCustomCommand(nId);
+        CMPSkinWnd::CSkinWnd::onCommand(id);
     }
 
 public:

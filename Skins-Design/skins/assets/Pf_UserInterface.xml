@@ -2,8 +2,8 @@
 <PreferPage.UIRoot Visible="false" Name="UI" Rect="0,65,w,h-65">
   <NormalFrame Rect="10,10,w-20,h-20"/>
   <NormalTabButton ID="CID_TOOLBAR_UI"  Rect="30,8,w-30,">
-    <button ID="CMD_UI" Text="User Interface"/>
-    <button ID="CMD_SKINS" Text="Skins"/>
+    <button ID="ID_UI" Text="User Interface"/>
+    <button ID="ID_SKINS" Text="Skins"/>
   </NormalTabButton>
   <Container Name="Content" Rect="10,0,w-20,h" ClipChildren="true">
     <PreferPage.UI Visible="false" Name="UI" Rect="0,30,w,h-30-10">

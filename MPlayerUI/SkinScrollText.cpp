@@ -23,7 +23,7 @@ CSkinScrollText::~CSkinScrollText() {
 //     if (!m_enable)
 //         return false;
 //
-//     if (m_id != UID_INVALID)
+//     if (m_id != ID_INVALID)
 //         m_pSkin->postCustomCommandMsg(m_id);
 //
 //     return true;

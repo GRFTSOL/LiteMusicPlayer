@@ -318,7 +318,7 @@ protected:
     // 插入到 ListView 的 header 和 footer 控件
     CUIObject                   *m_header, *m_footer;
 
-    // DoubleClick or Enter will post (CMD_OK) message
-    int                         m_cmdSubmit = UID_INVALID;
+    // DoubleClick or Enter will post (ID_OK) message
+    int                         m_cmdSubmit = ID_INVALID;
 
 };

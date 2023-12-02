@@ -26,7 +26,7 @@ public:
     void onSkinLoaded() override;
 
     void onDestroy() override;
-    bool onCustomCommand(int nId) override;
+    void onCommand(uint32_t id) override;
 
     void onOK() override;
 

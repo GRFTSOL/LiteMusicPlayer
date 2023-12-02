@@ -31,7 +31,7 @@ public:
         }
     }
 
-    bool onCustomCommand(int nId) override {
+    bool onCommand(uint32_t nId) override {
         if (nId == getIDByName("CID_RESET")) {
             updateAdjustHue(0.0);
             CSkinSeekCtrl *pSeek = (CSkinSeekCtrl*)getUIObjectById(getIDByName("CID_HUE"), CSkinSeekCtrl::className());
@@ -41,7 +41,7 @@ public:
             return true;
         }
 
-        return CSkinContainer::onCustomCommand(nId);
+        return CSkinContainer::onCommand(nId);
     }
 
     bool onCancel() override {

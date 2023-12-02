@@ -81,7 +81,7 @@ void CSkinStaticText::onAdjustHue(float hue, float saturation, float luminance) 
 }
 
 bool CSkinStaticText::onLButtonUp(uint32_t nFlags, CPoint point) {
-    if (m_id != UID_INVALID) {
+    if (m_id != ID_INVALID) {
         m_pSkin->postCustomCommandMsg(m_id);
     }
 

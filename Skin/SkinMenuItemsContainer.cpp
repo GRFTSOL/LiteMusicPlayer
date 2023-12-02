@@ -159,10 +159,10 @@ bool SkinMenuItemsContainer::onLButtonUp(uint32_t nFlags, CPoint point) {
         offsetFirstVisibleMenuItem(-((m_rcObj.height() - m_sepYPadding * 2) / m_itemHeight - 1));
     } else if (item == IDX_DOWN_ARROW) {
         offsetFirstVisibleMenuItem((m_rcObj.height() - m_sepYPadding * 2) / m_itemHeight - 1);
-    } else if (item != IDX_INVALID && m_items[item].id != UID_INVALID) {
+    } else if (item != IDX_INVALID && m_items[item].id != ID_INVALID) {
         onPopupMenuClosed();
         m_pSkin->invalidateRect();
-        m_pSkin->onCommand(m_items[item].id, 0);
+        m_pSkin->onCommand(m_items[item].id);
         return true;
     }
 

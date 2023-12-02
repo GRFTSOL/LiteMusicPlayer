@@ -34,8 +34,7 @@ public:
 
     virtual void onSize() override;
 
-    virtual bool onCommand(int nID) override;
-    virtual bool onCustomCommand(int nId) override;
+    virtual bool onCommand(uint32_t nId) override;
 
     virtual void onSwitchTo();
 

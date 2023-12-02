@@ -1201,7 +1201,7 @@ bool CLyricShowObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
         break;
     case 'D':
-        m_pSkin->postShortcutKeyCmd(CMD_OPEN_LRC);
+        m_pSkin->postShortcutKeyCmd(ID_OPEN_LRC);
         break;
     case 'Z':
         g_player.prev();
@@ -1326,7 +1326,7 @@ bool CLyricShowObj::onLButtonDown(uint32_t nFlags, CPoint point) {
 }
 
 void CLyricShowObj::onMagnify(float magnification) {
-    m_pSkin->postShortcutKeyCmd(magnification >= 0 ? CMD_FONT_SIZE_INC : CMD_FONT_SIZE_DEC);
+    m_pSkin->postShortcutKeyCmd(magnification >= 0 ? ID_FONT_SIZE_INC : ID_FONT_SIZE_DEC);
 }
 
 void CLyricShowObj::onLyricsChanged() {

@@ -337,15 +337,15 @@ void CMPMediaLibCmdHandler::init(CSkinWnd *pSkinWnd) {
 }
 
 // if the command id is processed, return true.
-bool CMPMediaLibCmdHandler::onCommand(int nId) {
+bool CMPMediaLibCmdHandler::onCommand(uint32_t nId) {
     switch (nId) {
-    case IDC_PLAY:
+    case ID_PLAY:
         onDblClickMediaList();
         break;
     case IDOK:
         m_pSkinWnd->destroy();
         break;
-    case IDC_QUEUE_UP:
+    case ID_QUEUE_UP:
         {
             CSkinListCtrl *pMediaList = (CSkinListCtrl*)m_pSkinWnd->getUIObjectById(ID_ML_MEDIA_LIST, CSkinListCtrl::className());
             int nSel = pMediaList->getNextSelectedItem(-1);
@@ -363,13 +363,13 @@ bool CMPMediaLibCmdHandler::onCommand(int nId) {
             }
         }
         break;
-    case IDC_NOWPLAYING:
+    case ID_NOWPLAYING:
         {
             SkinWndStartupInfo startInfo("MPSkin", "Playlist", "Playlist.xml", nullptr);
             CMPlayerAppBase::getMPSkinFactory()->activeOrCreateSkinWnd(startInfo);
         }
         break;
-    case IDC_ADD_DIR_TO_ML:
+    case ID_ADD_DIR_TO_ML:
         //
         // add Media to library
         //
@@ -377,7 +377,7 @@ bool CMPMediaLibCmdHandler::onCommand(int nId) {
             reloadMedialibView();
         }
         break;
-    case IDC_REMOVE_FROM_ML:
+    case ID_REMOVE_FROM_ML:
         {
             CSkinListCtrl *pMediaList = (CSkinListCtrl*)m_pSkinWnd->getUIObjectById(ID_ML_MEDIA_LIST, CSkinListCtrl::className());
             if (pMediaList) {
@@ -409,19 +409,8 @@ bool CMPMediaLibCmdHandler::onCommand(int nId) {
             }
         }
         break;
-    default:
-        return false;
-    }
-
-    return true;
-}
-
-bool CMPMediaLibCmdHandler::onCustomCommand(int nID) {
-    switch (nID) {
-    case CMD_ML_BACK:
-        {
-            backHistoryPath();
-        }
+    case ID_ML_BACK:
+        backHistoryPath();
         break;
     default:
         return false;
@@ -487,7 +476,7 @@ bool CMPMediaLibCmdHandler::onUIObjNotify(IUIObjNotify *pNotify) {
 
         return true;
     }
-    /*    else if (pNotify->nID == CMD_ML_GUIDE)
+    /*    else if (pNotify->nID == ID_ML_GUIDE)
     {
         if (pNotify->pUIObject->isKindOf(CSkinDroplistCtrl::className()))
         {
@@ -573,7 +562,7 @@ void CMPMediaLibCmdHandler::updateMediaList() {
     }
 
     /*    CSkinDroplistCtrl    *pDroplist;
-    pDroplist = (CSkinDroplistCtrl*)m_pSkinWnd->getUIObjectById(CMD_ML_GUIDE, CSkinDroplistCtrl::className());
+    pDroplist = (CSkinDroplistCtrl*)m_pSkinWnd->getUIObjectById(ID_ML_GUIDE, CSkinDroplistCtrl::className());
     if (pDroplist)
     {
         CMediaLibTreeProvider::V_ITEMS    vItems;

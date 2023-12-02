@@ -12,7 +12,7 @@ public:
     void onTimer(int nId) override;
     void onEvent(const IEvent *pEvent) override;
 
-    bool onCommand(int nId) override;
+    bool onCommand(uint32_t nId) override;
 
     bool onKeyDown(uint32_t nChar, uint32_t nFlags) override;
     bool onHandleKeyDown(uint32_t nChar, uint32_t nFlags) override;

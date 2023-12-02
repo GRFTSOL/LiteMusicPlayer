@@ -35,8 +35,7 @@ public:
 
     virtual void onUIObjNotify(IUIObjNotify *pNotify) override;
 
-    bool onCommand(int nId) override;
-    bool onCustomCommand(int nId) override;
+    bool onCommand(uint32_t nId) override;
 
     void onTimer(int nId) override;
 

@@ -64,7 +64,7 @@ protected:
 
 class CDlgMediaInfoPageBasic : public CDlgMediaInfoPage {
 public:
-    CDlgMediaInfoPageBasic(CDlgMediaInfo *parent) : CDlgMediaInfoPage(parent, "CID_C_MI_BASIC", "CMD_MI_BASIC"), _tags(parent->_tags) {
+    CDlgMediaInfoPageBasic(CDlgMediaInfo *parent) : CDlgMediaInfoPage(parent, "CID_C_MI_BASIC", "ID_MI_BASIC"), _tags(parent->_tags) {
     }
 
     void onCreate() {
@@ -133,7 +133,7 @@ string formatFileSize(long size) {
 
 class CDlgMediaInfoPageDetail : public CDlgMediaInfoPage {
 public:
-    CDlgMediaInfoPageDetail(CDlgMediaInfo *parent) : CDlgMediaInfoPage(parent, "CID_C_MI_DETAIL", "CMD_MI_DETAIL"), _info(parent->_info), _parent(parent) {
+    CDlgMediaInfoPageDetail(CDlgMediaInfo *parent) : CDlgMediaInfoPage(parent, "CID_C_MI_DETAIL", "ID_MI_DETAIL"), _info(parent->_info), _parent(parent) {
     }
 
     void onCreate() {
@@ -196,7 +196,7 @@ protected:
 
 class CDlgMediaInfoPageLyrics : public CDlgMediaInfoPage {
 public:
-    CDlgMediaInfoPageLyrics(CDlgMediaInfo *parent) : CDlgMediaInfoPage(parent, "CID_C_MI_LYRICS", "CMD_MI_LYRICS") {
+    CDlgMediaInfoPageLyrics(CDlgMediaInfo *parent) : CDlgMediaInfoPage(parent, "CID_C_MI_LYRICS", "ID_MI_LYRICS") {
     }
 
     void onCreate() {
@@ -226,13 +226,11 @@ protected:
 
 class CDlgMediaInfoPagePictures : public CDlgMediaInfoPage {
 public:
-    CDlgMediaInfoPagePictures(CDlgMediaInfo *parent) : CDlgMediaInfoPage(parent, "CID_C_MI_PICTURES", "CMD_MI_PICTURES") {
+    CDlgMediaInfoPagePictures(CDlgMediaInfo *parent) : CDlgMediaInfoPage(parent, "CID_C_MI_PICTURES", "ID_MI_PICTURES") {
     }
 
     void onCreate() {
         CDlgMediaInfoPage::onCreate();
-
-        GET_ID_BY_NAME(PIC_ACTIONS);
 
         _picListCtrl = (CSkinListCtrl *)getUIObjectById("LIST_PICTURES", CSkinListCtrl::className());
         if (_picListCtrl) {
@@ -240,40 +238,32 @@ public:
         }
     }
 
-    bool onCustomCommand(int nId) {
-        assert(_picListCtrl);
-        if (_picListCtrl == nullptr) {
-            return false;
-        }
+    bool onCommand(uint32_t nId) {
+        if (nId == ID_PIC_ACTIONS) {
+            assert(_picListCtrl);
+            if (_picListCtrl == nullptr) {
+                return false;
+            }
 
-        if (nId == PIC_ACTIONS) {
             CMenu menu;
             VecStrings options;
 
             menu.createPopupMenu();
 
-            menu.appendItem(IDC_ADD_PIC, _TL("&Add Picture..."));
-            menu.appendItem(IDC_DEL_PIC, _TL("&Delete Picture"));
-            menu.appendItem(IDC_SAVE_PIC_AS, _TL("&Save Picture as..."));
+            menu.appendItem(ID_ADD_PIC, _TL("&Add Picture..."));
+            menu.appendItem(ID_DEL_PIC, _TL("&Delete Picture"));
+            menu.appendItem(ID_SAVE_PIC_AS, _TL("&Save Picture as..."));
 
             if (_picListCtrl->getSelectedCount() == 0) {
-                menu.enableItem(IDC_DEL_PIC, false);
-                menu.enableItem(IDC_SAVE_PIC_AS, false);
+                menu.enableItem(ID_DEL_PIC, false);
+                menu.enableItem(ID_SAVE_PIC_AS, false);
             }
 
             CRect rc;
             getUIObjectRect(nId, rc);
             m_pSkin->clientToScreen(rc);
             menu.trackPopupMenu(rc.left, rc.bottom, m_pSkin);
-            return true;
-        }
-
-        return CDlgMediaInfoPage::onCustomCommand(nId);
-    }
-
-    bool onCommand(int nId) {
-
-        if (nId == IDC_ADD_PIC) {
+        } else if (nId == ID_ADD_PIC) {
             // add picture
             CFileOpenDlg    dlg(_TLT("Browse picture file"),
                 "", "All picture files (*.bmp; *.jpg; *.gif; *.png)\0*.bmp;*.jpg;*.jpeg;*.gif;*.png\0\0", 1);
@@ -293,7 +283,7 @@ public:
             } else {
                 ERR_LOG1("Failed to read picture file: %s", dlg.getOpenFile());
             }
-        } else if (nId == IDC_DEL_PIC) {
+        } else if (nId == ID_DEL_PIC) {
             // delete picture
             while (true) {
                 int index = _picListCtrl->getNextSelectedItem(-1);
@@ -307,7 +297,7 @@ public:
                     break;
                 }
             }
-        } else if (nId == IDC_SAVE_PIC_AS) {
+        } else if (nId == ID_SAVE_PIC_AS) {
             int nPos = -1;
 
             while (1) {
@@ -353,7 +343,6 @@ public:
     }
 
 protected:
-    int                         PIC_ACTIONS;
     CSkinListCtrl              *_picListCtrl;
 
 };
@@ -416,19 +405,19 @@ void CDlgMediaInfo::onSkinLoaded() {
     }
 }
 
-bool CDlgMediaInfo::onCustomCommand(int nId) {
+void CDlgMediaInfo::onCommand(uint32_t nId) {
     for (auto page : _vInfoPages) {
         if (page->_nAssociateTabButtonId == nId) {
             auto obj = getUIObjectById(page->_strPageId);
             if (obj && obj->isContainer()) {
                 obj->getParent()->switchToPage(static_cast<CSkinContainer *>(obj), false, 0, true);
                 g_profile.writeString("media-info", "active-page", page->_strPageId.c_str());
-                return true;
+                return;
             }
         }
     }
 
-    return CMPSkinWnd::CSkinWnd::onCustomCommand(nId);
+    CMPSkinWnd::onCommand(nId);
 }
 
 void CDlgMediaInfo::onDestroy() {

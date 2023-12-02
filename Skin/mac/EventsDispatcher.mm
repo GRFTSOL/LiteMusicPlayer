@@ -82,15 +82,15 @@ void CEventsDispatcher::dispatchUnsyncEventDelayed(IEvent *pEvent, int delayInMs
 
 }
 
-- (void) onCustomCommand;
+- (void) onCommand;
 - (id) init:(CSkinWnd *)pWnd cmd:(int)cmdId;
 
 @end
 
 @implementation CustomCmdPoster
 
-- (void) onCustomCommand {
-    mSkinWnd->onCustomCommand(mCmdId);
+- (void) onCommand {
+    mSkinWnd->onCommand(mCmdId);
 }
 
 - (id) init:(CSkinWnd *)pWnd cmd:(int)cmdId {
@@ -101,9 +101,9 @@ void CEventsDispatcher::dispatchUnsyncEventDelayed(IEvent *pEvent, int delayInMs
 
 @end
 
-void postCustomCommandMsgMac(CSkinWnd *pSkinWnd, int cmd) {
+void postCommandMsgMac(CSkinWnd *pSkinWnd, int cmd) {
     CustomCmdPoster *poster = [[CustomCmdPoster alloc] init:pSkinWnd cmd:cmd];
-    [poster performSelectorOnMainThread:@selector(onCustomCommand)
+    [poster performSelectorOnMainThread:@selector(onCommand)
         withObject:nil
         waitUntilDone:NO];
     [poster release];

@@ -112,10 +112,10 @@ void CSkinTabButton::onCreate() {
 bool CSkinTabButton::onMenuKey(uint32_t nChar, uint32_t nFlags) {
     //     if (toUpper(m_chMenuKey) == toUpper(nChar))
     //     {
-    //         if (m_id != UID_INVALID)
+    //         if (m_id != ID_INVALID)
     //             m_pSkin->postCustomCommandMsg(m_id);
     //
-    //         if (m_vBtStatImg[m_nCurStatus]->nIDCmd != UID_INVALID)
+    //         if (m_vBtStatImg[m_nCurStatus]->nIDCmd != ID_INVALID)
     //             m_pSkin->postCustomCommandMsg(m_vBtStatImg[m_nCurStatus]->nIDCmd);
     //         return true;
     //     }

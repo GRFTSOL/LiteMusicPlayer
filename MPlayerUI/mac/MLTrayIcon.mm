@@ -26,7 +26,7 @@
 }
 
 - (void)onClicked {
-    if (self->cmdId != UID_INVALID) {
+    if (self->cmdId != ID_INVALID) {
         if (g_wndFloatingLyr.isValid()) {
             g_wndFloatingLyr.m_ignoreOneActivate = true;
         }
@@ -41,10 +41,10 @@
 #define STATUS_ITEM_VIEW_WIDTH 24.0
 
 SYSTRAY_ICON_CMD    g_sysTrayIconCmd[] = {
-    { CMD_NEXT,    _TLM("Next Track"), true },
-    { CMD_PLAYPAUSE, _TLM("Play/pause"), true },
-    { CMD_PREVIOUS, _TLM("Previous Track"), false },
-    { UID_INVALID, _TLM("Menu"), true },
+    { ID_NEXT, _TLM("Next Track"), true },
+    { ID_PLAYPAUSE, _TLM("Play/pause"), true },
+    { ID_PREVIOUS, _TLM("Previous Track"), false },
+    { ID_MENU, _TLM("Menu"), true },
 };
 
 int MAX_PLAYER_TRAY_ICON_CMD = CountOf(g_sysTrayIconCmd);
@@ -69,27 +69,27 @@ struct MLtrayIconPrivate {
 };
 
 NSString *getStatusItemIcon(uint32_t cmd) {
-    if (cmd == UID_INVALID) {
+    if (cmd == ID_MENU) {
         return ICON_MENU;
     }
 
     auto playlist = g_player.getNowPlaying();
     if (!playlist || playlist->getCount() == 0) {
-        if (cmd == CMD_PLAYPAUSE) {
+        if (cmd == ID_PLAYPAUSE) {
             return ICON_PLAY_DISABLED;
-        } else if (cmd == CMD_NEXT) {
+        } else if (cmd == ID_NEXT) {
             return ICON_NEXT_DISABLED;
         } else {
             return ICON_PREV_DISABLED;
         }
     }
 
-    if (cmd == CMD_PLAYPAUSE) {
+    if (cmd == ID_PLAYPAUSE) {
         if (g_player.getPlayerState() == PS_PLAYING) {
             return ICON_PAUSE;
         }
         return ICON_PLAY;
-    } else if (cmd == CMD_NEXT) {
+    } else if (cmd == ID_NEXT) {
         return ICON_NEXT;
     } else {
         return ICON_PREV;
@@ -135,7 +135,7 @@ void CMLTrayIcon::updatePlayerSysTrayIcon() {
                 item.statusItem = statusItem;
 
                 [statusItem setImage:[NSImage imageNamed:getStatusItemIcon(setting.cmdId)]];
-                if (setting.cmdId == UID_INVALID) {
+                if (setting.cmdId == ID_MENU) {
                     // Menu
                     item.menu = CMPlayerApp::getInstance()->getSkinFactory()->loadMenu(
                         CMPlayerApp::getMainWnd(), "TrayIconMenu");

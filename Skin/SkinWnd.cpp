@@ -372,7 +372,7 @@ CUIObject * CSkinWnd::getUIObjectById(int nId, cstr_t className) {
 
 CUIObject *CSkinWnd::getUIObjectById(cstr_t idName, cstr_t className) {
     auto id = m_pSkinFactory->getIDByName(idName);
-    if (id != UID_INVALID) {
+    if (id != ID_INVALID) {
         return getUIObjectById(id, className);
     }
     return nullptr;
@@ -646,7 +646,7 @@ bool CSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags) {
 
     if (nFlags == MK_COMMAND) {
         if (nChar == VK_W) {
-            onCustomCommand(CMD_CLOSE);
+            onCommand(ID_CLOSE);
             return true;
         }
     }
@@ -680,25 +680,86 @@ void CSkinWnd::onContexMenu(int xPos, int yPos) {
     }
 }
 
-void CSkinWnd::onCommand(uint32_t uID, uint32_t nNotifyCode) {
+void CSkinWnd::onCommand(uint32_t id) {
     if (m_pUIObjHandleContextMenuCmd) {
         // Only handle 1 command.
-        if (m_pUIObjHandleContextMenuCmd->onCommand(uID)) {
+        if (m_pUIObjHandleContextMenuCmd->onCommand(id)) {
             m_pUIObjHandleContextMenuCmd = nullptr;
             return;
         }
         m_pUIObjHandleContextMenuCmd = nullptr;
     }
 
-    if (m_rootConainter.onCommand(uID)) {
+    if (m_rootConainter.onCommand(id)) {
         return;
     }
 
-    int nUID = m_pSkinFactory->getUIDByMenuID(uID);
-    if (nUID != UID_INVALID) {
-        onCustomCommand(nUID);
-    } else {
-        Window::onCommand(uID, nNotifyCode);
+    if (m_onCommandListener.isFunction()) {
+        callVMFunction(m_onCommandListener, ArgumentsX(makeJsValueInt32(id)));
+    }
+
+    int nRet = m_pSkinFactory->onDynamicCmd(id, this);
+    if (nRet != ERR_NOT_FOUND && nRet != ERR_OK) {
+        ERR_LOG2("execute Dynamic Command failed: %s, %s", m_pSkinFactory->getStringOfID(id).c_str(), (cstr_t)Error2Str(nRet));
+    }
+
+    switch (id) {
+    case ID_OK:
+        onOK();
+        break;
+    case ID_CANCEL:
+        onCancel();
+        break;
+    case ID_CLOSE:
+        if (m_rootConainter.onClose()) {
+            postDestroy();
+        }
+        break;
+    case ID_QUIT:
+        CSkinApp::getInstance()->postQuitMessage();
+        break;
+    case ID_MINIMIZE:
+        if (isToolWindow()) {
+            hide();
+        } else {
+            minimize();// (SW_SHOWMINIMIZED);
+        }
+        break;
+    case ID_MAXIMIZE:
+        if (isZoomed()) {
+            restore();
+        } else {
+#ifdef WIN32
+            bool bToolWindow = isToolWindow();
+            if (bToolWindow) {
+                showAsAppWindowNoRefresh(getHandle());
+            }
+
+            showWindow(SW_SHOWMAXIMIZED);
+
+            if (bToolWindow) {
+                showAsToolWindowNoRefresh(getHandle());
+            }
+#else
+            maximize();
+#endif
+        }
+        break;
+    case ID_MENU:
+        {
+            CPoint pt = getCursorPos();
+            onContexMenu(pt.x, pt.y);
+        }
+        break;
+    case ID_EXEC_FUNCTION:
+        onExecOnMainThread();
+        break;
+    default:
+        break;
+    }
+
+    if (id <= ID_SYSTEM_END) {
+        Window::onCommand(id);
     }
 }
 
@@ -1488,8 +1549,6 @@ void CSkinWnd::updateMemGraphicsToScreen(const CRect* lpRect) {
 
 #ifdef _WIN32
 
-int CSkinWnd::ms_msgIDCustomCommand = RegisterWindowMessage("SkinWndCustomMsgID");
-
 LRESULT CSkinWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
     if (message == WM_NOTIFY) {
         NMHDR *pnmh = (NMHDR *)lParam;
@@ -1526,11 +1585,6 @@ LRESULT CSkinWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
     //
     //         return 0;
     //     }
-
-    if (message == ms_msgIDCustomCommand) {
-        onCustomCommand(wParam);
-        return 0;
-    }
 
     switch (message) {
     case WM_NCCALCSIZE:
@@ -1829,86 +1883,14 @@ bool showAsToolWindowNoRefresh(HWND hWnd) {
 }
 #endif // #ifdef _WIN32_DESKTOP
 
-bool CSkinWnd::onCustomCommand(int nId) {
-    if (m_onCommandListener.isFunction()) {
-        callVMFunction(m_onCommandListener, ArgumentsX(makeJsValueInt32(nId)));
-    }
-
-    if (m_rootConainter.onCustomCommand(nId)) {
-        return true;
-    }
-
-    int nRet = m_pSkinFactory->onDynamicCmd(nId, this);
-    if (nRet != ERR_NOT_FOUND && nRet != ERR_OK) {
-        ERR_LOG2("execute Dynamic Command failed: %s, %s", m_pSkinFactory->getStringOfID(nId).c_str(), (cstr_t)Error2Str(nRet));
-    }
-
-    switch (nId) {
-    case CMD_OK:
-        onOK();
-        break;
-    case CMD_CANCEL:
-        onCancel();
-        break;
-    case CMD_CLOSE:
-        if (m_rootConainter.onClose()) {
-            postDestroy();
-        }
-        break;
-    case CMD_QUIT:
-        CSkinApp::getInstance()->postQuitMessage();
-        break;
-    case CMD_MINIMIZE:
-        if (isToolWindow()) {
-            hide();
-        } else {
-            minimize();// (SW_SHOWMINIMIZED);
-        }
-        break;
-    case CMD_MAXIMIZE:
-        if (isZoomed()) {
-            restore();
-        } else {
-#ifdef WIN32
-            bool bToolWindow = isToolWindow();
-            if (bToolWindow) {
-                showAsAppWindowNoRefresh(getHandle());
-            }
-
-            showWindow(SW_SHOWMAXIMIZED);
-
-            if (bToolWindow) {
-                showAsToolWindowNoRefresh(getHandle());
-            }
-#else
-            maximize();
-#endif
-        }
-        break;
-    case CMD_MENU:
-        {
-            CPoint pt = getCursorPos();
-            onContexMenu(pt.x, pt.y);
-        }
-        break;
-    case CMD_EXEC_FUNCTION:
-        onExecOnMainThread();
-        break;
-    default:
-        return false;
-    }
-
-    return true;
-}
-
 void CSkinWnd::postCustomCommandMsg(int nId) {
 #ifdef _WIN32
-    ::PostMessage(m_hWnd, ms_msgIDCustomCommand, nId, 0);
+    ::PostMessage(m_hWnd, WM_COMMAND, nId, 0);
 #else // #ifdef _WIN32
 #ifdef _MAC_OS
-    ::postCustomCommandMsgMac(this, nId);
+    ::postCommandMsgMac(this, nId);
 #else
-    onCustomCommand(nId);
+    onCommand(nId);
 #endif // #ifdef _MAC_OS
 #endif // #ifdef _WIN32
 }
@@ -1916,7 +1898,7 @@ void CSkinWnd::postCustomCommandMsg(int nId) {
 void CSkinWnd::postExecOnMainThread(const std::function<void()> &f) {
     RMutexAutolock lock(m_mutex);
     m_functionsToExecOnMainThread.push_back(f);
-    postCustomCommandMsg(CMD_EXEC_FUNCTION);
+    postCustomCommandMsg(ID_EXEC_FUNCTION);
 }
 
 void CSkinWnd::onExecOnMainThread() {
@@ -2202,7 +2184,7 @@ int CSkinWnd::fromXML(SXNode *pXmlNode) {
         strSplit(strOnCreateCmd.c_str(), ',', vStrParam);
         for (int i = 0; i < (int)vStrParam.size(); i++) {
             trimStr(vStrParam[i]);
-            onCustomCommand(m_pSkinFactory->getIDByName(vStrParam[i].c_str()));
+            onCommand(m_pSkinFactory->getIDByName(vStrParam[i].c_str()));
         }
     }
 

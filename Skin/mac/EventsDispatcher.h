@@ -12,6 +12,6 @@ public:
 
 };
 
-void postCustomCommandMsgMac(class CSkinWnd *pSkinWnd, int cmd);
+void postCommandMsgMac(class CSkinWnd *pSkinWnd, int cmd);
 
 void postQuitMessageMac();

@@ -383,7 +383,7 @@ CUIObject::CUIObject() {
     m_pSkin = nullptr;
     m_pContainer = nullptr;
 
-    m_id = UID_INVALID;
+    m_id = ID_INVALID;
     m_autoUniID = 0;
 
     m_msgNeed = 0;
@@ -425,7 +425,7 @@ CUIObject::~CUIObject() {
             m_pSkin->releaseCaptureMouse(this);
         }
 
-        if (m_strTooltip.size() > 0 && m_id != UID_INVALID) {
+        if (m_strTooltip.size() > 0 && m_id != ID_INVALID) {
             m_pSkin->delToolTip(m_autoUniID);
         }
 
@@ -886,7 +886,7 @@ bool CUIObject::isPtIn(CPoint pt) {
 void CUIObject::enumProperties(CUIObjProperties &listProperties) {
     listProperties.addPropStr(SZ_PN_NAME, m_strName.c_str(), !m_strName.empty());
 
-    listProperties.addPropID(SZ_PN_ID, m_pSkin->getSkinFactory()->getStringOfID(m_id).c_str(), m_id != UID_INVALID);
+    listProperties.addPropID(SZ_PN_ID, m_pSkin->getSkinFactory()->getStringOfID(m_id).c_str(), m_id != ID_INVALID);
 
     listProperties.addPropVar(SZ_PN_LEFT, m_formLeft);
     listProperties.addPropVar(SZ_PN_TOP, m_formTop);
@@ -1012,7 +1012,7 @@ void CUIObject::onLanguageChanged() {
     }
 
     if (m_strTooltip.size()) {
-        m_pSkin->getSkinFactory()->getTooltip(m_id, m_strTooltip);
+        m_strTooltip = m_pSkin->getSkinFactory()->getTooltip(m_id);
     }
 }
 

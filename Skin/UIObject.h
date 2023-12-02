@@ -127,8 +127,7 @@ enum {
     UO_MSG_WANT_ALL_KEYS        = 1 << 5,
     UO_MSG_WANT_MOUSEWHEEL      = 1 << 6,
     UO_MSG_WANT_MENU_KEY        = 1 << 7,
-    UO_MSG_WANT_CUSTOM_CMD      = 1 << 8,
-    UO_MSG_WANT_MENU_CMD        = 1 << 9,
+    UO_MSG_WANT_COMMAND         = 1 << 8,
     UO_MSG_WANT_MAGNIFY         = 1 << 10,
     UO_MSG_WANT_ALL             = 0xFFFFFFFF
 };
@@ -285,8 +284,7 @@ public:
     // MarketText 是临时的文字，当输入其他字符时会被替代
     virtual void onInputMarkedText(cstr_t text) { }
 
-    virtual bool onCommand(int nId) { return false; }
-    virtual bool onCustomCommand(int nId) { return false; }
+    virtual bool onCommand(uint32_t nId) { return false; }
 
     virtual void onAnimate(CSkinAnimation *pAnimation) { }
 
@@ -311,8 +309,7 @@ public:
     inline bool needMsgAllKeys()    { return (m_msgNeed & UO_MSG_WANT_ALL_KEYS) != 0; }
     inline bool needMsgEnterKey()    { return (m_msgNeed & UO_MSG_WANT_ENTER_KEY) != 0; }
     inline bool needMsgMenuKey()    { return (m_msgNeed & UO_MSG_WANT_MENU_KEY) != 0; }
-    inline bool needMsgCustomCmd()    { return (m_msgNeed & UO_MSG_WANT_CUSTOM_CMD) != 0; }
-    inline bool needMsgMenuCmd()    { return (m_msgNeed & UO_MSG_WANT_MENU_CMD) != 0; }
+    inline bool needMsgCommand()    { return (m_msgNeed & UO_MSG_WANT_COMMAND) != 0; }
     inline bool needMsgMagnify()    { return (m_msgNeed & UO_MSG_WANT_MAGNIFY) != 0; }
 
     bool isVisible();

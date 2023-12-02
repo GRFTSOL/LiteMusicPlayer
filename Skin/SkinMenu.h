@@ -22,7 +22,6 @@ public:
     };
 
     struct Item {
-        int                         nMenuID;
         int                         nPos;
         ItemType                    type;
         Action                      action;
@@ -43,7 +42,7 @@ public:
 
     virtual int fromXML(SXNode *pNodeMenu, int nAppendPos);
 
-    virtual bool getShortcutKey(int nMenuID, string &strShortcut) { return false; }
+    virtual bool getShortcutKey(int id, string &strShortcut) { return false; }
 
     virtual int getOrgAppendPos() { return m_nOrgAppenPos; }
 

@@ -86,7 +86,7 @@ CLyricShowTextEditObj::CLyricShowTextEditObj() {
     m_lyrEditSyntaxParser.init(this);
     setEditSyntaxParser(&m_lyrEditSyntaxParser);
 
-    m_msgNeed |= UO_MSG_WANT_MENU_CMD | UO_MSG_WANT_CUSTOM_CMD;
+    m_msgNeed |= UO_MSG_WANT_COMMAND;
     m_nEditorStyles |= S_MULTILINE;
 
     m_bDiscardLyrChangeEvent = false;
@@ -137,7 +137,7 @@ void CLyricShowTextEditObj::onCreate() {
 
     // If there's no lyrics opened, fill media info.
     if (!g_currentLyrics.hasLyricsOpened()) {
-        onCustomCommand(CMD_AUTO_FILL_LYR_INFO);
+        onCommand(ID_AUTO_FILL_LYR_INFO);
     }
 
     bool isEditorToolbarVisible = g_profile.getBool("LyrEditorTB_Visible", false);
@@ -167,7 +167,7 @@ void CLyricShowTextEditObj::onEvent(const IEvent *pEvent) {
         onPlayTimeChangedUpdate();
     } else if (pEvent->eventType == ET_PLAYER_CUR_MEDIA_CHANGED) {
         if (!g_currentLyrics.hasLyricsOpened()) {
-            onCustomCommand(CMD_AUTO_FILL_LYR_INFO);
+            onCommand(ID_AUTO_FILL_LYR_INFO);
         }
     } else if (pEvent->eventType == ET_LYRICS_DISPLAY_SETTINGS) {
         cstr_t szProperty = pEvent->name.c_str();
@@ -936,7 +936,7 @@ S_ERROR:
 
 //////////////////////////////////////////////////////////////////////
 
-bool CLyricShowTextEditObj::onCustomCommand(int nId) {
+bool CLyricShowTextEditObj::onCommand(uint32_t nId) {
     CSkinWnd::CAutoRedrawLock arl(m_pSkin);
 
     if (nId == CID_FIND_PREV) {
@@ -998,7 +998,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
     }
 
     switch (nId) {
-    case CMD_JUMP:
+    case ID_JUMP_TO_CUR_LINE:
         {
             int nLine, nCol, nTime;
             string strLine, strTimeTag;
@@ -1013,7 +1013,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
             return true;
         }
         break;
-    case CMD_DEL_TAG:
+    case ID_DEL_TAG:
         {
             string strLine, strTimeTag;
 
@@ -1050,7 +1050,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
             return true;
         }
         break;
-    case CMD_TOGGLE_LYR_EDIT_TOOLBAR:
+    case ID_TOGGLE_LYR_EDIT_TOOLBAR:
         {
             CUIObject *pToolbar = m_pSkin->getUIObjectById(ID_TB_LYR_EDIT);
             if (pToolbar) {
@@ -1060,20 +1060,20 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
             }
             break;
         }
-    case CMD_INSERTTAG:
+    case ID_INSERTTAG:
         syncTimeTag(false);
         break;
-    case CMD_INSERTTAG_DOWN:
+    case ID_INSERTTAG_DOWN:
         syncTimeTag(true);
         break;
-    case CMD_FORWARD_CUR_LINE:
+    case ID_FORWARD_CUR_LINE:
         adjustSyncTimeOfSelected(true);
         break;
-    case CMD_BACKWARD_CUR_LINE:
+    case ID_BACKWARD_CUR_LINE:
         adjustSyncTimeOfSelected(false);
         break;
-    case CMD_FORWARD_REMAIN_LINES:
-    case CMD_BACKWARD_REMAIN_LINES:
+    case ID_FORWARD_REMAIN_LINES:
+    case ID_BACKWARD_REMAIN_LINES:
         {
             int nLine, nCol;
             string strLine, strTimeTag;
@@ -1086,7 +1086,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
             for (int i = nLine; getTextOfLine(i, strLine); i++) {
                 if (getTimeTagOfLine(strLine.c_str(), strTimeTag)) {
                     nTime = getTimeTagValue(strTimeTag.c_str(), strTimeTag.size());
-                    if (nId == CMD_FORWARD_REMAIN_LINES) {
+                    if (nId == ID_FORWARD_REMAIN_LINES) {
                         nTime += 200;
                     } else {
                         nTime -= 200;
@@ -1102,34 +1102,34 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
             setCaret(nLine, nCol);
             return true;
         }
-    case CMD_EDIT_UNDO:
+    case ID_EDIT_UNDO:
         onCmdUndo();
         break;
-    case CMD_EDIT_REDO:
+    case ID_EDIT_REDO:
         onCmdRedo();
         break;
-    case CMD_EDIT_CUT:
+    case ID_EDIT_CUT:
         onCmdCut();
         break;
-    case CMD_EDIT_COPY:
+    case ID_EDIT_COPY:
         onCmdCopy();
         break;
-    case CMD_EDIT_PASTE:
+    case ID_EDIT_PASTE:
         onCmdPaste();
         break;
-    case CMD_EDIT_DELETE:
+    case ID_EDIT_DELETE:
         onCmdDelete();
         break;
-    case CMD_EDIT_FIND:
+    case ID_EDIT_FIND:
         showFindDialog();
         break;
-    case CMD_EDIT_FINDNEXT:
+    case ID_EDIT_FINDNEXT:
         findNext();
         break;
-    case CMD_EDIT_REPLACE:
+    case ID_EDIT_REPLACE:
         showFindDialog(false);
         break;
-    case CMD_AUTO_FILL_LYR_INFO:
+    case ID_AUTO_FILL_LYR_INFO:
         {
             LyricsProperties &prop = g_currentLyrics.properties();
 
@@ -1148,7 +1148,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
             updateLyricsProperties(true);
         }
         break;
-    case CMD_REMOVE_ALL_TAG:
+    case ID_REMOVE_ALL_TAG:
         {
             int nLineCount;
             string strLine, strTimeTag;
@@ -1168,7 +1168,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
             }
         }
         break;
-    case CMD_REMOVE_BLANK_LINE:
+    case ID_REMOVE_BLANK_LINE:
         {
             string strLine;
 
@@ -1193,7 +1193,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
             }
         }
         break;
-    case CMD_TRIM_WHITESPACE:
+    case ID_TRIM_WHITESPACE:
         {
             int nLineCount;
             string strLine, strTimeTag;
@@ -1245,7 +1245,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
             }
         }
         break;
-    case CMD_REMOVE_UNSYNC_LINES:
+    case ID_REMOVE_UNSYNC_LINES:
         {
             string strLine, strTimeTag;
             CLyrOneLine *pLine;
@@ -1266,7 +1266,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
             }
         }
         break;
-    case CMD_CAPITALIZE_LEADING_LETTER:
+    case ID_CAPITALIZE_LEADING_LETTER:
         {
             string strLine, strTimeTag;
             CLyrOneLine *pLine;
@@ -1311,7 +1311,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
             }
         }
         break;
-    case CMD_LYRICS_TO_LOWERCASE:
+    case ID_LYRICS_TO_LOWERCASE:
         {
             string strLine, strTimeTag;
 
@@ -1338,7 +1338,7 @@ bool CLyricShowTextEditObj::onCustomCommand(int nId) {
             }
         }
         break;
-    case CMD_EDIT_LYR_TAG:
+    case ID_EDIT_LYR_TAG:
         {
             CUIObject *pEditorFrame = m_pSkin->getUIObjectById(getIDByName("CID_EDITOR_FRAME"));
             CUIObject *pTagEditor = m_pSkin->getUIObjectById(getIDByName("CID_C_LYR_TAG"));
@@ -1410,10 +1410,10 @@ void CLyricShowTextEditObj::onLyricsChanged() {
 
     auto pToolBar = (CSkinToolbar *)m_pSkin->getUIObjectById(ID_TB_LYR_EDIT, CSkinToolbar::className());
     if (pToolBar) {
-        pToolBar->enableBt(CMD_EDIT_REDO, canRedo());
-        pToolBar->enableBt(CMD_EDIT_UNDO, canUndo());
-        pToolBar->enableBt(CMD_EDIT_CUT, isSelected());
-        pToolBar->enableBt(CMD_EDIT_COPY, isSelected());
+        pToolBar->enableBt(ID_EDIT_REDO, canRedo());
+        pToolBar->enableBt(ID_EDIT_UNDO, canUndo());
+        pToolBar->enableBt(ID_EDIT_CUT, isSelected());
+        pToolBar->enableBt(ID_EDIT_COPY, isSelected());
         pToolBar->invalidate();
     }
 }
@@ -1487,14 +1487,14 @@ void CLyricShowTextEditObj::onEditorTextChanged(IEditNotification::Status status
     pToolBar = (CSkinToolbar *)m_pSkin->getUIObjectById(ID_TB_LYR_EDIT, CSkinToolbar::className());
     if (pToolBar) {
         if (status == IEditNotification::S_CAN_REDO) {
-            pToolBar->enableBt(CMD_EDIT_REDO, bVal);
+            pToolBar->enableBt(ID_EDIT_REDO, bVal);
         }
         if (status == IEditNotification::S_CAN_UNDO) {
-            pToolBar->enableBt(CMD_EDIT_UNDO, bVal);
+            pToolBar->enableBt(ID_EDIT_UNDO, bVal);
         }
         if (status == IEditNotification::S_SEL) {
-            pToolBar->enableBt(CMD_EDIT_CUT, bVal);
-            pToolBar->enableBt(CMD_EDIT_COPY, bVal);
+            pToolBar->enableBt(ID_EDIT_CUT, bVal);
+            pToolBar->enableBt(ID_EDIT_COPY, bVal);
         }
         pToolBar->invalidate();
     }

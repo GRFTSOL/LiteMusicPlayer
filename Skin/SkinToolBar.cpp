@@ -61,7 +61,7 @@ CSkinToolbar::~CSkinToolbar() {
 }
 
 CSkinToolbar::Button::Button() {
-    nID = UID_INVALID;
+    nID = ID_INVALID;
     nWidth = 1;
     nWidthImage = 1;
     bSeperator = false;
@@ -147,7 +147,7 @@ void CSkinToolbar::Button::toXML(CSkinToolbar *pToolbar, CXMLWriter &xml) {
     } else {
         xml.writeStartElement("button");
 
-        if (nID != UID_INVALID) {
+        if (nID != ID_INVALID) {
             xml.writeAttribute(SZ_PN_ID, pToolbar->m_pSkin->getSkinFactory()->getStringOfID(nID).c_str());
         }
 
@@ -269,7 +269,7 @@ bool CSkinToolbar::onLButtonUp(uint32_t nFlags, CPoint point) {
 
             invalidateButton(m_nCurButton);
 
-            if (bt.nID != UID_INVALID) {
+            if (bt.nID != ID_INVALID) {
                 m_pSkin->postCustomCommandMsg(bt.nID);
             }
         }
@@ -300,7 +300,7 @@ void CSkinToolbar::onTimer(int nId) {
 
     if (m_bLBtDown) {
         if (m_nCurButton != -1) {
-            if (m_vButtons[m_nCurButton].nID != UID_INVALID) {
+            if (m_vButtons[m_nCurButton].nID != ID_INVALID) {
                 m_pSkin->postCustomCommandMsg(m_vButtons[m_nCurButton].nID);
             }
         }
@@ -374,7 +374,7 @@ void CSkinToolbar::onLanguageChanged() {
     for (int i = 0; i < (int)m_vButtons.size(); i++) {
         m_vButtons[i].strText = _TL(m_vButtons[i].strTextEnglish.c_str());
         if (m_vButtons[i].strTooltip.size()) {
-            m_pSkin->getSkinFactory()->getTooltip(m_vButtons[i].nID, m_vButtons[i].strTooltip);
+            m_vButtons[i].strTooltip = m_pSkin->getSkinFactory()->getTooltip(m_vButtons[i].nID);
         }
     }
 }

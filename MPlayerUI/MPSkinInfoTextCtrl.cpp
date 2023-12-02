@@ -73,9 +73,8 @@ bool CMPSkinInfoTextCtrl::onLButtonUp(uint32_t nFlags, CPoint point) {
             m_menu.createPopupMenu();
             for (uint32_t i = 0; i < vIDs.size(); i++) {
                 int nId = m_pSkin->getSkinFactory()->getIDByName(vIDs[i].c_str());
-                string tooltip;
-                m_pSkin->getSkinFactory()->getTooltip(nId, tooltip);
-                m_menu.appendItem(m_pSkin->getSkinFactory()->getMenuIDByUID(nId), tooltip.c_str());
+                string tooltip = m_pSkin->getSkinFactory()->getTooltip(nId);
+                m_menu.appendItem(nId, tooltip.c_str());
             }
 
             CPoint pt = getCursorPos();

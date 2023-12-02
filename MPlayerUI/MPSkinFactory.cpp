@@ -41,8 +41,6 @@
 CMPSkinFactory::CMPSkinFactory(CSkinApp *pApp, UIObjectIDDefinition uidDefinition[])
 : CSkinFactory(pApp, uidDefinition) {
     m_bClickThrough = false;
-
-    setMenuIDByUID(CMD_QUIT, IDC_EXIT);
 }
 
 CMPSkinFactory::~CMPSkinFactory() {
@@ -145,7 +143,7 @@ void CMPSkinFactory::restoreAll() {
 
 int CMPSkinFactory::getIDByNameEx(cstr_t szId, string &strToolTip) {
     int nID = CSkinFactory::getIDByNameEx(szId, strToolTip);
-    if (nID == UID_INVALID) {
+    if (nID == ID_INVALID) {
         return nID;
     }
 
@@ -161,19 +159,21 @@ int CMPSkinFactory::getIDByNameEx(cstr_t szId, string &strToolTip) {
     return nID;
 }
 
-void CMPSkinFactory::getTooltip(int nId, string &strToolTip) {
-    CSkinFactory::getTooltip(nId, strToolTip);
+string CMPSkinFactory::getTooltip(int nId) {
+    auto toolTip = CSkinFactory::getTooltip(nId);
 
-    if (strToolTip.size()) {
+    if (toolTip.size()) {
         string strHotkey;
 
         if (CMPlayerAppBase::getHotkey().getHotkeyText(nId, strHotkey)) {
-            strToolTip = _TL(strToolTip.c_str());
-            strToolTip += " (";
-            strToolTip += strHotkey;
-            strToolTip += ")";
+            toolTip = _TL(toolTip.c_str());
+            toolTip += " (";
+            toolTip += strHotkey;
+            toolTip += ")";
         }
     }
+
+    return toolTip;
 }
 
 void CMPSkinFactory::adjustHue(float hue, float saturation, float luminance) {

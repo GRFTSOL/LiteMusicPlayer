@@ -9,7 +9,7 @@ const int _CMD_ID_LANGUANG_BEGIN = 3000;
 class CPagePfUI : public CPagePfBase {
     UIOBJECT_CLASS_NAME_DECLARE(CPagePfBase)
 public:
-    CPagePfUI() : CPagePfBase(PAGE_UI, "CMD_UI") {
+    CPagePfUI() : CPagePfBase(PAGE_UI, "ID_UI") {
     }
 
     void onInitialUpdate() override {
@@ -26,7 +26,10 @@ public:
         updateLanguageInfo();
     }
 
-    bool onCustomCommand(int nId) override {
+    virtual bool onCommand(uint32_t nId) override {
+        //
+        // 选择了一个语言包, 则立即切换到该语言
+        //
         if (nId == getIDByName("CID_C_ON_TOP")) {
             bool bValue = isButtonChecked(nId);
             g_profile.writeInt(SZ_SECT_UI, "topmost", bValue);
@@ -64,22 +67,7 @@ public:
             }
 
             m_menuLang.trackPopupMenu(rc.left, rc.top, m_pSkin);
-        } else {
-            return CPagePfBase::onCustomCommand(nId);
-        }
-
-        return true;
-    }
-
-    virtual bool onCommand(int nId) override {
-        if (CPagePfBase::onCommand(nId)) {
-            return true;
-        }
-
-        //
-        // 选择了一个语言包, 则立即切换到该语言
-        //
-        if (nId >= _CMD_ID_LANGUANG_BEGIN &&
+        } else if (nId >= _CMD_ID_LANGUANG_BEGIN &&
             nId < _CMD_ID_LANGUANG_BEGIN + (int)m_vTransFiles.size()) {
             string langFileName = g_profile.getString("Language", "");
             if (!langFileName.empty()) {
@@ -97,9 +85,11 @@ public:
             invalidate();
 
             return true;
+        } else {
+            return CPagePfBase::onCommand(nId);
         }
 
-        return false;
+        return true;
     }
 
 protected:
@@ -140,7 +130,7 @@ UIOBJECT_CLASS_NAME_IMP(CPagePfUI, "PreferPage.UI")
 class CPagePfSkin : public CPagePfBase {
     UIOBJECT_CLASS_NAME_DECLARE(CPagePfBase)
 public:
-    CPagePfSkin() : CPagePfBase(PAGE_SKINS, "CMD_SKINS") {
+    CPagePfSkin() : CPagePfBase(PAGE_SKINS, "ID_SKINS") {
         m_pSkinList = nullptr;
         m_bIgnoreSkinListNotify = false;
         CID_SKIN_LIST = 0;
@@ -168,10 +158,6 @@ public:
         m_pSkin->unregisterUIObjNotifyHandler(this);
 
         CPagePfBase::onDestroy();
-    }
-
-    bool onCustomCommand(int nId) override {
-        return CPagePfBase::onCustomCommand(nId);
     }
 
     void onTimer(int nId) override {
@@ -279,7 +265,7 @@ UIOBJECT_CLASS_NAME_IMP(CPagePfSkin, "PreferPage.Skin")
 
 UIOBJECT_CLASS_NAME_IMP(CPagePfUIRoot, "PreferPage.UIRoot")
 
-CPagePfUIRoot::CPagePfUIRoot() : CPagePfBase(PAGE_UNKNOWN, "CMD_ROOT_UI") {
+CPagePfUIRoot::CPagePfUIRoot() : CPagePfBase(PAGE_UNKNOWN, "ID_ROOT_UI") {
 }
 
 void CPagePfUIRoot::onInitialUpdate() {

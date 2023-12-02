@@ -32,10 +32,6 @@ public:
         CSkinContainer::onSwitchTo();
     }
 
-    bool onCustomCommand(int nId) override {
-        return false;
-    }
-
     void onEvent(const IEvent *pEvent) override {
         if (pEvent->eventType == ET_DOWNLOAD_END) {
             CEventDownloadEnd *pDlEvt = (CEventDownloadEnd *)pEvent;

@@ -11,7 +11,7 @@
 class CPagePfLyricsBgPic : public CPagePfBase {
     UIOBJECT_CLASS_NAME_DECLARE(CPagePfBase)
 public:
-    CPagePfLyricsBgPic() : CPagePfBase(PAGE_LYR_BG, "CMD_THEME_LYR_BG_PIC") {
+    CPagePfLyricsBgPic() : CPagePfBase(PAGE_LYR_BG, "ID_THEME_LYR_BG_PIC") {
         m_bIntialized = false;
     }
 
@@ -58,14 +58,14 @@ public:
         CPagePfBase::onDestroy();
     }
 
-    bool onCustomCommand(int nId) override {
+    bool onCommand(uint32_t nId) override {
         if (nId == getIDByName("CID_BR_PIC_FOLDER")) {
             onCommandSetBkImg();
 
             setUIObjectText("CID_E_PIC_FOLDER",
                 CMLProfile::getDir(SZ_SECT_LYR_DISPLAY, "BgPicFolder", "").c_str());
         } else {
-            return CPagePfBase::onCustomCommand(nId);
+            return CPagePfBase::onCommand(nId);
         }
 
         return true;
@@ -126,7 +126,7 @@ public:
     }
 
 public:
-    CPagePfDisplayStyle() : CPagePfBase(PAGE_LYR_DISPLAY, "CMD_THEME_LYR_DISPLAY") {
+    CPagePfDisplayStyle() : CPagePfBase(PAGE_LYR_DISPLAY, "ID_THEME_LYR_DISPLAY") {
         CID_DS_MODE = 0;
         CID_DS_STYLE = 0;
         CID_DS_FADEOUT = 0;
@@ -186,7 +186,7 @@ public:
         }
     }
 
-    bool onCustomCommand(int nId) override {
+    bool onCommand(uint32_t nId) override {
         if (nId == CID_DS_LOAD_LATIN_FONT || nId == CID_DS_LOAD_OTHER_FONT) {
             bool bLatin9 = (nId == CID_DS_LOAD_LATIN_FONT);
 
@@ -238,7 +238,7 @@ public:
                 }
             }
 
-            return CPagePfBase::onCustomCommand(nId);
+            return CPagePfBase::onCommand(nId);
         }
 
         return true;
@@ -422,7 +422,7 @@ UIOBJECT_CLASS_NAME_IMP(CPagePfDisplayStyle, "PreferPage.LyrDisplayStyle")
 class CPagePfTheme : public CPagePfBase {
     UIOBJECT_CLASS_NAME_DECLARE(CPagePfBase)
 public:
-    CPagePfTheme() : CPagePfBase(PAGE_THEMES, "CMD_THEME_THEME") {
+    CPagePfTheme() : CPagePfBase(PAGE_THEMES, "ID_THEME_THEME") {
         m_nThemeListID = 0;
     }
 
@@ -462,7 +462,7 @@ public:
         CPagePfBase::onDestroy();
     }
 
-    bool onCustomCommand(int nId) override {
+    bool onCommand(uint32_t nId) override {
         if (nId == getIDByName("CID_LOAD_THEME")) {
             loadTheme();
         } else if (nId == getIDByName("CID_SAVE_THEME")) {
@@ -470,7 +470,7 @@ public:
         } else if (nId == getIDByName("CID_DELETE_THEME")) {
             deleteTheme();
         } else {
-            return CPagePfBase::onCustomCommand(nId);
+            return CPagePfBase::onCommand(nId);
         }
 
         return true;
@@ -579,7 +579,7 @@ UIOBJECT_CLASS_NAME_IMP(CPagePfTheme, "PreferPage.Theme")
 
 UIOBJECT_CLASS_NAME_IMP(CPagePfThemeRoot, "PreferPage.ThemeRoot")
 
-CPagePfThemeRoot::CPagePfThemeRoot() : CPagePfBase(PAGE_UNKNOWN, "CMD_ROOT_THEME") {
+CPagePfThemeRoot::CPagePfThemeRoot() : CPagePfBase(PAGE_UNKNOWN, "ID_ROOT_THEME") {
 }
 
 void CPagePfThemeRoot::onInitialUpdate() {

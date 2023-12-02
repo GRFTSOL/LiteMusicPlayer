@@ -9,7 +9,7 @@ UIOBJECT_CLASS_NAME_IMP(CPagePfBase, "PagePfBase")
 CPagePfBase::CPagePfBase(PreferPageID pfPageId, cstr_t szAssociateTabButtonId) {
     m_pfPageId = pfPageId;
     m_nAssociateTabButtonId = CSkinApp::getInstance()->getSkinFactory()->getIDByName(szAssociateTabButtonId);
-    m_nDefaultPageAssociateTabButtonId = UID_INVALID;
+    m_nDefaultPageAssociateTabButtonId = ID_INVALID;
 }
 
 CSkinContainer *getChildPreferPageParent(CSkinContainer *pContainer) {
@@ -80,8 +80,8 @@ bool CPagePfBase::onSwitchToPageCmd(int nId) {
     return false;
 }
 
-bool CPagePfBase::onCustomCommand(int nId) {
-    if (CSkinContainer::onCustomCommand(nId)) {
+bool CPagePfBase::onCommand(uint32_t nId) {
+    if (CSkinContainer::onCommand(nId)) {
         return true;
     }
 
@@ -287,7 +287,7 @@ bool CPagePfBase::setDefaultPreferPage(CSkinContainer *pContainer, PreferPageID 
 }
 
 void CPagePfBase::checkToolbarDefaultPage(cstr_t szToolbarId) {
-    if (m_nDefaultPageAssociateTabButtonId != UID_INVALID) {
+    if (m_nDefaultPageAssociateTabButtonId != ID_INVALID) {
         checkToolbarButton(getIDByName(szToolbarId), m_nDefaultPageAssociateTabButtonId, true);
     }
 }

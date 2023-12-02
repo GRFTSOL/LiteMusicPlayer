@@ -333,6 +333,8 @@
 		C08AA9952AFA62AE00F5DE2D /* pause@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C08AA9912AFA62AE00F5DE2D /* pause@2x.png */; };
 		C08AA99B2B12480B00F5DE2D /* DlgPlaylist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C08AA9992B12480B00F5DE2D /* DlgPlaylist.cpp */; };
 		C08AA99E2B15DD6800F5DE2D /* SkinToolTip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C08AA99C2B15DD6700F5DE2D /* SkinToolTip.cpp */; };
+		C08AA9B32B19753B00F5DE2D /* MediaKeyController.mm in Sources */ = {isa = PBXBuildFile; fileRef = C08AA9B22B19753B00F5DE2D /* MediaKeyController.mm */; };
+		C08AA9BB2B197C7700F5DE2D /* SPMediaKeyTap.m in Sources */ = {isa = PBXBuildFile; fileRef = C08AA9B72B197C7700F5DE2D /* SPMediaKeyTap.m */; };
 		C0A27E772AD7B25E00D248A4 /* IJsonWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0A27E752AD7B25E00D248A4 /* IJsonWriter.cpp */; };
 		C0A81FFF2ABDDFC200CDF309 /* libTinyJsStaticLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A81FFE2ABDDFBB00CDF309 /* libTinyJsStaticLib.a */; };
 		C0ADB9712AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0ADB96F2AB86C5F008F81BB /* DlgSaveEmbeddedLyrics.cpp */; };
@@ -1032,6 +1034,10 @@
 		C08AA99A2B12480B00F5DE2D /* DlgPlaylist.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = DlgPlaylist.hpp; path = MPlayerUI/DlgPlaylist.hpp; sourceTree = "<group>"; };
 		C08AA99C2B15DD6700F5DE2D /* SkinToolTip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkinToolTip.cpp; sourceTree = "<group>"; };
 		C08AA99D2B15DD6800F5DE2D /* SkinToolTip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkinToolTip.h; sourceTree = "<group>"; };
+		C08AA9B12B19750F00F5DE2D /* MediaKeyController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaKeyController.h; sourceTree = "<group>"; };
+		C08AA9B22B19753B00F5DE2D /* MediaKeyController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaKeyController.mm; sourceTree = "<group>"; };
+		C08AA9B62B197C7700F5DE2D /* SPMediaKeyTap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPMediaKeyTap.h; sourceTree = "<group>"; };
+		C08AA9B72B197C7700F5DE2D /* SPMediaKeyTap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPMediaKeyTap.m; sourceTree = "<group>"; };
 		C0A27E742AD7B25E00D248A4 /* RapidjsonWriter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RapidjsonWriter.hpp; sourceTree = "<group>"; };
 		C0A27E752AD7B25E00D248A4 /* IJsonWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IJsonWriter.cpp; sourceTree = "<group>"; };
 		C0A27E762AD7B25E00D248A4 /* IJsonWriter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IJsonWriter.hpp; sourceTree = "<group>"; };
@@ -1589,6 +1595,7 @@
 		0EB7103327773BB4006929F1 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				C08AA9B42B197C7700F5DE2D /* imported */,
 				0EB7104727773BB4006929F1 /* DlgChooseFont.h */,
 				0EB7105027773BB4006929F1 /* DlgChooseFont.mm */,
 				0EB7104627773BB4006929F1 /* DlgSaveLyrPrompt.cpp */,
@@ -1600,6 +1607,8 @@
 				0EB7104B27773BB4006929F1 /* HelperMac.cpp */,
 				0EB7103D27773BB4006929F1 /* LyricsOutPluginMgr.cpp */,
 				0EB7103C27773BB4006929F1 /* LyricsOutPluginMgr.h */,
+				C08AA9B12B19750F00F5DE2D /* MediaKeyController.h */,
+				C08AA9B22B19753B00F5DE2D /* MediaKeyController.mm */,
 				0EB7104927773BB4006929F1 /* MLTrayIcon.h */,
 				0EB7104127773BB4006929F1 /* MLTrayIcon.mm */,
 				0EB7103527773BB4006929F1 /* MPHotkey.h */,
@@ -1891,6 +1900,23 @@
 			path = "tray-icons";
 			sourceTree = "<group>";
 		};
+		C08AA9B42B197C7700F5DE2D /* imported */ = {
+			isa = PBXGroup;
+			children = (
+				C08AA9B52B197C7700F5DE2D /* SPMediaKeyTap */,
+			);
+			path = imported;
+			sourceTree = "<group>";
+		};
+		C08AA9B52B197C7700F5DE2D /* SPMediaKeyTap */ = {
+			isa = PBXGroup;
+			children = (
+				C08AA9B62B197C7700F5DE2D /* SPMediaKeyTap.h */,
+				C08AA9B72B197C7700F5DE2D /* SPMediaKeyTap.m */,
+			);
+			path = SPMediaKeyTap;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -2107,6 +2133,7 @@
 				0EB7109527773BB6006929F1 /* MPSkinMenu.cpp in Sources */,
 				C04DBFEE297ECDA100A0FCB1 /* x509_create.c in Sources */,
 				C04DC01A297ECDA100A0FCB1 /* pkwrite.c in Sources */,
+				C08AA9B32B19753B00F5DE2D /* MediaKeyController.mm in Sources */,
 				C04DC03C298D619300A0FCB1 /* MediaLibrary.cpp in Sources */,
 				C08AA99B2B12480B00F5DE2D /* DlgPlaylist.cpp in Sources */,
 				0EB7107B27773BB6006929F1 /* DlgUpload.cpp in Sources */,
@@ -2266,6 +2293,7 @@
 				C04DC01E297ECDA100A0FCB1 /* rsa.c in Sources */,
 				C04DC01B297ECDA100A0FCB1 /* ssl_cookie.c in Sources */,
 				0EB70F1C277223D2006929F1 /* RawBmpFont.cpp in Sources */,
+				C08AA9BB2B197C7700F5DE2D /* SPMediaKeyTap.m in Sources */,
 				C04DC004297ECDA100A0FCB1 /* ssl_debug_helpers_generated.c in Sources */,
 				C04DC001297ECDA100A0FCB1 /* ssl_msg.c in Sources */,
 				0E56BBEA2745E53D00032A3E /* SkinFontProperty.cpp in Sources */,

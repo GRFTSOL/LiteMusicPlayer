@@ -30,22 +30,22 @@ CMPCommonCmdHandler::~CMPCommonCmdHandler() {
 }
 
 // if the command id is processed, return true.
-bool CMPCommonCmdHandler::onCommand(int nId) {
-    switch (nId) {
-    case IDC_EDITOR_LYR_COLOR:
-    case IDC_EDITOR_HIGH_COLOR:
-    case IDC_TAG_COLOR:
-    case IDC_EDIT_LINE_COLOR:
-    case IDC_EDITOR_BG_COLOR:
+bool CMPCommonCmdHandler::onCommand(uint32_t nID) {
+    switch (nID) {
+    case ID_EDITOR_LYR_COLOR:
+    case ID_EDITOR_HIGH_COLOR:
+    case ID_TAG_COLOR:
+    case ID_EDIT_LINE_COLOR:
+    case ID_EDITOR_BG_COLOR:
         {
             cstr_t szColorValueName = nullptr;
-            if (nId == IDC_EDITOR_LYR_COLOR) {
+            if (nID == ID_EDITOR_LYR_COLOR) {
                 szColorValueName = "Ed_LowColor";
-            } else if (nId == IDC_EDITOR_HIGH_COLOR) {
+            } else if (nID == ID_EDITOR_HIGH_COLOR) {
                 szColorValueName = "Ed_HighColor";
-            } else if (nId == IDC_TAG_COLOR) {
+            } else if (nID == ID_TAG_COLOR) {
                 szColorValueName = "Ed_TagColor";
-            } else if (nId == IDC_EDITOR_BG_COLOR) {
+            } else if (nID == ID_EDITOR_BG_COLOR) {
                 szColorValueName = "Ed_BgColor";
             } else {
                 szColorValueName = "Ed_FocusLineBgColor";
@@ -62,44 +62,27 @@ bool CMPCommonCmdHandler::onCommand(int nId) {
             }
         }
         break;
-    default:
-        {
-            if (onCommandCharEncoding(nId)) {
-                break;
-            }
-            if (onCommandSkin(nId)) {
-                break;
-            }
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool CMPCommonCmdHandler::onCustomCommand(int nID) {
-    switch (nID) {
-    case CMD_NO_SUITTABLE_LYRICS:
-    case CMD_INSTRUMENTAL_MUSIC:
+    case ID_NO_SUITTABLE_LYRICS:
+    case ID_INSTRUMENTAL_MUSIC:
         if (g_LyricSearch.associateLyrics(g_player.getMediaKey().c_str(), NONE_LYRCS)) {
             CMPlayerAppBase::getInstance()->dispatchResearchLyrics();
         }
         break;
-    case CMD_SEARCH_LYR_SUGGESTIONS:
+    case ID_SEARCH_LYR_SUGGESTIONS:
         openUrl(m_pSkinWnd, getStrName(SN_HTTP_HELP_SEARCH_LYR_SUGGESTIONS));
         break;
 
-    case CMD_RATE_LYR_1:
-    case CMD_RATE_LYR_2:
-    case CMD_RATE_LYR_3:
-    case CMD_RATE_LYR_4:
-    case CMD_RATE_LYR_5:
+    case ID_RATE_LYR_1:
+    case ID_RATE_LYR_2:
+    case ID_RATE_LYR_3:
+    case ID_RATE_LYR_4:
+    case ID_RATE_LYR_5:
         {
             int nRate;
-            if (nID == CMD_RATE_LYR_2) nRate = 2;
-            else if (nID == CMD_RATE_LYR_3) nRate = 3;
-            else if (nID == CMD_RATE_LYR_4) nRate = 4;
-            else if (nID == CMD_RATE_LYR_5) nRate = 5;
+            if (nID == ID_RATE_LYR_2) nRate = 2;
+            else if (nID == ID_RATE_LYR_3) nRate = 3;
+            else if (nID == ID_RATE_LYR_4) nRate = 4;
+            else if (nID == ID_RATE_LYR_5) nRate = 5;
             else nRate = 1;
 
             string strUrl;
@@ -111,24 +94,24 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             openUrl(m_pSkinWnd, strUrl.c_str());
         }
         break;
-    case CMD_LDO_KARAOKE:
+    case ID_LDO_KARAOKE:
         CMPlayerSettings::setSettings(m_etDispSettings, m_strSectName.c_str(), "Karaoke",
             !g_profile.getBool(m_strSectName.c_str(), "Karaoke", false));
         break;
-    case CMD_LDO_NORMAL:
-    case CMD_LDO_FADE_IN:
-    case CMD_LDO_FADEOUT_BG:
-    case CMD_LDO_AUTO:
+    case ID_LDO_NORMAL:
+    case ID_LDO_FADE_IN:
+    case ID_LDO_FADEOUT_BG:
+    case ID_LDO_AUTO:
         {
             DISPLAY_OPTIONS displayOpt;
 
-            if (nID == CMD_LDO_NORMAL) {
+            if (nID == ID_LDO_NORMAL) {
                 displayOpt = DO_NORMAL;
-            } else if (nID == CMD_LDO_FADE_IN) {
+            } else if (nID == ID_LDO_FADE_IN) {
                 displayOpt = DO_FADEOUT_LOWCOLOR;
-            } else if (nID == CMD_LDO_FADEOUT_BG) {
+            } else if (nID == ID_LDO_FADEOUT_BG) {
                 displayOpt = DO_FADEOUT_BG;
-            } else if (nID == CMD_LDO_AUTO) {
+            } else if (nID == ID_LDO_AUTO) {
                 displayOpt = DO_AUTO;
             } else {
                 return false;
@@ -139,10 +122,10 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
         }
         break;
 
-    case CMD_SHOW_MAIN_WND:
+    case ID_SHOW_MAIN_WND:
         m_pSkinWnd->activateWindow();
         break;
-    case CMD_TOGGLE_MP:
+    case ID_TOGGLE_MP:
         {
             if (m_pSkinWnd->isIconic() || !m_pSkinWnd->isForeground()) {
                 m_pSkinWnd->activateWindow();
@@ -154,13 +137,13 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             }
         }
         break;
-    case CMD_ADJUST_HUE:
+    case ID_ADJUST_HUE:
         {
             showAdjustHueDialog(m_pSkinWnd);
         }
         break;
 
-    case CMD_FLOATING_LYRICS:
+    case ID_FLOATING_LYRICS:
         {
             g_profile.writeInt("FloatingLyr", !g_wndFloatingLyr.isValid());
             if (!g_wndFloatingLyr.isValid()) {
@@ -171,17 +154,17 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
         }
         break;
 
-    case CMD_PREFERENCES:
+    case ID_PREFERENCES:
         showPreferenceDialog(m_pSkinWnd, m_etDispSettings != ET_LYRICS_FLOATING_SETTINGS);
         break;
-    case CMD_DISPLAY_OPT:
+    case ID_DISPLAY_OPT:
         showPreferenceDialog(m_pSkinWnd, m_etDispSettings == ET_LYRICS_FLOATING_SETTINGS, PAGE_LYR_DISPLAY);
         break;
 
-    case CMD_WEBHOME:
+    case ID_WEBHOME:
         openUrl(m_pSkinWnd, getStrName(SN_HTTP_DOMAIN));
         break;
-    case CMD_EMAIL:
+    case ID_EMAIL:
         // feed back
         {
             string str;
@@ -192,17 +175,17 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             openUrl(m_pSkinWnd, str.c_str());
         }
         break;
-    case CMD_APPLY_ACCOUNT:
+    case ID_APPLY_ACCOUNT:
         {
             openUrl(m_pSkinWnd, getStrName(SN_HTTP_SIGNUP));
         }
         break;
-    case CMD_LOGIN_VIA_IE:
+    case ID_LOGIN_VIA_IE:
         {
             openUrl(m_pSkinWnd, getStrName(SN_HTTP_LOGIN));
         }
         break;
-    case CMD_ABOUT:
+    case ID_ABOUT:
         {
             /*            CSkinWnd    *pWnd = new CDlgAbout();
             int nRet = CMPlayerAppBase::getMPSkinFactory()->openOrCloseSkinWnd("about_box",
@@ -211,7 +194,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             showAboutDialog(m_pSkinWnd);
         }
         break;
-    case CMD_BR_ALBUM_ART:
+    case ID_BR_ALBUM_ART:
         {
             string strAlbumArtFileName = fileGetPath(g_player.getSrcMedia());
             if (!isDirExist(strAlbumArtFileName.c_str())) {
@@ -247,16 +230,16 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_PLAYER_CUR_MEDIA_INFO_CHANGED);
         }
         break;
-    case CMD_LYR_EDITOR:
+    case ID_LYR_EDITOR:
         {
             SkinWndStartupInfo skinWndStartupInfo("LyrEditor", _TLT("Lyrics Editor"), "LyricsEditor.xml", nullptr);
             CMPlayerAppBase::getMPSkinFactory()->activeOrCreateSkinWnd(skinWndStartupInfo);
         }
         break;
-    case CMD_EDIT_HELP:
+    case ID_EDIT_HELP:
         openUrl(m_pSkinWnd, getStrName(SN_HTTP_HELP_EDIT_LYR));
         break;
-    case CMD_HELP:
+    case ID_HELP:
         {
             CUIObject *pObjLyrEdit = m_pSkinWnd->getUIObjectByClassName(CLyricShowTextEditObj::className());
             if (pObjLyrEdit && pObjLyrEdit->isVisible()) {
@@ -266,33 +249,33 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             }
         }
         break;
-    case CMD_PAUSE:
+    case ID_PAUSE:
         g_player.pause();
         break;
-    case CMD_PLAY:
+    case ID_PLAY:
         g_player.play();
         break;
-    case CMD_PLAYPAUSE:
+    case ID_PLAYPAUSE:
         g_player.playPause();
         break;
-    case CMD_STOP:
+    case ID_STOP:
         g_player.stop();
         break;
-    case CMD_NEXT:
+    case ID_NEXT:
         g_player.next();
         break;
-    case CMD_PREVIOUS:
+    case ID_PREVIOUS:
         g_player.prev();
         break;
-    case CMD_SEEK:
+    case ID_SEEK:
         {
-            CSkinSeekCtrl *pCtrl = (CSkinSeekCtrl*)m_pSkinWnd->getUIObjectById(CMD_SEEK, CSkinSeekCtrl::className());
+            CSkinSeekCtrl *pCtrl = (CSkinSeekCtrl*)m_pSkinWnd->getUIObjectById(ID_SEEK, CSkinSeekCtrl::className());
             if (pCtrl) {
                 g_player.seekTo(pCtrl->getScrollPos());
             }
         }
         break;
-    case CMD_BACKWARD:
+    case ID_BACKWARD:
         {
             int dwCurPos;
 
@@ -305,7 +288,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             g_player.seekTo(dwCurPos);
         }
         break;
-    case CMD_FORWARD:
+    case ID_FORWARD:
         {
             int dwCurPos;
 
@@ -318,7 +301,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             g_player.seekTo(dwCurPos);
         }
         break;
-    case CMD_VOL_INC:
+    case ID_VOL_INC:
         {
             int vol = g_player.getVolume();
             if (vol < MP_VOLUME_MAX) {
@@ -332,7 +315,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             }
         }
         break;
-    case CMD_VOL_DEC:
+    case ID_VOL_DEC:
         {
             int vol = g_player.getVolume();
             if (vol > 0) {
@@ -346,33 +329,33 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             }
         }
         break;
-    case CMD_MUTE:
+    case ID_MUTE:
         {
             bool bMute = !g_player.isMute();
             g_player.setMute(bMute);
             CMPlayerAppBase::getInstance()->dispatchInfoText(bMute ? _TL("Mute On") : _TL("Mute Off"));
         }
         break;
-    case CMD_SHUFFLE:
+    case ID_SHUFFLE:
         {
             bool bShuffle = !g_player.isShuffle();
             g_player.setShuffle(bShuffle);
             CMPlayerAppBase::getInstance()->dispatchInfoText(bShuffle ? _TL("Shuffle On") : _TL("Shuffle Off"));
         }
         break;
-    case CMD_LOOP_OFF:
+    case ID_LOOP_OFF:
         g_player.setLoop(MP_LOOP_OFF);
         CMPlayerAppBase::getInstance()->dispatchInfoText(_TL("Repeat Off"));
         break;
-    case CMD_LOOP_ALL:
+    case ID_LOOP_ALL:
         g_player.setLoop(MP_LOOP_ALL);
         CMPlayerAppBase::getInstance()->dispatchInfoText(_TL("Repeat All"));
         break;
-    case CMD_LOOP_TRACK:
+    case ID_LOOP_TRACK:
         g_player.setLoop(MP_LOOP_TRACK);
         CMPlayerAppBase::getInstance()->dispatchInfoText(_TL("Repeat Track"));
         break;
-    case CMD_LOOP:
+    case ID_LOOP:
         {
             g_player.setToNextLoopMode();
 
@@ -389,10 +372,10 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             CMPlayerAppBase::getInstance()->dispatchInfoText(str.c_str());
         }
         break;
-    case CMD_RATE:
+    case ID_RATE:
         {
             CSkinRateCtrl *pRateCtrl;
-            pRateCtrl = (CSkinRateCtrl*)m_pSkinWnd->getUIObjectById(CMD_RATE, CSkinRateCtrl::className());
+            pRateCtrl = (CSkinRateCtrl*)m_pSkinWnd->getUIObjectById(ID_RATE, CSkinRateCtrl::className());
             if (pRateCtrl) {
                 auto mediaLib = g_player.getMediaLibrary();
                 auto media = g_player.getCurrentMedia();
@@ -402,23 +385,23 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             }
         }
         break;
-    case CMD_PL_OPEN_FILE:
+    case ID_PL_OPEN_FILE:
         onSongOpenFileCmd(m_pSkinWnd, true);
         break;
-    case CMD_PL_ADD_FILE:
+    case ID_PL_ADD_FILE:
         onSongOpenFileCmd(m_pSkinWnd, false);
         break;
-    case CMD_PL_OPEN_DIR:
+    case ID_PL_OPEN_DIR:
         onSongOpenDirCmd(m_pSkinWnd, true);
         break;
-    case CMD_PL_ADD_DIR:
+    case ID_PL_ADD_DIR:
         onSongOpenDirCmd(m_pSkinWnd, false);
         break;
 
         //
         // Lyrics ....
         //
-    case CMD_NEW_LRC:
+    case ID_NEW_LRC:
         {
             CMPlayerAppBase::getInstance()->getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_ON_SAVE_EDIT);
 
@@ -439,7 +422,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             CMPlayerAppBase::getInstance()->newLyrics();
         }
         break;
-    case CMD_OPEN_LRC:
+    case ID_OPEN_LRC:
         //
         // 歌词下载
         //
@@ -457,10 +440,10 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             }
         }
         break;
-    case CMD_SAVE_LRC:
+    case ID_SAVE_LRC:
         saveCurrentLyrics(m_pSkinWnd, true);
         break;
-    case CMD_SAVE_LRC_AS:
+    case ID_SAVE_LRC_AS:
         {
             // notify to save...
             IEvent *pEvent = new IEvent;
@@ -470,10 +453,10 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             saveAsLyricsFile(m_pSkinWnd);
         }
         break;
-    case CMD_SAVE_LYR_IN_SONG_FILE:
+    case ID_SAVE_LYR_IN_SONG_FILE:
         showSaveEmbeddedLyricsDialog(m_pSkinWnd);
         break;
-    case CMD_FORWARD_LYRICS:
+    case ID_FORWARD_LYRICS:
         {
             CUIObject *pObj;
             pObj = m_pSkinWnd->getUIObjectByClassName(CLyricShowTxtObj::className());
@@ -491,7 +474,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             }
         }
         break;
-    case CMD_BACKWARD_LYRICS:
+    case ID_BACKWARD_LYRICS:
         {
             CUIObject *pObj;
             pObj = m_pSkinWnd->getUIObjectByClassName(CLyricShowTxtObj::className());
@@ -511,8 +494,8 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
         }
         break;
 
-    case CMD_FONT_SIZE_INC:
-    case CMD_FONT_SIZE_DEC:
+    case ID_FONT_SIZE_INC:
+    case ID_FONT_SIZE_DEC:
         {
             // increase the font size.
             FontInfoEx font;
@@ -520,7 +503,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             // get default settings in profile
             profileGetLyricsFont(m_strSectName.c_str(), font);
 
-            if (nID == CMD_FONT_SIZE_INC) {
+            if (nID == ID_FONT_SIZE_INC) {
                 font.height++;
                 if (font.height >= 96 * 2) { // 96 is the max font size in font choosing dialog.
                     break;
@@ -536,12 +519,12 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             profileWriteLyricsFont(m_etDispSettings, m_strSectName.c_str(), font);
         }
         break;
-    case CMD_CLR_PREV_HUE:
-    case CMD_CLR_NEXT_HUE:
+    case ID_CLR_PREV_HUE:
+    case ID_CLR_NEXT_HUE:
         {
             float hue = (float)(g_profile.getInt(CMPlayerAppBase::getMPSkinFactory()->getSkinName(), "Hue", 0));
 
-            if (nID == CMD_CLR_NEXT_HUE) {
+            if (nID == ID_CLR_NEXT_HUE) {
                 hue += 30;
             } else {
                 hue -= 30;
@@ -553,10 +536,10 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             CMPlayerAppBase::getMPSkinFactory()->adjustHue(hue);
         }
         break;
-    case CMD_LYR_HIGH_CLR_LIST:
+    case ID_LYR_HIGH_CLR_LIST:
         {
             CRect rc;
-            CUIObject *pObj = m_pSkinWnd->getUIObjectById(CMD_LYR_HIGH_CLR_LIST, nullptr);
+            CUIObject *pObj = m_pSkinWnd->getUIObjectById(ID_LYR_HIGH_CLR_LIST, nullptr);
             if (pObj) {
                 rc = pObj->m_rcObj;
                 m_pSkinWnd->screenToClient(rc);
@@ -568,16 +551,13 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
                 m_etDispSettings == ET_LYRICS_FLOATING_SETTINGS, nullptr);
         }
         break;
-
-    case CMD_OK:
-    case CMD_CANCEL:
     case ID_ALBUMART:
         {
             // album art
             m_pSkinWnd->getSkinFactory()->showPopupMenu(m_pSkinWnd, "AlbumArtMenu");
         }
         break;
-    case CMD_RATE_LYR:
+    case ID_RATE_LYR:
         {
             if (!g_currentLyrics.hasLyricsOpened()) {
                 m_pSkinWnd->messageOut(_TLT("No Lyrics file was opened."));
@@ -587,18 +567,18 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             m_pSkinWnd->getSkinFactory()->showPopupMenu(m_pSkinWnd, "RateMenu");
         }
         break;
-    case CMD_RELOAD_LYR:
+    case ID_RELOAD_LYR:
         CMPlayerAppBase::getInstance()->dispatchResearchLyrics();
         break;
-    case CMD_J_PREV_LINE:
-    case CMD_J_NEXT_LINE:
+    case ID_J_PREV_LINE:
+    case ID_J_NEXT_LINE:
         {
             // Jump to next/previous line of lyrics.
             LyricsLines &vLyrics = g_currentLyrics.getLyricsLines();
 
             int nCurLine = g_currentLyrics.getCurPlayLine(vLyrics);
             if (nCurLine >= 0 && nCurLine < (int)vLyrics.size()) {
-                if (nID == CMD_J_NEXT_LINE) {
+                if (nID == ID_J_NEXT_LINE) {
                     if (nCurLine == vLyrics.size() - 1) {
                         return true;
                     }
@@ -613,7 +593,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
             }
         }
         break;
-    case CMD_UPLOAD_LYR:
+    case ID_UPLOAD_LYR:
         {
             CMPlayerAppBase::getInstance()->getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_ON_SAVE_EDIT);
 
@@ -642,7 +622,7 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
                 g_currentLyrics.getLyricsFileName());
         }
         break;
-    case CMD_EXTERNAL_LYR_EDIT:
+    case ID_EXTERNAL_LYR_EDIT:
         //
         // Edit lyrics with external editor.
         if (g_currentLyrics.getLyricsSourceType() != LST_FILE) {
@@ -663,14 +643,22 @@ bool CMPCommonCmdHandler::onCustomCommand(int nID) {
         }
         break;
     default:
-        return false;
+        {
+            if (onCommandCharEncoding(nID)) {
+                break;
+            }
+            if (onCommandSkin(nID)) {
+                break;
+            }
+            return false;
+        }
     }
 
     return true;
 }
 
 bool CMPCommonCmdHandler::onUIObjNotify(IUIObjNotify *pNotify) {
-    if (pNotify->nID == CMD_SEEK) {
+    if (pNotify->nID == ID_SEEK) {
         if (pNotify->pUIObject->isKindOf(CSkinSeekCtrl::className())) {
             CSkinSeekCtrlEventNotify *pListCtrlNotify = (CSkinSeekCtrlEventNotify *)pNotify;
             if (pListCtrlNotify->cmd == CSkinSeekCtrlEventNotify::C_BEG_DRAG) {
@@ -690,10 +678,10 @@ bool CMPCommonCmdHandler::onUIObjNotify(IUIObjNotify *pNotify) {
 
 bool CMPCommonCmdHandler::getChecked(uint32_t nID, bool &bChecked) {
     switch (nID) {
-    case IDC_LDO_KARAOKE:
+    case ID_LDO_KARAOKE:
         bChecked = g_profile.getBool(m_strSectName.c_str(), "Karaoke", false);
         break;
-    case IDC_FLOATING_LYRICS:
+    case ID_FLOATING_LYRICS:
         bChecked = g_wndFloatingLyr.isValid();
         break;
     default:
@@ -705,33 +693,33 @@ bool CMPCommonCmdHandler::getChecked(uint32_t nID, bool &bChecked) {
 
 bool CMPCommonCmdHandler::getRadioChecked(vector<uint32_t> &vIDs, uint32_t &nIDChecked) {
     switch (vIDs[0]) {
-    case IDC_LDO_NORMAL:
-    case IDC_LDO_FADE_IN:
-    case IDC_LDO_FADEOUT_BG:
-    case IDC_LDO_AUTO:
+    case ID_LDO_NORMAL:
+    case ID_LDO_FADE_IN:
+    case ID_LDO_FADEOUT_BG:
+    case ID_LDO_AUTO:
         {
             DISPLAY_OPTIONS        displayOpt = displayOptFromStr(
                 g_profile.getString(m_strSectName.c_str(), "LyrDrawOpt", ""));
 
             if (displayOpt == DO_NORMAL) {
-                nIDChecked = IDC_LDO_NORMAL;
+                nIDChecked = ID_LDO_NORMAL;
             } else if (displayOpt == DO_FADEOUT_LOWCOLOR) {
-                nIDChecked = IDC_LDO_FADE_IN;
+                nIDChecked = ID_LDO_FADE_IN;
             } else if (displayOpt == DO_FADEOUT_BG) {
-                nIDChecked = IDC_LDO_FADEOUT_BG;
+                nIDChecked = ID_LDO_FADEOUT_BG;
             } else {
-                nIDChecked = IDC_LDO_AUTO;
+                nIDChecked = ID_LDO_AUTO;
             }
         }
         break;
-    case IDC_REPEAT_OFF:
-    case IDC_REPEAT_ALL:
-    case IDC_REPEAT_TRACK:
+    case ID_LOOP_OFF:
+    case ID_LOOP_ALL:
+    case ID_LOOP_TRACK:
         {
             switch (g_player.getLoop()) {
-                case MP_LOOP_ALL: nIDChecked = IDC_REPEAT_ALL; break;
-                case MP_LOOP_TRACK: nIDChecked = IDC_REPEAT_TRACK; break;
-                case MP_LOOP_OFF: nIDChecked = IDC_REPEAT_OFF; break;
+                case MP_LOOP_ALL: nIDChecked = ID_LOOP_ALL; break;
+                case MP_LOOP_TRACK: nIDChecked = ID_LOOP_TRACK; break;
+                case MP_LOOP_OFF: nIDChecked = ID_LOOP_OFF; break;
             }
             break;
         }

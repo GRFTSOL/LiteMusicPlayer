@@ -31,6 +31,6 @@ bool CSkinDataObj::setProperty(cstr_t szProperty, cstr_t szValue) {
 void CSkinDataObj::enumProperties(CUIObjProperties &listProperties) {
     listProperties.addPropStr(SZ_PN_NAME, m_strName.c_str(), !m_strName.empty());
 
-    listProperties.addPropID(SZ_PN_ID, m_pSkin->getSkinFactory()->getStringOfID(m_id).c_str(), m_id != UID_INVALID);
+    listProperties.addPropID(SZ_PN_ID, m_pSkin->getSkinFactory()->getStringOfID(m_id).c_str(), m_id != ID_INVALID);
 }
 #endif // _SKIN_EDITOR_

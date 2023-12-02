@@ -128,7 +128,7 @@ public:
     };
 
     CPageSearchLyrics() {
-        m_msgNeed |= UO_MSG_WANT_CUSTOM_CMD;
+        m_msgNeed |= UO_MSG_WANT_COMMAND;
         TIMER_ID_RESEARCH = 0;
         m_bAutoSearchLocal = true;
         m_nCurPage = 0;
@@ -359,9 +359,9 @@ public:
         return true;
     }
 
-    bool onCommand(int nId) override {
+    bool onCommand(uint32_t nId) override {
         switch (nId) {
-        case IDC_NOT_MATCH:
+        case ID_NO_SUITTABLE_LYRICS:
             {
                 if (m_strMediaKey.empty()) {
                     break;
@@ -372,12 +372,12 @@ public:
                 m_pSkin->postDestroy();
             }
             break;
-        case IDC_NO_PROMPT:
+        case ID_NO_PROMPT:
             // Don't prompt this dialog automatically.
             g_profile.writeInt(SZ_SECT_LYR_DL, "DownLrcUserSelect",
                 !g_profile.getBool(SZ_SECT_LYR_DL, "DownLrcUserSelect", false));
             break;
-        case IDC_RENAME:
+        case ID_RENAME:
             {
                 //
                 // Rename selected lyrics file
@@ -395,7 +395,7 @@ public:
                 m_pContainer->switchToPage(CPageRename::className(), true, R_CODE_RENAME_LYR, true);
             }
             break;
-        case IDC_DEL_FILE:
+        case ID_DEL_FILE:
             {
                 LrcSearchResult *pSel;
 
@@ -429,7 +429,7 @@ public:
                 }
             }
             break;
-        case IDC_EXTERNAL_LYR_EDIT:
+        case ID_EXTERNAL_LYR_EDIT:
             //
             // Edit lyrics
             //
@@ -452,7 +452,7 @@ public:
                     pSel->strUrl.c_str());
             }
             break;
-        case IDC_BROWSE:
+        case ID_BROWSE:
             {
                 //
                 // Browse lyrics file and associate.
@@ -481,102 +481,97 @@ public:
             }
             break;
         default:
-            return false;
-            break;
-        }
+            if (nId == CID_SEARCH) {
+                onSearch();
+            } else if (nId == CID_OPEN) {
+                onOpen();
+            } else if (nId == CID_GOOGLE) {
+                //
+                string strLink = "http://www.google.com/cse?cx=partner-pub-6917905549616855%3All7s7l-jge2&ie=ISO-8859-1&q=";
+                string strArtist = getUIObjectText(CID_E_ARTIST);
+                string strTitle = getUIObjectText(CID_E_TITLE);
+                strrep(strArtist, " ", "+");
+                strrep(strTitle, " ", "+");
+                strLink += strArtist + "+" + strTitle;
+                strLink += "&siteurl=viewlyrics.com%2Fsearch.htm";
+                openUrl(m_pSkin, strLink.c_str());
+            } else if (nId == ID_SHOW_ERR_RESULT) {
+                if (m_nErrResultToShow == ERR_NOT_FOUND) {
+                    string strMsg;
+                    strMsg = _TLT("Sorry, no result returned. Please make sure you enter the correct artist name and title.");
+                    strMsg += "\r\n";
+                    strMsg += _TLT("If you have the lyrics, please upload it to our server to share it with others.");
+                    m_pSkin->messageOut(strMsg.c_str());
+                } else if (m_nErrResultToShow != ERR_OK) {
+                    showInetErrorDlg(m_pSkin, m_nErrResultToShow);
+                }
+            } else if (nId == CID_MORE) {
+                CRect rc;
+                bool bLocalLyr = false;
+                bool bLocalLyrFile = false;
 
-        return true;
-    }
+                LrcSearchResult *pSel;
 
-    bool onCustomCommand(int nId) override {
-        if (nId == CID_SEARCH) {
-            onSearch();
-        } else if (nId == CID_OPEN) {
-            onOpen();
-        } else if (nId == CID_GOOGLE) {
-            //
-            string strLink = "http://www.google.com/cse?cx=partner-pub-6917905549616855%3All7s7l-jge2&ie=ISO-8859-1&q=";
-            string strArtist = getUIObjectText(CID_E_ARTIST);
-            string strTitle = getUIObjectText(CID_E_TITLE);
-            strrep(strArtist, " ", "+");
-            strrep(strTitle, " ", "+");
-            strLink += strArtist + "+" + strTitle;
-            strLink += "&siteurl=viewlyrics.com%2Fsearch.htm";
-            openUrl(m_pSkin, strLink.c_str());
-        } else if (nId == CMD_SHOW_ERR_RESULT) {
-            if (m_nErrResultToShow == ERR_NOT_FOUND) {
-                string strMsg;
-                strMsg = _TLT("Sorry, no result returned. Please make sure you enter the correct artist name and title.");
-                strMsg += "\r\n";
-                strMsg += _TLT("If you have the lyrics, please upload it to our server to share it with others.");
-                m_pSkin->messageOut(strMsg.c_str());
-            } else if (m_nErrResultToShow != ERR_OK) {
-                showInetErrorDlg(m_pSkin, m_nErrResultToShow);
-            }
-        } else if (nId == CID_MORE) {
-            CRect rc;
-            bool bLocalLyr = false;
-            bool bLocalLyrFile = false;
-
-            LrcSearchResult *pSel;
-
-            pSel = getCurSel();
-            if (pSel) {
-                if (!isHttpUrl(pSel->strUrl.c_str())) {
-                    bLocalLyr = true;
-                    if (lyrSrcTypeFromName(pSel->strUrl.c_str()) == LST_FILE) {
-                        bLocalLyrFile = true;
+                pSel = getCurSel();
+                if (pSel) {
+                    if (!isHttpUrl(pSel->strUrl.c_str())) {
+                        bLocalLyr = true;
+                        if (lyrSrcTypeFromName(pSel->strUrl.c_str()) == LST_FILE) {
+                            bLocalLyrFile = true;
+                        }
                     }
                 }
-            }
 
-            auto menu = m_pSkin->getSkinFactory()->loadMenu(m_pSkin, "OpenLyricsDlgMenu");
-            if (menu) {
-                menu->enableItem(IDC_EXTERNAL_LYR_EDIT, bLocalLyrFile);
-                menu->enableItem(IDC_DEL_FILE, bLocalLyr);
-                menu->enableItem(IDC_RENAME, bLocalLyrFile);
-                menu->checkItem(IDC_NO_PROMPT,
-                    !g_profile.getBool(SZ_SECT_LYR_DL, "DownLrcUserSelect", false));
+                auto menu = m_pSkin->getSkinFactory()->loadMenu(m_pSkin, "OpenLyricsDlgMenu");
+                if (menu) {
+                    menu->enableItem(ID_EXTERNAL_LYR_EDIT, bLocalLyrFile);
+                    menu->enableItem(ID_DEL_FILE, bLocalLyr);
+                    menu->enableItem(ID_RENAME, bLocalLyrFile);
+                    menu->checkItem(ID_NO_PROMPT,
+                        !g_profile.getBool(SZ_SECT_LYR_DL, "DownLrcUserSelect", false));
 
-                getUIObjectRect(CID_MORE, rc);
-                m_pSkin->clientToScreen(rc);
-                menu->trackPopupMenu(rc.left, rc.top, m_pSkin);
-            }
-        } else if (nId == CID_NEXT_PAGE) {
-            if (m_nCurPage >= m_nPageCount - 1) {
-                return true;
-            }
-            m_nCurPage++;
+                    getUIObjectRect(CID_MORE, rc);
+                    m_pSkin->clientToScreen(rc);
+                    menu->trackPopupMenu(rc.left, rc.top, m_pSkin);
+                }
+            } else if (nId == CID_NEXT_PAGE) {
+                if (m_nCurPage >= m_nPageCount - 1) {
+                    return true;
+                }
+                m_nCurPage++;
 
-            if (m_nCurPage < (int)m_vCachePages.size()) {
+                if (m_nCurPage < (int)m_vCachePages.size()) {
+                    m_vResultsInet = m_vCachePages[m_nCurPage];
+                } else {
+                    searchOnline();
+                }
+
+                updateSearchResultToListCtrl();
+
+                m_pLyricsList->setItemSelectionState(0, true);
+
+                enableUIObject(CID_NEXT_PAGE, m_nCurPage < m_nPageCount - 1);
+                enableUIObject(CID_PREV_PAGE, m_nCurPage > 0);
+            } else if (nId == CID_PREV_PAGE) {
+                if (m_nCurPage <= 0) {
+                    return true;
+                }
+                m_nCurPage--;
+
+                assert(m_nCurPage < (int)m_vCachePages.size());
                 m_vResultsInet = m_vCachePages[m_nCurPage];
+
+                updateSearchResultToListCtrl();
+
+                m_pLyricsList->setItemSelectionState(0, true);
+
+                enableUIObject(CID_NEXT_PAGE, m_nCurPage < m_nPageCount - 1);
+                enableUIObject(CID_PREV_PAGE, m_nCurPage > 0);
             } else {
-                searchOnline();
+                return false;
             }
 
-            updateSearchResultToListCtrl();
-
-            m_pLyricsList->setItemSelectionState(0, true);
-
-            enableUIObject(CID_NEXT_PAGE, m_nCurPage < m_nPageCount - 1);
-            enableUIObject(CID_PREV_PAGE, m_nCurPage > 0);
-        } else if (nId == CID_PREV_PAGE) {
-            if (m_nCurPage <= 0) {
-                return true;
-            }
-            m_nCurPage--;
-
-            assert(m_nCurPage < (int)m_vCachePages.size());
-            m_vResultsInet = m_vCachePages[m_nCurPage];
-
-            updateSearchResultToListCtrl();
-
-            m_pLyricsList->setItemSelectionState(0, true);
-
-            enableUIObject(CID_NEXT_PAGE, m_nCurPage < m_nPageCount - 1);
-            enableUIObject(CID_PREV_PAGE, m_nCurPage > 0);
-        } else {
-            return false;
+            return true;
         }
 
         return true;
@@ -592,7 +587,7 @@ protected:
 
         else if (m_pSearchObj->m_nResult != ERR_OK && !m_pSearchObj->isJobCanceled()) {
             m_nErrResultToShow = m_pSearchObj->m_nResult;
-            m_pSkin->postCustomCommandMsg(CMD_SHOW_ERR_RESULT);
+            m_pSkin->postCustomCommandMsg(ID_SHOW_ERR_RESULT);
         }
 
         m_nCurPage = m_pSearchObj->m_nCurPage;

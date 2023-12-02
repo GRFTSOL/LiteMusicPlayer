@@ -20,7 +20,7 @@ CSkinContainer::~CSkinContainer() {
     destroy();
 }
 
-bool CSkinContainer::onCommand(int nID) {
+bool CSkinContainer::onCommand(uint32_t nId) {
     for (int i = 0; i < (int)m_vUIObjs.size(); i++) {
         CUIObject *pObj = m_vUIObjs[i];
 
@@ -28,22 +28,8 @@ bool CSkinContainer::onCommand(int nID) {
             continue;
         }
 
-        if (pObj->isContainer() || pObj->needMsgMenuCmd()) {
-            if (pObj->onCommand(nID)) {
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-bool CSkinContainer::onCustomCommand(int nId) {
-    for (int i = 0; i < (int)m_vUIObjs.size(); i++) {
-        CUIObject *pObj = m_vUIObjs[i];
-
-        if (pObj->isContainer() || pObj->needMsgCustomCmd()) {
-            if (pObj->onCustomCommand(nId)) {
+        if (pObj->isContainer() || pObj->needMsgCommand()) {
+            if (pObj->onCommand(nId)) {
                 return true;
             }
         }
@@ -534,7 +520,7 @@ CUIObject *CSkinContainer::getUIObjectByClassName(cstr_t szClassName) {
 }
 
 CUIObject *CSkinContainer::getUIObjectById(int nId, cstr_t szClassName) {
-    if (nId == UID_INVALID) {
+    if (nId == ID_INVALID) {
         return nullptr;
     }
 
@@ -774,7 +760,7 @@ bool CSkinContainer::removeUIObject(CUIObject *pObj, bool bFree) {
 }
 
 CUIObject *CSkinContainer::removeUIObjectById(int nId) {
-    if (nId == UID_INVALID) {
+    if (nId == ID_INVALID) {
         return nullptr;
     }
 

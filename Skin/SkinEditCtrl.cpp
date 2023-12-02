@@ -2485,7 +2485,7 @@ bool CSkinEditCtrl::onKeyDown(uint32_t nChar, uint32_t nFlags) {
                     }
                 }
 
-                if (m_cmdSubmit != UID_INVALID) {
+                if (m_cmdSubmit != ID_INVALID) {
                     m_pSkin->postCustomCommandMsg(m_cmdSubmit);
                 }
                 break;
@@ -2572,25 +2572,25 @@ void CSkinEditCtrl::onContexMenu(int xPos, int yPos) {
     rapidjson::Document doc;
     doc.SetArray();
 
-    addMenuItem(doc, _TL("&Undo"), IDC_EDIT_UNDO);
-    addMenuItem(doc, _TL("&Redo"), IDC_EDIT_REDO);
+    addMenuItem(doc, _TL("&Undo"), ID_EDIT_UNDO);
+    addMenuItem(doc, _TL("&Redo"), ID_EDIT_REDO);
     addMenuItem(doc, nullptr, 0);
-    addMenuItem(doc, _TL("Cu&t"), IDC_EDIT_CUT);
-    addMenuItem(doc, _TL("&Copy"), IDC_EDIT_COPY);
-    addMenuItem(doc, _TL("&Paste"), IDC_EDIT_PASTE);
-    addMenuItem(doc, _TL("&Delete"), IDC_EDIT_DELETE);
+    addMenuItem(doc, _TL("Cu&t"), ID_EDIT_CUT);
+    addMenuItem(doc, _TL("&Copy"), ID_EDIT_COPY);
+    addMenuItem(doc, _TL("&Paste"), ID_EDIT_PASTE);
+    addMenuItem(doc, _TL("&Delete"), ID_EDIT_DELETE);
 
     menu.loadMenu(doc.GetArray());
 
     bool bEnable = isSelected();
-    menu.enableItem(IDC_EDIT_CUT, bEnable);
-    menu.enableItem(IDC_EDIT_COPY, bEnable);
+    menu.enableItem(ID_EDIT_CUT, bEnable);
+    menu.enableItem(ID_EDIT_COPY, bEnable);
 
     bEnable = m_undoMgr.canUndo();
-    menu.enableItem(IDC_EDIT_UNDO, bEnable);
+    menu.enableItem(ID_EDIT_UNDO, bEnable);
 
     bEnable = m_undoMgr.canRedo();
-    menu.enableItem(IDC_EDIT_REDO, bEnable);
+    menu.enableItem(ID_EDIT_REDO, bEnable);
 
     m_pSkin->registerHandleContextMenuCmd(this);
 
@@ -2618,31 +2618,31 @@ void CSkinEditCtrl::onTimer(int nId) {
     }
 }
 
-bool CSkinEditCtrl::onCommand(int nId) {
+bool CSkinEditCtrl::onCommand(uint32_t nId) {
     switch (nId) {
-    case IDC_EDIT_UNDO:
+    case ID_EDIT_UNDO:
         onCmdUndo();
         break;
-    case IDC_EDIT_REDO:
+    case ID_EDIT_REDO:
         onCmdRedo();
         break;
-    case IDC_EDIT_CUT:
+    case ID_EDIT_CUT:
         onCmdCut();
         break;
-    case IDC_EDIT_COPY:
+    case ID_EDIT_COPY:
         onCmdCopy();
         break;
-    case IDC_EDIT_PASTE:
+    case ID_EDIT_PASTE:
         onCmdPaste();
         break;
-    case IDC_EDIT_DELETE:
+    case ID_EDIT_DELETE:
         onCmdDelete();
         break;
     default:
         return false;
     }
 
-    return true;
+    return CSkinScrollFrameCtrlBase::onCommand(nId);
 }
 
 void CSkinEditCtrl::onAdjustHue(float hue, float saturation, float luminance) {
@@ -2767,9 +2767,9 @@ bool CSkinEditCtrl::setProperty(cstr_t szProperty, cstr_t szValue) {
         m_clrPlaceHolder = parseColorString(szValue);
     } else if (isPropertyName(szProperty, "SubmitCmd")) {
         if (isTRUE(szValue)) {
-            m_cmdSubmit = CMD_OK;
+            m_cmdSubmit = ID_OK;
         } else if (strIsSame(szValue, SZ_FALSE)) {
-            m_cmdSubmit = UID_INVALID;
+            m_cmdSubmit = ID_INVALID;
         } else {
             m_cmdSubmit = getIDByName(szValue);
         }

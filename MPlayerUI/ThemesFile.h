@@ -17,7 +17,6 @@ struct ThemeItem {
     cstr_t                      szName;
     cstr_t                      *properties;
     int                         nPropertiesCount;
-    int                         nIDCtrl;
     bool                        bValid;
 };
 

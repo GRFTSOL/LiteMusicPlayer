@@ -37,7 +37,7 @@ void CallMenuCommand(int cmd);
 
 
 void CallMenuCommand(int cmd) {
-    CMPlayerAppBase::getInstance()->getMainWnd()->onCommand(cmd, 0);
+    CMPlayerAppBase::getInstance()->getMainWnd()->onCommand(cmd);
 }
 
 @implementation AppDelegate
@@ -291,14 +291,14 @@ NSMenuItem *duplicateMenuItem(NSMenuItem *org) {
 {
     CMPSkinMainWnd *pWnd = CMPlayerApp::getInstance()->getMainWnd();
     if (pWnd != NULL && pWnd->isValid())
-        pWnd->postCustomCommandMsg(CMD_ABOUT);
+        pWnd->postCustomCommandMsg(ID_ABOUT);
 }
 
 - (IBAction)preferencesWindow:(id)sender
 {
     CMPSkinMainWnd *pWnd = CMPlayerApp::getInstance()->getMainWnd();
     if (pWnd != NULL && pWnd->isValid())
-        pWnd->postCustomCommandMsg(CMD_PREFERENCES);
+        pWnd->postCustomCommandMsg(ID_PREFERENCES);
 }
 
 - (void)dealloc

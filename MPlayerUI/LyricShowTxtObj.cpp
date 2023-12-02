@@ -299,8 +299,6 @@ int CLyricShowTxtObj::getLinesPerPage() {
 }
 
 void CLyricShowTxtObj::startScrollAnimation(int nCurLineNew) {
-    bool bMultipleLineScrolled = (abs(nCurLineNew - m_nCurLine) > 1);
-
     if (m_bInScrollingToNewLine) {
         m_yOffsetScroll = m_yCurLineLatest - getLineVertAlignPos();
     } else {

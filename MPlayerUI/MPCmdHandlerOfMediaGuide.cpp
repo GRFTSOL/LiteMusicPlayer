@@ -25,7 +25,7 @@ void CMPCmdHandlerOfMediaGuide::init(CSkinWnd *pSkinWnd) {
         }
     }
 
-    CSkinTreeCtrl *pTree = (CSkinTreeCtrl*)m_pSkinWnd->getUIObjectById(CMD_MG_TREE_GUIDE, CSkinTreeCtrl::className());
+    CSkinTreeCtrl *pTree = (CSkinTreeCtrl*)m_pSkinWnd->getUIObjectById(ID_MG_TREE_GUIDE, CSkinTreeCtrl::className());
     if (pTree) {
         pTree->setDataSrc(&m_mediaTree);
     }
@@ -34,14 +34,14 @@ void CMPCmdHandlerOfMediaGuide::init(CSkinWnd *pSkinWnd) {
 }
 
 // if the command id is processed, return true.
-bool CMPCmdHandlerOfMediaGuide::onCommand(int nId) {
+bool CMPCmdHandlerOfMediaGuide::onCommand(uint32_t nId) {
     switch (nId) {
-    case IDC_PLAY:
+    case ID_PLAY:
         onDblClickMediaList();
         break;
-    case IDC_QUEUE_UP:
+    case ID_QUEUE_UP:
         {
-            CSkinListCtrl *pMediaList = (CSkinListCtrl*)m_pSkinWnd->getUIObjectById(CMD_MG_MEDIA_LIST, CSkinListCtrl::className());
+            CSkinListCtrl *pMediaList = (CSkinListCtrl*)m_pSkinWnd->getUIObjectById(ID_MG_MEDIA_LIST, CSkinListCtrl::className());
 
             auto playlist = m_mediaTree.getCurNodePlaylist();
             if (playlist) {
@@ -61,7 +61,7 @@ bool CMPCmdHandlerOfMediaGuide::onCommand(int nId) {
             }
         }
         break;
-    case IDC_QUEUE_UP_ALL:
+    case ID_QUEUE_UP_ALL:
         {
             auto playlist = m_mediaTree.getCurNodePlaylist();
             if (playlist) {
@@ -77,10 +77,10 @@ bool CMPCmdHandlerOfMediaGuide::onCommand(int nId) {
             }
         }
         break;
-    case IDC_NOWPLAYING:
+    case ID_NOWPLAYING:
         g_mpApp.getSkinFactory()->activeOrCreateSkinWnd(false, "CMPSkin", "Playlist", "Playlist");
         break;
-    case IDC_ADD_DIR_TO_ML:
+    case ID_ADD_DIR_TO_ML:
         //
         // add Media to library
         //
@@ -88,7 +88,7 @@ bool CMPCmdHandlerOfMediaGuide::onCommand(int nId) {
             reloadMediaGuideView();
         }
         break;
-    case IDC_ADD_FILE_TO_ML:
+    case ID_ADD_FILE_TO_ML:
         //
         // add files to library
         //
@@ -96,10 +96,10 @@ bool CMPCmdHandlerOfMediaGuide::onCommand(int nId) {
             reloadMediaGuideView();
         }
         break;
-    case IDC_REMOVE_FROM_ML:
+    case ID_REMOVE_FROM_ML:
         {
             // remove media from media library
-            CSkinListCtrl *pMediaList = (CSkinListCtrl*)m_pSkinWnd->getUIObjectById(CMD_MG_MEDIA_LIST, CSkinListCtrl::className());
+            CSkinListCtrl *pMediaList = (CSkinListCtrl*)m_pSkinWnd->getUIObjectById(ID_MG_MEDIA_LIST, CSkinListCtrl::className());
             if (pMediaList) {
                 int nSel = pMediaList->getNextSelectedItem(-1);
                 if (nSel == -1) {
@@ -130,19 +130,8 @@ bool CMPCmdHandlerOfMediaGuide::onCommand(int nId) {
             }
         }
         break;
-    default:
-        return false;
-    }
-
-    return true;
-}
-
-bool CMPCmdHandlerOfMediaGuide::onCustomCommand(int nID) {
-    switch (nID) {
-    case CMD_ML_BACK:
-        {
-            backHistoryPath();
-        }
+    case ID_ML_BACK:
+        backHistoryPath();
         break;
     default:
         return false;
@@ -152,7 +141,7 @@ bool CMPCmdHandlerOfMediaGuide::onCustomCommand(int nID) {
 }
 
 bool CMPCmdHandlerOfMediaGuide::onUIObjNotify(IUIObjNotify *pNotify) {
-    if (pNotify->nID == CMD_MG_MEDIA_LIST) {
+    if (pNotify->nID == ID_MG_MEDIA_LIST) {
         if (pNotify->pUIObject->isKindOf(CSkinListCtrl::className())) {
             IMPMediaTreeNode *pNode;
             CSkinListCtrl *pMediaList = (CSkinListCtrl*)pNotify->pUIObject;
@@ -183,7 +172,7 @@ bool CMPCmdHandlerOfMediaGuide::onUIObjNotify(IUIObjNotify *pNotify) {
         }
 
         return true;
-    } else if (pNotify->nID == CMD_MG_TREE_GUIDE) {
+    } else if (pNotify->nID == ID_MG_TREE_GUIDE) {
         if (pNotify->pUIObject->isKindOf(CSkinTreeCtrl::className())) {
             //
             // Change to new node of media tree guide, update media guide view.
@@ -205,7 +194,7 @@ bool CMPCmdHandlerOfMediaGuide::onUIObjNotify(IUIObjNotify *pNotify) {
 }
 
 void CMPCmdHandlerOfMediaGuide::onDblClickMediaList() {
-    //    CSkinListCtrl    *pMediaList = (CSkinListCtrl*)m_pSkinWnd->getUIObjectById(CMD_MG_MEDIA_LIST, CSkinListCtrl::className());
+    //    CSkinListCtrl    *pMediaList = (CSkinListCtrl*)m_pSkinWnd->getUIObjectById(ID_MG_MEDIA_LIST, CSkinListCtrl::className());
     //    if (!pMediaList)
     //        return;
     //
@@ -234,7 +223,7 @@ void CMPCmdHandlerOfMediaGuide::updateMediaList() {
     IMPMediaTreeNode *pNode = (IMPMediaTreeNode*)m_mediaTree.getSelNode();
 
     CSkinListCtrl *plistCtrl;
-    plistCtrl = (CSkinListCtrl*)m_pSkinWnd->getUIObjectById(CMD_MG_MEDIA_LIST, CSkinListCtrl::className());
+    plistCtrl = (CSkinListCtrl*)m_pSkinWnd->getUIObjectById(ID_MG_MEDIA_LIST, CSkinListCtrl::className());
     if (!plistCtrl) {
         return;
     }
@@ -273,7 +262,7 @@ void CMPCmdHandlerOfMediaGuide::updateMediaList() {
 void CMPCmdHandlerOfMediaGuide::addHistoryPath() {
     HistroyItem item;
     CSkinListCtrl *plistCtrl;
-    plistCtrl = (CSkinListCtrl*)m_pSkinWnd->getUIObjectById(CMD_MG_MEDIA_LIST, CSkinListCtrl::className());
+    plistCtrl = (CSkinListCtrl*)m_pSkinWnd->getUIObjectById(ID_MG_MEDIA_LIST, CSkinListCtrl::className());
     if (plistCtrl) {
         item.nSelChild = plistCtrl->getNextSelectedItem();
     } else {
@@ -294,7 +283,7 @@ void CMPCmdHandlerOfMediaGuide::backHistoryPath() {
         int nSelRow = m_historyPath.back().nSelChild;
         ISkinTreeNode *pNode;
 
-        plistCtrl = (CSkinListCtrl*)m_pSkinWnd->getUIObjectById(CMD_MG_MEDIA_LIST, CSkinListCtrl::className());
+        plistCtrl = (CSkinListCtrl*)m_pSkinWnd->getUIObjectById(ID_MG_MEDIA_LIST, CSkinListCtrl::className());
         pNode = m_mediaTree.getNode(m_historyPath.back().path);
         if (plistCtrl && pNode) {
             m_mediaTree.setSelNode(pNode);
@@ -308,7 +297,7 @@ void CMPCmdHandlerOfMediaGuide::backHistoryPath() {
                 plistCtrl->invalidate();
             }
 
-            CSkinTreeCtrl *pTree = (CSkinTreeCtrl*)m_pSkinWnd->getUIObjectById(CMD_MG_TREE_GUIDE, CSkinTreeCtrl::className());
+            CSkinTreeCtrl *pTree = (CSkinTreeCtrl*)m_pSkinWnd->getUIObjectById(ID_MG_TREE_GUIDE, CSkinTreeCtrl::className());
             if (pTree) {
                 pTree->invalidate();
             }

@@ -9,11 +9,11 @@
 
 class SkinWndNewPlaylist : public CMPSkinWnd {
 public:
-    bool onCustomCommand(int nId) override {
-        if (nId == CMD_OK) {
+    void onCommand(uint32_t id) override {
+        if (id == ID_OK) {
             auto name = getUIObjectText("CID_E_NAME");
             if (name.empty()) {
-                return true;
+                return;
             }
 
             auto mediaLib = g_player.getMediaLibrary();
@@ -22,7 +22,7 @@ public:
             mediaLib->savePlaylist(pl);
         }
 
-        return CMPSkinWnd::CSkinWnd::onCustomCommand(nId);
+        CMPSkinWnd::onCommand(id);
     }
 
 public:
@@ -72,10 +72,10 @@ public:
         _menu = m_pSkinFactory->loadMenu(this, "OpenSavePlaylistMenu");
     }
 
-    bool onCustomCommand(int nId) override {
-        if (nId == CMD_OK) {
+    void onCommand(uint32_t nId) override {
+        if (nId == ID_OK) {
             if (_listCtrl->getSelectedCount() == 0) {
-                return true;
+                return;
             }
 
             _listCtrl->saveColumnWidth("dlg_playlist");
@@ -94,7 +94,7 @@ public:
             g_player.setNowPlayingModified(true);
             g_player.saveNowPlaying();
 
-            return CMPSkinWnd::onCustomCommand(nId);
+            CMPSkinWnd::onCommand(nId);
         } else if (nId == CID_MORE) {
             auto obj = getUIObjectById(CID_MORE);
             if (_menu && obj) {
@@ -102,8 +102,8 @@ public:
                 CPoint pos(obj->m_rcObj.left, obj->m_rcObj.top);
                 clientToScreen(pos);
 
-                _menu->enableItem(IDC_DELETE, countSelected >= 1);
-                _menu->enableItem(IDC_RENAME, countSelected == 1);
+                _menu->enableItem(ID_DELETE, countSelected >= 1);
+                _menu->enableItem(ID_RENAME, countSelected == 1);
                 _menu->trackPopupMenu(pos, this);
             }
         } else if (nId == CID_DO_RENAME && _containerRename) {
@@ -125,15 +125,7 @@ public:
             }
         } else if (nId == CID_CANCEL_RENAME && _containerRename) {
             _containerRename->getParent()->switchToLastPage(0, true);
-        } else {
-            return CMPSkinWnd::onCustomCommand(nId);
-        }
-
-        return true;
-    }
-
-    void onCommand(uint32_t id, uint32_t nNotifyCode) override {
-        if (id == IDC_DELETE) {
+        } else if (nId == ID_DELETE) {
             auto mediaLib = g_player.getMediaLibrary();
             for (auto index : _listCtrl->getSelectedItems()) {
                 auto id = _listCtrl->getItemData(index);
@@ -141,7 +133,7 @@ public:
             }
 
             updatePlaylist();
-        } else if (id == IDC_RENAME) {
+        } else if (nId == ID_RENAME) {
             if (_containerRename) {
                 auto index = _listCtrl->getNextSelectedItem();
                 if (index != -1) {
@@ -150,6 +142,8 @@ public:
                     setFocusUIObj(getUIObjectById(CID_E_NAME));
                 }
             }
+        } else {
+            CMPSkinWnd::onCommand(nId);
         }
     }
 
@@ -214,10 +208,10 @@ public:
         }
     }
 
-    bool onCustomCommand(int nId) override {
-        if (nId == CMD_OK) {
+    void onCommand(uint32_t nId) override {
+        if (nId == ID_OK) {
             if (!playlist) {
-                return true;
+                return;
             }
 
             auto mediaLib = g_player.getMediaLibrary();
@@ -235,15 +229,17 @@ public:
                 playlist->setInfo(existing->toPlaylistInfo());
                 mediaLib->savePlaylist(playlist);
             }
+
+            CMPSkinWnd::onCommand(nId);
         } else if (nId == CID_R_CREATE_NEW) {
             _isCreateNew = true;
             updateControlStatus();
         } else if (nId == CID_R_OVERWRITE) {
             _isCreateNew = false;
             updateControlStatus();
+        } else {
+            CMPSkinWnd::onCommand(nId);
         }
-
-        return CMPSkinWnd::onCustomCommand(nId);
     }
 
     void updateControlStatus() {

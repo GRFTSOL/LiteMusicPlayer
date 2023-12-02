@@ -121,7 +121,7 @@ bool CSkinMenuBar::onLButtonDown(uint32_t nFlags, CPoint point) {
             onMenuItemSelected(index);
         }
     } else {
-        m_pSkin->onCommand(m_vSubMenus[index].id, 0);
+        m_pSkin->onCommand(m_vSubMenus[index].id);
         hideSubMenu();
     }
 
@@ -204,7 +204,7 @@ bool CSkinMenuBar::onMenuKey(uint32_t nChar, uint32_t nFlags) {
                 onMenuItemSelected(i);
             } else {
                 m_nSelSubMenu = i;
-                m_pSkin->onCommand(m_vSubMenus[m_nSelSubMenu].id, 0);
+                m_pSkin->onCommand(m_vSubMenus[m_nSelSubMenu].id);
             }
             return true;
         }

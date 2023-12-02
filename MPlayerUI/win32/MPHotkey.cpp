@@ -9,33 +9,33 @@
 
 MLCmdAccKey        g_mlCmdAccKey[] = 
 {
-    { CMD_PLAYPAUSE, VK_RETURN, 0, VK_RETURN, 0 },
-    { CMD_PLAYPAUSE, 0, 0, 0, 0 },
-    { CMD_STOP, 0, 0, 0 },
-    { CMD_PLAY, 0, 0, 0 },
-    { CMD_PAUSE, 0, 0, 0 },
-    { CMD_PREVIOUS, VK_LEFT, 0, VK_LEFT, 0 },
-    { CMD_NEXT, VK_RIGHT, 0, VK_RIGHT, 0 },
-    { CMD_VOL_INC, VK_UP, 0, VK_UP, 0 },
-    { CMD_VOL_DEC, VK_DOWN, 0, VK_DOWN, 0 },
-    { CMD_BACKWARD, 0, 0, 0, 0 },
-    { CMD_FORWARD, 0, 0, 0, 0 },
-    { CMD_MUTE, '#', 0, '#', 0 },
-    { CMD_BACKWARD_LYRICS, 0, 0 , 0, 0 },
-    { CMD_FORWARD_LYRICS, 0, 0, 0, 0 },
-    { CMD_TOGGLE_SCREEEN, 0, 0, 0, 0 },
-    { CMD_SHUFFLE, 0, 0, 0, 0 },
-    { CMD_LOOP, 0, 0, 0, 0 },
+    { ID_PLAYPAUSE, VK_RETURN, 0, VK_RETURN, 0 },
+    { ID_PLAYPAUSE, 0, 0, 0, 0 },
+    { ID_STOP, 0, 0, 0 },
+    { ID_PLAY, 0, 0, 0 },
+    { ID_PAUSE, 0, 0, 0 },
+    { ID_PREVIOUS, VK_LEFT, 0, VK_LEFT, 0 },
+    { ID_NEXT, VK_RIGHT, 0, VK_RIGHT, 0 },
+    { ID_VOL_INC, VK_UP, 0, VK_UP, 0 },
+    { ID_VOL_DEC, VK_DOWN, 0, VK_DOWN, 0 },
+    { ID_BACKWARD, 0, 0, 0, 0 },
+    { ID_FORWARD, 0, 0, 0, 0 },
+    { ID_MUTE, '#', 0, '#', 0 },
+    { ID_BACKWARD_LYRICS, 0, 0 , 0, 0 },
+    { ID_FORWARD_LYRICS, 0, 0, 0, 0 },
+    { ID_TOGGLE_SCREEEN, 0, 0, 0, 0 },
+    { ID_SHUFFLE, 0, 0, 0, 0 },
+    { ID_LOOP, 0, 0, 0, 0 },
 };
 
 int                g_mlCmdAccKeyCount = CountOf(g_mlCmdAccKey) - 1;*/
 
 
-int g_hcPlayback[] = { CMD_PLAY, CMD_PLAYPAUSE, CMD_STOP, CMD_PREVIOUS, CMD_NEXT, CMD_FORWARD, CMD_BACKWARD, CMD_J_PREV_LINE, CMD_J_NEXT_LINE, 0 };
-int g_hcGeneral[] = { CMD_HELP, CMD_QUIT, CMD_CLOSE, CMD_MENU, CMD_PREFERENCES, CMD_DISPLAY_OPT, 0 };
-int g_hcUI[] = { CMD_FONT_SIZE_INC, CMD_FONT_SIZE_DEC, CMD_CLR_PREV_HUE, CMD_CLR_NEXT_HUE, CMD_TOGGLE_MP, CMD_MINIMIZE, CMD_TOPMOST, CMD_CLICK_THROUGH, 0 };
-int g_hcLyrics[] = { CMD_OPEN_LRC, CMD_BACKWARD_LYRICS, CMD_FORWARD_LYRICS, CMD_RELOAD_LYR, 0 };
-int g_hcLyrEditor[] = { CMD_LYR_EDITOR, CMD_NEW_LRC, CMD_SAVE_LRC, CMD_SAVE_LRC_AS, CMD_SAVE_LYR_IN_SONG_FILE, CMD_INSERTTAG_DOWN, CMD_INSERTTAG, CMD_DEL_TAG, CMD_AUTO_FILL_LYR_INFO, CMD_JUMP, CMD_FORWARD_CUR_LINE, CMD_BACKWARD_CUR_LINE, CMD_FORWARD_REMAIN_LINES, CMD_BACKWARD_REMAIN_LINES, CMD_REMOVE_ALL_TAG, CMD_REMOVE_BLANK_LINE, CMD_TRIM_WHITESPACE, CMD_REMOVE_UNSYNC_LINES, CMD_CAPITALIZE_LEADING_LETTER, CMD_LYRICS_TO_LOWERCASE, 0 };
+int g_hcPlayback[] = { ID_PLAY, ID_PLAYPAUSE, ID_STOP, ID_PREVIOUS, ID_NEXT, ID_FORWARD, ID_BACKWARD, ID_J_PREV_LINE, ID_J_NEXT_LINE, 0 };
+int g_hcGeneral[] = { ID_HELP, ID_QUIT, ID_CLOSE, ID_MENU, ID_PREFERENCES, ID_DISPLAY_OPT, 0 };
+int g_hcUI[] = { ID_FONT_SIZE_INC, ID_FONT_SIZE_DEC, ID_CLR_PREV_HUE, ID_CLR_NEXT_HUE, ID_TOGGLE_MP, ID_MINIMIZE, ID_TOPMOST, ID_CLICK_THROUGH, 0 };
+int g_hcLyrics[] = { ID_OPEN_LRC, ID_BACKWARD_LYRICS, ID_FORWARD_LYRICS, ID_RELOAD_LYR, 0 };
+int g_hcLyrEditor[] = { ID_LYR_EDITOR, ID_NEW_LRC, ID_SAVE_LRC, ID_SAVE_LRC_AS, ID_SAVE_LYR_IN_SONG_FILE, ID_INSERTTAG_DOWN, ID_INSERTTAG, ID_DEL_TAG, ID_AUTO_FILL_LYR_INFO, ID_JUMP_TO_CUR_LINE, ID_FORWARD_CUR_LINE, ID_BACKWARD_CUR_LINE, ID_FORWARD_REMAIN_LINES, ID_BACKWARD_REMAIN_LINES, ID_REMOVE_ALL_TAG, ID_REMOVE_BLANK_LINE, ID_TRIM_WHITESPACE, ID_REMOVE_UNSYNC_LINES, ID_CAPITALIZE_LEADING_LETTER, ID_LYRICS_TO_LOWERCASE, 0 };
 
 MPHotKeySection        g_vHotkeySections[] = {
     { _TLM("Playback"), g_hcPlayback },
@@ -54,42 +54,42 @@ MPHotKeySection        g_vHotkeySections[] = {
 #endif
 
 CMPHotkey::CmdAccKey            g_vDefAccKey[] = {
-    { CMD_PLAYPAUSE, true, VK_MEDIA_PLAY_PAUSE, 0, 0 },
-    { CMD_STOP, true, VK_MEDIA_STOP, 0, 0 },
-    { CMD_NEXT, true, VK_MEDIA_NEXT_TRACK, 0, 0 },
-    { CMD_PREVIOUS, true, VK_MEDIA_PREV_TRACK, 0, 0 },
+    { ID_PLAYPAUSE, true, VK_MEDIA_PLAY_PAUSE, 0, 0 },
+    { ID_STOP, true, VK_MEDIA_STOP, 0, 0 },
+    { ID_NEXT, true, VK_MEDIA_NEXT_TRACK, 0, 0 },
+    { ID_PREVIOUS, true, VK_MEDIA_PREV_TRACK, 0, 0 },
 
-    { CMD_BACKWARD_LYRICS, false, VK_UP, MOD_CONTROL | MOD_SHIFT, 0 },
-    { CMD_FORWARD_LYRICS, false, VK_DOWN, MOD_CONTROL | MOD_SHIFT, 0 },
-    { CMD_TOPMOST, true, 'T', MOD_CONTROL | MOD_SHIFT, 0 },
-    { CMD_TOGGLE_MP, true, 'M', MOD_CONTROL | MOD_ALT, 0 },
+    { ID_BACKWARD_LYRICS, false, VK_UP, MOD_CONTROL | MOD_SHIFT, 0 },
+    { ID_FORWARD_LYRICS, false, VK_DOWN, MOD_CONTROL | MOD_SHIFT, 0 },
+    { ID_TOPMOST, true, 'T', MOD_CONTROL | MOD_SHIFT, 0 },
+    { ID_TOGGLE_MP, true, 'M', MOD_CONTROL | MOD_ALT, 0 },
 
-    { CMD_HELP, false, VK_F1, 0, 0 },
+    { ID_HELP, false, VK_F1, 0, 0 },
 
-    { CMD_OPEN_LRC, false, 'D', MOD_CONTROL, 0 },
-    { CMD_RELOAD_LYR, false, VK_F5, 0, 0 },
+    { ID_OPEN_LRC, false, 'D', MOD_CONTROL, 0 },
+    { ID_RELOAD_LYR, false, VK_F5, 0, 0 },
 
-    { CMD_LYR_EDITOR, false, 'E', MOD_CONTROL, 0 },
-    { CMD_NEW_LRC, false, 'N', MOD_CONTROL, 0 },
-    { CMD_OPEN_LRC, false, 'O', MOD_CONTROL, 0 },
-    { CMD_SAVE_LRC, false, 'S', MOD_CONTROL, 0 },
-    { CMD_JUMP, false, 'J', MOD_CONTROL, 0 },
-    { CMD_FORWARD_REMAIN_LINES, false, VK_F11, 0, 0 },
-    { CMD_BACKWARD_REMAIN_LINES, false, VK_F12, 0, 0 },
-    { CMD_INSERTTAG_DOWN, false, VK_F7, 0, 0 },
-    { CMD_INSERTTAG, false, VK_F7, MOD_CONTROL, 0 },
-    { CMD_FORWARD_CUR_LINE, false, VK_ADD, MOD_CONTROL, 0 },
-    { CMD_FORWARD_CUR_LINE, false, 187, MOD_CONTROL, 0 },
-    { CMD_BACKWARD_CUR_LINE, false, VK_SUBTRACT, MOD_CONTROL, 0 },
-    { CMD_BACKWARD_CUR_LINE, false, 189, MOD_CONTROL, 0 },
+    { ID_LYR_EDITOR, false, 'E', MOD_CONTROL, 0 },
+    { ID_NEW_LRC, false, 'N', MOD_CONTROL, 0 },
+    { ID_OPEN_LRC, false, 'O', MOD_CONTROL, 0 },
+    { ID_SAVE_LRC, false, 'S', MOD_CONTROL, 0 },
+    { ID_JUMP_TO_CUR_LINE, false, 'J', MOD_CONTROL, 0 },
+    { ID_FORWARD_REMAIN_LINES, false, VK_F11, 0, 0 },
+    { ID_BACKWARD_REMAIN_LINES, false, VK_F12, 0, 0 },
+    { ID_INSERTTAG_DOWN, false, VK_F7, 0, 0 },
+    { ID_INSERTTAG, false, VK_F7, MOD_CONTROL, 0 },
+    { ID_FORWARD_CUR_LINE, false, VK_ADD, MOD_CONTROL, 0 },
+    { ID_FORWARD_CUR_LINE, false, 187, MOD_CONTROL, 0 },
+    { ID_BACKWARD_CUR_LINE, false, VK_SUBTRACT, MOD_CONTROL, 0 },
+    { ID_BACKWARD_CUR_LINE, false, 189, MOD_CONTROL, 0 },
 
-    { CMD_FORWARD, false, VK_NEXT, MOD_CONTROL, 0 },
-    { CMD_BACKWARD, false, VK_PRIOR, MOD_CONTROL, 0 },
+    { ID_FORWARD, false, VK_NEXT, MOD_CONTROL, 0 },
+    { ID_BACKWARD, false, VK_PRIOR, MOD_CONTROL, 0 },
 
-    { CMD_MINIMIZE, false, 'M', MOD_CONTROL, 0 },
-    { CMD_TOPMOST, false, 'T', MOD_CONTROL, 0 },
+    { ID_MINIMIZE, false, 'M', MOD_CONTROL, 0 },
+    { ID_TOPMOST, false, 'T', MOD_CONTROL, 0 },
 
-    { CMD_PREFERENCES, false, 'P', MOD_CONTROL, 0 },
+    { ID_PREFERENCES, false, 'P', MOD_CONTROL, 0 },
 
 };
 
@@ -373,9 +373,9 @@ bool CMPHotkey::getHotkeyText(int cmd, string &strKey) {
         }
     }
 
-    if (cmd == CMD_FONT_SIZE_INC) {
+    if (cmd == ID_FONT_SIZE_INC) {
         strKey = string(_TLT("Ctrl+")) + _TLT("Mouse Wheel Up");
-    } else if (cmd == CMD_FONT_SIZE_DEC) {
+    } else if (cmd == ID_FONT_SIZE_DEC) {
         strKey = string(_TLT("Ctrl+")) + _TLT("Mouse Wheel Down");
     } else {
         return false;
@@ -430,7 +430,7 @@ int CMPHotkey::loadSettings() {
 
         // Cmd
         cmdKey.cmd = CMPlayerAppBase::getMPSkinFactory()->getIDByName(vValues[index++].c_str());
-        if (cmdKey.cmd == UID_INVALID) {
+        if (cmdKey.cmd == ID_INVALID) {
             continue;
         }
 

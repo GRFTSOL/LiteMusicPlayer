@@ -292,7 +292,7 @@ public:
 class CAnimationResizeWndMotion : public CAnimationMotion {
 public:
     CAnimationResizeWndMotion(CSkinWnd *pSkinWnd, int nResizeToWidth, int nResizeToHeight)
-    : CAnimationMotion(UID_INVALID), m_pSkin(pSkinWnd), m_nResizeToWidth(nResizeToWidth), m_nResizeToHeight(nResizeToHeight) {
+    : CAnimationMotion(ID_INVALID), m_pSkin(pSkinWnd), m_nResizeToWidth(nResizeToWidth), m_nResizeToHeight(nResizeToHeight) {
     }
 
     virtual void animate(AnimateState as, int nMotionPercent, CUIObject *pObj) {
@@ -401,7 +401,7 @@ bool CSkinAnimationUIObj::setProperty(cstr_t szProperty, cstr_t szValue) {
 
 void CSkinAnimationUIObj::onAnimate(CSkinAnimation *pAnimation) {
     for (CAnimationMotion *pMotion : m_listObjAnimation) {
-        if (pMotion->m_id != UID_INVALID) {
+        if (pMotion->m_id != ID_INVALID) {
             CUIObject *pObj = m_pSkin->getUIObjectById(pMotion->m_id);
             if (pObj) {
                 pMotion->animate(pAnimation->getState(), pAnimation->getMotionPercent(), pObj);

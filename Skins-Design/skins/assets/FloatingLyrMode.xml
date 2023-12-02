@@ -12,13 +12,13 @@
       <button ID="ID_PLAYPAUSE" Left="1" CanCheck="TRUE" checked_left="2"/>
       <button ID="ID_NEXT" Left="3" />
       <seperator/>
-      <button ID="ID_SEARCH_LYRICS" Left="5" />
+      <button ID="ID_OPEN_LRC" Left="5" />
       <button ID="ID_BACKWARD_LYRICS" Left="6" Continuous="TRUE"/>
       <button ID="ID_FORWARD_LYRICS" Left="7" Continuous="TRUE"/>
       <seperator/>
       <button ID="ID_FONT_SIZE_INC" Left="8"/>
       <button ID="ID_FONT_SIZE_DEC" Left="9"/>
-      <button ID="ID_LYR_HIGH_CLR_LIST" Left="14"/>
+      <button ID="ID_CLR_HIGH_CLR_LIST" Left="14"/>
     </Toolbar>
     <Toolbar Rect="w-62-10,10,62,14" TranslucencyWithSkin="TRUE" Image="fl_cap_bt.png" enablehover="TRUE" units_x="14" blank_x="-1" blank_cx="14" seperator_x="0" seperator_cx="10" MarginX="0" MarginY="0" ButtonSpacesCX="2" FullStatusImage="TRUE">
       <button ID="ID_MINIMIZE" Left="0" />

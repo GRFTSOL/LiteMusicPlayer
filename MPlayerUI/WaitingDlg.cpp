@@ -57,9 +57,9 @@ void CPageWaitMessage::onSwitchTo() {
     if (m_pWorkObj) {
         m_pWorkObj->createWorkThread(m_pSkin);
         if (m_pWorkObj->isCancelEnabled()) {
-            enableUIObject(CMD_CANCEL, true);
+            enableUIObject(ID_CANCEL, true);
         } else {
-            enableUIObject(CMD_CANCEL, false);
+            enableUIObject(ID_CANCEL, false);
         }
     }
 }

@@ -11,9 +11,9 @@
 #define IDN_PLAYER_CTRL_MAX        (2 + 5)
 
 SYSTRAY_ICON_CMD    g_sysTrayIconCmd[] = {
-    { CMD_PREVIOUS, "Previous Track", IDI_PREV, nullptr, false },
-    { CMD_PLAYPAUSE, "play/pause", IDI_PLAY, nullptr, false },
-    { CMD_NEXT,    "next Track", IDI_NEXT,    nullptr, false },
+    { ID_PREVIOUS, "Previous Track", IDI_PREV, nullptr, false },
+    { ID_PLAYPAUSE, "play/pause", IDI_PLAY, nullptr, false },
+    { ID_NEXT,    "next Track", IDI_NEXT,    nullptr, false },
 };
 
 int MAX_PLAYER_TRAY_ICON_CMD = CountOf(g_sysTrayIconCmd);
@@ -168,7 +168,7 @@ void CMLTrayIcon::onMyNotifyIcon(WPARAM wParam, LPARAM lParam) {
                 if (menu.loadPopupMenu(IDM_MOUSE_CLICK_THROUGH, 0)) {
                     CPoint pt;
                     getCursorPos(&pt);
-                    menu.checkItem(IDC_CLICK_THROUGH, true);
+                    menu.checkItem(ID_CLICK_THROUGH, true);
                     menu.trackPopupMenu(pt.x, pt.y, CMPlayerAppBase::getMainWnd());
                 }
             }

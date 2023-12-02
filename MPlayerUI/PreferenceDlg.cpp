@@ -30,7 +30,7 @@ public:
 
 UIOBJECT_CLASS_NAME_IMP(CPagePfRoot, "PreferPage.Root")
 
-CPagePfRoot::CPagePfRoot() : CPagePfBase(PAGE_UNKNOWN, "CMD_ROOT_UI") {
+CPagePfRoot::CPagePfRoot() : CPagePfBase(PAGE_UNKNOWN, "ID_ROOT_UI") {
 }
 
 void CPagePfRoot::onInitialUpdate() {
