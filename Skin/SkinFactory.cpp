@@ -43,6 +43,11 @@ SkinWndStartupInfo::SkinWndStartupInfo(cstr_t szClassName, cstr_t szCaptionText,
 
 UIObjectIDDefinition g_uidBaseDefinition[] = {
     SKIN_BASE_IDS
+
+    DEFINE_CMD_ID(ID_OK)
+    DEFINE_CMD_ID(ID_CANCEL)
+    DEFINE_CMD_ID_TIP(ID_CLOSE, _TLM("Close"))
+
     { nullptr, 0, nullptr },
 };
 

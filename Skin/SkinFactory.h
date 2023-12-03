@@ -51,7 +51,6 @@ typedef set<UIObjectIDDefinition *, UIObjectIDDefinitionLessCmp> SetUIObjectIDDe
 #define SKIN_BASE_IDS                                       \
 DEFINE_CMD_ID_TIP(ID_MINIMIZE,      _TLM("Minimize"))       \
 DEFINE_CMD_ID_TIP(ID_MAXIMIZE,      _TLM("Maximize"))       \
-DEFINE_CMD_ID_TIP(ID_CLOSE,         _TLM("Close"))          \
 DEFINE_CMD_ID_TIP(ID_QUIT,          _TLM("Quit"))           \
 DEFINE_CMD_ID_TIP(ID_MENU,          _TLM("Menu"))           \
 DEFINE_CMD_ID_TIP(ID_EDIT_UNDO,     _TLM("Undo"))           \
@@ -60,8 +59,6 @@ DEFINE_CMD_ID_TIP(ID_EDIT_CUT,      _TLM("Cut"))            \
 DEFINE_CMD_ID_TIP(ID_EDIT_COPY,     _TLM("Copy"))           \
 DEFINE_CMD_ID_TIP(ID_EDIT_PASTE,    _TLM("Paste"))          \
 DEFINE_CMD_ID_TIP(ID_EDIT_DELETE,   _TLM("Delete"))         \
-DEFINE_CMD_ID(ID_OK)                                        \
-DEFINE_CMD_ID(ID_CANCEL)                                    \
 DEFINE_CMD_ID(ID_EXEC_FUNCTION)                             \
 
 #undef DEFINE_CMD_ID
@@ -71,14 +68,18 @@ DEFINE_CMD_ID(ID_EXEC_FUNCTION)                             \
 #define DEFINE_CMD_ID_TIP(uid, tooltip)   uid,
 
 enum UIObjectId {
-    ID_INVALID                 = 0,
+    ID_INVALID                  = 0,
 
-    ID_SYSTEM_END              = 10,
+    ID_OK                       = IDOK,
+    ID_CANCEL                   = IDCANCEL,
+    ID_CLOSE                    = IDCLOSE,
+
+    _BASE_ID_START_             = 10,
 
     SKIN_BASE_IDS
 
     ID_BASE_END,
-    ID_ID_USER_BASE          = 1000, // system alloc id begins from here
+    ID_ID_USER_BASE             = 1000, // system alloc id begins from here
 
 };
 

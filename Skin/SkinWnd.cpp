@@ -758,9 +758,7 @@ void CSkinWnd::onCommand(uint32_t id) {
         break;
     }
 
-    if (id <= ID_SYSTEM_END) {
-        Window::onCommand(id);
-    }
+    Window::onCommand(id);
 }
 
 void CSkinWnd::onOK() {
