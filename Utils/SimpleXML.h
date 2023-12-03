@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef Utils_SimpleXML_h
 #define Utils_SimpleXML_h

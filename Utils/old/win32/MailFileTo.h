@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef __SENDFILETO_H__
 #define __SENDFILETO_H__

@@ -142,7 +142,7 @@ FUNGdiplusShutdown CGdiplusGraphicsLite::m_sfunGdiplusShutdown = nullptr;
 #define m_sfunGdipCreateFontFromLogfont m_sfunGdipCreateFontFromLogfontA
 // #endif
 
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
 ULONG_PTR g_gdiplusToken = nullptr;
 #endif
 

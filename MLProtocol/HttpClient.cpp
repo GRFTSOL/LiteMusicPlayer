@@ -1,4 +1,4 @@
-#include "HttpClient.h"
+﻿#include "HttpClient.h"
 
 
 int downloadUrl(cstr_t szUrl, cstr_t szRefer, int &nHttpCode, string &buffRet, cstr_t szUserAgent) {

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef Skin_SkinSquare_h
 #define Skin_SkinSquare_h

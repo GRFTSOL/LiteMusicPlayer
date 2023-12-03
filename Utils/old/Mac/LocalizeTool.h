@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 cstr_t _TL(cstr_t szString);
 #define _TLT                _TL

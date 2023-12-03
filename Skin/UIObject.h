@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../Window/WindowLib.h"
 #include "SkinTypes.h"

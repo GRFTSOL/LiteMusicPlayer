@@ -1,4 +1,4 @@
-#include "tiffiop.h"
+﻿#include "tiffiop.h"
 #ifdef OJPEG_SUPPORT
 
 /* JPEG Compression support, as per the original TIFF 6.0 specification.

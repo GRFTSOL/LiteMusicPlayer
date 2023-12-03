@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerEngine_MDRow_h
 #define MPlayerEngine_MDRow_h

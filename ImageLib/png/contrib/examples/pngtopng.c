@@ -1,4 +1,4 @@
-/*- pngtopng
+﻿/*- pngtopng
  *
  * COPYRIGHT: Written by John Cunningham Bowler, 2011, 2017.
  * To the extent possible under law, the author has waived all copyright and

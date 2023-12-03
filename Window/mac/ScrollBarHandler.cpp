@@ -1,4 +1,4 @@
-#include "../WindowTypes.h"
+﻿#include "../WindowTypes.h"
 #include "ScrollBarHandler.h"
 
 

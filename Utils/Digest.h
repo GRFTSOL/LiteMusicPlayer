@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #define MD5_LEN             16
 #define MD5_STR_LEN        (32 + 1)

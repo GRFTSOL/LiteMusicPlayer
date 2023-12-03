@@ -1,4 +1,4 @@
-/* makepng.c */
+﻿/* makepng.c */
 #define _ISOC99_SOURCE
 /* Copyright: */
 #define COPYRIGHT "\251 2013,2015 John Cunningham Bowler"

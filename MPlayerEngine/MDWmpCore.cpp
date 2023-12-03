@@ -1,4 +1,4 @@
-#include "../MPlayerEngine/IMPlayer.h"
+﻿#include "../MPlayerEngine/IMPlayer.h"
 #include "MDWmpCore.h"
 #include "MPTime.h"
 #include "MPlayer.h"

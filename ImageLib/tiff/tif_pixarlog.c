@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 1996-1997 Sam Leffler
  * Copyright (c) 1996 Pixar
  *

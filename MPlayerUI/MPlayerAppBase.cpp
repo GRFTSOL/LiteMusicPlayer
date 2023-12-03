@@ -1,4 +1,4 @@
-#include "MPlayerAppBase.h"
+﻿#include "MPlayerAppBase.h"
 #include "MLCmd.h"
 #include "DownloadMgr.h"
 #include "MPEventsDispatcher.h"

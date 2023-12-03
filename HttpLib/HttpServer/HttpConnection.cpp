@@ -1,4 +1,4 @@
-//
+﻿//
 //  HttpConnection.cpp
 //
 

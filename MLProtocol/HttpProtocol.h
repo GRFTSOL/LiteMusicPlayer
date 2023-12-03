@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MLProtocol_HttpProtocol_h
 #define MLProtocol_HttpProtocol_h

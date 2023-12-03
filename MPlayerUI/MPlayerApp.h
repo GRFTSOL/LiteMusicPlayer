@@ -1,6 +1,6 @@
-#pragma once
+﻿#pragma once
 
-#include "../MPlayerAppBase.h"
+#include "MPlayerAppBase.h"
 
 
 class CMPlayerApp : public CMPlayerAppBase {
@@ -17,6 +17,10 @@ public:
     bool isRunning() { return m_hMutexRuning != nullptr; }
 
 protected:
+#ifdef _WIN32
     HANDLE                      m_hMutexRuning;
+#else
+    bool                        m_bRunning;
+#endif
 
 };

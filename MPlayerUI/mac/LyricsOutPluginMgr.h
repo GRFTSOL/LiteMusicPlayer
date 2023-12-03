@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerUI_mac_LyricsOutPluginMgr_h
 #define MPlayerUI_mac_LyricsOutPluginMgr_h

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 DECLAR_CPPUNIT_TEST_REG(CharEncodingBase)
 

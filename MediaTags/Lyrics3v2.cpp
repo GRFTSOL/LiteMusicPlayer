@@ -1,4 +1,4 @@
-// ID3v2 standards: https://id3.org/Lyrics3v2
+﻿// ID3v2 standards: https://id3.org/Lyrics3v2
 
 #include "Lyrics3v2.h"
 #include "ID3/ID3v1.h"

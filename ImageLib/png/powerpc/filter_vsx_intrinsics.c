@@ -1,4 +1,4 @@
-/* filter_vsx_intrinsics.c - PowerPC optimised filter functions
+﻿/* filter_vsx_intrinsics.c - PowerPC optimised filter functions
  *
  * Copyright (c) 2018 Cosmin Truta
  * Copyright (c) 2017 Glenn Randers-Pehrson

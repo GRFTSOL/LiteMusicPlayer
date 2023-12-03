@@ -1,4 +1,4 @@
-#include "../../Skin/Skin.h"
+﻿#include "../../Skin/Skin.h"
 #include "DlgUpdateLibrary.h"
 #include "MPlayerAppBase.h"
 #include "Player.h"

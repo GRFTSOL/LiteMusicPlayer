@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 /*
  * madplay - MPEG audio decoder and player

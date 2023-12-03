@@ -1,4 +1,4 @@
-//
+﻿//
 //  OggTag.cpp
 //  Taglib
 //

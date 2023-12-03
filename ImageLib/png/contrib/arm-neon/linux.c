@@ -1,4 +1,4 @@
-/* contrib/arm-neon/linux.c
+﻿/* contrib/arm-neon/linux.c
  *
  * Copyright (c) 2014, 2017 Glenn Randers-Pehrson
  * Written by John Bowler, 2014, 2017.

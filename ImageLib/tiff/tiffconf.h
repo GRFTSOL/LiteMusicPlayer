@@ -1,4 +1,4 @@
-/* $Header: /cvsroot/osrs/libtiff/libtiff/tiffconf.h,v 1.3 2001/05/12 03:59:50 warmerda Exp $ */
+﻿/* $Header: /cvsroot/osrs/libtiff/libtiff/tiffconf.h,v 1.3 2001/05/12 03:59:50 warmerda Exp $ */
 /*
  * Copyright (c) 1988-1997 Sam Leffler
  * Copyright (c) 1991-1997 Silicon Graphics, Inc.

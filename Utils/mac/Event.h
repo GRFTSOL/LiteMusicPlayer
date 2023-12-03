@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef Utils_mac_Event_h
 #define Utils_mac_Event_h

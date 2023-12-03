@@ -1,4 +1,4 @@
-#include "RawImageData.h"
+﻿#include "RawImageData.h"
 #include "ILIO.h"
 
 //#define PNG_EXPORTA(ordinal, type, name, args, attributes) type name args

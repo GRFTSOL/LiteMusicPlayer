@@ -1,4 +1,4 @@
-/* $Header: /cvsroot/libtiff-lzw-compression-kit/tif_lzw.c,v 1.2 2001/09/25 02:14:31 warmerda Exp $ */
+﻿/* $Header: /cvsroot/libtiff-lzw-compression-kit/tif_lzw.c,v 1.2 2001/09/25 02:14:31 warmerda Exp $ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler

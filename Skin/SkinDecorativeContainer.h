@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef __SKINDECORATIVECONTAINER_H__
 #define __SKINDECORATIVECONTAINER_H__

@@ -1,4 +1,4 @@
-#ifndef _PREFER_PAGE_ADVANCED_H_
+﻿#ifndef _PREFER_PAGE_ADVANCED_H_
 #define _PREFER_PAGE_ADVANCED_H_
 
 #pragma once

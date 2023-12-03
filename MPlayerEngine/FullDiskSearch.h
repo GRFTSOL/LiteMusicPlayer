@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 ﻿/******************************************************************************
 The idea here to keep media libarary are updated in time. The detail requirements are:

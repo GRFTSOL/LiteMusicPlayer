@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "PopupSkinWnd.h"
 #include "SkinListCtrl.h"

@@ -1,4 +1,4 @@
-#include "MPlayerApp.h"
+﻿#include "MPlayerApp.h"
 #include "WaitingDlg.h"
 #include "DownloadMgr.h"
 #include "Helper.h"

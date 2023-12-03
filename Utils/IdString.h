@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef _OUR_LIB_ID_STRING_INC_
 #define _OUR_LIB_ID_STRING_INC_

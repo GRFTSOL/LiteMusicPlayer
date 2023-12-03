@@ -1,4 +1,4 @@
-#include "MPlayerApp.h"
+﻿#include "MPlayerApp.h"
 #include "LyricsOutPluginMgr.h"
 #include "Helper.h"
 

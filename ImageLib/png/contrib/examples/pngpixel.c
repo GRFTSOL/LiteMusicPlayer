@@ -1,4 +1,4 @@
-/*- pngpixel
+﻿/*- pngpixel
  *
  * COPYRIGHT: Written by John Cunningham Bowler, 2011.
  * To the extent possible under law, the author has waived all copyright and

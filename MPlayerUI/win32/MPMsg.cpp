@@ -1,4 +1,4 @@
-#include "MPMsg.h"
+﻿#include "MPMsg.h"
 
 
 void cmdLineAnalyse(cstr_t szCmdLine, vector<string> &vCmdLine) {

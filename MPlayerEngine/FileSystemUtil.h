@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef WALLPAPER_UTIL_H
 #define WALLPAPER_UTIL_H

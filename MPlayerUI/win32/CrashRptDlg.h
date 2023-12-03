@@ -1,9 +1,9 @@
-#ifndef MPlayerUI_win32_CrashRptDlg_h
+﻿#ifndef MPlayerUI_win32_CrashRptDlg_h
 #define MPlayerUI_win32_CrashRptDlg_h
 
 #pragma once
 
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
 
 #include "../Utils/win32/MiniDump.h"
 
@@ -34,10 +34,10 @@ public:
 
 };
 
-#else // _WIN32_DESKTOP
+#else // _WIN32
 
 inline void initMiniDumper() { }
 
-#endif // _WIN32_DESKTOP
+#endif // _WIN32
 
 #endif // !defined(MPlayerUI_win32_CrashRptDlg_h)

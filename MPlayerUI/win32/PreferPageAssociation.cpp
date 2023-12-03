@@ -1,4 +1,4 @@
-#include "MPlayerAppBase.h"
+﻿#include "MPlayerAppBase.h"
 #include "PreferPageAssociation.h"
 #include "MLCmd.h"
 

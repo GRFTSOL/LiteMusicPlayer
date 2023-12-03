@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerUI_WaitingDlg_h
 #define MPlayerUI_WaitingDlg_h

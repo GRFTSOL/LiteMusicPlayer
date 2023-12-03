@@ -1,4 +1,4 @@
-#include "MP3InfoReader.h"
+﻿#include "MP3InfoReader.h"
 #include "ID3/ID3v2.h"
 #include "ID3/ID3Helper.h"
 #include "../TinyJS/utils/BinaryFileStream.h"

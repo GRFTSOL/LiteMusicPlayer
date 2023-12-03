@@ -1,4 +1,4 @@
-#ifndef _HEADER_UTILS_H
+﻿#ifndef _HEADER_UTILS_H
 #define _HEADER_UTILS_H
 
 #pragma once

@@ -1,4 +1,4 @@
-#include "MPlayerAppBase.h"
+﻿#include "MPlayerAppBase.h"
 #include "MPCmdHandlerOfMediaGuide.h"
 #include "Player.h"
 #include "MPHelper.h"

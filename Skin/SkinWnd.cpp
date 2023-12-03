@@ -1,4 +1,4 @@
-/********************************************************************
+﻿/********************************************************************
     Created  :    2001-12-15 2:36:55
     FileName :    SkinWnd.cpp
     Author   :    xhy
@@ -328,7 +328,7 @@ void CSkinWnd::closeSkin() {
     killTimer(TIMER_ID_DYNAMIC_TRANS);
     m_translucencyStatus = TS_NORMAL;
 
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
     ::unSetLayeredWindow(m_hWnd);
 #endif
 
@@ -1855,7 +1855,7 @@ void CSkinWnd::onSkinLoaded() {
     }
 }
 
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
 bool showAsAppWindowNoRefresh(HWND hWnd) {
     uint32_t dwStyleEx;
     dwStyleEx = (uint32_t)GetWindowLong(hWnd, GWL_EXSTYLE);
@@ -1879,7 +1879,7 @@ bool showAsToolWindowNoRefresh(HWND hWnd) {
     }
     return false;
 }
-#endif // #ifdef _WIN32_DESKTOP
+#endif // #ifdef _WIN32
 
 void CSkinWnd::postCustomCommandMsg(int nId) {
 #ifdef _WIN32
@@ -2414,7 +2414,7 @@ void CSkinWnd::onLoadWndSizePos() {
 void CSkinWnd::saveWndPos() {
     CRect rcToSave;
 
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
     if (::getParent(m_hWnd)) {
         return;
     }

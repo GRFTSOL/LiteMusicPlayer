@@ -1,4 +1,4 @@
-#include "../third-parties/Agg/include/agg_scanline_p.h"
+﻿#include "../third-parties/Agg/include/agg_scanline_p.h"
 #include "../third-parties/Agg/include/agg_renderer_scanline.h"
 #include "../third-parties/Agg/include/agg_pixfmt_rgba.h"
 #include "../third-parties/Agg/include/agg_pixfmt_rgb.h"

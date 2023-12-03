@@ -1,4 +1,4 @@
-#include "MORaw.h"
+﻿#include "MORaw.h"
 
 
 CMORaw::CMORaw() : m_eventCanWrite(false, true) {

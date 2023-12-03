@@ -1,4 +1,4 @@
-//
+﻿//
 //  MP3FileTags.hpp
 //  Taglib
 //

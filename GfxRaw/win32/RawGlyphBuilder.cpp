@@ -1,4 +1,4 @@
-#include "../../GfxLite/win32/GdiGraphicsLite.h"
+﻿#include "../../GfxLite/win32/GdiGraphicsLite.h"
 #include "../../GfxLite/win32/GdiplusGraphicsLite.h"
 #include "../third-parties/Agg/include/agg_scanline_p.h"
 #include "../third-parties/Agg/include/agg_renderer_scanline.h"

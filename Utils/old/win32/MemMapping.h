@@ -1,4 +1,4 @@
-#if !defined(_MEM_MAPPING_H_)
+﻿#if !defined(_MEM_MAPPING_H_)
 #define _MEM_MAPPING_H_
 
 #pragma once

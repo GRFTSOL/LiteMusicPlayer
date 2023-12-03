@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef _LINUX_GTK2_KEYMAP_INC_
 #define _LINUX_GTK2_KEYMAP_INC_

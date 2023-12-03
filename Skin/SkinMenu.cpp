@@ -1,4 +1,4 @@
-#include "SkinTypes.h"
+﻿#include "SkinTypes.h"
 #include "Skin.h"
 #include "SkinMenu.h"
 

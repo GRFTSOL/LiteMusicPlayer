@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../MPlayerEngine/IPlayerCore.hpp"
 #include "../MPlayerEngine/MPTools.h"

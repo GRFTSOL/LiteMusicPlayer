@@ -1,4 +1,4 @@
-#include "ID3v2FrameParser.h"
+﻿#include "ID3v2FrameParser.h"
 #include "ID3Helper.h"
 
 

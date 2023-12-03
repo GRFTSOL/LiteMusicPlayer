@@ -1,4 +1,4 @@
-#include "M4aFileTags.hpp"
+﻿#include "M4aFileTags.hpp"
 #include "ID3/ID3v1.h"
 #include "ID3/ID3v2.h"
 #include "ID3/ID3Helper.h"

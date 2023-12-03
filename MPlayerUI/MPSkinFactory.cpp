@@ -1,4 +1,4 @@
-#include "MPlayerApp.h"
+﻿#include "MPlayerApp.h"
 #include "MPSkinFactory.h"
 #include "MPSkinWnd.h"
 #include "LyricShowMultiRowObj.h"
@@ -241,7 +241,7 @@ void CMPSkinFactory::allUpdateTransparent() {
     int nOpaque = g_profile.getInt(SZ_SECT_UI, "WindowOpaquePercent", 100);
     uint8_t byAlpha = opaquePercentToAlpha(nOpaque);
 
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
     if (!isLayeredWndSupported()) {
         return;
     }
@@ -255,7 +255,7 @@ void CMPSkinFactory::allUpdateTransparent() {
         return;
     }
 #endif
-#endif // #ifdef _WIN32_DESKTOP
+#endif // #ifdef _WIN32
 
     auto itEnd = m_listSkinWnds.end();
     for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
@@ -270,7 +270,7 @@ void CMPSkinFactory::setClickThrough(bool bClickThrough) {
     // save ClickThrough options
     g_profile.writeInt(SZ_SECT_UI, "ClickThrough", m_bClickThrough);
 
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
     if (m_bClickThrough) {
         // show MiniLyrics system tray icon.
         int nShowPos;
@@ -281,7 +281,7 @@ void CMPSkinFactory::setClickThrough(bool bClickThrough) {
             CMPlayerAppBase::getMainWnd()->getTrayIcon().updateShowIconPos();
         }
     }
-#endif // #ifdef _WIN32_DESKTOP
+#endif // #ifdef _WIN32
 
     allUpdateTransparent();
 }

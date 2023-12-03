@@ -1,4 +1,4 @@
-#ifndef _STRING_ITERATOR_H_
+﻿#ifndef _STRING_ITERATOR_H_
 #define _STRING_ITERATOR_H_
 
 #pragma once

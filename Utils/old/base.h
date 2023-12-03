@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "OsBaseInc.h"
 #include "MapStrings.h"

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef Skin_SkinVScrollBar_h
 #define Skin_SkinVScrollBar_h

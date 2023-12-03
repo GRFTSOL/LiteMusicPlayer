@@ -1,4 +1,4 @@
-//
+﻿//
 //  IPlayerCore.hpp
 //  MPlayerLib
 //

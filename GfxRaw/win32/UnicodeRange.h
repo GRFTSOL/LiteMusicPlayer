@@ -1,4 +1,4 @@
-#ifndef GfxRaw_win32_UnicodeRange_h
+﻿#ifndef GfxRaw_win32_UnicodeRange_h
 #define GfxRaw_win32_UnicodeRange_h
 
 #pragma once

@@ -1,4 +1,4 @@
-#include "MPlayerApp.h"
+﻿#include "MPlayerApp.h"
 #include "DlgUpload.h"
 #include "WaitingDlg.h"
 #include "../LyricsLib/CurrentLyrics.h"

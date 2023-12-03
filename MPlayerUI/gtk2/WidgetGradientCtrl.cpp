@@ -1,4 +1,4 @@
-#include "WidgetGradientCtrl.h"
+﻿#include "WidgetGradientCtrl.h"
 #include "MPlayerApp.h"
 #include "LyricShowObj.h"
 

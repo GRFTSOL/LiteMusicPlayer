@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerUI_win32_DlgBatchProcessEmbeddedLyrics_h
 #define MPlayerUI_win32_DlgBatchProcessEmbeddedLyrics_h

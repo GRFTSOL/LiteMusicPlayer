@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef _LYRICSOUTPLUGIN_H_
 #define _LYRICSOUTPLUGIN_H_

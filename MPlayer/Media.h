@@ -1,12 +1,8 @@
-#pragma once
+﻿#pragma once
 
-#include <vector>
-#include <string>
 #include "Utils/Utils.h"
 #include "MPlayerEngine/IPlayerCore.hpp"
 
-
-using namespace std;
 
 #define MEDIA_LENGTH_INVALID    0
 #define MEDIA_ID_INVALID        0

@@ -1,4 +1,4 @@
-#include "../Utils/UtilsTypes.h"
+﻿#include "../Utils/UtilsTypes.h"
 #include "LyricsKeywordFilter.h"
 
 

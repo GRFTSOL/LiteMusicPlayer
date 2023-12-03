@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 /* fft.h: Header for iterative implementation of a FFT
  * Copyright (C) 1999 Richard Boulton <richard@tartarus.org>

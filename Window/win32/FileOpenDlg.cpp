@@ -1,4 +1,4 @@
-#ifndef _NO_WIGET_LIB
+﻿#ifndef _NO_WIGET_LIB
 #include "BaseWnd.h"
 #endif
 #include "FileOpenDlg.h"

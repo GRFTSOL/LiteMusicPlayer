@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerUI_MPSkinVis_h
 #define MPlayerUI_MPSkinVis_h

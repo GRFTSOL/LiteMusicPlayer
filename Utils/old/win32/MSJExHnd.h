@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef __MSJEXHND_H__
 #define __MSJEXHND_H__

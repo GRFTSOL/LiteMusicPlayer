@@ -1,4 +1,4 @@
-//
+﻿//
 //  PlayerEventSender.cpp
 //  Mp3Player
 //

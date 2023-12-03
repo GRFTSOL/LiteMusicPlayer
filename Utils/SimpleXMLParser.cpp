@@ -1,4 +1,4 @@
-#include "UtilsTypes.h"
+﻿#include "UtilsTypes.h"
 #include "Utils.h"
 #include "SimpleXMLParser.h"
 
@@ -92,9 +92,9 @@ SimpleXMLParserError CSimpleXMLParser::parseData(const void *lpXmlData, size_t n
     if (encoding == ED_UNICODE || encoding == ED_UNICODE_BIG_ENDIAN) {
         string str;
         if (encoding == ED_UNICODE_BIG_ENDIAN) {
-            ucs2EncodingReverse((WCHAR *)szBuffer, (int)nLen / sizeof(WCHAR));
+            ucs2EncodingReverse((utf16_t *)szBuffer, (int)nLen / sizeof(utf16_t));
         }
-        ucs2ToUtf8((const WCHAR *)szBuffer, (int)nLen / sizeof(WCHAR), str);
+        ucs2ToUtf8((const utf16_t *)szBuffer, (int)nLen / sizeof(utf16_t), str);
 
         return doParse(str.c_str(), (int)str.size(), xmlData);
     } else {

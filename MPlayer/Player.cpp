@@ -1,4 +1,4 @@
-#include "MPlayerAppBase.h"
+﻿#include "MPlayerAppBase.h"
 #include "Player.h"
 #include "PlayListFile.h"
 #include "OnlineSearch.h"

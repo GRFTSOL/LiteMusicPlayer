@@ -1,4 +1,4 @@
-// ImgGifFile.cpp: implementation of the CImgGifFile class.
+﻿// ImgGifFile.cpp: implementation of the CImgGifFile class.
 //
 //////////////////////////////////////////////////////////////////////
 

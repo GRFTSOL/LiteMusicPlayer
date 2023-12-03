@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef __DX_SKIN_INC_
 #define __DX_SKIN_INC_

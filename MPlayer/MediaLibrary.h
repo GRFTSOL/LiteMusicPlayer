@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerEngine_MediaLibrary_h
 #define MPlayerEngine_MediaLibrary_h

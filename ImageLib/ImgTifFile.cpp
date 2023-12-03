@@ -1,4 +1,4 @@
-#include "ImgTifFile.h"
+﻿#include "ImgTifFile.h"
 #include <math.h>
 
 extern "C" {

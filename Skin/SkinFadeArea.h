@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef Skin_SkinFadeArea_h
 #define Skin_SkinFadeArea_h

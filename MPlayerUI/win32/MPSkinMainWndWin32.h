@@ -1,4 +1,4 @@
-// MPSkinMainWnd.h: interface for the CMPSkinMainWnd class.
+﻿// MPSkinMainWnd.h: interface for the CMPSkinMainWnd class.
 #pragma once
 
 #include "MPSkinWnd.h"

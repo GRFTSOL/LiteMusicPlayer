@@ -1,4 +1,4 @@
-/********************************************************************
+﻿/********************************************************************
     Created  :    2002/02/21    2:11
     FileName :    DownloadMgr.cpp
     Author   :    xhy
@@ -33,7 +33,7 @@ int CDownloadMgr::init() {
     g_nPortDownloadServer = g_profile.getInt("PortDownloadServer", 80);
     g_nPortSearchServer = g_profile.getInt("PortSearchServer", 80);
 
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
     if (g_profile.getInt("ProxyType", 0xFF) == 0xFF) {
         // 第一次运行，自动加载代理设置
         bool bUseProxy;
@@ -258,7 +258,7 @@ bool CDownloadMgr::isTaskExist(cstr_t szURL) {
 }
 
 void CDownloadMgr::createDefaultLyricsDir(string &strDefSavePath) {
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
     // Retrieve the root Dir.
     strDefSavePath = getAppResourceDir();
     strDefSavePath.resize(3);

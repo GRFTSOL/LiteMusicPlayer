@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerUI_MPSkinMediaNumInfoCtrl_h
 #define MPlayerUI_MPSkinMediaNumInfoCtrl_h

@@ -1,4 +1,4 @@
-/* $Header: /cvsroot/osrs/libtiff/libtiff/tif_compress.c,v 1.4 1999/12/21 17:03:03 mwelles Exp $ */
+﻿/* $Header: /cvsroot/osrs/libtiff/libtiff/tif_compress.c,v 1.4 1999/12/21 17:03:03 mwelles Exp $ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler

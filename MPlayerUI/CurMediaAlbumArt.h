@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../MediaTags/MediaTags.h"
 #include "../ImageLib/RawImageData.h"

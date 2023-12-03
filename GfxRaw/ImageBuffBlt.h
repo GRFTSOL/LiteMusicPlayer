@@ -1,4 +1,4 @@
-#ifndef _IMAGE_BUFF_BLT_
+﻿#ifndef _IMAGE_BUFF_BLT_
 #define _IMAGE_BUFF_BLT_
 
 #pragma once

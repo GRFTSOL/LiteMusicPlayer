@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef Skin_SkinTextButton_h
 #define Skin_SkinTextButton_h

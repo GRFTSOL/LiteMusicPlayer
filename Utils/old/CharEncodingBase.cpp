@@ -1,4 +1,4 @@
-#include "xstr.h"
+﻿#include "xstr.h"
 #include "stringex_t.h"
 #include "CharEncoding.h"
 #include "string.h"

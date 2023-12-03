@@ -1,4 +1,4 @@
-
+﻿
 /* pngunknown.c - test the read side unknown chunk handling
  *
  * Copyright (c) 2021 Cosmin Truta

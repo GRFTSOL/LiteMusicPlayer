@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerEngine_MDWave_h
 #define MPlayerEngine_MDWave_h

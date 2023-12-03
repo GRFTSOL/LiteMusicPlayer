@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef _ML_GFX_RAW_H_
 #define _ML_GFX_RAW_H_

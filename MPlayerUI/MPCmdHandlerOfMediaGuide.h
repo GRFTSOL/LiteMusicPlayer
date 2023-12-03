@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "MPMediaTree.h"
 #include "SkinDroplistCtrl.h"

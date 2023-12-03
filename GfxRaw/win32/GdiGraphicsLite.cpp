@@ -1,4 +1,4 @@
-#include "../GfxLite.h"
+﻿#include "../GfxLite.h"
 #include "GdiGraphicsLite.h"
 #include <wingdi.h>
 

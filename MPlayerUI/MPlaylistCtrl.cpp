@@ -1,4 +1,4 @@
-#include "MPlayerAppBase.h"
+﻿#include "MPlayerAppBase.h"
 #include "MPlaylistCtrl.h"
 #include "PlayListFile.h"
 #include "DlgPlaylist.hpp"

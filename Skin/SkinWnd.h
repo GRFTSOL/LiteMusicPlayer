@@ -1,4 +1,4 @@
-/********************************************************************
+﻿/********************************************************************
     Created  :    2001/07/06
     FileName :    SkinWnd.h
     Author   :    xhy
@@ -271,7 +271,7 @@ public:
 
     CColor getTranslucencyColor(const CColor &clr) const;
 
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
     void invalidateRectOfLayeredWindow(const CRect* lpRect);
     virtual bool invalidateRect(const CRect* lpRect = nullptr, bool bErase = false);
 #endif

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerUI_MLProfile_h
 #define MPlayerUI_MLProfile_h

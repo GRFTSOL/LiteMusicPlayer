@@ -1,4 +1,4 @@
-#include "SkinTypes.h"
+﻿#include "SkinTypes.h"
 #include "SFImage.h"
 #include "SFImgList.h"
 

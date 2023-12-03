@@ -1,4 +1,4 @@
-#include "SkinTypes.h"
+﻿#include "SkinTypes.h"
 #include "EventsDispatcherBase.h"
 #include "EventsDispatcher.h"
 

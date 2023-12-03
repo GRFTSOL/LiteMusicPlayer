@@ -1,4 +1,4 @@
-#include "../base.h"
+﻿#include "../base.h"
 
 
 JavaVM *g_jvm = nullptr;

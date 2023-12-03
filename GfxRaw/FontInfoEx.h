@@ -1,4 +1,4 @@
-#ifndef _GfxRaw_FontInfoEx_h
+﻿#ifndef _GfxRaw_FontInfoEx_h
 #define _GfxRaw_FontInfoEx_h
 
 #pragma once

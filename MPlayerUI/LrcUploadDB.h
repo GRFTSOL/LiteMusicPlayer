@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerUI_LrcUploadDB_h
 #define MPlayerUI_LrcUploadDB_h

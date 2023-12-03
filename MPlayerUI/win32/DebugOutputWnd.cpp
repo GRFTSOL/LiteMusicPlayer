@@ -1,4 +1,4 @@
-#include "DebugOutputWnd.h"
+﻿#include "DebugOutputWnd.h"
 
 
 CDebugOutputWnd::CDebugOutputWnd() {

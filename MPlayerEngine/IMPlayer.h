@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef _IMPLAYER_H_
 #define _IMPLAYER_H_

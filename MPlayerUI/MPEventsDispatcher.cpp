@@ -1,4 +1,4 @@
-
+﻿
 
 #include "MPlayerApp.h"
 #include "MPEventsDispatcher.h"

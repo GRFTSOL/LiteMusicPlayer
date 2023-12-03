@@ -1,4 +1,4 @@
-/* makesRGB.c -- build sRGB-to-linear and linear-to-sRGB conversion tables
+﻿/* makesRGB.c -- build sRGB-to-linear and linear-to-sRGB conversion tables
  *
  * COPYRIGHT: Written by John Cunningham Bowler, 2013.
  * To the extent possible under law, the author has waived all copyright and

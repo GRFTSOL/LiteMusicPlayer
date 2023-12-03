@@ -1,4 +1,4 @@
-/********************************************************************
+﻿/********************************************************************
     Created  :    2002/01/04    21:41
     FileName :    LyricsLocalSearch.h
     Author   :    xhy
@@ -52,7 +52,7 @@ protected:
     void saveLyricsAssociation();
 
     string toAssociateKeyword(cstr_t szKeyword) {
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
         // Use keyword without driver letter info "C:"
         if (szKeyword[0] && szKeyword[1] == ':') {
             return toLower(szKeyword + 2);

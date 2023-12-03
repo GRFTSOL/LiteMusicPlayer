@@ -1,4 +1,4 @@
-//
+﻿//
 //  OperationLog.hpp
 //  Mp3Player
 //

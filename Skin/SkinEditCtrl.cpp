@@ -1,4 +1,4 @@
-#include "SkinTypes.h"
+﻿#include "SkinTypes.h"
 #include "Skin.h"
 #include "SkinMenu.h"
 #include "SkinEditCtrl.h"
@@ -929,7 +929,7 @@ void CSkinEditCtrl::setColor(int nColorName, const CColor & clr) {
 }
 
 uint8_t CSkinEditCtrl::getBgAlpha() {
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
     if (m_translucencyWithSkin) {
         return int(m_pSkin->m_nCurTranslucencyAlpha);
     }

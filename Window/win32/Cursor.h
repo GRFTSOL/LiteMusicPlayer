@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef _WIN32
 #define IDC_ARROW           32512

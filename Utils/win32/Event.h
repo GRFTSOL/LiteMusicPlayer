@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef Utils_win32_Event_h
 #define Utils_win32_Event_h

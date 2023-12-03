@@ -1,4 +1,4 @@
-/* pngcp.c
+﻿/* pngcp.c
  *
  * Copyright (c) 2016,2022 John Cunningham Bowler
  *

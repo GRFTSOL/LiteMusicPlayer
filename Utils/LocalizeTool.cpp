@@ -1,6 +1,6 @@
-#include "SkinTypes.h"
-#include "Utils.h"
+﻿#include "Utils.h"
 #include "LocalizeTool.h"
+#include "App.h"
 
 
 CLanguageTool g_LangTool;
@@ -8,16 +8,7 @@ CLanguageTool g_LangTool;
 #define SZ_LANG_DIR         "lang"
 
 string getLangPackDir() {
-    string strLangDir = getAppResourceDir();
-    strLangDir += SZ_LANG_DIR PATH_SEP_STR;
-
-#if defined (_DEBUG) && defined (_WIN32)
-    if (!isDirExist(strLangDir.c_str())) {
-        strLangDir = getInstallShareDir();
-        strLangDir += "lang\\";
-    }
-#endif
-    return strLangDir;
+    return getAppResourceFile(SZ_LANG_DIR);
 }
 
 

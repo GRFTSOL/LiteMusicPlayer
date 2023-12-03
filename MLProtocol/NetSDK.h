@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef _NET_SDK_H
 #define _NET_SDK_H
@@ -7,11 +7,6 @@
 #include "sockadapt.h"
 
 #pragma warning(disable:4786)
-
-#include <list>
-
-
-using namespace std;
 
 
 #define NETLIB_API

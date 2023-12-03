@@ -1,4 +1,4 @@
-
+﻿
 /* pngwtran.c - transforms the data in a row for PNG writers
  *
  * Copyright (c) 2018 Cosmin Truta

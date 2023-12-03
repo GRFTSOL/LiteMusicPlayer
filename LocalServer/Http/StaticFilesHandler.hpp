@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef Http_StaticFilesHandler_hpp
 #define Http_StaticFilesHandler_hpp

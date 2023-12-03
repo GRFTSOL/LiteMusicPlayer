@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 ﻿#ifndef _SAFE_STRING_H_
 #define _SAFE_STRING_H_

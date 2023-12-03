@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef Skin_SkinCaption_h
 #define Skin_SkinCaption_h

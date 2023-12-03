@@ -1,4 +1,4 @@
-//
+﻿//
 //  InitConnectionHandler.cpp
 //  Mp3Player
 //

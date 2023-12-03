@@ -1,4 +1,4 @@
-#include "MPlayerApp.h"
+﻿#include "MPlayerApp.h"
 #include "PreferPageTheme.h"
 #include "LyricShowAgentObj.h"
 #include "ThemesFile.h"

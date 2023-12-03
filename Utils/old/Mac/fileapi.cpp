@@ -1,4 +1,4 @@
-#include "safestr.h"
+﻿#include "safestr.h"
 #include "fileapi.h"
 #include "stringex_t.h"
 #include "CharEncoding.h"

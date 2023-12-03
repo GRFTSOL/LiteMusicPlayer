@@ -1,4 +1,4 @@
-/* pngfix.c
+﻿/* pngfix.c
  *
  * Copyright (c) 2014-2017 John Cunningham Bowler
  *

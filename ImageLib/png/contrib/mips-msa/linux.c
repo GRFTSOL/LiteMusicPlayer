@@ -1,4 +1,4 @@
-
+﻿
 /* contrib/mips-msa/linux.c
  *
  * Copyright (c) 2020 Cosmin Truta

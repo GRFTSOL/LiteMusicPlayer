@@ -1,4 +1,4 @@
-#include "LyricsSearch.h"
+﻿#include "LyricsSearch.h"
 #include "CurrentLyrics.h"
 #include "HelperFun.h"
 #include "LyricsKeywordFilter.h"

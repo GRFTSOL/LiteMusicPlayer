@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef _WIN_TYPE_H
 #define _WIN_TYPE_H

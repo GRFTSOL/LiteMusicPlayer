@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "ID3/ID3v2.h"
 #include "MediaTagTypes.hpp"

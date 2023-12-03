@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 class CMPlaylistCtrl : public CSkinListCtrl, public IEventHandler, public IEditNotification {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinListCtrl)

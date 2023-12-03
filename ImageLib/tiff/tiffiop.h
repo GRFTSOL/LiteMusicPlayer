@@ -1,4 +1,4 @@
-/* $Header: /cvsroot/osrs/libtiff/libtiff/tiffiop.h,v 1.3 2000/01/28 20:56:59 warmerda Exp $ */
+﻿/* $Header: /cvsroot/osrs/libtiff/libtiff/tiffiop.h,v 1.3 2000/01/28 20:56:59 warmerda Exp $ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler

@@ -1,4 +1,4 @@
-//
+﻿//
 //  XiphComment.cpp
 //  Taglib
 //

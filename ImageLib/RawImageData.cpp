@@ -1,4 +1,4 @@
-#include "ILIO.h"
+﻿#include "ILIO.h"
 #include "../GfxRaw/GfxRaw.h"
 
 #include "../third-parties/Agg/include/agg_scanline_p.h"

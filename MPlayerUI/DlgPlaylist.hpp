@@ -1,4 +1,4 @@
-//
+﻿//
 //  DlgPlaylist.hpp
 //
 

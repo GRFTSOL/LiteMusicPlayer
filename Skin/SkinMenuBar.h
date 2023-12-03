@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #if !defined(_SKIN_MENU_BAR_H_)
 #define _SKIN_MENU_BAR_H_

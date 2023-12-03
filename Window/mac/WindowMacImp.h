@@ -1,4 +1,4 @@
-//
+﻿//
 //  WindowMacImp.h
 //  MiniLyricsMac
 //

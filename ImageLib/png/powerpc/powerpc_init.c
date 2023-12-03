@@ -1,4 +1,4 @@
-
+﻿
 /* powerpc_init.c - POWERPC optimised filter functions
  *
  * Copyright (c) 2018 Cosmin Truta

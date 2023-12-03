@@ -1,6 +1,8 @@
-#include "Utils.h"
-#ifdef _WIN32
-#include <wtypes.h>
+﻿#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#define _WIN32_WINNT	0x0500
+#include <windows.h>
+
 #include <oleauto.h>
 #include <crtdbg.h>
 #include <atldef.h>
@@ -14,6 +16,7 @@
 #endif
 #include <time.h>
 #include <cstdarg>
+#include "Utils.h"
 #include "Log.h"
 
 /*
@@ -66,7 +69,7 @@ void DBG_LOG0(cstr_t szData)
 #define MAX_MSG_LEN             (1024 * 10)
 #define MAX_LOG_FILE_LEN        (1024 * 1024)
 
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
 #define SENDDEBUGMESSAGE    19771212
 #define    DEBUGCLASSNAME   "Debug Tracer Class"
 #define    DEBUGWNDNAME     "Debug Tracer"
@@ -74,16 +77,20 @@ void DBG_LOG0(cstr_t szData)
 static HWND _hDebugWnd;
 
 void logTrace(void *lpData, int nSize) {
+    COPYDATASTRUCT data;
+    USES_CONVERSION;
+    LPCSTR	szMsgAssii = T2CA((TCHAR*)lpData);
+
     data.dwData = SENDDEBUGMESSAGE;
     data.lpData = (void *)lpData;
     data.cbData = strlen((cstr_t)lpData) + 1;
 
     if (_hDebugWnd == nullptr) {
-        _hDebugWnd = findWindow(DEBUGCLASSNAME, DEBUGWNDNAME);
+        _hDebugWnd = FindWindow(DEBUGCLASSNAME, DEBUGWNDNAME);
     }
 
     if (_hDebugWnd) {
-        ::sendMessage(_hDebugWnd, WM_COPYDATA, nullptr, (LPARAM)&data);
+        ::SendMessage(_hDebugWnd, WM_COPYDATA, NULL, (LPARAM)&data);
     }
 }
 #else
@@ -198,7 +205,7 @@ void CLog::writeLog( uint8_t byLevel, cstr_t szFile, int nLine, cstr_t szFormat,
 
     auto time = DateTime::localTime();
 
-#if defined(_WIN32_DESKTOP)
+#if defined(_WIN32)
     __try
 #endif
     {
@@ -220,7 +227,7 @@ void CLog::writeLog( uint8_t byLevel, cstr_t szFile, int nLine, cstr_t szFormat,
             szMsg[nBuf] = '\0';
         }
     }
-#if defined(_WIN32_DESKTOP)
+#if defined(_WIN32)
     __except(EXCEPTION_EXECUTE_HANDLER) {
         // 有异常发生！
         strcpy_safe(szBuffer + nLen, CountOf(szBuffer) - nLen, "Exception error in format.");

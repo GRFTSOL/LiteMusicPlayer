@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerUI_SkinRateCtrl_h
 #define MPlayerUI_SkinRateCtrl_h

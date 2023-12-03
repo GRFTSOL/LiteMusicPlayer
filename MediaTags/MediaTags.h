@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "MediaTagTypes.hpp"
 #include "LyricsData.h"

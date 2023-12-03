@@ -1,4 +1,4 @@
-#ifndef HTTP_REQUEST_PARSER_HPP
+﻿#ifndef HTTP_REQUEST_PARSER_HPP
 #define HTTP_REQUEST_PARSER_HPP
 
 #include "Request.hpp"

@@ -1,4 +1,4 @@
-#include "BaseWnd.h"
+﻿#include "BaseWnd.h"
 
 
 void openUrl(Window *pWnd, cstr_t szUrl) {

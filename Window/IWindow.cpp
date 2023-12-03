@@ -1,4 +1,4 @@
-//
+﻿//
 //  IWindow.cpp
 //  Mp3Player
 //

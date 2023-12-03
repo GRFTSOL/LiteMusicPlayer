@@ -1,4 +1,4 @@
-/* contrib/arm-neon/android-ndk.c
+﻿/* contrib/arm-neon/android-ndk.c
  *
  * Copyright (c) 2014 Glenn Randers-Pehrson
  * Written by John Bowler, 2014.

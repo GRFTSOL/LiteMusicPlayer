@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 uint32_t parseVersionStr(cstr_t version);

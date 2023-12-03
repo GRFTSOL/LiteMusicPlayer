@@ -1,4 +1,4 @@
-//
+﻿//
 //  PlayerEventSender.hpp
 //  Mp3Player
 //

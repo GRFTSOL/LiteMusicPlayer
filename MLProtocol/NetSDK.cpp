@@ -1,4 +1,4 @@
-#include "NetSDK.h"
+﻿#include "NetSDK.h"
 
 
 NETLIB_API bool InitNetLib() {

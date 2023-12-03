@@ -1,4 +1,4 @@
-/* $Header: /cvsroot/osrs/libtiff/libtiff/tif_codec.c,v 1.2 1999/12/07 17:11:38 mwelles Exp $ */
+﻿/* $Header: /cvsroot/osrs/libtiff/libtiff/tif_codec.c,v 1.2 1999/12/07 17:11:38 mwelles Exp $ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler

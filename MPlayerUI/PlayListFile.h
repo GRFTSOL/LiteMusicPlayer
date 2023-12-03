@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 bool savePlaylistAsM3u(Playlist *playList, cstr_t szFile);
 

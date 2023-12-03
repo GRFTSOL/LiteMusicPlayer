@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef _ML_WINDOW_H_INC_
 #define _ML_WINDOW_H_INC_

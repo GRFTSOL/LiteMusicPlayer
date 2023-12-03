@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Media.h"
 #include "../Utils/Utils.h"

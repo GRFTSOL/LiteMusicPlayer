@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerUI_MPEventsDispatcher_h
 #define MPlayerUI_MPEventsDispatcher_h

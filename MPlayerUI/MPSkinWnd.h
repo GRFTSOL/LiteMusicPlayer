@@ -1,4 +1,4 @@
-#ifndef MPlayerUI_MPSkinWnd_h
+﻿#ifndef MPlayerUI_MPSkinWnd_h
 #define MPlayerUI_MPSkinWnd_h
 
 #pragma once
@@ -48,7 +48,7 @@ public:
     virtual void postCustomCommandMsg(int nId) override;
     virtual void postShortcutKeyCmd(int nId) override;
 
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
 protected:
     virtual void onDropFiles(HDROP hDrop);
 #endif

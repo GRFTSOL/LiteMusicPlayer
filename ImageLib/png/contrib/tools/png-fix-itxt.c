@@ -1,4 +1,4 @@
-/* png-fix-itxt
+﻿/* png-fix-itxt
  *
  * Copyright 2015 Glenn Randers-Pehrson
  *

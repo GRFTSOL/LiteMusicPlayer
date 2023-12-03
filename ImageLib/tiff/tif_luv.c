@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 1997 Greg Ward Larson
  * Copyright (c) 1997 Silicon Graphics, Inc.
  *

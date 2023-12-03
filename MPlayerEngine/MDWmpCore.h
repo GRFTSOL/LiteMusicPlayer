@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../PluginWMP/wmp.h"
 #include "MDAgent.h"

@@ -1,4 +1,4 @@
-
+﻿
 /* png.c - location for general purpose libpng functions
  *
  * Copyright (c) 2018-2022 Cosmin Truta

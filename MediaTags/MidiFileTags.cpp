@@ -1,4 +1,4 @@
-#include "MidiFileTags.h"
+﻿#include "MidiFileTags.h"
 
 namespace MediaTags {
 

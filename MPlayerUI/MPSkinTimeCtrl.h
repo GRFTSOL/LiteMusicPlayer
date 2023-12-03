@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerUI_MPSkinTimeCtrl_h
 #define MPlayerUI_MPSkinTimeCtrl_h

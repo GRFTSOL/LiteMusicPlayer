@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef _CColor_INC_
 #define _CColor_INC_

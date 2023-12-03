@@ -1,4 +1,4 @@
-#ifndef _RAW_GLYPH_BUILDER_H_
+﻿#ifndef _RAW_GLYPH_BUILDER_H_
 #define _RAW_GLYPH_BUILDER_H_
 
 #pragma once

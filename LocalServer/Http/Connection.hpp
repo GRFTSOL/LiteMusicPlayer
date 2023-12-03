@@ -1,4 +1,4 @@
-#ifndef HTTP_CONNECTION_HPP
+﻿#ifndef HTTP_CONNECTION_HPP
 #define HTTP_CONNECTION_HPP
 
 #include <array>

@@ -1,4 +1,4 @@
-/* $Id: tif_fax3.h,v 1.4 2000/12/01 15:46:46 warmerda Exp $ */
+﻿/* $Id: tif_fax3.h,v 1.4 2000/12/01 15:46:46 warmerda Exp $ */
 
 /*
  * Copyright (c) 1990-1997 Sam Leffler

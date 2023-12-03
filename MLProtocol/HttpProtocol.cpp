@@ -1,4 +1,4 @@
-#include "HttpProtocol.h"
+﻿#include "HttpProtocol.h"
 
 
 #define SZ_RETURNA          "\r\n"

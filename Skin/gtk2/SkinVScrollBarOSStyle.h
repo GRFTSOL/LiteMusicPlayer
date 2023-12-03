@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef Skin_gtk2_SkinVScrollBarOSStyle_h
 #define Skin_gtk2_SkinVScrollBarOSStyle_h

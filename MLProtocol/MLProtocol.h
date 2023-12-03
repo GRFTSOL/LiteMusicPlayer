@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "ClientCom.h"
 #include "HttpProtocol.h"

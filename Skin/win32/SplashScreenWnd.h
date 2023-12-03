@@ -1,4 +1,4 @@
-#if !defined(_SPLASHSCREENWND_H_)
+﻿#if !defined(_SPLASHSCREENWND_H_)
 #define _SPLASHSCREENWND_H_
 
 #pragma once

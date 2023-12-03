@@ -1,4 +1,4 @@
-/* $Header: /cvsroot/osrs/libtiff/libtiff/tif_dir.h,v 1.3 2001/03/02 04:59:52 warmerda Exp $ */
+﻿/* $Header: /cvsroot/osrs/libtiff/libtiff/tif_dir.h,v 1.3 2001/03/02 04:59:52 warmerda Exp $ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler

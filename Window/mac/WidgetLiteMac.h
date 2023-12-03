@@ -1,4 +1,4 @@
-//
+﻿//
 //  WidgetLiteMac.h
 //  WidgetLiteMac
 //

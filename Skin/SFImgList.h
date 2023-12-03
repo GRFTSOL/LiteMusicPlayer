@@ -1,4 +1,4 @@
-#if !defined(_RAW_IMAGE_LIST_H_)
+﻿#if !defined(_RAW_IMAGE_LIST_H_)
 #define _RAW_IMAGE_LIST_H_
 
 #pragma once

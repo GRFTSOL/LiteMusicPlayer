@@ -1,4 +1,4 @@
-#ifndef GfxRaw_RawImage_h
+﻿#ifndef GfxRaw_RawImage_h
 #define GfxRaw_RawImage_h
 
 #pragma once

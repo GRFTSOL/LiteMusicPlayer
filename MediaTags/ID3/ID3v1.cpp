@@ -1,4 +1,4 @@
-#include "ID3v1.h"
+﻿#include "ID3v1.h"
 
 
 const char *ID3_v1_genre_description[] = {

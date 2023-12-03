@@ -1,4 +1,4 @@
-#include "Event.h"
+﻿#include "Event.h"
 
 
 Event::Event(bool bManualSet, bool bInitialStat) {

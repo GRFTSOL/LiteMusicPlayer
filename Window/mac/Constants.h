@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #define SB_LINEUP           0
 #define SB_LINELEFT         0

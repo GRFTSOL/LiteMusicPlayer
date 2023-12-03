@@ -1,4 +1,4 @@
-#include "MPluginManager.h"
+﻿#include "MPluginManager.h"
 #include "../Skin/SkinTypes.h"
 
 

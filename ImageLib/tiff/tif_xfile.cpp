@@ -1,4 +1,4 @@
-/*
+﻿/*
  * TIFF C Library by Troels K.
  * TIFF file IO, using straight C Runtime Library file functions.
  */

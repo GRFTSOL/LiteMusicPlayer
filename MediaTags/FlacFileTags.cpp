@@ -1,4 +1,4 @@
-//
+﻿//
 //  FlacFileTags.cpp
 //  Taglib
 //

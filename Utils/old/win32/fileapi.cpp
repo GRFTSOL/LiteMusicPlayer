@@ -1,4 +1,4 @@
-#include "base.h"
+﻿#include "base.h"
 #include "safestr.h"
 #include "base.h"
 #include "fileapi.h"

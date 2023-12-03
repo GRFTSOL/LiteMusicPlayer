@@ -1,4 +1,4 @@
-//
+﻿//
 //  MediaTagTypes.hpp
 //  Taglib
 //

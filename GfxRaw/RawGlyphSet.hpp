@@ -1,4 +1,4 @@
-//
+﻿//
 //  RawGlyphSet.hpp
 //  Mp3Player
 //

@@ -1,4 +1,4 @@
-#include "MPlayerApp.h"
+﻿#include "MPlayerApp.h"
 #include "DownloadMgr.h"
 #include "DlgSearchLyrics.h"
 #include "DlgAbout.h"

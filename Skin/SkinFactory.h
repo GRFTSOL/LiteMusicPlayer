@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef Skin_SkinFactory_h
 #define Skin_SkinFactory_h

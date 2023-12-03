@@ -1,4 +1,4 @@
-/*
+﻿/*
  * madplay - MPEG audio decoder and player
  * Copyright (C) 2000-2004 Robert Leslie
  *

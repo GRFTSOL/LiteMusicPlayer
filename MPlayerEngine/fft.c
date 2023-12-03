@@ -1,4 +1,4 @@
-/* fft.c: Iterative implementation of a FFT
+﻿/* fft.c: Iterative implementation of a FFT
  * Copyright (C) 1999 Richard Boulton <richard@tartarus.org>
  * Convolution stuff by Ralph Loader <suckfish@ihug.co.nz>
  *

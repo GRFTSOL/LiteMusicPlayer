@@ -1,4 +1,4 @@
-//
+﻿//
 //  IMediaFileTags.hpp
 //  Taglib
 //

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef _SKIN_IMAGE_INC_
 #define _SKIN_IMAGE_INC_

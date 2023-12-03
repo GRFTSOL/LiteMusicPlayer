@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef Window_mac_Menu_h
 #define Window_mac_Menu_h

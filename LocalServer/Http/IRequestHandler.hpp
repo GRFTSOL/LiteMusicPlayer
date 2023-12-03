@@ -1,4 +1,4 @@
-//
+﻿//
 //  IRequestHandler.hpp
 //  Mp3Player
 //

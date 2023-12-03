@@ -1,4 +1,4 @@
-/********************************************************************
+﻿/********************************************************************
     Created  :    2002/01/04    21:30
     FileName :    CProfile.h
     Author   :    xhy
@@ -10,6 +10,9 @@
 #define Utils_Profile_h
 
 #pragma once
+
+#include "UtilsTypes.h"
+
 
 bool writePrivateProfileInt(
     cstr_t lpAppName,  // section name

@@ -1,4 +1,4 @@
-#include "ID3v2.h"
+﻿#include "ID3v2.h"
 #include <bitset>
 #include "ID3v2FrameParser.h"
 #include "ID3v2Frame.h"

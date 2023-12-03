@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerEngine_MILocalFile_h
 #define MPlayerEngine_MILocalFile_h

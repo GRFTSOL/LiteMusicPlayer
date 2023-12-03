@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerUI_LyricShowTwoRowObj_h
 #define MPlayerUI_LyricShowTwoRowObj_h

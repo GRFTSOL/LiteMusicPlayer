@@ -1,4 +1,4 @@
-#include "BaseWnd.h"
+﻿#include "BaseWnd.h"
 #include "DlgChooseColor.h"
 
 

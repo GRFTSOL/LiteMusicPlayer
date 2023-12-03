@@ -1,4 +1,4 @@
-//
+﻿//
 //  SkinJsAPI.cpp
 //  Mp3Player
 //

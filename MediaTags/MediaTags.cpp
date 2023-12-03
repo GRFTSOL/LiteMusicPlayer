@@ -1,4 +1,4 @@
-#include "MediaTags.h"
+﻿#include "MediaTags.h"
 
 #include "ID3/ID3v1.h"
 #include "ID3/ID3v2.h"

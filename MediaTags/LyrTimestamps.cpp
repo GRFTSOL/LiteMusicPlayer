@@ -1,4 +1,4 @@
-#include "LyrTimestamps.h"
+﻿#include "LyrTimestamps.h"
 
 
 const char *getBase64Set();

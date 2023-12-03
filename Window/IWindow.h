@@ -1,4 +1,4 @@
-//
+﻿//
 //  IWindow.h
 //  Mp3Player
 //

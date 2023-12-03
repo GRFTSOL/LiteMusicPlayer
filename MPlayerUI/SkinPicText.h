@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerUI_SkinPicText_h
 #define MPlayerUI_SkinPicText_h

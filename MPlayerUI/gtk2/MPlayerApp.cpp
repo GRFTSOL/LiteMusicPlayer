@@ -60,7 +60,7 @@ bool CMPlayerApp::init(int argc, char *argv[]) {
         return false;
     }
 
-#if (defined _WIN32_DESKTOP && defined _DEBUG_OUTPUT)
+#if (defined _WIN32 && defined _DEBUG_OUTPUT)
     DBG_LOG1("Working Folder: %s", getAppResourceDir());
     DBG_LOG1("App Data Folder: %s", getAppDataDir());
 #endif

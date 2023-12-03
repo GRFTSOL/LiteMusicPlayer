@@ -1,4 +1,4 @@
-#include "MPlayerApp.h"
+﻿#include "MPlayerApp.h"
 #include "../third-parties/sqlite/Sqlite3.hpp"
 #include "OnlineSearch.h"
 #include "DownloadMgr.h"

@@ -1,4 +1,4 @@
-#ifndef Utils_old_linux_Semaphore_h
+﻿#ifndef Utils_old_linux_Semaphore_h
 #define Utils_old_linux_Semaphore_h
 
 #pragma once

@@ -1,4 +1,4 @@
-/* $Header: /cvsroot/osrs/libtiff/libtiff/tif_fax3.c,v 1.15 2001/09/09 16:10:37 warmerda Exp $ */
+﻿/* $Header: /cvsroot/osrs/libtiff/libtiff/tif_fax3.c,v 1.15 2001/09/09 16:10:37 warmerda Exp $ */
 
 /*
  * Copyright (c) 1990-1997 Sam Leffler

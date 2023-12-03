@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 bool deleteFile(cstr_t lpFileName);
 bool removeDirectory(cstr_t lpPathName);

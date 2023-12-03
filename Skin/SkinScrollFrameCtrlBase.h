@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 class CSkinScrollFrameCtrlBase : public CSkinContainer, public IScrollNotify {
 public:

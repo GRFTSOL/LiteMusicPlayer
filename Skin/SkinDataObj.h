@@ -1,4 +1,4 @@
-#ifndef _SKINDATAOBJ_H_
+﻿#ifndef _SKINDATAOBJ_H_
 #define _SKINDATAOBJ_H_
 
 #pragma once

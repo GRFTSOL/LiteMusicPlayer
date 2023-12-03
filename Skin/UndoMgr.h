@@ -1,4 +1,4 @@
-#ifndef _UNDOMGR_H__
+﻿#ifndef _UNDOMGR_H__
 #define _UNDOMGR_H__
 
 #pragma once

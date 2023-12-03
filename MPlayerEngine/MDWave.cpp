@@ -1,4 +1,4 @@
-#include "MDWave.h"
+﻿#include "MDWave.h"
 
 
 #define    WAVE_FORMAT_UNKNOWN        (0x0000)

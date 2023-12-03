@@ -1,4 +1,4 @@
-#if !defined(_RAW_PEN_H_)
+﻿#if !defined(_RAW_PEN_H_)
 #define _RAW_PEN_H_
 
 #pragma once

@@ -1,4 +1,4 @@
-#include "ShellNotifyIcon.h"
+﻿#include "ShellNotifyIcon.h"
 
 
 CShellNotifyIcon::CShellNotifyIcon() {

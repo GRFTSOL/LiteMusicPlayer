@@ -1,4 +1,4 @@
-//
+﻿//
 //  DlgSaveEmbeddedLyrics.cpp
 //  Mp3Player
 //

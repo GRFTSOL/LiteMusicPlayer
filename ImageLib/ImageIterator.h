@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef ImageLib_ImageIterator_h
 #define ImageLib_ImageIterator_h

@@ -1,4 +1,4 @@
-#ifndef MPlayerUI_ThemesFile_h
+﻿#ifndef MPlayerUI_ThemesFile_h
 #define MPlayerUI_ThemesFile_h
 
 #pragma once

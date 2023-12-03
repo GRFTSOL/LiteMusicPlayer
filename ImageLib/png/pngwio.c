@@ -1,4 +1,4 @@
-
+﻿
 /* pngwio.c - functions for data output
  *
  * Copyright (c) 2018 Cosmin Truta

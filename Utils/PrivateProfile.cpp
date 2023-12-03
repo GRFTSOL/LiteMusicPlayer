@@ -1,5 +1,7 @@
-#include "Utils.h"
+﻿#include "Utils.h"
 
+
+#ifndef _WIN32
 
 uint32_t GetPrivateProfileString(cstr_t lpAppName, cstr_t lpKeyName, cstr_t lpDefault, char * lpReturnedString, uint32_t nSize, cstr_t lpFileName) {
     char szBuff[1024];
@@ -250,3 +252,5 @@ bool WritePrivateProfileString(cstr_t appName, cstr_t keyName, cstr_t value, cst
 
     return writeFile(fileName, buff.c_str(), (int)buff.size());
 }
+
+#endif // #ifndef _WIN32

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerUI_MPMediaLibCmdHandler_h
 #define MPlayerUI_MPMediaLibCmdHandler_h

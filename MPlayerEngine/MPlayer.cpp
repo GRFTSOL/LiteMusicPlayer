@@ -1,4 +1,4 @@
-#include "MPlayer.h"
+﻿#include "MPlayer.h"
 #include "MILocalFile.h"
 #include "../LyricsLib/HelperFun.h"
 // #include "MDWave.h"

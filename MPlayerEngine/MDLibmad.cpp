@@ -1,4 +1,4 @@
-#include "MDLibmad.h"
+﻿#include "MDLibmad.h"
 #include "audio.h"
 #include "../MediaTags/MediaTags.h"
 

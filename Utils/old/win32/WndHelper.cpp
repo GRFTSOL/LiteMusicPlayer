@@ -1,4 +1,4 @@
-#include "WndHelper.h"
+﻿#include "WndHelper.h"
 
 
 CWndHelper::CWndHelper() {

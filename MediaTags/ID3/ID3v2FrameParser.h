@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MediaTags_ID3_ID3v2FrameParser_h
 #define MediaTags_ID3_ID3v2FrameParser_h

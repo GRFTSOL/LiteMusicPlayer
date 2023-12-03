@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerUI_mac_MPHotkey_h
 #define MPlayerUI_mac_MPHotkey_h

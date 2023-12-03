@@ -1,4 +1,4 @@
-#include "../stdafx.h"
+﻿#include "../stdafx.h"
 #include "../stringex_t.h"
 #include "../CharEncoding.h"
 #include "../misc.h"

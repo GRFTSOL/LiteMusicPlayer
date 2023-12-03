@@ -1,4 +1,4 @@
-
+﻿
 /* pngwutil.c - utilities to write a PNG file
  *
  * Copyright (c) 2018-2022 Cosmin Truta

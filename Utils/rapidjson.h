@@ -1,4 +1,4 @@
-//
+﻿//
 //  rapidjson.h
 //  Mp3Player
 //

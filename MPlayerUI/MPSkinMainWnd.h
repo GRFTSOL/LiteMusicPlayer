@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerUI_MPSkinMainWnd_h
 #define MPlayerUI_MPSkinMainWnd_h

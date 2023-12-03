@@ -1,4 +1,4 @@
-//
+﻿//
 //  JsSkinDocument.cpp
 //  Mp3Player
 //

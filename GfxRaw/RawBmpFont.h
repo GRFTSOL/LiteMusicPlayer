@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #if !defined(_RAW_BMP_FONT_H_)
 #define _RAW_BMP_FONT_H_

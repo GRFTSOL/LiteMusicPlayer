@@ -1,4 +1,4 @@
-//==========================================
+﻿//==========================================
 // Matt Pietrek
 // Microsoft Systems Journal, May 1997
 // FILE: MSJEXHND.CPP

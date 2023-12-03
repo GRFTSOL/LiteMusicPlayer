@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef Skin_SkinNStatusButton_h
 #define Skin_SkinNStatusButton_h

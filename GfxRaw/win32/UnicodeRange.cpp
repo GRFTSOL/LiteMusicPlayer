@@ -1,4 +1,4 @@
-#include "UnicodeRange.h"
+﻿#include "UnicodeRange.h"
 
 
 // This table depends on unicode range definitions.

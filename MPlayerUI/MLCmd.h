@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #define MP_SKIN_IDS     \
 DEFINE_CMD_ID_TIP(ID_TOPMOST,           _TLM("Toggle always on top"))               \

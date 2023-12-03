@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerUI_MPVisAdapter_h
 #define MPlayerUI_MPVisAdapter_h

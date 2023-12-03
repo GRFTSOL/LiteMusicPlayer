@@ -1,4 +1,4 @@
-#ifndef ImageLib_RawImageData_h
+﻿#ifndef ImageLib_RawImageData_h
 #define ImageLib_RawImageData_h
 
 #pragma once

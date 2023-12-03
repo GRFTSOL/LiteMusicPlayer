@@ -1,4 +1,4 @@
-//
+﻿//
 //  SkinMenuItemsContainer.cpp
 //  Mp3Player
 //

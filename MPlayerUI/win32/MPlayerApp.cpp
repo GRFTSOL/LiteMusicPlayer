@@ -1,6 +1,6 @@
 ﻿
 
-#include "MPlayerAppBase.h"
+#include "../MPlayerApp.h"
 #include "DownloadMgr.h"
 #include "VersionUpdate.h"
 #include "OnlineSearch.h"
@@ -8,9 +8,7 @@
 #include "MPFloatingLyrWnd.h"
 #include "LyricShowObj.h"
 #include "../../GfxLite/win32/GdiplusGraphicsLite.h"
-
 #include "CrashRptDlg.h"
-
 #include "MPMsg.h"
 
 // #define _MEM_LEAK_CHECK
@@ -223,7 +221,7 @@ void CMPlayerApp::quit() {
 
     CMPlayerAppBase::quit();
 
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
     CGdiplusGraphicsLite::Shutdown();
 
     OleUninitialize();

@@ -1,4 +1,4 @@
-#include <bitset>
+﻿#include <bitset>
 #include "../../Utils/Utils.h"
 #include "ID3v2Frame.h"
 #include "ID3Helper.h"

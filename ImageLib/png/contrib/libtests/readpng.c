@@ -1,4 +1,4 @@
-
+﻿
 /* readpng.c
  *
  * Copyright (c) 2013 John Cunningham Bowler

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 class CSkinAnimationUIObj : public CUIObject {
     UIOBJECT_CLASS_NAME_DECLARE(CUIObject)

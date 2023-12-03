@@ -1,4 +1,4 @@
-#ifndef SKIN_EDITOR
+﻿#ifndef SKIN_EDITOR
 #include "MPlayerAppBase.h"
 #endif
 #include "MPSkinVis.h"

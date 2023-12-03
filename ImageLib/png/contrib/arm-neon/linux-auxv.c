@@ -1,4 +1,4 @@
-/* contrib/arm-neon/linux-auxv.c
+﻿/* contrib/arm-neon/linux-auxv.c
  *
  * Copyright (c) 2014 Glenn Randers-Pehrson
  * Written by Mans Rullgard, 2011.

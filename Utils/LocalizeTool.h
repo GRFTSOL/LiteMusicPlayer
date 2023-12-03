@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 bool getUserDefaultLang(string &strLang, string &strLangFull);
 

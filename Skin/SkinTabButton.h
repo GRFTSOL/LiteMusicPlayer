@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 class CSkinTabButton : public CSkinToolbar {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinToolbar)

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef _DESKTOP_INC_
 #define _DESKTOP_INC_

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../third-parties/sqlite/Sqlite3.hpp"
 

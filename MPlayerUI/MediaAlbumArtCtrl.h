@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerUI_MediaAlbumArtCtrl_h
 #define MPlayerUI_MediaAlbumArtCtrl_h

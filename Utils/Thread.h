@@ -1,10 +1,12 @@
-#pragma once
+﻿#pragma once
 
 #ifndef Utils_Thread_h
 #define Utils_Thread_h
 
-
+#ifdef _WIN32
+#else
 #include <pthread.h>
+#endif
 
 
 typedef void (*FUNThread)(void * lpParam);
@@ -22,12 +24,18 @@ public:
     bool isRunning();
 
 protected:
+    FUNThread                   m_funThead = nullptr;
+    void                        *m_lpData = nullptr;
+
+#ifdef _WIN32
+    static DWORD WINAPI threadFunction(void *lpParam);
+
+    HANDLE                      m_hThread = NULL;
+#else
     static void *threadFunction(void *lpParam);
 
-protected:
-    FUNThread                   m_funThead;
-    void                        *m_lpData;
-    pthread_t                   m_threadID;
+    pthread_t                   m_threadID = 0;
+#endif
 
 };
 

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef _HEADER_WIDGETIF_H_
 #define _HEADER_WIDGETIF_H_

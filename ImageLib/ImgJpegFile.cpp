@@ -1,4 +1,4 @@
-#include "RawImageData.h"
+﻿#include "RawImageData.h"
 #include "ILIO.h"
 #include "ImgJpegFile.h"
 #include <setjmp.h>

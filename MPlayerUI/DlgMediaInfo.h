@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 void showMediaInfoDialog(CSkinWnd *pParent, const MediaPtr &media);

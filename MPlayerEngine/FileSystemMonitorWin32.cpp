@@ -1,4 +1,4 @@
-#include "filesystemmonitor.h"
+﻿#include "filesystemmonitor.h"
 #include "filesystemmonitorwin32.h"
 #include <process.h>
 #include <winioctl.h>

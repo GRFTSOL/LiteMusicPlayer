@@ -1,4 +1,4 @@
-#include "MPlayerApp.h"
+﻿#include "MPlayerApp.h"
 #include "MLCmd.h"
 #include "LyricShowTextEditObj.h"
 #include "LyricShowObj.h"

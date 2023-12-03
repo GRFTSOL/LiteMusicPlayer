@@ -1,4 +1,4 @@
-//
+﻿//
 //  JsResizableLinearContainer.cpp
 //  Mp3Player
 //

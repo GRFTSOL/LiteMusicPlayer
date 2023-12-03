@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "win32/VolumeOutMaster.h"
 #include "PlayerSmoothTimer.h"

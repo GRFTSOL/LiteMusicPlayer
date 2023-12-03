@@ -1,4 +1,4 @@
-#include "StaticFilesHandler.hpp"
+﻿#include "StaticFilesHandler.hpp"
 #include "Connection.hpp"
 #include "Utils/Utils.h"
 #include "Utils/url.h"

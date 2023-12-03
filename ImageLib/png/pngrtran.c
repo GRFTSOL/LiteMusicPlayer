@@ -1,4 +1,4 @@
-
+﻿
 /* pngrtran.c - transforms the data in a row for PNG readers
  *
  * Copyright (c) 2018-2019 Cosmin Truta

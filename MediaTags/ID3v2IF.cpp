@@ -1,4 +1,4 @@
-#include "ID3v2IF.h"
+﻿#include "ID3v2IF.h"
 #include "ID3/ID3v1.h"
 #include "ID3/ID3v2FrameParser.h"
 #include "MediaTags.h"

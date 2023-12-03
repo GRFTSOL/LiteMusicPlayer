@@ -1,4 +1,4 @@
-//
+﻿//
 //  RapidjsonWriterEx.hpp
 //
 

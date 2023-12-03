@@ -1,4 +1,4 @@
-#include "IMPlayer.h"
+﻿#include "IMPlayer.h"
 #include "MOSoundCard.h"
 
 #define ALSA_PCM_NEW_HW_PARAMS_API

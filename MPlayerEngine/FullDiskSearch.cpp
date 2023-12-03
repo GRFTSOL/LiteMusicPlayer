@@ -1,4 +1,4 @@
-#include "FullDiskSearch.h"
+﻿#include "FullDiskSearch.h"
 #include "base.h"
 #include <process.h>
 #include <winioctl.h>

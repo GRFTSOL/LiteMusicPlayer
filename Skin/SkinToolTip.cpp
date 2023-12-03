@@ -1,4 +1,4 @@
-#include "SkinToolTip.h"
+﻿#include "SkinToolTip.h"
 #include "Skin.h"
 #include "SkinWnd.h"
 

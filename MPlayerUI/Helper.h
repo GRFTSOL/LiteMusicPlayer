@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerUI_Helper_h
 #define MPlayerUI_Helper_h

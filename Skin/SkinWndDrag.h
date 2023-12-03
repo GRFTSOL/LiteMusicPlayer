@@ -1,4 +1,4 @@
-#ifndef Skin_SkinWndDrag_h
+﻿#ifndef Skin_SkinWndDrag_h
 #define Skin_SkinWndDrag_h
 
 #pragma once

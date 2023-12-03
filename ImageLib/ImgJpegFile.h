@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef ImageLib_ImgJpegFile_h
 #define ImageLib_ImgJpegFile_h

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef GfxRaw_win32_GdiGraphicsLite_h
 #define GfxRaw_win32_GdiGraphicsLite_h

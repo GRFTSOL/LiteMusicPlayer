@@ -1,4 +1,4 @@
-#ifndef _SKINFILTER_CTRL_H_
+﻿#ifndef _SKINFILTER_CTRL_H_
 #define _SKINFILTER_CTRL_H_
 
 #pragma once

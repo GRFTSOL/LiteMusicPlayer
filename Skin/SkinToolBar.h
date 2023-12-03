@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef Skin_SkinToolBar_h
 #define Skin_SkinToolBar_h

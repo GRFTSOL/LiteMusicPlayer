@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef _ML_COMMON_INC_
 #define _ML_COMMON_INC_

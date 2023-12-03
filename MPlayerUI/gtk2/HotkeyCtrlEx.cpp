@@ -1,4 +1,4 @@
-#include "HotkeyCtrlEx.h"
+﻿#include "HotkeyCtrlEx.h"
 
 
 bool isExtendedKey(uint32_t nVk) {

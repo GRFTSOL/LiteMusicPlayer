@@ -1,4 +1,4 @@
-
+﻿
 /* pngget.c - retrieval of values from info struct
  *
  * Copyright (c) 2018 Cosmin Truta

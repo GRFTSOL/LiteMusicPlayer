@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // -*- C++ -*-
 // $Id: mp3_header.h,v 1.4 2002/11/02 17:48:51 t1mpy Exp $

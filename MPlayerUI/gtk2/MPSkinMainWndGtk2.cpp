@@ -1,4 +1,4 @@
-#include "../MPlayerApp.h"
+﻿#include "../MPlayerApp.h"
 #include "../MPSkinMainWnd.h"
 #include "MPSkinMainWndGtk2.h"
 

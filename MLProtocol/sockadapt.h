@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef _SOCK_ADAPTER_INC_
 #define _SOCK_ADAPTER_INC_

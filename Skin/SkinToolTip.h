@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef _SKIN_TOOL_TOP_INC_
 #define _SKIN_TOOL_TOP_INC_

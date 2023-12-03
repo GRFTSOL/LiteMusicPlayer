@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef Utils_old_linux_Mutex_h
 #define Utils_old_linux_Mutex_h

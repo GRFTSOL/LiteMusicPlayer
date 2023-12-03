@@ -1,4 +1,4 @@
-#ifndef _MLENCRYPT_H_
+﻿#ifndef _MLENCRYPT_H_
 #define _MLENCRYPT_H_
 
 #pragma once

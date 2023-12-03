@@ -1,4 +1,4 @@
-#include "Media.h"
+﻿#include "Media.h"
 
 
 Media::Media() : IMediaInfo() {

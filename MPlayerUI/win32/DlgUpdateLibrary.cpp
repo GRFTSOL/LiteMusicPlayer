@@ -1,4 +1,4 @@
-#include "DlgUpdateLibrary.h"
+﻿#include "DlgUpdateLibrary.h"
 #include "MPlayerAppBase.h"
 #include "Player.h"
 

@@ -1,4 +1,4 @@
-#include "MPlayerApp.h"
+﻿#include "MPlayerApp.h"
 #include "MPSkinMenu.h"
 #include "LyricShowAgentObj.h"
 #include "LyricShowTextEditObj.h"

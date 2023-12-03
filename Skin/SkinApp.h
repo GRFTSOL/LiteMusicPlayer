@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifdef _WIN32
 #include "win32/EventsDispatcher.h"
@@ -6,12 +6,7 @@
 
 #ifdef _MAC_OS
 #include "mac/EventsDispatcher.h"
-
-
 #endif
-
-
-bool initBaseFramework(int argc, const char *argv[], cstr_t logFile, cstr_t profileName, cstr_t defAppName);
 
 
 class CEventsDispatcher;

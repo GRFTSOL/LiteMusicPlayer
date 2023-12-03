@@ -1,4 +1,4 @@
-#include "MPlayerApp.h"
+﻿#include "MPlayerApp.h"
 #include "MPSkinWnd.h"
 #include "MPCommonCmdHandler.h"
 
@@ -418,7 +418,7 @@ void CMPSkinWnd::onPreCreate(bool &bTopmost, bool &bVisible) {
 void CMPSkinWnd::onCreate() {
     CSkinWnd::onCreate();
 
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
     ::sendMessage(m_hWnd, WM_SETICON, ICON_BIG, (WPARAM)LoadIcon(getAppInstance(), MAKEINTRESOURCE(IDI_MPLAYER)));
 
     // 允许拖放歌词文件
@@ -428,7 +428,7 @@ void CMPSkinWnd::onCreate() {
 
 void CMPSkinWnd::onCommand(uint32_t id) {
     switch (id) {
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
     case ID_SET_OPAQUE_100:
     case ID_SET_OPAQUE_90:
     case ID_SET_OPAQUE_80:
@@ -847,7 +847,7 @@ void CMPSkinWnd::addCmdHandler(cstr_t szName) {
     m_listSkinCmdHandler.push_back(pHandler);
 }
 
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
 void CMPSkinWnd::onDropFiles(HDROP hDrop) {
     char szFile[MAX_PATH];
     int n;

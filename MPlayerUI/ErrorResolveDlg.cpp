@@ -1,4 +1,4 @@
-#include "MPlayerApp.h"
+﻿#include "MPlayerApp.h"
 #include "ErrorResolveDlg.h"
 #include "Helper.h"
 #include "PreferenceDlg.h"

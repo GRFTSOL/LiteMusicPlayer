@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef Skin_SkinSeekCtrl_h
 #define Skin_SkinSeekCtrl_h

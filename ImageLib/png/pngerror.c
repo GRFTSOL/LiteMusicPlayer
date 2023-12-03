@@ -1,4 +1,4 @@
-
+﻿
 /* pngerror.c - stub functions for i/o and memory allocation
  *
  * Copyright (c) 2018 Cosmin Truta

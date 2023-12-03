@@ -1,7 +1,7 @@
-#include "MPlayerApp.h"
+﻿#include "MPlayerApp.h"
 #include "crashRptDlg.h"
 
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
 
 #include "../Utils/win32/MailFileTo.h"
 
@@ -45,4 +45,4 @@ void CCrashRptDlg::onOK() {
     mail.sendMail(HWND_DESKTOP, SZ_COMPANY_NAME " support", getStrName(SN_SUPPORT_MAIL), m_strDumpFile.c_str(), strSubjet.c_str());
 }
 
-#endif // #ifdef _WIN32_DESKTOP
+#endif // #ifdef _WIN32

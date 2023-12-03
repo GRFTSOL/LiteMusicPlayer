@@ -1,4 +1,4 @@
-#ifndef Window_mac_ScrollBarHandler_h
+﻿#ifndef Window_mac_ScrollBarHandler_h
 #define Window_mac_ScrollBarHandler_h
 
 #pragma once

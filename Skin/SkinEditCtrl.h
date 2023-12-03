@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "SkinScrollFrameCtrlBase.h"
 #include "UndoMgr.h"

@@ -1,4 +1,4 @@
-#include "MPlayerApp.h"
+﻿#include "MPlayerApp.h"
 #include "PreferPageAdvanced.h"
 #include "DownloadMgr.h"
 #include "../MediaTags/LrcParser.h"
@@ -409,7 +409,7 @@ public:
 };
 
 
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
 class CPfItemWndOpacity : public CPfItemInt {
 public:
     CPfItemWndOpacity() : CPfItemInt(connectToLocalStr(_TLM("UI"), _TLM("Window opaque percent (10 - 100)")).c_str(),
@@ -475,7 +475,7 @@ public:
 
 };
 
-#endif // #ifdef _WIN32_DESKTOP
+#endif // #ifdef _WIN32
 
 class CPfItemLyrLineSpacing : public CPfItemInt {
 public:
@@ -753,7 +753,7 @@ void CPagePfAdvanced::onInitialUpdate() {
     m_pListItems->addColumn(_TLT("Option"), 450);
     m_pListItems->addColumn(_TLT("Value"), 150);
 
-#ifdef _WIN32_DESKTOP
+#ifdef _WIN32
     m_vPreferItems.push_back(new CPfItemWndOpacity());
 #endif
 

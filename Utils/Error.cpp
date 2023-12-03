@@ -1,4 +1,4 @@
-#include "Utils.h"
+﻿#include "Utils.h"
 #include "Error.h"
 #include "IdString.h"
 

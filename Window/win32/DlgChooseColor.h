@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef Window_win32_DlgChooseColor_h
 #define Window_win32_DlgChooseColor_h

@@ -1,4 +1,4 @@
-#include "HelperFun.h"
+﻿#include "HelperFun.h"
 #ifdef WIN32
 #include "mbstring.h"
 #endif

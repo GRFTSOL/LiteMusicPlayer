@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #define SZ_EX_POOL_PF_FLOATING_LYR  "FloatingLyr"
 #define SZ_EX_POOL_PF_DEFAULT_PAGE  "DefaultPage"

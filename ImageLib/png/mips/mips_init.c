@@ -1,4 +1,4 @@
-
+﻿
 /* mips_init.c - MSA optimised filter functions
  *
  * Copyright (c) 2018 Cosmin Truta

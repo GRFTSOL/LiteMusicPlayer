@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef LyricsLib_SncParser_h
 #define LyricsLib_SncParser_h

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "SimpleXML.h"
 #include "XMLWriter.h"

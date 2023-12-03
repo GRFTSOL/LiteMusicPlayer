@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MPlayerUI_gtk2_PlayerSmoothTimer_h
 #define MPlayerUI_gtk2_PlayerSmoothTimer_h

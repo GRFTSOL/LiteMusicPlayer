@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef _ML_CONFIG_H
 #define _ML_CONFIG_H
@@ -34,10 +34,6 @@
 #define _LINUX_GTK2
 #endif
 #endif
-#endif
-
-#ifdef WIN32
-#define _WIN32_DESKTOP
 #endif
 
 #ifdef UTF8

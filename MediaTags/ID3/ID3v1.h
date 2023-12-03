@@ -1,4 +1,4 @@
-#ifndef MediaTags_ID3_ID3v1_h
+﻿#ifndef MediaTags_ID3_ID3v1_h
 #define MediaTags_ID3_ID3v1_h
 
 #pragma once

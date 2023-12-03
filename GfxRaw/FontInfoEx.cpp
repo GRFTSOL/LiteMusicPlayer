@@ -1,4 +1,4 @@
-//
+﻿//
 //  FontInfoEx.cpp
 //  Mp3Player
 //
