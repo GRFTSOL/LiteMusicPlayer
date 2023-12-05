@@ -1606,10 +1606,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\MPShared\SkinDroplistCtrl.cpp"
-				>
-			</File>
-			<File
 				RelativePath="SkinEditorFrame.cpp"
 				>
 				<FileConfiguration
@@ -1917,10 +1913,6 @@
 			</File>
 			<File
 				RelativePath="..\MPShared\SkinContainerBar.h"
-				>
-			</File>
-			<File
-				RelativePath="..\MPShared\SkinDroplistCtrl.h"
 				>
 			</File>
 			<File

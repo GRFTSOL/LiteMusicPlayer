@@ -1,5 +1,5 @@
-﻿#include "MPlayerApp.h"
-#include "DlgChooseFont.h"
+﻿#include "../WindowLib.h"
+#include <commdlg.h>
 
 
 // #define FLAG_BOLD        1
@@ -30,7 +30,7 @@ int CDlgChooseFont::doModal(Window *pWndParent, cstr_t szFontFaceName, int nFont
 
     choosefont.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCALABLEONLY | CF_SCREENFONTS | CF_NOVERTFONTS;// | CF_EFFECTS;
     choosefont.lpLogFont = &lgfont;
-    choosefont.hwndOwner = pWndParent->getHandle();
+    choosefont.hwndOwner = pWndParent->getWndHandle();
     choosefont.lStructSize = sizeof(choosefont);
     if (ChooseFont(&choosefont)) {
         m_strFontFaceName = lgfont.lfFaceName;

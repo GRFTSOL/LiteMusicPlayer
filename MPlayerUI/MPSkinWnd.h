@@ -56,7 +56,6 @@ protected:
     void addCmdHandler(cstr_t szName);
 
     void setTopmost(bool bTopmost);
-    Window *getParentOrSelf();
 
     //
     // Special settings for different kind of winodw (Floating lyrics and Normal window).

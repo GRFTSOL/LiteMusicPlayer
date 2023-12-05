@@ -4,9 +4,6 @@
 #define MPlayerUI_MPMediaLibCmdHandler_h
 
 
-#include "SkinDroplistCtrl.h"
-
-
 class CMediaLibTreeProvider {
 public:
     enum FolderType {

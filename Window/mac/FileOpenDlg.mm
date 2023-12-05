@@ -1,5 +1,6 @@
 #import <Cocoa/Cocoa.h>
 #include "WindowTypes.h"
+#include "Window.h"
 #include "FileOpenDlg.h"
 
 

@@ -82,8 +82,6 @@ public:
     CRawGlyphSet *getGlyphSet(const FontInfoEx &font);
     void removeRawGlyphSet(CRawGlyphSet *pRawGlyphSet);
 
-    void enableAntialias(bool bEnable);
-
 protected:
     typedef list<CRawGlyphSet*>    LIST_SET;
 

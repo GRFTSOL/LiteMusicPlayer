@@ -1,4 +1,5 @@
 #import <Cocoa/Cocoa.h>
+#import <AppKit/AppKit.h>
 
 
 @interface FontChooserDelegate : NSObject <NSWindowDelegate>
@@ -7,13 +8,8 @@
 
 @end
 
-#import "../../Window/mac/Window.h"
-#import "../../Window/mac/WindowHandleHolder.h"
-#include "MPlayerApp.h"
-#include "DlgChooseFont.h"
+#import "../WindowLib.h"
 
-
-#import <AppKit/AppKit.h>
 
 CDlgChooseFont::CDlgChooseFont() {
 }

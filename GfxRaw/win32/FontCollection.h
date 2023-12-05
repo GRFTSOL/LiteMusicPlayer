@@ -4,6 +4,7 @@
 #pragma once
 
 #include "UnicodeRange.h"
+#include "../FontInfoEx.h"
 
 
 extern uint8_t g_byFontQuality;
@@ -25,7 +26,7 @@ public:
         destroy();
     }
 
-    void setFont(CFontInfo &font) {
+    void setFont(FontInfoEx &font) {
         if (m_logFontLatin9.lfHeight == font.getSize() &&
             m_logFontLatin9.lfWeight == font.getWeight() &&
             m_logFontLatin9.lfItalic == (uint8_t)font.getItalic() &&
@@ -69,8 +70,8 @@ public:
     int getFontHeight() const { return m_logFontLatin9.lfHeight; }
 
     template<class _Graphics, class _Worker>
-    void resovleText(_Graphics *canvas, cstr_t szText, int nLen, _Worker &fun) {
-        cstr_t szBeg, szEnd;
+    void resovleText(_Graphics *canvas, cwstr_t szText, int nLen, _Worker &fun) {
+        cwstr_t szBeg, szEnd;
         int nClip;
         uint8_t lfCharSetAbove = DEFAULT_CHARSET, lfCharSet = DEFAULT_CHARSET;
         CharEncodingType encoding;

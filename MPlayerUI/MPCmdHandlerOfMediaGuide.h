@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "MPMediaTree.h"
-#include "SkinDroplistCtrl.h"
 
 
 class CMPCmdHandlerOfMediaGuide : public ISkinCmdHandler {

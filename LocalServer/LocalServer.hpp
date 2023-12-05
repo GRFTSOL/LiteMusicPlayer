@@ -8,8 +8,8 @@
 #ifndef LocalServer_hpp
 #define LocalServer_hpp
 
-#include "Utils/Thread.h"
 #include "Utils/Utils.h"
+#include "Utils/Thread.h"
 #include "Http/Server.hpp"
 #include "WebSocket/Server.hpp"
 #include "PlayerEventSender.hpp"

@@ -1,4 +1,4 @@
-﻿#ifndef _HEADER_UTILS_H
+#ifndef _HEADER_UTILS_H
 #define _HEADER_UTILS_H
 
 #pragma once
@@ -19,6 +19,7 @@
 #include "url.h"
 #include "Digest.h"
 #include "RegExTool.h"
+#include "App.h"
 
 #ifdef _MAC_OS
 #include "mac/Event.h"

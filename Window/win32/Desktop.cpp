@@ -1,8 +1,8 @@
-﻿#include "BaseWnd.h"
+﻿#include "../WindowLib.h"
 
 
 void openUrl(Window *pWnd, cstr_t szUrl) {
-    shellExecute(pWnd->getHandle(), "open", szUrl, nullptr, nullptr, SW_SHOWNORMAL);
+    ShellExecute(pWnd->getWndHandle(), "open", szUrl, nullptr, nullptr, SW_SHOWNORMAL);
 }
 
 bool isModifierKeyPressed(int nKey, uint32_t nFlags) {
@@ -18,27 +18,66 @@ bool isModifierKeyPressed(int nKey, uint32_t nFlags) {
     return (GetKeyState(nKey) & 0x8000) == 0x8000;
 }
 
-void getCursorPos(LPPOINT lpPoint) {
-    ::getCursorPos(lpPoint);
+CPoint getCursorPos() {
+	CPoint pt;
+    ::GetCursorPos(&pt);
+
+	return { pt.x, pt.y };
 }
 
-// set new cursor, and return the old cursor.
-bool setCursor(Cursor &Cursor, Cursor *pCursorOld) {
-    HCURSOR hCursorOld;
-    hCursorOld = ::setCursor(Cursor.m_cursor);
+bool getMonitorRestrictRect(const CRect &rcIn, CRect &rcRestrict) {
+   const HWND hDesktop = GetDesktopWindow();
 
-    if (pCursorOld) {
-        pCursorOld->m_cursor = hCursorOld;
-    }
+    RECT desktop;
+    GetWindowRect(hDesktop, &desktop);
+
+    rcRestrict.setLTRB(desktop.left, desktop.top, desktop.right, desktop.bottom);
 
     return true;
 }
 
-Window *findWindow(cstr_t szClassName, cstr_t szWindowName) {
-    HWND hWnd = ::findWindow(szClassName, szWindowName);
-    if (!hWnd) {
-        return nullptr;
+bool copyTextToClipboard(cstr_t text) {
+    if (!OpenClipboard(NULL)) {
+        return false;
     }
 
-    return Window::fromHandle(hWnd);
+    auto len = strlen(text);
+    auto data = GlobalAlloc(GMEM_MOVEABLE, (len + 1) * sizeof(char));
+    if (data == NULL) {
+        CloseClipboard();
+        return false;
+    }
+
+    auto buf = (char *)GlobalLock(data);
+    memcpy(buf, text, len * sizeof(char));
+    buf[len] = '\0';
+    GlobalUnlock(data);
+
+    SetClipboardData(CF_TEXT, data);
+
+    return true;
+}
+
+bool getClipBoardText(string &str) {
+    if (!IsClipboardFormatAvailable(CF_TEXT)) {
+        return false;
+    }
+
+    if (!OpenClipboard(NULL)) {
+        return false;
+    }
+
+    bool succeeded = false;
+    auto data = GetClipboardData(CF_TEXT);
+    if (data != NULL) {
+        auto text = (char *)GlobalLock(data);
+        if (text != NULL) {
+            str.assign(text);
+            GlobalUnlock(data);
+            succeeded = true;
+        }
+    }
+    CloseClipboard();
+
+    return succeeded;
 }

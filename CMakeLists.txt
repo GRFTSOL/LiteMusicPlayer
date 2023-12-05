@@ -19,7 +19,10 @@ elseif (LINUX)
     add_definitions(-D_LINUX)
 endif (APPLE)
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
+add_definitions(-DASIO_STANDALONE)
+add_definitions(-D_WEBSOCKETPP_CPP11_TYPE_TRAITS_)
+
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG -DASIO_STANDALONE")
 
 PROJECT(Mp3Player)
 
@@ -29,22 +32,31 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/third-parties/http-parser
     # ${PROJECT_SOURCE_DIR}/third-parties/libuv/include
     ${PROJECT_SOURCE_DIR}/third-parties/rapidjson
+    ${PROJECT_SOURCE_DIR}/third-parties/zlib
     ${PROJECT_SOURCE_DIR}/third-parties/glog
     ${PROJECT_SOURCE_DIR}/third-parties/googletest
     ${PROJECT_SOURCE_DIR}/third-parties/tiny-AES-c
+    ${PROJECT_SOURCE_DIR}/third-parties/mbedtls/include
+    ${PROJECT_SOURCE_DIR}/third-parties/asio/include
+    ${PROJECT_SOURCE_DIR}/third-parties/websocketpp
     ${PROJECT_SOURCE_DIR}/TinyJS
 )
 
-# set(SRC 
-#     ${PROJECT_SOURCE_DIR}/LyricsLib/LyricsKeywordFilter.cpp
-#     ${PROJECT_SOURCE_DIR}/MediaTags/LrcParser.cpp
-#     ${PROJECT_SOURCE_DIR}/MediaTags/LyricsData.cpp
-#     ${PROJECT_SOURCE_DIR}/MediaTags/LyrTimestamps.cpp
-#     ${PROJECT_SOURCE_DIR}/third-parties/tiny-AES-c/aes.c
-#     ${PROJECT_SOURCE_DIR}/third-parties/zlib/crc32.c
-#     ${PROJECT_SOURCE_DIR}/third-parties/http-parser/http_parser.c
-#     ${PROJECT_SOURCE_DIR}/third-parties/googletest/src/gtest-all.cc
-# )
+set(SRC ${SRC}
+    ${PROJECT_SOURCE_DIR}/third-parties/zlib/adler32.c
+    ${PROJECT_SOURCE_DIR}/third-parties/zlib/compress.c
+    ${PROJECT_SOURCE_DIR}/third-parties/zlib/crc32.c
+    ${PROJECT_SOURCE_DIR}/third-parties/zlib/deflate.c
+    ${PROJECT_SOURCE_DIR}/third-parties/zlib/gzio.c
+    ${PROJECT_SOURCE_DIR}/third-parties/zlib/infback.c
+    ${PROJECT_SOURCE_DIR}/third-parties/zlib/inffast.c
+    ${PROJECT_SOURCE_DIR}/third-parties/zlib/inflate.c
+    ${PROJECT_SOURCE_DIR}/third-parties/zlib/inftrees.c
+    ${PROJECT_SOURCE_DIR}/third-parties/zlib/minigzip.c
+    ${PROJECT_SOURCE_DIR}/third-parties/zlib/trees.c
+    ${PROJECT_SOURCE_DIR}/third-parties/zlib/uncompr.c
+    ${PROJECT_SOURCE_DIR}/third-parties/zlib/zutil.c
+)
 
 if (UT)
     set(SRC
@@ -80,15 +92,18 @@ set(LINK_OPT_FRAME_WORK)
 
 if (APPLE)
     aux_source_directory(${PROJECT_SOURCE_DIR}/Utils/mac SRC)
+    aux_source_directory(${PROJECT_SOURCE_DIR}/Window/mac SRC)
     aux_source_directory(${PROJECT_SOURCE_DIR}/GfxRaw/mac SRC)
     aux_source_directory(${PROJECT_SOURCE_DIR}/MPlayerUI/mac SRC)
     set(LINK_OPT_FRAME_WORK "-framework CoreFoundation" "-framework Cocoa")
 elseif (LINUX)
     aux_source_directory(${PROJECT_SOURCE_DIR}/Utils/linux SRC)
+    aux_source_directory(${PROJECT_SOURCE_DIR}/Window/gtk2 SRC)
     aux_source_directory(${PROJECT_SOURCE_DIR}/GfxRaw/gtk2 SRC)
     aux_source_directory(${PROJECT_SOURCE_DIR}/MPlayerUI/gtk2 SRC)
 else ()
     aux_source_directory(${PROJECT_SOURCE_DIR}/Utils/win32 SRC)
+    aux_source_directory(${PROJECT_SOURCE_DIR}/Window/win32 SRC)
     aux_source_directory(${PROJECT_SOURCE_DIR}/GfxRaw/win32 SRC)
     aux_source_directory(${PROJECT_SOURCE_DIR}/MPlayerUI/win32 SRC)
 endif (APPLE)

@@ -89,6 +89,7 @@ public:
                 m_canvas->setOpacityPainting(nOpacityPainting);
             } else {
                 m_canvas = nullptr;
+                m_nOpacityPainting = 255;
             }
         }
         ~COpacityBlendAutoRecovery() {
@@ -110,7 +111,7 @@ public:
 
     };
 
-    bool create(int cx, int cy, WindowHandleHolder *windowHandle, int nBitCount = 32) override;
+    bool create(int cx, int cy, WindowHandle windowHandle, int nBitCount = 32) override;
 
     int width() const { return m_width; }
     int height() const { return m_height; }

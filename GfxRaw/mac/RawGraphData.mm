@@ -1,17 +1,18 @@
 #import <Foundation/Foundation.h>
 #import <Cocoa/Cocoa.h>
 #import <QuartzCore/QuartzCore.h>
+#import "../../Window/ViewMacImp.h"
 #include "GfxRaw.h"
 #include "RawGraphData.h"
-#include "../../Window/mac/WindowHandleHolder.h"
 
 
-CGContextRef createViewContext(ViewMacImp *view) {
+CGContextRef createViewContext(WindowHandle handle) {
     CGContextRef viewContext = (CGContextRef)[[NSGraphicsContext currentContext] CGContext];
     assert(viewContext);
 
     CGContextSaveGState(viewContext);
 
+    ViewMacImp *view = (ViewMacImp *)handle;
     CGContextTranslateCTM(viewContext, 0, [view frame].size.height);
     CGContextScaleCTM(viewContext, 1.0, -1.0);
 
@@ -20,14 +21,13 @@ CGContextRef createViewContext(ViewMacImp *view) {
 
 CRawGraphData::CRawGraphData() {
     m_context = nullptr;
-    m_windowHandle = nullptr;
 }
 
 CRawGraphData::~CRawGraphData() {
     destroy();
 }
 
-bool CRawGraphData::create(int cx, int cy, WindowHandleHolder *windowHandle, int nBitCount) {
+bool CRawGraphData::create(int cx, int cy, WindowHandle windowHandle, int nBitCount) {
     assert(cx > 0 && cy > 0);
     assert(nBitCount == 32);
     m_windowHandle = windowHandle;
@@ -70,7 +70,7 @@ void CRawGraphData::drawToWindow(int xdest, int ydest, int width, int height, in
         height = m_imageData.height - ysrc;
     }
 
-    CGContextRef viewContext = createViewContext(m_windowHandle->view);
+    CGContextRef viewContext = createViewContext(m_windowHandle);
 
     if (xsrc == 0 && ysrc == 0 && m_imageData.width == width && m_imageData.height == height) {
         CGContextDrawImage(viewContext, rcDest, rawImage);

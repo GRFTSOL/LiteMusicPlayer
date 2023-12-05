@@ -1,5 +1,6 @@
 #import <Cocoa/Cocoa.h>
 #include "WindowTypes.h"
+#include "Window.h"
 #include "FileSaveDlg.h"
 
 
@@ -37,9 +38,11 @@ cstr_t GetFileFilterExtByIndex(cstr_t szFilters, int nIndex) {
     return szReturn;
 }
 
-CFileSaveDlg::CFileSaveDlg(cstr_t szTitle, cstr_t szFile, cstr_t extFilter, int nDefFileType) {
-    strcpy_safe(m_szFile, CountOf(m_szFile), szFile);
-
+CFileSaveDlg::CFileSaveDlg(cstr_t title, cstr_t file, cstr_t extFilter, int nDefFileType) {
+    m_title = title;
+    m_file = file;
+    m_extFilter = extFilter;
+    m_nDefFileType = nDefFileType;
     if (extFilter) {
         extractExtFilters(extFilter, m_vExts);
     }
@@ -52,7 +55,7 @@ int CFileSaveDlg::doModal(Window *pWndParent) {
     NSSavePanel* saveDlg = [NSSavePanel savePanel];
 
     // Enable the selection of files in the dialog.
-    [saveDlg setDirectoryURL:[NSURL URLWithString:[NSString stringWithUTF8String:m_szFile]]];
+    [saveDlg setDirectoryURL:[NSURL URLWithString:[NSString stringWithUTF8String:m_file._cstr()]]];
 
     [saveDlg setAllowedFileTypes:toNsStringArray(m_vExts)];
 
@@ -64,18 +67,10 @@ int CFileSaveDlg::doModal(Window *pWndParent) {
     if ([saveDlg runModal] == NSModalResponseOK) {
         NSString *fileName = [saveDlg filename];
 
-        strcpy_safe(m_szFile, CountOf(m_szFile), [fileName UTF8String]);
+        m_file.assign([fileName UTF8String]);
 
         return IDOK;
     }
 
     return IDCANCEL;
-}
-
-cstr_t CFileSaveDlg::getSaveFile() {
-    return m_szFile;
-}
-
-cstr_t CFileSaveDlg::getSelectedExt() {
-    return "";
 }

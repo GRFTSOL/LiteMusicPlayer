@@ -884,27 +884,6 @@ void CMPSkinWnd::onDropFiles(HDROP hDrop) {
 }
 #endif
 
-void CMPSkinWnd::setTopmost(bool bTopmost) {
-    getParentOrSelf()->setTopmost(bTopmost);
-}
-
-Window *CMPSkinWnd::getParentOrSelf() {
-#ifdef _WIN32
-    HWND hParent = m_hWnd, hParentNew = m_hWnd;
-    while (hParentNew) {
-        hParent = hParentNew;
-        hParentNew = ::getParent(hParent);
-    }
-    if (hParent != m_hWnd) {
-        return Window::fromHandle(hParent);
-    } else {
-        return this;
-    }
-#else
-    return this;
-#endif
-}
-
 bool CMPSkinWnd::settingGetTopmost() {
     return g_profile.getBool(SZ_SECT_UI, "topmost", true);
 }

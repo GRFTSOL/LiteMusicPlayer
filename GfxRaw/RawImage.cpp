@@ -333,8 +333,8 @@ bool CRawImage::blt(CRawGraph *canvas, int xDest, int yDest, int widthDest, int 
     canvas->getClipBoundBox(rcDst);
 
     // get the clip box to copy
-    rcDst.right = min(rcDst.right, xDest + widthDest);
-    rcDst.bottom = min(rcDst.bottom, yDest + heightDest);
+    rcDst.right = min((int)rcDst.right, xDest + widthDest);
+    rcDst.bottom = min((int)rcDst.bottom, yDest + heightDest);
 
     // determine the start position of Graph, image, mask.
     if (xDest >= rcDst.left) {
@@ -379,8 +379,8 @@ bool CRawImage::maskBlt(CRawGraph *canvas, int xDest, int yDest, int widthDest, 
     canvas->getClipBoundBox(rcDst);
 
     // get the clip box to copy
-    rcDst.right = min(rcDst.right, xDest + widthDest);
-    rcDst.bottom = min(rcDst.bottom, yDest + heightDest);
+    rcDst.right = min((int)rcDst.right, xDest + widthDest);
+    rcDst.bottom = min((int)rcDst.bottom, yDest + heightDest);
 
     // determine the start position of Graph, image, mask.
     if (xDest >= rcDst.left) {

@@ -16,7 +16,7 @@ public:
         destroy();
     }
 
-    bool create(CGraphics *canvas, LOGFONTA &logFont) {
+    bool create(CGdiplusGraphicsLite *canvas, LOGFONTA &logFont) {
         destroy();
 
         m_hFont = CreateFontIndirectA(&logFont);
@@ -24,7 +24,7 @@ public:
         return m_hFont != nullptr;
     }
 
-    bool create(const CFontInfo &font);
+    bool create(const FontInfoEx &font);
 
     void destroy() {
         if (m_hFont) {
@@ -42,14 +42,14 @@ protected:
 
 };
 
-class CGdiGraphicsLite : public CGraphics {
+class CGdiGraphicsLite {
 public:
     CGdiGraphicsLite();
     ~CGdiGraphicsLite();
 
     virtual HDC detach();
 
-    virtual void setFont(CFontInfo *font);
+    virtual void setFont(FontInfoEx *font);
 
     virtual bool textOut(int x, int y, cstr_t szText, int nLen);
     virtual bool getTextExtentPoint32(cstr_t szText, int nLen, CSize *pSize);

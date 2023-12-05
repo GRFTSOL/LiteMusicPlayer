@@ -1,18 +1,12 @@
-﻿
+﻿#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#define _WIN32_WINNT	0x0500
 
-#include "../GfxLite.h"
+#include <windows.h>
+#include <objidl.h>
+#include <gdiplus.h>
+
+
 #include "GdiplusGraphicsLite.h"
-
-
-//typedef uint32_t *    ULONG_PTR;
-#define iterator            Gdiplusiterator
-#define list                Gdipluslist
-#define map                 Gdiplusmap
-#include "../../third-parties/GDIPlus/Include/GdiPlus.h"
-#undef Gdiplusiterator
-#undef Gdipluslist
-#undef Gdiplusmap
-#include <atlbase.h>
 
 
 using namespace Gdiplus;
@@ -28,6 +22,63 @@ ARGB makeARGB(IN uint8_t a,
         ((ARGB) (a) << ALPHA_SHIFT));
 }
 
+#define WINGDIPAPI          __stdcall
+
+#define GDIPCONST           const
+
+typedef Status(WINGDIPAPI* FUNGdipCreateFromHDC)(HDC hdc, GpGraphics** graphics);
+typedef Status(WINGDIPAPI* FUNGdipCreateFontFromLogfontA) (HDC hdc, GDIPCONST LOGFONTA* logfont, GpFont** font);
+typedef Status(WINGDIPAPI* FUNGdipCreateFontFromLogfontW) (HDC hdc, GDIPCONST LOGFONTW* logfont, GpFont** font);
+typedef Status(WINGDIPAPI* FUNGdipCreateFontFromDC) (HDC hdc, GpFont** font);
+typedef Status(WINGDIPAPI* FUNGdipCreateSolidFill) (ARGB color, GpSolidFill** brush);
+typedef Status(WINGDIPAPI* FUNGdipStringFormatGetGenericTypographic) (GpStringFormat** format);
+typedef Status(WINGDIPAPI* FUNGdipDeleteStringFormat) (GpStringFormat* format);
+typedef Status(WINGDIPAPI* FUNGdipSetStringFormatFlags) (GpStringFormat* format, INT flags);
+typedef Status(WINGDIPAPI* FUNGdipGetStringFormatFlags) (GDIPCONST GpStringFormat* format, INT* flags);
+typedef Status(WINGDIPAPI* FUNGdipDeleteFont) (GpFont* font);
+typedef Status(WINGDIPAPI* FUNGdipDeleteBrush) (GpBrush* brush);
+typedef Status(WINGDIPAPI* FUNGdipDeleteGraphics) (GpGraphics* graphics);
+typedef Status(WINGDIPAPI* FUNGdipDrawString) (GpGraphics* graphics, GDIPCONST WCHAR* string, INT length, GDIPCONST GpFont* font, GDIPCONST RectF* layoutRect, GDIPCONST GpStringFormat* stringFormat, GDIPCONST GpBrush* brush);
+typedef Status(WINGDIPAPI* FUNGdipGetClipBoundsI) (GpGraphics* graphics, GpRect* rect);
+typedef Status(WINGDIPAPI* FUNGdipSetClipRectI) (GpGraphics* graphics, INT x, INT y, INT width, INT height, CombineMode combineMode);
+typedef Status(WINGDIPAPI* FUNGdipSetTextRenderingHint) (GpGraphics* graphics, TextRenderingHint mode);
+typedef Status(WINGDIPAPI* FUNGdipMeasureString) (GpGraphics* graphics, GDIPCONST WCHAR* string, INT length, GDIPCONST GpFont* font, GDIPCONST RectF* layoutRect, GDIPCONST GpStringFormat* stringFormat, RectF* boundingBox, INT* codepointsFitted, INT* linesFilled);
+typedef Status(WINGDIPAPI* FUNGdipSetStringFormatAlign) (GpStringFormat* format, StringAlignment align);
+typedef Status(WINGDIPAPI* FUNGdipGetStringFormatAlign) (GDIPCONST GpStringFormat* format, StringAlignment* align);
+typedef Status(WINGDIPAPI* FUNGdipSetStringFormatLineAlign) (GpStringFormat* format, StringAlignment align);
+typedef Status(WINGDIPAPI* FUNGdipGetStringFormatLineAlign) (GDIPCONST GpStringFormat* format, StringAlignment* align);
+typedef Status(WINGDIPAPI* FUNGdipSetStringFormatTrimming) (GpStringFormat* format, StringTrimming trimming);
+typedef Status(WINAPI* FUNGdiplusStartup) (OUT ULONG_PTR* token, const GdiplusStartupInput* input, OUT GdiplusStartupOutput* output);
+typedef VOID(WINAPI* FUNGdiplusShutdown) (ULONG_PTR token);
+
+typedef Status(WINGDIPAPI* FUNGdipGetStringFormatTrimming) (GpStringFormat* format, StringTrimming* trimming);
+
+static FUNGdipCreateFromHDC                     g_funGdipCreateFromHDC = nullptr;
+static FUNGdipCreateFontFromLogfontA            g_funGdipCreateFontFromLogfontA = nullptr;
+// static FUNGdipCreateFontFromLogfontW         g_funGdipCreateFontFromLogfontW = nullptr;
+static FUNGdipCreateFontFromDC                  g_funGdipCreateFontFromDC = nullptr;
+static FUNGdipCreateSolidFill                   g_funGdipCreateSolidFill = nullptr;
+static FUNGdipStringFormatGetGenericTypographic g_funGdipStringFormatGetGenericTypographic = nullptr;
+static FUNGdipDeleteStringFormat                g_funGdipDeleteStringFormat = nullptr;
+static FUNGdipSetStringFormatFlags              g_funGdipSetStringFormatFlags = nullptr;
+static FUNGdipGetStringFormatFlags              g_funGdipGetStringFormatFlags = nullptr;
+static FUNGdipDeleteFont                        g_funGdipDeleteFont = nullptr;
+static FUNGdipDeleteBrush                       g_funGdipDeleteBrush = nullptr;
+static FUNGdipDeleteGraphics                    g_funGdipDeleteGraphics = nullptr;
+static FUNGdipDrawString                        g_funGdipDrawString = nullptr;
+static FUNGdipGetClipBoundsI                    g_funGdipGetClipBoundsI = nullptr;
+static FUNGdipSetClipRectI                      g_funGdipSetClipRectI = nullptr;
+static FUNGdipSetTextRenderingHint              g_funGdipSetTextRenderingHint = nullptr;
+static FUNGdipMeasureString                     g_funGdipMeasureString = nullptr;
+static FUNGdipSetStringFormatAlign              g_funGdipSetStringFormatAlign = nullptr;
+static FUNGdipGetStringFormatAlign              g_funGdipGetStringFormatAlign = nullptr;
+static FUNGdipSetStringFormatLineAlign          g_funGdipSetStringFormatLineAlign = nullptr;
+static FUNGdipGetStringFormatLineAlign          g_funGdipGetStringFormatLineAlign = nullptr;
+static FUNGdipSetStringFormatTrimming           g_funGdipSetStringFormatTrimming = nullptr;
+static FUNGdipGetStringFormatTrimming           g_funGdipGetStringFormatTrimming = nullptr;
+static FUNGdiplusStartup                        g_funGdiplusStartup = nullptr;
+static FUNGdiplusShutdown                       g_funGdiplusShutdown = nullptr;
+
 
 class CGdiplusFont {
 public:
@@ -38,17 +89,17 @@ public:
         destroy();
     }
 
-    bool create(CGraphics *canvas, LOGFONTA &logFont) {
+    bool create(CGdiplusGraphicsLite *canvas, LOGFONTA &logFont) {
         Status ret;
 
         destroy();
 
-        ret = CGdiplusGraphicsLite::m_sfunGdipCreateFontFromLogfontA(canvas->getHandle(), &logFont, &m_font);
+        ret = g_funGdipCreateFontFromLogfontA(canvas->getHandle(), &logFont, &m_font);
         if (ret == NotTrueTypeFont) {
             // 选择默认的TRUEType字体！
             LOGFONTA logfontNew = logFont;
             strcpy_safe(logfontNew.lfFaceName, CountOf(logfontNew.lfFaceName), "Tahoma");
-            ret = CGdiplusGraphicsLite::m_sfunGdipCreateFontFromLogfontA(canvas->getHandle(), &logfontNew, &m_font);
+            ret = g_funGdipCreateFontFromLogfontA(canvas->getHandle(), &logfontNew, &m_font);
         }
 
         return ret == Ok;
@@ -56,7 +107,7 @@ public:
 
     void destroy() {
         if (m_font) {
-            CGdiplusGraphicsLite::m_sfunGdipDeleteFont(m_font);
+            g_funGdipDeleteFont(m_font);
             m_font = nullptr;
         }
     }
@@ -68,102 +119,28 @@ protected:
 
 };
 
-class CGdiplusTextOut {
-public:
-    void operator()(CGdiplusFont *font, cstr_t szClip, int nClip) {
-        Status ret;
-        RectF rcLayout(rect.X, rect.Y, 0.0f, 0.0f);
-        RectF rcBoundBox;
-
-        ret = CGdiplusGraphicsLite::m_sfunGdipDrawString(canvas->griphics, szClip, nClip, font->getHandle(), &rect, canvas->stringFormat, canvas->brush);
-        if (ret != Ok) {
-            DBG_LOG1("m_sfunGdipSetTextRenderingHint FAILED: %d!", ret);
-        }
-        CGdiplusGraphicsLite::m_sfunGdipMeasureString(canvas->griphics, szClip, nClip, font->getHandle(), &rcLayout, canvas->stringFormat, &rcBoundBox, nullptr, nullptr);
-        rect.X += rcBoundBox.width;
-    }
-
-public:
-    RectF                       rect;
-    CGdiplusGraphicsLite        *canvas;
-
-};
-
-class CGdiplusMeasureString {
-public:
-    void operator()(CGdiplusFont *font, cstr_t szClip, int nClip) {
-        RectF rcLayout(0.0f, 0.0f, 0.0f, 0.0f);
-        RectF rcBoundBox;
-
-        CGdiplusGraphicsLite::m_sfunGdipMeasureString(canvas->griphics, szClip, nClip, font->getHandle(), &rcLayout, canvas->stringFormat, &rcBoundBox, nullptr, nullptr);
-        cx += rcBoundBox.width;
-        if (rcBoundBox.height > cy) {
-            cy = rcBoundBox.height;
-        }
-    }
-
-public:
-    REAL                        cx, cy;
-    CGdiplusGraphicsLite        *canvas;
-
-};
-
-typedef Status (WINGDIPAPI *FUNGdipGetStringFormatTrimming) (GpStringFormat *format, StringTrimming *trimming);
-
-FUNGdipCreateFromHDC CGdiplusGraphicsLite::m_sfunGdipCreateFromHDC = nullptr;
-FUNGdipCreateFontFromLogfontA CGdiplusGraphicsLite::m_sfunGdipCreateFontFromLogfontA = nullptr;
-// FUNGdipCreateFontFromLogfontW            CGdiplusGraphicsLite::m_sfunGdipCreateFontFromLogfontW = nullptr;
-FUNGdipCreateFontFromDC CGdiplusGraphicsLite::m_sfunGdipCreateFontFromDC = nullptr;
-FUNGdipCreateSolidFill CGdiplusGraphicsLite::m_sfunGdipCreateSolidFill = nullptr;
-FUNGdipStringFormatGetGenericTypographic CGdiplusGraphicsLite::m_sfunGdipStringFormatGetGenericTypographic = nullptr;
-FUNGdipDeleteStringFormat CGdiplusGraphicsLite::m_sfunGdipDeleteStringFormat = nullptr;
-FUNGdipSetStringFormatFlags CGdiplusGraphicsLite::m_sfunGdipSetStringFormatFlags = nullptr;
-FUNGdipGetStringFormatFlags CGdiplusGraphicsLite::m_sfunGdipGetStringFormatFlags = nullptr;
-FUNGdipDeleteFont CGdiplusGraphicsLite::m_sfunGdipDeleteFont = nullptr;
-FUNGdipDeleteBrush CGdiplusGraphicsLite::m_sfunGdipDeleteBrush = nullptr;
-FUNGdipDeleteGraphics CGdiplusGraphicsLite::m_sfunGdipDeleteGraphics = nullptr;
-FUNGdipDrawString CGdiplusGraphicsLite::m_sfunGdipDrawString = nullptr;
-FUNGdipGetClipBoundsI CGdiplusGraphicsLite::m_sfunGdipGetClipBoundsI = nullptr;
-FUNGdipSetClipRectI CGdiplusGraphicsLite::m_sfunGdipSetClipRectI = nullptr;
-FUNGdipSetTextRenderingHint CGdiplusGraphicsLite::m_sfunGdipSetTextRenderingHint = nullptr;
-FUNGdipMeasureString CGdiplusGraphicsLite::m_sfunGdipMeasureString = nullptr;
-FUNGdipSetStringFormatAlign CGdiplusGraphicsLite::m_sfunGdipSetStringFormatAlign = nullptr;
-FUNGdipGetStringFormatAlign CGdiplusGraphicsLite::m_sfunGdipGetStringFormatAlign = nullptr;
-FUNGdipSetStringFormatLineAlign CGdiplusGraphicsLite::m_sfunGdipSetStringFormatLineAlign = nullptr;
-FUNGdipGetStringFormatLineAlign CGdiplusGraphicsLite::m_sfunGdipGetStringFormatLineAlign = nullptr;
-FUNGdipSetStringFormatTrimming CGdiplusGraphicsLite::m_sfunGdipSetStringFormatTrimming = nullptr;
-FUNGdipGetStringFormatTrimming m_sfunGdipGetStringFormatTrimming = nullptr;
-FUNGdiplusStartup CGdiplusGraphicsLite::m_sfunGdiplusStartup = nullptr;
-FUNGdiplusShutdown CGdiplusGraphicsLite::m_sfunGdiplusShutdown = nullptr;
-
 // #ifdef _UNICODE
-// #define m_sfunGdipCreateFontFromLogfont        m_sfunGdipCreateFontFromLogfontW
+// #define g_funGdipCreateFontFromLogfont        g_funGdipCreateFontFromLogfontW
 // #else
-#define m_sfunGdipCreateFontFromLogfont m_sfunGdipCreateFontFromLogfontA
+#define g_funGdipCreateFontFromLogfont g_funGdipCreateFontFromLogfontA
 // #endif
 
 #ifdef _WIN32
-ULONG_PTR g_gdiplusToken = nullptr;
+ULONG_PTR g_gdiplusToken = NULL;
 #endif
 
 CGdiplusGraphicsLite::CGdiplusGraphicsLite() {
-    m_hdcBk = nullptr;
-    griphics = nullptr;
-    brush = nullptr;
-    stringFormat = nullptr;
-    bInitOK = false;
-    m_bResolveTextEncoding = true;
 }
 
 CGdiplusGraphicsLite::~CGdiplusGraphicsLite() {
     if (stringFormat) {
-        m_sfunGdipDeleteStringFormat(stringFormat);
+        g_funGdipDeleteStringFormat(stringFormat);
     }
     if (brush) {
-        m_sfunGdipDeleteBrush(brush);
+        g_funGdipDeleteBrush(brush);
     }
     if (griphics) {
-        m_sfunGdipDeleteGraphics(griphics);
+        g_funGdipDeleteGraphics(griphics);
     }
 
     if (m_hdcBk) {
@@ -172,7 +149,7 @@ CGdiplusGraphicsLite::~CGdiplusGraphicsLite() {
 }
 
 void CGdiplusGraphicsLite::attach(HDC hdc) {
-    if (!m_sfunGdipCreateFromHDC) {
+    if (!g_funGdipCreateFromHDC) {
         //
         // 载入地址
         HMODULE hModule;
@@ -183,68 +160,64 @@ void CGdiplusGraphicsLite::attach(HDC hdc) {
             return;
         }
 
-        m_sfunGdipCreateFromHDC = (FUNGdipCreateFromHDC )GetProcAddress(hModule, "GdipCreateFromHDC");
-        m_sfunGdipCreateFontFromLogfontA = (FUNGdipCreateFontFromLogfontA )GetProcAddress(hModule, "GdipCreateFontFromLogfontA");
-        // m_sfunGdipCreateFontFromLogfontW        = (FUNGdipCreateFontFromLogfontW            )GetProcAddress(hModule, "GdipCreateFontFromLogfontW");
-        m_sfunGdipCreateFontFromDC = (FUNGdipCreateFontFromDC )GetProcAddress(hModule, "GdipCreateFontFromDC");
-        m_sfunGdipCreateSolidFill = (FUNGdipCreateSolidFill )GetProcAddress(hModule, "GdipCreateSolidFill");
-        //        m_sfunGdipStringFormatGetGenericDefault = (FUNGdipStringFormatGetGenericDefault    )GetProcAddress(hModule, "GdipStringFormatGetGenericDefault");
-        m_sfunGdipStringFormatGetGenericTypographic = (FUNGdipStringFormatGetGenericTypographic )GetProcAddress(hModule, "GdipStringFormatGetGenericTypographic");
-        m_sfunGdipDeleteStringFormat = (FUNGdipDeleteStringFormat )GetProcAddress(hModule, "GdipDeleteStringFormat");
-        m_sfunGdipSetStringFormatFlags = (FUNGdipSetStringFormatFlags )GetProcAddress(hModule, "GdipSetStringFormatFlags");
-        m_sfunGdipGetStringFormatFlags = (FUNGdipGetStringFormatFlags )GetProcAddress(hModule, "GdipGetStringFormatFlags");
-        m_sfunGdipDeleteFont = (FUNGdipDeleteFont )GetProcAddress(hModule, "GdipDeleteFont");
-        m_sfunGdipDeleteBrush = (FUNGdipDeleteBrush )GetProcAddress(hModule, "GdipDeleteBrush");
-        m_sfunGdipDeleteGraphics = (FUNGdipDeleteGraphics )GetProcAddress(hModule, "GdipDeleteGraphics");
-        m_sfunGdipDrawString = (FUNGdipDrawString )GetProcAddress(hModule, "GdipDrawString");
-        m_sfunGdipGetClipBoundsI = (FUNGdipGetClipBoundsI )GetProcAddress(hModule, "GdipGetClipBoundsI");
-        m_sfunGdipSetClipRectI = (FUNGdipSetClipRectI )GetProcAddress(hModule, "GdipSetClipRectI");
-        m_sfunGdipSetTextRenderingHint = (FUNGdipSetTextRenderingHint )GetProcAddress(hModule, "GdipSetTextRenderingHint");
-        m_sfunGdipMeasureString = (FUNGdipMeasureString )GetProcAddress(hModule, "GdipMeasureString");
-        m_sfunGdipSetStringFormatAlign = (FUNGdipSetStringFormatAlign )GetProcAddress(hModule, "GdipSetStringFormatAlign");
-        m_sfunGdipGetStringFormatAlign = (FUNGdipGetStringFormatAlign )GetProcAddress(hModule, "GdipGetStringFormatAlign");
-        m_sfunGdipSetStringFormatLineAlign = (FUNGdipSetStringFormatLineAlign )GetProcAddress(hModule, "GdipSetStringFormatLineAlign");
-        m_sfunGdipGetStringFormatLineAlign = (FUNGdipGetStringFormatLineAlign )GetProcAddress(hModule, "GdipGetStringFormatLineAlign");
-        m_sfunGdipSetStringFormatTrimming = (FUNGdipSetStringFormatTrimming )GetProcAddress(hModule, "GdipSetStringFormatTrimming");
-        m_sfunGdipGetStringFormatTrimming = (FUNGdipGetStringFormatTrimming )GetProcAddress(hModule, "GdipGetStringFormatTrimming");
-        if (!m_sfunGdipCreateFromHDC || !m_sfunGdipCreateFontFromLogfontA
-            // || !m_sfunGdipCreateFontFromLogfontW
-            || !m_sfunGdipCreateFontFromDC || !m_sfunGdipCreateSolidFill
-            || !m_sfunGdipStringFormatGetGenericTypographic || !m_sfunGdipDeleteStringFormat
-            || !m_sfunGdipGetStringFormatFlags || !m_sfunGdipSetStringFormatFlags
-            || !m_sfunGdipDeleteFont || !m_sfunGdipDeleteBrush
-            || !m_sfunGdipDeleteGraphics || !m_sfunGdipSetTextRenderingHint
-            || !m_sfunGdipSetTextRenderingHint || !m_sfunGdipDrawString
-            || !m_sfunGdipGetClipBoundsI || !m_sfunGdipSetClipRectI
-            || !m_sfunGdipSetTextRenderingHint || !m_sfunGdipMeasureString
-            || !m_sfunGdipSetStringFormatAlign || !m_sfunGdipGetStringFormatAlign
-            || !m_sfunGdipSetStringFormatLineAlign || !m_sfunGdipGetStringFormatLineAlign
-            || !m_sfunGdipSetStringFormatTrimming || !m_sfunGdipGetStringFormatTrimming) {
+        g_funGdipCreateFromHDC = (FUNGdipCreateFromHDC )GetProcAddress(hModule, "GdipCreateFromHDC");
+        g_funGdipCreateFontFromLogfontA = (FUNGdipCreateFontFromLogfontA )GetProcAddress(hModule, "GdipCreateFontFromLogfontA");
+        // g_funGdipCreateFontFromLogfontW        = (FUNGdipCreateFontFromLogfontW            )GetProcAddress(hModule, "GdipCreateFontFromLogfontW");
+        g_funGdipCreateFontFromDC = (FUNGdipCreateFontFromDC )GetProcAddress(hModule, "GdipCreateFontFromDC");
+        g_funGdipCreateSolidFill = (FUNGdipCreateSolidFill )GetProcAddress(hModule, "GdipCreateSolidFill");
+        //        g_funGdipStringFormatGetGenericDefault = (FUNGdipStringFormatGetGenericDefault    )GetProcAddress(hModule, "GdipStringFormatGetGenericDefault");
+        g_funGdipStringFormatGetGenericTypographic = (FUNGdipStringFormatGetGenericTypographic )GetProcAddress(hModule, "GdipStringFormatGetGenericTypographic");
+        g_funGdipDeleteStringFormat = (FUNGdipDeleteStringFormat )GetProcAddress(hModule, "GdipDeleteStringFormat");
+        g_funGdipSetStringFormatFlags = (FUNGdipSetStringFormatFlags )GetProcAddress(hModule, "GdipSetStringFormatFlags");
+        g_funGdipGetStringFormatFlags = (FUNGdipGetStringFormatFlags )GetProcAddress(hModule, "GdipGetStringFormatFlags");
+        g_funGdipDeleteFont = (FUNGdipDeleteFont )GetProcAddress(hModule, "GdipDeleteFont");
+        g_funGdipDeleteBrush = (FUNGdipDeleteBrush )GetProcAddress(hModule, "GdipDeleteBrush");
+        g_funGdipDeleteGraphics = (FUNGdipDeleteGraphics )GetProcAddress(hModule, "GdipDeleteGraphics");
+        g_funGdipDrawString = (FUNGdipDrawString )GetProcAddress(hModule, "GdipDrawString");
+        g_funGdipGetClipBoundsI = (FUNGdipGetClipBoundsI )GetProcAddress(hModule, "GdipGetClipBoundsI");
+        g_funGdipSetClipRectI = (FUNGdipSetClipRectI )GetProcAddress(hModule, "GdipSetClipRectI");
+        g_funGdipSetTextRenderingHint = (FUNGdipSetTextRenderingHint )GetProcAddress(hModule, "GdipSetTextRenderingHint");
+        g_funGdipMeasureString = (FUNGdipMeasureString )GetProcAddress(hModule, "GdipMeasureString");
+        g_funGdipSetStringFormatAlign = (FUNGdipSetStringFormatAlign )GetProcAddress(hModule, "GdipSetStringFormatAlign");
+        g_funGdipGetStringFormatAlign = (FUNGdipGetStringFormatAlign )GetProcAddress(hModule, "GdipGetStringFormatAlign");
+        g_funGdipSetStringFormatLineAlign = (FUNGdipSetStringFormatLineAlign )GetProcAddress(hModule, "GdipSetStringFormatLineAlign");
+        g_funGdipGetStringFormatLineAlign = (FUNGdipGetStringFormatLineAlign )GetProcAddress(hModule, "GdipGetStringFormatLineAlign");
+        g_funGdipSetStringFormatTrimming = (FUNGdipSetStringFormatTrimming )GetProcAddress(hModule, "GdipSetStringFormatTrimming");
+        g_funGdipGetStringFormatTrimming = (FUNGdipGetStringFormatTrimming )GetProcAddress(hModule, "GdipGetStringFormatTrimming");
+        if (!g_funGdipCreateFromHDC || !g_funGdipCreateFontFromLogfontA
+            // || !g_funGdipCreateFontFromLogfontW
+            || !g_funGdipCreateFontFromDC || !g_funGdipCreateSolidFill
+            || !g_funGdipStringFormatGetGenericTypographic || !g_funGdipDeleteStringFormat
+            || !g_funGdipGetStringFormatFlags || !g_funGdipSetStringFormatFlags
+            || !g_funGdipDeleteFont || !g_funGdipDeleteBrush
+            || !g_funGdipDeleteGraphics || !g_funGdipSetTextRenderingHint
+            || !g_funGdipSetTextRenderingHint || !g_funGdipDrawString
+            || !g_funGdipGetClipBoundsI || !g_funGdipSetClipRectI
+            || !g_funGdipSetTextRenderingHint || !g_funGdipMeasureString
+            || !g_funGdipSetStringFormatAlign || !g_funGdipGetStringFormatAlign
+            || !g_funGdipSetStringFormatLineAlign || !g_funGdipGetStringFormatLineAlign
+            || !g_funGdipSetStringFormatTrimming || !g_funGdipGetStringFormatTrimming) {
             return;
         }
     }
 
     m_hdc = hdc;
 
-    Status ret;
-
-    ret = m_sfunGdipCreateFromHDC(hdc, &griphics);
+    Status ret = g_funGdipCreateFromHDC(hdc, &griphics);
     if (ret != Ok) {
-        DBG_LOG1("m_sfunGdipCreateFromHDC FAILED: %d!", ret);
+        DBG_LOG1("g_funGdipCreateFromHDC FAILED: %d!", ret);
         return;
     }
-    ret = m_sfunGdipStringFormatGetGenericTypographic(&stringFormat);
+    ret = g_funGdipStringFormatGetGenericTypographic(&stringFormat);
     if (ret != Ok) {
-        DBG_LOG1("m_sfunGdipStringFormatGetGenericTypographic FAILED: %d!", ret);
+        DBG_LOG1("g_funGdipStringFormatGetGenericTypographic FAILED: %d!", ret);
         return;
     }
-    INT flag;
-    ret = m_sfunGdipGetStringFormatFlags(stringFormat, &flag);
+    INT flag = 0;
+    ret = g_funGdipGetStringFormatFlags(stringFormat, &flag);
     flag &= ~StringFormatFlagsNoClip;
-    ret = m_sfunGdipSetStringFormatFlags(stringFormat, flag | StringFormatFlagsMeasureTrailingSpaces | StringFormatFlagsNoWrap);
-    //     StringTrimming    strTrimming;
-    //     ret = m_sfunGdipGetStringFormatTrimming(stringFormat, &strTrimming);
-    ret = m_sfunGdipSetStringFormatTrimming(stringFormat, StringTrimmingNone);
+    ret = g_funGdipSetStringFormatFlags(stringFormat, flag | StringFormatFlagsMeasureTrailingSpaces | StringFormatFlagsNoWrap);
+    ret = g_funGdipSetStringFormatTrimming(stringFormat, StringTrimmingNone);
     //    ret = GdipCreateFontFromDC(hdc, &font);
     //    if (ret != Ok)
     //        return;
@@ -255,41 +228,30 @@ void CGdiplusGraphicsLite::attach(HDC hdc) {
     bInitOK = true;
 }
 
-bool CGdiplusGraphicsLite::textOut(int x, int y, cstr_t szText, int nLen) {
-    Status ret;
+bool CGdiplusGraphicsLite::textOut(int x, int y, cwstr_t szText, int nLen) {
     RectF rect((float)x, (float)y, (float)2000, (float)300);
 
     if (!bInitOK) {
         return false;
     }
 
-    ret = m_sfunGdipSetTextRenderingHint(griphics, TextRenderingHintAntiAlias);
+    Status ret = g_funGdipSetTextRenderingHint(griphics, TextRenderingHintAntiAlias);
     if (ret != Ok) {
-        DBG_LOG1("m_sfunGdipSetTextRenderingHint FAILED: %d!", ret);
+        DBG_LOG1("g_funGdipSetTextRenderingHint FAILED: %d!", ret);
         return false;
     }
 
-    if (m_bResolveTextEncoding) {
-        CGdiplusTextOut funGdiplus;
-
-        funGdiplus.canvas = this;
-        funGdiplus.rect = rect;
-        m_fontCollection.resovleText(this, szText, nLen, funGdiplus);
-    } else {
-        CGdiplusFont *font;
-        font = m_fontCollection.getFont(this, DEFAULT_CHARSET);
-        ret = m_sfunGdipDrawString(griphics, szText, nLen, font->getHandle(), &rect, stringFormat, brush);
-    }
+    ret = g_funGdipDrawString(griphics, szText, nLen, m_font->getHandle(), &rect, stringFormat, brush);
     //     if (ret != Ok)
     //     {
-    //         DBG_LOG1("m_sfunGdipDrawString FAILED: %d!", ret);
+    //         DBG_LOG1("g_funGdipDrawString FAILED: %d!", ret);
     //         return false;
     //     }
 
     return true;
 }
 
-bool CGdiplusGraphicsLite::getTextExtentPoint32(cstr_t szText, int nLen, CSize *pSize) {
+bool CGdiplusGraphicsLite::getTextExtentPoint32(cwstr_t szText, int nLen, CSize *pSize) {
     //    RectF        rcLayout(0, 0, 2000, 300);
     //    RectF        rcBoundBox;
     if (!bInitOK) {
@@ -298,30 +260,15 @@ bool CGdiplusGraphicsLite::getTextExtentPoint32(cstr_t szText, int nLen, CSize *
         return false;
     }
 
-    if (m_bResolveTextEncoding) {
-        CGdiplusMeasureString funGdiplus;
+    RectF rcLayout(0.0f, 0.0f, 0.0f, 0.0f);
+    RectF rcBoundBox;
 
-        funGdiplus.canvas = this;
-        funGdiplus.cx = 0;
-        funGdiplus.cy = 0;
-
-        m_fontCollection.resovleText(this, szText, nLen, funGdiplus);
-
-        pSize->cx = (INT)funGdiplus.cx;
-        pSize->cy = (INT)funGdiplus.cy;
-    } else {
-        CGdiplusFont *font;
-        RectF rcLayout(0.0f, 0.0f, 0.0f, 0.0f);
-        RectF rcBoundBox;
-
-        font = m_fontCollection.getFont(this, DEFAULT_CHARSET);
-        if (m_sfunGdipMeasureString(griphics, szText, nLen, font->getHandle(), &rcLayout, stringFormat, &rcBoundBox, nullptr, nullptr) != Ok) {
-            return false;
-        }
-
-        pSize->cx = (INT)rcBoundBox.width;
-        pSize->cy = (INT)rcBoundBox.height;
+    if (g_funGdipMeasureString(griphics, szText, nLen, m_font->getHandle(), &rcLayout, stringFormat, &rcBoundBox, nullptr, nullptr) != Ok) {
+        return false;
     }
+
+    pSize->cx = (INT)rcBoundBox.Width;
+    pSize->cy = (INT)rcBoundBox.Height;
 
     return true;
 }
@@ -330,36 +277,26 @@ void CGdiplusGraphicsLite::setTextColor(const CColor &color) {
     Status ret;
 
     if (brush) {
-        m_sfunGdipDeleteBrush(brush);
+        g_funGdipDeleteBrush(brush);
         brush = nullptr;
     }
 
-    ret = m_sfunGdipCreateSolidFill(makeARGB(255, getRValue(color.get()), getGValue(color.get()), getBValue(color.get())), &brush);
+    ret = g_funGdipCreateSolidFill(makeARGB(255, GetRValue(color.get()), GetGValue(color.get()), GetBValue(color.get())), &brush);
     if (ret != Ok) {
-        DBG_LOG1("m_sfunGdipCreateSolidFill FAILED: %d!", ret);
+        DBG_LOG1("g_funGdipCreateSolidFill FAILED: %d!", ret);
         bInitOK = false;
     }
 }
 
 void CGdiplusGraphicsLite::setBkMode(bool bTransparent) {
-    ::setBkMode(m_hdc, bTransparent ? TRANSPARENT : OPAQUE);
+    ::SetBkMode(m_hdc, bTransparent ? TRANSPARENT : OPAQUE);
 }
 
 void CGdiplusGraphicsLite::setBgColor(const CColor &color) {
     ::SetBkColor(m_hdc, color.get());
 }
 
-void CGdiplusGraphicsLite::setFont(CFontInfo *font) {
-    m_fontCollection.setFont(*font);
-}
-
 bool CGdiplusGraphicsLite::canSupportGdiplus() {
-    int nRet;
-    nRet = GetOperationSystemType();
-    if (nRet == OPS_WIN95 || nRet == OPS_WINNT4) {
-        return false;
-    }
-
     HMODULE hModule;
 
     hModule = loadGdiplusDll();
@@ -374,13 +311,10 @@ bool CGdiplusGraphicsLite::canSupportGdiplus() {
 HMODULE CGdiplusGraphicsLite::loadGdiplusDll() {
     HMODULE hModule;
 
-    hModule = LoadLibrary("Gdiplus.dll");
+    hModule = LoadLibraryA("Gdiplus.dll");
     if (!hModule) {
-        char szDll[MAX_PATH];
-
-        GetAppResourceDir(szDll);
-        strcat_safe(szDll, CountOf(szDll), "Gdiplus.dll");
-        hModule = LoadLibrary(szDll);
+        string fn = getAppResourceFile("Gdiplus.dll");
+        hModule = LoadLibraryA(fn.c_str());
     }
     return hModule;
 }
@@ -388,26 +322,44 @@ HMODULE CGdiplusGraphicsLite::loadGdiplusDll() {
 bool CGdiplusGraphicsLite::startup() {
     GdiplusStartupInput gdiplusStartupInput;
 
-    if (!m_sfunGdiplusStartup || !m_sfunGdiplusShutdown) {
+    if (!g_funGdiplusStartup || !g_funGdiplusShutdown) {
         HMODULE hModule;
         hModule = loadGdiplusDll();
         if (!hModule) {
             return false;
         }
-        m_sfunGdiplusStartup = (FUNGdiplusStartup)GetProcAddress(hModule, "GdiplusStartup");
-        m_sfunGdiplusShutdown = (FUNGdiplusShutdown)GetProcAddress(hModule, "GdiplusShutdown");
+        g_funGdiplusStartup = (FUNGdiplusStartup)GetProcAddress(hModule, "GdiplusStartup");
+        g_funGdiplusShutdown = (FUNGdiplusShutdown)GetProcAddress(hModule, "GdiplusShutdown");
     }
 
     // Initialize GDI+.
-    if (m_sfunGdiplusStartup && g_gdiplusToken == nullptr) {
-        return m_sfunGdiplusStartup(&g_gdiplusToken, &gdiplusStartupInput, nullptr) == Ok;
+    if (g_funGdiplusStartup && g_gdiplusToken == NULL) {
+        return g_funGdiplusStartup(&g_gdiplusToken, &gdiplusStartupInput, nullptr) == Ok;
     }
     return false;
 }
 
 void CGdiplusGraphicsLite::shutdown() {
-    if (m_sfunGdiplusShutdown) {
-        m_sfunGdiplusShutdown(g_gdiplusToken);
-        g_gdiplusToken = nullptr;
+    if (g_funGdiplusShutdown) {
+        g_funGdiplusShutdown(g_gdiplusToken);
+        g_gdiplusToken = NULL;
     }
+}
+
+CGdiplusFontPtr CGdiplusGraphicsLite::createFont(FontInfoEx &font, bool isLatin) {
+    LOGFONTA logFont;
+    logFont.lfHeight = font.getSize();
+    logFont.lfWeight = font.getWeight();
+    logFont.lfItalic = font.getItalic();
+    logFont.lfUnderline = font.isUnderline;
+    if (isEmptyString(font.getName())) {
+        strcpy_safe(logFont.lfFaceName, CountOf(logFont.lfFaceName), "Tahoma");
+    } else {
+        strcpy_safe(logFont.lfFaceName, CountOf(logFont.lfFaceName), font.getName());
+    }
+
+    auto f = std::make_shared<CGdiplusFont>();
+    f->create(this, logFont);
+
+    return f;
 }

@@ -1,106 +1,80 @@
-﻿#include "../../GfxLite/win32/GdiGraphicsLite.h"
-#include "../../GfxLite/win32/GdiplusGraphicsLite.h"
-#include "../third-parties/Agg/include/agg_scanline_p.h"
+﻿#include "../third-parties/Agg/include/agg_scanline_p.h"
 #include "../third-parties/Agg/include/agg_renderer_scanline.h"
 #include "../third-parties/Agg/include/agg_pixfmt_rgba.h"
 #include "../third-parties/Agg/include/agg_pixfmt_rgb.h"
 #include "../third-parties/Agg/include/agg_rasterizer_scanline_aa.h"
-#include "GfxRaw.h"
-#include "RawBmpFont.h"
+#include "GdiplusGraphicsLite.h"
 #include "RawGlyphBuilder.h"
+#include "../RawBmpFont.h"
+#include "../RawGlyphSet.hpp"
 
-
-namespace GfxRaw
-{
 
 #define MEM_GRAPH_BITS      24
 
-extern bool g_bAntialiasFontEnabled;
-
 CRawGlyphBuilder::CRawGlyphBuilder() {
-    m_pmemGraph = nullptr;
 }
 
 CRawGlyphBuilder::~CRawGlyphBuilder() {
     destroy();
 }
 
-void CRawGlyphBuilder::init(const CFontInfo &font) {
-    if (m_pmemGraph && m_font.isSame(font)) {
+void CRawGlyphBuilder::init(const FontInfoEx &font) {
+    if (m_fontMemGraph.isValid() && m_fontInfo.isSame(font)) {
         return;
     }
 
-    m_font.create(font);
+    m_fontInfo = font;
 
     createMemGraph(getHeightBitmap() * 2);
 }
 
-
 int CRawGlyphBuilder::getHeight() const {
-    return m_font.getHeight();
+    return m_fontInfo.getHeight();
 }
 
 void CRawGlyphBuilder::createMemGraph(int nWidthGraph) {
     nWidthGraph = (nWidthGraph + 3 % 4) * 4;
-    m_memGraph.destroy();
-    if (m_pmemGraph) {
-        delete m_pmemGraph;
-        m_pmemGraph = nullptr;
-    }
+    m_fontMemGraph.destroy();
 
-    CGraphics graphScreen;
-    HDC hdcScreen;
-    hdcScreen = GetDC(nullptr);
-    graphScreen.attach(hdcScreen);
+    m_fontMemGraph.create(nWidthGraph, getHeightBitmap(), NULL, MEM_GRAPH_BITS);
 
-    m_memGraph.create(nWidthGraph, getHeightBitmap(), &graphScreen, MEM_GRAPH_BITS);
+    CGdiplusGraphicsLite *pmemGraph;
 
-    if (g_bAntialiasFontEnabled) {
-        CGdiplusGraphicsLite *pmemGraph;
+    m_fontGraph.attach(m_fontMemGraph.getHandle());
 
-        pmemGraph = new CGdiplusGraphicsLite;
-        pmemGraph->attach(m_memGraph.getHandle());
-        m_pmemGraph = pmemGraph;
-    } else {
-        CGdiGraphicsLite *pmemGraph;
+    m_fontGraph.setTextColor(CColor(RGB(255, 255, 255)));
+    m_fontGraph.setBgColor(CColor(RGB(0, 0, 0)));
 
-        pmemGraph = new CGdiGraphicsLite;
-        pmemGraph->attach(m_memGraph.getHandle());
-        m_pmemGraph = pmemGraph;
-    }
-
-    m_pmemGraph->setFont(&m_font);
-    m_pmemGraph->setTextColor(CColor(RGB(255, 255, 255)));
-    m_pmemGraph->setBgColor(CColor(RGB(0, 0, 0)));
-
-    ReleaseDC(nullptr, hdcScreen);
+    m_fontLatin = m_fontGraph.createFont(m_fontInfo, true);
+    m_fontOthers = m_fontGraph.createFont(m_fontInfo, false);
 }
 
 void CRawGlyphBuilder::destroy() {
-    if (m_pmemGraph) {
-        delete m_pmemGraph;
-        m_pmemGraph = nullptr;
-    }
-
-    m_memGraph.destroy();
+    m_fontMemGraph.destroy();
 }
 
 void copyBitmpDataFromGraphBuffer(Glyph *pGlyph, agg::pixfmt_rgb24 &bufGraph);
 
 Glyph *CRawGlyphBuilder::buildGlyph(string &ch) {
-    SIZE size;
+    utf16string ucs2Ch;
+    utf8ToUCS2(ch.c_str(), ch.size(), ucs2Ch);
 
-    assert(m_pmemGraph);
+    if (isAnsiStr(ch.c_str())) {
+        m_fontGraph.setFont(m_fontLatin);
+    } else {
+        m_fontGraph.setFont(m_fontOthers);
+    }
 
-    if (!m_pmemGraph->getTextExtentPoint32(ch.c_str(), ch.size(), &size)) {
+    CSize size;
+    if (!m_fontGraph.getTextExtentPoint32(ucs2Ch.c_str(), ucs2Ch.size(), &size)) {
         return nullptr;
     }
 
-    if (size.cx > m_memGraph.width() + MARGIN_FONT * 2) {
+    if (size.cx > m_fontMemGraph.width() + MARGIN_FONT * 2) {
         createMemGraph(size.cx + getHeightBitmap());
     }
 
-    RawImageData *rawBuff = m_memGraph.getRawBuff();
+    RawImageData *rawBuff = m_fontMemGraph.getRawBuff();
     agg::rendering_buffer bufGraph(rawBuff->buff, rawBuff->width, rawBuff->height, rawBuff->stride);
 
     int nHeightBitmap = getHeightBitmap();
@@ -111,18 +85,17 @@ Glyph *CRawGlyphBuilder::buildGlyph(string &ch) {
         pRowSrc += bufGraph.stride();
     }
 
-    if (!m_pmemGraph->textOut(MARGIN_FONT, MARGIN_FONT, ch.c_str(), ch.size())) {
+    int textWidth = 0;
+    if (!m_fontGraph.textOut(MARGIN_FONT, MARGIN_FONT, ucs2Ch.c_str(), ucs2Ch.size())) {
         return nullptr;
     }
 
     Glyph *glyph = new Glyph;
     glyph->ch = ch;
-    glyph->nWidth = (uint16_t)size.cx;
+    glyph->nWidth = (uint8_t)size.cx + 1; // 增加一个像素的字体间距.
 
     agg::pixfmt_rgb24 pixf(bufGraph);
     copyBitmpDataFromGraphBuffer(glyph, pixf);
 
     return glyph;
 }
-
-};

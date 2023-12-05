@@ -17,3 +17,8 @@ string getAppResourceFile(cstr_t name);
 
 const string &getAppDataDir();
 string getAppDataFile(cstr_t name);
+
+#ifdef _WIN32
+HINSTANCE getAppInstance();
+void setAppInstance(HINSTANCE instance);
+#endif

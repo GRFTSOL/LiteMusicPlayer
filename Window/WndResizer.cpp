@@ -6,19 +6,12 @@ Author   :    xhy
 Purpose  :    调整窗口的大小
 *********************************************************************/
 
-#include "../WidgetLite.h"
+#include "WindowTypes.h"
+#include "WindowLib.h"
 #include "WndResizer.h"
 
 
 #define SIZING_REGION        5        // 调整大小的范围
-
-void myRectangle(HDC hdc, int x, int y, int x2, int y2) {
-    MoveToEx(hdc, x, y2, nullptr);
-    LineTo(hdc, x, y);
-    LineTo(hdc, x2, y);
-    LineTo(hdc, x2, y2);
-    LineTo(hdc, x, y2);
-}
 
 
 
@@ -31,8 +24,6 @@ WndResizer::WndResizer() {
 
     m_bResizing = false;
     m_ResizeDirection = 0;
-
-    m_bInstanceResizing = true;
 
     m_bResizingAutoCloseto = true;
 
@@ -59,8 +50,7 @@ void WndResizer::onMouseMessage(uint32_t fwKeys, CPoint pt) {
         CRect rc;
         m_pWnd->getWindowRect(&rc);
 
-        CPoint point;
-        getCursorPos(&point);
+        CPoint point = getCursorPos();
 
         if (rc.ptInRect(point)) {
             m_pWnd->screenToClient(rc);
@@ -78,7 +68,7 @@ void WndResizer::onMouseMessage(uint32_t fwKeys, CPoint pt) {
     } else if (m_bResizing) {
         endSizing(fwKeys, pt);
 
-        setCursor(m_cursorArrow);
+        m_pWnd->setCursor(&m_cursorArrow);
     }
 }
 
@@ -108,33 +98,12 @@ void WndResizer::beginSize(uint32_t fwKeys, CPoint &pt) {
     }
 
     m_pWnd->setCapture();
-
-    if (m_bResizing && !m_bInstanceResizing) {
-        HDC hdc;
-        HBRUSH hbrOld;
-        HPEN hpenOld;
-
-        hdc = GetDC(nullptr);
-        hbrOld = (HBRUSH)SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
-        hpenOld = (HPEN)SelectObject(hdc, GetStockObject(WHITE_PEN));
-        SetROP2(hdc, R2_XORPEN);
-
-        // 画出矩形框
-        myRectangle(hdc, m_rcResizing.left, m_rcResizing.top, m_rcResizing.right, m_rcResizing.bottom);
-
-        SelectObject(hdc, hbrOld);
-        SelectObject(hdc, hpenOld);
-        ReleaseDC(nullptr, hdc);
-
-        LockWindowUpdate(m_pWnd->getHandle());
-    }
 }
 
 void WndResizer::onSizing(uint32_t fwKeys, CPoint &pt) {
     // 正在调整大小
     int nOffx;
     int nOffy;
-    CRect rcOld = m_rcResizing;
 
     pt = getCursorPos();
 
@@ -161,7 +130,12 @@ void WndResizer::onSizing(uint32_t fwKeys, CPoint &pt) {
             nOffy = m_rcResizing.height() - m_nMincy;
         }
 
+#ifdef _WIN32
         m_rcResizing.top += nOffy;
+#else
+        // For mac, it's upside is reversed.
+        m_rcResizing.bottom += nOffy;
+#endif
     }
 
     // 限制最小的宽度
@@ -179,7 +153,12 @@ void WndResizer::onSizing(uint32_t fwKeys, CPoint &pt) {
             nOffy = m_nMincy - m_rcResizing.height();
         }
 
+#ifdef _WIN32
         m_rcResizing.bottom += nOffy;
+#else
+        // For mac, it's upside is reversed.
+        m_rcResizing.top += nOffy;
+#endif
     }
 
     // 保存上一次鼠标的位置
@@ -197,33 +176,10 @@ void WndResizer::onSizing(uint32_t fwKeys, CPoint &pt) {
         m_ptOld.y += nOffy;
     }
 
-    // remove old lines and draw new lines
-    if (m_bInstanceResizing) {
-        CRect rc;
-        m_pWnd->getWindowRect(&rc);
-        if (!rc.requal(m_rcResizing)) {
-            // m_ptOld = pt;
-            m_pWnd->moveWindowSafely(m_rcResizing.left, m_rcResizing.top, m_rcResizing.width(), m_rcResizing.height(), true);
-        }
-    } else {
-        HDC hdc;
-        HBRUSH hbrOld;
-        HPEN hpenOld;
-
-        hdc = GetDC(nullptr);
-        hbrOld = (HBRUSH)SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
-        hpenOld = (HPEN)SelectObject(hdc, GetStockObject(WHITE_PEN));
-        SetROP2(hdc, R2_XORPEN);
-
-        // 删除原来的矩形框
-        myRectangle(hdc, rcOld.left, rcOld.top, rcOld.right, rcOld.bottom);
-
-        // 画出新的矩形框
-        myRectangle(hdc, m_rcResizing.left, m_rcResizing.top, m_rcResizing.right, m_rcResizing.bottom);
-
-        SelectObject(hdc, hbrOld);
-        SelectObject(hdc, hpenOld);
-        ReleaseDC(nullptr, hdc);
+    CRect rc;
+    m_pWnd->getWindowRect(&rc);
+    if (!rc.equal(m_rcResizing)) {
+        m_pWnd->moveWindowSafely(m_rcResizing.left, m_rcResizing.top, m_rcResizing.width(), m_rcResizing.height(), true);
     }
 }
 
@@ -269,32 +225,6 @@ void WndResizer::endSizing(uint32_t fwKeys, CPoint &pt) {
     m_ResizeDirection = 0;
 
     m_pWnd->releaseCapture();
-
-    if (!m_bInstanceResizing) {
-        HDC hdc;
-        HBRUSH hbrOld;
-        HPEN hpenOld;
-
-        hdc = GetDC(nullptr);
-        hbrOld = (HBRUSH)SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
-        hpenOld = (HPEN)SelectObject(hdc, GetStockObject(WHITE_PEN));
-        SetROP2(hdc, R2_XORPEN);
-
-        // 擦除画的矩形
-        myRectangle(hdc, m_rcResizing.left, m_rcResizing.top, m_rcResizing.right, m_rcResizing.bottom);
-
-        SelectObject(hdc, hbrOld);
-        SelectObject(hdc, hpenOld);
-        ReleaseDC(nullptr, hdc);
-
-        LockWindowUpdate(nullptr);
-
-        CRect rc;
-        m_pWnd->getWindowRect(&rc);
-        if (!rc.requal(m_rcResizing)) {
-            m_pWnd->moveWindowSafely(m_rcResizing.left, m_rcResizing.top, m_rcResizing.width(), m_rcResizing.height(), true);
-        }
-    }
 }
 
 void WndResizer::autoCloseToWindows(int &nOffx, int &nOffy) {
@@ -352,13 +282,13 @@ uint32_t WndResizer::hitTestResizeArea(CPoint &pt, const CRect &rc) {
 void WndResizer::setCursor() {
     if (isFlagSet(m_ResizeDirection, RD_LEFT | RD_TOP)
         || isFlagSet(m_ResizeDirection, RD_RIGHT | RD_BOTTOM)) {
-        setCursor(m_cursorNWSE);
+        m_pWnd->setCursor(&m_cursorNWSE);
     } else if (isFlagSet(m_ResizeDirection, RD_LEFT | RD_BOTTOM)
         || isFlagSet(m_ResizeDirection, RD_RIGHT | RD_TOP)) {
-        setCursor(m_cursorNESW);
+        m_pWnd->setCursor(&m_cursorNESW);
     } else if (m_ResizeDirection & (RD_LEFT | RD_RIGHT)) {
-        setCursor(m_cursorWE);
+        m_pWnd->setCursor(&m_cursorWE);
     } else if (m_ResizeDirection & (RD_TOP | RD_BOTTOM)) {
-        setCursor(m_cursorNS);
+        m_pWnd->setCursor(&m_cursorNS);
     }
 }

@@ -6,10 +6,7 @@
 *********************************************************************/
 
 #include "WindowTypes.h"
-#include "Window.h"
-#include "WndDrag.h"
-#include "Desktop.h"
-#include <vector>
+#include "WindowLib.h"
 
 
 int horzLineCloseToLine(int lsx1, int lsx2, int lsy, int ldx1, int ldx2, int ldy, int nCloseExt) {

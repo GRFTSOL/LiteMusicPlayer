@@ -1,13 +1,13 @@
 ﻿
 
-#include "BaseWnd.h"
+#include "../WindowTypes.h"
+#include "Window.h"
+#include "../GfxRaw/RawGraph.h"
 
 
 #define BASEWNDCLASSNAME    "Window"
 
 #define WM_MOUSEWHEEL       0x020A
-
-CMLHandleMap<HWND, Window> g_mapWnd;
 
 
 LRESULT CALLBACK BaseWndProc(HWND hWnd, uint32_t uMsg, WPARAM wParam, LPARAM lParam) {
@@ -21,7 +21,7 @@ LRESULT CALLBACK BaseWndProc(HWND hWnd, uint32_t uMsg, WPARAM wParam, LPARAM lPa
         if (pWnd) {
             pWnd->attach(hWnd);
         }
-        SetWindowLong(hWnd, GWL_USERDATA, (LONG)(cs->lpCreateParams));
+        SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)cs->lpCreateParams);
     } else if (uMsg == WM_INITDIALOG) {
         Window *pWnd = (Window *)lParam;
         if (pWnd) {
@@ -29,14 +29,14 @@ LRESULT CALLBACK BaseWndProc(HWND hWnd, uint32_t uMsg, WPARAM wParam, LPARAM lPa
         }
 
         // stash pointer to self
-        SetWindowLong(hWnd, GWL_USERDATA, (LONG)lParam);
+        SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG)lParam);
     }
 
     // pass the messages into the BaseWnd
-    Window *pBaseWnd = (Window *)GetWindowLong(hWnd, GWL_USERDATA);
+    Window *pBaseWnd = (Window *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
     if (pBaseWnd == nullptr) {
-        return defWindowProc(hWnd, uMsg, wParam, lParam);
+        return DefWindowProc(hWnd, uMsg, wParam, lParam);
     } else {
         // assert(pBaseWnd->getHandle());
         return pBaseWnd->wndProc(uMsg, wParam, lParam);
@@ -60,14 +60,14 @@ bool mLRegisterWndClass(HINSTANCE hInstance, cstr_t szClassName) {
     wc.hInstance = hInstance;
     wc.hIcon = nullptr;
     wc.hIconSm = nullptr;
-    wc.hCursor = loadCursor(nullptr, MAKEINTRESOURCE(IDC_ARROW));
+    wc.hCursor = LoadCursor(nullptr, MAKEINTRESOURCE(IDC_ARROW));
     wc.hbrBackground= (HBRUSH)GetStockObject(NULL_BRUSH);
     wc.lpszMenuName = nullptr;
     wc.lpszClassName= szClassName;
 
-    int r = registerClassEx(&wc);
+    int r = RegisterClassEx(&wc);
     if (r == 0) {
-        int res = getLastError();
+        int res = GetLastError();
         if (res != ERROR_CLASS_ALREADY_EXISTS) {
             // LOG1("Failed to register class, err %d", res);
             return false;
@@ -77,6 +77,29 @@ bool mLRegisterWndClass(HINSTANCE hInstance, cstr_t szClassName) {
     return true;
 }
 
+bool showAsAppWindowNoRefresh(HWND hWnd) {
+    uint32_t dwStyleEx;
+    dwStyleEx = (uint32_t)GetWindowLong(hWnd, GWL_EXSTYLE);
+    if (isFlagSet(dwStyleEx, WS_EX_TOOLWINDOW) || isFlagSet(dwStyleEx, WS_EX_PALETTEWINDOW)) {
+        dwStyleEx &= ~(WS_EX_TOOLWINDOW | WS_EX_PALETTEWINDOW);
+        dwStyleEx |= WS_EX_APPWINDOW;
+        SetWindowLong(hWnd, GWL_EXSTYLE, dwStyleEx);
+        return true;
+    }
+    return false;
+}
+
+bool showAsToolWindowNoRefresh(HWND hWnd) {
+    uint32_t dwStyleEx;
+    dwStyleEx = (uint32_t)GetWindowLong(hWnd, GWL_EXSTYLE);
+    if (!isFlagSet(dwStyleEx, WS_EX_TOOLWINDOW) && !isFlagSet(dwStyleEx, WS_EX_PALETTEWINDOW)) {
+        dwStyleEx |= WS_EX_TOOLWINDOW;// | WS_EX_PALETTEWINDOW;
+        dwStyleEx &= ~WS_EX_APPWINDOW;
+        SetWindowLong(hWnd, GWL_EXSTYLE, dwStyleEx);
+        return true;
+    }
+    return false;
+}
 
 
 Window::Window() {
@@ -93,7 +116,7 @@ bool Window::create(cstr_t szCaption, int x, int y, int nWidth, int nHeight, Win
     return createEx(BASEWNDCLASSNAME, szCaption, x, y, nWidth, nHeight, pWndParent, dwStyle, nID);
 }
 
-bool Window::createEx(cstr_t szClassName, cstr_t szCaption, int x, int y, int nWidth, int nHeight, Window *pWndParent, uint32_t dwStyle, uint32_t dwExStyle, int nID) {
+bool Window::createEx(cstr_t szClassName, cstr_t szCaption, int x, int y, int nWidth, int nHeight, Window *pWndParent, uint32_t dwStyle, uint32_t dwExStyle, int64_t nID) {
     if (!mLRegisterWndClass(getAppInstance(), szClassName)) {
         return false;
     }
@@ -102,16 +125,16 @@ bool Window::createEx(cstr_t szClassName, cstr_t szCaption, int x, int y, int nW
 
     // 创建窗口
     m_hWnd = CreateWindowEx(
-        dwExStyle,                        // extend styles
+        dwExStyle,              // extend styles
         szClassName,            // window class name
-        szCaption,                 // window title
+        szCaption,              // window title
         dwStyle,                // window style
-        x, y,                    // screen position
+        x, y,                   // screen position
         nWidth, nHeight,        // width & height of window
         pWndParent ? pWndParent->m_hWnd : nullptr,    // parent window
-        (HMENU)nID,                    // menu or window id
-        getAppInstance(),        // hInstance
-        (void *)this);            // this for window creation data
+        (HMENU)nID,             // menu or window id
+        getAppInstance(),       // hInstance
+        (void *)this);          // this for window creation data
 
     return m_hWnd != nullptr;
 }
@@ -140,47 +163,26 @@ bool Window::createForSkin(cstr_t szClassName, cstr_t szCaption, int x, int y, i
     return true;
 }
 
-bool Window::destroy() {
-    return tobool(::destroyWindow(m_hWnd));
+void Window::destroy() {
+    ::DestroyWindow(m_hWnd);
 }
 
 void Window::postDestroy() {
     PostMessage(m_hWnd, WM_CLOSE, 0, 0);
 }
 
-bool Window::onClose() {
-    return true;
-}
-
-bool Window::onCreate() {
-    onLanguageChanged();
-
-    return true;
-}
-
-void Window::onDestroy() {
-    if (m_hWnd) {
-        SetWindowLong(m_hWnd, GWL_USERDATA, (LONG)0);
-        defWindowProc(m_hWnd, WM_DESTROY, 0, 0);
-        m_hWnd = nullptr;
-    }
-}
-
-void Window::onPaint(CGraphics *canvas, CRect &rcClip) {
-}
-
-void Window::onLanguageChanged() {
+void Window::onPaint(CRawGraph *canvas, CRect *rcClip) {
 }
 
 void Window::activateWindow() {
     uint32_t dwTimeOutPrev = 0;
 
-    sendMessage(m_hWnd, WM_SYSCOMMAND, SC_RESTORE, 0);
-    ::showWindow(m_hWnd, SW_SHOW);
+    SendMessage(m_hWnd, WM_SYSCOMMAND, SC_RESTORE, 0);
+    ::ShowWindow(m_hWnd, SW_SHOW);
 
     if (!isTopmost()) {
-        ::setWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
-        ::setWindowPos(m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+        ::SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+        ::SetWindowPos(m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
     }
     // save old
     SystemParametersInfo(0x2000, 0, (void *)&dwTimeOutPrev, 0);
@@ -199,23 +201,23 @@ void Window::activateWindow() {
 }
 
 void Window::showNoActivate() {
-    return ::showWindow(m_hWnd, SW_SHOWNOACTIVATE);
+    ::ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
 }
 
 void Window::show() {
-    return ::showWindow(m_hWnd, SW_SHOW);
+    ::ShowWindow(m_hWnd, SW_SHOW);
 }
 
 void Window::hide() {
-    return ::showWindow(m_hWnd, SW_HIDE);
+    ::ShowWindow(m_hWnd, SW_HIDE);
 }
 
 void Window::minimize() {
-    return ::showWindow(m_hWnd, SW_MINIMIZE);
+    ::ShowWindow(m_hWnd, SW_MINIMIZE);
 }
 
 void Window::maximize() {
-    return ::showWindow(m_hWnd, SW_MAXIMIZE);
+    ::ShowWindow(m_hWnd, SW_MAXIMIZE);
 }
 
 void Window::restore() {
@@ -227,11 +229,7 @@ void Window::restore() {
 }
 
 void Window::minimizeNoActivate() {
-    return ::showWindow(m_hWnd, SW_SHOWMINNOACTIVE);
-}
-
-bool Window::showWindow(int nCmdShow) {
-    return ::showWindow(m_hWnd, nCmdShow);
+    ::ShowWindow(m_hWnd, SW_SHOWMINNOACTIVE);
 }
 
 uint32_t Window::getDlgItemText(int nIDItem, string &str) {
@@ -240,7 +238,7 @@ uint32_t Window::getDlgItemText(int nIDItem, string &str) {
     nLen = SendDlgItemMessage(m_hWnd, nIDItem, WM_GETTEXTLENGTH, 0, 0);
     if (nLen > 0) {
         str.resize(nLen + 1);
-        nLen = ::getDlgItemText(m_hWnd, nIDItem, (char *)str.c_str(), str.capacity());
+        nLen = ::GetDlgItemText(m_hWnd, nIDItem, (char *)str.c_str(), str.capacity());
 
         // Under certain conditions, the defWindowProc function returns
         // a value that is larger than the actual length of the text
@@ -254,181 +252,288 @@ uint32_t Window::getDlgItemText(int nIDItem, string &str) {
 }
 
 bool Window::getDlgItemRect(int nIDItem, CRect* lpRect) {
-    HWND hWnd = ::getDlgItem(m_hWnd, nIDItem);
+    HWND hWnd = ::GetDlgItem(m_hWnd, nIDItem);
     if (!hWnd) {
         return false;
     }
 
-    return tobool(::getWindowRect(hWnd, lpRect));
+    return tobool(::GetWindowRect(hWnd, lpRect));
 }
 
 void Window::screenToClient(CRect &rc) {
-    ::screenToClient(m_hWnd, (LPPOINT)&rc.left);
-    ::screenToClient(m_hWnd, (LPPOINT)&rc.right);
+    ::ScreenToClient(m_hWnd, (LPPOINT)&rc.left);
+    ::ScreenToClient(m_hWnd, (LPPOINT)&rc.right);
 }
 
 void Window::clientToScreen(CRect &rc) {
-    ::clientToScreen(m_hWnd, (LPPOINT)&rc.left);
-    ::clientToScreen(m_hWnd, (LPPOINT)&rc.right);
+    ::ClientToScreen(m_hWnd, (LPPOINT)&rc.left);
+    ::ClientToScreen(m_hWnd, (LPPOINT)&rc.right);
 }
 
 void Window::screenToClient(CPoint &pt) {
-    ::screenToClient(m_hWnd, &pt);
+    ::ScreenToClient(m_hWnd, &pt);
 }
 
 void Window::clientToScreen(CPoint &pt) {
-    ::clientToScreen(m_hWnd, &pt);
+    ::ClientToScreen(m_hWnd, &pt);
 }
 
 bool Window::getWindowRect(CRect* lpRect) {
-    return tobool(::getWindowRect(m_hWnd, lpRect));
+    return tobool(::GetWindowRect(m_hWnd, lpRect));
 }
 
 bool Window::getClientRect(CRect* lpRect) {
-    return tobool(::getClientRect(m_hWnd, lpRect));
+    return tobool(::GetClientRect(m_hWnd, lpRect));
 }
 
-void Window::setParent(Window *pWndParent) {
-    if (pWndParent) {
-        uint32_t dwStyle;
-        dwStyle = GetWindowLong(m_hWnd, GWL_STYLE);
-        SetWindowLong(m_hWnd, GWL_STYLE, dwStyle | WS_CHILD);
-        ::setParent(m_hWnd, pWndParent->getHandle());
-    } else {
-        uint32_t dwStyle;
-        dwStyle = GetWindowLong(m_hWnd, GWL_STYLE);
-        SetWindowLong(m_hWnd, GWL_STYLE, dwStyle & ~WS_CHILD);
-        ::setParent(m_hWnd, nullptr);
-    }
-}
-
-Window *Window::getParent() {
-    return fromHandle(::getParent(m_hWnd));
+void Window::setCursor(Cursor *cursor) {
+    setWndCursor(cursor);
 }
 
 bool Window::setTimer(uint32_t nTimerId, uint32_t nElapse) {
-    return tobool(::setTimer(m_hWnd, nTimerId, nElapse, nullptr));
+    return tobool(::SetTimer(m_hWnd, nTimerId, nElapse, nullptr));
 }
 
 void Window::killTimer(uint32_t nTimerId) {
-    ::killTimer(m_hWnd, nTimerId);
+    ::KillTimer(m_hWnd, nTimerId);
 }
 
-int Window::getWindowText(string &str) {
-    int nLen;
+string Window::getTitle() {
+	string str;
+    int len = SendMessage(m_hWnd, WM_GETTEXTLENGTH, 0, 0);
+    if (len > 0) {
+        str.resize(len + 1);
+        len = ::GetWindowText(m_hWnd, (char *)str.c_str(), str.capacity());
 
-    nLen = sendMessage(m_hWnd, WM_GETTEXTLENGTH, 0, 0);
-    if (nLen > 0) {
-        str.resize(nLen + 1);
-        nLen = ::getWindowText(m_hWnd, (char *)str.c_str(), str.capacity());
-
-        // Under certain conditions, the defWindowProc function returns
-        // a value that is larger than the actual length of the text
-        // So, must call str.resize again.
-        str.resize(nLen);
-    } else {
-        str.resize(0);
+        str.resize(len);
     }
 
-    return nLen;
+    return str;
 }
 
 bool Window::setWndCursor(Cursor *pCursor) {
-    SetClassLong(m_hWnd, GCL_HCURSOR, (LONG)pCursor->getHandle());
+    SetClassLongPtr(m_hWnd, GCLP_HCURSOR, (LONG_PTR)pCursor->getHandle());
     return true;
 }
 
 bool Window::setFocus() {
-    return ::setFocus(m_hWnd) != nullptr;
-}
-
-void Window::setUseWindowsAppearance(bool isUseWindowAppearance) {
-    if (isUseWindowAppearance) {
-        // Use windows appearance, set region to nullptr, windows xp will auto apply the system region.
-        ::SetWindowRgn(m_hWnd, nullptr, true);
-    } else {
-        HRGN rgn = ::CreateRectRgn(0, 0, m_wndSize.cx, m_wndSize.cy);
-        ::SetWindowRgn(m_hWnd, rgn, true);
-    }
+    return ::SetFocus(m_hWnd) != nullptr;
 }
 
 bool Window::setCapture() {
-    ::setCapture(m_hWnd);
+    ::SetCapture(m_hWnd);
 
     return true;
 }
 
 void Window::releaseCapture() {
-    ::releaseCapture();
-}
-
-CGraphics *Window::getGraphics() {
-    HDC hdc;
-    CGraphics *canvas;
-
-    hdc = GetDC(m_hWnd);
-
-    canvas = new CGraphics;
-    canvas->attach(hdc);
-
-    return canvas;
-}
-
-void Window::releaseGraphics(CGraphics *canvas) {
-    ReleaseDC(m_hWnd, canvas->getHandle());
-
-    delete canvas;
+    ::ReleaseCapture();
 }
 
 bool Window::invalidateRect(const CRect *lpRect, bool bErase) {
-    return ::invalidateRect(m_hWnd, lpRect, bErase);
+    return ::InvalidateRect(m_hWnd, lpRect, bErase);
 }
 
 bool Window::isChild() {
-    return tobool(::isChildWnd(m_hWnd));
+    return ::GetParent(m_hWnd) != NULL;
 }
 
 bool Window::isMouseCaptured() {
-    return getCapture() == m_hWnd;
+    return GetCapture() == m_hWnd;
 }
 
 bool Window::isIconic() {
-    return tobool(::isIconic(m_hWnd));
+    return tobool(::IsIconic(m_hWnd));
 }
 
 bool Window::isWindow() {
-    return tobool(::isWindow(m_hWnd));
+    return tobool(::IsWindow(m_hWnd));
 }
 
 bool Window::isVisible() {
     return tobool(::IsWindowVisible(m_hWnd));
 }
 
-bool Window::isTopmost() {
-    uint32_t dwStyleEx;
+HWND getParentOrSelf(HWND wnd) {
+    HWND parent = wnd;
+    while (parent) {
+        auto tmp = GetParent(parent);
+        if (!tmp) {
+            break;
+        }
+        parent = tmp;
+    }
 
-    dwStyleEx = (uint32_t)::GetWindowLong(m_hWnd, GWL_EXSTYLE);
+    return parent;
+}
+
+bool Window::isTopmost() {
+    auto hWnd = getParentOrSelf(m_hWnd);
+
+    uint32_t dwStyleEx = (uint32_t)::GetWindowLong(hWnd, GWL_EXSTYLE);
 
     return ((dwStyleEx & WS_EX_TOPMOST) == WS_EX_TOPMOST);
 }
 
 void Window::setTopmost(bool bTopmost) {
+    auto hWnd = getParentOrSelf(m_hWnd);
+
     uint32_t dwStyleEx;
     if (bTopmost) {
-        dwStyleEx = (uint32_t)::GetWindowLong(m_hWnd, GWL_EXSTYLE);
+        dwStyleEx = (uint32_t)::GetWindowLong(hWnd, GWL_EXSTYLE);
         dwStyleEx |= WS_EX_TOPMOST;
-        ::SetWindowLong(m_hWnd, GWL_EXSTYLE, dwStyleEx);
-        ::setWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE |SWP_NOACTIVATE);
+        ::SetWindowLong(hWnd, GWL_EXSTYLE, dwStyleEx);
+        ::SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE |SWP_NOACTIVATE);
     } else {
-        dwStyleEx = (uint32_t)::GetWindowLong(m_hWnd, GWL_EXSTYLE);
+        dwStyleEx = (uint32_t)::GetWindowLong(hWnd, GWL_EXSTYLE);
         dwStyleEx &= ~WS_EX_TOPMOST;
-        ::SetWindowLong(m_hWnd, GWL_EXSTYLE, dwStyleEx);
-        ::setWindowPos(m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE |SWP_NOACTIVATE);
+        ::SetWindowLong(hWnd, GWL_EXSTYLE, dwStyleEx);
+        ::SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE |SWP_NOACTIVATE);
     }
 }
 
 bool Window::isToolWindow() {
-    return tobool(::isToolWindow(m_hWnd));
+    DWORD dwStyleEx = (DWORD)GetWindowLong(m_hWnd, GWL_EXSTYLE);
+
+    return (dwStyleEx & WS_EX_TOOLWINDOW) == WS_EX_TOOLWINDOW/* | WS_EX_PALETTEWINDOW*/;
+}
+
+BOOL showAsToolWindow(HWND hWnd) {
+    DWORD dwStyleEx;
+    dwStyleEx = (DWORD)GetWindowLong(hWnd, GWL_EXSTYLE);
+    if (!isFlagSet(dwStyleEx, WS_EX_TOOLWINDOW) && !isFlagSet(dwStyleEx, WS_EX_PALETTEWINDOW)) {
+        // not showed in task bar, so show it
+        ShowWindow(hWnd, SW_HIDE);
+        dwStyleEx |= WS_EX_TOOLWINDOW;// | WS_EX_PALETTEWINDOW;
+        dwStyleEx &= ~WS_EX_APPWINDOW;
+        SetWindowLong(hWnd, GWL_EXSTYLE, dwStyleEx);
+        ShowWindow(hWnd, SW_SHOW);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+// add it's WS_EX_APPWINDOW AND remove WS_EX_TOOLWINDOW
+BOOL showAsAppWindow(HWND hWnd) {
+    DWORD dwStyleEx;
+    dwStyleEx = (DWORD)GetWindowLong(hWnd, GWL_EXSTYLE);
+    if (isFlagSet(dwStyleEx, WS_EX_TOOLWINDOW) || isFlagSet(dwStyleEx, WS_EX_PALETTEWINDOW)) {
+        // not showed in task bar, so show it
+        ShowWindow(hWnd, SW_HIDE);
+        dwStyleEx &= ~(WS_EX_TOOLWINDOW | WS_EX_PALETTEWINDOW);
+        dwStyleEx |= WS_EX_APPWINDOW;
+        SetWindowLong(hWnd, GWL_EXSTYLE, dwStyleEx);
+        ShowWindow(hWnd, SW_SHOW);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+BOOL isChildWnd(HWND hWnd) {
+    DWORD	dwStyleEx = (DWORD)::GetWindowLong(hWnd, GWL_STYLE);
+    return (dwStyleEx & WS_CHILD) == WS_CHILD;
+}
+
+BOOL HasCaption(HWND hWnd)
+{
+    DWORD	dwStyleEx;
+
+    dwStyleEx = (DWORD)::GetWindowLong(hWnd, GWL_STYLE);
+    return (dwStyleEx & WS_CAPTION) == WS_CAPTION;
+}
+
+void RemoveCaption(HWND	hWnd)
+{
+    DWORD	dwStyleEx;
+
+    dwStyleEx = (DWORD)::GetWindowLong(hWnd, GWL_STYLE);
+    dwStyleEx &= ~WS_CAPTION;
+    ::SetWindowLong(hWnd, GWL_STYLE, dwStyleEx);
+    ::SetWindowPos(hWnd, 0, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+}
+
+void AddCaption(HWND	hWnd)
+{
+    DWORD	dwStyleEx;
+
+    dwStyleEx = (DWORD)::GetWindowLong(hWnd, GWL_STYLE);
+    if ((dwStyleEx & WS_CAPTION) != WS_CAPTION)
+    {
+        dwStyleEx |= WS_CAPTION;
+        ::SetWindowLong(hWnd, GWL_STYLE, dwStyleEx);
+        ::SetWindowPos(hWnd, 0, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    }
+}
+
+BOOL moveWindowSafely(HWND hWnd, int X, int Y, int nWidth, int nHeight, BOOL bRepaint) {
+    if (isChildWnd(hWnd)) {
+        POINT	pt;
+        HWND	hWndParent;
+        hWndParent = GetParent(hWnd);
+        if (hWndParent) {
+            pt.x = X;
+            pt.y = Y;
+            ScreenToClient(hWndParent, &pt);
+            X = pt.x;
+            Y = pt.y;
+        }
+    }
+
+    BOOL bHasCap = HasCaption(hWnd);
+    if (bHasCap)
+        RemoveCaption(hWnd);
+
+    BOOL bRet = MoveWindow(hWnd, X, Y, nWidth, nHeight, bRepaint);
+
+    if (bHasCap)
+        AddCaption(hWnd);
+
+    return bRet;
+}
+
+BOOL IsLayeredWndSupported()
+{
+    OSVERSIONINFO		version;
+
+    memset(&version, 0, sizeof(version));
+    version.dwOSVersionInfoSize = sizeof(version);
+
+    if (!GetVersionEx(&version))
+    {
+        //		LOGOUT1(LOG_LVL_ERROR, _T("GetVersionEx FAILED! Error Id: %d"), GetLastError);
+        return FALSE;
+    }
+
+    // Major version: 5, windows 2000
+    if (version.dwMajorVersion < 5)
+        return FALSE;
+
+    return TRUE;
+}
+
+//	COMMENT:
+//		sets the opacity and transparency color key of a layered window
+//	INPUT:
+//		crKey,		specifies the color key
+//		bAlpha,		value for the blend function, When bAlpha is 0, 
+//					the window is completely transparent. 
+//					When bAlpha is 255, the window is opaque. 
+//		dwFlags		Specifies an action to take. This parameter can be one or 
+//					more of the following values. Value Meaning 
+//					LWA_COLORKEY Use crKey as the transparency color.  
+//					LWA_ALPHA Use bAlpha to determine the opacity of the layered window 
+BOOL SetLayeredWindow(HWND hWnd, COLORREF crKey, BYTE bAlpha, DWORD dwFlags) {
+    DWORD dwStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
+    dwStyle |= WS_EX_LAYERED;
+    SetWindowLong(hWnd, GWL_EXSTYLE, dwStyle);
+
+    return SetLayeredWindowAttributes(hWnd, crKey, bAlpha, dwFlags);
+}
+
+void UnSetLayeredWindow(HWND hWnd) {
+    DWORD dwStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
+    dwStyle &= ~WS_EX_LAYERED;
+    SetWindowLong(hWnd, GWL_EXSTYLE, dwStyle);
 }
 
 void Window::setToolWindow(bool bToolWindow) {
@@ -444,27 +549,27 @@ bool Window::setForeground() {
 }
 
 void Window::setWindowPos(int x, int y) {
-    ::setWindowPos(m_hWnd, nullptr, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOREPOSITION);
+    ::SetWindowPos(m_hWnd, nullptr, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOREPOSITION);
 }
 
 void Window::setWindowPosSafely(int x, int y) {
     if (isChild()) {
         HWND hWndParent;
-        hWndParent = ::getParent(m_hWnd);
+        hWndParent = ::GetParent(m_hWnd);
         if (hWndParent) {
             CPoint pt;
             pt.x = x;
             pt.y = y;
-            ::screenToClient(hWndParent, &pt);
+            ::ScreenToClient(hWndParent, &pt);
             x = pt.x;
             y = pt.y;
         }
     }
-    ::setWindowPos(m_hWnd, nullptr, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOREPOSITION);
+    ::SetWindowPos(m_hWnd, nullptr, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOREPOSITION);
 }
 
 bool Window::moveWindow(int X, int Y, int nWidth, int nHeight, bool bRepaint) {
-    return tobool(::moveWindow(m_hWnd, X, Y, nWidth, nHeight, bRepaint));
+    return tobool(::MoveWindow(m_hWnd, X, Y, nWidth, nHeight, bRepaint));
 }
 
 bool Window::moveWindowSafely(int X, int Y, int nWidth, int nHeight, bool bRepaint) {
@@ -472,14 +577,14 @@ bool Window::moveWindowSafely(int X, int Y, int nWidth, int nHeight, bool bRepai
 }
 
 int Window::messageOut(cstr_t lpText, uint32_t uType, cstr_t lpCaption) {
-    char szCap[512];
+    char szCap[512] = { 0 };
     if (lpCaption == nullptr) {
         emptyStr(szCap);
-        getWindowText(szCap, CountOf(szCap));
+        GetWindowText(m_hWnd, szCap, CountOf(szCap));
         lpCaption = szCap;
     }
 
-    return messageBox(m_hWnd, lpText, lpCaption, uType);
+    return MessageBox(m_hWnd, lpText, lpCaption, uType);
 }
 
 bool Window::replaceChildPos(int nIDChildSrcPos, Window *pChildNew) {
@@ -498,7 +603,7 @@ void Window::postUserMessage(int nMessageID, LPARAM param) {
 }
 
 void Window::sendUserMessage(int nMessageID, LPARAM param) {
-    sendMessage(m_hWnd, ML_WM_USER, nMessageID, param);
+    SendMessage(m_hWnd, ML_WM_USER, nMessageID, param);
 }
 
 LRESULT Window::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
@@ -524,11 +629,7 @@ LRESULT Window::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
         }
         break;
     case WM_CREATE:
-        if (onCreate()) {
-            return 0;
-        } else {
-            return -1;
-        }
+        onCreate();
     case WM_CLOSE:
         if (onClose()) {
             destroy();
@@ -537,8 +638,7 @@ LRESULT Window::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
     case WM_COMMAND:
         {
             uint32_t uId = LOWORD(wParam);
-            uint32_t uEvent = HIWORD(wParam);
-            onCommand(uId, uEvent);
+            onCommand(uId);
         }
         break;
     case WM_CONTEXTMENU:
@@ -547,44 +647,21 @@ LRESULT Window::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
             //            int yPos = HIWORD(lParam);
             if (lParam == -1) {
                 CPoint pt;
-                getCursorPos(&pt);
+                GetCursorPos(&pt);
                 onContexMenu(pt.x, pt.y);
             } else {
                 onContexMenu(LOWORD(lParam), HIWORD(lParam));
             }
         }
         break;
-    case WM_PAINT:
-        {
-            CRect rcClip;
-            if (!::getUpdateRect(m_hWnd, &rcClip, false)) {
-                return 0;
-            }
-
-            PAINTSTRUCT ps;
-            HDC hdc;
-            hdc = BeginPaint(m_hWnd, &ps);
-            CGraphics *canvas;
-
-            canvas = new CGraphics;
-            canvas->attach(hdc);
-
-            onPaint(canvas, rcClip);
-
-            delete canvas;
-
-            EndPaint(m_hWnd, &ps);
-        }
-        break;
     case WM_DESTROY:
         {
             onDestroy();
             if (m_hWnd) {
-                SetWindowLong(m_hWnd, GWL_USERDATA, (LONG)0);
-                defWindowProc(m_hWnd, message, wParam, lParam);
+                SetWindowLongPtr(m_hWnd, GWLP_USERDATA, (LONG)0);
+                DefWindowProc(m_hWnd, message, wParam, lParam);
                 m_hWnd = nullptr;
             }
-            // g_mapWnd.remove(m_hWnd);
         }
         return 0;
     case WM_DROPFILES:
@@ -660,15 +737,6 @@ LRESULT Window::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
         break;
     case WM_VSCROLL:
         {
-            // CSkinVScrollBarOSStyle
-            if (lParam) {
-                IScrollNotify *pNotify;
-                pNotify = (IScrollNotify *)GetWindowLong((HWND)lParam, GWL_USERDATA);
-                if (pNotify) {
-                    pNotify->onVScroll(LOWORD(wParam), HIWORD(wParam), nullptr);
-                    return 0;
-                }
-            }
             onVScroll(LOWORD(wParam), HIWORD(wParam), nullptr);
         }
         break;
@@ -676,7 +744,7 @@ LRESULT Window::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
         onTimer((uint32_t)wParam);
         break;
     default:
-        return defWindowProc(m_hWnd, message, wParam, lParam);
+        return DefWindowProc(m_hWnd, message, wParam, lParam);
     }
     return 0;
 }
@@ -684,7 +752,7 @@ LRESULT Window::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
 
 void Window::setTransparent(uint8_t nAlpha, bool bClickThrough) {
     // If it's child old, ignore this.
-    if (::getParent(m_hWnd)) {
+    if (::GetParent(m_hWnd)) {
         return;
     }
 
@@ -716,26 +784,18 @@ void Window::setTransparent(uint8_t nAlpha, bool bClickThrough) {
     }
 
     if (dwFlags != 0 || (isClickThrough())) {
-        ::setLayeredWindow(m_hWnd, clrTrans, nAlpha, dwFlags);
+        ::SetLayeredWindow(m_hWnd, clrTrans, nAlpha, dwFlags);
     } else {
-        ::unSetLayeredWindow(m_hWnd);
+        ::UnSetLayeredWindow(m_hWnd);
     }
 }
 
 bool Window::updateLayeredWindowUsingMemGraph(CRawGraph *canvas) {
-    HDC hdc, hdcSrc;
-    CRect rcWnd;
-    CPoint ptSrc, ptDest;
-    SIZE sizeWnd;
-    uint32_t dwStyle, dwStyleNew;
-    BLENDFUNCTION blend;
+    HDC hdc = GetDC(m_hWnd);
+    HDC hdcSrc = canvas->getHandle();
 
-    hdc = GetDC(m_hWnd);
-
-    hdcSrc = canvas->getHandle();
-
-    dwStyle = GetWindowLong(m_hWnd, GWL_EXSTYLE);
-    dwStyleNew = dwStyle | WS_EX_LAYERED;
+    DWORD dwStyle = GetWindowLong(m_hWnd, GWL_EXSTYLE);
+    DWORD dwStyleNew = dwStyle | WS_EX_LAYERED;
     if (isClickThrough()) {
         dwStyleNew |= WS_EX_TRANSPARENT;
     } else {
@@ -745,32 +805,23 @@ bool Window::updateLayeredWindowUsingMemGraph(CRawGraph *canvas) {
         SetWindowLong(m_hWnd, GWL_EXSTYLE, dwStyleNew);
     }
 
+    CRect rcWnd;
     getWindowRect(&rcWnd);
 
+    BLENDFUNCTION blend;
     blend.AlphaFormat = AC_SRC_ALPHA;
     blend.BlendOp = AC_SRC_OVER;
     blend.BlendFlags = 0;
     blend.SourceConstantAlpha = m_nAlpha;
 
-    ptSrc.x = ptSrc.y = 0;
-    ptDest.x = rcWnd.left;
-    ptDest.y = rcWnd.top;
-    sizeWnd.cx = rcWnd.width();
-    sizeWnd.cy = rcWnd.height();
+    CPoint ptSrc, ptDest(rcWnd.left, rcWnd.top);
+    CSize sizeWnd(rcWnd.width(), rcWnd.height());
 
     bool bRet = UpdateLayeredWindow(m_hWnd, hdc, &ptDest, &sizeWnd, hdcSrc, &ptSrc, 0, &blend, ULW_ALPHA);
-    //bool bRet = UpdateLayeredWindow(m_hWnd, nullptr, nullptr, nullptr, hdcSrc, &ptSrc, 0, &blend, ULW_ALPHA);
 
     ReleaseDC(m_hWnd, hdc);
 
     return bRet;
-}
-
-Window *Window::fromHandle(HWND hWnd) {
-    assert(hWnd != nullptr);
-    // if (hWnd == nullptr)
-    //     return nullptr;
-    return g_mapWnd.fromhandle(hWnd);
 }
 
 void Window::attach(HWND hWnd) {
@@ -779,4 +830,8 @@ void Window::attach(HWND hWnd) {
 
 void Window::detach() {
     m_hWnd = nullptr;
+}
+
+WindowHandle Window::getHandle() {
+    return (WindowHandle)m_hWnd;
 }

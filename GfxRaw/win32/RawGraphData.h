@@ -8,7 +8,7 @@ public:
     CRawGraphData();
     virtual ~CRawGraphData();
 
-    virtual bool create(int cx, int cy, Window *window, int nBitCount = 32);
+    virtual bool create(int cx, int cy, WindowHandle handle, int nBitCount = 32);
 
     virtual void destroy();
 
@@ -20,22 +20,16 @@ public:
 
     bool isValid() { return m_imageData.buff != nullptr; }
 
-    virtual void drawToWindow(int xdest, int ydest, int width, int height, int xsrc, int ysrc);
-    virtual void drawToWindowStretch(int xdest, int ydest, int width, int height, int xsrc, int ysrc, int widthsrc, int heightsrc);
+    void drawToWindow(int xdest, int ydest, int width, int height, int xsrc, int ysrc, float scaleFactor);
 
-    //     virtual void DrawGraphicsAlphaBlend(CGraphics *pSrc, int xdest, int ydest, int width, int height, int xsrc, int ysrc, uint8_t nAlpha, bool bPerPixelAlpha);
-    //     virtual void DrawGraphicsStretchAlphaBlend(CGraphics *pSrc, int xdest, int ydest, int width, int height, int xsrc, int ysrc, int widthsrc, int heightsrc, uint8_t nAlpha, bool bPerPixelAlpha);
-
-public:
-    // For win32 only
     HDC getHandle() const { return m_hdc; }
 
 protected:
-    Window                      *m_window;
+    WindowHandle                m_windowHandle = NULL;
     RawImageData                m_imageData;
-    HDC                         m_hdc;
-    HBITMAP                     m_bmpMem;
-    HBITMAP                     m_bmpOld;
+    HDC                         m_hdc = NULL;
+    HBITMAP                     m_bmpMem = NULL;
+    HBITMAP                     m_bmpOld = NULL;
 
     BITMAPINFO                  m_bmpInfo;
 

@@ -29,8 +29,6 @@ enum WndSizeMode {
     WndSizeMode_Normal,
 };
 
-struct WindowHandleHolder;
-
 class IWindow {
 public:
     //
@@ -91,10 +89,9 @@ public:
 
     void onResized(int width, int height);
 
-    WindowHandleHolder *getHandleHolder() { return m_handleHolder; }
+    virtual WindowHandle getHandle() = 0;
 
 protected:
-    WindowHandleHolder          *m_handleHolder;
     CRawGraph                   *m_pmemGraph;
     CSize                       m_wndSize;
 

@@ -10,7 +10,7 @@
 #import "WindowTypes.h"
 #import "ViewMacImp.h"
 #import "Window.h"
-#import "Cursor.h"
+#import "../Cursor.h"
 
 
 @implementation ViewMacImp

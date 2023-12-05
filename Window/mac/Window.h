@@ -78,9 +78,6 @@ public:
 
     virtual bool invalidateRect(const CRect* lpRect = nullptr, bool bErase = false);
 
-    void checkButton(int nIDButton, bool bCheck);
-    bool isButtonChecked(int nIDButton);
-
     bool isSameWnd(Window *pWnd);
 
     bool isChild();
@@ -119,6 +116,8 @@ public:
     void postUserMessage(int nMessageID, LPARAM param);
 
     virtual void onUserMessage(int nMessageID, LPARAM param) { }
+
+    WindowHandle getHandle() override;
 
     //
     // 输入法相关的处理
@@ -164,6 +163,8 @@ public:
 
 protected:
     WndSizeMode                 m_WndSizeMode;
-    Window                      *m_parent;
+    Window                      *m_parent = nullptr;
+
+    struct WindowHandleHolder   *m_handleHolder = nullptr;
 
 };

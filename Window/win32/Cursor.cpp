@@ -1,5 +1,9 @@
-﻿#include "Cursor.h"
+﻿#include "../Cursor.h"
 
+
+void setCursor(Cursor &cursor) {
+    ::setCursor(Cursor.m_cursor);
+}
 
 Cursor::Cursor(void) {
     m_cursor = nullptr;
@@ -7,6 +11,10 @@ Cursor::Cursor(void) {
 
 Cursor::~Cursor(void) {
     destroy();
+}
+
+bool Cursor::isValid() const {
+    return m_cursor != nullptr;
 }
 
 bool Cursor::loadStdCursor(STD_CURSOR_TYPE cusorType) {

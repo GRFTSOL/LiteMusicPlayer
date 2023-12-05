@@ -1,5 +1,5 @@
-﻿#include "BaseWnd.h"
-#include "DlgChooseColor.h"
+﻿#include "../WindowLib.h"
+#include <commdlg.h>
 
 
 CDlgChooseColor::CDlgChooseColor() {
@@ -17,7 +17,7 @@ int CDlgChooseColor::doModal(Window *pWndParent, const CColor &clr) {
 
     CHOOSECOLOR choosecolor;
     choosecolor.lStructSize = sizeof(choosecolor);
-    choosecolor.hwndOwner = pWndParent->getHandle();
+    choosecolor.hwndOwner = pWndParent->getWndHandle();
     choosecolor.lpCustColors = _clrCustom;
     choosecolor.Flags = CC_RGBINIT;
     choosecolor.rgbResult = clr.get();

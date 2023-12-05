@@ -8,7 +8,7 @@ public:
     CRawGraphData();
     virtual ~CRawGraphData();
 
-    virtual bool create(int cx, int cy, IMLGraphicsBase *canvas, int nBitCount = 32);
+    virtual bool create(int cx, int cy, WindowHandle handle, int nBitCount = 32);
 
     virtual void destroy();
 

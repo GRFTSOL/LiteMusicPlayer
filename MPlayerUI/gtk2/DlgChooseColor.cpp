@@ -1,5 +1,5 @@
 ﻿#include "../MPlayerApp.h"
-#include "DlgChooseColor.h"
+#include "../DlgChooseColor.h"
 
 
 CDlgChooseColor::CDlgChooseColor() {

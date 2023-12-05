@@ -5,7 +5,7 @@
 void appendStrByEncodingAndBom(string &buff, cstr_t str, ID3v2EncType encType, CharEncodingType encoding) {
     if (encType == IET_UCS2) {
         buff += SZ_FE_UCS2;
-        u16string strW;
+        utf16string strW;
         utf8ToUCS2(str, -1, strW);
         // ucs2EncodingReverse((WCHAR *)strW.data(), (int)strW.size());
         buff.append((const char *)strW.c_str(), (strW.size() + 1) * sizeof(WCHAR));
@@ -75,7 +75,7 @@ int copyStrByEncodingAndBom(string &str, ID3v2EncType encType, const char *data,
     int nCopyiedBytes = 0;
     if (srcEncoding == ED_UNICODE || srcEncoding == ED_UNICODE_BIG_ENDIAN) {
         int n = (int)wcslen_safe((WCHAR *)pbyData, len / sizeof(WCHAR));
-        u16string temp;
+        utf16string temp;
         temp.append((WCHAR *)pbyData, n);
         if (srcEncoding == ED_UNICODE_BIG_ENDIAN) {
             ucs2EncodingReverse((WCHAR *)temp.c_str(), n);
@@ -375,10 +375,10 @@ TEST(ID3Helper, CopyStrByEncodingAndBom) {
     cstr_t text = SZ_TEXT_TEST;
     int lenText = CountOf(SZ_TEXT_TEST);
     int n;
-    u16string wStr;
+    utf16string wStr;
     utf8ToUCS2(text, lenText, wStr);
 
-    u16string wLyrics;
+    utf16string wLyrics;
     wLyrics.append((const WCHAR *)SZ_FE_UCS2, 1);
     wLyrics.append(wStr.c_str(), wStr.size());
 

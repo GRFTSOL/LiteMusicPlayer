@@ -10,7 +10,7 @@ CRawGraphData::~CRawGraphData() {
     destroy();
 }
 
-bool CRawGraphData::create(int cx, int cy, IMLGraphicsBase *canvas, int nBitCount) {
+bool CRawGraphData::create(int cx, int cy, WindowHandle handle, int nBitCount) {
     assert(nBitCount == 32);
 
     if (!m_imageData.createReverse(cx, cy, nBitCount)) {

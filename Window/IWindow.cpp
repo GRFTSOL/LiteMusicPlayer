@@ -42,15 +42,6 @@ void IWindow::onScaleFactorChanged(float scaleFactor) {
     recreateMemGraphics();
 }
 
-//
-//void IWindow::onActivate(bool isActive) {
-////    if (_windowContext) {
-////        _windowContext->activate(isActive);
-////    }
-////    fIsActive = isActive;
-//}
-
-
 CRawGraph *IWindow::getMemGraphics() {
     //    assert(m_pmemGraph);
     if (!m_pmemGraph) {

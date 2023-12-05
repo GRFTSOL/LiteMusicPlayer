@@ -3,6 +3,9 @@
 
 #pragma once
 
+#include "../../TinyJS/utils/CharEncoding.h"
+
+
 // The following constants define unicode subranges
 // values below kRangeNum must be continuous so that we can map to
 // lang group directly.

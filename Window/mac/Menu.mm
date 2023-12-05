@@ -1,10 +1,6 @@
-#include "../WindowTypes.h"
-#include "Window.h"
-#include "Menu.h"
 #import <Cocoa/Cocoa.h>
+#include "../WindowLib.h"
 
-
-//////////////////////////////////////////////////////////////////////
 
 @interface MLMenuImp : NSObject {
     Window *mBaseWnd;
@@ -32,6 +28,33 @@
 
 @end
 
+
+cstr_t ToMacMenuText(cstr_t szOrg, string &buf) {
+    cstr_t p = strchr(szOrg, '&');
+    if (p == nullptr) {
+        return szOrg;
+    }
+    if (p[1] == '&') {
+        buf = szOrg;
+        strrep(buf, "&&", "&");
+        return buf.c_str();
+    }
+
+    if (!isAlpha(p[1])) {
+        return szOrg;
+    }
+
+    buf = szOrg;
+    if (p > szOrg) {
+        if (*(p - 1) == '(' && p[2] == ')') {
+            buf.erase((int)(p - szOrg) - 1, 4);
+            return buf.c_str();
+        }
+    }
+
+    buf.erase((int)(p - szOrg), 1);
+    return buf.c_str();
+}
 
 bool ToLocalMenu(CMenu *pMenu) {
     return false;
@@ -68,6 +91,17 @@ bool CMenu::isValid() const {
     return m_info->menuImp != nil;
 }
 
+bool CMenu::createPopupMenu() {
+    destroy();
+
+    m_info->menuImp = [MLMenuImp alloc];
+    m_info->menu = [[NSMenu alloc] initWithTitle:@"Menu"];
+    [m_info->menu setAutoenablesItems:NO];
+
+    return true;
+}
+
+
 void CMenu::destroy() {
     if (m_info->menu != nil) {
         [m_info->menu release];
@@ -81,6 +115,8 @@ void CMenu::destroy() {
 }
 
 void CMenu::trackPopupMenu(int x, int y, Window *pWnd, CRect *prcNotOverlap) {
+    assert(pWnd);
+
     updateMenuStatus(pWnd);
 
     NSPoint pt = { float(x), float(y) };
@@ -95,6 +131,8 @@ void CMenu::trackPopupMenu(int x, int y, Window *pWnd, CRect *prcNotOverlap) {
 }
 
 void CMenu::trackPopupSubMenu(int x, int y, int nSubMenu, Window *pWnd, CRect *prcNotOverlap) {
+    assert(pWnd);
+
     updateMenuStatus(pWnd);
 
     NSPoint pt = { float(x), float(y) };
@@ -129,46 +167,8 @@ void CMenu::checkRadioItem(int nID, int nStartID, int nEndID) {
     }
 }
 
-bool CMenu::createPopupMenu() {
-    destroy();
-
-    m_info->menuImp = [MLMenuImp alloc];
-    m_info->menu = [[NSMenu alloc] initWithTitle:@"Menu"];
-    [m_info->menu setAutoenablesItems:NO];
-
-    return true;
-}
-
-
 int CMenu::getItemCount() {
     return (int)[m_info->menu numberOfItems];
-}
-
-cstr_t ToMacMenuText(cstr_t szOrg, string &buf) {
-    cstr_t p = strchr(szOrg, '&');
-    if (p == nullptr) {
-        return szOrg;
-    }
-    if (p[1] == '&') {
-        buf = szOrg;
-        strrep(buf, "&&", "&");
-        return buf.c_str();
-    }
-
-    if (!isAlpha(p[1])) {
-        return szOrg;
-    }
-
-    buf = szOrg;
-    if (p > szOrg) {
-        if (*(p - 1) == '(' && p[2] == ')') {
-            buf.erase((int)(p - szOrg) - 1, 4);
-            return buf.c_str();
-        }
-    }
-
-    buf.erase((int)(p - szOrg), 1);
-    return buf.c_str();
 }
 
 void CMenu::appendItem(uint32_t nID, cstr_t szText, cstr_t szShortcutKey) {
@@ -179,24 +179,6 @@ void CMenu::appendItem(uint32_t nID, cstr_t szText, cstr_t szShortcutKey) {
         keyEquivalent:[NSString stringWithUTF8String:szShortcutKey]];
     [item setTarget:m_info->menuImp];
     [item setTag:nID];
-}
-
-CMenu CMenu::appendSubmenu(cstr_t szText) {
-    string buf;
-    NSString *title = [NSString stringWithUTF8String:ToMacMenuText(szText, buf)];
-    NSMenuItem *item = [m_info->menu addItemWithTitle:title
-        action:@selector(onCommand:)
-        keyEquivalent:@""];
-    [item setTarget:m_info->menuImp];
-    NSMenu *submenu = [[NSMenu alloc] initWithTitle:@""];
-    [item setSubmenu:submenu];
-
-    CMenu menu;
-    menu.m_info->menu = submenu;
-    menu.m_info->menuImp = m_info->menuImp;
-    [menu.m_info->menuImp retain];
-
-    return menu;
 }
 
 void CMenu::appendSeperator() {
@@ -223,6 +205,28 @@ void CMenu::insertItemByID(uint32_t nPosID, uint32_t nID, cstr_t szText, cstr_t 
     }
 }
 
+void CMenu::insertSeperator(int nPos) {
+    [m_info->menu insertItem: [NSMenuItem separatorItem] atIndex: nPos];
+}
+
+CMenu CMenu::appendSubmenu(cstr_t szText) {
+    string buf;
+    NSString *title = [NSString stringWithUTF8String:ToMacMenuText(szText, buf)];
+    NSMenuItem *item = [m_info->menu addItemWithTitle:title
+        action:@selector(onCommand:)
+        keyEquivalent:@""];
+    [item setTarget:m_info->menuImp];
+    NSMenu *submenu = [[NSMenu alloc] initWithTitle:@""];
+    [item setSubmenu:submenu];
+
+    CMenu menu;
+    menu.m_info->menu = submenu;
+    menu.m_info->menuImp = m_info->menuImp;
+    [menu.m_info->menuImp retain];
+
+    return menu;
+}
+
 CMenu CMenu::insertSubmenu(int nPos, cstr_t szText) {
     string buf;
     NSString *title = [NSString stringWithUTF8String:ToMacMenuText(szText, buf)];
@@ -242,37 +246,12 @@ CMenu CMenu::insertSubmenu(int nPos, cstr_t szText) {
     return menu;
 }
 
-void CMenu::insertSeperator(int nPos) {
-    [m_info->menu insertItem: [NSMenuItem separatorItem] atIndex: nPos];
-}
-
 void CMenu::removeItem(int nPos) {
     [m_info->menu removeItemAtIndex:nPos];
 }
 
 void CMenu::removeAllItems() {
     [m_info->menu removeAllItems];
-}
-
-void CMenu::replaceAllItems(int idStartWith, const VecStrings &names) {
-    int count = getItemCount();
-    int i = 0;
-    for (i = 0; i < count; i++) {
-        MenuItemInfo info;
-        if (getMenuItemInfo(i, true, info)) {
-            if (info.id == idStartWith) {
-                break;
-            }
-        }
-    }
-
-    for (; i < count; count--) {
-        removeItem(i);
-    }
-
-    for (auto &name : names) {
-        appendItem(idStartWith++, name.c_str());
-    }
 }
 
 bool CMenu::getMenuItemText(uint32_t index, string &strText, bool byPosition) {

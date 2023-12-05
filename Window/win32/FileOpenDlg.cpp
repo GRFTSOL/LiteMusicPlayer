@@ -1,8 +1,7 @@
-﻿#ifndef _NO_WIGET_LIB
-#include "BaseWnd.h"
-#endif
-#include "FileOpenDlg.h"
-#include <CdErr.h>
+﻿#include "../WindowLib.h"
+#include <commdlg.h>
+#include <array>
+#include <cderr.h>
 
 
 void CFileDlgExtFilter::addExtention(cstr_t szDesc, cstr_t szExt) {
@@ -13,88 +12,96 @@ void CFileDlgExtFilter::addExtention(cstr_t szDesc, cstr_t szExt) {
     append(1, char('\0'));
 }
 
+VecStrings extractOpenFiles(bool isMulSel, const char *text) {
+    VecStrings files;
+
+    if (!isMulSel) {
+        files.push_back(text);
+        return files;
+    }
+
+    string strDir = text;
+    dirStringAddSep(strDir);
+
+    while (*text != '\0') {
+        text++;
+    }
+    text++;
+
+    while (*text) {
+        files.push_back(strDir + text);
+        while (*text != '\0') {
+            text++;
+        }
+        text++;
+    }
+
+    return files;
+}
 //////////////////////////////////////////////////////////////////////
 
-CFileOpenDlg::CFileOpenDlg(cstr_t szTitle, cstr_t szFile, cstr_t extFilter, int nDefFileType, bool bAllowMultiSel) {
-    if (bAllowMultiSel) {
-        m_nBufLen = 1024 * 10;
-    } else {
-        m_nBufLen = MAX_PATH;
-    }
-
+CFileOpenDlg::CFileOpenDlg(cstr_t title, cstr_t file, cstr_t extFilter, int nDefFileType, bool bAllowMultiSel) {
+    m_title = title;
+    m_extFilter = extFilter;
+    m_nDefFileType = nDefFileType;
     m_bAllowMultiSel = bAllowMultiSel;
-    m_szFile = new char[m_nBufLen];
-    emptyStr(m_szFile);
 
-    if (szFile) {
-        strcpy_safe(m_szFile, m_nBufLen, szFile);
+    if (file) {
+        m_vFiles.push_back(file);
     }
-
-    memset(&m_openfile, 0, sizeof(m_openfile));
-    m_openfile.lpstrTitle = szTitle;
-    m_openfile.lpstrFilter = extFilter;
-    m_openfile.lpstrFile = m_szFile;
-    m_openfile.nMaxFile = m_nBufLen;
-    m_openfile.nFilterIndex = nDefFileType;
-
-    m_openfile.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST;
-    if (bAllowMultiSel) {
-        m_openfile.Flags |= OFN_ALLOWMULTISELECT;
-    }
-    m_openfile.lStructSize = sizeof(m_openfile);
-    m_openfile.hInstance = getAppInstance();
 }
 
 CFileOpenDlg::~CFileOpenDlg() {
-    delete[] m_szFile;
 }
 
 int CFileOpenDlg::doModal(Window *pWndParent) {
-    m_openfile.hwndOwner = pWndParent->getHandle();
+    OPENFILENAME openfile;
+    std::array<char, 1024 * 16> buf;
 
-    if (getOpenFileName(&m_openfile)) {
+    if (!m_vFiles.empty()) {
+        memcpy(buf.data(), m_vFiles[0].c_str(), m_vFiles[0].size() + 1);
+    }
+
+    memset(&openfile, 0, sizeof(openfile));
+    openfile.lStructSize = sizeof(openfile);
+    openfile.lpstrTitle = m_title.c_str();
+    openfile.lpstrFilter = m_extFilter;
+    openfile.lpstrFile = buf.data();
+    openfile.nMaxFile = buf.size();
+    openfile.nFilterIndex = m_nDefFileType;
+
+    openfile.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST;
+    if (m_bAllowMultiSel) {
+        openfile.Flags |= OFN_ALLOWMULTISELECT;
+    }
+    openfile.hInstance = getAppInstance();
+    openfile.hwndOwner = pWndParent->getWndHandle();
+
+    if (GetOpenFileName(&openfile)) {
+        extractOpenFiles(m_bAllowMultiSel, buf.data());
         return IDOK;
     } else {
         uint32_t dwErr = CommDlgExtendedError();
         if (dwErr == FNERR_INVALIDFILENAME) {
-            emptyStr(m_openfile.lpstrFile);
-            if (getOpenFileName(&m_openfile)) {
+            emptyStr(openfile.lpstrFile);
+            if (GetOpenFileName(&openfile)) {
+                extractOpenFiles(m_bAllowMultiSel, buf.data());
                 return IDOK;
             }
         }
     }
+
     return IDCANCEL;
 }
 
 cstr_t CFileOpenDlg::getOpenFile() {
-    return m_szFile;
+    if (m_vFiles.size() > 0) {
+        return m_vFiles[0].c_str();
+    } else {
+        return "";
+    }
 }
 
 void CFileOpenDlg::getOpenFile(vector<string> &vFiles) {
-    if (m_bAllowMultiSel) {
-        cstr_t szText = m_szFile;
-        string strDir;
-
-        strDir = m_szFile;
-        dirStringAddSep(strDir);
-
-        while (*szText != '\0') {
-            szText++;
-        }
-        szText++;
-
-        while (*szText) {
-            vFiles.push_back(strDir + szText);
-            while (*szText != '\0') {
-                szText++;
-            }
-            szText++;
-        }
-
-        if (vFiles.empty()) {
-            vFiles.push_back(m_szFile);
-        }
-    } else {
-        vFiles.push_back(m_szFile);
-    }
+    vFiles = m_vFiles;
 }

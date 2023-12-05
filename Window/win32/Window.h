@@ -4,7 +4,8 @@
 #define _ML_WINDOW_H_INC_
 
 #include "../IWindow.h"
-#include "Cursor.h"
+#include "../Cursor.h"
+#include <shellapi.h>
 
 
 const int ML_WM_LANGUAGE_CHANGED = (WM_USER + 1212);
@@ -12,6 +13,9 @@ const int ML_LANGUAGE_CHANGED_PARAM = 172172;
 #define ML_WM_USER                (WM_USER + 1213)
 
 LRESULT CALLBACK BaseWndProc(HWND hWnd, uint32_t message, WPARAM wParam, LPARAM lParam);
+void UnSetLayeredWindow(HWND hWnd);
+bool showAsAppWindowNoRefresh(HWND hWnd);
+bool showAsToolWindowNoRefresh(HWND hWnd);
 
 class Window : public IWindow {
 public:
@@ -20,11 +24,11 @@ public:
 
 public:
     virtual bool create(cstr_t szCaption, int x, int y, int nWidth, int nHeight, Window *pWndParent, uint32_t dwStyle = DS_NOIDLEMSG | WS_VISIBLE | WS_SYSMENU | WS_MINIMIZEBOX, int nID = ID_UNDEFINE);
-    virtual bool createEx(cstr_t szClassName, cstr_t szCaption, int x, int y, int nWidth, int nHeight, Window *pWndParent, uint32_t dwStyle = DS_NOIDLEMSG | WS_VISIBLE | WS_SYSMENU | WS_MINIMIZEBOX, uint32_t dwExStyle = 0, int nID = ID_UNDEFINE);
+    virtual bool createEx(cstr_t szClassName, cstr_t szCaption, int x, int y, int nWidth, int nHeight, Window *pWndParent, uint32_t dwStyle = DS_NOIDLEMSG | WS_VISIBLE | WS_SYSMENU | WS_MINIMIZEBOX, uint32_t dwExStyle = 0, int64_t nID = ID_UNDEFINE);
 
     virtual bool createForSkin(cstr_t szClassName, cstr_t szCaption, int x, int y, int nWidth, int nHeight, Window *pWndParent, bool bToolWindow = true, bool bTopmost = false, bool bVisible = true);
 
-    virtual bool destroy();
+    virtual void destroy();
 
     void postDestroy();
 
@@ -49,29 +53,24 @@ public:
     void maximize();
     void restore();
 
-    uint32_t getDlgItemText(int nIDItem, char * szString, int nMaxCount) { return ::getDlgItemText(m_hWnd, nIDItem, szString, nMaxCount); }
+    uint32_t getDlgItemText(int nIDItem, char * szString, int nMaxCount) { return ::GetDlgItemText(m_hWnd, nIDItem, szString, nMaxCount); }
     uint32_t getDlgItemText(int nIDItem, string &str);
-    bool setDlgItemText(int nIDItem, cstr_t szString) { return ::setDlgItemText(m_hWnd, nIDItem, szString); }
-    uint32_t getDlgItemInt(int nIDItem, bool *pTranslated, bool bSigned) { return ::getDlgItemInt(m_hWnd, nIDItem, pTranslated, bSigned); }
-    bool setDlgItemInt(int nIDItem, uint32_t uValue, bool bSigned) { return ::setDlgItemInt(m_hWnd, nIDItem, uValue, bSigned); }
-    bool enableDlgItem(int nIDItem, bool bEnable) { return tobool(::enableWindow(::getDlgItem(m_hWnd, nIDItem), bEnable)); }
-    bool enableWindow(bool bEnable) { return tobool(::enableWindow(m_hWnd, bEnable)); }
-    bool showDlgItem(int nIDItem, int nCmdShow) { return tobool(::showWindow(::getDlgItem(m_hWnd, nIDItem), nCmdShow)); }
-    Window *getDlgItem(int nIDItem) { return fromHandle(::getDlgItem(m_hWnd, nIDItem)); }
+    bool setDlgItemText(int nIDItem, cstr_t szString) { return ::SetDlgItemText(m_hWnd, nIDItem, szString); }
+    bool setDlgItemInt(int nIDItem, uint32_t uValue, bool bSigned) { return ::SetDlgItemInt(m_hWnd, nIDItem, uValue, bSigned); }
+    bool enableDlgItem(int nIDItem, bool bEnable) { return tobool(::EnableWindow(::GetDlgItem(m_hWnd, nIDItem), bEnable)); }
+    bool enableWindow(bool bEnable) { return tobool(::EnableWindow(m_hWnd, bEnable)); }
+    bool showDlgItem(int nIDItem, int nCmdShow) { return tobool(::ShowWindow(::GetDlgItem(m_hWnd, nIDItem), nCmdShow)); }
     bool getDlgItemRect(int nIDItem, CRect* lpRect);
 
     bool setTimer(uint32_t nTimerId, uint32_t nElapse);
     void killTimer(uint32_t nTimerId);
 
-    int getWindowText(char * szString, int nMaxCount) { return ::getWindowText(m_hWnd, szString, nMaxCount); }
-    int getWindowText(string &str);
-    bool setWindowText(cstr_t szText) { return tobool(::setWindowText(m_hWnd, szText)); }
+	string getTitle();
+    bool setTitle(cstr_t szText) { return tobool(::SetWindowText(m_hWnd, szText)); }
 
     bool setWndCursor(Cursor *pCursor);
 
     bool setFocus();
-
-    void setUseWindowsAppearance(bool isUseWindowAppearance);
 
     bool setCapture();
     void releaseCapture();
@@ -92,8 +91,7 @@ public:
     void setParent(Window *pWndParent);
     Window *getParent();
 
-    CGraphics *getGraphics();
-    void releaseGraphics(CGraphics *canvas);
+    virtual void onPaint(CRawGraph *surface, CRect *rcClip) override;
 
     virtual bool invalidateRect(const CRect* lpRect = nullptr, bool bErase = false);
 
@@ -107,8 +105,7 @@ public:
     bool isMouseCaptured();
 
     bool isIconic();
-
-    bool isZoomed() { return tobool(::isZoomed(m_hWnd)); }
+    bool isZoomed() { return tobool(::IsZoomed(m_hWnd)); }
 
     bool isWindow();
 
@@ -141,6 +138,23 @@ public:
 
     virtual void onUserMessage(int nMessageID, LPARAM param) { }
 
+    WindowHandle getHandle() override;
+
+    //
+    // 输入法相关的处理
+    //
+    // 在编辑框开始/结束编辑时需要调用
+    virtual void startTextInput();
+    virtual void endTextInput();
+
+    // 编辑控件的光标位置改变后需要调用此函数
+    void caretPositionChanged(const CPoint &point);
+
+    // 最终输入的文字
+    virtual void onInputText(cstr_t text) { }
+    // MarketText 是临时的文字，当输入其他字符时会被替代
+    virtual void onInputMarkedText(cstr_t text) { }
+
 public:
     // Translucency related APIs
     bool                        m_bTranslucencyLayered; // Is following alpha setting enabled?
@@ -155,22 +169,15 @@ public:
     bool updateLayeredWindowUsingMemGraph(CRawGraph *canvas);
 
 public:
-    static Window *fromHandle(HWND hWnd);
     void attach(HWND hWnd);
     void detach();
-
-    HWND getHandle() {
-        return m_hWnd;
-    }
-    // void SetWndHandle(HWND hWnd);
-    // bool sendMessage(uint32_t Msg, WPARAM wParam, LPARAM lParam);
-    // bool PostMessage(uint32_t Msg, WPARAM wParam, LPARAM lParam);
+    HWND getWndHandle() { return m_hWnd; }
 
     virtual LRESULT wndProc(uint32_t message, WPARAM wParam, LPARAM lParam);
 
 protected:
-    HWND                        m_hWnd;
     WndSizeMode                 m_WndSizeMode;
+    HWND                        m_hWnd;
 
 };
 

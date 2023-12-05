@@ -29,7 +29,7 @@ CRawGraph::CRawGraph(float scaleFactor) : m_scaleFactor(scaleFactor) {
 CRawGraph::~CRawGraph() {
 }
 
-bool CRawGraph::create(int cx, int cy, WindowHandleHolder *windowHandle, int nBitCount) {
+bool CRawGraph::create(int cx, int cy, WindowHandle windowHandle, int nBitCount) {
     m_rcClip.setLTWH(0, 0, cx, cy);
     m_rcClipScaleMaped = scale(m_rcClip);
     m_ptOrigin.x = m_ptOrigin.y = 0;

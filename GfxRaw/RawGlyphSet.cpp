@@ -44,23 +44,6 @@ void CRawGlyphSetMgr::removeRawGlyphSet(CRawGlyphSet *pRawGlyphSet) {
     }
 }
 
-void CRawGlyphSetMgr::enableAntialias(bool bEnable) {
-#ifdef _WIN32
-    if (g_bAntialiasFontEnabled == bEnable) {
-        return;
-    }
-
-    g_bAntialiasFontEnabled = bEnable;
-
-    for (LIST_SET::iterator it = m_listSet.begin(); it != m_listSet.end(); ++it) {
-        CRawGlyphSet *pSet = *it;
-        pSet->clearGlyph();
-        pSet->m_rawGlyphBuilder.destroy();
-        pSet->m_rawGlyphBuilder.init(*pSet);
-    }
-#endif
-}
-
 CRawGlyphSetMgr g_rawGlyphSetMgr;
 
 

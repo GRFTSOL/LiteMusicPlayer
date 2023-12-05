@@ -23,7 +23,7 @@ CRawGlyphBuilder::~CRawGlyphBuilder() {
     cairo_surface_destroy(m_surface);
 }
 
-void CRawGlyphBuilder::init(const CFontInfo &font) {
+void CRawGlyphBuilder::init(const FontInfoEx &font) {
     if (m_cr && m_font.isSame(font)) {
         return;
     }

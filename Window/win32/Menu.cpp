@@ -1,10 +1,5 @@
-﻿#include "BaseWnd.h"
-#include "MLMenu.h"
+﻿#include "../WindowLib.h"
 
-
-bool toLocalMenu(CMenu *pMenu) {
-    return toLocalMenu(pMenu->getHandle());
-}
 
 bool toLocalMenu(HMENU hMenu) {
     if (g_LangTool.isEnglish() && !g_LangTool.hasMacro()) {
@@ -12,28 +7,28 @@ bool toLocalMenu(HMENU hMenu) {
     }
 
     // int                nCount;
-    MENUITEMINFO MenuItemInfo;
+    MENUITEMINFO info;
     char szString[256];
     char szAccKey[256];
     cstr_t szPos;
 
     // don't use get menu item count, under win ce, it will cost a lot time
     for (int i = 0; i < 256; i++) {
-        memset(&MenuItemInfo, 0, sizeof(MenuItemInfo));
+        memset(&info, 0, sizeof(info));
 
-        MenuItemInfo.cbSize = sizeof(MenuItemInfo);
-        MenuItemInfo.fMask = MIIM_TYPE | MIIM_SUBMENU | MIIM_DATA;
-        MenuItemInfo.dwTypeData = szString;
-        MenuItemInfo.cch = CountOf(szString);
+        info.cbSize = sizeof(info);
+        info.fMask = MIIM_TYPE | MIIM_SUBMENU | MIIM_DATA;
+        info.dwTypeData = szString;
+        info.cch = CountOf(szString);
         szString[0] = '\0';
 
         // get menu item by pos.
-        if (!getMenuItemInfo(hMenu, i, true, &MenuItemInfo)) {
+        if (!GetMenuItemInfo(hMenu, i, true, &info)) {
             break;
         }
 
-        if (MenuItemInfo.hSubMenu != nullptr) {
-            toLocalMenu(MenuItemInfo.hSubMenu);
+        if (info.hSubMenu != nullptr) {
+            toLocalMenu(info.hSubMenu);
         }
 
         if (isEmptyString(szString)) {
@@ -53,9 +48,9 @@ bool toLocalMenu(HMENU hMenu) {
             strcat_safe(szString, CountOf(szString), szAccKey);
         }
 
-        MenuItemInfo.cch = strlen(szString) + 1;
-        MenuItemInfo.fMask = MIIM_DATA | MIIM_TYPE;
-        if (!SetMenuItemInfo(hMenu, i, true, &MenuItemInfo)) {
+        info.cch = strlen(szString) + 1;
+        info.fMask = MIIM_DATA | MIIM_TYPE;
+        if (!SetMenuItemInfo(hMenu, i, true, &info)) {
             OSError Err;
             ERR_LOG1("SetMenuItemInfo: %s", Err.Description());
             continue;
@@ -65,22 +60,27 @@ bool toLocalMenu(HMENU hMenu) {
     return true;
 }
 
+bool toLocalMenu(CMenu *pMenu) {
+    return toLocalMenu(pMenu->getHandle());
+}
+
 //////////////////////////////////////////////////////////////////////
 
 CMenu::CMenu() {
-    m_hMenu = nullptr;
-    m_nSubMenu = -1;
-    m_bFree = true;
 }
 
 CMenu::~CMenu() {
     destroy();
 }
 
+bool CMenu::isValid() const {
+    return m_hMenu != nullptr;
+}
+
 bool CMenu::loadMenu(int nID) {
     destroy();
 
-    m_hMenu = ::loadMenu(getAppInstance(), MAKEINTRESOURCE(nID));
+    m_hMenu = ::LoadMenu(getAppInstance(), MAKEINTRESOURCE(nID));
     assert(m_hMenu);
     m_nSubMenu = -1;
 
@@ -96,7 +96,7 @@ bool CMenu::loadMenu(int nID) {
 bool CMenu::createPopupMenu() {
     destroy();
 
-    m_hMenu = ::createPopupMenu();
+    m_hMenu = ::CreatePopupMenu();
 
     return m_hMenu != nullptr;
 }
@@ -111,6 +111,8 @@ void CMenu::destroy() {
 void CMenu::trackPopupMenu(int x, int y, Window *pWnd, CRect *prcNotOverlap) {
     assert(pWnd);
 
+    updateMenuStatus(pWnd);
+
     TPMPARAMS tpmParam;
 
     if (prcNotOverlap) {
@@ -118,12 +120,14 @@ void CMenu::trackPopupMenu(int x, int y, Window *pWnd, CRect *prcNotOverlap) {
         tpmParam.rcExclude = *prcNotOverlap;
     }
 
-    TrackPopupMenuEx(getHandle(), TPM_LEFTALIGN, x, y, pWnd->getHandle(), prcNotOverlap ? &tpmParam : nullptr);
+    TrackPopupMenuEx(getHandle(), TPM_LEFTALIGN, x, y, pWnd->getWndHandle(), prcNotOverlap ? &tpmParam : nullptr);
 }
 
 void CMenu::trackPopupSubMenu(int x, int y, int nSubMenu, Window *pWnd, CRect *prcNotOverlap) {
     assert(pWnd);
 
+    updateMenuStatus(pWnd);
+
     TPMPARAMS tpmParam;
 
     if (prcNotOverlap) {
@@ -131,7 +135,7 @@ void CMenu::trackPopupSubMenu(int x, int y, int nSubMenu, Window *pWnd, CRect *p
         tpmParam.rcExclude = *prcNotOverlap;
     }
 
-    TrackPopupMenuEx(getSubMenuHandle(nSubMenu), TPM_LEFTALIGN | TPM_VERTICAL, x, y, pWnd->getHandle(), prcNotOverlap ? &tpmParam : nullptr);
+    TrackPopupMenuEx(getSubMenuHandle(nSubMenu), TPM_LEFTALIGN | TPM_VERTICAL, x, y, pWnd->getWndHandle(), prcNotOverlap ? &tpmParam : nullptr);
 }
 
 void CMenu::enableItem(int nID, bool bEnable) {
@@ -153,14 +157,14 @@ void CMenu::checkRadioItem(int nID, int nStartID, int nEndID) {
 }
 
 int CMenu::getItemCount() {
-    return ::getMenuItemCount(getHandle());
+    return ::GetMenuItemCount(getHandle());
 }
 
-void CMenu::appendItem(uint32_t nID, cstr_t szText, cstr_t szShortcutKey) {
+void CMenu::appendItem(uint32_t nID, cstr_t text, cstr_t szShortcutKey) {
     if (isEmptyString(szShortcutKey)) {
-        ::AppendMenu(m_hMenu, MF_STRING, nID, szText);
+        ::AppendMenu(m_hMenu, MF_STRING, nID, text);
     } else {
-        ::AppendMenu(m_hMenu, MF_STRING, nID, (string(szText) + "\t" + szShortcutKey).c_str());
+        ::AppendMenu(m_hMenu, MF_STRING, nID, (string(text) + "\t" + szShortcutKey).c_str());
     }
 }
 
@@ -168,25 +172,57 @@ void CMenu::appendSeperator() {
     AppendMenu(m_hMenu, MF_SEPARATOR, 0, nullptr);
 }
 
-void CMenu::insertItem(int nPos, uint32_t nID, cstr_t szText, cstr_t szShortcutKey) {
+void CMenu::insertItem(int nPos, uint32_t nID, cstr_t text, cstr_t szShortcutKey) {
     if (isEmptyString(szShortcutKey)) {
-        ::InsertMenu(getHandle(), nPos, MF_BYPOSITION, nID, szText);
+        ::InsertMenu(getHandle(), nPos, MF_BYPOSITION, nID, text);
     } else {
-        ::InsertMenu(getHandle(), nPos, MF_BYPOSITION, nID, (string(szText) + "\t" + szShortcutKey).c_str());
+        ::InsertMenu(getHandle(), nPos, MF_BYPOSITION, nID, (string(text) + "\t" + szShortcutKey).c_str());
     }
 }
 
-void CMenu::insertItemByID(uint32_t nPosID, uint32_t nID, cstr_t szText, cstr_t szShortcutKey) {
-    HMENU hMenu = findMenuPos(getHandle(), nPosID);
+HMENU findMenuPos(HMENU hMenu, UINT nIDMenu) {
+    MENUITEMINFO	mii;
+
+    // don't use get menu item count, under win ce, it will cost a lot time
+    for (int i = 0; i < 256; i++) {
+        memset(&mii, 0, sizeof(mii));
+
+        mii.cbSize = sizeof(mii);
+        mii.fMask = MIIM_TYPE | MIIM_SUBMENU | MIIM_ID;
+        mii.dwTypeData = NULL;
+        mii.cch = 0;
+
+        // get menu item by pos.
+        if (!::GetMenuItemInfo(hMenu, i, TRUE, &mii)) {
+            break;
+        }
+
+        if (mii.hSubMenu != NULL) {
+            HMENU h = findMenuPos(mii.hSubMenu, nIDMenu);
+            if (h != NULL) {
+                return h;
+            }
+        } else {
+            if (mii.wID == nIDMenu) {
+                return hMenu;
+            }
+        }
+    }
+
+    return NULL;
+}
+
+void CMenu::insertItemByID(uint32_t nPosID, uint32_t nID, cstr_t text, cstr_t szShortcutKey) {
+    HMENU hMenu = findMenuPos(m_hMenu, nPosID);
     assert(hMenu);
     if (hMenu == nullptr) {
         return;
     }
 
     if (isEmptyString(szShortcutKey)) {
-        ::InsertMenu(hMenu, nPosID, MF_BYCOMMAND, nID, szText);
+        ::InsertMenu(hMenu, nPosID, MF_BYCOMMAND, nID, text);
     } else {
-        ::InsertMenu(hMenu, nPosID, MF_BYCOMMAND, nID, (string(szText) + "\t" + szShortcutKey).c_str());
+        ::InsertMenu(hMenu, nPosID, MF_BYCOMMAND, nID, (string(text) + "\t" + szShortcutKey).c_str());
     }
 }
 
@@ -194,24 +230,22 @@ void CMenu::insertSeperator(int nPos) {
     ::InsertMenu(getHandle(), nPos, MF_SEPARATOR, 0, nullptr);
 }
 
-CMenu CMenu::appendSubmenu(cstr_t szText) {
-    HMENU hSubMenu = ::createPopupMenu();
-    ::AppendMenu(getHandle(), MF_POPUP, (UINT_PTR)hSubMenu, szText);
+CMenu CMenu::appendSubmenu(cstr_t text) {
+    HMENU hSubMenu = ::CreatePopupMenu();
+    ::AppendMenu(getHandle(), MF_POPUP, (UINT_PTR)hSubMenu, text);
 
     CMenu menu;
-    menu.attach(hSubMenu);
-    menu.m_bFree = false;
+    menu.attach(hSubMenu, false);
 
     return menu;
 }
 
-CMenu CMenu::insertSubmenu(int nPos, cstr_t szText) {
-    HMENU hSubMenu = ::createPopupMenu();
-    ::InsertMenu(getHandle(), nPos, MF_BYPOSITION | MF_POPUP, (UINT_PTR)hSubMenu, szText);
+CMenu CMenu::insertSubmenu(int nPos, cstr_t text) {
+    HMENU hSubMenu = ::CreatePopupMenu();
+    ::InsertMenu(getHandle(), nPos, MF_BYPOSITION | MF_POPUP, (UINT_PTR)hSubMenu, text);
 
     CMenu menu;
-    menu.attach(hSubMenu);
-    menu.m_bFree = false;
+    menu.attach(hSubMenu, false);
 
     return menu;
 }
@@ -221,39 +255,60 @@ void CMenu::removeItem(int nPos) {
     ::DeleteMenu(getHandle(), nPos, MF_BYPOSITION);
 }
 
-bool CMenu::getMenuItemText(uint32_t nItem, string &strText, bool bByPosition) {
-    uint32_t nID;
-    bool bSubMenu;
-
-    return getMenuItemInfo(nItem, strText, nID, bSubMenu, bByPosition);
+void CMenu::removeAllItems() {
+    int count = getItemCount();
+    for (count--; count >= 0; count--) {
+        removeItem(count);
+    }
 }
 
-bool CMenu::getMenuItemInfo(uint32_t nItem, string &strText, uint32_t &nID, bool &bSubMenu, bool bByPosition) {
-    MENUITEMINFO MenuItemInfo;
+bool CMenu::getMenuItemText(uint32_t index, string &text, bool byPosition) {
+    MenuItemInfo info;
+
+    if (!getMenuItemInfo(index, byPosition, info)) {
+        return false;
+    }
+    text = info.text;
+
+    return true;
+}
+
+bool CMenu::getMenuItemInfo(uint32_t index, bool byPosition, MenuItemInfo &itemOut) {
+    MENUITEMINFO info;
     char szString[256];
 
-    MenuItemInfo.cbSize = sizeof(MenuItemInfo);
-    MenuItemInfo.fMask = MIIM_TYPE | MIIM_SUBMENU | MIIM_DATA | MIIM_ID;
-    MenuItemInfo.dwTypeData = szString;
-    MenuItemInfo.cch = CountOf(szString);
+    info.cbSize = sizeof(info);
+    info.fMask = MIIM_TYPE | MIIM_SUBMENU | MIIM_DATA | MIIM_ID;
+    info.dwTypeData = szString;
+    info.cch = CountOf(szString);
     szString[0] = '\0';
 
     // get menu item by pos.
-    if (!::getMenuItemInfo(getHandle(), nItem, bByPosition, &MenuItemInfo)) {
+    if (!::GetMenuItemInfo(getHandle(), index, byPosition, &info)) {
         return false;
     }
 
-    strText = szString;
-    nID = MenuItemInfo.wID;
-    bSubMenu = MenuItemInfo.hSubMenu != nullptr;
+    itemOut.text = szString;
+    itemOut.id = info.wID;
+    itemOut.isSubmenu = info.hSubMenu != nullptr;
+
+    auto state = GetMenuState(m_hMenu, index, byPosition);
+
+    itemOut.isChecked = state & MF_CHECKED;
+    itemOut.isEnabled = !(state & MF_DISABLED);
 
     return true;
+}
+
+bool CMenu::isSeparator(int pos) {
+    auto state = GetMenuState(m_hMenu, pos, MF_BYPOSITION);
+    return state & MF_SEPARATOR;
 }
 
 bool CMenu::loadPopupMenu(int nID, int nSubMenu) {
     destroy();
 
-    m_hMenu = ::loadMenu(getAppInstance(), MAKEINTRESOURCE(nID));
+    m_hMenu = ::LoadMenu(getAppInstance(), MAKEINTRESOURCE(nID));
     assert(m_hMenu);
     m_nSubMenu = nSubMenu;
 
@@ -277,7 +332,7 @@ bool CMenu::hasItem(int nPos) {
     mii.cch = 0;
 
     // get menu item by pos.
-    if (!::getMenuItemInfo(getHandle(), nPos, true, &mii)) {
+    if (!::GetMenuItemInfo(getHandle(), nPos, true, &mii)) {
         return false;
     }
 
@@ -291,18 +346,9 @@ bool CMenu::hasSubmenu(int nPos) {
 CMenu CMenu::getSubmenu(int nPos) {
     CMenu menu;
 
-    menu.attach(getSubMenuHandle(nPos));
-    menu.m_bFree = false;
+    menu.attach(getSubMenuHandle(nPos), false);
 
     return menu;
-}
-
-CMenu & CMenu::operator = (CMenu &menu) {
-    m_hMenu = menu.m_hMenu;
-    m_nSubMenu = menu.m_nSubMenu;
-    m_bFree = false;
-
-    return *this;
 }
 
 HMENU CMenu::getSubMenuHandle(int nPos) {
@@ -323,34 +369,10 @@ HMENU CMenu::getHandle() {
     }
 }
 
-HMENU CMenu::findMenuPos(HMENU hMenu, uint32_t nIDMenu) {
-    MENUITEMINFO mii;
+CMenu & CMenu::operator = (const CMenu &menu) {
+    m_hMenu = menu.m_hMenu;
+    m_nSubMenu = menu.m_nSubMenu;
+    m_bFree = false;
 
-    // don't use get menu item count, under win ce, it will cost a lot time
-    for (int i = 0; i < 256; i++) {
-        memset(&mii, 0, sizeof(mii));
-
-        mii.cbSize = sizeof(mii);
-        mii.fMask = MIIM_TYPE | MIIM_SUBMENU | MIIM_ID;
-        mii.dwTypeData = nullptr;
-        mii.cch = 0;
-
-        // get menu item by pos.
-        if (!::getMenuItemInfo(hMenu, i, true, &mii)) {
-            break;
-        }
-
-        if (mii.hSubMenu != nullptr) {
-            HMENU h = findMenuPos(mii.hSubMenu, nIDMenu);
-            if (h != nullptr) {
-                return h;
-            }
-        } else {
-            if (mii.wID == nIDMenu) {
-                return hMenu;
-            }
-        }
-    }
-
-    return nullptr;
+    return *this;
 }

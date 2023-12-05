@@ -18,12 +18,6 @@ CPoint getCursorPos() {
     return CPoint(pt.x, pt.y);
 }
 
-Window *findWindow(cstr_t szClassName, cstr_t szWindowName) {
-#pragma warning("Unplememented method: ");
-
-    return nullptr;
-}
-
 bool getMonitorRestrictRect(const CRect &rcIn, CRect &rcRestrict) {
     NSArray *screens = [NSScreen screens];
     int nMaxSpace = -1;

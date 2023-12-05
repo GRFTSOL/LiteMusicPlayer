@@ -9,7 +9,6 @@
 #include "../MPShared/SkinSeekCtrl.h"
 #include "../MPShared/SkinListCtrl.h"
 #include "../MPShared/SkinRateCtrl.h"
-#include "../MPShared/SkinDroplistCtrl.h"
 #include "../MPlayer/MPSkinVis.h"
 #include "../MPShared/SkinBarFrame.h"
 #include "../MPShared/SkinBarFrameClientArea.h"
@@ -112,8 +111,6 @@ CUIObject *CSESkinFactory::createUIObject(CSkinWnd *pSkin, cstr_t szClassName)
         pObj = new CSEUIEditObject<CSkinSeekCtrl>(pNotify);
     else if (strcasecmp(szClassName, CSkinListCtrl::className()) == 0)
         pObj = new CSEUIEditObject<CSkinListCtrl>(pNotify);
-    else if (strcasecmp(szClassName, CSkinDroplistCtrl::className()) == 0)
-        pObj = new CSEUIEditObject<CSkinDroplistCtrl>(pNotify);
     else if (strcasecmp(szClassName, CMPSkinVis::className()) == 0)
         pObj = new CSEUIEditObject<CMPSkinVis>(pNotify);
     else if (strcasecmp(szClassName, CMPSkinTimeCtrl::className()) == 0)
@@ -207,8 +204,6 @@ CUIObject *CSESkinFactory::createUIObject(CSkinWnd *pSkin, cstr_t szClassName)
             pObj = new CSkinSeekCtrl;
         else if (strcasecmp(szClassName, CSkinListCtrl::className()) == 0)
             pObj = new CSkinListCtrl;
-        else if (strcasecmp(szClassName, CSkinDroplistCtrl::className()) == 0)
-            pObj = new CSkinDroplistCtrl;
         else if (strcasecmp(szClassName, CMPSkinVis::className()) == 0)
             pObj = new CMPSkinVis;
         else if (strcasecmp(szClassName, CMPSkinTimeCtrl::className()) == 0)

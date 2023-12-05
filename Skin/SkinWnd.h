@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include <functional>
 #include "UIObject.h"
 #include "SkinToolTip.h"
 #include "SkinContainer.h"

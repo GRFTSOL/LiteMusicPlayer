@@ -3,7 +3,7 @@
 
 #pragma once
 
-struct WindowHandleHolder;
+
 class Window;
 typedef struct CGContext *CGContextRef;
 
@@ -12,7 +12,7 @@ public:
     CRawGraphData();
     virtual ~CRawGraphData();
 
-    virtual bool create(int cx, int cy, WindowHandleHolder *windowHandle, int nBitCount = 32);
+    virtual bool create(int cx, int cy, WindowHandle handle, int nBitCount = 32);
 
     virtual void destroy();
 
@@ -26,9 +26,9 @@ public:
     CGContextRef getHandle() const { return m_context; }
 
 protected:
+    WindowHandle                m_windowHandle = NULL;
     RawImageData                m_imageData;
     CGContextRef                m_context;
-    WindowHandleHolder          *m_windowHandle;
 
 };
 

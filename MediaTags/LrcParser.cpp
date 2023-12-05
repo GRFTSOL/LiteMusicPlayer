@@ -786,14 +786,14 @@ TEST(LrcParser, CLrcParser_Lrc) {
     string gbStr;
     utf8ToMbcs(SZ_LYRICS_TEST, -1, gbStr);
 
-    u16string wStr;
+    utf16string wStr;
     utf8ToUCS2(SZ_LYRICS_TEST, -1, wStr);
 
-    u16string wLyrics;
+    utf16string wLyrics;
     wLyrics.append((const WCHAR *)SZ_FE_UCS2, 1);
     wLyrics.append(wStr.c_str(), wStr.size());
 
-    u16string wLyricsBe;
+    utf16string wLyricsBe;
     wLyricsBe.append(wLyrics.c_str(), wLyrics.size());
     ucs2EncodingReverse((utf16_t *)wLyricsBe.data(), (int)wLyricsBe.size());
 
@@ -908,14 +908,14 @@ TEST(LrcParser, CLrcParser_Txt) {
     string gbStr;
     utf8ToMbcs(SZ_LYRICS_TEST, -1, gbStr, ED_GB2312);
 
-    u16string wStr;
+    utf16string wStr;
     utf8ToUCS2(SZ_LYRICS_TEST, -1, wStr);
 
-    u16string wLyrics;
+    utf16string wLyrics;
     wLyrics.append((utf16_t *)SZ_FE_UCS2, 1);
     wLyrics.append(wStr.c_str(), wStr.size());
 
-    u16string wLyricsBe;
+    utf16string wLyricsBe;
     wLyricsBe.append(wLyrics.c_str(), wLyrics.size());
     ucs2EncodingReverse((utf16_t *)wLyricsBe.data(), (int)wLyricsBe.size());
 
@@ -1097,14 +1097,14 @@ TEST(lrcTag, CLrcTag_replaceInFile) {
     string gbStr;
     utf8ToMbcs(SZ_LYRICS_TEST, -1, gbStr);
 
-    u16string wStr;
+    utf16string wStr;
     utf8ToUCS2(SZ_LYRICS_TEST, -1, wStr);
 
-    u16string wLyrics;
+    utf16string wLyrics;
     wLyrics.append((utf16_t *)SZ_FE_UCS2, 1);
     wLyrics.append(wStr.c_str(), wStr.size());
 
-    u16string wLyricsBe;
+    utf16string wLyricsBe;
     wLyricsBe.append(wLyrics.c_str(), wLyrics.size());
     ucs2EncodingReverse((utf16_t *)wLyricsBe.data(), (int)wLyricsBe.size());
 

@@ -9,8 +9,12 @@
 #import <Cocoa/Cocoa.h>
 #import "WindowTypes.h"
 #import "Window.h"
-#import "WindowHandleHolder.h"
 
+
+struct WindowHandleHolder {
+    WindowMacImp                *window;
+    ViewMacImp                  *view;
+};
 
 void showInFinder(cstr_t filename) {
     string path = fileGetPath(filename);
@@ -339,38 +343,6 @@ bool Window::setCapture() {
 void Window::releaseCapture() {
     m_bMouseCaptured = false;
 }
-//
-//CGraphics *Window::getGraphics()
-//{
-//    if (m_handleHolder->window == nullptr)
-//        return nullptr;
-//
-//    CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-//
-//    CGContextSaveGState(context);
-//
-//    CGContextTranslateCTM(context, 0, [m_handleHolder->view frame].size.height);
-//    CGContextScaleCTM(context, 1.0, -1.0);
-//
-//    CGraphics        *canvas;
-//
-//    canvas = new CGraphics;
-//    canvas->attach(context);
-//
-//    return canvas;
-//}
-//
-//void Window::ReleaseGraphics(CGraphics *canvas)
-//{
-//    if (m_handleHolder->window == nullptr)
-//        return;
-//
-//    CGContextRestoreGState(canvas->getHandle());
-//
-//    canvas->detach();
-//
-//    delete canvas;
-//}
 
 bool Window::invalidateRect(const CRect *lpRect, bool bErase) {
     if (m_handleHolder->window != nullptr) {
@@ -636,3 +608,7 @@ void Window::setTransparent(uint8_t nAlpha, bool bClickThrough) {
 //    return (void *)m_handleHolder->window;
 //}
 //
+
+WindowHandle Window::getHandle() {
+    return (WindowHandle)m_handleHolder->window;
+}

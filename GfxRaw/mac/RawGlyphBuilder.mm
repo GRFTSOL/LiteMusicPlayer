@@ -20,6 +20,7 @@ CRawGlyphBuilder::CRawGlyphBuilder() {
 }
 
 CRawGlyphBuilder::~CRawGlyphBuilder() {
+    destroy();
 }
 
 void CRawGlyphBuilder::init(const FontInfoEx &font) {
@@ -93,7 +94,7 @@ Glyph *CRawGlyphBuilder::buildGlyph(string &ch) {
     agg::pixfmt_rgba32 pixf(bufGraph);
     copyBitmpDataFromGraphBuffer(glyph, pixf);
 
-    // 字体又点偏上，修正一点位置
+    // 字体有点偏上，修正一点位置
     glyph->topOffset += 2;
 
     return glyph;

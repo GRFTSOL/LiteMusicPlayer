@@ -7,6 +7,7 @@ class CColor;
 class CRawGraph;
 class CRawImage;
 
+using WindowHandle = int64_t;
 
 #ifndef _WIN32
 // the dwFlags of drawTextEx

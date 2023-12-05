@@ -72,9 +72,7 @@ public:
     }
 
     void onCommandSetBkImg() {
-        CFolderDialog dlg;
-
-        dlg.setInitFolder(CMLProfile::getDir(SZ_SECT_LYR_DISPLAY, "BgPicFolder", "").c_str());
+        CFolderDialog dlg(CMLProfile::getDir(SZ_SECT_LYR_DISPLAY, "BgPicFolder", "").c_str());
         if (dlg.doBrowse(m_pSkin)) {
             CMPlayerSettings::setSettings(ET_LYRICS_DISPLAY_SETTINGS, SZ_SECT_LYR_DISPLAY, "UseBgImage", true);
             CMPlayerSettings::setSettings(ET_LYRICS_DISPLAY_SETTINGS, SZ_SECT_LYR_DISPLAY, "BgPicFolder", dlg.getFolder());

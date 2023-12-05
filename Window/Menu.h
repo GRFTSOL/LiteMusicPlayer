@@ -6,20 +6,12 @@
 class Window;
 
 struct MenuItemInfo {
-    bool                        isEnabled;
-    bool                        isSeparator;
-    bool                        isSubmenu;
-    bool                        isChecked;
-    string                      text, shortcutKey;
-    uint32_t                    id;
-
-    MenuItemInfo() {
-        isEnabled = true;
-        isSeparator = false;
-        isSubmenu = false;
-        isChecked = false;
-        id = 0;
-    }
+    bool                        isEnabled = true;
+    bool                        isSeparator = false;
+    bool                        isSubmenu = false;
+    bool                        isChecked = false;
+    std::string                 text, shortcutKey;
+    uint32_t                    id = 0;
 };
 
 class CMenu {
@@ -80,14 +72,49 @@ public:
 
     CMenu & operator = (const CMenu &menu);
 
+public:
+#ifdef _WIN32
+    bool loadMenu(int nID);
+    bool loadPopupMenu(int nID, int nSubMenu);
+    HMENU getSubMenuHandle(int nPos);
+
+    void attach(HMENU hMenu, bool isFree) { m_hMenu = hMenu; m_bFree = isFree; }
+    HMENU getHandle();
+protected:
+    HMENU                       m_hMenu = NULL;
+    int                         m_nSubMenu = -1;
+    bool                        m_bFree = true;
+
+#else // #ifdef _WIN32
     // For Mac
     void *getHandle(Window *window);
     void attachHandle(void *handle);
-
 protected:
     struct MLMenuInfo    *m_info;
+#endif // #ifdef _WIN32
 
 };
+
+inline void CMenu::replaceAllItems(int idStartWith, const VecStrings &names) {
+    int count = getItemCount();
+    int i = 0;
+    for (i = 0; i < count; i++) {
+        MenuItemInfo info;
+        if (getMenuItemInfo(i, true, info)) {
+            if (info.id == idStartWith) {
+                break;
+            }
+        }
+    }
+
+    for (; i < count; count--) {
+        removeItem(i);
+    }
+
+    for (auto &name : names) {
+        appendItem(idStartWith++, name.c_str());
+    }
+}
 
 bool toLocalMenu(CMenu *pMenu);
 

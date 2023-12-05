@@ -231,11 +231,9 @@ public:
     virtual void setOption(int nIndex) {
         if (nIndex == 0) {
             // add new folder:
-            CFolderDialog dlg;
-
             // 取得上次选择过的文件夹的位置
             string path = g_profile.getString("LastSelectFolder", "");
-            dlg.setInitFolder(path.c_str());
+            CFolderDialog dlg(path.c_str());
 
             if (dlg.doBrowse(m_pWndParent)) {
                 // 保存上次选择过的文件夹的位置

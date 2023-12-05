@@ -16,7 +16,7 @@ public:
     static void init();
 
     static void filter(const char *szTarg, string &strOut);
-    static void filter(cwstr_t szTarg, u16string &strOut);
+    static void filter(cwstr_t szTarg, utf16string &strOut);
 
 #define WORD_MAX            0xFFFF
 

@@ -9,7 +9,7 @@
 
 uint8_t g_byFontQuality = (GetOperationSystemType() >= OPS_WINXP) ? CLEARTYPE_QUALITY : ANTIALIASED_QUALITY;
 
-bool CGdiFont::create(const CFontInfo &font) {
+bool CGdiFont::create(const FontInfoEx &font) {
     LOGFONT logFont = {25, 0, 0, 0, FW_REGULAR, false, false, false, DEFAULT_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, g_byFontQuality, DEFAULT_PITCH | FF_ROMAN, "Tahoma"};
 
     logFont.lfHeight = font.getSize();
@@ -84,10 +84,12 @@ HDC CGdiGraphicsLite::detach() {
         m_hFontOld = nullptr;
     }
 
-    return CGraphics::detach();
+    auto tmp = m_hdc;
+    m_hdc = NULL;
+    return tmp;
 }
 
-void CGdiGraphicsLite::setFont(CFontInfo *font) {
+void CGdiGraphicsLite::setFont(FontInfoEx *font) {
     m_fontCollection.setFont(*font);
 
     if (!m_bResolveTextEncoding) {

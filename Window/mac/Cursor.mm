@@ -1,16 +1,14 @@
 #import <AppKit/AppKit.h>
-#include "WindowTypes.h"
-#include "Cursor.h"
+#include "../WindowTypes.h"
+#include "../Cursor.h"
 
 
 struct _CursorInternal {
     NSCursor                *cursor = nullptr;
 };
 
-// set new cursor, and return the old cursor.
-bool setCursor(Cursor &cursor) {
+void setCursor(Cursor &cursor) {
     cursor.set();
-    return true;
 }
 
 Cursor::Cursor(void) {

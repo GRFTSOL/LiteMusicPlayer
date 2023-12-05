@@ -43,8 +43,7 @@ bool onSongOpenFileCmd(Window *pWndParent, bool bOpen) {
 bool onSongOpenDirCmd(Window *pWndParent, bool bOpen) {
     string strFolder;
 
-    CFolderDialog dlg;
-    dlg.setInitFolder(g_profile.getString("Last open Dir", ""));
+    CFolderDialog dlg(g_profile.getString("Last open Dir", ""));
     if (dlg.doBrowse(pWndParent) == IDOK) {
         strFolder = dlg.getFolder();
 
@@ -71,8 +70,7 @@ bool onSongOpenDirCmd(Window *pWndParent, bool bOpen) {
 bool onCmdSongAddDirToMediaLib(Window *pWndParent) {
     string strFolder;
 
-    CFolderDialog dlg;
-    dlg.setInitFolder(g_profile.getString("Last open Dir", ""));
+    CFolderDialog dlg(g_profile.getString("Last open Dir", ""));
     if (dlg.doBrowse(pWndParent) == IDOK) {
         strFolder = dlg.getFolder();
 

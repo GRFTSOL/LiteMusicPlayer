@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include "Window.h"
 #include "../../GfxRaw/Color.h"
 
 

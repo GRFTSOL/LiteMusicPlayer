@@ -476,33 +476,6 @@ bool CMPMediaLibCmdHandler::onUIObjNotify(IUIObjNotify *pNotify) {
 
         return true;
     }
-    /*    else if (pNotify->nID == ID_ML_GUIDE)
-    {
-        if (pNotify->pUIObject->isKindOf(CSkinDroplistCtrl::className()))
-        {
-            //
-            // Change to new path.
-            //
-            CSkinDroplistCtrl        *pCtrl = (CSkinDroplistCtrl*)pNotify->pUIObject;
-            CSkinDroplistCtrlEventNotify    *pDroplistEvent = (CSkinDroplistCtrlEventNotify*)pNotify;
-            if (pDroplistEvent->cmd == CSkinDroplistCtrlEventNotify::C_SEL_CHANGED)
-            {
-                vector<string>        vPath;
-                CMediaLibTreeProvider::V_ITEMS    vPathNew;
-                pCtrl->getSelPath(vPath);
-                m_mediaLibTree.getPath(vPathNew);
-                assert(vPathNew.size() >= vPath.size());
-                if (vPathNew.size() > vPath.size())
-                {
-                    vPathNew.resize(vPath.size());
-                    addHistoryPath();
-                    m_mediaLibTree.chToPath(vPathNew);
-                    updateMediaList();
-                }
-            }
-        }
-        return true;
-    }*/
 
     return false;
 }
@@ -560,24 +533,6 @@ void CMPMediaLibCmdHandler::updateMediaList() {
         }
         plistCtrl->invalidate();
     }
-
-    /*    CSkinDroplistCtrl    *pDroplist;
-    pDroplist = (CSkinDroplistCtrl*)m_pSkinWnd->getUIObjectById(ID_ML_GUIDE, CSkinDroplistCtrl::className());
-    if (pDroplist)
-    {
-        CMediaLibTreeProvider::V_ITEMS    vItems;
-
-        m_mediaLibTree.getPath(vItems);
-
-        pDroplist->clear();
-
-        for (int i = 0; i < (int)vItems.size(); i++)
-        {
-            pDroplist->append(vItems[i].nImageIndex, vItems[i].name.c_str());
-        }
-
-        pDroplist->invalidate();
-    }*/
 }
 
 void CMPMediaLibCmdHandler::addHistoryPath() {

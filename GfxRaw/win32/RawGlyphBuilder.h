@@ -3,15 +3,18 @@
 
 #pragma once
 
-namespace GfxRaw
-{
+#include "GdiplusGraphicsLite.h"
+#include "RawGraphData.h"
+
+
+class Glyph;
 
 class CRawGlyphBuilder {
 public:
     CRawGlyphBuilder();
     virtual ~CRawGlyphBuilder();
 
-    void init(const CFontInfo &font);
+    void init(const FontInfoEx &font);
 
     int getHeight() const;
 
@@ -20,15 +23,16 @@ public:
     Glyph *buildGlyph(string &ch);
 
 protected:
+    int getHeightBitmap();
     void createMemGraph(int nWidthGraph);
-    int getHeightBitmap() { return m_font.getHeight() + MARGIN_FONT * 2; }
 
 protected:
-    CFontInfo                   m_font;
-    CGraphics                   *m_pmemGraph;
-    CRawGraph                   m_memGraph;
+    FontInfoEx                  m_fontInfo;
+    CGdiplusGraphicsLite        m_fontGraph;
+    CRawGraphData               m_fontMemGraph;
 
-};
+    CGdiplusFontPtr             m_fontLatin;
+    CGdiplusFontPtr             m_fontOthers;
 
 };
 

@@ -1,5 +1,7 @@
-﻿#include "BaseWnd.h"
-#include "FileSaveDlg.h"
+﻿#include "../WindowLib.h"
+#include <commdlg.h>
+#include <array>
+#include <cderr.h>
 #include <Dlgs.h>
 
 
@@ -41,25 +43,18 @@ UINT_PTR CALLBACK MyOFNHookProc(
     ) {
     switch (uiMsg) {
     case WM_NOTIFY:
-        LPOFNOTIFY lpOfNotify;
+        LPOFNOTIFY ofnotify = (LPOFNOTIFY)lParam;
+        if (ofnotify) {
+            if (ofnotify->hdr.code == CDN_TYPECHANGE) {
+                auto ofn = ofnotify->lpOFN;
+                cstr_t newExt = getFileFilterExtByIndex(ofn->lpstrFilter, ofn->nFilterIndex);
+                if (ofn->nFilterIndex > 1 && newExt) {
+                    char filename[MAX_PATH] = { 0 };
 
-        lpOfNotify = (LPOFNOTIFY)lParam;
-        if (lpOfNotify) {
-            //DBG_LOG2("hdr.code: %d, hdr.idFrom: %d", lpOfNotify->hdr.code, lpOfNotify->hdr.idFrom);
-
-            if (lpOfNotify->hdr.code == CDN_TYPECHANGE) {
-                //if (lpOfNotify->pszFile)
-                //_tcscpy(lpOfNotify->pszFile, "aa.snc");
-                //DBG_LOG3("HWND: %x, hWndFrom: %x, FilterIndex: %d", hdlg, lpOfNotify->hdr.hwndFrom, lpOfNotify->lpOFN->nFilterIndex);
-                char szFileName[MAX_PATH];
-                cstr_t szNewExt;
-
-                szNewExt = getFileFilterExtByIndex(lpOfNotify->lpOFN->lpstrFilter, lpOfNotify->lpOFN->nFilterIndex);
-                if (lpOfNotify->lpOFN->nFilterIndex > 1 && szNewExt) {
-
-                    getDlgItemText(lpOfNotify->hdr.hwndFrom, cmb13, szFileName, MAX_PATH);
-                    fileSetExt(szFileName, CountOf(szFileName), szNewExt);
-                    setDlgItemText(lpOfNotify->hdr.hwndFrom, cmb13, szFileName);
+                    GetDlgItemText(ofnotify->hdr.hwndFrom, cmb13, filename, MAX_PATH);
+                    string name = filename;
+                    fileSetExt(name, newExt);
+                    SetDlgItemText(ofnotify->hdr.hwndFrom, cmb13, name.c_str());
                 }
             }
             return 1;
@@ -69,44 +64,45 @@ UINT_PTR CALLBACK MyOFNHookProc(
     return 0;
 }
 
-CFileSaveDlg::CFileSaveDlg(cstr_t szTitle, cstr_t szFile, cstr_t extFilter, int nDefFileType) {
-    strcpy_safe(m_szFile, CountOf(m_szFile), szFile);
-
-    memset(&m_openfile, 0, sizeof(m_openfile));
-    m_openfile.lpstrTitle = szTitle;
-    m_openfile.lpstrFilter = extFilter;
-    m_openfile.lpstrFile = m_szFile;
-    m_openfile.nMaxFile = CountOf(m_szFile);
-    m_openfile.nFilterIndex = nDefFileType;
-
-    m_openfile.lStructSize = sizeof(m_openfile);
-    m_openfile.hInstance = getAppInstance();
-    m_openfile.Flags = OFN_OVERWRITEPROMPT | OFN_ENABLEHOOK | OFN_EXPLORER;
-    m_openfile.lpfnHook = (LPOFNHOOKPROC)MyOFNHookProc;
+CFileSaveDlg::CFileSaveDlg(cstr_t title, cstr_t file, cstr_t extFilter, int nDefFileType) {
+    m_title = title;
+    m_file = file;
+    m_extFilter = extFilter;
+    m_nDefFileType = nDefFileType;
 }
 
 CFileSaveDlg::~CFileSaveDlg(void) {
 }
 
 int CFileSaveDlg::doModal(Window *pWndParent) {
-    m_openfile.hwndOwner = pWndParent->getHandle();
-    if (GetSaveFileName(&m_openfile)) {
+    OPENFILENAME openfile;
+    m_file.resize(MAX_PATH);
+
+    memset(&openfile, 0, sizeof(openfile));
+    openfile.lpstrTitle = m_title.c_str();
+    openfile.lpstrFilter = m_extFilter;
+    openfile.lpstrFile = (char *)m_file.data();
+    openfile.nMaxFile = m_file.size();
+    openfile.nFilterIndex = m_nDefFileType;
+
+    openfile.lStructSize = sizeof(openfile);
+    openfile.hInstance = getAppInstance();
+    openfile.Flags = OFN_OVERWRITEPROMPT | OFN_ENABLEHOOK | OFN_EXPLORER;
+    openfile.lpfnHook = (LPOFNHOOKPROC)MyOFNHookProc;
+
+    openfile.hwndOwner = pWndParent->getWndHandle();
+    if (GetSaveFileName(&openfile)) {
+        m_file.resize(strlen(m_file.c_str()));
+
+        cstr_t ext = getFileFilterExtByIndex(m_extFilter, openfile.nFilterIndex);
+        if (ext) {
+            m_selectedExt = ext;
+        } else {
+            m_selectedExt.clear();
+        }
+
         return IDOK;
     } else {
         return IDCANCEL;
-    }
-}
-
-cstr_t CFileSaveDlg::getSaveFile() {
-    return m_szFile;
-}
-
-cstr_t CFileSaveDlg::getSelectedExt() {
-    cstr_t szNewExt;
-    szNewExt = getFileFilterExtByIndex(m_openfile.lpstrFilter, m_openfile.nFilterIndex);
-    if (szNewExt) {
-        return szNewExt;
-    } else {
-        return "";
     }
 }

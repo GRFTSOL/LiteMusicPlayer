@@ -80,10 +80,6 @@ public:
         return true;
     }
 
-    void onPaint(CGraphics *canvas, CRect &rcClip) {
-        showWindow(SW_HIDE);
-    }
-
     void onTimer(uint32_t nIDEvent) {
         assert(nIDEvent == TIMER_LYR_DRAW_UPDATE);
 

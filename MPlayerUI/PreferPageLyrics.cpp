@@ -115,12 +115,9 @@ public:
             enableUIObject(CID_C_ID3V2_USLT, bCheck);
             enableUIObject(CID_C_LYR3V2, bCheck);
         } else if (nId == CID_DOWN_DIR) {
-            CFolderDialog dlg;
-            string strDownSaveDir;
+            string strDownSaveDir = g_LyricsDownloader.getDefSavePath();
+            CFolderDialog dlg(strDownSaveDir.c_str());
 
-            strDownSaveDir = g_LyricsDownloader.getDefSavePath();
-
-            dlg.setInitFolder(strDownSaveDir.c_str());
             if (dlg.doBrowse(m_pSkin)) {
                 if (strcasecmp(strDownSaveDir.c_str(), dlg.getFolder()) != 0) {
                     strDownSaveDir = dlg.getFolder();

@@ -1,4 +1,4 @@
-﻿#include "GfxRaw.h"
+﻿#include "../GfxRaw.h"
 #include "RawGraphData.h"
 
 
@@ -12,9 +12,11 @@ CRawGraphData::~CRawGraphData() {
     destroy();
 }
 
-bool CRawGraphData::create(int cx, int cy, Window *window, int nBitCount) {
-    m_window = window;
-    HDC hdc = ::GetHDC(window->getHandle());
+bool CRawGraphData::create(int cx, int cy, WindowHandle windowHandle, int nBitCount) {
+    assert(cx > 0 && cy > 0);
+    assert(nBitCount == 32);
+    m_windowHandle = windowHandle;
+    HDC hdc = ::GetDC((HWND)windowHandle);
 
     m_bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     m_bmpInfo.bmiHeader.biWidth = cx;
@@ -59,10 +61,7 @@ void CRawGraphData::destroy() {
     m_imageData.buff = nullptr;
 }
 
-void CRawGraphData::drawToWindow(int xdest, int ydest, int width, int height, int xsrc, int ysrc) {
-    BitBlt(pTarg->getHandle(), xdest, ydest, width, height, getHandle(), xsrc, ysrc, SRCCOPY);
-}
-
-void CRawGraphData::drawToWindowStretch(int xdest, int ydest, int width, int height, int xsrc, int ysrc, int widthsrc, int heightsrc) {
-    stretchBlt(pTarg->getHandle(), xdest, ydest, width, height, getHandle(), xsrc, ysrc, widthsrc, heightsrc, SRCCOPY);
+void CRawGraphData::drawToWindow(int xdest, int ydest, int width, int height, int xsrc, int ysrc, float scaleFactor) {
+	assert(0);
+    // BitBlt(pTarg->getHandle(), xdest, ydest, width, height, getHandle(), xsrc, ysrc, SRCCOPY);
 }

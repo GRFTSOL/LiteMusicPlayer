@@ -44,7 +44,7 @@ bool isNumeric(cwstr_t szString);
 
 WCHAR CLyricsKeywordFilter::m_wTableUcs2[WORD_MAX];
 
-void eraseNumb(u16string &str) {
+void eraseNumb(utf16string &str) {
     WCHAR *szPtr, *szNew;
     szNew = szPtr = (WCHAR *)str.data();
     while (*szPtr) {
@@ -58,7 +58,7 @@ void eraseNumb(u16string &str) {
     str.resize(wcslen(str.c_str()));
 }
 
-void eraseSpace(u16string &str) {
+void eraseSpace(utf16string &str) {
     WCHAR *szPtr, *szNew;
     szNew = szPtr = (WCHAR *)str.data();
     while (*szPtr) {
@@ -107,7 +107,7 @@ void CLyricsKeywordFilter::init() {
 
     for (cstr_t str : TO_REMOVE_STRS) {
         // remove
-        u16string strW;
+        utf16string strW;
 
         utf8ToUCS2(str, -1, strW);
         ucs2TableDelChars(strW.c_str());
@@ -115,7 +115,7 @@ void CLyricsKeywordFilter::init() {
 
     for (int i = 0; i < CountOf(TO_RPLACE_STRS); i += 2) {
         // replace
-        u16string strWSrc, strWDst;
+        utf16string strWSrc, strWDst;
 
         utf8ToUCS2(TO_RPLACE_STRS[i], -1, strWDst);
         utf8ToUCS2(TO_RPLACE_STRS[i + 1], -1, strWSrc);
@@ -128,13 +128,13 @@ void CLyricsKeywordFilter::init() {
 }
 
 void CLyricsKeywordFilter::xTableDelChars(const char *szChars) {
-    u16string strOut;
+    utf16string strOut;
     utf8ToUCS2(szChars, -1, strOut);
     ucs2TableDelChars(strOut.c_str());
 }
 
 void CLyricsKeywordFilter::xTableReplaceChars(const char *szReplace, const char *szTo) {
-    u16string strReplaceW, strToW;
+    utf16string strReplaceW, strToW;
     utf8ToUCS2(szReplace, -1, strReplaceW);
     utf8ToUCS2(szTo, -1, strToW);
     ucs2TableReplaceChars(strReplaceW.c_str(), strToW.c_str());
@@ -165,7 +165,7 @@ void CLyricsKeywordFilter::ucs2TableReplaceChars(const WCHAR *szReplace, const W
 }
 
 void CLyricsKeywordFilter::filter(const char *szTarg, string &strOut) {
-    u16string strTargUcs2, strOutUcs2;
+    utf16string strTargUcs2, strOutUcs2;
 
     utf8ToUCS2(szTarg, -1, strTargUcs2);
 
@@ -174,7 +174,7 @@ void CLyricsKeywordFilter::filter(const char *szTarg, string &strOut) {
     ucs2ToUtf8(strOutUcs2.c_str(), (int)strOutUcs2.size(), strOut);
 }
 
-void CLyricsKeywordFilter::filter(cwstr_t szInput, u16string &strOut) {
+void CLyricsKeywordFilter::filter(cwstr_t szInput, utf16string &strOut) {
     if (m_wTableUcs2['a'] == 0) {
         // Isn't initialized?
         assert(m_wTableUcs2['a'] != 0);

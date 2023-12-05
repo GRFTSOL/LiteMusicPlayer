@@ -59,6 +59,16 @@ string _getAppDataDir(cstr_t szDefAppName) {
     return _getAppResourceDir();
 }
 
+static HINSTANCE g_instance = NULL;
+
+HINSTANCE getAppInstance() {
+    return g_instance;
+}
+
+void setAppInstance(HINSTANCE instance) {
+    g_instance = instance;
+}
+
 /*
 static void _invalid_parameter(
     const WCHAR * expression,

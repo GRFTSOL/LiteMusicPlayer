@@ -11,7 +11,7 @@ public:
     CRawGlyphBuilder();
     virtual ~CRawGlyphBuilder();
 
-    void init(const CFontInfo &font);
+    void init(const FontInfoEx &font);
 
     Glyph *buildGlyph(string &ch);
 

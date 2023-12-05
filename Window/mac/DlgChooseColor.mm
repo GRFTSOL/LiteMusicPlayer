@@ -7,12 +7,11 @@
 
 @end
 
-#include "DlgChooseColor.h"
+#include "../DlgChooseColor.h"
 #include "../WindowTypes.h"
 #include "../../GfxRaw/Color.h"
 #include "Constants.h"
 #include "Window.h"
-#include "WindowHandleHolder.h"
 
 
 @implementation ColorChooserDelegate

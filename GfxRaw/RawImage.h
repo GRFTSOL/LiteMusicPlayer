@@ -281,14 +281,10 @@ The image with --- is expandable
 \************************************************************************/
 class CScaleImagePainter {
 public:
-    CScaleImagePainter() {
-        bDrawCenterArea = true;
-    }
-
-    int                         srcX, srcY, srcWidth, srcHeight;
-    int                         srcHorzExtendStart, srcHorzExtendEnd;
-    int                         srcVertExtendStart, srcVertExtendEnd;
-    bool                        bDrawCenterArea;
+    int                         srcX = 0, srcY = 0, srcWidth = 0, srcHeight = 0;
+    int                         srcHorzExtendStart = 0, srcHorzExtendEnd = 0;
+    int                         srcVertExtendStart = 0, srcVertExtendEnd = 0;
+    bool                        bDrawCenterArea = true;
 
 public:
     template<class _DrawImageFun>

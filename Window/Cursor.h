@@ -49,6 +49,13 @@ public:
     void set();
 
 public:
+#ifdef _WIN32
+    // for win32 only
+    HCURSOR getHandle() const { return m_cursor; }
+    void setHandle(HCURSOR hCursor) { m_cursor = hCursor; }
+    HCURSOR                     m_cursor;
+#else // #ifdef _WIN32
     struct _CursorInternal       *_data = nullptr;
+#endif // #ifdef _WIN32
 
 };
