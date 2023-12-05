@@ -242,7 +242,7 @@ public:
 
                 if (g_LyricSearch.setFolder(path.c_str())) {
                     // update lyric
-                    CMPlayerAppBase::getInstance()->dispatchResearchLyrics();
+                    MPlayerApp::getInstance()->dispatchResearchLyrics();
                     g_LyricSearch.saveLyricFolderCfg();
                 }
             }
@@ -256,7 +256,7 @@ public:
             g_LyricSearch.removeFolder(nIndex);
             g_LyricSearch.saveLyricFolderCfg();
 
-            CMPlayerAppBase::getInstance()->dispatchResearchLyrics();
+            MPlayerApp::getInstance()->dispatchResearchLyrics();
         }
     }
 
@@ -399,7 +399,7 @@ public:
 
         g_sysTrayIconCmd[nPlayerCtrlIndex].isEnabled = tobool(value);
 
-        CMPlayerAppBase::getMainWnd()->updatePlayerSysTrayIcon();
+        MPlayerApp::getMainWnd()->updatePlayerSysTrayIcon();
     }
 
     int                         nPlayerCtrlIndex;
@@ -437,7 +437,7 @@ public:
 
     virtual void setIntValue(int value) {
         CPfItemInt::setIntValue(value);
-        CMPlayerAppBase::getMPSkinFactory()->allUpdateTransparent();
+        MPlayerApp::getMPSkinFactory()->allUpdateTransparent();
     }
 
 };
@@ -495,7 +495,7 @@ public:
 };
 
 static string getCmdIDDescription(int nCmd) {
-    string strTooltip = CMPlayerAppBase::getMPSkinFactory()->getTooltip(nCmd);
+    string strTooltip = MPlayerApp::getMPSkinFactory()->getTooltip(nCmd);
     if (strTooltip.empty()) {
         return "";
     }
@@ -522,7 +522,7 @@ public:
 
         GET_ID_BY_NAME(CID_E_NAME);
 
-        CMPlayerAppBase::getHotkey().enableGlobalHotkey(false);
+        MPlayerApp::getHotkey().enableGlobalHotkey(false);
     }
 
     void onCommand(uint32_t nId) override {
@@ -530,7 +530,7 @@ public:
             return CSkinWnd::onCommand(nId);
         }
 
-        auto &hotKeys = CMPlayerAppBase::getHotkey();
+        auto &hotKeys = MPlayerApp::getHotkey();
 
         // Is this hotkey already being used?
         int usedCmdIndex = hotKeys.getByKey(key, modifiers);
@@ -603,7 +603,7 @@ public:
     }
 
     virtual void setIntValue(int value) {
-        CMPlayerAppBase::getHotkey().enableGlobalHotkey(tobool(value));
+        MPlayerApp::getHotkey().enableGlobalHotkey(tobool(value));
         CPfItemBool::setIntValue(value);
     }
 
@@ -647,12 +647,12 @@ public:
         int nIndex = -1;
         CMPHotkey::CmdAccKey *pCmdKey;
         while (1) {
-            nIndex = CMPlayerAppBase::getHotkey().getByCmd(m_nCmd, nIndex);
+            nIndex = MPlayerApp::getHotkey().getByCmd(m_nCmd, nIndex);
             if (nIndex == -1) {
                 break;
             }
 
-            pCmdKey = CMPlayerAppBase::getHotkey().get(nIndex);
+            pCmdKey = MPlayerApp::getHotkey().get(nIndex);
             if (pCmdKey) {
                 Hotkey hotkey;
                 hotkey.strHotkey = formatHotkeyText(pCmdKey->button, pCmdKey->fsModifiers);
@@ -690,24 +690,24 @@ public:
             // remove shortcut key
             int nShortcutIndex = -1;
             for (int i = 2; i <= nIndex; i++) {
-                nShortcutIndex = CMPlayerAppBase::getHotkey().getByCmd(m_nCmd, nShortcutIndex);
+                nShortcutIndex = MPlayerApp::getHotkey().getByCmd(m_nCmd, nShortcutIndex);
                 if (nShortcutIndex == -1) {
                     break;
                 }
 
                 if (i == nIndex) {
-                    CMPlayerAppBase::getHotkey().remove(nShortcutIndex);
+                    MPlayerApp::getHotkey().remove(nShortcutIndex);
                 }
             }
         }
     }
 
     virtual bool isDefault() {
-        return CMPlayerAppBase::getHotkey().isDefaultKey(m_nCmd);
+        return MPlayerApp::getHotkey().isDefaultKey(m_nCmd);
     }
 
     virtual void reset() {
-        return CMPlayerAppBase::getHotkey().restoreDefaultKey(m_nCmd);
+        return MPlayerApp::getHotkey().restoreDefaultKey(m_nCmd);
     }
 
     CPagePfAdvanced             *m_pWndParent;
@@ -797,7 +797,7 @@ void CPagePfAdvanced::onInitialUpdate() {
     MPHotKeySection *pSect = g_vHotkeySections;
     for (; pSect->szName != nullptr; pSect++) {
         for (int k = 0; pSect->vHotkeys[k] != 0; k++) {
-            string strTooltip = CMPlayerAppBase::getMPSkinFactory()->getTooltip(pSect->vHotkeys[k]);
+            string strTooltip = MPlayerApp::getMPSkinFactory()->getTooltip(pSect->vHotkeys[k]);
             if (strTooltip.empty()) {
                 continue;
             }

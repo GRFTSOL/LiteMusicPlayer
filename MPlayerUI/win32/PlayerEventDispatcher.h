@@ -35,7 +35,7 @@ public:
             // load default playlist
         } else {
             // excute cmdline
-            sendCommandLine(CMPlayerAppBase::getMainWnd()->getHandle(), szCmdLine);
+            sendCommandLine(MPlayerApp::getMainWnd()->getHandle(), szCmdLine);
         }
     }
 
@@ -90,7 +90,7 @@ public:
         int nPlayPos = g_player.getPlayPos();
         g_currentLyrics.SetPlayElapsedTime(nPlayPos);
 
-        CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
+        MPlayerApp::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
 
         dispatchPlayPosEvent(nPlayPos);
     }
@@ -98,7 +98,7 @@ public:
 
     void onCopyData(WPARAM wParam, COPYDATASTRUCT *pcds) {
         if (wParam == ML_ACTIVATE && pcds->dwData == ML_ACTIVATE) {
-            CMPSkinMainWnd *pWnd = CMPlayerAppBase::getMainWnd();
+            CMPSkinMainWnd *pWnd = MPlayerApp::getMainWnd();
             if (pWnd) {
                 pWnd->activateWindow();
             } else {
@@ -120,7 +120,7 @@ public:
             pEvent->settingType = IMPEvent::MPS_VOLUME;
             pEvent->value = g_player.getVolume();
 
-            CMPlayerApp::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
+            MPlayerApp::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
         }
 #endif
 

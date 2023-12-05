@@ -157,19 +157,19 @@ void CMLTrayIcon::onMyNotifyIcon(WPARAM wParam, LPARAM lParam) {
             // show popup menu
             CPoint pt;
             getCursorPos(&pt);
-            CMPlayerAppBase::getMainWnd()->setForeground();
-            CMPlayerAppBase::getMainWnd()->onContexMenu(pt.x, pt.y);
+            MPlayerApp::getMainWnd()->setForeground();
+            MPlayerApp::getMainWnd()->onContexMenu(pt.x, pt.y);
         } else if (lParam == WM_LBUTTONDBLCLK || lParam == WM_LBUTTONUP) {
-            activateWindow(CMPlayerAppBase::getMainWnd()->getHandle());
+            activateWindow(MPlayerApp::getMainWnd()->getHandle());
 
             // show cancel transparent with mouse click menu.
-            if (CMPlayerAppBase::getMainWnd()->m_bClickThrough) {
+            if (MPlayerApp::getMainWnd()->m_bClickThrough) {
                 CMenu menu;
                 if (menu.loadPopupMenu(IDM_MOUSE_CLICK_THROUGH, 0)) {
                     CPoint pt;
                     getCursorPos(&pt);
                     menu.checkItem(ID_CLICK_THROUGH, true);
-                    menu.trackPopupMenu(pt.x, pt.y, CMPlayerAppBase::getMainWnd());
+                    menu.trackPopupMenu(pt.x, pt.y, MPlayerApp::getMainWnd());
                 }
             }
         }
@@ -188,10 +188,10 @@ void CMLTrayIcon::onMyNotifyIcon(WPARAM wParam, LPARAM lParam) {
                 //
                 //                 trackPopupMenu(hMenuPlayer, TPM_RIGHTBUTTON | TPM_LEFTALIGN, pt.x, pt.y, 0, m_pWnd->getHandle(), nullptr);
             } else if (lParam == WM_LBUTTONUP) {
-                CMPlayerAppBase::getMainWnd()->postShortcutKeyCmd(g_sysTrayIconCmd[i].dwCmd);
+                MPlayerApp::getMainWnd()->postShortcutKeyCmd(g_sysTrayIconCmd[i].dwCmd);
             } else if (lParam == WM_LBUTTONDBLCLK) {
                 // 激活播放器窗口
-                activateWindow(CMPlayerAppBase::getMainWnd()->getHandle());
+                activateWindow(MPlayerApp::getMainWnd()->getHandle());
             }
         }
     }

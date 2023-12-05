@@ -1,4 +1,4 @@
-﻿#include "MPlayerAppBase.h"
+﻿#include "../MPlayerUI/MPlayerApp.h"
 #include "Player.h"
 #include "PlayListFile.h"
 #include "OnlineSearch.h"
@@ -659,7 +659,7 @@ void CPlayer::saveNowPlaying() {
 void CPlayer::onUISeekbarSeek(int nPos) {
     g_currentLyrics.SetPlayElapsedTime(nPos);
 
-    CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
+    MPlayerApp::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
 }
 
 string fixFileUri(cstr_t szUri) {
@@ -767,13 +767,13 @@ void CPlayer::updateMediaInfo(Media *media) {
             // Current media info changed.
             auto event = new IEvent();
             event->eventType = ET_PLAYER_CUR_MEDIA_INFO_CHANGED;
-            CMPlayerApp::getInstance()->getEventsDispatcher()->dispatchUnsyncEvent(event);
+            MPlayerApp::getInstance()->getEventsDispatcher()->dispatchUnsyncEvent(event);
         } else {
             // Changed other media file.
             auto event = new IEvent();
             event->eventType = ET_PLAYER_MEDIA_INFO_CHANGED;
             event->strValue = std::to_string(media->ID);
-            CMPlayerApp::getInstance()->getEventsDispatcher()->dispatchUnsyncEvent(event);
+            MPlayerApp::getInstance()->getEventsDispatcher()->dispatchUnsyncEvent(event);
         }
     }
 }
@@ -816,7 +816,7 @@ ResultCode CPlayer::loadMediaTagInfo(Media *media) {
 }
 
 void CPlayer::registerVisualizer(IEventHandler *eventHandler) {
-    // eventHandler->registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_VIS_DRAW_UPDATE);
+    // eventHandler->registerHandler(MPlayerApp::getEventsDispatcher(), ET_VIS_DRAW_UPDATE);
 
     // class CMPVisAdapter         *m_pVisAdapter;
 
@@ -834,7 +834,7 @@ void CPlayer::registerVisualizer(IEventHandler *eventHandler) {
 }
 
 void CPlayer::unregisterVisualizer(IEventHandler *eventHandler) {
-    // eventHandler->registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_VIS_DRAW_UPDATE);
+    // eventHandler->registerHandler(MPlayerApp::getEventsDispatcher(), ET_VIS_DRAW_UPDATE);
 
     // MutexAutolock lock(m_mutex);
     // ListEventHandlers &listHandler = m_vListEventHandler[eventType];
@@ -889,7 +889,7 @@ void CPlayer::notifyPlayStateChanged() {
     CEventPlayerStatusChanged *pEvent = new CEventPlayerStatusChanged();
     pEvent->eventType = ET_PLAYER_STATUS_CHANGED;
     pEvent->status = m_state;
-    CMPlayerAppBase::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
+    MPlayerApp::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
 
     g_playerEventDispatcher.stopLyrDrawUpdate();
 
@@ -904,7 +904,7 @@ void CPlayer::notifyCurrentPlaylistChanged(IMPEvent::PlaylistChangeAction action
     pEvent->action = action;
     pEvent->nIndex = nIndex;
     pEvent->nIndexOld = nIndexOld;
-    CMPlayerAppBase::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
+    MPlayerApp::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
 }
 
 void CPlayer::notifySettingsChanged(IMPEvent::SettingType settingType, int value) {
@@ -912,14 +912,14 @@ void CPlayer::notifySettingsChanged(IMPEvent::SettingType settingType, int value
     pEvent->eventType = ET_PLAYER_SETTING_CHANGED;
     pEvent->settingType = settingType;
     pEvent->value = value;
-    CMPlayerAppBase::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
+    MPlayerApp::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
 }
 
 void CPlayer::notifyEQSettingsChanged(const EQualizer *eq) {
     CEventPlayerEQChanged *pEvent = new CEventPlayerEQChanged();
     pEvent->eventType = ET_PLAYER_EQ_SETTING_CHANGED;
     pEvent->eqlalizer = *eq;
-    CMPlayerAppBase::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
+    MPlayerApp::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
 }
 
 void CPlayer::notifySeek() {
@@ -927,7 +927,7 @@ void CPlayer::notifySeek() {
     pEvent->eventType = ET_PLAYER_SEEK;
 
     // CoreAVPlayer 在 Seek 之后，立即调用 getPos 的值偶尔正确，延迟100ms 通知 Seek 更新.
-    CMPlayerAppBase::getEventsDispatcher()->dispatchUnsyncEventDelayed(pEvent, 100);
+    MPlayerApp::getEventsDispatcher()->dispatchUnsyncEventDelayed(pEvent, 100);
 }
 
 // For internal using, do NOT lock.
@@ -969,7 +969,7 @@ void CPlayer::setCurrentMedia(MediaPtr &media) {
 
     IEvent *pEvent = new IEvent();
     pEvent->eventType = ET_PLAYER_CUR_MEDIA_CHANGED;
-    CMPlayerAppBase::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
+    MPlayerApp::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
 }
 
 void CPlayer::currentMediaChanged() {

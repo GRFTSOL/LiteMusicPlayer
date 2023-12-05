@@ -1,4 +1,4 @@
-﻿#include "MPlayerAppBase.h"
+﻿#include "MPlayerApp.h"
 #include "MPVisAdapter.h"
 
 
@@ -25,7 +25,7 @@ int CMPVisAdapter::render(VisParam *visParam) {
 
     pEvent->pVisParam = visParam; // &m_visParam;
     pEvent->eventType = ET_VIS_DRAW_UPDATE;
-    CMPlayerAppBase::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
+    MPlayerApp::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
 
     return ERR_OK;
 }

@@ -36,9 +36,9 @@ void promptForLogitechLCD(cstr_t szModuleName) {
     string strMsg = _TL("You have Logitech LCD device installed, lyrics can be displayed on it.");
     strMsg += "\r\n";
     strMsg += _TLT("Do you want to visit our website for more information?");
-    int nRet = CMPlayerAppBase::getInstance()->messageOut(strMsg.c_str(), MB_ICONINFORMATION | MB_OKCANCEL);
+    int nRet = MPlayerApp::getInstance()->messageOut(strMsg.c_str(), MB_ICONINFORMATION | MB_OKCANCEL);
     if (nRet == IDOK) {
-        openUrl(CMPlayerAppBase::getMainWnd(), getStrName(SN_HTTP_HELP_G15_LCD));
+        openUrl(MPlayerApp::getMainWnd(), getStrName(SN_HTTP_HELP_G15_LCD));
     }
 }
 
@@ -91,7 +91,7 @@ int CLyricsOutPluginMgr::init() {
                 nRet = (*funInitMLyricsOutPlugin)(hModule, this, &plugin.plyricsOut);
                 if (nRet != ML_LYR_OUT_VERSION || plugin.plyricsOut == nullptr) {
                     FreeLibrary(hModule);
-                    CMPlayerAppBase::getInstance()->messageOut(stringPrintf("init lyrics output plugin: %s FAILED!\r\nMaybe incorrect plugin version!", strPluginFile.c_str()).c_str());
+                    MPlayerApp::getInstance()->messageOut(stringPrintf("init lyrics output plugin: %s FAILED!\r\nMaybe incorrect plugin version!", strPluginFile.c_str()).c_str());
                 } else {
                     plugin.strPluginFile = strPluginFile;
                     plugin.hModule = hModule;
@@ -112,7 +112,7 @@ int CLyricsOutPluginMgr::init() {
 
     m_bActive = !m_vPlugins.empty();
     if (m_bActive) {
-        registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_LYRICS_CHANGED, ET_LYRICS_DRAW_UPDATE, ET_PLAYER_CUR_MEDIA_CHANGED);
+        registerHandler(MPlayerApp::getEventsDispatcher(), ET_LYRICS_CHANGED, ET_LYRICS_DRAW_UPDATE, ET_PLAYER_CUR_MEDIA_CHANGED);
     }
 
     return ERR_OK;
@@ -366,8 +366,8 @@ bool CLyricsOutPluginMgr::getMediaFile(char szFile[], int nBuffLen) {
 
 #ifdef _WIN32
 HWND CLyricsOutPluginMgr::getMainWnd() {
-    if (CMPlayerAppBase::getMainWnd()) {
-        return CMPlayerAppBase::getMainWnd()->getHandle();
+    if (MPlayerApp::getMainWnd()) {
+        return MPlayerApp::getMainWnd()->getHandle();
     } else {
         return nullptr;
     }

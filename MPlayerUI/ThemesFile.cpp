@@ -219,7 +219,7 @@ void CThemesXML::lyrSettingsToTheme(bool bFloatingLyr, SXNode *pNode) {
 
     string strSectName;
     EventType etDispSettings;
-    CMPlayerApp::getInstance()->getCurLyrDisplaySettingName(bFloatingLyr, strSectName, etDispSettings);
+    MPlayerApp::getInstance()->getCurLyrDisplaySettingName(bFloatingLyr, strSectName, etDispSettings);
 
     for (int i = 0; i < g_themeItemsCount; i++) {
         addSubPropNode(pNode, strSectName.c_str(), g_themeItems[i].szName,
@@ -232,7 +232,7 @@ void CThemesXML::themeToLyrSettings(bool bFloatingLyr, SXNode *pNode) {
 
     string strSectName;
     EventType etDispSettings;
-    CMPlayerApp::getInstance()->getCurLyrDisplaySettingName(bFloatingLyr, strSectName, etDispSettings);
+    MPlayerApp::getInstance()->getCurLyrDisplaySettingName(bFloatingLyr, strSectName, etDispSettings);
 
     for (int i = 0; i < g_themeItemsCount; i++) {
         if (!g_themeItems[i].bValid) {

@@ -1,4 +1,4 @@
-﻿#include "MPlayerAppBase.h"
+﻿#include "MPlayerApp.h"
 #include "MPSkinMediaNumInfoCtrl.h"
 
 
@@ -14,7 +14,7 @@ CMPSkinMediaNumInfoCtrl::~CMPSkinMediaNumInfoCtrl() {
 void CMPSkinMediaNumInfoCtrl::onCreate() {
     CSkinPicText::onCreate();
 
-    registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_CUR_MEDIA_INFO_CHANGED);
+    registerHandler(MPlayerApp::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_CUR_MEDIA_INFO_CHANGED);
 
     updateShowTrackInfo();
 }

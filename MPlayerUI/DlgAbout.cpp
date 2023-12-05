@@ -10,7 +10,7 @@ class CPageAbout : public CSkinContainer, public IEventHandler {
     UIOBJECT_CLASS_NAME_DECLARE(CSkinContainer)
 public:
     CPageAbout() {
-        registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_DOWNLOAD_END);
+        registerHandler(MPlayerApp::getEventsDispatcher(), ET_DOWNLOAD_END);
         m_strText = _TLM("about $Product$");
     }
 

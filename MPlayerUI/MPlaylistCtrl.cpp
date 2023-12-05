@@ -1,4 +1,4 @@
-﻿#include "MPlayerAppBase.h"
+﻿#include "MPlayerApp.h"
 #include "MPlaylistCtrl.h"
 #include "PlayListFile.h"
 #include "DlgPlaylist.hpp"
@@ -195,7 +195,7 @@ void CMPlaylistCtrl::onCreate() {
     addColumn(_TLT("Media Files"), 130, CColHeader::TYPE_TEXT_EX, false, DT_CENTER);
     addColumn(_TLT("Duration"), 70, CColHeader::TYPE_TEXT, false, DT_CENTER);
 
-    registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_CUR_PLAYLIST_CHANGED, ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_MEDIA_INFO_CHANGED);
+    registerHandler(MPlayerApp::getEventsDispatcher(), ET_PLAYER_CUR_PLAYLIST_CHANGED, ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_MEDIA_INFO_CHANGED);
 
     updatePlaylist(false);
 }

@@ -260,7 +260,7 @@ void CLyricShowTxtObj::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) {
 void CLyricShowTxtObj::onCreate() {
     CLyricShowMultiRowObj::onCreate();
 
-    registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_LYRICS_ON_SAVE_EDIT);
+    registerHandler(MPlayerApp::getEventsDispatcher(), ET_LYRICS_ON_SAVE_EDIT);
 
     m_pObjScrollBar = m_pContainer->getUIObjectByClassName(CSkinVScrollBar::className());
     if (m_pObjScrollBar) {

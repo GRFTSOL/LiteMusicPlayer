@@ -7,7 +7,7 @@
 #include "../MPlayerEngine/IPlayerCore.hpp"
 #include "../Skin/Skin.h"
 #include "../MPlayer/Player.h"
-#include "MPlayerAppBase.h"
+#include "MPlayerApp.h"
 
 
 // section name

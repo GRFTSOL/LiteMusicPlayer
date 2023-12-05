@@ -85,8 +85,8 @@ void CVersionUpdate::onDownloadOK(CDownloadTask *pTask) {
         string strMessage = versionInfo.strFeature;
         strMessage += "\r\n\r\n";
         strMessage += _TLT("Do you want to visit our website for more information?");
-        if (IDYES == CMPlayerAppBase::getInstance()->messageOut(strMessage.c_str(), MB_YESNO, _TLT("new version Notice"))) {
-            openUrl(CMPlayerAppBase::getMainWnd(), getStrName(SN_HTTP_DOMAIN));
+        if (IDYES == MPlayerApp::getInstance()->messageOut(strMessage.c_str(), MB_YESNO, _TLT("new version Notice"))) {
+            openUrl(MPlayerApp::getMainWnd(), getStrName(SN_HTTP_DOMAIN));
         }
     }
 }

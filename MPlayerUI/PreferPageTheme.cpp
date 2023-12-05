@@ -251,7 +251,7 @@ protected:
     void setSettingType(SettingType settingType) {
         clearOptions();
 
-        CMPlayerApp::getInstance()->getCurLyrDisplaySettingName(settingType == ST_FLOATING_LYR, m_strSectName, m_eventType);
+        MPlayerApp::getInstance()->getCurLyrDisplaySettingName(settingType == ST_FLOATING_LYR, m_strSectName, m_eventType);
 
         {
             // Lyrics border colors and background

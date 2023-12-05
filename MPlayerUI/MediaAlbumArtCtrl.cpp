@@ -1,4 +1,4 @@
-﻿#include "MPlayerAppBase.h"
+﻿#include "MPlayerApp.h"
 #include "MediaAlbumArtCtrl.h"
 
 
@@ -54,7 +54,7 @@ CMediaAlbumArtCtrl::~CMediaAlbumArtCtrl() {
 void CMediaAlbumArtCtrl::onCreate() {
     CUIObject::onCreate();
 
-    registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_CUR_MEDIA_INFO_CHANGED);
+    registerHandler(MPlayerApp::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_CUR_MEDIA_INFO_CHANGED);
 
     m_pSkin->registerTimerObject(this, 20 * 1000);
 

@@ -177,8 +177,8 @@ void CMPHotkey::onHotKey(int nId, uint32_t fuModifiers, uint32_t uVirtKey) {
 
         if (cmdKey.bGlobal && nId == cmdKey.idHotKey) {
             // execute cmd
-            if (CMPlayerAppBase::getMPSkinFactory()->getMainWnd()) {
-                CMPlayerAppBase::getMPSkinFactory()->getMainWnd()->postShortcutKeyCmd(cmdKey.cmd);
+            if (MPlayerApp::getMPSkinFactory()->getMainWnd()) {
+                MPlayerApp::getMPSkinFactory()->getMainWnd()->postShortcutKeyCmd(cmdKey.cmd);
             }
             return;
         }
@@ -429,7 +429,7 @@ int CMPHotkey::loadSettings() {
         size_t index = 0;
 
         // Cmd
-        cmdKey.cmd = CMPlayerAppBase::getMPSkinFactory()->getIDByName(vValues[index++].c_str());
+        cmdKey.cmd = MPlayerApp::getMPSkinFactory()->getIDByName(vValues[index++].c_str());
         if (cmdKey.cmd == ID_INVALID) {
             continue;
         }
@@ -474,7 +474,7 @@ int CMPHotkey::saveSettings() {
 
     for (int i = 0; i < (int)m_vAccKey.size(); i++) {
         CmdAccKey &cmdKey = m_vAccKey[i];
-        string strId = CMPlayerAppBase::getMPSkinFactory()->getStringOfID(cmdKey.cmd);
+        string strId = MPlayerApp::getMPSkinFactory()->getStringOfID(cmdKey.cmd);
 
         if (strId.empty()) {
             continue;

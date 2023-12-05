@@ -1,4 +1,4 @@
-﻿#include "MPlayerAppBase.h"
+﻿#include "MPlayerApp.h"
 #include "MPSkinInfoTextCtrl.h"
 
 
@@ -19,8 +19,8 @@ CMPSkinInfoTextCtrl::~CMPSkinInfoTextCtrl() {
 void CMPSkinInfoTextCtrl::onCreate() {
     CSkinScrollText::onCreate();
 
-    registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_UI_INFO_TEXT, ET_UI_LONG_ERROR_TEXT);
-    registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_LYRICS_CHANGED);
+    registerHandler(MPlayerApp::getEventsDispatcher(), ET_UI_INFO_TEXT, ET_UI_LONG_ERROR_TEXT);
+    registerHandler(MPlayerApp::getEventsDispatcher(), ET_LYRICS_CHANGED);
 
     updateShowDefaultInfo();
     m_cursor.loadStdCursor(Cursor::C_HAND);

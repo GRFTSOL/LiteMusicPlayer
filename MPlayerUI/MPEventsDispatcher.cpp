@@ -23,7 +23,7 @@ void CMPlayerSettings::setSettings(EventType eventType, cstr_t szSectionName, cs
     pEvt->name = szSettingName;
     pEvt->strValue = szValue;
 
-    CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(pEvt);
+    MPlayerApp::getEventsDispatcher()->dispatchSyncEvent(pEvt);
 }
 
 void CMPlayerSettings::setSettings(EventType eventType, cstr_t szSectionName, cstr_t szSettingName, int value, bool bNotify) {
@@ -41,5 +41,5 @@ void CMPlayerSettings::setSettings(EventType eventType, cstr_t szSectionName, cs
     pEvt->name = szSettingName;
     pEvt->strValue = stringFromInt(value);
 
-    CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(pEvt);
+    MPlayerApp::getEventsDispatcher()->dispatchSyncEvent(pEvt);
 }

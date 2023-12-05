@@ -22,7 +22,7 @@ bool g_bInModalDlLrcSelDlg;
 const int SET_SPEED_SPAN = 500;
 
 CMPCommonCmdHandler::CMPCommonCmdHandler(bool bFloatingLyr) {
-    CMPlayerApp::getInstance()->getCurLyrDisplaySettingName(bFloatingLyr, m_strSectName, m_etDispSettings);
+    MPlayerApp::getInstance()->getCurLyrDisplaySettingName(bFloatingLyr, m_strSectName, m_etDispSettings);
 }
 
 CMPCommonCmdHandler::~CMPCommonCmdHandler() {
@@ -65,7 +65,7 @@ bool CMPCommonCmdHandler::onCommand(uint32_t nID) {
     case ID_NO_SUITTABLE_LYRICS:
     case ID_INSTRUMENTAL_MUSIC:
         if (g_LyricSearch.associateLyrics(g_player.getMediaKey().c_str(), NONE_LYRCS)) {
-            CMPlayerAppBase::getInstance()->dispatchResearchLyrics();
+            MPlayerApp::getInstance()->dispatchResearchLyrics();
         }
         break;
     case ID_SEARCH_LYR_SUGGESTIONS:
@@ -188,9 +188,9 @@ bool CMPCommonCmdHandler::onCommand(uint32_t nID) {
     case ID_ABOUT:
         {
             /*            CSkinWnd    *pWnd = new CDlgAbout();
-            int nRet = CMPlayerAppBase::getMPSkinFactory()->openOrCloseSkinWnd("about_box",
+            int nRet = MPlayerApp::getMPSkinFactory()->openOrCloseSkinWnd("about_box",
                 "AboutBox",
-                "AboutBox.xml", CMPlayerAppBase::getMainWnd(), &pWnd);*/
+                "AboutBox.xml", MPlayerApp::getMainWnd(), &pWnd);*/
             showAboutDialog(m_pSkinWnd);
         }
         break;
@@ -227,13 +227,13 @@ bool CMPCommonCmdHandler::onCommand(uint32_t nID) {
 
             copyFile(dlg.getOpenFile(), strAlbumArtFileName.c_str(), false);
 
-            CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_PLAYER_CUR_MEDIA_INFO_CHANGED);
+            MPlayerApp::getEventsDispatcher()->dispatchSyncEvent(ET_PLAYER_CUR_MEDIA_INFO_CHANGED);
         }
         break;
     case ID_LYR_EDITOR:
         {
             SkinWndStartupInfo skinWndStartupInfo("LyrEditor", _TLT("Lyrics Editor"), "LyricsEditor.xml", nullptr);
-            CMPlayerAppBase::getMPSkinFactory()->activeOrCreateSkinWnd(skinWndStartupInfo);
+            MPlayerApp::getMPSkinFactory()->activeOrCreateSkinWnd(skinWndStartupInfo);
         }
         break;
     case ID_EDIT_HELP:
@@ -311,7 +311,7 @@ bool CMPCommonCmdHandler::onCommand(uint32_t nID) {
                     vol = MP_VOLUME_MAX;
                 }
                 g_player.setVolume(vol);
-                CMPlayerAppBase::getInstance()->dispatchInfoText(stringPrintf("%s %d%%", _TLT("set Volume"), vol).c_str());
+                MPlayerApp::getInstance()->dispatchInfoText(stringPrintf("%s %d%%", _TLT("set Volume"), vol).c_str());
             }
         }
         break;
@@ -325,7 +325,7 @@ bool CMPCommonCmdHandler::onCommand(uint32_t nID) {
                     vol = 0;
                 }
                 g_player.setVolume(vol);
-                CMPlayerAppBase::getInstance()->dispatchInfoText(stringPrintf("%s %d%%", _TLT("set Volume"), vol).c_str());
+                MPlayerApp::getInstance()->dispatchInfoText(stringPrintf("%s %d%%", _TLT("set Volume"), vol).c_str());
             }
         }
         break;
@@ -333,27 +333,27 @@ bool CMPCommonCmdHandler::onCommand(uint32_t nID) {
         {
             bool bMute = !g_player.isMute();
             g_player.setMute(bMute);
-            CMPlayerAppBase::getInstance()->dispatchInfoText(bMute ? _TL("Mute On") : _TL("Mute Off"));
+            MPlayerApp::getInstance()->dispatchInfoText(bMute ? _TL("Mute On") : _TL("Mute Off"));
         }
         break;
     case ID_SHUFFLE:
         {
             bool bShuffle = !g_player.isShuffle();
             g_player.setShuffle(bShuffle);
-            CMPlayerAppBase::getInstance()->dispatchInfoText(bShuffle ? _TL("Shuffle On") : _TL("Shuffle Off"));
+            MPlayerApp::getInstance()->dispatchInfoText(bShuffle ? _TL("Shuffle On") : _TL("Shuffle Off"));
         }
         break;
     case ID_LOOP_OFF:
         g_player.setLoop(MP_LOOP_OFF);
-        CMPlayerAppBase::getInstance()->dispatchInfoText(_TL("Repeat Off"));
+        MPlayerApp::getInstance()->dispatchInfoText(_TL("Repeat Off"));
         break;
     case ID_LOOP_ALL:
         g_player.setLoop(MP_LOOP_ALL);
-        CMPlayerAppBase::getInstance()->dispatchInfoText(_TL("Repeat All"));
+        MPlayerApp::getInstance()->dispatchInfoText(_TL("Repeat All"));
         break;
     case ID_LOOP_TRACK:
         g_player.setLoop(MP_LOOP_TRACK);
-        CMPlayerAppBase::getInstance()->dispatchInfoText(_TL("Repeat Track"));
+        MPlayerApp::getInstance()->dispatchInfoText(_TL("Repeat Track"));
         break;
     case ID_LOOP:
         {
@@ -369,7 +369,7 @@ bool CMPCommonCmdHandler::onCommand(uint32_t nID) {
                 str = _TL("Repeat All");
             }
 
-            CMPlayerAppBase::getInstance()->dispatchInfoText(str.c_str());
+            MPlayerApp::getInstance()->dispatchInfoText(str.c_str());
         }
         break;
     case ID_RATE:
@@ -403,7 +403,7 @@ bool CMPCommonCmdHandler::onCommand(uint32_t nID) {
         //
     case ID_NEW_LRC:
         {
-            CMPlayerAppBase::getInstance()->getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_ON_SAVE_EDIT);
+            MPlayerApp::getInstance()->getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_ON_SAVE_EDIT);
 
             if (g_currentLyrics.isContentModified()) {
                 string        strMessage = stringPrintf(_TLT("The lyrics of the %s file have changed."),
@@ -419,7 +419,7 @@ bool CMPCommonCmdHandler::onCommand(uint32_t nID) {
                     }
                 }
             }
-            CMPlayerAppBase::getInstance()->newLyrics();
+            MPlayerApp::getInstance()->newLyrics();
         }
         break;
     case ID_OPEN_LRC:
@@ -448,7 +448,7 @@ bool CMPCommonCmdHandler::onCommand(uint32_t nID) {
             // notify to save...
             IEvent *pEvent = new IEvent;
             pEvent->eventType = ET_LYRICS_ON_SAVE_EDIT;
-            CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(pEvent);
+            MPlayerApp::getEventsDispatcher()->dispatchSyncEvent(pEvent);
 
             saveAsLyricsFile(m_pSkinWnd);
         }
@@ -466,11 +466,11 @@ bool CMPCommonCmdHandler::onCommand(uint32_t nID) {
                 }
             } else {
                 g_currentLyrics.setOffsetTime(g_currentLyrics.getOffsetTime() + SET_SPEED_SPAN);
-                CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
+                MPlayerApp::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
 
-                CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_EDITOR_RELOAD_TAG);
+                MPlayerApp::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_EDITOR_RELOAD_TAG);
 
-                CMPlayerAppBase::getInstance()->dispatchInfoText(_TLT("Lyrics Forward 0.5 Sec"));
+                MPlayerApp::getInstance()->dispatchInfoText(_TLT("Lyrics Forward 0.5 Sec"));
             }
         }
         break;
@@ -485,11 +485,11 @@ bool CMPCommonCmdHandler::onCommand(uint32_t nID) {
                 }
             } else {
                 g_currentLyrics.setOffsetTime(g_currentLyrics.getOffsetTime() - SET_SPEED_SPAN);
-                CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
+                MPlayerApp::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
 
-                CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_EDITOR_RELOAD_TAG);
+                MPlayerApp::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_EDITOR_RELOAD_TAG);
 
-                CMPlayerAppBase::getInstance()->dispatchInfoText(_TLT("Lyrics Backward 0.5 Sec"));
+                MPlayerApp::getInstance()->dispatchInfoText(_TLT("Lyrics Backward 0.5 Sec"));
             }
         }
         break;
@@ -522,7 +522,7 @@ bool CMPCommonCmdHandler::onCommand(uint32_t nID) {
     case ID_CLR_PREV_HUE:
     case ID_CLR_NEXT_HUE:
         {
-            float hue = (float)(g_profile.getInt(CMPlayerAppBase::getMPSkinFactory()->getSkinName(), "Hue", 0));
+            float hue = (float)(g_profile.getInt(MPlayerApp::getMPSkinFactory()->getSkinName(), "Hue", 0));
 
             if (nID == ID_CLR_NEXT_HUE) {
                 hue += 30;
@@ -532,8 +532,8 @@ bool CMPCommonCmdHandler::onCommand(uint32_t nID) {
             if (hue >= 360)   hue -= 360;
             else if (hue < 0) hue += 360;
 
-            g_profile.writeInt(CMPlayerAppBase::getMPSkinFactory()->getSkinName(), "Hue", (int)hue);
-            CMPlayerAppBase::getMPSkinFactory()->adjustHue(hue);
+            g_profile.writeInt(MPlayerApp::getMPSkinFactory()->getSkinName(), "Hue", (int)hue);
+            MPlayerApp::getMPSkinFactory()->adjustHue(hue);
         }
         break;
     case ID_LYR_HIGH_CLR_LIST:
@@ -568,7 +568,7 @@ bool CMPCommonCmdHandler::onCommand(uint32_t nID) {
         }
         break;
     case ID_RELOAD_LYR:
-        CMPlayerAppBase::getInstance()->dispatchResearchLyrics();
+        MPlayerApp::getInstance()->dispatchResearchLyrics();
         break;
     case ID_J_PREV_LINE:
     case ID_J_NEXT_LINE:
@@ -595,7 +595,7 @@ bool CMPCommonCmdHandler::onCommand(uint32_t nID) {
         break;
     case ID_UPLOAD_LYR:
         {
-            CMPlayerAppBase::getInstance()->getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_ON_SAVE_EDIT);
+            MPlayerApp::getInstance()->getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_ON_SAVE_EDIT);
 
             if (!g_currentLyrics.hasLyricsOpened()) {
                 m_pSkinWnd->messageOut(_TLT("No Lyrics file was opened."));
@@ -631,7 +631,7 @@ bool CMPCommonCmdHandler::onCommand(uint32_t nID) {
         }
 
         if (g_currentLyrics.hasLyricsOpened()) {
-            if (!CMPlayerAppBase::getInstance()->onLyricsChangingSavePrompt()) {
+            if (!MPlayerApp::getInstance()->onLyricsChangingSavePrompt()) {
                 break;
             }
 
@@ -757,7 +757,7 @@ bool CMPCommonCmdHandler::onCommandCharEncoding(int nCmdId) {
     // 以用户指定的编码重新打开歌词
     g_currentLyrics.reopenWithEncoding((CharEncodingType)nEncodingId);
 
-    CMPlayerAppBase::getInstance()->dispatchLyricsChangedSyncEvent();
+    MPlayerApp::getInstance()->dispatchLyricsChangedSyncEvent();
 
     return true;
 }
@@ -825,7 +825,7 @@ bool CMPCommonCmdHandler::saveCurrentLyrics(CSkinWnd *pSkinWnd, bool bDispatchOn
         // Dispatch on save lyrics message.
         IEvent *pEvent = new IEvent;
         pEvent->eventType = ET_LYRICS_ON_SAVE_EDIT;
-        CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(pEvent);
+        MPlayerApp::getEventsDispatcher()->dispatchSyncEvent(pEvent);
     }
 
     if (g_currentLyrics.doesChooseNewFileName()) {

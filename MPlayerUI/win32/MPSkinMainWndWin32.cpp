@@ -24,7 +24,7 @@ bool CMPSkinMainWnd::onCreate() {
         return false;
     }
 
-    registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_CUR_MEDIA_INFO_CHANGED);
+    registerHandler(MPlayerApp::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_CUR_MEDIA_INFO_CHANGED);
 
     m_mlTrayIcon.init(this);
 
@@ -144,13 +144,13 @@ LRESULT CMPSkinMainWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) 
         return 0;
     case WM_HOTKEY:
         // onHotKey(int nId, uint32_t fuModifiers, uint32_t uVirtKey)
-        CMPlayerAppBase::getHotkey().onHotKey((int)wParam, (uint32_t)LOWORD(lParam), (uint32_t)HIWORD(lParam));
+        MPlayerApp::getHotkey().onHotKey((int)wParam, (uint32_t)LOWORD(lParam), (uint32_t)HIWORD(lParam));
         return 0;
 #ifndef _MPLAYER
     case WM_SYSCOMMAND:
         if (wParam == SC_RESTORE) {
             if (isIconic()) {
-                CMPlayerAppBase::getMPSkinFactory()->restoreAll();
+                MPlayerApp::getMPSkinFactory()->restoreAll();
             }
         }
         break;

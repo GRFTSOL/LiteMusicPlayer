@@ -19,7 +19,7 @@ public:
 
         // Click though...
         setUIObjectProperty("CID_C_CLICK_THROUGH", "CurStatus",
-            stringPrintf("%d", CMPlayerAppBase::getMPSkinFactory()->getClickThrough()).c_str());
+            stringPrintf("%d", MPlayerApp::getMPSkinFactory()->getClickThrough()).c_str());
 
         initCheckButtons();
 
@@ -33,9 +33,9 @@ public:
         if (nId == getIDByName("CID_C_ON_TOP")) {
             bool bValue = isButtonChecked(nId);
             g_profile.writeInt(SZ_SECT_UI, "topmost", bValue);
-            CMPlayerAppBase::getMPSkinFactory()->topmostAll(bValue);
+            MPlayerApp::getMPSkinFactory()->topmostAll(bValue);
         } else if (nId == getIDByName("CID_C_CLICK_THROUGH")) {
-            CMPlayerAppBase::getMPSkinFactory()->setClickThrough(isButtonChecked(nId));
+            MPlayerApp::getMPSkinFactory()->setClickThrough(isButtonChecked(nId));
         } else if (nId == getIDByName("CID_SEL_LANGUAGE")) {
             //
             // 创建快捷菜单, 显示可以使用的语言包
@@ -78,7 +78,7 @@ public:
 
             g_profile.writeString("Language", m_vTransFiles[nId - _CMD_ID_LANGUANG_BEGIN].strFileName.c_str());
 
-            CMPlayerAppBase::getInstance()->onLanguageChanged();
+            MPlayerApp::getInstance()->onLanguageChanged();
 
             updateLanguageInfo();
 
@@ -179,7 +179,7 @@ public:
         string strSkinName;
         m_pSkinList->getItemText(nSel, 0, strSkinName);
 
-        CMPlayerAppBase::getInstance()->changeSkinByUserCmd(strSkinName.c_str());
+        MPlayerApp::getInstance()->changeSkinByUserCmd(strSkinName.c_str());
     }
 
     virtual void onUIObjNotify(IUIObjNotify *pNotify) override {
@@ -210,11 +210,11 @@ public:
 
 #ifdef _MINILYRICS_WIN32
         m_strEmbeddedSkinName = "";
-        if (CMPlayerAppBase::getInstance()->isSupportEmbedded()) {
+        if (MPlayerApp::getInstance()->isSupportEmbedded()) {
             m_strEmbeddedSkinName = string("<< ") + g_player.getEmbeddedSkinName() + " >>";
             m_pSkinList->insertItem(m_pSkinList->getItemCount(), m_strEmbeddedSkinName.c_str());
 
-            if (CMPlayerAppBase::getInstance()->isEmbeddedMode()) {
+            if (MPlayerApp::getInstance()->isEmbeddedMode()) {
                 m_pSkinList->setItemSelectionState(0, true);
             }
         }
@@ -222,7 +222,7 @@ public:
 
         // 查找所有的Skin，并且添加到菜单中
         vector<string> vSkins;
-        if (CMPlayerAppBase::getMPSkinFactory()->enumAllSkins(vSkins)) {
+        if (MPlayerApp::getMPSkinFactory()->enumAllSkins(vSkins)) {
             for (uint32_t i = 0; i < vSkins.size(); i++) {
                 m_pSkinList->insertItem((int)m_pSkinList->getItemCount(), vSkins[i].c_str());
                 if (strcmp(strDefaultSkin.c_str(), vSkins[i].c_str()) == 0) {
@@ -240,7 +240,7 @@ public:
         string str;
 
         // 设置Skin的说明
-        if (CMPlayerAppBase::getMPSkinFactory()->getResourceMgr()->getResourcePathName("Readme.txt", fnReadme)
+        if (MPlayerApp::getMPSkinFactory()->getResourceMgr()->getResourcePathName("Readme.txt", fnReadme)
             && readFileByBom(fnReadme.c_str(), str)) {
             setUIObjectText("CID_SKIN_INFO", str.c_str(), true);
             return true;

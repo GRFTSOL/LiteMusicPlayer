@@ -1,4 +1,4 @@
-﻿#include "MPlayerAppBase.h"
+﻿#include "MPlayerApp.h"
 #include "MediaInfoTextCtrl.h"
 
 
@@ -51,7 +51,7 @@ CMediaInfoTextCtrl::~CMediaInfoTextCtrl() {
 void CMediaInfoTextCtrl::onCreate() {
     CSkinScrollText::onCreate();
 
-    registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_CUR_MEDIA_INFO_CHANGED);
+    registerHandler(MPlayerApp::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_CUR_MEDIA_INFO_CHANGED);
 
     if (m_vInfoType.size() > 1 && m_strCombineWith.empty()) {
         m_nIDTimerUpdateTrackInfo = m_pSkin->registerTimerObject(this, m_nSwitchTime);

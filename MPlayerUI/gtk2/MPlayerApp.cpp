@@ -12,26 +12,26 @@
 
 #ifdef _MPLAYER
 int main(int argc, char *argv[]) {
-    if (!CMPlayerAppBase::getInstance()->init(argc, argv)) {
+    if (!MPlayerApp::getInstance()->init(argc, argv)) {
         return 0;
     }
 
     gtk_main();
 
-    CMPlayerAppBase::getInstance()->quit();
+    MPlayerApp::getInstance()->quit();
 
     return 0;
 }
 #endif // #ifdef _MPLAYER
 
 
-CMPlayerApp::CMPlayerApp() {
+MPlayerApp::MPlayerApp() {
 }
 
-CMPlayerApp::~CMPlayerApp() {
+MPlayerApp::~MPlayerApp() {
 }
 
-bool CMPlayerApp::init(int argc, char *argv[]) {
+bool MPlayerApp::init(int argc, char *argv[]) {
 
     char szWorkingFolder[MAX_PATH];
     string strMLIniFile, strMLLogFile;
@@ -88,12 +88,11 @@ bool CMPlayerApp::init(int argc, char *argv[]) {
         }
     }
 
-    return CMPlayerAppBase::init();
+    return _init();
 }
 
-void CMPlayerApp::quit() {
-    CMPlayerAppBase::quit();
-
+void MPlayerApp::quit() {
+    _quit();
 
     gtk_main_quit();
 }

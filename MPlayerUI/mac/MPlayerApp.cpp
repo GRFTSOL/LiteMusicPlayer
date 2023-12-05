@@ -1,4 +1,4 @@
-﻿#include "MPlayerAppBase.h"
+﻿#include "MPlayerApp.h"
 #include "DownloadMgr.h"
 #include "VersionUpdate.h"
 #include "OnlineSearch.h"
@@ -8,31 +8,31 @@
 #include "HeadPhoneWatch.hpp"
 
 
-CMPlayerApp::CMPlayerApp() {
+MPlayerApp::MPlayerApp() {
     m_bRunning = false;
 }
 
-CMPlayerApp::~CMPlayerApp() {
+MPlayerApp::~MPlayerApp() {
 }
 
-bool CMPlayerApp::isAnotherInstanceRunning() {
+bool MPlayerApp::isAnotherInstanceRunning() {
     return false;
 }
 
-bool CMPlayerApp::setRunningFlag() {
+bool MPlayerApp::setRunningFlag() {
     // Is Product already running?
     m_bRunning = true;
 
     return true;
 }
 
-bool CMPlayerApp::init() {
+bool MPlayerApp::init() {
     g_log.setSrcRootDir(__FILE__, 2);
 
     g_LangTool.setMacro(SZ_MACRO_PRODUCT_NAME, SZ_APP_NAME);
     g_LangTool.setMacro(SZ_MACRO_COMPANY_NAME, SZ_COMPANY_NAME);
 
-    if (!CMPlayerAppBase::init()) {
+    if (!_init()) {
         return false;
     }
 
@@ -41,12 +41,12 @@ bool CMPlayerApp::init() {
     return true;
 }
 
-void CMPlayerApp::quit() {
+void MPlayerApp::quit() {
     if (!m_bRunning) {
         return;
     }
 
     m_bRunning = false;
 
-    CMPlayerAppBase::quit();
+    _quit();
 }

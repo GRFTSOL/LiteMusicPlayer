@@ -510,7 +510,7 @@ void COnlineSearch::threadSearchOnline(void *lpParam) {
         str += _TLT("Failed to search lyrics with error:");
         str += " ";
         str += cstr_t(ERROR2STR_LOCAL(nRet));
-        CMPlayerAppBase::getInstance()->dispatchLongErrorText(str.c_str(), getStrName(SN_HTTP_FAQ_INET));
+        MPlayerApp::getInstance()->dispatchLongErrorText(str.c_str(), getStrName(SN_HTTP_FAQ_INET));
 
         pSearchParam->pOnlineSearch->m_bRunning = false;
         delete pSearchParam;
@@ -520,8 +520,8 @@ void COnlineSearch::threadSearchOnline(void *lpParam) {
     nRet = session.search(pSearchParam->bOnlyMatched, pSearchParam->strArtist.c_str(), pSearchParam->strTitle.c_str(), 0, retSearch);
     session.close();
 
-    if (retSearch.strMessage.size() && CMPlayerAppBase::getMainWnd()) {
-        CMPlayerAppBase::getInstance()->messageOut(retSearch.strMessage.c_str());
+    if (retSearch.strMessage.size() && MPlayerApp::getMainWnd()) {
+        MPlayerApp::getInstance()->messageOut(retSearch.strMessage.c_str());
     }
 
     if (retSearch.listResultFiles.size() > 0 || nRet == ERR_NOT_FOUND) {
@@ -531,13 +531,13 @@ void COnlineSearch::threadSearchOnline(void *lpParam) {
         // 通知给调用者
         IEvent *pEvent = new IEvent;
         pEvent->eventType = ET_LYRICS_SEARCH_END;
-        CMPlayerAppBase::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
+        MPlayerApp::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
     } else {
         string str;
         str += _TLT("Failed to search lyrics with error:");
         str += " ";
         str += (cstr_t)ERROR2STR_LOCAL(nRet);
-        CMPlayerAppBase::getInstance()->dispatchLongErrorText(str.c_str(), getStrName(SN_HTTP_FAQ_INET));
+        MPlayerApp::getInstance()->dispatchLongErrorText(str.c_str(), getStrName(SN_HTTP_FAQ_INET));
     }
 
     pSearchParam->pOnlineSearch->m_bRunning = false;
@@ -595,7 +595,7 @@ bool COnlineSearch::autoSearch() {
     str = _TLT("Searching lyrics");
     str += ": ";
     str += g_player.getFullTitle();
-    CMPlayerAppBase::getInstance()->dispatchLongErrorText(str.c_str());
+    MPlayerApp::getInstance()->dispatchLongErrorText(str.c_str());
 
     return addSearchJob(true, g_player.getMediaKey().c_str(), strArtist.c_str(), strTitle.c_str());
 }
@@ -617,8 +617,8 @@ int COnlineSearch::searchOnline(CMLClientSession &session, cstr_t szArtist, cstr
     nRet = session.search(false, szArtist, szTitle, nCurPage, retSearch);
     session.close();
 
-    if (retSearch.strMessage.size() && CMPlayerAppBase::getMainWnd()) {
-        CMPlayerAppBase::getInstance()->messageOut(retSearch.strMessage.c_str());
+    if (retSearch.strMessage.size() && MPlayerApp::getMainWnd()) {
+        MPlayerApp::getInstance()->messageOut(retSearch.strMessage.c_str());
     }
 
     nCurPage = retSearch.nCurPage;
@@ -663,8 +663,8 @@ int COnlineSearch::batchSearch(CMLClientSession &session, MLListSearchItems &lis
         return nRet;
     }
 
-    if (retLyrics.strMessage.size() && CMPlayerAppBase::getMainWnd()) {
-        CMPlayerAppBase::getInstance()->messageOut(retLyrics.strMessage.c_str());
+    if (retLyrics.strMessage.size() && MPlayerApp::getMainWnd()) {
+        MPlayerApp::getInstance()->messageOut(retLyrics.strMessage.c_str());
     }
 
     if (listSearch.size() != retLyrics.listLyricsInfo.size()) {

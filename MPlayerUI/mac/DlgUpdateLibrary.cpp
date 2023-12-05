@@ -1,6 +1,6 @@
 ﻿#include "../../Skin/Skin.h"
 #include "DlgUpdateLibrary.h"
-#include "MPlayerAppBase.h"
+#include "MPlayerApp.h"
 #include "Player.h"
 
 

@@ -1,4 +1,4 @@
-#ifndef tools_cpp_format_test_h
+﻿#ifndef tools_cpp_format_test_h
 #define tools_cpp_format_test_h
 
 #define

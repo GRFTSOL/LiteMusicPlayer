@@ -23,7 +23,7 @@ int CMPFloatingLyrWnd::create() {
 
     SkinWndStartupInfo skinWndStartupInfo("FloatingLyr", "Floating Lyrics",
         "floatinglyr.xml", nullptr);
-    CMPSkinWnd::create(skinWndStartupInfo, CMPlayerAppBase::getMPSkinFactory());
+    CMPSkinWnd::create(skinWndStartupInfo, MPlayerApp::getMPSkinFactory());
 
     return ERR_OK;
 }

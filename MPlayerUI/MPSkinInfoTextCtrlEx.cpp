@@ -13,12 +13,12 @@ CMPSkinInfoTextCtrlEx::~CMPSkinInfoTextCtrlEx() {
 void CMPSkinInfoTextCtrlEx::onCreate() {
     CLyricShowObj::onCreate();
 
-    registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_UI_INFO_TEXT, ET_UI_LONG_ERROR_TEXT);
+    registerHandler(MPlayerApp::getEventsDispatcher(), ET_UI_INFO_TEXT, ET_UI_LONG_ERROR_TEXT);
 
     // Do not proceed these messages.
-    CMPlayerAppBase::getEventsDispatcher()->unRegisterHandler(ET_PLAYER_CUR_MEDIA_CHANGED, this);
-    CMPlayerAppBase::getEventsDispatcher()->unRegisterHandler(ET_LYRICS_CHANGED, this);
-    CMPlayerAppBase::getEventsDispatcher()->unRegisterHandler(ET_LYRICS_DRAW_UPDATE, this);
+    MPlayerApp::getEventsDispatcher()->unRegisterHandler(ET_PLAYER_CUR_MEDIA_CHANGED, this);
+    MPlayerApp::getEventsDispatcher()->unRegisterHandler(ET_LYRICS_CHANGED, this);
+    MPlayerApp::getEventsDispatcher()->unRegisterHandler(ET_LYRICS_DRAW_UPDATE, this);
     if (m_bUseBgImg) {
         m_pSkin->unregisterTimerObject(this);
     }

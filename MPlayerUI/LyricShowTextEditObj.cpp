@@ -127,8 +127,8 @@ void CLyricShowTextEditObj::onCreate() {
 
     onLyricsChanged();
 
-    registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_LYRICS_ON_SAVE_EDIT, ET_LYRICS_EDITOR_RELOAD_TAG, ET_LYRICS_CHANGED, ET_LYRICS_DRAW_UPDATE);
-    registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_LYRICS_DISPLAY_SETTINGS, ET_PLAYER_CUR_MEDIA_CHANGED);
+    registerHandler(MPlayerApp::getEventsDispatcher(), ET_LYRICS_ON_SAVE_EDIT, ET_LYRICS_EDITOR_RELOAD_TAG, ET_LYRICS_CHANGED, ET_LYRICS_DRAW_UPDATE);
+    registerHandler(MPlayerApp::getEventsDispatcher(), ET_LYRICS_DISPLAY_SETTINGS, ET_PLAYER_CUR_MEDIA_CHANGED);
 
     updateTextFontColor();
 
@@ -1516,7 +1516,7 @@ void CLyricShowTextEditObj::onTimer(int nId) {
         onSaveLyrics();
 
         m_bDiscardLyrChangeEvent = true;
-        CMPlayerAppBase::getInstance()->dispatchLyricsChangedSyncEvent();
+        MPlayerApp::getInstance()->dispatchLyricsChangedSyncEvent();
         m_bDiscardLyrChangeEvent = false;
     } else {
         CSkinEditCtrl::onTimer(nId);

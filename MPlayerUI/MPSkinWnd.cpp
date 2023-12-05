@@ -113,7 +113,7 @@ public:
     virtual void addPlayPauseUpdater(IUIStateUpdater *pUpdater)
     {
         if (m_listStatePlaypause.empty())
-            CMPlayerAppBase::getEventsDispatcher()->registerHandler(ET_PLAYER_STATUS_CHANGED, this);
+            MPlayerApp::getEventsDispatcher()->registerHandler(ET_PLAYER_STATUS_CHANGED, this);
         m_listStatePlaypause.add(pUpdater);
     }
 
@@ -121,7 +121,7 @@ public:
     {
         m_listStatePlaypause.del(hObj);
         if (m_listStatePlaypause.empty())
-            CMPlayerAppBase::getEventsDispatcher()->unRegisterHandler(ET_PLAYER_STATUS_CHANGED, this);
+            MPlayerApp::getEventsDispatcher()->unRegisterHandler(ET_PLAYER_STATUS_CHANGED, this);
     }
 
     LIST_UISTATE_UPDATER        m_listStatePlaypause;
@@ -138,7 +138,7 @@ public:
         if (g_player.isShuffle() != tobool(m_pShuffle->getStatus())) {
             pShuffle->setStatus(g_player.isShuffle() ? 1 : 0);
         }
-        registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_SETTING_CHANGED);
+        registerHandler(MPlayerApp::getEventsDispatcher(), ET_PLAYER_SETTING_CHANGED);
     }
 
     virtual void onEvent(const IEvent *pEvent) {
@@ -164,7 +164,7 @@ public:
         if ((int)g_player.getLoop() != pLoopBt->getStatus()) {
             m_pLoop->setStatus(g_player.getLoop());
         }
-        registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_SETTING_CHANGED);
+        registerHandler(MPlayerApp::getEventsDispatcher(), ET_PLAYER_SETTING_CHANGED);
     }
 
     virtual void onEvent(const IEvent *pEvent) {
@@ -189,7 +189,7 @@ public:
     CPlayerVolumeEventHandler(CSkinSeekCtrl *pVolume) {
         m_pVolume = pVolume;
         m_pVolume->setScrollInfo(0, MP_VOLUME_MAX, 0, g_player.getVolume());
-        registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_SETTING_CHANGED);
+        registerHandler(MPlayerApp::getEventsDispatcher(), ET_PLAYER_SETTING_CHANGED);
     }
 
     virtual void onEvent(const IEvent *pEvent) {
@@ -213,7 +213,7 @@ public:
     CPlayerSeekEventHandler(CSkinSeekCtrl *pSeekCtrl) {
         m_pSeekCtrl = pSeekCtrl;
         pSeekCtrl->setScrollInfo(0, g_player.getMediaLength(), 0, 0);
-        registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_POS_UPDATE, ET_PLAYER_STATUS_CHANGED);
+        registerHandler(MPlayerApp::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_POS_UPDATE, ET_PLAYER_STATUS_CHANGED);
     }
 
     virtual void onEvent(const IEvent *pEvent) {
@@ -244,7 +244,7 @@ public:
         if (m_pButtn->getStatus() != bCheck) {
             m_pButtn->setStatus(bCheck);
         }
-        registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_STATUS_CHANGED);
+        registerHandler(MPlayerApp::getEventsDispatcher(), ET_PLAYER_STATUS_CHANGED);
     }
 
     virtual void onEvent(const IEvent *pEvent) {
@@ -274,7 +274,7 @@ public:
         if (m_pToolbar->isCheck(ID_PLAYPAUSE) != bCheck) {
             m_pToolbar->setCheck(ID_PLAYPAUSE, bCheck, false);
         }
-        registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_STATUS_CHANGED);
+        registerHandler(MPlayerApp::getEventsDispatcher(), ET_PLAYER_STATUS_CHANGED);
     }
 
     virtual void onEvent(const IEvent *pEvent) {
@@ -306,7 +306,7 @@ public:
             m_pToolbar->setBtStatus(ID_LOOP, g_player.getLoop(), false);
         }
 
-        registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_SETTING_CHANGED);
+        registerHandler(MPlayerApp::getEventsDispatcher(), ET_PLAYER_SETTING_CHANGED);
     }
 
     virtual void onEvent(const IEvent *pEvent) {
@@ -349,7 +349,7 @@ public:
                 m_pStereoStatusCtrl->setPropertyInt("CurStatus", 0);
             }
         }
-        registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED);
+        registerHandler(MPlayerApp::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED);
     }
 
     virtual void onEvent(const IEvent *pEvent) {
@@ -382,7 +382,7 @@ public:
             media->getAttribute(MA_RATING, &nRating);
             m_pRateCtrl->setRating(nRating);
         }
-        registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_CUR_MEDIA_INFO_CHANGED);
+        registerHandler(MPlayerApp::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_CUR_MEDIA_INFO_CHANGED);
     }
 
     virtual void onEvent(const IEvent *pEvent) {
@@ -534,9 +534,9 @@ bool CMPSkinWnd::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         }
     }
 
-    CMPSkinMainWnd *pMainWnd = CMPlayerAppBase::getMainWnd();
+    CMPSkinMainWnd *pMainWnd = MPlayerApp::getMainWnd();
     if (pMainWnd) {
-        if (CMPlayerAppBase::getHotkey().onKeyDown(this, nChar, nFlags)) {
+        if (MPlayerApp::getHotkey().onKeyDown(this, nChar, nFlags)) {
             return true;
         }
     }
@@ -580,7 +580,7 @@ void CMPSkinWnd::onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) {
         g_player.setVolume(pScrollBar->getScrollPos());
         long vol = g_player.getVolume();
 
-        CMPlayerAppBase::getInstance()->dispatchInfoText(stringPrintf("%s %d%%", _TLT("set Volume"), vol).c_str());
+        MPlayerApp::getInstance()->dispatchInfoText(stringPrintf("%s %d%%", _TLT("set Volume"), vol).c_str());
     } else if (pScrollBar->getID() == ID_SEEK) {
         int nPos, nPercent, nMediaLength;
         char szPos[256], szLength[256];
@@ -591,7 +591,7 @@ void CMPSkinWnd::onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) {
             nPercent = nPos * 100 / nMediaLength;
             formatPlayTime(nPos, szPos);
             formatPlayTime(nMediaLength, szLength);
-            CMPlayerAppBase::getInstance()->dispatchInfoText(stringPrintf("%s %s/%s (%d%%)", _TLT("seek"),
+            MPlayerApp::getInstance()->dispatchInfoText(stringPrintf("%s %s/%s (%d%%)", _TLT("seek"),
                 szPos, szLength, nPercent).c_str(), "seek");
         }
 
@@ -859,7 +859,7 @@ void CMPSkinWnd::onDropFiles(HDROP hDrop) {
         if (fileIsExtSame(szFile, ".lrc") || fileIsExtSame(szFile, ".txt")
             || fileIsExtSame(szFile, ".srt")) {
             g_LyricSearch.associateLyrics(g_player.getMediaKey().c_str(), szFile);
-            CMPlayerAppBase::getInstance()->dispatchResearchLyrics();
+            MPlayerApp::getInstance()->dispatchResearchLyrics();
 
             DragFinish(hDrop);
             return;
@@ -893,21 +893,21 @@ int CMPSkinWnd::settingGetOpaquePercent() {
 }
 
 bool CMPSkinWnd::settingGetClickThrough() {
-    return CMPlayerAppBase::getMPSkinFactory()->getClickThrough();
+    return MPlayerApp::getMPSkinFactory()->getClickThrough();
 }
 
 void CMPSkinWnd::settingReverseTopmost() {
     bool bTopmost = !isTopmost();
 
     g_profile.writeInt(SZ_SECT_UI, "topmost", bTopmost);
-    CMPlayerAppBase::getMPSkinFactory()->topmostAll(bTopmost);
+    MPlayerApp::getMPSkinFactory()->topmostAll(bTopmost);
 }
 
 void CMPSkinWnd::settingSetOpaquePercent(int nPercent) {
     g_profile.writeInt(SZ_SECT_UI, "WindowOpaquePercent", nPercent);
-    CMPlayerAppBase::getMPSkinFactory()->allUpdateTransparent();
+    MPlayerApp::getMPSkinFactory()->allUpdateTransparent();
 }
 
 void CMPSkinWnd::settingReverseClickThrough() {
-    CMPlayerAppBase::getMPSkinFactory()->setClickThrough(!CMPlayerAppBase::getMPSkinFactory()->getClickThrough());
+    MPlayerApp::getMPSkinFactory()->setClickThrough(!MPlayerApp::getMPSkinFactory()->getClickThrough());
 }

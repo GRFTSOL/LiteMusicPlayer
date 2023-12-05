@@ -149,7 +149,7 @@ int CMPSkinFactory::getIDByNameEx(cstr_t szId, string &strToolTip) {
 
     string strHotkey;
 
-    if (CMPlayerAppBase::getHotkey().getHotkeyText(nID, strHotkey)) {
+    if (MPlayerApp::getHotkey().getHotkeyText(nID, strHotkey)) {
         strToolTip = _TL(strToolTip.c_str());
         strToolTip += " (";
         strToolTip += strHotkey;
@@ -165,7 +165,7 @@ string CMPSkinFactory::getTooltip(int nId) {
     if (toolTip.size()) {
         string strHotkey;
 
-        if (CMPlayerAppBase::getHotkey().getHotkeyText(nId, strHotkey)) {
+        if (MPlayerApp::getHotkey().getHotkeyText(nId, strHotkey)) {
             toolTip = _TL(toolTip.c_str());
             toolTip += " (";
             toolTip += strHotkey;
@@ -251,7 +251,7 @@ void CMPSkinFactory::allUpdateTransparent() {
         g_wndFloatingLyr.setTransparent(byAlpha, false);
     }
 
-    if (::getParent(CMPlayerAppBase::getMainWnd()->getHandle())) {
+    if (::getParent(MPlayerApp::getMainWnd()->getHandle())) {
         return;
     }
 #endif
@@ -278,7 +278,7 @@ void CMPSkinFactory::setClickThrough(bool bClickThrough) {
         nShowPos = g_profile.getInt(SZ_SECT_UI, "ShowIconOn", SHOW_ICON_ON_TASKBAR);
         if (nShowPos == SHOW_ICON_ON_NONE || nShowPos == SHOW_ICON_ON_TASKBAR) {
             g_profile.writeInt(SZ_SECT_UI, "ShowIconOn", SHOW_ICON_ON_TASKBAR);
-            CMPlayerAppBase::getMainWnd()->getTrayIcon().updateShowIconPos();
+            MPlayerApp::getMainWnd()->getTrayIcon().updateShowIconPos();
         }
     }
 #endif // #ifdef _WIN32

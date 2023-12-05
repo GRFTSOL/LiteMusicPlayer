@@ -21,7 +21,7 @@ bool CMiniDumperNotify::onDumpFinished(HMODULE hCrashMod, cstr_t szDumpFileToSav
     dlg.m_strDumpFile = szDumpFileToSave;
 
     // show error report dialog
-    dlg.doModal(CMPlayerAppBase::getMainWnd());
+    dlg.doModal(MPlayerApp::getMainWnd());
 
     return true;
 }

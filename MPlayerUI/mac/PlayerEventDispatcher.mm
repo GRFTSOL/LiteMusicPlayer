@@ -47,7 +47,7 @@
     int nPlayPos = g_player.getPlayPos();
     g_currentLyrics.SetPlayElapsedTime(nPlayPos);
 
-    CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
+    MPlayerApp::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
 
     dispatchPlayPosEvent(nPlayPos);
 }

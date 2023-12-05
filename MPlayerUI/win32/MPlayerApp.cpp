@@ -82,7 +82,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance,
 
     // Only allow one copy of MiniLyrics.exe running, iPod Lyrics Downloader and MiniLyrics can't be running at same time.
 
-    CMPlayerApp *pApp = CMPlayerAppBase::getInstance();
+    MPlayerApp *pApp = MPlayerApp::getInstance();
     if (pApp->isAnotherInstanceRunning()) {
         HWND hWndMsg = findWindow(MSG_WND_CLASS_NAME, nullptr);
         if (hWndMsg) {
@@ -98,7 +98,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance,
         }
     }
 
-    if (!CMPlayerAppBase::getInstance()->init()) {
+    if (!MPlayerApp::getInstance()->init()) {
         return 1;
     }
 
@@ -109,23 +109,23 @@ int WINAPI _tWinMain(HINSTANCE hInstance,
         DispatchMessage(&msg);
     }
 
-    CMPlayerAppBase::getInstance()->quit();
+    MPlayerApp::getInstance()->quit();
 
     return msg.wParam;
 }
 
 
-CMPlayerApp::CMPlayerApp() {
+MPlayerApp::MPlayerApp() {
     m_hMutexRuning = nullptr;
 #ifndef _MPLAYER
     m_bReloadEmbeddedTheme = false;
 #endif
 }
 
-CMPlayerApp::~CMPlayerApp() {
+MPlayerApp::~MPlayerApp() {
 }
 
-bool CMPlayerApp::isAnotherInstanceRunning() {
+bool MPlayerApp::isAnotherInstanceRunning() {
     assert(!m_hMutexRuning);
     HANDLE hMutexRuning = CreateMutex(nullptr, true, SZ_MUTEX_RUNNING);
     int nLastErr = getLastError();
@@ -135,7 +135,7 @@ bool CMPlayerApp::isAnotherInstanceRunning() {
     return nLastErr == ERROR_ALREADY_EXISTS;
 }
 
-bool CMPlayerApp::setRunningFlag() {
+bool MPlayerApp::setRunningFlag() {
     // Is Product already running?
     assert(!m_hMutexRuning);
     m_hMutexRuning = CreateMutex(nullptr, true, SZ_MUTEX_RUNNING);
@@ -154,7 +154,7 @@ cstr_t getAppIniFile() {
     return SZ_PROFILE_NAME;
 }
 
-bool CMPlayerApp::init() {
+bool MPlayerApp::init() {
     cstr_t lpCmdLine = GetCommandLine();
 
     if (isAnotherInstanceRunning()) {
@@ -206,10 +206,10 @@ bool CMPlayerApp::init() {
 
     CGdiplusGraphicsLite::Startup();
 
-    return CMPlayerAppBase::init();
+    return _init();
 }
 
-void CMPlayerApp::quit() {
+void MPlayerApp::quit() {
     if (!m_hMutexRuning) {
         return;
     }
@@ -219,7 +219,7 @@ void CMPlayerApp::quit() {
     CloseHandle(m_hMutexRuning);
     m_hMutexRuning = nullptr;
 
-    CMPlayerAppBase::quit();
+    _quit();
 
 #ifdef _WIN32
     CGdiplusGraphicsLite::Shutdown();

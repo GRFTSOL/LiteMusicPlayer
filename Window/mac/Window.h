@@ -33,7 +33,6 @@ public:
     //
     void activateWindow();
 
-
     void showNoActivate();
     void show();
     void hide();
@@ -144,8 +143,6 @@ public:
 
     virtual void setTransparent(uint8_t nAlpha, bool bClickThrough);
     virtual bool isClickThrough() { return m_bClickThrough; }
-
-    //    bool updateLayeredWindowUsingMemGraph(CRawGraph *canvas);
 
     bool                        m_bMouseCaptured;
 

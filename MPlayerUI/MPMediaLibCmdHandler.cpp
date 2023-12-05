@@ -1,4 +1,4 @@
-﻿#include "MPlayerAppBase.h"
+﻿#include "MPlayerApp.h"
 #include "MPMediaLibCmdHandler.h"
 #include "MPHelper.h"
 
@@ -366,7 +366,7 @@ bool CMPMediaLibCmdHandler::onCommand(uint32_t nId) {
     case ID_NOWPLAYING:
         {
             SkinWndStartupInfo startInfo("MPSkin", "Playlist", "Playlist.xml", nullptr);
-            CMPlayerAppBase::getMPSkinFactory()->activeOrCreateSkinWnd(startInfo);
+            MPlayerApp::getMPSkinFactory()->activeOrCreateSkinWnd(startInfo);
         }
         break;
     case ID_ADD_DIR_TO_ML:
@@ -459,7 +459,7 @@ bool CMPMediaLibCmdHandler::onUIObjNotify(IUIObjNotify *pNotify) {
                     item = m_mediaLibTree.getChildData(nSel);
                     if (item.folderType == CMediaLibTreeProvider::FT_NOW_PLAYING) {
                         SkinWndStartupInfo startInfo("MPSkin", "Playlist", "Playlist.xml", nullptr);
-                        CMPlayerAppBase::getMPSkinFactory()->activeOrCreateSkinWnd(startInfo);
+                        MPlayerApp::getMPSkinFactory()->activeOrCreateSkinWnd(startInfo);
                     } else {
                         addHistoryPath();
                         m_mediaLibTree.chToChild(nSel);

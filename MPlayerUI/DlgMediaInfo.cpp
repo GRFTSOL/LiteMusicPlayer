@@ -1,4 +1,4 @@
-﻿#include "MPlayerAppBase.h"
+﻿#include "MPlayerApp.h"
 #include "DlgMediaInfo.h"
 #include "../MediaTags/ID3/ID3v1.h"
 #include "../MediaTags/LrcParser.h"

@@ -274,7 +274,7 @@ public:
         } else {
             // Associate lyrics file
             if (g_LyricSearch.associateLyrics(m_strMediaKey.c_str(), pSel->strUrl.c_str())) {
-                CMPlayerAppBase::getInstance()->dispatchResearchLyrics();
+                MPlayerApp::getInstance()->dispatchResearchLyrics();
             }
         }
         m_pSkin->postDestroy();
@@ -368,7 +368,7 @@ public:
                 }
 
                 g_LyricSearch.associateLyrics(m_strMediaKey.c_str(), NONE_LYRCS);
-                CMPlayerAppBase::getInstance()->dispatchResearchLyrics();
+                MPlayerApp::getInstance()->dispatchResearchLyrics();
                 m_pSkin->postDestroy();
             }
             break;
@@ -473,7 +473,7 @@ public:
                 if (dlg.doModal(m_pSkin) == IDOK) {
                     strFile = dlg.getOpenFile();
                     if (g_LyricSearch.associateLyrics(m_strMediaKey.c_str(), strFile.c_str())) {
-                        CMPlayerAppBase::getInstance()->dispatchResearchLyrics();
+                        MPlayerApp::getInstance()->dispatchResearchLyrics();
                     }
 
                     m_pSkin->postDestroy();

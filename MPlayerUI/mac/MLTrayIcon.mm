@@ -31,7 +31,7 @@
             g_wndFloatingLyr.m_ignoreOneActivate = true;
         }
 
-        CMPlayerApp::getInstance()->getMainWnd()->postCustomCommandMsg(self->cmdId);
+        MPlayerApp::getInstance()->getMainWnd()->postCustomCommandMsg(self->cmdId);
     }
 }
 
@@ -137,10 +137,10 @@ void CMLTrayIcon::updatePlayerSysTrayIcon() {
                 [statusItem setImage:[NSImage imageNamed:getStatusItemIcon(setting.cmdId)]];
                 if (setting.cmdId == ID_MENU) {
                     // Menu
-                    item.menu = CMPlayerApp::getInstance()->getSkinFactory()->loadMenu(
-                        CMPlayerApp::getMainWnd(), "TrayIconMenu");
+                    item.menu = MPlayerApp::getInstance()->getSkinFactory()->loadMenu(
+                        MPlayerApp::getMainWnd(), "TrayIconMenu");
                     if (item.menu) {
-                        [statusItem setMenu:(NSMenu *)item.menu->getHandle(CMPlayerApp::getMainWnd())];
+                        [statusItem setMenu:(NSMenu *)item.menu->getHandle(MPlayerApp::getMainWnd())];
                     }
                 } else {
                     auto statusCtrl = [[_StatusbarCtrl alloc] init:setting.cmdId];

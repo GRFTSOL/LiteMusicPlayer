@@ -31,13 +31,13 @@ void CallMenuCommand(int cmd);
 
 @end
 
-#import "../MPlayerUI/MPlayerAppBase.h"
+#import "../MPlayerUI/MPlayerApp.h"
 #import "../MPlayerUI/MPSkinMenu.h"
 // #import "../Window/WindowLib.h"
 
 
 void CallMenuCommand(int cmd) {
-    CMPlayerAppBase::getInstance()->getMainWnd()->onCommand(cmd);
+    MPlayerApp::getInstance()->getMainWnd()->onCommand(cmd);
 }
 
 @implementation AppDelegate
@@ -78,13 +78,13 @@ NSMenuItem *duplicateMenuItem(NSMenuItem *org) {
 }
 
 - (void)menuWillOpen:(NSMenu *)menu {
-    _menu->updateMenuStatus(CMPlayerAppBase::getInstance()->getMainWnd());
+    _menu->updateMenuStatus(MPlayerApp::getInstance()->getMainWnd());
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     // Insert code here to initialize your application
-    CMPlayerAppBase *pApp = CMPlayerAppBase::getInstance();
+    MPlayerApp *pApp = MPlayerApp::getInstance();
     pApp->init();
 
     const char *szMenu = "MainWndMenu";
@@ -241,7 +241,7 @@ NSMenuItem *duplicateMenuItem(NSMenuItem *org) {
 
     // Save changes in the application's managed object context before the application terminates.
 
-    CMPlayerAppBase::getInstance()->quit();
+    MPlayerApp::getInstance()->quit();
 
     if (!__managedObjectContext) {
         return NSTerminateNow;
@@ -289,14 +289,14 @@ NSMenuItem *duplicateMenuItem(NSMenuItem *org) {
 
 - (IBAction)aboutWindow:(id)sender
 {
-    CMPSkinMainWnd *pWnd = CMPlayerApp::getInstance()->getMainWnd();
+    CMPSkinMainWnd *pWnd = MPlayerApp::getInstance()->getMainWnd();
     if (pWnd != NULL && pWnd->isValid())
         pWnd->postCustomCommandMsg(ID_ABOUT);
 }
 
 - (IBAction)preferencesWindow:(id)sender
 {
-    CMPSkinMainWnd *pWnd = CMPlayerApp::getInstance()->getMainWnd();
+    CMPSkinMainWnd *pWnd = MPlayerApp::getInstance()->getMainWnd();
     if (pWnd != NULL && pWnd->isValid())
         pWnd->postCustomCommandMsg(ID_PREFERENCES);
 }

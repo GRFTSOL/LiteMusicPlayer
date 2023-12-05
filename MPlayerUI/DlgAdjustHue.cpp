@@ -15,14 +15,14 @@ public:
     }
 
     void updateAdjustHue(float hue) {
-        g_profile.writeInt(CMPlayerAppBase::getMPSkinFactory()->getSkinName(), "Hue", (int)hue);
-        CMPlayerAppBase::getMPSkinFactory()->adjustHue(hue);
+        g_profile.writeInt(MPlayerApp::getMPSkinFactory()->getSkinName(), "Hue", (int)hue);
+        MPlayerApp::getMPSkinFactory()->adjustHue(hue);
     }
 
     void onCreate() override {
         CSkinContainer::onCreate();
 
-        m_hueOld = (float)(g_profile.getInt(CMPlayerAppBase::getMPSkinFactory()->getSkinName(), "Hue", 0));
+        m_hueOld = (float)(g_profile.getInt(MPlayerApp::getMPSkinFactory()->getSkinName(), "Hue", 0));
 
         CSkinSeekCtrl *pSeek = (CSkinSeekCtrl*)getUIObjectById("CID_HUE", CSkinSeekCtrl::className());
         if (pSeek) {

@@ -30,7 +30,7 @@ void CLyricShowAgentObj::getLyrDispStyleSettings(CSkinWnd *pSkinWnd, string &str
     bool isFloatingLyr = isFloatingLyrMode(pSkinWnd);
 
     strLyrStyle = g_profile.getString(
-        CMPlayerApp::getInstance()->getCurLyrDisplaySettingName(isFloatingLyr),
+        MPlayerApp::getInstance()->getCurLyrDisplaySettingName(isFloatingLyr),
         SZ_LYR_DISPLAY_STYLE,
         strLyrStyle.c_str());
 }
@@ -39,7 +39,7 @@ void CLyricShowAgentObj::setLyrDispStyleSettings(CSkinWnd *pSkinWnd, cstr_t szLy
     bool isFloatingLyr = isFloatingLyrMode(pSkinWnd);
 
     CMPlayerSettings::setSettings(ET_UI_SETTINGS_CHANGED,
-        CMPlayerApp::getInstance()->getCurLyrDisplaySettingName(isFloatingLyr),
+        MPlayerApp::getInstance()->getCurLyrDisplaySettingName(isFloatingLyr),
         SZ_LYR_DISPLAY_STYLE, szLyrStyle);
 }
 
@@ -49,11 +49,11 @@ void CLyricShowAgentObj::onCreate() {
     m_bFloatingLyr = isFloatingLyrMode(m_pSkin);
 
     m_strLyrDisplayStyleDefault = g_profile.getString(
-        CMPlayerApp::getInstance()->getCurLyrDisplaySettingName(m_bFloatingLyr),
+        MPlayerApp::getInstance()->getCurLyrDisplaySettingName(m_bFloatingLyr),
         SZ_LYR_DISPLAY_STYLE,
         m_strLyrDisplayStyleDefault.c_str());
 
-    registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_UI_SETTINGS_CHANGED, ET_LYRICS_CHANGED);
+    registerHandler(MPlayerApp::getEventsDispatcher(), ET_UI_SETTINGS_CHANGED, ET_LYRICS_CHANGED);
 
     if (m_bEnableToolbar && !g_profile.getBool("HideToolbar", false)) {
         // create tool bar

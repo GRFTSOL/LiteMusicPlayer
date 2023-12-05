@@ -327,13 +327,13 @@ void CMPSkinMenu::updateMenuStatus(Window *window) {
 }
 
 bool CMPSkinMenu::getShortcutKey(int id, string &strShortcut) {
-    return CMPlayerAppBase::getHotkey().getHotkeyText(id, strShortcut);
+    return MPlayerApp::getHotkey().getHotkeyText(id, strShortcut);
 }
 
 void CMPSkinMenu::insertSkinMenu(CMenu &menuSkin) {
     // 查找所有的Skin，并且添加到菜单中
     vector<string> vSkins;
-    if (CMPlayerAppBase::getMPSkinFactory()->enumAllSkins(vSkins)) {
+    if (MPlayerApp::getMPSkinFactory()->enumAllSkins(vSkins)) {
         menuSkin.replaceAllItems(ID_SKIN_START, vSkins);
 
         // 取得上次加载的Skin
@@ -351,13 +351,13 @@ bool onCommandSkin(int id) {
     }
 
     vector<string> vSkins;
-    if (CMPlayerAppBase::getMPSkinFactory()->enumAllSkins(vSkins)) {
+    if (MPlayerApp::getMPSkinFactory()->enumAllSkins(vSkins)) {
         int index = id - ID_SKIN_START;
         if (index >= 0 && index < (int)vSkins.size()) {
             auto &strSkin = vSkins[index];
             string strDefaultSkin = CSkinApp::getInstance()->getDefaultSkin();
             if (strcmp(strSkin.c_str(), strDefaultSkin.c_str()) != 0) {
-                CMPlayerAppBase::getInstance()->changeSkinByUserCmd(strSkin.c_str());
+                MPlayerApp::getInstance()->changeSkinByUserCmd(strSkin.c_str());
             }
         }
     }

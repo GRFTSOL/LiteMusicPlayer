@@ -36,7 +36,7 @@ void CLyrDisplayClrListWnd::create(CSkinWnd *pWnd, CRect &rc, bool bHighLight, b
         m_bInitialized = true;
     }
 
-    CMPlayerApp::getInstance()->getCurLyrDisplaySettingName(bFloatingLyr, m_strSectName, m_et);
+    MPlayerApp::getInstance()->getCurLyrDisplaySettingName(bFloatingLyr, m_strSectName, m_et);
 
     m_bHilight = bHighLight;
 

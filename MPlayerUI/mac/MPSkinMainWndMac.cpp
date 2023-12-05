@@ -19,7 +19,7 @@ CMPSkinMainWnd::~CMPSkinMainWnd() {
 void CMPSkinMainWnd::onCreate() {
     CMPSkinMainWndBase::onCreate();
 
-    registerHandler(CMPlayerAppBase::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_CUR_MEDIA_INFO_CHANGED, ET_PLAYER_STATUS_CHANGED);
+    registerHandler(MPlayerApp::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_CUR_MEDIA_INFO_CHANGED, ET_PLAYER_STATUS_CHANGED);
 
     m_mlTrayIcon.init(this);
 }

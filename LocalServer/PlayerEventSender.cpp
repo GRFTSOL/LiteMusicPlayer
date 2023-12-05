@@ -38,7 +38,7 @@ PlayerEventSender::PlayerEventSender(WebSocket::Server *server) : m_server(serve
     };
 
     for (auto event : events) {
-        registerHandler(CMPlayerAppBase::getEventsDispatcher(), event);
+        registerHandler(MPlayerApp::getEventsDispatcher(), event);
     }
 }
 

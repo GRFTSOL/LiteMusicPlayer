@@ -32,7 +32,7 @@ void CMPSkinMainWndBase::onDestroy() {
 void CMPSkinMainWndBase::onEvent(const IEvent *pEvent) {
     if (pEvent->eventType == ET_UI_SETTINGS_CHANGED) {
         if (isPropertyName(pEvent->name.c_str(), "topmost")) {
-            CMPlayerAppBase::getMPSkinFactory()->topmostAll(isTRUE(pEvent->strValue.c_str()));
+            MPlayerApp::getMPSkinFactory()->topmostAll(isTRUE(pEvent->strValue.c_str()));
         } else {
             CMPSkinWnd::onEvent(pEvent);
         }

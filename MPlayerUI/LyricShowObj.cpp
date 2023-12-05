@@ -447,7 +447,7 @@ bool profileGetLyricsFont(cstr_t sectName, FontInfoEx &info) {
     bool ret = info.parse(g_profile.getString(sectName, "Font", defaultFont));
 
     // Font height is associated with current skin name.
-    auto skinName = CMPlayerApp::getInstance()->getSkinFactory()->getSkinName();
+    auto skinName = MPlayerApp::getInstance()->getSkinFactory()->getSkinName();
     string keyFontHeight = string(sectName) + "FontHeight";
     auto height = g_profile.getInt(skinName, keyFontHeight.c_str(), 0);
     if (height > 0) {
@@ -459,7 +459,7 @@ bool profileGetLyricsFont(cstr_t sectName, FontInfoEx &info) {
 
 void profileWriteLyricsFont(EventType etColorTheme, cstr_t sectName, const FontInfoEx &info) {
     // Font height is associated with current skin name.
-    auto skinName = CMPlayerApp::getInstance()->getSkinFactory()->getSkinName();
+    auto skinName = MPlayerApp::getInstance()->getSkinFactory()->getSkinName();
     string keyFontHeight = string(sectName) + "FontHeight";
     g_profile.writeInt(skinName, keyFontHeight.c_str(), info.height);
 
@@ -547,12 +547,12 @@ void CLyricShowObj::onCreate() {
     {
         // Is floating lyrics?
         bool isFloatingLyr = CLyricShowAgentObj::isFloatingLyrMode(m_pSkin);
-        CMPlayerApp::getInstance()->getCurLyrDisplaySettingName(isFloatingLyr, m_strSectName, m_etDispSettings);
+        MPlayerApp::getInstance()->getCurLyrDisplaySettingName(isFloatingLyr, m_strSectName, m_etDispSettings);
     }
 
     loadAllSettings();
 
-    registerHandler(CMPlayerAppBase::getEventsDispatcher(), m_etDispSettings, ET_LYRICS_CHANGED, ET_LYRICS_DRAW_UPDATE, ET_PLAYER_CUR_MEDIA_CHANGED);
+    registerHandler(MPlayerApp::getEventsDispatcher(), m_etDispSettings, ET_LYRICS_CHANGED, ET_LYRICS_DRAW_UPDATE, ET_PLAYER_CUR_MEDIA_CHANGED);
     if (m_bUseBgImg) {
         m_pSkin->registerTimerObject(this, g_profile.getInt("SlideDelayTime", 10) * 1000);
     }
@@ -1194,11 +1194,11 @@ bool CLyricShowObj::onKeyDown(uint32_t nChar, uint32_t nFlags) {
     switch (nChar) {
     case VK_UP:
         m_curLyrics->setOffsetTime(m_curLyrics->getOffsetTime() - SET_SPEED_SPAN);
-        CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
+        MPlayerApp::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
         break;
     case VK_DOWN:
         m_curLyrics->setOffsetTime(m_curLyrics->getOffsetTime() + SET_SPEED_SPAN);
-        CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
+        MPlayerApp::getEventsDispatcher()->dispatchSyncEvent(ET_LYRICS_DRAW_UPDATE);
         break;
     case 'D':
         m_pSkin->postShortcutKeyCmd(ID_OPEN_LRC);

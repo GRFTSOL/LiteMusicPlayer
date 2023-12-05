@@ -113,7 +113,7 @@ bool CDownloadMgr::searchInCacheResult(bool bShowInfoText) {
             str = _TLT("Failed to get searching lyrics results.");
             str += " ";
             str += _TLT("Please contact us to report this issue.");
-            CMPlayerAppBase::getInstance()->dispatchLongErrorText(str.c_str(), ID_EMAIL);
+            MPlayerApp::getInstance()->dispatchLongErrorText(str.c_str(), ID_EMAIL);
         }
         return false;
     }
@@ -128,9 +128,9 @@ bool CDownloadMgr::searchInCacheResult(bool bShowInfoText) {
                 if (i != 0) {
                     strCmd += "|";
                 }
-                strCmd += CMPlayerAppBase::getInstance()->getSkinFactory()->getStringOfID(cmds[i]);
+                strCmd += MPlayerApp::getInstance()->getSkinFactory()->getStringOfID(cmds[i]);
             }
-            CMPlayerAppBase::getInstance()->dispatchLongErrorText(str.c_str(), strCmd.c_str());
+            MPlayerApp::getInstance()->dispatchLongErrorText(str.c_str(), strCmd.c_str());
         }
         return false;
     }
@@ -151,7 +151,7 @@ bool CDownloadMgr::searchInCacheResult(bool bShowInfoText) {
             // Do not download .txt lyrics
             if (fileIsExtSame(result.strUrl.c_str(), ".txt")
                 && g_profile.getInt(SZ_SECT_LYR_DL, "OnlyDlSyncLyr", false)) {
-                CMPlayerAppBase::getInstance()->dispatchLongErrorText(_TLT("None of the lyrics are .lrc extension lyrics, so they are not downloaded."));
+                MPlayerApp::getInstance()->dispatchLongErrorText(_TLT("None of the lyrics are .lrc extension lyrics, so they are not downloaded."));
                 return true;
             }
 
@@ -167,7 +167,7 @@ bool CDownloadMgr::searchInCacheResult(bool bShowInfoText) {
             str = _TLT("Downloading lyrics:");
             str += " ";
             str += result.strSaveFileName.c_str();
-            CMPlayerAppBase::getInstance()->dispatchLongErrorText(str.c_str());
+            MPlayerApp::getInstance()->dispatchLongErrorText(str.c_str());
 
             downloadLyrics(g_player.getMediaKey().c_str(),
                 g_player.getSrcMedia(), result.strUrl.c_str(), result.strSaveFileName.c_str());
@@ -185,20 +185,20 @@ bool CDownloadMgr::searchInCacheResult(bool bShowInfoText) {
         // if all lyrics is txt, return directly.
         if (g_profile.getInt(SZ_SECT_LYR_DL, "OnlyDlSyncLyr", false)
             && vLrcSearchResult.isAllTxtLyrics()) {
-            CMPlayerAppBase::getInstance()->dispatchLongErrorText(_TLT("None of the lyrics are .lrc extension lyrics, so they are not downloaded."));
+            MPlayerApp::getInstance()->dispatchLongErrorText(_TLT("None of the lyrics are .lrc extension lyrics, so they are not downloaded."));
             return true;
         }
 
         if (bShowInfoText) {
-            CMPlayerAppBase::getInstance()->dispatchLongErrorText(
+            MPlayerApp::getInstance()->dispatchLongErrorText(
                 _TLT("Found lyrics, please select the lyrics in the popup dialog."), ID_OPEN_LRC);
         }
 
-        CMPlayerAppBase::getMainWnd()->onCommand(ID_OPEN_LRC);
+        MPlayerApp::getMainWnd()->onCommand(ID_OPEN_LRC);
         return true;
     } else {
         if (bShowInfoText) {
-            CMPlayerAppBase::getInstance()->dispatchLongErrorText(
+            MPlayerApp::getInstance()->dispatchLongErrorText(
                 _TLT("Found some similar lyrics, please choose them in 'search Lyrics' window."), ID_OPEN_LRC);
         }
     }
@@ -348,14 +348,14 @@ void CDownloadMgr::onEndDownload(CDownloadTask *pTask) {
             pEvent->eventType = ET_DOWNLOAD_END;
             pEvent->pTask = pTask;
             pEvent->downloadType = CEventDownloadEnd::DT_DL_LRC_FAILED;
-            CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEventByNoUIThread(pEvent);
+            MPlayerApp::getEventsDispatcher()->dispatchSyncEventByNoUIThread(pEvent);
         } else if (pTask->taskType == DTT_CHECK_VERSION_NOUI
             || pTask->taskType == DTT_CHECK_VERSION) {
             CEventDownloadEnd *pEvent = new CEventDownloadEnd;
             pEvent->eventType = ET_DOWNLOAD_END;
             pEvent->pTask = pTask;
             pEvent->downloadType = CEventDownloadEnd::DT_DL_CHECK_NEW_VERSION_OK;
-            CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEventByNoUIThread(pEvent);
+            MPlayerApp::getEventsDispatcher()->dispatchSyncEventByNoUIThread(pEvent);
         }
         return;
     }
@@ -368,12 +368,12 @@ void CDownloadMgr::onEndDownload(CDownloadTask *pTask) {
         {
             if (saveDownloadedLyrics(pTask->strMediaKey.c_str(), pTask->m_strLyrFileName.c_str(),
                 pTask->buffContent.c_str(), (int)pTask->buffContent.size()) == ERR_OK) {
-                CMPlayerAppBase::getInstance()->dispatchResearchLyrics();
+                MPlayerApp::getInstance()->dispatchResearchLyrics();
 
                 // show rate link
                 if (!g_profile.getBool(SZ_SECT_UI, "HideRateLink", false)) {
                     if (g_currentLyrics.properties().id.size()) {
-                        CMPlayerApp::getInstance()->dispatchLongErrorText(_TLT("Are these lyrics correct to the song? rate them!"), ID_RATE_LYR);
+                        MPlayerApp::getInstance()->dispatchLongErrorText(_TLT("Are these lyrics correct to the song? rate them!"), ID_RATE_LYR);
                     }
                 }
             }
@@ -386,7 +386,7 @@ void CDownloadMgr::onEndDownload(CDownloadTask *pTask) {
             pEvent->eventType = ET_DOWNLOAD_END;
             pEvent->pTask = pTask;
             pEvent->downloadType = CEventDownloadEnd::DT_DL_CHECK_NEW_VERSION_OK;
-            CMPlayerAppBase::getEventsDispatcher()->dispatchSyncEventByNoUIThread(pEvent);
+            MPlayerApp::getEventsDispatcher()->dispatchSyncEventByNoUIThread(pEvent);
         }
         break;
     default:
@@ -526,7 +526,7 @@ int CDownloadMgr::runHttpTask(CDownloadTask *pTask) {
             //
             // wait for 10 sec to try again
             if (pTask->taskType == DTT_LYRICS) {
-                CMPlayerAppBase::getInstance()->dispatchLongErrorText(_TLT("wait 10 seconds and retry."));
+                MPlayerApp::getInstance()->dispatchLongErrorText(_TLT("wait 10 seconds and retry."));
             }
 
             if (m_eventShutDown.acquire(10 * 1000)) {
@@ -545,7 +545,7 @@ int CDownloadMgr::runHttpTask(CDownloadTask *pTask) {
             str += "\r\n";
             str += (cstr_t)ERROR2STR_LOCAL(nRet);
             if (pTask->taskType == DTT_LYRICS) {
-                CMPlayerAppBase::getInstance()->dispatchLongErrorText(str.c_str(), getStrName(SN_HTTP_FAQ_INET));
+                MPlayerApp::getInstance()->dispatchLongErrorText(str.c_str(), getStrName(SN_HTTP_FAQ_INET));
             }
             DBG_LOG1("%s", str.c_str());
 
@@ -563,7 +563,7 @@ int CDownloadMgr::runHttpTask(CDownloadTask *pTask) {
             str += "\r\n";
             str += (cstr_t)ERROR2STR_LOCAL(nRet);
             if (pTask->taskType == DTT_LYRICS) {
-                CMPlayerAppBase::getInstance()->dispatchLongErrorText(str.c_str(), getStrName(SN_HTTP_FAQ_INET));
+                MPlayerApp::getInstance()->dispatchLongErrorText(str.c_str(), getStrName(SN_HTTP_FAQ_INET));
             }
             DBG_LOG1("%s", str.c_str());
             httpClient.close();
@@ -581,7 +581,7 @@ int CDownloadMgr::runHttpTask(CDownloadTask *pTask) {
             str += "\r\n";
             str += (cstr_t)ERROR2STR_LOCAL(nRet);
             if (pTask->taskType == DTT_LYRICS) {
-                CMPlayerAppBase::getInstance()->dispatchLongErrorText(str.c_str(), getStrName(SN_HTTP_FAQ_INET));
+                MPlayerApp::getInstance()->dispatchLongErrorText(str.c_str(), getStrName(SN_HTTP_FAQ_INET));
             }
             DBG_LOG1("%s", str.c_str());
             httpClient.close();
