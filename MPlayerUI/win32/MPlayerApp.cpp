@@ -84,7 +84,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance,
 
     MPlayerApp *pApp = MPlayerApp::getInstance();
     if (pApp->isAnotherInstanceRunning()) {
-        HWND hWndMsg = findWindow(MSG_WND_CLASS_NAME, nullptr);
+        HWND hWndMsg = FindWindow(MSG_WND_CLASS_NAME, nullptr);
         if (hWndMsg) {
             sendActivateMainWnd(hWndMsg);
 
@@ -112,17 +112,6 @@ int WINAPI _tWinMain(HINSTANCE hInstance,
     MPlayerApp::getInstance()->quit();
 
     return msg.wParam;
-}
-
-
-MPlayerApp::MPlayerApp() {
-    m_hMutexRuning = nullptr;
-#ifndef _MPLAYER
-    m_bReloadEmbeddedTheme = false;
-#endif
-}
-
-MPlayerApp::~MPlayerApp() {
 }
 
 bool MPlayerApp::isAnotherInstanceRunning() {
@@ -158,7 +147,7 @@ bool MPlayerApp::init() {
     cstr_t lpCmdLine = GetCommandLine();
 
     if (isAnotherInstanceRunning()) {
-        HWND hWndMsg = findWindow(MSG_WND_CLASS_NAME, nullptr);
+        HWND hWndMsg = FindWindow(MSG_WND_CLASS_NAME, nullptr);
         if (hWndMsg) {
             sendActivateMainWnd(hWndMsg);
 

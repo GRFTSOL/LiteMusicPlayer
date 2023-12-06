@@ -10,7 +10,6 @@
 
 
 IWindow::IWindow() {
-    m_handleHolder = nullptr;
     m_pmemGraph = nullptr;
 }
 
@@ -60,7 +59,7 @@ bool IWindow::recreateMemGraphics() {
     }
 
     CRawGraph *memCanvas = new CRawGraph(getScaleFactor());
-    memCanvas->create(m_wndSize.cx, m_wndSize.cy, m_handleHolder);
+    memCanvas->create(m_wndSize.cx, m_wndSize.cy, getHandle());
     m_pmemGraph = memCanvas;
 
     return true;

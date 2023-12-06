@@ -3,7 +3,7 @@
 #ifndef _LYRICSOUTPLUGIN_H_
 #define _LYRICSOUTPLUGIN_H_
 
-interface IMLyrOutHost {
+struct IMLyrOutHost {
     virtual int getLineCount() = 0;
     virtual bool getLyricsOfLine(int nLine, char szLyrics[], int nBuffLen, int &beginTime, int &endTime) = 0;
     virtual int getCurLine() = 0;
@@ -16,7 +16,7 @@ interface IMLyrOutHost {
 
 #define ML_LYR_OUT_VERSION  2
 
-interface ILyricsOut {
+struct ILyricsOut {
     enum {
         NOTIF_CUR_LINE              = 1, // onCurLineChanged
         NOTIF_HALF_CUR_LINE         = 1 << 1, // OnNextLine

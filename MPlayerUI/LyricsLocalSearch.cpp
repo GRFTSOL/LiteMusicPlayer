@@ -416,12 +416,6 @@ R_END:
     if (fp) {
         fclose(fp);
     }
-
-#ifdef _WIN32
-    if (bConvertSave) {
-        saveLyricsAssociation();
-    }
-#endif
 }
 
 void CLyricsLocalSearch::saveLyricsAssociation() {

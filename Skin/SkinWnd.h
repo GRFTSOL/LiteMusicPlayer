@@ -345,8 +345,6 @@ public:
 
     void addWndCloseto(Window *pWnd, cstr_t szWndClass, cstr_t szWndName);
 
-    void trackMove(Window *pWnd, int x, int y);
-
     void addToolTip(const StringView &text, CRect &rc, uint32_t idTooltip);
     void delToolTip(uint32_t nIDTool);
 

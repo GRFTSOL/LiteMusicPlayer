@@ -4,6 +4,7 @@
 #define MPlayerEngine_MediaLibrary_h
 
 #include <unordered_map>
+#include <functional>
 #include "../third-parties/sqlite/Sqlite3.hpp"
 
 #include "Playlist.h"

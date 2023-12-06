@@ -10,7 +10,6 @@
 #include "MPlayerAppGtk2.h"
 
 
-#ifdef _MPLAYER
 int main(int argc, char *argv[]) {
     if (!MPlayerApp::getInstance()->init(argc, argv)) {
         return 0;
@@ -22,7 +21,6 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-#endif // #ifdef _MPLAYER
 
 
 MPlayerApp::MPlayerApp() {

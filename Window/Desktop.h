@@ -14,7 +14,7 @@ CPoint getCursorPos();
 
 bool setCursor(Cursor &cursor);
 
-Window *findWindow(cstr_t szClassName, cstr_t szWindowName);
+inline Window *findWindow(cstr_t szClassName, cstr_t szWindowName) { return nullptr; }
 
 bool getMonitorRestrictRect(const CRect &rcIn, CRect &rcRestrict);
 

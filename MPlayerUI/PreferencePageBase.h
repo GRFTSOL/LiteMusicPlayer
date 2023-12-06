@@ -1,6 +1,5 @@
-﻿#pragma once
+#pragma once
 
-#define SZ_EX_POOL_PF_FLOATING_LYR  "FloatingLyr"
 #define SZ_EX_POOL_PF_DEFAULT_PAGE  "DefaultPage"
 
 enum PreferPageID {
@@ -13,6 +12,7 @@ enum PreferPageID {
     // Themes
     PAGE_THEMES,
     PAGE_LYR_DISPLAY,
+    PAGE_FLOAT_LYR_DISPLAY,
     PAGE_LYR_BG,
 
     // System

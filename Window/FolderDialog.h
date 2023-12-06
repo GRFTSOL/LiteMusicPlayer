@@ -21,7 +21,7 @@ public:
     virtual ~CFolderDialog() { }
 
     bool doBrowse(Window *pWndParent);
-    cstr_t getFolder();
+    cstr_t getFolder() { return m_path.c_str(); }
 
 public:
     string                      m_initFolder;

@@ -31,7 +31,7 @@ void CRawGlyphBuilder::init(const FontInfoEx &font) {
     m_fontInfo = font;
 
     m_fontMemGraph.destroy();
-    m_fontMemGraph.create(getHeightBitmap() * 2, getHeightBitmap(), nullptr, MEM_GRAPH_BITS);
+    m_fontMemGraph.create(getHeightBitmap() * 2, getHeightBitmap(), 0, MEM_GRAPH_BITS);
 
     CGContextSetTextMatrix(m_fontMemGraph.getHandle(), CGAffineTransformMakeScale(1.0, -1.0));
 

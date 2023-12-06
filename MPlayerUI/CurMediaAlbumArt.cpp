@@ -1,4 +1,5 @@
 ﻿#include "MPlayerApp.h"
+#include "CurMediaAlbumArt.h"
 #include "../LyricsLib/HelperFun.h"
 
 

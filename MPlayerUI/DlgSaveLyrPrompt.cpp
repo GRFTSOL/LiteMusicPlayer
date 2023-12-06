@@ -1,6 +1,6 @@
 ﻿#include "MPlayerApp.h"
 #include "DlgSaveLyrPrompt.h"
-#include "../../LyricsLib/CurrentLyrics.h"
+#include "../LyricsLib/CurrentLyrics.h"
 
 
 int saveLyrDialogBox(Window *pWnd) {

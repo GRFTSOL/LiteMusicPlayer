@@ -7,11 +7,8 @@
 
 @end
 
-#include "../DlgChooseColor.h"
-#include "../WindowTypes.h"
-#include "../../GfxRaw/Color.h"
-#include "Constants.h"
-#include "Window.h"
+#include "../WindowLib.h"
+#import "WindowHandleHolder.h"
 
 
 @implementation ColorChooserDelegate
@@ -41,7 +38,7 @@ int CDlgChooseColor::doModal(Window *pWndParent, const CColor &clr) {
 
     NSColorPanel *panel = [NSColorPanel sharedColorPanel];
     if (pWndParent != nullptr) {
-        [panel setParentWindow: pWndParent->getHandleHolder()->window];
+        [panel setParentWindow: pWndParent->getWindowHandleHolder()->window];
     }
     // [panel setWorksWhenModal:YES];
     ColorChooserDelegate *delegate = [ColorChooserDelegate alloc];

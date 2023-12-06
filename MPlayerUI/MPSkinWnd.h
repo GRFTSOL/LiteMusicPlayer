@@ -1,4 +1,4 @@
-﻿#ifndef MPlayerUI_MPSkinWnd_h
+#ifndef MPlayerUI_MPSkinWnd_h
 #define MPlayerUI_MPSkinWnd_h
 
 #pragma once
@@ -54,8 +54,6 @@ protected:
 #endif
 
     void addCmdHandler(cstr_t szName);
-
-    void setTopmost(bool bTopmost);
 
     //
     // Special settings for different kind of winodw (Floating lyrics and Normal window).

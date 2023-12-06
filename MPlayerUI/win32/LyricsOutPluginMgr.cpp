@@ -22,26 +22,6 @@ CLyricsOutPluginMgr::~CLyricsOutPluginMgr() {
 
 }
 
-void promptForLogitechLCD(cstr_t szModuleName) {
-    if (strcasecmp(fileGetName(szModuleName), "mlp_G15.dll") != 0) {
-        return;
-    }
-
-    if (g_profile.getBool("G15LCDPrompted", false)) {
-        return;
-    }
-
-    g_profile.writeInt("G15LCDPrompted", true);
-
-    string strMsg = _TL("You have Logitech LCD device installed, lyrics can be displayed on it.");
-    strMsg += "\r\n";
-    strMsg += _TLT("Do you want to visit our website for more information?");
-    int nRet = MPlayerApp::getInstance()->messageOut(strMsg.c_str(), MB_ICONINFORMATION | MB_OKCANCEL);
-    if (nRet == IDOK) {
-        openUrl(MPlayerApp::getMainWnd(), getStrName(SN_HTTP_HELP_G15_LCD));
-    }
-}
-
 int CLyricsOutPluginMgr::init() {
     int nRet;
     FileFind find;

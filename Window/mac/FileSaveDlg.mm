@@ -55,7 +55,7 @@ int CFileSaveDlg::doModal(Window *pWndParent) {
     NSSavePanel* saveDlg = [NSSavePanel savePanel];
 
     // Enable the selection of files in the dialog.
-    [saveDlg setDirectoryURL:[NSURL URLWithString:[NSString stringWithUTF8String:m_file._cstr()]]];
+    [saveDlg setDirectoryURL:[NSURL URLWithString:[NSString stringWithUTF8String:m_file.c_str()]]];
 
     [saveDlg setAllowedFileTypes:toNsStringArray(m_vExts)];
 

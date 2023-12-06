@@ -3,7 +3,6 @@
 #include "../MPlayerEngine/IPlayerCore.hpp"
 #include "../MPlayerEngine/MPTools.h"
 #include "../Skin/EventsDispatcherBase.h"
-#include "CurMediaAlbumArt.h"
 #include "MediaLibrary.h"
 
 

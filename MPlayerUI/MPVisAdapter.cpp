@@ -1,4 +1,5 @@
 ﻿#include "MPlayerApp.h"
+#include "../MPlayer/Player.h"
 #include "MPVisAdapter.h"
 
 

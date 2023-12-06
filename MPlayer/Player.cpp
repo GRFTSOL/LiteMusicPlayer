@@ -1,13 +1,12 @@
 ﻿#include "../MPlayerUI/MPlayerApp.h"
 #include "Player.h"
-#include "PlayListFile.h"
-#include "OnlineSearch.h"
+#include "../MPlayerUI/PlayListFile.h"
+#include "../MPlayerUI/OnlineSearch.h"
 #include "../LyricsLib/HelperFun.h"
 #include "../LyricsLib/CurrentLyrics.h"
 
 
 #ifdef _WIN32
-#include "../MPlayerUI/MPMsg.h"
 #include "../MPlayerUI/win32/PlayerEventDispatcher.h"
 #endif
 

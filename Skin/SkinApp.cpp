@@ -79,7 +79,7 @@ void CSkinApp::quit() {
 
 void CSkinApp::postQuitMessage() {
 #ifdef _WIN32
-    ::postQuitMessage(0);
+    ::PostQuitMessage(0);
 #else
     postQuitMessageMac();
 #endif

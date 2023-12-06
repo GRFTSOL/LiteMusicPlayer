@@ -1,4 +1,6 @@
-﻿#include <netdb.h>
+﻿#ifndef _WIN32
+#include <netdb.h>
+#endif
 #include "ClientCom.h"
 
 

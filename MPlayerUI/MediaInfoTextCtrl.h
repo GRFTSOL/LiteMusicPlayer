@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "SkinScrollText.h"
+#include "../Skin/SkinScrollText.h"
 
 
 class CMediaInfoTextCtrl : public CSkinScrollText, public IEventHandler {

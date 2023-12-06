@@ -2,7 +2,7 @@
 <skin defmainwnd="MainWnd" mainwnds="MainWnd">
 	<include Name="Styles.xml"/>
 
-	<skinwnd Name="MainWnd" Extends="MenuWindowFrame" CmdHandler="ch_common,ch_playlist,ch_medialib"
+	<skinwnd Name="MainWnd" Extends="MenuWindowFrame" CmdHandler="ch_common,ch_playlist"
 		MinWidth="640" MinHeight="480" Width="700" Height="400"
 		Menu="MainWndMenu" ContextMenu="MainContextMenu" Script="main.js">
 

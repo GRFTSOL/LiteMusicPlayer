@@ -13,26 +13,20 @@
 #include "../LocalServer/LocalServer.hpp"
 #include "../MediaTags/LrcParser.h"
 #include "utils/unittest.h"
+#include "DlgSaveLyrPrompt.h"
+#include "MPFloatingLyrWnd.h"
 
 #ifdef _LINUX_GTK2
-#include "../Skin/gtk2/SplashScreenWnd.h"
 #include "gtk2/LyricsOutPluginMgr.h"
 #endif
 
 #ifdef _WIN32
-#include "../Skin/win32/SplashScreenWnd.h"
 #include "win32/LyricsOutPluginMgr.h"
 #include "win32/LyricsDownloader.h"
-#include "win32/DlgSaveLyrPrompt.h"
 #endif
 
-#include "MPFloatingLyrWnd.h"
-
 #ifdef _MAC_OS
-#include "mac/DlgSaveLyrPrompt.h"
 #include "mac/LyricsOutPluginMgr.h"
-
-
 #endif
 
 CurrentLyrics g_currentLyrics;
@@ -88,9 +82,6 @@ void dispatchPlayPosEvent(int nPlayPos) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-
-
-bool g_bAutoMinimized = false;
 
 MPlayerApp::MPlayerApp() {
 }
@@ -276,12 +267,7 @@ void MPlayerApp::onMediaChanged(bool bAutoDownloadIfNotExist) {
         }
     }
 
-    if (g_currentLyrics.hasLyricsOpened()) {
-        if (g_bAutoMinimized) {
-            MPlayerApp::getMPSkinFactory()->restoreAll();
-            g_bAutoMinimized = false;
-        }
-    } else {
+    if (!g_currentLyrics.hasLyricsOpened()) {
         // add Media Info:
         string mediaInfo;
         if (!isEmptyString(g_player.getArtist())) {

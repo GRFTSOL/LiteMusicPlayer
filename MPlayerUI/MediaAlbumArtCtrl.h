@@ -4,6 +4,8 @@
 #define MPlayerUI_MediaAlbumArtCtrl_h
 
 
+#include "CurMediaAlbumArt.h"
+
 class CMediaAlbumArtCtrl : public CUIObject, public IEventHandler {
     UIOBJECT_CLASS_NAME_DECLARE(CUIObject)
 public:

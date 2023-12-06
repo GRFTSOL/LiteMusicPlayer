@@ -4,6 +4,7 @@
 #define MPlayerUI_win32_MPHotkey_h
 
 
+string formatHotkeyText(uint32_t key, uint32_t modifiers);
 
 struct MPHotKeySection {
     cstr_t                      szName;
@@ -15,11 +16,11 @@ extern MPHotKeySection g_vHotkeySections[];
 class CMPHotkey {
 public:
     struct CmdAccKey {
-        int                         cmd;
-        bool                        bGlobal;
-        uint16_t                    button;
-        uint16_t                    fsModifiers;
-        uint16_t                    idHotKey;
+        int                         cmd = 0;
+        bool                        bGlobal = false;
+        uint16_t                    button = 0;
+        uint32_t                    fsModifiers = 0;
+        uint32_t                    idHotKey = 0;
     };
     typedef vector<CmdAccKey>        VecCmAccKeys;
     typedef VecCmAccKeys::iterator        iterator;
@@ -29,16 +30,15 @@ public:
     virtual ~CMPHotkey();
 
     void init();
+    void quit();
 
     void setEventWnd(Window *pWnd);
-
-    void quit();
 
     void enableGlobalHotkey(bool bEnable);
 
     void restoreDefaults();
 
-    void onHotKey(int nId, uint32_t fuModifiers, uint32_t uVirtKey);
+    void onHotKey(uint32_t nId, uint32_t fuModifiers, uint32_t uVirtKey);
 
     // If this key was processed, return true.
     bool onKeyDown(CMPSkinWnd *pWnd, uint32_t nChar, uint32_t nFlags);
@@ -66,9 +66,10 @@ protected:
     void unregisterAllGlobalHotKeys();
 
 protected:
-    HWND                        m_hWnd;
     bool                        m_bGlobalHotkeyEnabled;
     VecCmAccKeys                m_vAccKey;
+
+    HWND                        m_hWnd;
 
 };
 

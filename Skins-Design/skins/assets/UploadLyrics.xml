@@ -31,7 +31,7 @@
       <TitleText Rect="20,10,w-40,25" Text="Failed to upload lyrics."/>
 
       <Image Rect="w/2-24,45,," Image="warning.png"/>
-      <NormalText ID="CID_RESULT" Rect="20,120,w-40,50" Text="UNTRANS_Upload Result" AlignText="AT_CENTER"/>
+      <NormalText ID="CID_RESULT" Rect="20,120,w-40,50" Name="Upload Result" AlignText="AT_CENTER"/>
 
       <NormalTextBt ID="ID_OK" Text="OK" Rect="w/2-100-10,h-40,100,"/>
       <NormalTextBt ID="CID_TRY_AGAIN" Text="Try Again" Rect="w/2+10,h-40,100,"/>

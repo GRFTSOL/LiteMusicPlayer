@@ -10,6 +10,7 @@
 
 #include "../MediaTags/LyricsData.h"
 #include "../LyricsLib/CurrentLyrics.h"
+#include "CurMediaAlbumArt.h"
 
 
 enum LyrAlignment {

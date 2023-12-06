@@ -4,7 +4,7 @@
 #define MPlayerUI_MPSkinMediaNumInfoCtrl_h
 
 
-#include "SkinPicText.h"
+#include "../Skin/SkinPicText.h"
 
 
 class CMPSkinMediaNumInfoCtrl : public CSkinPicText, IEventHandler {

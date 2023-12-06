@@ -5,10 +5,6 @@
 #include "MPMsg.h"
 #endif
 
-#ifdef _MPLAYER
-#include "MPHelper.h"
-#endif
-
 
 const uint32_t g_msgTaskBarCreated = RegisterWindowMessage("TaskBarCreated");
 
@@ -69,7 +65,6 @@ void CMPSkinMainWnd::onEvent(const IEvent *pEvent) {
 }
 
 void CMPSkinMainWnd::onCopyData(WPARAM wParam, PCOPYDATASTRUCT pCopyData) {
-#ifdef _MPLAYER
     vector<string> vCmdLine;
     cstr_t szCmdLine;
     int i;
@@ -112,7 +107,6 @@ void CMPSkinMainWnd::onCopyData(WPARAM wParam, PCOPYDATASTRUCT pCopyData) {
     }
 
     g_player.play();
-#endif
 }
 
 void CMPSkinMainWnd::onSkinLoaded() {
@@ -146,15 +140,6 @@ LRESULT CMPSkinMainWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) 
         // onHotKey(int nId, uint32_t fuModifiers, uint32_t uVirtKey)
         MPlayerApp::getHotkey().onHotKey((int)wParam, (uint32_t)LOWORD(lParam), (uint32_t)HIWORD(lParam));
         return 0;
-#ifndef _MPLAYER
-    case WM_SYSCOMMAND:
-        if (wParam == SC_RESTORE) {
-            if (isIconic()) {
-                MPlayerApp::getMPSkinFactory()->restoreAll();
-            }
-        }
-        break;
-#endif
     default:
         if (message == g_msgTaskBarCreated) {
             m_mlTrayIcon.updateShowIconPos();
@@ -165,52 +150,6 @@ LRESULT CMPSkinMainWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) 
 
     return CMPSkinWnd::wndProc(message, wParam, lParam);
 }
-
-#ifndef _MPLAYER
-bool CMPSkinMainWnd::isTopmost() {
-    HWND hWndParent = getRootParentWnd();
-    if (hWndParent) {
-        return tobool(::isTopmostWindow(hWndParent));
-    }
-
-    return Window::isTopmost();
-}
-
-bool CMPSkinMainWnd::isIconic() {
-    HWND hWndParent = getRootParentWnd();
-    if (hWndParent) {
-        return tobool(::isIconic(hWndParent));
-    }
-
-    return Window::isIconic();
-}
-
-void CMPSkinMainWnd::setTopmost(bool bTopmost) {
-    HWND hWndParent = getRootParentWnd();
-    if (hWndParent) {
-        ::topmostWindow(hWndParent, bTopmost);
-        return;
-    }
-
-    Window::setTopmost(bTopmost);
-}
-
-extern bool g_bAutoMinimized;
-
-void CMPSkinMainWnd::minimize() {
-    if (getRootParentWnd()) {
-        return;
-    }
-
-    showWindow(SW_MINIMIZE);
-
-    g_bAutoMinimized = false;
-
-    if (isToolWindow()) {
-        showWindow(SW_HIDE);
-    }
-}
-#endif
 
 void CMPSkinMainWnd::activateWindow() {
     HWND hWndParent = getRootParentWnd();

@@ -200,7 +200,6 @@ DEFINE_CMD_ID(ID_SET_OPAQUE_20)                                     \
 DEFINE_CMD_ID(ID_SET_OPAQUE_10)                                     \
 \
 DEFINE_CMD_ID(ID_NEW_MENU_POS)                                      \
-DEFINE_CMD_ID(ID_LYR_DISPLAY_OPT)                                   \
 DEFINE_CMD_ID(ID_SHOW_ERR_RESULT)                                   \
 
 #undef DEFINE_CMD_ID

@@ -38,7 +38,7 @@ void logTrace(void *lpData, int nSize)
     data.cbData = nSize;
 
     if (_hDebugWnd == nullptr)
-    _hDebugWnd = findWindow(DEBUGCLASSNAME, DEBUGWNDNAME);
+    _hDebugWnd = FindWindow(DEBUGCLASSNAME, DEBUGWNDNAME);
 
     if (_hDebugWnd)
     ::sendMessage(_hDebugWnd, WM_COPYDATA, nullptr, (LPARAM)&data);

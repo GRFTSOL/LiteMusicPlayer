@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import "../App.h"
+#include "../Utils.h"
 
 
 const string &_getAppResourceDir() {

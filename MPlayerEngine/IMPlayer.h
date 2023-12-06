@@ -11,15 +11,11 @@
  * 传统的播放器实现架构，从 Input, Decoder, Output, DSP, Visualizer 都定义接口，来实现一遍.
  */
 
-#ifndef _WIN32
-#define interface           struct
-#endif
-
-interface IMediaDecoder;
-interface IMediaOutput;
-interface IMediaInput;
-interface IVisualizer;
-interface IDSP;
+struct IMediaDecoder;
+struct IMediaOutput;
+struct IMediaInput;
+struct IVisualizer;
+struct IDSP;
 
 typedef int ResultCode;
 
@@ -64,7 +60,7 @@ enum MPInterfaceType {
     MPIT_GENERAL_PLUGIN         = 6,
 };
 
-interface IFBuffer {
+struct IFBuffer {
     virtual ~IFBuffer() { }
 
     virtual void addRef() = 0;
@@ -89,7 +85,7 @@ struct VisParam {
     unsigned char               waveformData[2][VIS_N_SPTR_SAMPLE];
 };
 
-interface IVisualizer {
+struct IVisualizer {
     virtual ~IVisualizer() { }
     virtual void addRef() = 0;
     virtual void release() = 0;
@@ -97,7 +93,7 @@ interface IVisualizer {
     virtual int render(VisParam *visParam) = 0;
 };
 
-interface IDSP {
+struct IDSP {
     virtual ~IDSP() { }
 
     virtual void addRef() = 0;
@@ -106,7 +102,7 @@ interface IDSP {
     virtual void process(IFBuffer *pBuf) = 0;
 };
 
-interface IMediaOutput { // : IUnknown
+struct IMediaOutput { // : IUnknown
     virtual ~IMediaOutput() { }
 
     virtual void addRef() = 0;
@@ -130,7 +126,7 @@ interface IMediaOutput { // : IUnknown
 
 };
 
-interface IMediaInput {
+struct IMediaInput {
     virtual ~IMediaInput() { }
     virtual void addRef() = 0;
     virtual void release() = 0;
@@ -152,7 +148,7 @@ interface IMediaInput {
 
 };
 
-interface IMediaDecoder { // : IUnknown
+struct IMediaDecoder { // : IUnknown
     virtual ~IMediaDecoder() { }
 
     virtual void addRef() = 0;

@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "../../GfxRaw/Color.h"
-
 
 class CDlgChooseColor {
 public:

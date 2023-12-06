@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #ifndef MPlayerUI_MPSkinFactory_h
 #define MPlayerUI_MPSkinFactory_h
@@ -29,23 +29,6 @@ public:
 
     virtual void adjustHue(float hue, float saturation = 0.5, float luminance = 0.5) override;
 
-#ifndef _MPLAYER
-    //
-    // Auto close to player window, and track to move with it.
-    //
-
-    void beforeTrackMoveWith(Window *pWndChain[], int nCount, Window *pWndToTrack);
-    void trackMoveWith(Window *pWnd, int x, int y);
-
-    void addWndCloseto(Window *pWnd, cstr_t szWndName, cstr_t szClass);
-
-    // ISkinWndDragHost
-    virtual void getWndDragAutoCloseTo(vector<Window *> &vWnd) override;
-
-    typedef vector<WndDrag::WndCloseTo>        V_WNDCLOSETO;
-
-    WndDrag                     m_WndCloseToPlayers;
-#endif
     void allUpdateTransparent();
     void setClickThrough(bool bClickThrough);
     bool getClickThrough() const { return m_bClickThrough; }

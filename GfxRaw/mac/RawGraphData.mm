@@ -1,9 +1,9 @@
 #import <Foundation/Foundation.h>
 #import <Cocoa/Cocoa.h>
 #import <QuartzCore/QuartzCore.h>
-#import "../../Window/ViewMacImp.h"
 #include "GfxRaw.h"
 #include "RawGraphData.h"
+#import "../../Window/mac/ViewMacImp.h"
 
 
 CGContextRef createViewContext(WindowHandle handle) {
@@ -20,7 +20,6 @@ CGContextRef createViewContext(WindowHandle handle) {
 }
 
 CRawGraphData::CRawGraphData() {
-    m_context = nullptr;
 }
 
 CRawGraphData::~CRawGraphData() {
@@ -52,6 +51,7 @@ bool CRawGraphData::create(int cx, int cy, WindowHandle windowHandle, int nBitCo
 void CRawGraphData::destroy() {
     if (m_context != nullptr) {
         CGContextRelease(m_context);
+        m_context = nullptr;
     }
 
     m_imageData.free();

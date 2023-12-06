@@ -1,15 +1,17 @@
 ﻿
 
-#include "MPlayerApp.h"
-#include "Helper.h"
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#define _WIN32_WINNT	0x0500
+#include <windows.h>
 #include <time.h>
 #include <olectl.h>
+#include "../MPlayerApp.h"
 
 
 void analyseProxySetting(cstr_t szProxySetting, char szServer[], int nMaxSize, int &nPort);
 
 void execute(Window *pWnd, cstr_t szExe, cstr_t szParam) {
-    shellExecute(pWnd != nullptr ? pWnd->getHandle() : nullptr, "open",
+    ShellExecute(pWnd != nullptr ? pWnd->getWndHandle() : nullptr, "open",
         szExe,
         szParam, nullptr, SW_SHOWNORMAL);
 }
@@ -25,7 +27,7 @@ bool SHDeleteFile(cstr_t szFile, Window *pWndParent) {
     strFile = szFile;
     strFile += '\0';
 
-    sop.hwnd = pWndParent->getHandle();
+    sop.hwnd = pWndParent->getWndHandle();
     sop.wFunc = FO_DELETE;
     sop.pFrom = strFile.c_str();
     sop.pTo = nullptr;
@@ -46,7 +48,7 @@ bool SHCopyFile(cstr_t szSrcFile, cstr_t szTargFile, Window *pWndParent) {
     szSrcFile += '\0';
     szTargFile += '\0';
 
-    sop.hwnd = pWndParent->getHandle();
+    sop.hwnd = pWndParent->getWndHandle();
     sop.wFunc = FO_COPY;
     sop.pFrom = strSrc.c_str();
     sop.pTo = strTarg.c_str();
@@ -68,7 +70,7 @@ bool setFileNoReadOnly(cstr_t szFile) {
 
     if (dwAttr != INVALID_FILE_ATTRIBUTES) {
         if (isFlagSet(dwAttr, FILE_ATTRIBUTE_READONLY)) {
-            return setFileAttributes(szFile, dwAttr & ~FILE_ATTRIBUTE_READONLY);
+            return SetFileAttributes(szFile, dwAttr & ~FILE_ATTRIBUTE_READONLY);
         } else {
             return true;
         }
@@ -87,13 +89,10 @@ bool loadProxySvrFromIE(bool &bUseProxy, string &strSvr, int &nPort) {
 
     if (RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",
         0, KEY_QUERY_VALUE, &hKeyInet) == ERROR_SUCCESS) {
-        uint32_t nSize, dwType, dwEnable;
         char szBuff[256];
-        nSize = sizeof(szBuff);
 
         // ProxyEnable?
-        dwType = REG_DWORD;
-        nSize = sizeof(dwEnable);
+        DWORD dwType = REG_DWORD, dwEnable, nSize = sizeof(szBuff);
         if (RegQueryValueEx(hKeyInet, "ProxyEnable", nullptr, &dwType, (uint8_t *)&dwEnable, &nSize) != ERROR_SUCCESS) {
             bRet = false;
             bUseProxy = false;
@@ -107,23 +106,22 @@ bool loadProxySvrFromIE(bool &bUseProxy, string &strSvr, int &nPort) {
         if (RegQueryValueEx(hKeyInet, "ProxyServer", nullptr, &dwType, (uint8_t *)szBuff, &nSize) != ERROR_SUCCESS) {
             bRet = false;
         } else {
-            char szServer[256] = "";
-            char szHttp[256];
-            cstr_t szBeg, szEnd;
-            szBeg = strstr(szBuff, "http=");
+            string http;
+            cstr_t szBeg = strstr(szBuff, "http=");
             if (szBeg) {
                 szBeg += 5;
-                szEnd = strchr(szBeg, ';');
+                cstr_t szEnd = strchr(szBeg, ';');
                 if (szEnd) {
-                    strncpysz_safe(szHttp, CountOf(szHttp), szBeg, (int)(szEnd - szBeg));
+                    http.assign(szBeg, (int)(szEnd - szBeg));
                 } else {
-                    strcpy_safe(szHttp, CountOf(szHttp), szBeg);
+                    http = szBeg;
                 }
             } else {
-                strcpy_safe(szHttp, CountOf(szHttp), szBuff);
+                http = szBuff;
             }
 
-            analyseProxySetting(szHttp, szServer, CountOf(szServer), nPort);
+            char szServer[256] = { 0 };
+            analyseProxySetting(http.c_str(), szServer, CountOf(szServer), nPort);
             strSvr = szServer;
         }
 
@@ -136,25 +134,21 @@ bool loadProxySvrFromIE(bool &bUseProxy, string &strSvr, int &nPort) {
 }
 
 void getNotepadEditor(string &strEditor) {
-    char szBuffer[MAX_PATH];
+    char szBuffer[MAX_PATH] = { 0 };
 
-    GetWindowsDirectory(szBuffer, MAX_PATH);
-    dirStringAddSep(szBuffer);
-
-    strEditor = szBuffer;
-    strEditor += "notepad.exe";
+    GetWindowsDirectoryA(szBuffer, MAX_PATH);
+    
+    strEditor = dirStringJoin(szBuffer, "notepad.exe");
     if (isFileExist(strEditor.c_str())) {
         return;
     }
 
-    strEditor = szBuffer;
-    strEditor += "system32\\notepad.exe";
+    strEditor = dirStringJoin(szBuffer, "system32\\notepad.exe");
     if (isFileExist(strEditor.c_str())) {
         return;
     }
 
-    strEditor = szBuffer;
-    strEditor += "system\\notepad.exe";
+    strEditor = dirStringJoin(szBuffer, "system\\notepad.exe");
     if (isFileExist(strEditor.c_str())) {
         return;
     }

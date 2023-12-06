@@ -1,4 +1,4 @@
-﻿#include "Player.h"
+﻿#include "../MPlayer/Player.h"
 #include "../Skin/Skin.h"
 #include "MPSkinTimeCtrl.h"
 

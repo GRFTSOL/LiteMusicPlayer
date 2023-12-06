@@ -1,8 +1,7 @@
 ﻿#pragma once
 
-#include "win32/VolumeOutMaster.h"
 #include "PlayerSmoothTimer.h"
-#include "win32/MLPlayerMgr.h"
+#include "MPMsg.h"
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -20,8 +19,6 @@ public:
     void init() {
         Window::createEx(MSG_WND_CLASS_NAME, "PlayerEventWnd", 0, 0, 1, 1, nullptr, 0);
 
-        m_volMaster.init(getHandle());
-
         // latest playlist and latest playing song file will loaded while main window is created.
         cstr_t szCmdLine;
 
@@ -35,22 +32,12 @@ public:
             // load default playlist
         } else {
             // excute cmdline
-            sendCommandLine(MPlayerApp::getMainWnd()->getHandle(), szCmdLine);
+            sendCommandLine(MPlayerApp::getMainWnd()->getWndHandle(), szCmdLine);
         }
     }
 
     void quit() {
-        m_volMaster.quit();
-
         destroy();
-    }
-
-    long getMasterVolume() {
-        return m_volMaster.getVolume();
-    }
-
-    void setMasterVolume(long volume) {
-        m_volMaster.setVolume(volume);
     }
 
     void setLyrDrawUpdateFast(bool bFast) {
@@ -69,15 +56,11 @@ public:
     void stopLyrDrawUpdate()
         { killTimer(TIMER_LYR_DRAW_UPDATE); }
 
-    bool onCreate() {
-        if (!Window::onCreate()) {
-            return false;
-        }
+    void onCreate() {
+        Window::onCreate();
 
-        showWindow(SW_MINIMIZE);
-        showWindow(SW_HIDE);
-
-        return true;
+        ::ShowWindow(m_hWnd, SW_MINIMIZE);
+        ::ShowWindow(m_hWnd, SW_HIDE);
     }
 
     void onTimer(uint32_t nIDEvent) {
@@ -112,24 +95,12 @@ public:
         if (message == WM_COPYDATA) {
             onCopyData(wParam, (COPYDATASTRUCT *)lParam);
         }
-#ifndef _MPLAYER
-        else if (message == MM_MIXM_CONTROL_CHANGE) {
-            // Volume changed message.
-            CEventPlayerSettingChanged *pEvent = new CEventPlayerSettingChanged();
-            pEvent->eventType = ET_PLAYER_SETTING_CHANGED;
-            pEvent->settingType = IMPEvent::MPS_VOLUME;
-            pEvent->value = g_player.getVolume();
-
-            MPlayerApp::getEventsDispatcher()->dispatchUnsyncEvent(pEvent);
-        }
-#endif
 
         return Window::wndProc(message, wParam, lParam);
     }
 
 protected:
     int                         m_nTimeOutUpdateLyr;
-    CVolumeOutMaster            m_volMaster;
 
 };
 

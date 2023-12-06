@@ -1,7 +1,35 @@
 ﻿#include "MPlayerApp.h"
 #include "MLCmd.h"
 #include "MPHotkey.h"
-#include "HotkeyCtrlEx.h"
+
+
+void formatHotkeyText(string &strText, uint32_t nVirtKey, uint32_t fsModifiers) {
+    char szKeyName[256];
+    uint32_t nScanCode;
+
+    strText.resize(0);
+
+    emptyStr(szKeyName);
+    nScanCode = MapVirtualKey(nVirtKey, 0) << 16;
+    if (isExtendedKey(nVirtKey)) {
+        nScanCode |= 1 << 24;
+    }
+    GetKeyNameText(nScanCode, szKeyName, CountOf(szKeyName));
+
+    if (isFlagSet(fsModifiers, MOD_WIN)) {
+        strText += _TLT("Winkey+");
+    }
+    if (isFlagSet(fsModifiers, MOD_CONTROL)) {
+        strText += _TLT("Ctrl+");
+    }
+    if (isFlagSet(fsModifiers, MOD_SHIFT)) {
+        strText += _TLT("Shift+");
+    }
+    if (isFlagSet(fsModifiers, MOD_ALT)) {
+        strText += _TLT("Alt+");
+    }
+    strText += szKeyName;
+}
 
 
 /*

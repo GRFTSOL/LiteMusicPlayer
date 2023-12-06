@@ -1,4 +1,4 @@
-﻿#include "Player.h"
+﻿#include "../MPlayer/Player.h"
 #include "PlayListFile.h"
 
 

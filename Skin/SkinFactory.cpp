@@ -11,6 +11,10 @@
 #include "SkinLinearContainer.h"
 #include "SkinResizableLinearContainer.h"
 #include "SkinMenuItemsContainer.hpp"
+#include "SkinFilterCtrl.h"
+#include "SkinRateCtrl.h"
+#include "SkinPicText.h"
+#include "SkinTreeCtrl.h"
 
 
 #define _SZ_SKINWND         "skinwnd"
@@ -567,6 +571,10 @@ int CSkinFactory::init() {
     AddUIObjNewer(CSkinLinearContainer);
     AddUIObjNewer(CSkinResizableLinearContainer);
     AddUIObjNewer(SkinMenuItemsContainer);
+    AddUIObjNewer(CSkinRateCtrl);
+    AddUIObjNewer(CSkinPicText);
+    AddUIObjNewer(CSkinFilterCtrl);
+    AddUIObjNewer(CSkinTreeCtrl);
 
     return ERR_OK;
 }
@@ -884,11 +892,8 @@ int CSkinFactory::openSkinFile(cstr_t szSkinFile) {
     return ERR_OK;
 }
 
-void CSkinFactory::expandIncludeNode(SXNode *pNodeRoot) {
-    for (SXNode::LIST_CHILDREN::iterator it = pNodeRoot->listChildren.begin();
-    it != pNodeRoot->listChildren.end(); ++it)
-        {
-        SXNode *p = *it;
+void CSkinFactory::expandIncludeNode(SXNode *parent) {
+    for (SXNode *&p : parent->listChildren) {
         if (isPropertyName(p->name.c_str(), "include")) {
             cstr_t szName = p->getProperty(SZ_PN_NAME);
             if (!szName || isEmptyString(szName)) {
@@ -910,7 +915,7 @@ void CSkinFactory::expandIncludeNode(SXNode *pNodeRoot) {
             expandIncludeNode(xml.m_pRoot);
 
             delete p;
-            *it = xml.m_pRoot;
+            p = xml.m_pRoot;
             xml.m_pRoot = nullptr;
         } else {
             expandIncludeNode(p);
@@ -1214,14 +1219,6 @@ cstr_t CSkinFactory::getSkinRootDir() {
         m_strSkinRootDir = getAppResourceDir();
         m_strSkinRootDir += "skins";
         m_strSkinRootDir += PATH_SEP_STR;
-
-#if defined (_DEBUG) && defined (_WIN32)
-        if (!isDirExist(m_strSkinRootDir.c_str())) {
-            m_strSkinRootDir = getInstallShareDir();
-
-            m_strSkinRootDir += "skins\\";
-        }
-#endif
     }
 
     return m_strSkinRootDir.c_str();
@@ -1663,7 +1660,7 @@ void CSkinFactory::onSkinWndActivate(CSkinWnd *pWndActive) {
     vector<HWND> vToBring;
 
     if (pWndActive) {
-        hWndActive = pWndActive->getHandle();
+        hWndActive = pWndActive->getWndHandle();
     } else {
         hWndActive = GetForegroundWindow();
     }
@@ -1679,8 +1676,8 @@ void CSkinFactory::onSkinWndActivate(CSkinWnd *pWndActive) {
     while (hWndNext) {
         itEnd = m_listSkinWnds.end();
         for (it = m_listSkinWnds.begin(); it != itEnd; ++it) {
-            if ((*it)->getHandle() == hWndNext && hWndNext != hWndActive) {
-                if (!isTopmostWindow(hWndNext) && !::isIconic(hWndNext)) {
+            if ((*it)->getWndHandle() == hWndNext && hWndNext != hWndActive) {
+                if (!isTopmostWindow(hWndNext) && !::IsIconic(hWndNext)) {
                     vToBring.push_back(hWndNext);
                     hWndPrev = hWndNext;
                 }

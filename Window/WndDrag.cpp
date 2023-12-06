@@ -89,11 +89,9 @@ void rectCloseToWindow(CRect &rcs, Window *pWnd, int nCloseExt, int &offx, int &
     CRect rcd;
     offx = 0;
     offy = 0;
-    if (pWnd) {
-        if (pWnd->isVisible()) {
-            pWnd->getWindowRect(&rcd);
-            rectCloseToRect(rcs, rcd, offx, offy, nCloseExt);
-        }
+    if (pWnd && pWnd->isVisible()) {
+        pWnd->getWindowRect(&rcd);
+        rectCloseToRect(rcs, rcd, offx, offy, nCloseExt);
     }
 }
 
@@ -176,7 +174,6 @@ void WndDrag::setWindowPosSafely(int xOld, int yOld, int nOffsetx, int nOffsety)
 
 bool WndDrag::autoCloseToWindows(int &nOffx, int &nOffy, bool bMoveWindow) {
     CRect rcw, rcd;
-    Window *pWnd;
 
     m_pWnd->getWindowRect(&rcw);
 
@@ -188,6 +185,7 @@ bool WndDrag::autoCloseToWindows(int &nOffx, int &nOffy, bool bMoveWindow) {
         if (nOffx == 0 || nOffy == 0) {
             int nOffxt, nOffyt;
             // get Window close to rect
+            Window *pWnd = nullptr;
             if (m_vWndCloseTo[i].pWnd) {
                 pWnd = m_vWndCloseTo[i].pWnd;
             } else {
@@ -312,80 +310,4 @@ bool isStickedWindows(Window *pWnd1, Window *pWnd2) {
         isVertStickLines(rcd.left, rcd.top, rcd.bottom, rcw.right, rcw.top, rcw.bottom) ||
         isVertStickLines(rcd.right, rcd.top, rcd.bottom, rcw.left, rcw.top, rcw.bottom) ||
         isVertStickLines(rcd.right, rcd.top, rcd.bottom, rcw.right, rcw.top, rcw.bottom));
-}
-
-void WndDrag::trackMoveWith(Window *pWnd, int x, int y) {
-    if (m_bEnableDrag && m_bSticked && m_pWndToTrack && !m_pWndToTrack->isIconic()) {
-        CRect rcw;
-
-        m_pWnd->getWindowRect(&rcw);
-
-        setWindowPosSafely(rcw.left, rcw.top, x - m_ptWndTrack.x, y - m_ptWndTrack.y);
-
-        rcw.offsetRect(x - m_ptWndTrack.x, y - m_ptWndTrack.y);
-
-        m_pWndToTrack->getWindowRect(&rcw);
-
-        m_ptWndTrack.x = rcw.left;
-        m_ptWndTrack.y = rcw.top;
-    }
-}
-
-//
-// 此函数在目标窗口移动之前进行调用，可以跟随目标窗口移动
-//
-// hWndChain 是中间的传递窗口;
-// nCount 是其中包含的个数
-// hWndToTrack 是将要跟随移动的窗口
-//
-// 如果检查的结果是本窗口靠近hWndToCheck中的任何一个，则
-void WndDrag::beforeTrackMoveWith(Window *pWndChain[], int nCount, Window *pWndToTrack) {
-    m_bSticked = false;
-    std::vector<Window *> vIn, vOut;
-
-    for (int i = 0; i < nCount; i++) {
-        if (pWndChain[i] && pWndChain[i]->isVisible()) {
-            vOut.push_back(pWndChain[i]);
-        }
-    }
-
-    vIn.push_back(pWndToTrack);
-
-    while (1) {
-        int i;
-        for (i = 0; i < (int)vIn.size(); i++) {
-            if (isStickedWindows(m_pWnd, vIn[i])) {
-                m_bSticked = true;
-                goto STICKED_FOUND;
-            }
-        }
-        bool bFound = false;
-        for (i = 0; i < (int)vIn.size(); i++) {
-            for (int k = 0; k < (int)vOut.size(); k++) {
-                if (isStickedWindows(vOut[k], vIn[i])) {
-                    vIn.push_back(vOut[k]);
-                    vOut.erase(vOut.begin() + k);
-                    bFound = true;
-                    goto FIND_CHAIN_OUT;
-                }
-            }
-        }
-    FIND_CHAIN_OUT:
-        if (!bFound) {
-            break;
-        }
-    }
-    return;
-
-STICKED_FOUND:
-    CRect rc;
-
-    m_pWndToTrack = pWndToTrack;
-
-    m_pWndToTrack->getWindowRect(&rc);
-
-    m_ptWndTrack.x = rc.left;
-    m_ptWndTrack.y = rc.top;
-
-    m_bSticked = true;
 }

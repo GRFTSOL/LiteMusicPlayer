@@ -9,6 +9,8 @@
 #define IRequestHandler_hpp
 
 #include <string>
+#include <memory>
+#include <vector>
 
 
 namespace HttpServer {

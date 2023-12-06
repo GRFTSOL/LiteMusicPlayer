@@ -1,4 +1,4 @@
-﻿#ifndef _RAW_GRAPH_DATA_H_
+#ifndef _RAW_GRAPH_DATA_H_
 #define _RAW_GRAPH_DATA_H_
 
 #pragma once
@@ -28,7 +28,7 @@ public:
 protected:
     WindowHandle                m_windowHandle = NULL;
     RawImageData                m_imageData;
-    CGContextRef                m_context;
+    CGContextRef                m_context = nullptr;
 
 };
 

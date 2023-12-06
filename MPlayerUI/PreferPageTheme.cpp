@@ -1,4 +1,4 @@
-﻿#include "MPlayerApp.h"
+#include "MPlayerApp.h"
 #include "PreferPageTheme.h"
 #include "LyricShowAgentObj.h"
 #include "ThemesFile.h"
@@ -124,8 +124,7 @@ public:
     }
 
 public:
-    CPagePfDisplayStyle() : CPagePfBase(PAGE_LYR_DISPLAY, "ID_THEME_LYR_DISPLAY") {
-        CID_DS_MODE = 0;
+    CPagePfDisplayStyle(PreferPageID pfPageId, cstr_t szAssociateTabButtonId) : CPagePfBase(pfPageId, szAssociateTabButtonId) {
         CID_DS_STYLE = 0;
         CID_DS_FADEOUT = 0;
         CID_DS_ALIGN = 0;
@@ -139,13 +138,6 @@ public:
     void onInitialUpdate() override {
         CPagePfBase::onInitialUpdate();
 
-        if (getExPoolBool(SZ_EX_POOL_PF_FLOATING_LYR, false)) {
-            m_eventType = ET_LYRICS_FLOATING_SETTINGS;
-        } else {
-            m_eventType = ET_LYRICS_DISPLAY_SETTINGS;
-        }
-
-        GET_ID_BY_NAME(CID_DS_MODE);
         GET_ID_BY_NAME(CID_DS_STYLE);
         GET_ID_BY_NAME(CID_DS_FADEOUT);
         GET_ID_BY_NAME(CID_DS_ALIGN);
@@ -154,33 +146,12 @@ public:
         GET_ID_BY_NAME(CID_DS_CLR_HIGH);
         GET_ID_BY_NAME(CID_DS_CLR_LOW);
 
-        m_pcbMode = (CSkinComboBox *)getUIObjectById(CID_DS_MODE, CSkinComboBox::className());
-        if (m_pcbMode) {
-            m_pcbMode->addString(_TLT("Normal lyrics mode settings"));
-            m_pcbMode->addString(_TLT("Floating lyrics mode settings"));
-
-            if (m_eventType == ET_LYRICS_FLOATING_SETTINGS) {
-                m_pcbMode->setCurSel(1);
-            } else {
-                m_pcbMode->setCurSel(0);
-            }
-
-            m_pSkin->registerUIObjNotifyHandler(CID_DS_MODE, this);
-        }
-
-        setSettingType(m_eventType == ET_LYRICS_FLOATING_SETTINGS ? ST_FLOATING_LYR : ST_NORMAL_LYR);
-    }
-
-    void onUIObjNotify(IUIObjNotify *pNotify) override {
-        CPagePfBase::onUIObjNotify(pNotify);
-
-        if (pNotify->isKindOf(CSkinComboBox::className())) {
-            if (pNotify->nID == CID_DS_MODE) {
-                assert(m_pcbMode);
-                if (m_pcbMode) {
-                    setSettingType(m_pcbMode->getCurSel() == 0 ? ST_NORMAL_LYR : ST_FLOATING_LYR);
-                }
-            }
+        if (m_pfPageId == PAGE_LYR_DISPLAY) {
+            setSettingType(ST_NORMAL_LYR);
+            m_eventType = ET_LYRICS_DISPLAY_SETTINGS;
+        } else {
+            setSettingType(ST_FLOATING_LYR);
+            m_eventType = ET_LYRICS_FLOATING_SETTINGS;
         }
     }
 
@@ -403,10 +374,8 @@ protected:
     EventType                   m_eventType;
     string                      m_strSectName;
 
-    int                         CID_DS_MODE, CID_DS_STYLE, CID_DS_FADEOUT, CID_DS_ALIGN;
+    int                         CID_DS_STYLE, CID_DS_FADEOUT, CID_DS_ALIGN;
     int                         CID_DS_LOAD_LATIN_FONT, CID_DS_LOAD_OTHER_FONT, CID_DS_CLR_HIGH, CID_DS_CLR_LOW;
-
-    CSkinComboBox               *m_pcbMode;
 
     CLyrDisplayClrListWnd       m_popupHighClrListWnd;
     CLyrDisplayClrListWnd       m_popupLowClrListWnd;
@@ -583,12 +552,25 @@ CPagePfThemeRoot::CPagePfThemeRoot() : CPagePfBase(PAGE_UNKNOWN, "ID_ROOT_THEME"
 void CPagePfThemeRoot::onInitialUpdate() {
     CPagePfBase::onInitialUpdate();
 
+    setDefaultPreferPage(this, (PreferPageID)getExPoolInt(SZ_EX_POOL_PF_DEFAULT_PAGE));
+
     checkToolbarDefaultPage("CID_TOOLBAR_THEME");
 }
+
+class PagePfDisplayStyleNewer : public IUIObjNewer {
+public:
+    PagePfDisplayStyleNewer(PreferPageID pfPageId, cstr_t szAssociateTabButtonId) : pfPageId(pfPageId), szAssociateTabButtonId(szAssociateTabButtonId) { }
+    virtual CUIObject *New() { return new CPagePfDisplayStyle(pfPageId, szAssociateTabButtonId); }
+
+    PreferPageID                    pfPageId;
+    cstr_t                          szAssociateTabButtonId;
+
+};
 
 void registerPfThemePages(CSkinFactory *pSkinFactory) {
     AddUIObjNewer2(pSkinFactory, CPagePfThemeRoot);
     AddUIObjNewer2(pSkinFactory, CPagePfTheme);
-    AddUIObjNewer2(pSkinFactory, CPagePfDisplayStyle);
+    pSkinFactory->registerUIObjNewer("PreferPage.LyrDisplayStyle", new PagePfDisplayStyleNewer(PAGE_LYR_DISPLAY, "ID_THEME_LYR_DISPLAY"));
+    pSkinFactory->registerUIObjNewer("PreferPage.FloatLyrDisplayStyle", new PagePfDisplayStyleNewer(PAGE_FLOAT_LYR_DISPLAY, "ID_THEME_FLOAT_LYR_DISPLAY"));
     AddUIObjNewer2(pSkinFactory, CPagePfLyricsBgPic);
 }

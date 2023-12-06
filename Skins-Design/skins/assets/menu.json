@@ -289,7 +289,7 @@
       [
         [
           "Dis&play Options...",
-          "ID_LYR_DISPLAY_OPT"
+          "ID_DISPLAY_OPT"
         ],
         [
           "Ad&just Hue...",
@@ -647,7 +647,7 @@
     ],
     [
       "Dis&play Options...",
-      "ID_LYR_DISPLAY_OPT"
+      "ID_DISPLAY_OPT"
     ],
     [
       "separator"

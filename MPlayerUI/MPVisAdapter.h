@@ -3,6 +3,9 @@
 #ifndef MPlayerUI_MPVisAdapter_h
 #define MPlayerUI_MPVisAdapter_h
 
+#include "../MPlayer/Player.h"
+#include "../MPlayerEngine/IMPlayer.h"
+
 
 class CMPVisAdapter : public IVisualizer {
     OBJ_REFERENCE_DECL

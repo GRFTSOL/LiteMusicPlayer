@@ -1,13 +1,8 @@
-﻿#include "MPlayerApp.h"
+#include "MPlayerApp.h"
 #include "MPHelper.h"
 #include "MLCmd.h"
 #include "MediaDetectionService.h"
 
-
-void getDefaultPlaylistName(string &strPlaylistFile) {
-    strPlaylistFile = getAppDataDir();
-    strPlaylistFile += "DefPlaylist.m3u";
-}
 
 bool onSongOpenFileCmd(Window *pWndParent, bool bOpen) {
     string strExtentions;
@@ -100,54 +95,4 @@ bool onCmdSongAddFilesToMediaLib(Window *pWndParent) {
     }
 
     return false;
-}
-
-void enumPlaylists(cstr_t szDir, int &nLevel, vector<string> &vFiles) {
-    FileFind finder;
-    string strDir, strFile;
-
-    if (!finder.openDir(szDir)) {
-        return;
-    }
-
-    strDir = szDir;
-    dirStringAddSep(strDir);
-
-    nLevel--;
-
-    while (finder.findNext()) {
-        if (finder.isCurDir()) {
-            if (nLevel >= 0 &&
-                strcmp(finder.getCurName(), ".") != 0 &&
-                strcmp(finder.getCurName(), "..") != 0) {
-                strFile = strDir + finder.getCurName();
-                enumPlaylists(strFile.c_str(), nLevel, vFiles);
-            }
-        } else {
-            if (CPlayer::isExtPlaylistFile(fileGetExt(finder.getCurName()))) {
-                strFile = strDir + finder.getCurName();
-                vFiles.push_back(strFile);
-            }
-        }
-    }
-
-    nLevel++;
-}
-
-void enumPlaylistsFast(vector<string> &vFiles) {
-    int nLevel = 0;
-    enumPlaylists(getAppDataDir().c_str(), nLevel, vFiles);
-
-#ifdef _WIN32
-    char szDir[MAX_PATH];
-    if (SUCCEEDED(SHGetSpecialFolderPath(nullptr, szDir, CSIDL_PERSONAL, false))) {
-        nLevel = 1;
-        enumPlaylists(szDir, nLevel, vFiles);
-    }
-
-    if (SUCCEEDED(SHGetSpecialFolderPath(nullptr, szDir, CSIDL_DESKTOPDIRECTORY , false))) {
-        nLevel = 0;
-        enumPlaylists(szDir, nLevel, vFiles);
-    }
-#endif
 }

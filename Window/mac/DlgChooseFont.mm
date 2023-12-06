@@ -9,6 +9,7 @@
 @end
 
 #import "../WindowLib.h"
+#import "WindowHandleHolder.h"
 
 
 CDlgChooseFont::CDlgChooseFont() {
@@ -41,7 +42,7 @@ int CDlgChooseFont::doModal(Window *pWndParent, cstr_t szFontFaceName, int nFont
 
     NSFontPanel *panel = [NSFontPanel sharedFontPanel];
     if (pWndParent != nullptr) {
-        [panel setParentWindow:(NSWindow*)pWndParent->getHandleHolder()->window];
+        [panel setParentWindow:(NSWindow*)pWndParent->getWindowHandleHolder()->window];
     }
     // [panel setWorksWhenModal:YES];
     FontChooserDelegate *delegate = [FontChooserDelegate alloc];

@@ -5,7 +5,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "../MPlayerUI/mac/MPlayerApp.h"
+#import "../MPlayerUI/MPlayerApp.h"
 #include "utils/unittest.h"
 
 

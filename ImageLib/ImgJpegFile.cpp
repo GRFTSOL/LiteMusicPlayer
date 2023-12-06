@@ -120,11 +120,11 @@ RawImageDataPtr loadRawImageDataFromJpgFile(IILIO *io) {
     //        SetYDPI(cinfo.Y_density);
     //    }
 
-    if (cinfo.jpeg_color_space==JCS_GRAYSCALE){
+    if (cinfo.jpeg_color_space == JCS_GRAYSCALE) {
         imgData->setClrUsed(256);
         setGrayPalette(imgData->pallete, 256);
     } else {
-        if (cinfo.quantize_colors == true){
+        if (cinfo.quantize_colors) {
             imgData->setClrUsed(cinfo.actual_number_of_colors);
             setPalette(imgData->pallete, cinfo.actual_number_of_colors, cinfo.colormap[0], cinfo.colormap[1], cinfo.colormap[2]);
         }

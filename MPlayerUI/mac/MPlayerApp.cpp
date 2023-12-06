@@ -1,4 +1,4 @@
-﻿#include "MPlayerApp.h"
+#include "MPlayerApp.h"
 #include "DownloadMgr.h"
 #include "VersionUpdate.h"
 #include "OnlineSearch.h"
@@ -7,13 +7,6 @@
 #include "LyricShowObj.h"
 #include "HeadPhoneWatch.hpp"
 
-
-MPlayerApp::MPlayerApp() {
-    m_bRunning = false;
-}
-
-MPlayerApp::~MPlayerApp() {
-}
 
 bool MPlayerApp::isAnotherInstanceRunning() {
     return false;

@@ -40,7 +40,7 @@
   </skinwnd>
   <skinwnd Name="MainWnd" Extends="Window" TranslucencyAlpha="228" 
        MinWidth="330" MinHeight="300" Width="330" Height="400"
-       ContextMenu="NormalMode" CmdHandler="ch_common,ch_playlist,ch_medialib">
+       ContextMenu="NormalMode" CmdHandler="ch_common,ch_playlist">
     <Image Name="TopLeftCorner" Rect="0,0,20,20" Image="frame.png" ImageRect="0, 0, 20, 20" BlendPixMode="alpha_mask"/>
     <Image Name="LeftBottomCorner" Rect="0,h-20,20,20" Image="frame.png" ImageRect="0, 55, 20, 20" BlendPixMode="alpha_mask"/>
     <Image Name="BottomBorder" Rect="20,h-20+10,w-20-20,20-10" Image="frame.png" ImageRect="20, 65, 35, 10" BltMode="tile" BlendPixMode="alpha_mask"/>

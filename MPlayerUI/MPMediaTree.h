@@ -1,11 +1,11 @@
-﻿#pragma once
+#pragma once
 
 #ifndef MPlayerUI_MPMediaTree_h
 #define MPlayerUI_MPMediaTree_h
 
 
-#include "SkinTreeCtrl.h"
-#include "Player.h"
+#include "../Skin/SkinTreeCtrl.h"
+#include "../MPlayer/Player.h"
 
 
 enum ImageIndex {
@@ -162,7 +162,7 @@ public:
 
     virtual void onUpdate();
 
-    string                      m_strPlaylistFile;
+    int                         idPlaylist;
 
 };
 

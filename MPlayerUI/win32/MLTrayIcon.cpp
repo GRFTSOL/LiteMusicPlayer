@@ -1,8 +1,7 @@
 ﻿
 
-#include "MPlayerApp.h"
+#include "../MPlayerApp.h"
 #include "MLTrayIcon.h"
-#include "MLCmd.h"
 #include "ShellNotifyIcon.h"
 
 
@@ -35,10 +34,8 @@ void CMLTrayIcon::init(Window *pWnd) {
     //
     // 更新按钮托盘图标
     for (int i = 0; i < MAX_PLAYER_TRAY_ICON_CMD; i++) {
-        char szKey[128];
-
-        wsprintf(szKey, "TrayIcon%d", i);
-        g_sysTrayIconCmd[i].bEnable = g_profile.getBool(szKey, false);
+        string key = stringPrintf("TrayIcon%d", i);
+        g_sysTrayIconCmd[i].isEnabled = g_profile.getBool(key.c_str(), false);
         g_sysTrayIconCmd[i].hIcon = (HICON)::LoadImage(getAppInstance(), MAKEINTRESOURCE(g_sysTrayIconCmd[i].uIconID), IMAGE_ICON, 16, 16, LR_VGACOLOR);
     }
 
@@ -115,7 +112,7 @@ void CMLTrayIcon::updateShowIconPos() {
         CShellNotifyIcon::addIcon(m_pWnd, IDN_MINILYRICS, strCaption.c_str(), m_hIconTray, MPWM_TRAYICN);
 
         if (m_pWnd->isIconic()) {
-            m_pWnd->showWindow(SW_HIDE);
+            m_pWnd->hide();
         }
     } else {
         // remove icon in tray bar
@@ -132,10 +129,10 @@ void CMLTrayIcon::updatePlayerSysTrayIcon() {
         CShellNotifyIcon::delIcon(m_pWnd, IDN_PLAYER_CTRL + i);
     }
     for (i = 0; i < MAX_PLAYER_TRAY_ICON_CMD; i++) {
-        if (g_sysTrayIconCmd[i].bEnable) {
+        if (g_sysTrayIconCmd[i].isEnabled) {
             // add icon in tray bar
             CShellNotifyIcon::addIcon(m_pWnd, IDN_PLAYER_CTRL + i,
-                _TL(g_sysTrayIconCmd[i].szCmd),
+                _TL(g_sysTrayIconCmd[i].cmdText),
                 g_sysTrayIconCmd[i].hIcon, MPWM_TRAYICN);
         }
     }
@@ -155,23 +152,11 @@ void CMLTrayIcon::onMyNotifyIcon(WPARAM wParam, LPARAM lParam) {
     if (wParam == IDN_MINILYRICS) {
         if (lParam == WM_RBUTTONUP) {
             // show popup menu
-            CPoint pt;
-            getCursorPos(&pt);
+            CPoint pt = getCursorPos();
             MPlayerApp::getMainWnd()->setForeground();
             MPlayerApp::getMainWnd()->onContexMenu(pt.x, pt.y);
         } else if (lParam == WM_LBUTTONDBLCLK || lParam == WM_LBUTTONUP) {
-            activateWindow(MPlayerApp::getMainWnd()->getHandle());
-
-            // show cancel transparent with mouse click menu.
-            if (MPlayerApp::getMainWnd()->m_bClickThrough) {
-                CMenu menu;
-                if (menu.loadPopupMenu(IDM_MOUSE_CLICK_THROUGH, 0)) {
-                    CPoint pt;
-                    getCursorPos(&pt);
-                    menu.checkItem(ID_CLICK_THROUGH, true);
-                    menu.trackPopupMenu(pt.x, pt.y, MPlayerApp::getMainWnd());
-                }
-            }
+            MPlayerApp::getMainWnd()->activateWindow();
         }
     } else {
         int i = wParam - IDN_PLAYER_CTRL;
@@ -188,10 +173,10 @@ void CMLTrayIcon::onMyNotifyIcon(WPARAM wParam, LPARAM lParam) {
                 //
                 //                 trackPopupMenu(hMenuPlayer, TPM_RIGHTBUTTON | TPM_LEFTALIGN, pt.x, pt.y, 0, m_pWnd->getHandle(), nullptr);
             } else if (lParam == WM_LBUTTONUP) {
-                MPlayerApp::getMainWnd()->postShortcutKeyCmd(g_sysTrayIconCmd[i].dwCmd);
+                MPlayerApp::getMainWnd()->postShortcutKeyCmd(g_sysTrayIconCmd[i].cmdId);
             } else if (lParam == WM_LBUTTONDBLCLK) {
                 // 激活播放器窗口
-                activateWindow(MPlayerApp::getMainWnd()->getHandle());
+                MPlayerApp::getMainWnd()->activateWindow();
             }
         }
     }

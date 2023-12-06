@@ -12,8 +12,10 @@ const int ML_WM_LANGUAGE_CHANGED = (WM_USER + 1212);
 const int ML_LANGUAGE_CHANGED_PARAM = 172172;
 #define ML_WM_USER                (WM_USER + 1213)
 
-LRESULT CALLBACK BaseWndProc(HWND hWnd, uint32_t message, WPARAM wParam, LPARAM lParam);
-void UnSetLayeredWindow(HWND hWnd);
+LRESULT CALLBACK baseWndProc(HWND hWnd, uint32_t message, WPARAM wParam, LPARAM lParam);
+void unSetLayeredWindow(HWND hWnd);
+bool isTopmostWindow(HWND hWnd);
+void topmostWindow(HWND hwnd, bool bTopmost);
 bool showAsAppWindowNoRefresh(HWND hWnd);
 bool showAsToolWindowNoRefresh(HWND hWnd);
 

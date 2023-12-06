@@ -4,7 +4,7 @@
 #define MPlayerUI_MPSkinTimeCtrl_h
 
 
-#include "SkinPicText.h"
+#include "../Skin/SkinPicText.h"
 
 
 string formatDuration(int nTimeSec);

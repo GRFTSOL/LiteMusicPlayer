@@ -11,7 +11,7 @@ public:
     CMPSkinMainWnd();
     virtual ~CMPSkinMainWnd();
 
-    virtual bool onCreate();
+    virtual void onCreate();
     virtual void onDestroy();
 
     // IEventHandler
@@ -27,16 +27,6 @@ public:
 
     CMLTrayIcon &getTrayIcon() { return m_mlTrayIcon; }
 
-#ifndef _MPLAYER
-public:
-    //
-    // functions for embedded into other windows...
-    //
-    virtual bool isTopmost();
-    virtual bool isIconic();
-    virtual void setTopmost(bool bTopmost);
-    virtual void minimize();
-#endif
     virtual void activateWindow();
 
     HWND getRootParentWnd();

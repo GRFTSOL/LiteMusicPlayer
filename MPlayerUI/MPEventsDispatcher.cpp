@@ -1,10 +1,8 @@
-﻿
+
 
 #include "MPlayerApp.h"
 #include "MPEventsDispatcher.h"
-#ifdef _MPLAYER
-// #include "MPVisAdapter.h"
-#endif
+
 
 // szValue: p1="v1" p2="v2"
 //    or        v1

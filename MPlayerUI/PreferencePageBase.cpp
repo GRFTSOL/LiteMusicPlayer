@@ -1,4 +1,4 @@
-﻿#include "MPlayerApp.h"
+#include "MPlayerApp.h"
 #include "PreferencePageBase.h"
 
 
@@ -42,7 +42,7 @@ void CPagePfBase::onInitialUpdate() {
                 CPagePfBase *pPfPage = (CPagePfBase *)p;
                 m_nDefaultPageAssociateTabButtonId = pPfPage->getAssociateTabButtonId();
                 if (!pPfPageParent->hasActivePage()) {
-                    pPfPageParent->switchToPage(p->getClassName(), false, 0, false);
+                    pPfPageParent->switchToPage(pPfPage, false, 0, false);
                 }
                 break;
             }
@@ -66,7 +66,7 @@ bool CPagePfBase::onSwitchToPageCmd(int nId) {
             if (p->isContainer() && p->isKindOf(CPagePfBase::className())) {
                 CPagePfBase *pPfPage = (CPagePfBase *)p;
                 if (pPfPage->getAssociateTabButtonId() == nId) {
-                    pPfPageParent->switchToPage(pPfPage->getClassName(), false, 0, true);
+                    pPfPageParent->switchToPage(pPfPage, false, 0, true);
                     if (pPfPage->getPfPageID() != PAGE_UNKNOWN) {
                         // write default page in exchange pool data
                         setExPool(SZ_EX_POOL_PF_DEFAULT_PAGE, pPfPage->getPfPageID());
@@ -273,7 +273,7 @@ bool CPagePfBase::setDefaultPreferPage(CSkinContainer *pContainer, PreferPageID 
             if (p->isKindOf(CPagePfBase::className())) {
                 CPagePfBase *pPageChild = (CPagePfBase *)p;
                 if (pPageChild->setDefaultPreferPage(pPageChild, pfPageIdDefault)) {
-                    pPageChild->getParent()->switchToPage(pPageChild->getClassName(), false, 0, false);
+                    pPageChild->getParent()->switchToPage(pPageChild, false, 0, false);
                     m_nDefaultPageAssociateTabButtonId = pPageChild->getAssociateTabButtonId();
                     return true;
                 }

@@ -9,12 +9,8 @@
 #import <Cocoa/Cocoa.h>
 #import "WindowTypes.h"
 #import "Window.h"
+#import "WindowHandleHolder.h"
 
-
-struct WindowHandleHolder {
-    WindowMacImp                *window;
-    ViewMacImp                  *view;
-};
 
 void showInFinder(cstr_t filename) {
     string path = fileGetPath(filename);

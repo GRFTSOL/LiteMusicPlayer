@@ -1,4 +1,4 @@
-﻿#include "MPlayerApp.h"
+#include "MPlayerApp.h"
 #include "MPSkinFactory.h"
 #include "MPSkinWnd.h"
 #include "LyricShowMultiRowObj.h"
@@ -9,13 +9,10 @@
 #include "LyricShowAgentObj.h"
 #include "LyricShowTextEditObj.h"
 #include "LyricShowTxtContainer.h"
-#include "SkinRateCtrl.h"
-#include "SkinPicText.h"
 #include "MPSkinTimeCtrl.h"
 #include "MPSkinInfoTextCtrl.h"
 #include "MediaInfoTextCtrl.h"
 #include "MediaAlbumArtCtrl.h"
-#include "SkinFilterCtrl.h"
 #include "MPSkinInfoTextCtrlEx.h"
 #include "DlgAbout.h"
 #include "DlgSearchLyrics.h"
@@ -24,17 +21,7 @@
 #include "DlgAdjustHue.h"
 #include "MPlaylistCtrl.h"
 #include "MPSkinMediaNumInfoCtrl.h"
-
-#ifdef _MPLAYER
-#include "SkinTreeCtrl.h"
-#endif
-
-#ifdef _WIN32
-#include "win32/LyricsDownloader.h"
-#endif
-
 #include "MPSkinMenu.h"
-
 #include "MPFloatingLyrWnd.h"
 
 
@@ -56,16 +43,10 @@ int CMPSkinFactory::init() {
     AddUIObjNewer(CLyricShowTextEditObj);
     AddUIObjNewer(CLyricShowTxtContainer);
     AddUIObjNewer(CLyricShowAgentObj);
-    AddUIObjNewer(CSkinRateCtrl);
-    AddUIObjNewer(CSkinPicText);
     AddUIObjNewer(CMPSkinTimeCtrl<CSkinPicText>);
     AddUIObjNewer(CMPSkinTimeCtrl<CSkinStaticText>);
     AddUIObjNewer(CMPSkinInfoTextCtrl);
     AddUIObjNewer(CMPSkinInfoTextCtrlEx);
-    AddUIObjNewer(CSkinFilterCtrl);
-#ifdef _MPLAYER
-    AddUIObjNewer(CSkinTreeCtrl);
-#endif
     AddUIObjNewer(CMPSkinMediaNumInfoCtrl);
     AddUIObjNewer(CMediaInfoTextCtrl);
     AddUIObjNewer(CMediaAlbumArtCtrl);
@@ -110,7 +91,7 @@ void CMPSkinFactory::minizeAll(bool bSilently) {
     for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
         CSkinWnd *pWnd = *it;
 #ifdef _WIN32
-        if (::getParent(pWnd->getHandle()) != nullptr) {
+        if (::GetParent(pWnd->getWndHandle()) != nullptr) {
             continue;
         }
 #endif
@@ -183,79 +164,13 @@ void CMPSkinFactory::adjustHue(float hue, float saturation, float luminance) {
     g_wndFloatingLyr.invalidateRect();
 }
 
-#ifndef _MPLAYER
-void CMPSkinFactory::beforeTrackMoveWith(Window *pWndChain[], int nCount, Window *pWndToTrack) {
-    auto itEnd = m_listSkinWnds.end();
-
-    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
-        CSkinWnd *pWnd = *it;
-        pWnd->m_WndDrag.beforeTrackMoveWith(pWndChain, nCount, pWndToTrack);
-    }
-}
-
-void CMPSkinFactory::trackMoveWith(Window *pWnd, int x, int y) {
-    auto itEnd = m_listSkinWnds.end();
-
-    for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {
-        CSkinWnd *pWnd = *it;
-        pWnd->m_WndDrag.trackMoveWith(pWnd, x, y);
-    }
-}
-
-void CMPSkinFactory::addWndCloseto(Window *pWnd, cstr_t szWndName, cstr_t szClass) {
-    m_WndCloseToPlayers.addWndCloseto(pWnd, szClass, szWndName);
-}
-
-// ISkinWndDragHost
-void CMPSkinFactory::getWndDragAutoCloseTo(vector<Window *> &vWnd) {
-    CSkinFactory::getWndDragAutoCloseTo(vWnd);
-
-    V_WNDCLOSETO::iterator it, itEnd;
-    itEnd = m_WndCloseToPlayers.m_vWndCloseTo.end();
-    for (it = m_WndCloseToPlayers.m_vWndCloseTo.begin(); it != itEnd; ++it) {
-        Window *pWnd;
-        WndDrag::WndCloseTo &item = *it;
-
-        if (item.pWnd) {
-            pWnd = item.pWnd;
-        } else {
-            const char *szClass = item.strClass.c_str();
-            if (isEmptyString(szClass)) {
-                szClass = nullptr;
-            }
-            const char *szWnd = item.strWndName.c_str();
-            if (isEmptyString(szWnd)) {
-                szWnd = nullptr;
-            }
-            pWnd = findWindow(szClass, szWnd);
-        }
-
-        if (pWnd) {
-            vWnd.push_back(pWnd);
-        }
-    }
-}
-#endif
-
 void CMPSkinFactory::allUpdateTransparent() {
     int nOpaque = g_profile.getInt(SZ_SECT_UI, "WindowOpaquePercent", 100);
     uint8_t byAlpha = opaquePercentToAlpha(nOpaque);
 
-#ifdef _WIN32
-    if (!isLayeredWndSupported()) {
-        return;
-    }
-
-#ifndef _MPLAYER
     if (g_wndFloatingLyr.isValid()) {
         g_wndFloatingLyr.setTransparent(byAlpha, false);
     }
-
-    if (::getParent(MPlayerApp::getMainWnd()->getHandle())) {
-        return;
-    }
-#endif
-#endif // #ifdef _WIN32
 
     auto itEnd = m_listSkinWnds.end();
     for (auto it = m_listSkinWnds.begin(); it != itEnd; ++it) {

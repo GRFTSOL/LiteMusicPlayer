@@ -26,7 +26,7 @@ CRawGraph *CSkinToggleCtrlContainer::getMemGraph() {
     }
 
     if (!m_memGraph.isValid()) {
-        m_memGraph.create(m_rcObj.width(), m_rcObj.height(), m_pSkin->getHandleHolder());
+        m_memGraph.create(m_rcObj.width(), m_rcObj.height(), m_pSkin->getHandle());
         m_memGraph.resetOrigin(CPoint(-m_rcObj.left, -m_rcObj.top));
     }
 

@@ -1,12 +1,8 @@
-﻿#include "MPlayerApp.h"
+#include "MPlayerApp.h"
 #include "MPSkinMainWnd.h"
 
 #ifdef _WIN32
 #include "MPMsg.h"
-#endif
-
-#ifdef _MPLAYER
-#include "MPHelper.h"
 #endif
 
 

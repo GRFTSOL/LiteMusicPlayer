@@ -1129,8 +1129,8 @@ void CLyricShowObj::darkenLyricsBg(CRawGraph *canvas, CRect &rc) {
 
     auto nDarkenTop = getLineVertAlignPos() - int(nLineHeight * m_nDarkenTopArea);
     auto nDarkenBottom = getLineVertAlignPos() + int(nLineHeight * m_nDarkenBottomArea);
-    auto nFillBottom = min(rc.bottom, nDarkenBottom);
-    auto nFillTop = max(rc.top, nDarkenTop);
+    auto nFillBottom = min((int)rc.bottom, nDarkenBottom);
+    auto nFillTop = max((int)rc.top, nDarkenTop);
     if (nFillBottom > nFillTop) {
         canvas->fillRect(rc.left, nFillTop, rc.width(), nFillBottom - nFillTop, m_clrDarken, BPM_BLEND);
     }
@@ -1416,17 +1416,10 @@ void CLyricShowObj::wrapLyricsLines() {
 // COMMENT:
 // 自动调整迷窗口高度
 void CLyricShowObj::autoHeightSkinAccordLyrics(int nLines) {
-#ifndef _MPLAYER
     if (!m_bEnableAutoResize || nLines <= 0) {
         return;
     }
 
-#ifdef _WIN32
-    // auto size feauture is disabled when the skin is embedded into other windw
-    if (::getParent(m_pSkin->getHandle()) != nullptr) {
-        return;
-    }
-#endif
     if (m_pSkin->m_wndResizer.isFixedHeight()) {
         return;
     }
@@ -1447,7 +1440,6 @@ void CLyricShowObj::autoHeightSkinAccordLyrics(int nLines) {
     if (nBottomOld != rc.bottom) {
         m_pSkin->moveWindow(rc);
     }
-#endif
 }
 
 // COMMENT:
@@ -1467,13 +1459,6 @@ bool CLyricShowObj::autoWidthSkinAccordLyrics() {
     if (!g_profile.getBool(SZ_SECT_UI, "AutoAdjustWndWidth", false)) {
         return false;
     }
-
-#ifdef _WIN32
-    // auto size feature is disabled when the skin is embedded into other window
-    if (::getParent(m_pSkin->getHandle()) != nullptr) {
-        return false;
-    }
-#endif
 
     CRawGraph *canvas;
 

@@ -10,7 +10,7 @@
 #define WM_MOUSEWHEEL       0x020A
 
 
-LRESULT CALLBACK BaseWndProc(HWND hWnd, uint32_t uMsg, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK baseWndProc(HWND hWnd, uint32_t uMsg, WPARAM wParam, LPARAM lParam) {
     // fetch out the Window *
     if (uMsg == WM_CREATE || uMsg == WM_NCCREATE) {
         CREATESTRUCT *cs = (CREATESTRUCT *)lParam;
@@ -54,7 +54,7 @@ bool mLRegisterWndClass(HINSTANCE hInstance, cstr_t szClassName) {
 
     // regiszter pane class
     wc.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
-    wc.lpfnWndProc = (WNDPROC)BaseWndProc;
+    wc.lpfnWndProc = (WNDPROC)baseWndProc;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
     wc.hInstance = hInstance;
@@ -77,9 +77,28 @@ bool mLRegisterWndClass(HINSTANCE hInstance, cstr_t szClassName) {
     return true;
 }
 
+bool isTopmostWindow(HWND hWnd) {
+    auto dwStyleEx = (DWORD)::GetWindowLong(hWnd, GWL_EXSTYLE);
+
+    return ((dwStyleEx & WS_EX_TOPMOST) == WS_EX_TOPMOST);
+}
+
+void topmostWindow(HWND hwnd, bool bTopmost) {
+    if (bTopmost) {
+        auto dwStyleEx = (DWORD)::GetWindowLong(hwnd, GWL_EXSTYLE);
+        dwStyleEx |= WS_EX_TOPMOST;
+        ::SetWindowLong(hwnd, GWL_EXSTYLE, dwStyleEx);
+        ::SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE |SWP_NOACTIVATE);
+    } else {
+        auto dwStyleEx = (DWORD)::GetWindowLong(hwnd, GWL_EXSTYLE);
+        dwStyleEx &= ~WS_EX_TOPMOST;
+        ::SetWindowLong(hwnd, GWL_EXSTYLE, dwStyleEx);
+        ::SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE |SWP_NOACTIVATE);
+    }
+}
+
 bool showAsAppWindowNoRefresh(HWND hWnd) {
-    uint32_t dwStyleEx;
-    dwStyleEx = (uint32_t)GetWindowLong(hWnd, GWL_EXSTYLE);
+    auto dwStyleEx = (uint32_t)GetWindowLong(hWnd, GWL_EXSTYLE);
     if (isFlagSet(dwStyleEx, WS_EX_TOOLWINDOW) || isFlagSet(dwStyleEx, WS_EX_PALETTEWINDOW)) {
         dwStyleEx &= ~(WS_EX_TOOLWINDOW | WS_EX_PALETTEWINDOW);
         dwStyleEx |= WS_EX_APPWINDOW;
@@ -90,8 +109,7 @@ bool showAsAppWindowNoRefresh(HWND hWnd) {
 }
 
 bool showAsToolWindowNoRefresh(HWND hWnd) {
-    uint32_t dwStyleEx;
-    dwStyleEx = (uint32_t)GetWindowLong(hWnd, GWL_EXSTYLE);
+    auto dwStyleEx = (uint32_t)GetWindowLong(hWnd, GWL_EXSTYLE);
     if (!isFlagSet(dwStyleEx, WS_EX_TOOLWINDOW) && !isFlagSet(dwStyleEx, WS_EX_PALETTEWINDOW)) {
         dwStyleEx |= WS_EX_TOOLWINDOW;// | WS_EX_PALETTEWINDOW;
         dwStyleEx &= ~WS_EX_APPWINDOW;
@@ -99,6 +117,145 @@ bool showAsToolWindowNoRefresh(HWND hWnd) {
         return true;
     }
     return false;
+}
+
+HWND getParentOrSelf(HWND wnd) {
+    HWND parent = wnd;
+    while (parent) {
+        auto tmp = GetParent(parent);
+        if (!tmp) {
+            break;
+        }
+        parent = tmp;
+    }
+
+    return parent;
+}
+
+bool showAsToolWindow(HWND hWnd) {
+    auto dwStyleEx = (DWORD)GetWindowLong(hWnd, GWL_EXSTYLE);
+    if (!isFlagSet(dwStyleEx, WS_EX_TOOLWINDOW) && !isFlagSet(dwStyleEx, WS_EX_PALETTEWINDOW)) {
+        // not showed in task bar, so show it
+        ShowWindow(hWnd, SW_HIDE);
+        dwStyleEx |= WS_EX_TOOLWINDOW;// | WS_EX_PALETTEWINDOW;
+        dwStyleEx &= ~WS_EX_APPWINDOW;
+        SetWindowLong(hWnd, GWL_EXSTYLE, dwStyleEx);
+        ShowWindow(hWnd, SW_SHOW);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+// add it's WS_EX_APPWINDOW AND remove WS_EX_TOOLWINDOW
+bool showAsAppWindow(HWND hWnd) {
+    auto dwStyleEx = (DWORD)GetWindowLong(hWnd, GWL_EXSTYLE);
+    if (isFlagSet(dwStyleEx, WS_EX_TOOLWINDOW) || isFlagSet(dwStyleEx, WS_EX_PALETTEWINDOW)) {
+        // not showed in task bar, so show it
+        ShowWindow(hWnd, SW_HIDE);
+        dwStyleEx &= ~(WS_EX_TOOLWINDOW | WS_EX_PALETTEWINDOW);
+        dwStyleEx |= WS_EX_APPWINDOW;
+        SetWindowLong(hWnd, GWL_EXSTYLE, dwStyleEx);
+        ShowWindow(hWnd, SW_SHOW);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+bool isChildWnd(HWND hWnd) {
+    auto dwStyleEx = (DWORD)::GetWindowLong(hWnd, GWL_STYLE);
+    return (dwStyleEx & WS_CHILD) == WS_CHILD;
+}
+
+bool hasCaption(HWND hWnd) {
+    auto dwStyleEx = (DWORD)::GetWindowLong(hWnd, GWL_STYLE);
+    return (dwStyleEx & WS_CAPTION) == WS_CAPTION;
+}
+
+void removeCaption(HWND hWnd) {
+    auto dwStyleEx = (DWORD)::GetWindowLong(hWnd, GWL_STYLE);
+    dwStyleEx &= ~WS_CAPTION;
+    ::SetWindowLong(hWnd, GWL_STYLE, dwStyleEx);
+    ::SetWindowPos(hWnd, 0, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+}
+
+void addCaption(HWND hWnd) {
+    auto dwStyleEx = (DWORD)::GetWindowLong(hWnd, GWL_STYLE);
+    if ((dwStyleEx & WS_CAPTION) != WS_CAPTION) {
+        dwStyleEx |= WS_CAPTION;
+        ::SetWindowLong(hWnd, GWL_STYLE, dwStyleEx);
+        ::SetWindowPos(hWnd, 0, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    }
+}
+
+bool moveWindowSafely(HWND hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint) {
+    if (isChildWnd(hWnd)) {
+        POINT    pt;
+        HWND    hWndParent;
+        hWndParent = GetParent(hWnd);
+        if (hWndParent) {
+            pt.x = X;
+            pt.y = Y;
+            ScreenToClient(hWndParent, &pt);
+            X = pt.x;
+            Y = pt.y;
+        }
+    }
+
+    bool bHasCap = hasCaption(hWnd);
+    if (bHasCap)
+        removeCaption(hWnd);
+
+    bool bRet = MoveWindow(hWnd, X, Y, nWidth, nHeight, bRepaint);
+
+    if (bHasCap)
+        addCaption(hWnd);
+
+    return bRet;
+}
+
+bool isLayeredWndSupported()
+{
+    OSVERSIONINFO        version;
+
+    memset(&version, 0, sizeof(version));
+    version.dwOSVersionInfoSize = sizeof(version);
+
+    if (!GetVersionEx(&version))
+    {
+        //        LOGOUT1(LOG_LVL_ERROR, _T("GetVersionEx FAILED! Error Id: %d"), GetLastError);
+        return FALSE;
+    }
+
+    // Major version: 5, windows 2000
+    if (version.dwMajorVersion < 5)
+        return FALSE;
+
+    return TRUE;
+}
+
+//    COMMENT:
+//        sets the opacity and transparency color key of a layered window
+//    INPUT:
+//        crKey,        specifies the color key
+//        bAlpha,        value for the blend function, When bAlpha is 0, 
+//                    the window is completely transparent. 
+//                    When bAlpha is 255, the window is opaque. 
+//        dwFlags        Specifies an action to take. This parameter can be one or 
+//                    more of the following values. Value Meaning 
+//                    LWA_COLORKEY Use crKey as the transparency color.  
+//                    LWA_ALPHA Use bAlpha to determine the opacity of the layered window 
+bool setLayeredWindow(HWND hWnd, COLORREF crKey, BYTE bAlpha, DWORD dwFlags) {
+    DWORD dwStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
+    dwStyle |= WS_EX_LAYERED;
+    SetWindowLong(hWnd, GWL_EXSTYLE, dwStyle);
+
+    return SetLayeredWindowAttributes(hWnd, crKey, bAlpha, dwFlags);
+}
+
+void unSetLayeredWindow(HWND hWnd) {
+    DWORD dwStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
+    dwStyle &= ~WS_EX_LAYERED;
+    SetWindowLong(hWnd, GWL_EXSTYLE, dwStyle);
 }
 
 
@@ -299,7 +456,7 @@ void Window::killTimer(uint32_t nTimerId) {
 }
 
 string Window::getTitle() {
-	string str;
+    string str;
     int len = SendMessage(m_hWnd, WM_GETTEXTLENGTH, 0, 0);
     if (len > 0) {
         str.resize(len + 1);
@@ -354,19 +511,6 @@ bool Window::isVisible() {
     return tobool(::IsWindowVisible(m_hWnd));
 }
 
-HWND getParentOrSelf(HWND wnd) {
-    HWND parent = wnd;
-    while (parent) {
-        auto tmp = GetParent(parent);
-        if (!tmp) {
-            break;
-        }
-        parent = tmp;
-    }
-
-    return parent;
-}
-
 bool Window::isTopmost() {
     auto hWnd = getParentOrSelf(m_hWnd);
 
@@ -396,144 +540,6 @@ bool Window::isToolWindow() {
     DWORD dwStyleEx = (DWORD)GetWindowLong(m_hWnd, GWL_EXSTYLE);
 
     return (dwStyleEx & WS_EX_TOOLWINDOW) == WS_EX_TOOLWINDOW/* | WS_EX_PALETTEWINDOW*/;
-}
-
-BOOL showAsToolWindow(HWND hWnd) {
-    DWORD dwStyleEx;
-    dwStyleEx = (DWORD)GetWindowLong(hWnd, GWL_EXSTYLE);
-    if (!isFlagSet(dwStyleEx, WS_EX_TOOLWINDOW) && !isFlagSet(dwStyleEx, WS_EX_PALETTEWINDOW)) {
-        // not showed in task bar, so show it
-        ShowWindow(hWnd, SW_HIDE);
-        dwStyleEx |= WS_EX_TOOLWINDOW;// | WS_EX_PALETTEWINDOW;
-        dwStyleEx &= ~WS_EX_APPWINDOW;
-        SetWindowLong(hWnd, GWL_EXSTYLE, dwStyleEx);
-        ShowWindow(hWnd, SW_SHOW);
-        return TRUE;
-    }
-    return FALSE;
-}
-
-// add it's WS_EX_APPWINDOW AND remove WS_EX_TOOLWINDOW
-BOOL showAsAppWindow(HWND hWnd) {
-    DWORD dwStyleEx;
-    dwStyleEx = (DWORD)GetWindowLong(hWnd, GWL_EXSTYLE);
-    if (isFlagSet(dwStyleEx, WS_EX_TOOLWINDOW) || isFlagSet(dwStyleEx, WS_EX_PALETTEWINDOW)) {
-        // not showed in task bar, so show it
-        ShowWindow(hWnd, SW_HIDE);
-        dwStyleEx &= ~(WS_EX_TOOLWINDOW | WS_EX_PALETTEWINDOW);
-        dwStyleEx |= WS_EX_APPWINDOW;
-        SetWindowLong(hWnd, GWL_EXSTYLE, dwStyleEx);
-        ShowWindow(hWnd, SW_SHOW);
-        return TRUE;
-    }
-    return FALSE;
-}
-
-BOOL isChildWnd(HWND hWnd) {
-    DWORD	dwStyleEx = (DWORD)::GetWindowLong(hWnd, GWL_STYLE);
-    return (dwStyleEx & WS_CHILD) == WS_CHILD;
-}
-
-BOOL HasCaption(HWND hWnd)
-{
-    DWORD	dwStyleEx;
-
-    dwStyleEx = (DWORD)::GetWindowLong(hWnd, GWL_STYLE);
-    return (dwStyleEx & WS_CAPTION) == WS_CAPTION;
-}
-
-void RemoveCaption(HWND	hWnd)
-{
-    DWORD	dwStyleEx;
-
-    dwStyleEx = (DWORD)::GetWindowLong(hWnd, GWL_STYLE);
-    dwStyleEx &= ~WS_CAPTION;
-    ::SetWindowLong(hWnd, GWL_STYLE, dwStyleEx);
-    ::SetWindowPos(hWnd, 0, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-}
-
-void AddCaption(HWND	hWnd)
-{
-    DWORD	dwStyleEx;
-
-    dwStyleEx = (DWORD)::GetWindowLong(hWnd, GWL_STYLE);
-    if ((dwStyleEx & WS_CAPTION) != WS_CAPTION)
-    {
-        dwStyleEx |= WS_CAPTION;
-        ::SetWindowLong(hWnd, GWL_STYLE, dwStyleEx);
-        ::SetWindowPos(hWnd, 0, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-    }
-}
-
-BOOL moveWindowSafely(HWND hWnd, int X, int Y, int nWidth, int nHeight, BOOL bRepaint) {
-    if (isChildWnd(hWnd)) {
-        POINT	pt;
-        HWND	hWndParent;
-        hWndParent = GetParent(hWnd);
-        if (hWndParent) {
-            pt.x = X;
-            pt.y = Y;
-            ScreenToClient(hWndParent, &pt);
-            X = pt.x;
-            Y = pt.y;
-        }
-    }
-
-    BOOL bHasCap = HasCaption(hWnd);
-    if (bHasCap)
-        RemoveCaption(hWnd);
-
-    BOOL bRet = MoveWindow(hWnd, X, Y, nWidth, nHeight, bRepaint);
-
-    if (bHasCap)
-        AddCaption(hWnd);
-
-    return bRet;
-}
-
-BOOL IsLayeredWndSupported()
-{
-    OSVERSIONINFO		version;
-
-    memset(&version, 0, sizeof(version));
-    version.dwOSVersionInfoSize = sizeof(version);
-
-    if (!GetVersionEx(&version))
-    {
-        //		LOGOUT1(LOG_LVL_ERROR, _T("GetVersionEx FAILED! Error Id: %d"), GetLastError);
-        return FALSE;
-    }
-
-    // Major version: 5, windows 2000
-    if (version.dwMajorVersion < 5)
-        return FALSE;
-
-    return TRUE;
-}
-
-//	COMMENT:
-//		sets the opacity and transparency color key of a layered window
-//	INPUT:
-//		crKey,		specifies the color key
-//		bAlpha,		value for the blend function, When bAlpha is 0, 
-//					the window is completely transparent. 
-//					When bAlpha is 255, the window is opaque. 
-//		dwFlags		Specifies an action to take. This parameter can be one or 
-//					more of the following values. Value Meaning 
-//					LWA_COLORKEY Use crKey as the transparency color.  
-//					LWA_ALPHA Use bAlpha to determine the opacity of the layered window 
-BOOL SetLayeredWindow(HWND hWnd, COLORREF crKey, BYTE bAlpha, DWORD dwFlags) {
-    DWORD dwStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
-    dwStyle |= WS_EX_LAYERED;
-    SetWindowLong(hWnd, GWL_EXSTYLE, dwStyle);
-
-    return SetLayeredWindowAttributes(hWnd, crKey, bAlpha, dwFlags);
-}
-
-void UnSetLayeredWindow(HWND hWnd) {
-    DWORD dwStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
-    dwStyle &= ~WS_EX_LAYERED;
-    SetWindowLong(hWnd, GWL_EXSTYLE, dwStyle);
 }
 
 void Window::setToolWindow(bool bToolWindow) {
@@ -784,9 +790,9 @@ void Window::setTransparent(uint8_t nAlpha, bool bClickThrough) {
     }
 
     if (dwFlags != 0 || (isClickThrough())) {
-        ::SetLayeredWindow(m_hWnd, clrTrans, nAlpha, dwFlags);
+        ::setLayeredWindow(m_hWnd, clrTrans, nAlpha, dwFlags);
     } else {
-        ::UnSetLayeredWindow(m_hWnd);
+        ::unSetLayeredWindow(m_hWnd);
     }
 }
 

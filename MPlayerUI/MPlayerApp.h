@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "MLClientSession.h"
 
@@ -13,17 +13,14 @@
 
 #ifdef _WIN32
 #include "win32/MPHotkey.h"
-#include "win32/DlgChooseFont.h"
 #endif
 
 #ifdef _LINUX_GTK2
 #include "gtk2/MPHotkey.h"
-#include "gtk2/DlgChooseFont.h"
 #endif
 
 #ifdef _MAC_OS
 #include "mac/MPHotkey.h"
-#include "mac/DlgChooseFont.h"
 #endif
 
 #include "resource.h"

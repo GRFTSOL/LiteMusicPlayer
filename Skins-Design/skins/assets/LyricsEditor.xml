@@ -47,16 +47,16 @@
 		<button ID="ID_EDIT_HELP" Left="24" />
 	</Toolbar>
 	<LinearContainer Name="EditorFrame" ID="CID_EDITOR_FRAME" Rect="5,26+5,w-10,h-26-10" Orientation="Vertical">
-		<Container Name="Find" ID="CID_C_FIND" Height="30" LayoutParams="match_parent_width" Visible="false" FixedHeight="TRUE" >
+		<Container Name="Find" ID="CID_C_FIND" Height="35" LayoutParams="match_parent_width" Visible="false" FixedHeight="TRUE" >
 			<NormalEdit ID="CID_E_FIND" Rect="5,7,w-145," PlaceHolder="Find what"/>
 			<FlatImageBtn ID="CID_FIND_PREV" ContentImage="arrow-up" Rect="w-130,5,26,"/>
 			<FlatImageBtn ID="CID_FIND_NEXT" ContentImage="arrow-down" Rect="w-130+28,5,26,"/>
 			<FlatImageCheckBtn ID="CID_MATCHCASE" ContentImage="case-sensitive" Rect="w-130+28*2,5,26,"/>
 		</Container>
-		<Container Name="Replace" ID="CID_C_REPLACE" Height="35" LayoutParams="match_parent_width" Visible="false" FixedHeight="TRUE" >
-			<NormalEdit ID="CID_E_REPLACE" Rect="5,7,w-145," PlaceHolder="Replace with"/>
-			<FlatImageBtn ID="CID_REPLACE" ContentImage="replace" Rect="w-130,5,26,"/>
-			<FlatImageBtn ID="CID_REPLACE_ALL" ContentImage="replace-all" Rect="w-130+28,5,26,"/>
+		<Container Name="Replace" ID="CID_C_REPLACE" Height="30" LayoutParams="match_parent_width" Visible="false" FixedHeight="TRUE" >
+			<NormalEdit ID="CID_E_REPLACE" Rect="5,2,w-145," PlaceHolder="Replace with"/>
+			<FlatImageBtn ID="CID_REPLACE" ContentImage="replace" Rect="w-130,0,26,"/>
+			<FlatImageBtn ID="CID_REPLACE_ALL" ContentImage="replace-all" Rect="w-130+28,0,26,"/>
 		</Container>
 	
 		<Container Name="Editor" ID="CID_C_EDITOR" MinWidth="220" MinHeight="104" Width="200" LayoutParams="match_parent_width" Weight="1">

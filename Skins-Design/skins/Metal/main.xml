@@ -4,7 +4,7 @@
 
 	<skinwnd Extends="Window" Name="MainWnd"
 			MinWidth="640" MinHeight="120" Width="700" Height="400" Menu="MainWndMenu"
-			CmdHandler="ch_common,ch_playlist,ch_medialib" Script="main.js" 
+			CmdHandler="ch_common,ch_playlist" Script="main.js" 
 			ContextMenu="MainContextMenu">
 
 		<Frame Name="Frame" Rect="0,110,w,h-110" Image="frame.png" ImageRect="0,110,425,40"

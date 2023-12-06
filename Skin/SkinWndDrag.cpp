@@ -11,7 +11,7 @@ void rectCloseToWindow(CRect &rcs, Window *pWnd, int nCloseExt, int &offx, int &
 
 #ifdef _WIN32
 void getTaskBarRect(CRect &rc) {
-    ::getWindowRect(::findWindow("Shell_TrayWnd",nullptr), &rc);
+    ::GetWindowRect(::FindWindow("Shell_TrayWnd",nullptr), &rc);
 }
 #endif
 
@@ -82,7 +82,6 @@ void getStickedWindows(Window *pMainWnd, V_WNDS &vAllWnds, V_WNDS &vStickedWnds)
 bool CSkinWndDrag::autoCloseToWindows(int &nOffx, int &nOffy, bool bMoveWindow) {
     Window *pWnd = nullptr;
     V_WNDS vWnds;
-    size_t i;
     vector<CRect> vRcSticked, vRcToClosedTo;
     CRect rc;
 
@@ -91,7 +90,7 @@ bool CSkinWndDrag::autoCloseToWindows(int &nOffx, int &nOffy, bool bMoveWindow) 
     }
 
     // enum all windows that should auto close to
-    for (i = 0; i < m_vWndCloseTo.size(); i ++) {
+    for (size_t i = 0; i < m_vWndCloseTo.size(); i ++) {
         if (m_vWndCloseTo[i].pWnd) {
             pWnd = m_vWndCloseTo[i].pWnd;
         } else {
@@ -111,7 +110,7 @@ bool CSkinWndDrag::autoCloseToWindows(int &nOffx, int &nOffy, bool bMoveWindow) 
     }
 
     // offset the rect of all sticked windows.
-    for (i = 0; i < m_vStickedWnds.size(); i++) {
+    for (size_t i = 0; i < m_vStickedWnds.size(); i++) {
         vWnds_Remove(vWnds, m_vStickedWnds[i]);
 
         m_vStickedWnds[i]->getWindowRect(&rc);
@@ -122,7 +121,7 @@ bool CSkinWndDrag::autoCloseToWindows(int &nOffx, int &nOffy, bool bMoveWindow) 
     // make the sticked windows auto be close to vWnds.
     int nOffXTemp, nOffYTemp;
     nOffx = 0; nOffy = 0;
-    for (i = 0; i < vWnds.size(); i ++) {
+    for (size_t i = 0; i < vWnds.size(); i ++) {
         pWnd = vWnds[i];
         for (int k = 0; k < (int)m_vStickedWnds.size(); k++) {
             Window *pWndToMove = m_vStickedWnds[k];

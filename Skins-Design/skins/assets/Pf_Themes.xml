@@ -4,6 +4,7 @@
   <NormalTabButton ID="CID_TOOLBAR_THEME"  Rect="30,8,w-30,">
     <button ID="ID_THEME_THEME" Text="Themes"/>
     <button ID="ID_THEME_LYR_DISPLAY" Text="Lyrics Display"/>
+    <button ID="ID_THEME_FLOAT_LYR_DISPLAY" Text="Floating Lyrics Display"/>
     <button ID="ID_THEME_LYR_BG_PIC" Text="Lyrics Background Picture"/>
   </NormalTabButton>
   <Container Name="Content" Rect="10,0,w-20,h" ClipChildren="true">
@@ -17,32 +18,11 @@
       <NormalTextBt ID="CID_DELETE_THEME" Text="&amp;Delete Theme" Rect="w/2+110/2+30,260,110,"/>
     </PreferPage.Theme>
     <PreferPage.LyrDisplayStyle Name="Lyrics Display" Visible="false" Rect="0,30,w,h-30-20">
-      <NormalComboBox ID="CID_DS_MODE" Text="UNTRANS_Display Mode" Rect="10,10,w-20,"/>
-
-      <NormalFrame Rect="10,35,w-20,90" Text="Font of lyrics text"/>
-      <NormalText Rect="25,60,w/2-30," Text="Latin language font:"/>
-      <NormalTextBt ID="CID_DS_LOAD_LATIN_FONT" Text="Choose Font" Rect="w/2,60,w/2-20,"/>
-      <NormalText Rect="25,90,w/2-30," Text="Other language font:"/>
-      <NormalTextBt ID="CID_DS_LOAD_OTHER_FONT" Text="Choose Font" Rect="w/2,90,w/2-20,"/>
-
-      <NormalFrame Rect="10,130,w-20,150" Text="Color of lyrics text"/>
-      <NormalCheckBox ID="CID_C_DRAW_SHADOW" Text="Draw shadow of lyrics text" Rect="25,155,w-50,"/>
-      <NormalText Rect="25,185,w/2-35," Text="Highlight lyrics color:"/>
-      <NormalImageBt ID="CID_DS_CLR_HIGH" Name="Highligh" Rect="w/2,185,w/4-20,"/>
-      <NormalImageBt ID="CID_DS_CLR_HIGH_BORDER" Name="Highligh Border" Rect="w/2+w/4,185,w/4-20,"/>
-      <NormalText Rect="25,215,w/2-35," Text="Normal lyrics color:"/>
-      <NormalImageBt ID="CID_DS_CLR_LOW" Name="lowligh" Rect="w/2,215,w/4-20,"/>
-      <NormalImageBt ID="CID_DS_CLR_LOW_BORDER" Name="lowligh Border" Rect="w/2+w/4,215,w/4-20,"/>
-      <NormalText Rect="25,245,w/2-35," Text="Background color:"/>
-      <NormalImageBt ID="CID_DS_CLR_BG" Name="bg" Rect="w/2,245,w/4-20,"/>
-
-      <NormalFrame Rect="10,285,w-20,90" Text="Lyrics display style"/>
-      <NormalComboBox ID="CID_DS_STYLE" Text="UNTRANS_Display Style" Rect="25,310,w/2-45,"/>
-      <NormalComboBox ID="CID_DS_FADEOUT" Text="UNTRANS_Fade out" Rect="w/2,310,w/2-20,"/>
-      <NormalText Rect="25,340,w/4-25," Text="Align lyrics at:"/>
-      <NormalComboBox ID="CID_DS_ALIGN" Text="UNTRANS_Align" Rect="w/4,340,w/4-20,"/>
-      <NormalCheckBox ID="CID_C_KARAOKE" Text="&amp;Karaoke" Rect="w/2,340,w/2-20,"/>
+      <include Name="pf_ThemesDisplayStyle.xml"/>
     </PreferPage.LyrDisplayStyle>
+    <PreferPage.FloatLyrDisplayStyle Name="Floating Lyrics Display" Visible="false" Rect="0,30,w,h-30-20">
+      <include Name="pf_ThemesDisplayStyle.xml"/>
+    </PreferPage.FloatLyrDisplayStyle>
     <PreferPage.LyrBgPic Name="Lyrics Background" Visible="false" Rect="0,30,w,h-30-20">
       <NormalCheckBox ID="CID_C_USE_ALBUM_ART_AS_BG" Text="Use album art picture if possible" Rect="10,10,w-20,"/>
       <NormalCheckBox ID="CID_C_DARKEN_LYR_BG" Text="Darken background of lyrics" Rect="10,40,w-20,"/>

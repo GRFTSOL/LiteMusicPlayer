@@ -65,10 +65,15 @@ void CEventsDispatcher::quit() {
 }
 
 void CEventsDispatcher::dispatchSyncEventByNoUIThread(IEvent *pEvent) {
-    ::sendMessage(m_hWnd, MPWM_DISPATCH, (WPARAM)pEvent, DISPATCH_EVENT_LPARAM);
+    ::SendMessage(m_hWnd, MPWM_DISPATCH, (WPARAM)pEvent, DISPATCH_EVENT_LPARAM);
 }
 
 void CEventsDispatcher::dispatchUnsyncEvent(IEvent *pEvent) {
+    ::PostMessage(m_hWnd, MPWM_DISPATCH, (WPARAM)pEvent, DISPATCH_EVENT_LPARAM);
+}
+
+void CEventsDispatcher::dispatchUnsyncEventDelayed(IEvent* pEvent, int delayInMs) {
+    // TODO: delayInMs
     ::PostMessage(m_hWnd, MPWM_DISPATCH, (WPARAM)pEvent, DISPATCH_EVENT_LPARAM);
 }
 

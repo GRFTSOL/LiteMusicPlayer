@@ -1,4 +1,5 @@
-﻿#include "Event.h"
+﻿#include "../UtilsTypes.h"
+#include "Event.h"
 
 
 Event::Event(bool bManualSet, bool bInitialStat) {
@@ -10,11 +11,11 @@ Event::~Event() {
 }
 
 bool Event::set() {
-    return setEvent(m_hObject) != 0;
+    return SetEvent(m_hObject) != 0;
 }
 
 bool Event::reset() {
-    return resetEvent(m_hObject) != 0;
+    return ResetEvent(m_hObject) != 0;
 }
 
 bool Event::acquire(uint32_t nTimeOut) {

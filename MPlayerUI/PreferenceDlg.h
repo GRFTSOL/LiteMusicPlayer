@@ -1,8 +1,8 @@
-﻿#pragma once
+#pragma once
 
 #include "PreferencePageBase.h"
 
 
-void showPreferenceDialog(CSkinWnd *pParent, bool bFloatingLyr = false, PreferPageID preferPageId = PAGE_UI);
+void showPreferenceDialog(CSkinWnd *pParent, PreferPageID preferPageId = PAGE_UI);
 
 void registerPreferencePage(CSkinFactory *pSkinFactory);

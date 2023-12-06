@@ -8,13 +8,6 @@ string getPatternDir() {
     string strPatternDir = getAppResourceDir();
     strPatternDir += "Patterns" PATH_SEP_STR;
 
-#if defined (_DEBUG) && defined (_WIN32)
-    if (!isDirExist(strPatternDir.c_str())) {
-        strPatternDir = getInstallShareDir();
-        strPatternDir += "Patterns\\";
-    }
-#endif
-
     return strPatternDir;
 }
 

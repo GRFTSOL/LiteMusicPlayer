@@ -40,9 +40,6 @@ public:
 
     void addWndCloseto(Window *pWnd, cstr_t szWndClass, cstr_t szWndName);
 
-    void beforeTrackMoveWith(Window *pWndChain[], int nCount, Window *pWndToTrack);
-    void trackMoveWith(Window *pWnd, int x, int y);
-
 protected:
     virtual void setWindowPosSafely(int xOld, int yOld, int nOffsetx, int nOffsety);
     virtual bool autoCloseToWindows(int &nOffx, int &nOffy, bool bMoveWindow = true);

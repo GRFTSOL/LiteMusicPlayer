@@ -5,8 +5,9 @@ public:
     int init();
     void quit();
 
-    virtual void dispatchSyncEventByNoUIThread(IEvent *pEvent);
-    virtual void dispatchUnsyncEvent(IEvent *pEvent);
+    void dispatchSyncEventByNoUIThread(IEvent *pEvent) override;
+    void dispatchUnsyncEvent(IEvent *pEvent) override;
+    void dispatchUnsyncEventDelayed(IEvent* pEvent, int delayInMs) override;
 
 protected:
     virtual LRESULT wndProc(uint32_t message, WPARAM wParam, LPARAM lParam);

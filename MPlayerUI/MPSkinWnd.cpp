@@ -1,14 +1,11 @@
-﻿#include "MPlayerApp.h"
+#include "MPlayerApp.h"
 #include "MPSkinWnd.h"
 #include "MPCommonCmdHandler.h"
-
 #include "MPPlaylistCmdHandler.h"
-#include "MPMediaLibCmdHandler.h"
-
-#include "SkinRateCtrl.h"
 #include "LyricShowObj.h"
 #include "LyricShowTextEditObj.h"
 #include "LyricShowAgentObj.h"
+#include "../Skin/SkinRateCtrl.h"
 
 
 /*
@@ -329,7 +326,6 @@ protected:
 
 };
 
-#ifdef _MPLAYER
 //
 // Player controls
 //
@@ -341,9 +337,7 @@ public:
         m_pStereoStatusCtrl = pCtrl;
         auto media = g_player.getCurrentMedia();
         if (media) {
-            int nChannels;
-            media->getAttribute(MA_CHANNELS, &nChannels);
-            if (nChannels >= 2) {
+            if (media->channels >= 2) {
                 m_pStereoStatusCtrl->setPropertyInt("CurStatus", 1);
             } else {
                 m_pStereoStatusCtrl->setPropertyInt("CurStatus", 0);
@@ -356,9 +350,7 @@ public:
         if (pEvent->eventType == ET_PLAYER_CUR_MEDIA_CHANGED) {
             auto media = g_player.getCurrentMedia();
             if (media) {
-                int nChannels;
-                media->getAttribute(MA_CHANNELS, &nChannels);
-                if (nChannels >= 2) {
+                if (media->channels >= 2) {
                     m_pStereoStatusCtrl->setPropertyInt("CurStatus", 1);
                 } else {
                     m_pStereoStatusCtrl->setPropertyInt("CurStatus", 0);
@@ -378,9 +370,7 @@ public:
         m_pRateCtrl = pRateCtrl;
         auto media = g_player.getCurrentMedia();
         if (media) {
-            int nRating = 0;
-            media->getAttribute(MA_RATING, &nRating);
-            m_pRateCtrl->setRating(nRating);
+            m_pRateCtrl->setRating(media->rating);
         }
         registerHandler(MPlayerApp::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_CUR_MEDIA_INFO_CHANGED);
     }
@@ -389,9 +379,7 @@ public:
         if (pEvent->eventType == ET_PLAYER_CUR_MEDIA_CHANGED || pEvent->eventType == ET_PLAYER_CUR_MEDIA_INFO_CHANGED) {
             auto media = g_player.getCurrentMedia();
             if (media) {
-                int nRating = 0;
-                media->getAttribute(MA_RATING, &nRating);
-                m_pRateCtrl->setRating(nRating);
+                m_pRateCtrl->setRating(media->rating);
             }
         }
     }
@@ -400,8 +388,6 @@ protected:
     CSkinRateCtrl               *m_pRateCtrl;
 
 };
-
-#endif // _MPLAYER
 
 
 CMPSkinWnd::CMPSkinWnd() {
@@ -419,7 +405,7 @@ void CMPSkinWnd::onCreate() {
     CSkinWnd::onCreate();
 
 #ifdef _WIN32
-    ::sendMessage(m_hWnd, WM_SETICON, ICON_BIG, (WPARAM)LoadIcon(getAppInstance(), MAKEINTRESOURCE(IDI_MPLAYER)));
+    ::SendMessage(m_hWnd, WM_SETICON, ICON_BIG, (WPARAM)LoadIcon(getAppInstance(), MAKEINTRESOURCE(IDI_MPLAYER)));
 
     // 允许拖放歌词文件
     DragAcceptFiles(m_hWnd, true);
@@ -662,9 +648,7 @@ void CMPSkinWnd::onAddUIObj(CUIObject *pObj) {
             CPlayerLoopEventHandler *pHandler = new CPlayerLoopEventHandler((CSkinNStatusButton*)pObj);
             m_mapEventHandlers[pObj] = pHandler;
         }
-    }
-#ifdef _MPLAYER
-    else if (nID == ID_RATE) {
+    } else if (nID == ID_RATE) {
         if (pObj->isKindOf(CSkinRateCtrl::className())) {
             CPlayerMediaChangedRateEventHandler *pHandler = new CPlayerMediaChangedRateEventHandler((CSkinRateCtrl*)pObj);
             m_mapEventHandlers[pObj] = pHandler;
@@ -674,9 +658,7 @@ void CMPSkinWnd::onAddUIObj(CUIObject *pObj) {
             CMediaStereoStatusEventHandler *pHandler = new CMediaStereoStatusEventHandler(pObj);
             m_mapEventHandlers[pObj] = pHandler;
         }
-    }
-#endif
-    else {
+    } else {
         if (pObj->isKindOf(CSkinToolbar::className())) {
             CSkinToolbar *pToolBar = (CSkinToolbar*)pObj;
 
@@ -831,12 +813,12 @@ void CMPSkinWnd::addCmdHandler(cstr_t szName) {
         pHandler = new CMPCommonCmdHandler();
     } else if (strcasecmp(szName, "ch_playlist") == 0) {
         pHandler = new CMPPlaylistCmdHandler();
-    } else if (strcasecmp(szName, "ch_medialib") == 0) {
-        pHandler = new CMPMediaLibCmdHandler();
-    }
+    // } else if (strcasecmp(szName, "ch_medialib") == 0) {
+    //     pHandler = new CMPMediaLibCmdHandler();
+    // }
     //    else if (strcasecmp(szName, "ch_mediaguide") == 0)
     //        pHandler = new CMPCmdHandlerOfMediaGuide;
-    else if (strcasecmp(szName, "ch_floating_lyr") == 0) {
+    } else if (strcasecmp(szName, "ch_floating_lyr") == 0) {
         pHandler = new CMPCommonCmdHandler(true);
     } else {
         ERR_LOG1("Unknow command handler: %s", szName);

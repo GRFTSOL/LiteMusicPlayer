@@ -1,9 +1,8 @@
-﻿#include "MPlayerApp.h"
+#include "MPlayerApp.h"
 #include "MLCmd.h"
 #include "MPCommonCmdHandler.h"
 #include "LyricShowAgentObj.h"
 #include "LyricShowTextEditObj.h"
-#include "SkinRateCtrl.h"
 #include "DlgSearchLyrics.h"
 #include "DlgUpload.h"
 #include "AutoProcessEmbeddedLyrics.h"
@@ -15,6 +14,7 @@
 #include "DlgAdjustHue.h"
 #include "MPHelper.h"
 #include "MPFloatingLyrWnd.h"
+#include "../Skin/SkinRateCtrl.h"
 
 
 bool g_bInModalDlLrcSelDlg;
@@ -155,10 +155,10 @@ bool CMPCommonCmdHandler::onCommand(uint32_t nID) {
         break;
 
     case ID_PREFERENCES:
-        showPreferenceDialog(m_pSkinWnd, m_etDispSettings != ET_LYRICS_FLOATING_SETTINGS);
+        showPreferenceDialog(m_pSkinWnd);
         break;
     case ID_DISPLAY_OPT:
-        showPreferenceDialog(m_pSkinWnd, m_etDispSettings == ET_LYRICS_FLOATING_SETTINGS, PAGE_LYR_DISPLAY);
+        showPreferenceDialog(m_pSkinWnd, m_etDispSettings == ET_LYRICS_FLOATING_SETTINGS ? PAGE_FLOAT_LYR_DISPLAY : PAGE_LYR_DISPLAY);
         break;
 
     case ID_WEBHOME:

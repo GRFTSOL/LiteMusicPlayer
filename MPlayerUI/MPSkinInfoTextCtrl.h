@@ -4,7 +4,7 @@
 #define MPlayerUI_MPSkinInfoTextCtrl_h
 
 
-#include "SkinScrollText.h"
+#include "../Skin/SkinScrollText.h"
 
 
 class CMPSkinInfoTextCtrl : public CSkinScrollText, public IEventHandler {

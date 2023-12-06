@@ -40,34 +40,6 @@ void analyseProxySetting(cstr_t szProxySetting, char szServer[], int nMaxSize, i
     }
 }
 
-#ifdef WIN32
-bool getMLEncriptyData(string &strData) {
-    char szFile[MAX_PATH];
-    string str;
-    char szMD5[64];
-
-    GetModuleFileName(getAppInstance(), szFile, CountOf(szFile));
-
-    if (!readFile(szFile, str)) {
-        return false;
-    }
-
-    md5ToString(str.c_str() + 0x100, str.size() - 0x100, szMD5);
-
-    // 0x51 ~ 0x78
-    // decodebase64(str.c_str() + 0x51, 0x78 - 0x51, strData);
-    strData.append(str.c_str() + 0x51, 0x78 - 0x51);
-
-    for (uint32_t i = 0; i < 32; i++) {
-        strData[i] = strData[i] ^ szMD5[i];
-    }
-
-    // 解密之后的数据了，这里存储的是核心数据
-
-    return true;
-}
-#endif
-
 #if UNIT_TEST
 
 #include "../TinyJS/utils/unittest.h"

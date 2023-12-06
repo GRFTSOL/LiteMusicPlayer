@@ -6,8 +6,8 @@
     Purpose  :    
 *********************************************************************/
 
-#include "../Utils.h"
-#include "../Profile.h"
+#include "Utils.h"
+#include "Profile.h"
 
 
 /*

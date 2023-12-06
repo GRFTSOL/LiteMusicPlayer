@@ -7,9 +7,9 @@
 #include "PluginManager.h"
 
 
-interface IMediaInput;
-interface IMediaDecoder;
-interface IMediaOutput;
+struct IMediaInput;
+struct IMediaDecoder;
+struct IMediaOutput;
 
 class CMPlayer;
 

@@ -440,6 +440,10 @@ void CSkinNStatusButton::buttonUpAction() {
 }
 
 void CSkinNStatusButton::changeButtonState(ButtonState state) {
+    if (!m_enable) {
+        return;
+    }
+
     if (m_btnState == state) {
         invalidate(); // m_nCurStatus 可能改变了
         return;

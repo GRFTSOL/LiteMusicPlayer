@@ -149,7 +149,7 @@ public:
     float                       m_scaleFactor;
 
     // For Mac
-    // void *getHandle();
+    struct WindowHandleHolder *getWindowHandleHolder() const { return m_handleHolder; }
     void setHasShadow(bool hasShadow);
 
 #ifdef _MAC_OS

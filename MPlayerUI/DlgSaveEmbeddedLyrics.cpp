@@ -7,7 +7,7 @@
 
 #include "MPlayerApp.h"
 #include "DlgSaveEmbeddedLyrics.hpp"
-#import "AutoProcessEmbeddedLyrics.h"
+#include "AutoProcessEmbeddedLyrics.h"
 #include "../LyricsLib/CurrentLyrics.h"
 
 int saveEmbeddedLyrics(const string &mediaUrl, const string &lyrics, const VecStrings &lyrUrls, CSkinWnd *parent) {

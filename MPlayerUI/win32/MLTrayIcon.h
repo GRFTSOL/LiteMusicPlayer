@@ -14,11 +14,11 @@ enum SHOW_ICON_ON {
 };
 
 struct SYSTRAY_ICON_CMD {
-    uint32_t                    dwCmd;
-    cstr_t                      szCmd;
+    uint32_t                    cmdId;
+    cstr_t                      cmdText;
     uint32_t                    uIconID;
     HICON                       hIcon;
-    bool                        bEnable;
+    bool                        isEnabled;
 };
 
 extern SYSTRAY_ICON_CMD g_sysTrayIconCmd[];

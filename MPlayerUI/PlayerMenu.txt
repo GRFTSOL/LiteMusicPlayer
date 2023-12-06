@@ -300,7 +300,7 @@ menufile_v2
     INSERT_SKIN_POS@ID_SKIN_POS
     separator
   popup@Display &Options
-    Dis&play Options...@ID_LYR_DISPLAY_OPT
+    Dis&play Options...@ID_DISPLAY_OPT
     Ad&just Hue...@ID_ADJUST_HUE
     separator
     Mouse &Click Through@ID_CLICK_THROUGH
@@ -388,7 +388,7 @@ menufile_v2
     separator
     &Edit with External Lyrics Editor...@ID_EXTERNAL_LYR_EDIT
   separator
-  Dis&play Options...@ID_LYR_DISPLAY_OPT
+  Dis&play Options...@ID_DISPLAY_OPT
   separator
   Mouse &Click Through@ID_CLICK_THROUGH
   separator

@@ -329,7 +329,7 @@ void CSkinWnd::closeSkin() {
     m_translucencyStatus = TS_NORMAL;
 
 #ifdef _WIN32
-    ::UnSetLayeredWindow(m_hWnd);
+    ::unSetLayeredWindow(m_hWnd);
 #endif
 
     assert(m_nInRedrawUpdate == 0);
@@ -1036,7 +1036,7 @@ CUIObject *nextCanFocusUIObjInChildren(CSkinContainer *parent) {
     int pos = 0, count = (int)parent->getChildrenCount();
     for (; pos < count; pos++) {
         CUIObject *obj = parent->getChildByIndex(pos);
-        if (obj->isVisible()) {
+        if (obj->isVisible() && obj->isEnable()) {
             if (obj->needMsgKey()) {
                 return obj;
             } else if (obj->isContainer()) {
@@ -1070,7 +1070,7 @@ CUIObject *nextCanFocusUIObjInSibParent(CUIObject *cur) {
     // 在接下来的 sibling 中查找
     for (pos++; pos < count; pos++) {
         CUIObject *obj = parent->getChildByIndex(pos);
-        if (obj->isVisible()) {
+        if (obj->isVisible() && obj->isEnable()) {
             if (obj->needMsgKey()) {
                 return obj;
             } else if (obj->isContainer()) {
@@ -1090,7 +1090,7 @@ CUIObject *prevCanFocusUIObjInChildren(CSkinContainer *parent) {
     int pos = (int)parent->getChildrenCount() - 1;
     for (; pos >= 0; pos--) {
         CUIObject *obj = parent->getChildByIndex(pos);
-        if (obj->isVisible()) {
+        if (obj->isVisible() && obj->isEnable()) {
             if (obj->needMsgKey()) {
                 return obj;
             } else if (obj->isContainer()) {
@@ -1124,7 +1124,7 @@ CUIObject *prevCanFocusUIObjInSibParent(CUIObject *cur) {
     // 在接下来的 sibling 中查找
     for (pos--; pos >= 0; pos--) {
         CUIObject *obj = parent->getChildByIndex(pos);
-        if (obj->isVisible()) {
+        if (obj->isVisible() && obj->isEnable()) {
             if (obj->needMsgKey()) {
                 return obj;
             } else if (obj->isContainer()) {
@@ -1501,11 +1501,6 @@ void CSkinWnd::onActivate(bool bActived) {
 
 void CSkinWnd::addWndCloseto(Window *pWnd, cstr_t szWndClass, cstr_t szWndName) {
     m_WndDrag.addWndCloseto(pWnd, szWndClass, szWndName);
-}
-
-void CSkinWnd::trackMove(Window *pWnd, int x, int y) {
-    m_WndDrag.trackMoveWith(pWnd, x, y);
-    //    m_WndDrag.TrackCheck();
 }
 
 void CSkinWnd::updateMemGraphicsToScreen(const CRect* lpRect) {

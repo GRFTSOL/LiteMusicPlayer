@@ -1,4 +1,4 @@
-﻿#include "../Skin/Skin.h"
+#include "../Skin/Skin.h"
 #include "MPMediaTree.h"
 #include "MPHelper.h"
 
@@ -257,19 +257,17 @@ void CMPMTNPlaylists::onUpdate() {
         // enum all the playlist files
         vector<string> vFiles;
 
-        enumPlaylistsFast(vFiles);
-        for (int i = 0; i < (int)vFiles.size(); i++) {
-            CMPMTNPlaylists *playlistNode;
-
-            playlistNode = new CMPMTNPlaylists;
-            playlistNode->m_strName = fileGetName(vFiles[i].c_str());
+        auto playlists = g_player.getMediaLibrary()->getAllPlaylistBriefs();
+        for (auto &pl : playlists) {
+            CMPMTNPlaylists *playlistNode = new CMPMTNPlaylists;
+            playlistNode->m_strName = pl.name;
             playlistNode->m_nImageIndex = II_PLAYLISTS;
             playlistNode->folderType = FT_PLAYLIST_FILE;
-            playlistNode->m_strPlaylistFile = vFiles[i];
+            playlistNode->idPlaylist = pl.id;
             addChildBack(playlistNode);
         }
     } else if (folderType == FT_PLAYLIST_FILE) {
-        m_playlist = loadPlaylist(m_strPlaylistFile.c_str());
+        m_playlist = g_player.getMediaLibrary()->getPlaylist(idPlaylist);
     }
 }
 
