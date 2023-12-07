@@ -1,11 +1,11 @@
-﻿#pragma once
+#pragma once
 
 #include "Utils/Utils.h"
 #include "MPlayerEngine/IPlayerCore.hpp"
 
 
 #define MEDIA_LENGTH_INVALID    0
-#define MEDIA_ID_INVALID        0
+#define MEDIA_ID_INVALID        -1
 
 class Media : public IMediaInfo {
 public:

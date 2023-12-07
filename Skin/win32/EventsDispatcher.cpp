@@ -8,6 +8,8 @@
 #define MPWM_DISPATCH        (WM_USER + 1)
 #define MPWM_QUIT            (WM_USER + 2)
 
+#define TIMER_EXEC_TASK     100
+
 /*
 class CEventDispatcherWnd : public Window  
 {
@@ -73,8 +75,59 @@ void CEventsDispatcher::dispatchUnsyncEvent(IEvent *pEvent) {
 }
 
 void CEventsDispatcher::dispatchUnsyncEventDelayed(IEvent* pEvent, int delayInMs) {
-    // TODO: delayInMs
-    ::PostMessage(m_hWnd, MPWM_DISPATCH, (WPARAM)pEvent, DISPATCH_EVENT_LPARAM);
+    postExecInUIThreadDelayed([m_hWnd, pEvent]() {
+        ::PostMessage(m_hWnd, MPWM_DISPATCH, (WPARAM)pEvent, DISPATCH_EVENT_LPARAM);
+    }, delayInMs);
+}
+
+void CEventsDispatcher::postExecInUIThread(std::function<void()> f) {
+    std::lock_guard autolock(_mutex);
+    _execItems.push_back({f, 0});
+}
+
+void CEventsDispatcher::postExecInUIThreadDelayed(std::function<void()> f, int delayInMs) {
+    auto now = getTickCount() + delayInMs;
+
+    std::lock_guard autolock(_mutex);
+    _execItems.push_back({f, now});
+    if (now < _nextTime) {
+        ::SetTimer(m_hWnd, TIMER_EXEC_TASK, delayInMs, nullptr);
+    }
+}
+
+void CEventsDispatcher::onExecTimer() {
+    KillTimer(m_hWnd, TIMER_EXEC_TASK);
+
+    while (true) {
+        std::function<void()> func;
+        bool ended;
+
+        {
+            std::lock_guard autolock(_mutex);
+            auto now = getTickCount();
+            for (auto it = _execItems.begin(); it != _execItems.end();) {
+                if ((*it).execTime <= now) {
+                    // Need to execute
+                    func = (*it).func;
+                    break;
+                    it = _execItems.erase(it);
+                } else {
+                    ++it;
+                }
+            }
+
+            ended = _execItems.empty();
+        }
+
+        if (func) {
+            func();
+            if (ended) {
+                break;
+            }
+        } else {
+            break;
+        }
+    }
 }
 
 LRESULT CEventsDispatcher::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
@@ -85,6 +138,13 @@ LRESULT CEventsDispatcher::wndProc(uint32_t message, WPARAM wParam, LPARAM lPara
                 IEvent *pEvent = (IEvent *)wParam;
                 dispatchSyncEvent(pEvent);
                 return 0;
+            }
+            break;
+        }
+    case WM_TIMER:
+        {
+            if (wParam == TIMER_EXEC_TASK) {
+                onExecTimer();
             }
             break;
         }

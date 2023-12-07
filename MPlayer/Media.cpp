@@ -1,4 +1,4 @@
-﻿#include "Media.h"
+#include "Media.h"
 
 
 Media::Media() : IMediaInfo() {
@@ -111,7 +111,7 @@ void Media::getAttribute(MediaAttribute mediaAttr, string &value) {
         case MA_COMMENT : value.assign(comments.c_str()); break;
         case MA_BITRATE : long2XStr(bitRate, value); break;
         case MA_DURATION : long2XStr(duration, value); break;
-        case MA_FILESIZE : long2XStr(fileSize, value); break;
+        case MA_FILESIZE : long2XStr((int)fileSize, value); break;
         case MA_TIME_ADDED : time2XStr(timeAdded, value); break;
         case MA_TIME_PLAYED : time2XStr(timePlayed, value); break;
         case MA_RATING : long2XStr(rating, value); break;

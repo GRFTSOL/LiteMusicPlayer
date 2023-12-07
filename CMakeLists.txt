@@ -112,6 +112,8 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/TinyJS TinyJS)
 add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/glog glog)
 add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/libuv uv_a)
 
+target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/MPlayerUI/Mp3Player/win32/resource.rc)
+
 # set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 add_executable(${PROJECT_NAME} ${SRC})
 target_link_libraries(${PROJECT_NAME} PRIVATE pthread glog uv_a -static-libstdc++ ${LINK_OPT_FRAME_WORK})

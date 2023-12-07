@@ -230,10 +230,7 @@ void CMPMTNDiskDevice::onUpdate() {
         if (finder.openDir(m_strDir.c_str())) {
             while (finder.findNext()) {
                 if (finder.isCurDir()) {
-                    if (strcmp(finder.getCurName(), ".") != 0 &&
-                        strcmp(finder.getCurName(), "..") != 0) {
-                        addNewNode(finder.getCurName(), (m_strDir + finder.getCurName()).c_str(), II_FOLDER_CLOSED, II_FOLDER_OPENED);
-                    }
+                    addNewNode(finder.getCurName(), (m_strDir + finder.getCurName()).c_str(), II_FOLDER_CLOSED, II_FOLDER_OPENED);
                 } else {
                     // Is file an audio media?
                     if (g_player.isExtAudioFile(fileGetExt(finder.getCurName()))) {

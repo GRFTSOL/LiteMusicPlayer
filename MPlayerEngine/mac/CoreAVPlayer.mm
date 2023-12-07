@@ -155,7 +155,9 @@ bool CoreAVPlayer::play(const char *mediaUrl, IMediaInfo *mediaTagsOut)  {
 
     m_state = PS_PLAYING;
 
-    [(_MDAVPlayer*)m_player play: [NSString stringWithUTF8String:mediaUrl]];
+    if (![(_MDAVPlayer*)m_player play: [NSString stringWithUTF8String:mediaUrl]]) {
+        return false;
+    }
 
     getMediaInfo(mediaUrl, mediaTagsOut);
 

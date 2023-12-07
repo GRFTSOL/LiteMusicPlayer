@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <mutex>
 
@@ -60,6 +60,9 @@ public:
         dispatchUnsyncEvent(pEvent);
     }
     virtual void dispatchUnsyncEventDelayed(IEvent *pEvent, int delayInMs) = 0;
+
+    virtual void postExecInUIThread(std::function<void()> f) = 0;
+    virtual void postExecInUIThreadDelayed(std::function<void()> f, int delayInMs) = 0;
 
 protected:
     typedef list<IEventHandler *>            ListEventHandlers;

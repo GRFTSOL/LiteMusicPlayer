@@ -65,14 +65,27 @@ void CEventsDispatcher::dispatchUnsyncEvent(IEvent *pEvent) {
 
 void CEventsDispatcher::dispatchUnsyncEventDelayed(IEvent *pEvent, int delayInMs) {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [NSTimer scheduledTimerWithTimeInterval:((double)40 / 1000)
+        [NSTimer scheduledTimerWithTimeInterval:((double)delayInMs / 1000)
                                         repeats:NO block:^(NSTimer *timer) {
             dispatchUnsyncEvent(pEvent);
         }];
     });
 }
 
-//////////////////////////////////////////////////////////////////////////
+void CEventsDispatcher::postExecInUIThread(std::function<void()> f) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        f();
+    });
+}
+
+void CEventsDispatcher::postExecInUIThreadDelayed(std::function<void()> f, int delayInMs) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [NSTimer scheduledTimerWithTimeInterval:((double)delayInMs / 1000)
+                                        repeats:NO block:^(NSTimer *timer) {
+            f();
+        }];
+    });
+}
 
 //////////////////////////////////////////////////////////////////////
 

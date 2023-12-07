@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "../MPlayerEngine/IPlayerCore.hpp"
 #include "../MPlayerEngine/MPTools.h"
@@ -184,6 +184,8 @@ protected:
     void generateShuffleMediaQueue();
     ResultCode doNext(bool bLoop);
 
+    void playNextOnFailed();
+
 protected:
     char                        m_szSrcMedia[MAX_PATH];
     char                        m_szArtist[LRC_TITLE_MAX_LEN], m_szTitle[LRC_TITLE_MAX_LEN];
@@ -198,6 +200,7 @@ protected:
     friend class CMPSkinMainWnd;
     bool                        m_isAutoPlayNext;
     PlayerState                 m_state;
+    int                         m_countPlayFailed = 0;
 
 protected:
     bool                        m_isNowPlayingModified;

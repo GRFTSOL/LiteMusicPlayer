@@ -1,6 +1,7 @@
-﻿#include "../Skin/Skin.h"
+#include "../Skin/Skin.h"
 #include "MediaLibrary.h"
 #include "Player.h"
+#include "MediaScanner.h"
 #include "Utils/rapidjson.h"
 
 
@@ -27,7 +28,7 @@
   url text,\
   file_deleted integer DEFAULT 0,\
   artist text COLLATE NOCASE,\
-  album text COLLATE NOCASE,\
+  album text DEFAULT NULL COLLATE NOCASE,\
   title text COLLATE NOCASE,\
   track integer DEFAULT -1,\
   year integer DEFAULT 0,\
@@ -50,7 +51,6 @@
 \
 CREATE UNIQUE INDEX IF NOT EXISTS mli_url on medialib (url);\
 CREATE INDEX IF NOT EXISTS mli_artist on medialib (artist);\
-CREATE INDEX IF NOT EXISTS mli_album on medialib (album);\
 CREATE INDEX IF NOT EXISTS mli_title on medialib (title);\
 CREATE INDEX IF NOT EXISTS mli_genre on medialib (genre);\
 CREATE INDEX IF NOT EXISTS mli_time_added on medialib (time_added);\
@@ -60,7 +60,6 @@ CREATE INDEX IF NOT EXISTS mli_music_hash on medialib (music_hash);"
 #define DROP_MEDIALIB_TABLE "DROP TABLE IF EXISTS medialib;\
 DROP INDEX IF EXISTS mli_url;\
 DROP INDEX IF EXISTS mli_artist;\
-DROP INDEX IF EXISTS mli_album;\
 DROP INDEX IF EXISTS mli_title;\
 DROP INDEX IF EXISTS mli_genre;\
 DROP INDEX IF EXISTS mli_time_added;\
@@ -483,6 +482,9 @@ MediaPtr CMediaLibrary::addFast(cstr_t mediaUrl) {
     m_sqlAddFast.reset();
 
     m_allMedias->insertItem(-1, media);
+    m_mapMedias[media->ID] = media;
+
+    g_mediaScanner.scanMedia(media);
 
     return media;
 
@@ -569,6 +571,12 @@ ResultCode CMediaLibrary::remove(const VecMediaPtrs &medias, bool isDeleteFile) 
 
     // Remove from memory
     m_allMedias->removeItems(medias);
+    for (auto &media : medias) {
+        auto it = m_mapMedias.find(media->ID);
+        if (it != m_mapMedias.end()) {
+            m_mapMedias.erase(it);
+        }
+    }
 
     //
     // Remove from database
@@ -627,6 +635,7 @@ ResultCode CMediaLibrary::setDeleted(Media *media) {
 
     removeMediaInMem(media);
 
+    RMutexAutolock autolock(m_mutexDataAccess);
     return executeSQL(szSql);
 }
 
@@ -840,6 +849,12 @@ int CMediaLibrary::init() {
         return m_nInitResult;
     }
 
+    // 创建 playlists 的 table
+    m_nInitResult = m_db.exec(SQL_CREATE_TABLE_PLAYLIST);
+    if (m_nInitResult != ERR_OK) {
+        return m_nInitResult;
+    }
+
     m_nInitResult = m_stmtUpdateMediaPlayTime.prepare(&m_db, SQL_UPDATE_MEDIA_PLAY_TIME);
     assert(m_nInitResult == ERR_OK);
 
@@ -854,12 +869,6 @@ int CMediaLibrary::init() {
 
     m_nInitResult = m_sqlQueryByUrl.prepare(&m_db, SQL_QUERY_MEDIA_BY_URL);
     assert(m_nInitResult == ERR_OK);
-
-    // 创建 playlists 的 table
-    m_nInitResult = m_db.exec(SQL_CREATE_TABLE_PLAYLIST);
-    if (m_nInitResult != ERR_OK) {
-        return m_nInitResult;
-    }
 
     loadPlaylists();
 
@@ -1038,6 +1047,7 @@ ResultCode CMediaLibrary::doAddMedia(const MediaPtr &media) {
     m_sqlAdd.reset();
 
     m_allMedias->insertItem(-1, media);
+    m_mapMedias[media->ID] = media;
 
 RET_FAILED:
 
@@ -1120,16 +1130,11 @@ int CMediaLibrary::upgradeCheck() {
 }
 
 void CMediaLibrary::updateMediaInMem(Media *media) {
-    auto id = media->ID;
-    auto count =  m_allMedias->getCount();
-
-    for (uint32_t i = 0; i < count; i++) {
-        auto item = m_allMedias->getItem(i);
-        if (item) {
-            if (item->ID == id) {
-                *(item.get()) = *media;
-                return;
-            }
+    auto it = m_mapMedias.find(media->ID);
+    if (it != m_mapMedias.end()) {
+        auto existing = (*it).second.get();
+        if (existing != media) {
+            *existing = *media;
         }
     }
 }
@@ -1143,6 +1148,10 @@ void CMediaLibrary::removeMediaInMem(Media *media) {
         if (item) {
             if (item->ID == id) {
                 m_allMedias->removeItem(i);
+                auto it = m_mapMedias.find(item->ID);
+                if (it != m_mapMedias.end()) {
+                    m_mapMedias.erase(it);
+                }
                 return;
             }
         }

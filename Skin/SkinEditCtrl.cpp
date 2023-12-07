@@ -1,8 +1,7 @@
-﻿#include "SkinTypes.h"
+#include "SkinTypes.h"
 #include "Skin.h"
 #include "SkinMenu.h"
 #include "SkinEditCtrl.h"
-#include "../MPlayerUI/resource.h"
 
 
 UIOBJECT_CLASS_NAME_IMP(CSkinEditCtrl, "EditCtrl")

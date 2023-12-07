@@ -13,7 +13,7 @@ const string &_getAppResourceDir() {
     return(const char *)[documentsDir UTF8String];
 #else
     NSString *resourcePath = [[NSBundle mainBundle] resourcePath];
-    return (const char *)[resourcePath UTF8String];
+    return [resourcePath UTF8String];
 #endif
 }
 

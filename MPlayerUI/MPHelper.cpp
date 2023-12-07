@@ -1,7 +1,6 @@
 #include "MPlayerApp.h"
 #include "MPHelper.h"
 #include "MLCmd.h"
-#include "MediaDetectionService.h"
 
 
 bool onSongOpenFileCmd(Window *pWndParent, bool bOpen) {
@@ -11,7 +10,6 @@ bool onSongOpenFileCmd(Window *pWndParent, bool bOpen) {
 
     if (dlg.doModal(pWndParent) == IDOK) {
         vector<string> vFiles;
-        string strFile;
 
         dlg.getOpenFile(vFiles);
 
@@ -36,12 +34,9 @@ bool onSongOpenFileCmd(Window *pWndParent, bool bOpen) {
 }
 
 bool onSongOpenDirCmd(Window *pWndParent, bool bOpen) {
-    string strFolder;
-
     CFolderDialog dlg(g_profile.getString("Last open Dir", ""));
     if (dlg.doBrowse(pWndParent) == IDOK) {
-        strFolder = dlg.getFolder();
-
+        string strFolder = dlg.getFolder();
         g_profile.writeString("Last open Dir", strFolder.c_str());
 
         if (bOpen) {
@@ -63,17 +58,14 @@ bool onSongOpenDirCmd(Window *pWndParent, bool bOpen) {
 }
 
 bool onCmdSongAddDirToMediaLib(Window *pWndParent) {
-    string strFolder;
-
     CFolderDialog dlg(g_profile.getString("Last open Dir", ""));
     if (dlg.doBrowse(pWndParent) == IDOK) {
-        strFolder = dlg.getFolder();
-
+        string strFolder = dlg.getFolder();
         g_profile.writeString("Last open Dir", strFolder.c_str());
 
         pWndParent->messageOut("The music in the folder will added in the background.");
-        g_mediaDetectionService.addMediaInDir(strFolder.c_str());
 
+        g_player.addDirToMediaLib(strFolder.c_str(), true);
         return true;
     }
 
@@ -87,9 +79,11 @@ bool onCmdSongAddFilesToMediaLib(Window *pWndParent) {
 
     if (dlg.doModal(pWndParent) == IDOK) {
         pWndParent->messageOut("The music in the folder will added in the background.");
-        vector<string> vFiles;
-        dlg.getOpenFile(vFiles);
-        g_mediaDetectionService.addMedia(vFiles);
+        vector<string> files;
+        dlg.getOpenFile(files);
+        for (auto &fn : files) {
+            g_player.addFileToMediaLib(fn.c_str());
+        }
 
         return true;
     }

@@ -1,5 +1,6 @@
-﻿#include "../MPlayerUI/MPlayerApp.h"
+#include "../MPlayerUI/MPlayerApp.h"
 #include "Player.h"
+#include "MediaScanner.h"
 #include "../MPlayerUI/PlayListFile.h"
 #include "../MPlayerUI/OnlineSearch.h"
 #include "../LyricsLib/HelperFun.h"
@@ -208,13 +209,19 @@ void CPlayer::play() {
             m_isAutoPlayNext = true;
             m_isCurMediaPlayed = true;
 
-            m_playerCore->play(m_currentMedia->url.c_str(), m_currentMedia.get());
+            if (m_playerCore->play(m_currentMedia->url.c_str(), m_currentMedia.get())) {
+                m_countPlayFailed = 0;
+            } else {
+                if (!isFileExist(m_currentMedia->url.c_str())) {
+                    m_mediaLib->setDeleted(m_currentMedia.get());
+                }
 
-            // TODO: 标记/删除不存在的文件...
-            // if (ret == ERR_MI_NOT_FOUND && media->ID != MEDIA_ID_INVALID) {
-            //     // the source can't be opened, set it as deleted.
-            //     m_mediaLib->setDeleted(&media);
-            // }
+                m_countPlayFailed++;
+                MPlayerApp::getEventsDispatcher()->postExecInUIThreadDelayed([]() {
+                    // Delay play next music
+                    g_player.playNextOnFailed();
+                }, 300);
+            }
         } else {
             next();
             if (m_currentMedia) {
@@ -439,8 +446,7 @@ void CPlayer::addDirToNowPlaying(cstr_t szDir, bool bIncSubDir) {
 
     while (find.findNext()) {
         if (find.isCurDir()) {
-            if (bIncSubDir && strcmp(".", find.getCurName()) != 0 &&
-                strcmp("..", find.getCurName()) != 0) {
+            if (bIncSubDir) {
                 string strFile = strDir + find.getCurName();
                 addDirToNowPlaying(strFile.c_str(), bIncSubDir);
             }
@@ -569,8 +575,7 @@ void CPlayer::addDirToMediaLib(cstr_t szDir, bool bIncSubDir) {
 
     while (find.findNext()) {
         if (find.isCurDir()) {
-            if (bIncSubDir && strcmp(".", find.getCurName()) != 0 &&
-                strcmp("..", find.getCurName()) != 0) {
+            if (bIncSubDir) {
                 string strFile = strDir + find.getCurName();
                 addDirToMediaLib(strFile.c_str(), bIncSubDir);
             }
@@ -1048,4 +1053,16 @@ ResultCode CPlayer::doNext(bool bLoop) {
         currentMediaChanged();
     }
     return ERR_OK;
+}
+
+void CPlayer::playNextOnFailed() {
+    if (!m_currentPlaylist || m_countPlayFailed >= m_currentPlaylist->getCount()) {
+        // Stop playing next if all files were tried.
+        return;
+    }
+
+    next();
+    if (m_currentMedia) {
+        play();
+    }
 }

@@ -23,7 +23,6 @@
 #include "mac/MPHotkey.h"
 #endif
 
-#include "resource.h"
 
 #define SZ_APP_NAME         "DHPlayer"
 #define SZ_COMPANY_NAME     "CrintSoft"

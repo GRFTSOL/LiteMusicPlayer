@@ -1,14 +1,19 @@
-﻿#pragma once
+#pragma once
+
+#include <functional>
 
 
 class CEventsDispatcher : public CEventsDispatcherBase {
 public:
-    int init();
-    void quit();
+    int init() override;
+    void quit() override;
 
-    virtual void dispatchSyncEventByNoUIThread(IEvent *pEvent);
-    virtual void dispatchUnsyncEvent(IEvent *pEvent);
-    virtual void dispatchUnsyncEventDelayed(IEvent *pEvent, int delayInMs);
+    void dispatchSyncEventByNoUIThread(IEvent *pEvent) override;
+    void dispatchUnsyncEvent(IEvent *pEvent) override;
+    void dispatchUnsyncEventDelayed(IEvent *pEvent, int delayInMs) override;
+
+    void postExecInUIThread(std::function<void()> f) override;
+    void postExecInUIThreadDelayed(std::function<void()> f, int delayInMs) override;
 
 };
 

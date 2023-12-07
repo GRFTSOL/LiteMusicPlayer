@@ -1,4 +1,4 @@
-﻿#include "../MPlayer/Player.h"
+#include "../MPlayer/Player.h"
 #include "PlayListFile.h"
 
 
@@ -105,12 +105,7 @@ bool savePlaylistAsM3u(Playlist *playList, cstr_t szFile) {
 }
 
 PlaylistPtr loadM3uPlaylist(cstr_t szFile) {
-    char szBuff[MAX_PATH * 2];
-    FILE *fp;
-    string strFile;
-    string str;
-
-    fp = fopen(szFile, "r");
+    auto fp = fopen(szFile, "r");
     if (!fp) {
         return nullptr;
     }
@@ -118,6 +113,7 @@ PlaylistPtr loadM3uPlaylist(cstr_t szFile) {
     string strPath = fileGetPath(szFile);
 
     // #EXTM3U
+    char szBuff[MAX_PATH * 2];
     if (!fgets(szBuff, CountOf(szBuff), fp)) {
         fclose(fp);
         return nullptr;
@@ -132,21 +128,6 @@ PlaylistPtr loadM3uPlaylist(cstr_t szFile) {
     while (fgets(szBuff, CountOf(szBuff), fp)) {
         removeReturn(szBuff);
         if (szBuff[0] == '#') {
-            //             if (strncmp(szBuff, EXTINF, strlen(EXTINF)) == 0)
-            //             {
-            //                 char *        p;
-            //                 p = strchr(szBuff, ',');
-            //                 if (p)
-            //                 {
-            //                     p++;
-            //                     while (*p == ' ')
-            //                         p++;
-            //                     if (!isEmptyString(p))
-            //                     {
-            //                         // p is title now
-            //                     }
-            //                 }
-            //             }
             continue;
         }
 
