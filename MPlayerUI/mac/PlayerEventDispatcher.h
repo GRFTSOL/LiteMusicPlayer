@@ -12,16 +12,6 @@ public:
     void quit() {
     }
 
-    void setLyrDrawUpdateFast(bool bFast) {
-        if (bFast) {
-            m_nTimeOutUpdateLyr = 20;
-        } else {
-            m_nTimeOutUpdateLyr = 40;
-        }
-
-        startLyrDrawUpdate();
-    }
-
     void startLyrDrawUpdate();
 
     void stopLyrDrawUpdate();

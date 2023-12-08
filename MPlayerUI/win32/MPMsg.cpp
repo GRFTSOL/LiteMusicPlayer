@@ -1,4 +1,5 @@
-﻿#include "MPMsg.h"
+﻿#include "../../Window/WindowLib.h"
+#include "MPMsg.h"
 
 
 void cmdLineAnalyse(cstr_t szCmdLine, vector<string> &vCmdLine) {
@@ -68,7 +69,7 @@ void sendCommandLine(HWND hWnd, cstr_t szCmdLine) {
     copyData.lpData = (void *)szCmdLine;
     copyData.cbData = sizeof(char) * (strlen(szCmdLine) + 1);
 
-    sendMessage(hWnd, WM_COPYDATA, ML_SEND_CMD_LINE, (LPARAM)&copyData);
+    SendMessage(hWnd, WM_COPYDATA, ML_SEND_CMD_LINE, (LPARAM)&copyData);
 }
 
 void sendActivateMainWnd(HWND hWnd) {
@@ -78,5 +79,5 @@ void sendActivateMainWnd(HWND hWnd) {
     copyData.lpData = "";
     copyData.cbData = 1;
 
-    sendMessage(hWnd, WM_COPYDATA, ML_ACTIVATE, (LPARAM)&copyData);
+    SendMessage(hWnd, WM_COPYDATA, ML_ACTIVATE, (LPARAM)&copyData);
 }

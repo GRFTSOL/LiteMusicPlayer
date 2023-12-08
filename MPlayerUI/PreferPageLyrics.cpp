@@ -2,20 +2,6 @@
 #include "PreferPageLyrics.h"
 #include "DownloadMgr.h"
 
-#ifdef _WIN32
-#include "win32/LyricsOutPluginMgr.h"
-#endif
-
-#ifdef _LINUX_GTK2
-#include "gtk2/LyricsOutPluginMgr.h"
-#endif
-
-#ifdef _MAC_OS
-#include "mac/LyricsOutPluginMgr.h"
-
-
-#endif
-
 
 class CPagePfLyrDownload : public CPagePfBase {
     UIOBJECT_CLASS_NAME_DECLARE(CPagePfBase)
@@ -171,94 +157,6 @@ UIOBJECT_CLASS_NAME_IMP(CPagePfLyrSaveOpt, "PreferPage.LyrSaveOptions")
 
 //////////////////////////////////////////////////////////////////////////
 
-class CPagePfLyrOutputPlugin : public CPagePfBase {
-    UIOBJECT_CLASS_NAME_DECLARE(CPagePfBase)
-public:
-    CPagePfLyrOutputPlugin() : CPagePfBase(PAGE_LYR_OUTPUT_PLUGINS, "ID_LYR_OUTPUT_PLUGIN") {
-        m_pListPlugins = nullptr;
-        CID_LO_PLUGIN_LIST = 0;
-    }
-
-    void onInitialUpdate() override {
-        CPagePfBase::onInitialUpdate();
-
-        GET_ID_BY_NAME(CID_LO_PLUGIN_LIST);
-
-        m_pSkin->setUIObjectProperty("CID_GET_PLUG", SZ_PN_LINK, getStrName(SN_HTTP_DLPLUGIN));
-
-        m_pSkin->registerUIObjNotifyHandler(CID_LO_PLUGIN_LIST, this);
-
-        m_pListPlugins = (CSkinListCtrl *)getUIObjectById(CID_LO_PLUGIN_LIST, CSkinListCtrl::className());
-        if (!m_pListPlugins) {
-            return;
-        }
-
-        m_pListPlugins->addColumn("Plug-ins", 100);
-
-        vector<string> vPlugins;
-        g_lyrOutPlguinMgr.getLoadedPlugins(vPlugins);
-        for (int i = 0; i < (int)vPlugins.size(); i++) {
-            m_pListPlugins->insertItem(i, vPlugins[i].c_str());
-        }
-
-        enablePluginBtns();
-    }
-
-    bool onCommand(uint32_t nId) override {
-        if (!m_pListPlugins) {
-            return CPagePfBase::onCommand(nId);
-        }
-
-        if (nId == getIDByName("CID_UNINST_PLUG")) {
-            int n = m_pListPlugins->getNextSelectedItem();
-            if (n != -1) {
-                g_lyrOutPlguinMgr.uninstPlugin(n, m_pSkin);
-            }
-        } else if (nId == getIDByName("CID_CONFIGURE")) {
-            int n = m_pListPlugins->getNextSelectedItem();
-            if (n != -1) {
-                g_lyrOutPlguinMgr.configurePlugin(n, m_pSkin);
-            }
-        } else if (nId == getIDByName("CID_ABOUT")) {
-            int n = m_pListPlugins->getNextSelectedItem();
-            if (n != -1) {
-                g_lyrOutPlguinMgr.aboutPlugin(n, m_pSkin);
-            }
-        } else {
-            return CPagePfBase::onCommand(nId);
-        }
-
-        return true;
-    }
-
-    void onUIObjNotify(IUIObjNotify *pNotify) override {
-        if (pNotify->nID == CID_LO_PLUGIN_LIST && pNotify->isKindOf(CSkinListCtrl::className())) {
-            CSkinListCtrlEventNotify *pListCtrlNotify = (CSkinListCtrlEventNotify*)pNotify;
-            if (pListCtrlNotify->cmd == CSkinListCtrlEventNotify::C_SEL_CHANGED) {
-                enablePluginBtns();
-            }
-        }
-    }
-
-protected:
-    void enablePluginBtns() {
-        assert(m_pListPlugins);
-        bool bEnable = (m_pListPlugins->getNextSelectedItem() != -1);
-
-        enableUIObject("CID_CONFIGURE", bEnable);
-        enableUIObject("CID_ABOUT", bEnable);
-        enableUIObject("CID_UNINST_PLUG", bEnable);
-    }
-
-    CSkinListCtrl               *m_pListPlugins;
-    int                         CID_LO_PLUGIN_LIST;
-
-};
-
-UIOBJECT_CLASS_NAME_IMP(CPagePfLyrOutputPlugin, "PreferPage.LyrOutputPlugin")
-
-//////////////////////////////////////////////////////////////////////////
-
 UIOBJECT_CLASS_NAME_IMP(CPagePfLyricsRoot, "PreferPage.LyricsRoot")
 
 CPagePfLyricsRoot::CPagePfLyricsRoot() : CPagePfBase(PAGE_UNKNOWN, "ID_ROOT_LYRICS") {
@@ -273,6 +171,5 @@ void CPagePfLyricsRoot::onInitialUpdate() {
 void registerPfLyricsPages(CSkinFactory *pSkinFactory) {
     AddUIObjNewer2(pSkinFactory, CPagePfLyrDownload);
     AddUIObjNewer2(pSkinFactory, CPagePfLyrSaveOpt);
-    AddUIObjNewer2(pSkinFactory, CPagePfLyrOutputPlugin);
     AddUIObjNewer2(pSkinFactory, CPagePfLyricsRoot);
 }

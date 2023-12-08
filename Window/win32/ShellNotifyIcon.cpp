@@ -1,4 +1,5 @@
-﻿#include "ShellNotifyIcon.h"
+﻿#include "../WindowLib.h"
+#include "ShellNotifyIcon.h"
 
 
 CShellNotifyIcon::CShellNotifyIcon() {
@@ -13,7 +14,7 @@ bool CShellNotifyIcon::addIcon(Window *pWnd, uint32_t nID, cstr_t szTip, HICON h
     NOTIFYICONDATA nif;
 
     nif.cbSize = sizeof(nif);
-    nif.hWnd = pWnd->getHandle();
+    nif.hWnd = pWnd->getWndHandle();
     nif.hIcon = hIcon;
     strcpy_safe(nif.szTip, CountOf(nif.szTip), szTip);
     nif.uID = nID;
@@ -28,7 +29,7 @@ bool CShellNotifyIcon::delIcon(Window *pWnd, uint32_t nID) {
 
     nif.cbSize = sizeof(nif);
     nif.uID = nID;
-    nif.hWnd = pWnd->getHandle();
+    nif.hWnd = pWnd->getWndHandle();
     nif.uFlags = 0;
 
     return tobool(::Shell_NotifyIcon(NIM_DELETE, &nif));
@@ -38,7 +39,7 @@ bool CShellNotifyIcon::modifyIcon(Window *pWnd, uint32_t nID, cstr_t szTip, HICO
     NOTIFYICONDATA nif;
 
     nif.cbSize = sizeof(nif);
-    nif.hWnd = pWnd->getHandle();
+    nif.hWnd = pWnd->getWndHandle();
     if (szTip) {
         strcpy_safe(nif.szTip, CountOf(nif.szTip), szTip);
     }

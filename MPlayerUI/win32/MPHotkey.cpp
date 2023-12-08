@@ -1,7 +1,12 @@
-﻿#include "MPlayerApp.h"
-#include "MLCmd.h"
+﻿#include "../MPlayerApp.h"
+#include "../MLCmd.h"
 #include "MPHotkey.h"
 
+
+bool isExtendedKey(UINT nVk)
+{
+    return nVk >= VK_SPACE && nVk <= VK_HELP;
+}
 
 void formatHotkeyText(string &strText, uint32_t nVirtKey, uint32_t fsModifiers) {
     char szKeyName[256];
@@ -154,7 +159,7 @@ void CMPHotkey::init() {
 }
 
 void CMPHotkey::setEventWnd(Window *pWnd) {
-    m_hWnd = pWnd->getHandle();
+    m_hWnd = pWnd->getWndHandle();
 
     if (m_bGlobalHotkeyEnabled) {
         registerAllGlobalHotKeys();
@@ -199,7 +204,7 @@ void CMPHotkey::restoreDefaults() {
     saveSettings();
 }
 
-void CMPHotkey::onHotKey(int nId, uint32_t fuModifiers, uint32_t uVirtKey) {
+void CMPHotkey::onHotKey(uint32_t nId, uint32_t fuModifiers, uint32_t uVirtKey) {
     for (int i = 0; i < (int)m_vAccKey.size(); i++) {
         CmdAccKey &cmdKey = m_vAccKey[i];
 
@@ -423,7 +428,7 @@ int CMPHotkey::loadSettings() {
     strFile += SZ_HOTKEY_FILENAME;
 
     CTextFile file;
-    if (file.open(strFile.c_str(), CTextFile::OM_READ, ED_SYSDEF) != ERR_OK) {
+    if (file.open(strFile.c_str(), false, ED_SYSDEF) != ERR_OK) {
         ERR_LOG1("Failed to open hotkey config file: %s", strFile.c_str());
         return ERR_OPEN_FILE;
     }
@@ -491,7 +496,7 @@ int CMPHotkey::saveSettings() {
     strFile = getAppDataDir();
     strFile += SZ_HOTKEY_FILENAME;
 
-    if (file.open(strFile.c_str(), CTextFile::OM_WRITE, ED_SYSDEF) != ERR_OK) {
+    if (file.open(strFile.c_str(), true, ED_SYSDEF) != ERR_OK) {
         ERR_LOG1("Failed to open hotkey config file: %s", strFile.c_str());
         return ERR_OPEN_FILE;
     }

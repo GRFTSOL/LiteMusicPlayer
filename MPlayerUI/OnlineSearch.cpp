@@ -562,22 +562,6 @@ bool COnlineSearch::addSearchJob(bool bOnlyMatched, cstr_t szMediaKey, cstr_t sz
     return true;
 }
 
-bool isTextWidthExceed(cstr_t sztext, int nWidth) {
-    while (*sztext && nWidth >= 0) {
-#ifdef UNICODE
-        if (unsigned(*sztext) >= 0xFF) {
-            nWidth -= 2;
-        } else {
-            nWidth -= 1;
-        }
-        sztext++;
-#else
-#pragma warning("isTextWidthExceed Not implemented!");
-#endif
-    }
-    return nWidth < 0;
-}
-
 bool COnlineSearch::autoSearch() {
     string strArtist = g_player.getArtist();
     string strTitle = g_player.getTitle();

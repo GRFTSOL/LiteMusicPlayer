@@ -1,5 +1,5 @@
-﻿#include "MPlayerApp.h"
-#include "MPSkinMainWnd.h"
+﻿#include "../MPlayerApp.h"
+#include "../MPSkinMainWnd.h"
 
 #ifdef _WIN32
 #include "MPMsg.h"
@@ -15,10 +15,8 @@ CMPSkinMainWnd::CMPSkinMainWnd() {
 CMPSkinMainWnd::~CMPSkinMainWnd() {
 }
 
-bool CMPSkinMainWnd::onCreate() {
-    if (!CMPSkinMainWndBase::onCreate()) {
-        return false;
-    }
+void CMPSkinMainWnd::onCreate() {
+    CMPSkinMainWndBase::onCreate();
 
     registerHandler(MPlayerApp::getEventsDispatcher(), ET_PLAYER_CUR_MEDIA_CHANGED, ET_PLAYER_CUR_MEDIA_INFO_CHANGED);
 
@@ -28,8 +26,6 @@ bool CMPSkinMainWnd::onCreate() {
     if (GetForegroundWindow() != m_hWnd && m_bActived) {
         onActivate(false);
     }
-
-    return true;
 }
 
 void CMPSkinMainWnd::onDestroy() {
@@ -50,7 +46,7 @@ void CMPSkinMainWnd::onEvent(const IEvent *pEvent) {
             strcpy_safe(szCaption, CountOf(szCaption), getAppNameLong().c_str());
         }
 
-        setWindowText(szCaption);
+        setCaptionText(szCaption);
 
         m_mlTrayIcon.updateTrayIconText(szCaption);
     } else if (pEvent->eventType == ET_UI_SETTINGS_CHANGED) {
@@ -66,14 +62,12 @@ void CMPSkinMainWnd::onEvent(const IEvent *pEvent) {
 
 void CMPSkinMainWnd::onCopyData(WPARAM wParam, PCOPYDATASTRUCT pCopyData) {
     vector<string> vCmdLine;
-    cstr_t szCmdLine;
-    int i;
 
     if (pCopyData->dwData != ML_SEND_CMD_LINE && wParam != ML_SEND_CMD_LINE) {
         return;
     }
 
-    szCmdLine = (cstr_t)pCopyData->lpData;
+    cstr_t szCmdLine = (cstr_t)pCopyData->lpData;
     cmdLineAnalyse(szCmdLine, vCmdLine);
 
     if (vCmdLine.empty()) {
@@ -81,7 +75,7 @@ void CMPSkinMainWnd::onCopyData(WPARAM wParam, PCOPYDATASTRUCT pCopyData) {
     }
 
     // deal with option cmd line
-    for (i = 0; i < (int)vCmdLine.size(); i++) {
+    for (int i = 0; i < (int)vCmdLine.size(); i++) {
         string &str = vCmdLine[i];
         if (str[0] == '/' || str[0] == '-') {
             vCmdLine.erase(vCmdLine.begin() + i);
@@ -92,18 +86,14 @@ void CMPSkinMainWnd::onCopyData(WPARAM wParam, PCOPYDATASTRUCT pCopyData) {
     if (vCmdLine.size() == 1 && fileIsExtSame(vCmdLine[0].c_str(), ".m3u")) {
         // open playlist
         g_player.saveNowPlaying();
-
-        g_player.m_currentPlaylistFn = vCmdLine[0];
-        g_player.setNowPlayingModified(false);
     } else {
-        getDefaultPlaylistName(g_player.m_currentPlaylistFn);
         g_player.setNowPlayingModified(true);
     }
 
     g_player.clearNowPlaying();
 
-    for (i = 0; i < (int)vCmdLine.size(); i++) {
-        g_player.addToPlaylist(vCmdLine[i].c_str());
+    for (int i = 0; i < (int)vCmdLine.size(); i++) {
+        g_player.addToNowPlaying(vCmdLine[i].c_str());
     }
 
     g_player.play();
@@ -149,27 +139,4 @@ LRESULT CMPSkinMainWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) 
     }
 
     return CMPSkinWnd::wndProc(message, wParam, lParam);
-}
-
-void CMPSkinMainWnd::activateWindow() {
-    HWND hWndParent = getRootParentWnd();
-    if (hWndParent) {
-        ::activateWindow(hWndParent);
-        return;
-    }
-
-    ::activateWindow(m_hWnd);
-}
-
-HWND CMPSkinMainWnd::getRootParentWnd() {
-    HWND hParent;
-    HWND hTemp;
-
-    hTemp = hParent = ::getParent(m_hWnd);
-    for (int i = 1; hTemp && i <= 3; i++) {
-        hParent = hTemp;
-        hTemp = ::getParent(hTemp);
-    }
-
-    return hParent;
 }

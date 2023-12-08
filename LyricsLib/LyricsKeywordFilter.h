@@ -13,7 +13,7 @@ public:
     CLyricsKeywordFilter();
     virtual ~CLyricsKeywordFilter();
 
-    static void init();
+    static void init(cstr_t fnFilter);
 
     static void filter(const char *szTarg, string &strOut);
     static void filter(cwstr_t szTarg, utf16string &strOut);

@@ -2,7 +2,7 @@
 #include "PreferPageAssociation.h"
 #include "MLCmd.h"
 
-
+/*
 #define MEDIA_FILE_ICON_ID  2
 
 #define KEY_LOCATION        "Software\\Crintsoft\\DHPlayer\\MP3\\Location"
@@ -118,3 +118,4 @@ void CPreferPageAssociation::onCommand(uint32_t uID, uint32_t nNotifyCode) {
         break;
     }
 }
+*/

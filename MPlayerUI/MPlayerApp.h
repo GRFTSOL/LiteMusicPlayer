@@ -13,6 +13,7 @@
 
 #ifdef _WIN32
 #include "win32/MPHotkey.h"
+#include "../Mp3Player/win32/resource.h"
 #endif
 
 #ifdef _LINUX_GTK2

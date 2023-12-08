@@ -27,10 +27,6 @@ public:
 
     CMLTrayIcon &getTrayIcon() { return m_mlTrayIcon; }
 
-    virtual void activateWindow();
-
-    HWND getRootParentWnd();
-
 protected:
     virtual LRESULT wndProc(uint32_t message, WPARAM wParam, LPARAM lParam);
 

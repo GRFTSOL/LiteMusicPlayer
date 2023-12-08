@@ -1,44 +1,6 @@
-﻿#include "../Utils/UtilsTypes.h"
+#include "../Utils/UtilsTypes.h"
 #include "LyricsKeywordFilter.h"
 
-
-cstr_t TO_REMOVE_STRS[] = {
-    " !\"#$%&'*+,-./:;<=>?@\\^_`|~",
-    "︰︱︳︴︵︶︷︸︹︺︻︼︽︾︿﹀﹁﹂﹃﹄﹉﹊﹋﹌﹍﹎﹏﹐﹑﹒﹔﹕﹖﹗﹛﹜﹝﹞﹟﹠﹡﹢﹣﹤﹥﹦﹨﹩﹪﹫！＂＃＄％＆＇＊＋，－．／：；＜＝＞？＠＼＾＿｀｛｜｝～￠￡￢￣￤￥",
-};
-
-cstr_t TO_RPLACE_STRS[] = {
-    "()()()()0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
-    "【】［］﹙﹚（）０１２３４５６７８９ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ=",
-    "a", "ÁáÀàĂăẮắẰằẴẵẲẳÂâẤấẦầẪẫẨẩǍǎÅåǺǻÄäǞǟÃãȦȧǠǡĄąĀāẢảȀȁȂȃẠạẶặẬậḀḁȺⱥᶏⱯɐⱭɑ",
-    "b", "ḂḃḄḅḆḇɃƀƁɓƂƃᵬᶀ",
-    "c", "ĆćĈĉČčĊċÇçḈḉȻȼƇƈɕ",
-    "d", "ĎďḊḋḐḑḌḍḒḓḎḏĐđƉɖƊɗƋƌᵭᶁᶑȡ∂",
-    "e", "ÉéÈèĔĕÊêẾếỀềỄễỂểĚěËëẼẽĖėȨȩḜḝĘęĒēḖḗḔḕẺẻȄȅȆȇẸẹỆệḘḙḚḛɆɇᶒⱸ",
-    "f", "ḞḟƑƒᵮᶂ",
-    "g", "ǴǵĞğĜĝǦǧĠġĢģḠḡǤǥƓɠᶃ",
-    "h", "ĤĥȞȟḦḧḢḣḨḩḤḥḪḫH̱ẖĦħⱧⱨ",
-    "i", "ÍíÌìĬĭÎîǏǐÏïḮḯĨĩĮįĪīỈỉȈȉȊȋỊịḬḭƗɨᵻᶖİiIıꟾ",
-    "j", "ĴĵɈɉǰȷʝɟʄ",
-    "k", "ḰḱǨǩĶķḲḳḴḵƘƙⱩⱪᶄꝀꝁ",
-    "l", "ĹĺĽľĻļḶḷḸḹḼḽḺḻŁłĿŀȽƚⱠⱡⱢɫɬᶅɭȴ",
-    "m", "ḾḿṀṁṂṃᵯᶆⱮɱ",
-    "n", "ŃńǸǹŇňÑñṄṅŅņṆṇṊṋṈṉN̈n̈ƝɲȠƞŊŋꞐꞑᵰᶇɳȵ",
-    "o", "ÓóÒòŎŏÔôỐốỒồỖỗỔổǑǒÖöȪȫŐőÕõṌṍṎṏȬȭȮȯO͘o͘ȰȱØøǾǿǪǫǬǭŌōṒṓṐṑỎỏȌȍȎȏƠơỚớỜờỠỡỞởỢợỌọỘộƟɵƆɔⱺ",
-    "p", "ṔṕṖṗⱣᵽƤƥᵱᶈ",
-    "q", "ɊɋƢƣʠ",
-    "r", "ŔŕŘřṘṙŖŗȐȑȒȓṚṛṜṝṞṟɌɍⱤɽᵲᶉɼɾᵳ",
-    "s", "ŚśṤṥŜŝŠšṦṧṠṡẛŞşṢṣṨṩȘșᵴᶊʂȿ",
-    "t", "ŤťṪṫŢţṬṭȚțṰṱṮṯŦŧȾⱦƬƭƮʈẗᵵƫȶ",
-    "u", "ÚúÙùŬŭÛûǓǔŮůÜüǗǘǛǜǙǚǕǖŰűŨũṸṹŲųŪūṺṻỦủȔȕȖȗƯưỨứỪừỮữỬửỰựỤụṲṳṶṷṴṵɄʉᵾᶙ",
-    "v", "ṼṽṾṿƲʋᶌⱱⱴ",
-    "w", "ẂẃẀẁŴŵẄẅẆẇẈẉẘⱲⱳ",
-    "x", "ẌẍẊẋᶍ",
-    "y", "ÝýỲỳŶŷẙŸÿỸỹẎẏȲȳỶỷỴỵɎɏƳƴʏ",
-    "z", "ŹźẐẑŽžŻżẒẓẔẕƵƶȤȥⱫⱬᵶᶎʐʑɀ",
-    "()()", "[]{}",
-    "abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-};
 
 bool isNumeric(cwstr_t szString);
 
@@ -100,31 +62,40 @@ CLyricsKeywordFilter::~CLyricsKeywordFilter() {
 
 }
 
-void CLyricsKeywordFilter::init() {
+void CLyricsKeywordFilter::init(cstr_t fnFilter) {
     for (int i = 0; i < WORD_MAX; i++) {
         m_wTableUcs2[i] = (uint16_t)i;
     }
 
-    for (cstr_t str : TO_REMOVE_STRS) {
-        // remove
-        utf16string strW;
+    CSimpleXML xml;
+    if (xml.parseFile(fnFilter)) {
+        assert(xml.m_pRoot->name == "KeywordFilter");
+        for (auto node : xml.m_pRoot->listChildren) {
+            if (node->name == "Remove") {
+                // remove
+                utf16string strW;
 
-        utf8ToUCS2(str, -1, strW);
-        ucs2TableDelChars(strW.c_str());
+                utf8ToUCS2(node->strContent.c_str(), node->strContent.size(), strW);
+                ucs2TableDelChars(strW.c_str());
+            } else if (node->name == "Replace") {
+                // replace
+                utf16string strWSrc, strWDst;
+
+                utf8ToUCS2(node->getPropertySafe("src"), -1, strWSrc);
+                utf8ToUCS2(node->getPropertySafe("dst"), -1, strWDst);
+                ucs2TableReplaceChars(strWSrc.c_str(), strWDst.c_str());
+            }
+        }
+    } else {
+        // ERRLOG1("Failed to parse lyrics keyword filter: %s", fnFilter);
     }
 
-    for (int i = 0; i < CountOf(TO_RPLACE_STRS); i += 2) {
-        // replace
-        utf16string strWSrc, strWDst;
-
-        utf8ToUCS2(TO_RPLACE_STRS[i], -1, strWDst);
-        utf8ToUCS2(TO_RPLACE_STRS[i + 1], -1, strWSrc);
-        ucs2TableReplaceChars(strWSrc.c_str(), strWDst.c_str());
-    }
-
-    //
-    //    TestCLyricsKeywordFilter();
-    //    TestCLyricsKeywordFilterUtf8();
+    xTableDelChars(" !\"#$%&'*+,-./:;<=>?@\\^_`|~");
+    xTableReplaceChars("[]{}", "()()");
+    xTableReplaceChars("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz");
+//
+//    TestCLyricsKeywordFilter();
+//    TestCLyricsKeywordFilterUtf8();
 }
 
 void CLyricsKeywordFilter::xTableDelChars(const char *szChars) {

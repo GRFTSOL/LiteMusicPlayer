@@ -1,5 +1,6 @@
-﻿#include "MPlayerApp.h"
+﻿#include "../MPlayerApp.h"
 #include "PlayerSmoothTimer.h"
+#include "../../LyricsLib/CurrentLyrics.h"
 
 
 #define COMPARE_PRECISION   300
@@ -50,7 +51,7 @@ void CPlayerSmoothTimer::threadTimer(void *lpParam) {
     pThis = (CPlayerSmoothTimer*)lpParam;
 
     while (!pThis->m_bQuit) {
-        sleep(pThis->m_nTimeSpan);
+        Sleep(pThis->m_nTimeSpan);
 
         dwTimeNow = getTickCount();
         // g_wndLyricShow.OnPlayTimeChanged(dwTimeNow - dwTimeBeg);

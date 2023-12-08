@@ -1,4 +1,3 @@
-#include "MPlayerApp.h"
 #include "Player.h"
 #include "MediaScanner.h"
 

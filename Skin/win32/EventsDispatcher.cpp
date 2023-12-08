@@ -1,5 +1,5 @@
-﻿#include "SkinTypes.h"
-#include "EventsDispatcherBase.h"
+﻿#include "../SkinTypes.h"
+#include "../EventsDispatcherBase.h"
 #include "EventsDispatcher.h"
 
 
@@ -75,7 +75,7 @@ void CEventsDispatcher::dispatchUnsyncEvent(IEvent *pEvent) {
 }
 
 void CEventsDispatcher::dispatchUnsyncEventDelayed(IEvent* pEvent, int delayInMs) {
-    postExecInUIThreadDelayed([m_hWnd, pEvent]() {
+    postExecInUIThreadDelayed([this, pEvent]() {
         ::PostMessage(m_hWnd, MPWM_DISPATCH, (WPARAM)pEvent, DISPATCH_EVENT_LPARAM);
     }, delayInMs);
 }

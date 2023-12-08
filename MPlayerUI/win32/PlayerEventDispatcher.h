@@ -40,16 +40,6 @@ public:
         destroy();
     }
 
-    void setLyrDrawUpdateFast(bool bFast) {
-        if (bFast) {
-            m_nTimeOutUpdateLyr = 20;
-        } else {
-            m_nTimeOutUpdateLyr = 40;
-        }
-
-        startLyrDrawUpdate();
-    }
-
     void startLyrDrawUpdate()
         { setTimer(TIMER_LYR_DRAW_UPDATE, m_nTimeOutUpdateLyr); }
 

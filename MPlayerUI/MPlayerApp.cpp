@@ -16,18 +16,6 @@
 #include "DlgSaveLyrPrompt.h"
 #include "MPFloatingLyrWnd.h"
 
-#ifdef _LINUX_GTK2
-#include "gtk2/LyricsOutPluginMgr.h"
-#endif
-
-#ifdef _WIN32
-#include "win32/LyricsOutPluginMgr.h"
-#include "win32/LyricsDownloader.h"
-#endif
-
-#ifdef _MAC_OS
-#include "mac/LyricsOutPluginMgr.h"
-#endif
 
 CurrentLyrics g_currentLyrics;
 
@@ -87,7 +75,6 @@ MPlayerApp::MPlayerApp() {
 }
 
 MPlayerApp::~MPlayerApp() {
-
 }
 
 CMPSkinFactory *MPlayerApp::getMPSkinFactory() {
@@ -107,7 +94,7 @@ bool MPlayerApp::_init() {
         return false;
     }
 
-    CLyricsKeywordFilter::init();
+    CLyricsKeywordFilter::init(getAppResourceFile("LyrKeywordFilter.xml"));
 
     runAllUnittest();
 

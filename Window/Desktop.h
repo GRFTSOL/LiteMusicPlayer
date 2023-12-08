@@ -12,7 +12,7 @@ bool isModifierKeyPressed(int nKey, uint32_t nFlags = 0);
 
 CPoint getCursorPos();
 
-bool setCursor(Cursor &cursor);
+void setCursor(Cursor &cursor);
 
 inline Window *findWindow(cstr_t szClassName, cstr_t szWindowName) { return nullptr; }
 

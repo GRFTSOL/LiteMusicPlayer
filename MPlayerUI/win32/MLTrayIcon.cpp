@@ -2,7 +2,7 @@
 
 #include "../MPlayerApp.h"
 #include "MLTrayIcon.h"
-#include "ShellNotifyIcon.h"
+#include "../../Window/win32/ShellNotifyIcon.h"
 
 
 #define IDN_MINILYRICS      1

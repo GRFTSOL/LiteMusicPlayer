@@ -5,6 +5,7 @@
 #include "../MPlayerUI/OnlineSearch.h"
 #include "../LyricsLib/HelperFun.h"
 #include "../LyricsLib/CurrentLyrics.h"
+#include "../MPlayerEngine/MPlayer.h"
 
 
 #ifdef _WIN32
@@ -314,10 +315,6 @@ uint32_t CPlayer::getMediaLength() {
 
 uint32_t CPlayer::getPlayPos() {
     return m_playerCore->getPos();
-}
-
-void CPlayer::setLyrDrawUpdateFast(bool bFast) {
-    g_playerEventDispatcher.setLyrDrawUpdateFast(bFast);
 }
 
 void CPlayer::setToNextLoopMode() {

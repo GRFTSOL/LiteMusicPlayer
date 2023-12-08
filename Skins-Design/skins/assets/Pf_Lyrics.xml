@@ -4,7 +4,6 @@
   <NormalTabButton ID="CID_TOOLBAR_LYR"  Rect="30,8,w-30,">
     <button ID="ID_LYR_DOWNLOAD" Text="Lyrics Download"/>
     <button ID="ID_LYR_SAVE_OPT" Text="Lyrics Saving Options"/>
-    <button ID="ID_LYR_OUTPUT_PLUGIN" Text="Lyrics Output Plug-ins"/>
   </NormalTabButton>
   <Container Name="Content" Rect="10,0,w-20,h" ClipChildren="true">
     <PreferPage.LyrDownload ID="CID_C_LYR_DOWNLOAD" Visible="false" Name="Lyrics Download" Rect="0,30,w,h-30-10">
@@ -24,14 +23,5 @@
     <PreferPage.LyrSaveOptions ID="CID_C_LYR_SAVE_OPT" Visible="false" Name="Lyrics Saving Options" Rect="0,30,w,h-30-10">
       <NormalCheckBox ID="CID_C_REMOVE_EXTRA_BLANK_LINES" Text="&amp;Remove extra blank lines in lyrics." Rect="10,15,w-50,"/>
     </PreferPage.LyrSaveOptions>
-    <PreferPage.LyrOutputPlugin ID="CID_C_LYR_OUTPUT_PLUGIN" Name="Lyrics Output Plug-ins" Visible="false" Rect="0,30,w,h-30-10">
-      <NormalText Rect="10,10,w-20,60" Text="$Product$ will use the plug-ins below for lyrics output. You can select a plug-in and configure, view about boxes, or uninstall them."/>
-      <NormalListCtrl ID="CID_LO_PLUGIN_LIST" Rect="10,70,w-20,h-70-50"
-                      EnableHorzScrollBar="false" EnableVertScrollBar="false"/>
-      <NormalTextBt ID="CID_CONFIGURE" Text="Configure" Rect="10,h-40,(w-20)/4-20,"/>
-      <NormalTextBt ID="CID_ABOUT" Text="About" Rect="10+(w-20)/4,h-40,(w-20)/4-20,"/>
-      <NormalTextBt ID="CID_UNINST_PLUG" Text="Uninstall plug-in" Rect="10+(w-20)/2,h-40,(w-20)/4-20,"/>
-      <NormalLink ID="CID_GET_PLUG" Text="Get plug-ins" Rect="10+(w-20)*3/4,h-40,(w-20)/4-20," AlignText="AT_CENTER"/>
-   </PreferPage.LyrOutputPlugin>
   </Container>
 </PreferPage.LyricsRoot>

@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+#include <list>
+
+
 class CEventsDispatcher : public CEventsDispatcherBase, public Window {
 public:
     int init() override;
@@ -20,7 +23,7 @@ protected:
     struct ExecItem {
         std::function<void()>       func;
         int64_t                     execTime = 0;
-    }
+    };
 
     using ListExecItems = std::list<ExecItem>;
 

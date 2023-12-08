@@ -143,8 +143,6 @@ public:
 
     void getCurMediaAttribute(MediaAttribute mediaAttr, string &strValue);
 
-    void setLyrDrawUpdateFast(bool bFast);
-
     //
     // Use UI Seekbar time as playing time
     //

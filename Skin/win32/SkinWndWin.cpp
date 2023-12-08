@@ -1,6 +1,8 @@
-﻿#include "../SkinTypes.h"
-#include "../SkinWnd.h"
+﻿#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#define _WIN32_WINNT	0x0500
+#include <windows.h>
 #include <Dwmapi.h>
+#include "../Skin.h"
 
 
 bool CSkinWnd::invalidateRect(const CRect *lpRect, bool bErase) {
@@ -181,12 +183,10 @@ LRESULT CSkinWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
                 }
 
                 PAINTSTRUCT ps;
-                HDC hdc;
-                hdc = BeginPaint(m_hWnd, &ps);
+                HDC hdc = BeginPaint(m_hWnd, &ps);
 
-                onPaint(canvas, rcClip);
-
-                delete canvas;
+                auto canvas = getMemGraphics();
+                onPaint(canvas, &rcClip);
 
                 EndPaint(m_hWnd, &ps);
             }

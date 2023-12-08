@@ -405,7 +405,7 @@ void CMPSkinWnd::onCreate() {
     CSkinWnd::onCreate();
 
 #ifdef _WIN32
-    ::SendMessage(m_hWnd, WM_SETICON, ICON_BIG, (WPARAM)LoadIcon(getAppInstance(), MAKEINTRESOURCE(IDI_MPLAYER)));
+    ::SendMessageA(m_hWnd, WM_SETICON, ICON_BIG, (WPARAM)LoadIcon(getAppInstance(), MAKEINTRESOURCEA(IDI_MPLAYER)));
 
     // 允许拖放歌词文件
     DragAcceptFiles(m_hWnd, true);
@@ -831,16 +831,15 @@ void CMPSkinWnd::addCmdHandler(cstr_t szName) {
 
 #ifdef _WIN32
 void CMPSkinWnd::onDropFiles(HDROP hDrop) {
-    char szFile[MAX_PATH];
-    int n;
-
-    n = DragQueryFile(hDrop, (uint32_t)-1, szFile, CountOf(szFile));
+    WCHAR szFile[MAX_PATH];
+    int n = DragQueryFileW(hDrop, (uint32_t)-1, szFile, CountOf(szFile));
 
     if (n == 1) {
-        DragQueryFile(hDrop, 0, szFile, CountOf(szFile));
-        if (fileIsExtSame(szFile, ".lrc") || fileIsExtSame(szFile, ".txt")
-            || fileIsExtSame(szFile, ".srt")) {
-            g_LyricSearch.associateLyrics(g_player.getMediaKey().c_str(), szFile);
+        DragQueryFileW(hDrop, 0, szFile, CountOf(szFile));
+
+        auto fn = ucs2ToUtf8(szFile);
+        if (fileIsExtSame(fn.c_str(), ".lrc") || fileIsExtSame(fn.c_str(), ".txt")) {
+            g_LyricSearch.associateLyrics(g_player.getMediaKey().c_str(), fn.c_str());
             MPlayerApp::getInstance()->dispatchResearchLyrics();
 
             DragFinish(hDrop);
@@ -851,12 +850,13 @@ void CMPSkinWnd::onDropFiles(HDROP hDrop) {
     g_player.clearNowPlaying();
 
     for (int i = 0; i < n; ++i) {
-        DragQueryFile(hDrop, i, szFile, CountOf(szFile));
+        DragQueryFileW(hDrop, i, szFile, CountOf(szFile));
 
-        if (isDirExist(szFile)) {
-            g_player.addDirToNowPlaying(szFile);
+        auto fn = ucs2ToUtf8(szFile);
+        if (isDirExist(fn.c_str())) {
+            g_player.addDirToNowPlaying(fn.c_str());
         } else {
-            g_player.addToNowPlaying(szFile);
+            g_player.addToNowPlaying(fn.c_str());
         }
     }
 
