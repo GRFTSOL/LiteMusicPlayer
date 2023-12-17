@@ -11,7 +11,7 @@
 static StringView NAME_LYRICS("LYRICS");
 static StringView NAME_COVERART("COVERART");
 
-void XiphComment::parse(const StringView &data, MediaDataType needDataTypes) throw(BinaryStreamOutOfRange) {
+void XiphComment::parse(const StringView &data, MediaDataType needDataTypes) {
     // Refer: https://xiph.org/vorbis/doc/v-comment.html
     /*
     1) [vendor_length] = read an unsigned integer of 32 bits

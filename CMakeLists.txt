@@ -26,36 +26,79 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG -DASIO_STANDALONE")
 
 PROJECT(Mp3Player)
 
-include_directories(
-    ${PROJECT_SOURCE_DIR}
-    ${PROJECT_SOURCE_DIR}/third-parties/googletest/include
-    ${PROJECT_SOURCE_DIR}/third-parties/http-parser
-    # ${PROJECT_SOURCE_DIR}/third-parties/libuv/include
-    ${PROJECT_SOURCE_DIR}/third-parties/rapidjson
-    ${PROJECT_SOURCE_DIR}/third-parties/zlib
-    ${PROJECT_SOURCE_DIR}/third-parties/glog
-    ${PROJECT_SOURCE_DIR}/third-parties/googletest
-    ${PROJECT_SOURCE_DIR}/third-parties/tiny-AES-c
-    ${PROJECT_SOURCE_DIR}/third-parties/mbedtls/include
-    ${PROJECT_SOURCE_DIR}/third-parties/asio/include
-    ${PROJECT_SOURCE_DIR}/third-parties/websocketpp
-    ${PROJECT_SOURCE_DIR}/TinyJS
-)
+#
+# Compile third-parties first.
+#
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/TinyJS TinyJS_STATIC)
+
+set(BUILD_SHARED_LIBS OFF)
+set(WITH_CUSTOM_PREFIX OFF)
+set(WITH_GFLAGS OFF)
+set(WITH_GTEST OFF)
+set(WITH_PKGCONFIG OFF)
+set(WITH_UNWIND OFF)
+set(BUILD_TESTING OFF)
+add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/glog glog)
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/libuv uv_a)
+add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/Agg agg_STATIC)
+
+set(ENABLE_PROGRAMS OFF)
+set(ENABLE_TESTING OFF)
+set(ENABLE_PROGRAMS OFF)
+set(MBEDTLS_PYTHON_EXECUTABLE OFF)
+set(USE_STATIC_MBEDTLS_LIBRARY ON)
+set(USE_SHARED_MBEDTLS_LIBRARY OFF)
+add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/mbedtls mbedtls)
+
+#
+# Media Engine dependencies
+#
+
+set(BUILD_CXXLIBS OFF)
+set(BUILD_PROGRAMS OFF)
+set(BUILD_EXAMPLES OFF)
+set(BUILD_TESTING OFF)
+set(BUILD_DOCS OFF)
+set(WITH_FORTIFY_SOURCE OFF)
+set(WITH_STACK_PROTECTOR OFF)
+set(INSTALL_MANPAGES OFF)
+set(INSTALL_PKGCONFIG_MODULES OFF)
+#set(INSTALL_CMAKE_CONFIG_MODULE OFF)
+add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/flac FLAC)
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/faad2 libfaad2)
+
+# set(ENABLE_OPT OFF)
+set(SPNG_SHARED OFF)
+# set(SPNG_STATIC OFF)
+set(BUILD_EXAMPLES OFF)
+add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/libspng libspng)
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/zlib zlib)
+
+#
+# Build Mp3Player
+#
 
 set(SRC ${SRC}
-    ${PROJECT_SOURCE_DIR}/third-parties/zlib/adler32.c
-    ${PROJECT_SOURCE_DIR}/third-parties/zlib/compress.c
-    ${PROJECT_SOURCE_DIR}/third-parties/zlib/crc32.c
-    ${PROJECT_SOURCE_DIR}/third-parties/zlib/deflate.c
-    ${PROJECT_SOURCE_DIR}/third-parties/zlib/gzio.c
-    ${PROJECT_SOURCE_DIR}/third-parties/zlib/infback.c
-    ${PROJECT_SOURCE_DIR}/third-parties/zlib/inffast.c
-    ${PROJECT_SOURCE_DIR}/third-parties/zlib/inflate.c
-    ${PROJECT_SOURCE_DIR}/third-parties/zlib/inftrees.c
-    ${PROJECT_SOURCE_DIR}/third-parties/zlib/minigzip.c
-    ${PROJECT_SOURCE_DIR}/third-parties/zlib/trees.c
-    ${PROJECT_SOURCE_DIR}/third-parties/zlib/uncompr.c
-    ${PROJECT_SOURCE_DIR}/third-parties/zlib/zutil.c
+    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/adler32.c
+    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/compress.c
+    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/crc32.c
+    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/deflate.c
+    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/gzio.c
+    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/infback.c
+    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/inffast.c
+    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/inflate.c
+    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/inftrees.c
+    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/trees.c
+    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/uncompr.c
+    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/zutil.c
+
+    ${PROJECT_SOURCE_DIR}/third-parties/http-parser/http_parser.c
+
+    ${PROJECT_SOURCE_DIR}/third-parties/faad2/frontend/mp4read.c
 )
 
 if (UT)
@@ -65,57 +108,126 @@ if (UT)
     )
 endif(UT)
 
-aux_source_directory(${PROJECT_SOURCE_DIR}/Utils SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/GfxRaw SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/HttpLib SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/ImageLib SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/ImageLib/jpeg SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/ImageLib/png SRC)
-# aux_source_directory(${PROJECT_SOURCE_DIR}/ImageLib/tiff SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/LocalServer SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/LocalServer/Http SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/LocalServer/WebSocket SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/LocalServer/WebSocketHandlers SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/LyricsLib SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/MediaTags SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/MediaTags/ID3 SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/MLProtocol SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/MPlayer SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/MPlayerUI SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/Skin SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/Window SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/third-parties/md5 SRC)
-aux_source_directory(${PROJECT_SOURCE_DIR}/third-parties/sqlite SRC)
-# message(SRC="${SRC}")
+set(SRC_PATHS
+    ${PROJECT_SOURCE_DIR}/Utils
+    ${PROJECT_SOURCE_DIR}/GfxRaw
+    ${PROJECT_SOURCE_DIR}/HttpLib
+    ${PROJECT_SOURCE_DIR}/ImageLib
+    ${PROJECT_SOURCE_DIR}/ImageLib/jpeg
+    ${PROJECT_SOURCE_DIR}/LocalServer
+    ${PROJECT_SOURCE_DIR}/LocalServer/Http
+    ${PROJECT_SOURCE_DIR}/LocalServer/WebSocket
+    ${PROJECT_SOURCE_DIR}/LocalServer/WebSocketHandlers
+    ${PROJECT_SOURCE_DIR}/LyricsLib
+    ${PROJECT_SOURCE_DIR}/MediaTags
+    ${PROJECT_SOURCE_DIR}/MediaTags/ID3
+    ${PROJECT_SOURCE_DIR}/MLProtocol
+    ${PROJECT_SOURCE_DIR}/MPlayer
+    ${PROJECT_SOURCE_DIR}/MPlayerEngine
+    ${PROJECT_SOURCE_DIR}/MPlayerUI
+    ${PROJECT_SOURCE_DIR}/Skin
+    ${PROJECT_SOURCE_DIR}/Skin/api-js
+    ${PROJECT_SOURCE_DIR}/Window
+)
+
+if (APPLE)
+    set(SRC_PATHS ${SRC_PATHS}
+        ${PROJECT_SOURCE_DIR}/Utils/mac
+        ${PROJECT_SOURCE_DIR}/Window/mac
+        ${PROJECT_SOURCE_DIR}/Skin/mac
+        ${PROJECT_SOURCE_DIR}/GfxRaw/mac
+        ${PROJECT_SOURCE_DIR}/MPlayerUI/mac
+        ${PROJECT_SOURCE_DIR}/MPlayerUI/mac/imported/SPMediaKeyTap
+        ${PROJECT_SOURCE_DIR}/MPlayerEngine/mac
+        ${PROJECT_SOURCE_DIR}/Mp3Player
+    )
+elseif (LINUX)
+    set(SRC_PATHS ${SRC_PATHS}
+        ${PROJECT_SOURCE_DIR}/Utils/linux
+        ${PROJECT_SOURCE_DIR}/Window/gtk2
+        ${PROJECT_SOURCE_DIR}/Skin/gtk2
+        ${PROJECT_SOURCE_DIR}/GfxRaw/gtk2
+        ${PROJECT_SOURCE_DIR}/MPlayerUI/gtk2
+        ${PROJECT_SOURCE_DIR}/MPlayerEngine/linux
+    )
+else ()
+    set(SRC_PATHS ${SRC_PATHS}
+        ${PROJECT_SOURCE_DIR}/Utils/win32
+        ${PROJECT_SOURCE_DIR}/Window/win32
+        ${PROJECT_SOURCE_DIR}/Skin/win32
+        ${PROJECT_SOURCE_DIR}/GfxRaw/win32
+        ${PROJECT_SOURCE_DIR}/MPlayerUI/win32
+        ${PROJECT_SOURCE_DIR}/MPlayerEngine/win32
+    )
+endif (APPLE)
+
+foreach(_PATH ${SRC_PATHS})
+    aux_source_directory(${_PATH} SRC)
+endforeach()
 
 set(LINK_OPT_FRAME_WORK)
 
 if (APPLE)
-    aux_source_directory(${PROJECT_SOURCE_DIR}/Utils/mac SRC)
-    aux_source_directory(${PROJECT_SOURCE_DIR}/Window/mac SRC)
-    aux_source_directory(${PROJECT_SOURCE_DIR}/Skin/mac SRC)
-    aux_source_directory(${PROJECT_SOURCE_DIR}/GfxRaw/mac SRC)
-    aux_source_directory(${PROJECT_SOURCE_DIR}/MPlayerUI/mac SRC)
-    set(LINK_OPT_FRAME_WORK "-framework CoreFoundation" "-framework Cocoa")
-elseif (LINUX)
-    aux_source_directory(${PROJECT_SOURCE_DIR}/Utils/linux SRC)
-    aux_source_directory(${PROJECT_SOURCE_DIR}/Window/gtk2 SRC)
-    aux_source_directory(${PROJECT_SOURCE_DIR}/Skin/gtk2 SRC)
-    aux_source_directory(${PROJECT_SOURCE_DIR}/GfxRaw/gtk2 SRC)
-    aux_source_directory(${PROJECT_SOURCE_DIR}/MPlayerUI/gtk2 SRC)
-else ()
-    aux_source_directory(${PROJECT_SOURCE_DIR}/Utils/win32 SRC)
-    aux_source_directory(${PROJECT_SOURCE_DIR}/Window/win32 SRC)
-    aux_source_directory(${PROJECT_SOURCE_DIR}/Skin/win32 SRC)
-    aux_source_directory(${PROJECT_SOURCE_DIR}/GfxRaw/win32 SRC)
-    aux_source_directory(${PROJECT_SOURCE_DIR}/MPlayerUI/win32 SRC)
+    set(LINK_OPT_FRAME_WORK "-framework CoreFoundation" "-framework Cocoa"
+        "-framework AudioToolbox" "-framework CoreAudio" "-framework CoreData"
+        "-framework AppKit" "-framework CoreText" "-framework CoreMedia"
+        "-framework AVFoundation" "-framework CoreGraphics" "-framework Carbon")
+    message("${LINK_OPT_FRAME_WORK}")
 endif (APPLE)
 
-add_subdirectory(${PROJECT_SOURCE_DIR}/TinyJS TinyJS)
-add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/glog glog)
-add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/libuv uv_a)
-
 # set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
-add_executable(${PROJECT_NAME} ${SRC})
+
+set(HEADER_FILES)
+foreach(HEADER_PATH ${SRC_PATHS})
+    file(GLOB _HEADERS_H "${HEADER_PATH}/*.h")
+    file(GLOB _HEADERS_HPP "${HEADER_PATH}/*.hpp")
+    set(HEADER_FILES ${HEADER_FILES} ${_HEADERS_H} ${_HEADERS_HPP})
+endforeach()
+
+if(APPLE)
+    file(GLOB RESOURCES "${PROJECT_SOURCE_DIR}/Mp3Player/tray-icons/*.png")
+    set(RESOURCES ${RESOURCES}
+        ${PROJECT_SOURCE_DIR}/Mp3Player/Base.lproj/MainMenu.xib
+    )
+
+    add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${SRC} ${RESOURCES} ${HEADER_FILES})
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        BUNDLE TRUE
+        MACOSX_BUNDLE_GUI_IDENTIFIER com.crintsoft.${PROJECT_NAME}
+        MACOSX_BUNDLE_ICON_FILE ${CMAKE_SOURCE_DIR}/Mp3Player/MiniLyrics.icns
+        MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
+        MACOSX_BUNDLE_BUNDLE_VERSION "1.0.0"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0"
+        RESOURCE "${RESOURCES}"
+        # MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist.in
+        # XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "iPhone Developer"
+        # XCODE_ATTRIBUTE_DEBUG_INFORMATION_FORMAT "dwarf-with-dsym"
+    )
+else(APPLE)
+    add_executable(${PROJECT_NAME} ${SRC} ${HEADER_FILES})
+endif(APPLE)
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/TinyJS
+    ${PROJECT_SOURCE_DIR}/third-parties/googletest/include
+    ${PROJECT_SOURCE_DIR}/third-parties/http-parser
+    ${CMAKE_CURRENT_BINARY_DIR}/glog
+    ${PROJECT_SOURCE_DIR}/third-parties/libuv/include
+    ${PROJECT_SOURCE_DIR}/third-parties/rapidjson
+    ${PROJECT_SOURCE_DIR}/third-parties/zlib
+    ${PROJECT_SOURCE_DIR}/third-parties/glog/src
+    ${PROJECT_SOURCE_DIR}/third-parties/googletest
+    ${PROJECT_SOURCE_DIR}/third-parties/tiny-AES-c
+    ${PROJECT_SOURCE_DIR}/third-parties/mbedtls/include
+    ${PROJECT_SOURCE_DIR}/third-parties/asio/include
+    ${PROJECT_SOURCE_DIR}/third-parties/websocketpp
+)
+
+if(WIN32)
 target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/Mp3Player/win32/resource.rc)
-target_link_libraries(${PROJECT_NAME} PRIVATE pthread glog uv_a -static-libstdc++ ${LINK_OPT_FRAME_WORK})
+endif(WIN32)
+
+
+target_link_libraries(${PROJECT_NAME} PRIVATE pthread FLAC faad TinyJS_STATIC agg_STATIC glogbase uv_a mbedtls spng_static ${LINK_OPT_FRAME_WORK})
+# -static-libstdc++

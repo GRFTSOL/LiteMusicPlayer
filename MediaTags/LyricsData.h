@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "../Utils/Utils.h"
 
@@ -153,3 +153,10 @@ protected:
 };
 
 void formatPlayTime(int nmsTime, char szBuf[]);
+
+void getArtistTitleFromFileName(string &strArtist, string &strTitle, cstr_t szFile);
+
+/**
+* Format media title in format of "artist - title"
+**/
+string formatMediaTitle(cstr_t szArtist, cstr_t szTitle);

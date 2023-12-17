@@ -1,4 +1,4 @@
-﻿/********************************************************************
+/********************************************************************
     Created  :    2002年1月2日 22:54:43
     FileName :    LyricsLocalSearch.cpp
     Author   :    xhy
@@ -9,7 +9,6 @@
 #include "MPlayerApp.h"
 #include "DownloadMgr.h"
 #include "LyricsLocalSearch.h"
-#include "../LyricsLib/HelperFun.h"
 
 
 cstr_t SZ_FOLDER_PREFIX = "LyricFolder";

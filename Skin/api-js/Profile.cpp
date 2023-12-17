@@ -7,7 +7,7 @@
 
 #include "interpreter/VirtualMachineTypes.hpp"
 #include "objects/JsLibObject.hpp"
-#include "SkinTypes.h"
+#include "../SkinTypes.h"
 
 
 void profile_getInt(VMContext *ctx, const JsValue &thiz, const Arguments &args) {

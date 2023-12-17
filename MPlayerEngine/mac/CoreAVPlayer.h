@@ -10,6 +10,8 @@ public:
     CoreAVPlayer(void);
     ~CoreAVPlayer(void);
 
+    virtual void quit() override;
+
     // 实现的说明
     virtual const char *getDescription() override;
 

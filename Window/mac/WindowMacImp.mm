@@ -6,7 +6,7 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "WindowTypes.h"
+#import "../WindowTypes.h"
 #import "WindowMacImp.h"
 #import "Window.h"
 #import "ViewMacImp.h"

@@ -6,10 +6,10 @@
 #include "../../third-parties/Agg/include/agg_pixfmt_rgba.h"
 #include "../../third-parties/Agg/include/agg_pixfmt_rgb.h"
 #include "../../third-parties/Agg/include/agg_rasterizer_scanline_aa.h"
-#include "GfxRaw.h"
-#include "RawBmpFont.h"
-#include "RawGlyphBuilder.h"
+#include "../GfxRaw.h"
+#include "../RawBmpFont.h"
 #include "../RawGlyphSet.hpp"
+#include "RawGlyphBuilder.h"
 
 
 #define MEM_GRAPH_BITS      32

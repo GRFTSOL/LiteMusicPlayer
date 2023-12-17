@@ -1,7 +1,7 @@
 #import <Cocoa/Cocoa.h>
-#include "WindowTypes.h"
+#include "../WindowTypes.h"
 #include "Window.h"
-#include "Desktop.h"
+#include "../Desktop.h"
 
 
 void openUrl(Window *pWnd, cstr_t szUrl) {

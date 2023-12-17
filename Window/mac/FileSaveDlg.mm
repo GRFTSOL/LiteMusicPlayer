@@ -1,7 +1,7 @@
 #import <Cocoa/Cocoa.h>
-#include "WindowTypes.h"
+#include "../WindowTypes.h"
 #include "Window.h"
-#include "FileSaveDlg.h"
+#include "../FileSaveDlg.h"
 
 
 NSArray *toNsStringArray(VecStrings &setExt);

@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		5FBCCD3214851B5300D7C64A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FBCCD3114851B5300D7C64A /* Cocoa.framework */; };
-		5FBCCD6714851BE700D7C64A /* HelperFun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FBCCD4614851BE700D7C64A /* HelperFun.cpp */; };
-		5FBCCD6814851BE700D7C64A /* HelperFun.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FBCCD4714851BE700D7C64A /* HelperFun.h */; };
 		5FBCCD7114851BE700D7C64A /* LyricsSearch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FBCCD5014851BE700D7C64A /* LyricsSearch.cpp */; };
 		5FBCCD7214851BE700D7C64A /* LyricsSearch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FBCCD5114851BE700D7C64A /* LyricsSearch.h */; };
 		5FBCCD7714851BE700D7C64A /* CurrentLyrics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FBCCD5614851BE700D7C64A /* CurrentLyrics.cpp */; };
@@ -32,8 +30,6 @@
 		5FBCCD3414851B5300D7C64A /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		5FBCCD3514851B5300D7C64A /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		5FBCCD3614851B5300D7C64A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		5FBCCD4614851BE700D7C64A /* HelperFun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HelperFun.cpp; sourceTree = SOURCE_ROOT; };
-		5FBCCD4714851BE700D7C64A /* HelperFun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelperFun.h; sourceTree = SOURCE_ROOT; };
 		5FBCCD5014851BE700D7C64A /* LyricsSearch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LyricsSearch.cpp; sourceTree = SOURCE_ROOT; };
 		5FBCCD5114851BE700D7C64A /* LyricsSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LyricsSearch.h; sourceTree = SOURCE_ROOT; };
 		5FBCCD5614851BE700D7C64A /* CurrentLyrics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CurrentLyrics.cpp; sourceTree = SOURCE_ROOT; };
@@ -104,8 +100,6 @@
 				C064707B2AB7E24E009EEB45 /* LrcParser.h */,
 				5FBCCD5614851BE700D7C64A /* CurrentLyrics.cpp */,
 				5FBCCD5714851BE700D7C64A /* CurrentLyrics.h */,
-				5FBCCD4614851BE700D7C64A /* HelperFun.cpp */,
-				5FBCCD4714851BE700D7C64A /* HelperFun.h */,
 				C006BA7A2AAA13CF0045EA52 /* LrcParser.cpp */,
 				5FDF5F971720CE8100F20EB2 /* LyricsKeywordFilter.cpp */,
 				5FDF5F981720CE8100F20EB2 /* LyricsKeywordFilter.h */,
@@ -128,7 +122,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5FBCCD6814851BE700D7C64A /* HelperFun.h in Headers */,
 				C006BA7C2AAA13CF0045EA52 /* LyricsParser.h in Headers */,
 				5FBCCD7214851BE700D7C64A /* LyricsSearch.h in Headers */,
 				5FBCCD7814851BE700D7C64A /* CurrentLyrics.h in Headers */,
@@ -191,7 +184,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5FBCCD6714851BE700D7C64A /* HelperFun.cpp in Sources */,
 				C006BA7D2AAA13CF0045EA52 /* LrcParser.cpp in Sources */,
 				5FBCCD7114851BE700D7C64A /* LyricsSearch.cpp in Sources */,
 				5FBCCD7714851BE700D7C64A /* CurrentLyrics.cpp in Sources */,

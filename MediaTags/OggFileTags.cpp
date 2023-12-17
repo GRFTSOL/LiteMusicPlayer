@@ -36,7 +36,7 @@ protected:
         uint8_t sizes[256];
     };
 
-    void parsePageHeader(BinaryFileInputStream &fs, PageHeader &headerOut) throw(BinaryStreamOutOfRange);
+    void parsePageHeader(BinaryFileInputStream &fs, PageHeader &headerOut);
     void parseStreamInfo(const StringView &data, uint64_t countGranular, size_t sizeMedia);
 
 protected:
@@ -131,7 +131,7 @@ int OggTag::open(cstr_t fileName, MediaDataType needMediaDataTypes) {
     return ERR_OK;
 }
 
-void OggTag::parsePageHeader(BinaryFileInputStream &fs, PageHeader &headerOut) throw(BinaryStreamOutOfRange) {
+void OggTag::parsePageHeader(BinaryFileInputStream &fs, PageHeader &headerOut) {
     string header = fs.readString(27);
     BinaryInputStream is(header);
 

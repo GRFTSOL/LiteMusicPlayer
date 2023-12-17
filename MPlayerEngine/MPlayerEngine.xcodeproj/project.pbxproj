@@ -8,11 +8,23 @@
 
 /* Begin PBXBuildFile section */
 		5F2BD4C714962301003E7F5C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F2BD4C614962301003E7F5C /* Cocoa.framework */; };
-		5F2BD59714963C09003E7F5C /* fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F2BD59514963C09003E7F5C /* fft.c */; };
-		5F2BD59814963C09003E7F5C /* fft.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2BD59614963C09003E7F5C /* fft.h */; };
-		5FCD5B9817A95168004FD253 /* CoreAVPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCD5B9617A95168004FD253 /* CoreAVPlayer.h */; };
-		5FCD5B9917A95168004FD253 /* CoreAVPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5FCD5B9717A95168004FD253 /* CoreAVPlayer.mm */; };
-		C0554002298FC64A0057629E /* IPlayerCore.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C0554000298FC64A0057629E /* IPlayerCore.hpp */; };
+		C07652052B24008300BC9342 /* CoreAVPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = C07651FF2B24008300BC9342 /* CoreAVPlayer.mm */; };
+		C07652062B24008300BC9342 /* CoreAVPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = C07652002B24008300BC9342 /* CoreAVPlayer.h */; };
+		C07652072B24008300BC9342 /* MPlayerCore.h in Headers */ = {isa = PBXBuildFile; fileRef = C07652012B24008300BC9342 /* MPlayerCore.h */; };
+		C07652082B24008300BC9342 /* MPlayerCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C07652022B24008300BC9342 /* MPlayerCore.cpp */; };
+		C07652092B24008300BC9342 /* IMPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = C07652032B24008300BC9342 /* IMPlayer.h */; };
+		C076520A2B24008300BC9342 /* IPlayerCore.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C07652042B24008300BC9342 /* IPlayerCore.hpp */; };
+		C076520D2B2461C100BC9342 /* MDMiniMp3.h in Headers */ = {isa = PBXBuildFile; fileRef = C076520B2B2461C100BC9342 /* MDMiniMp3.h */; };
+		C076520E2B2461C100BC9342 /* MDMiniMp3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C076520C2B2461C100BC9342 /* MDMiniMp3.cpp */; };
+		C07652112B256BE500BC9342 /* CoreAudioOutput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C07652102B256BE500BC9342 /* CoreAudioOutput.cpp */; };
+		C07E01662B268BB000EC2B98 /* InputBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C07E01642B268BB000EC2B98 /* InputBuffer.cpp */; };
+		C07E01672B268BB000EC2B98 /* InputBuffer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C07E01652B268BB000EC2B98 /* InputBuffer.hpp */; };
+		C07E016A2B26DA5000EC2B98 /* FBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C07E01682B26DA5000EC2B98 /* FBuffer.cpp */; };
+		C07E016B2B26DA5000EC2B98 /* FBuffer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C07E01692B26DA5000EC2B98 /* FBuffer.hpp */; };
+		C07E016E2B280EF100EC2B98 /* MDFaac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C07E016C2B280EF100EC2B98 /* MDFaac.cpp */; };
+		C07E02442B2B2FED00EC2B98 /* MediaInputFile.h in Headers */ = {isa = PBXBuildFile; fileRef = C07E02422B2B2FED00EC2B98 /* MediaInputFile.h */; };
+		C07E02452B2B2FED00EC2B98 /* MediaInputFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C07E02432B2B2FED00EC2B98 /* MediaInputFile.cpp */; };
+		C07E06492B2BF87F00EC2B98 /* MDFlac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C07E06472B2BF87E00EC2B98 /* MDFlac.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,11 +33,26 @@
 		5F2BD4C914962301003E7F5C /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		5F2BD4CA14962301003E7F5C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		5F2BD4CB14962301003E7F5C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		5F2BD59514963C09003E7F5C /* fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fft.c; sourceTree = SOURCE_ROOT; };
-		5F2BD59614963C09003E7F5C /* fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fft.h; sourceTree = SOURCE_ROOT; };
-		5FCD5B9617A95168004FD253 /* CoreAVPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreAVPlayer.h; path = mac/CoreAVPlayer.h; sourceTree = SOURCE_ROOT; };
-		5FCD5B9717A95168004FD253 /* CoreAVPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CoreAVPlayer.mm; path = mac/CoreAVPlayer.mm; sourceTree = SOURCE_ROOT; };
-		C0554000298FC64A0057629E /* IPlayerCore.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = IPlayerCore.hpp; sourceTree = SOURCE_ROOT; };
+		C07651FF2B24008300BC9342 /* CoreAVPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreAVPlayer.mm; sourceTree = "<group>"; };
+		C07652002B24008300BC9342 /* CoreAVPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreAVPlayer.h; sourceTree = "<group>"; };
+		C07652012B24008300BC9342 /* MPlayerCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPlayerCore.h; sourceTree = "<group>"; };
+		C07652022B24008300BC9342 /* MPlayerCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MPlayerCore.cpp; sourceTree = "<group>"; };
+		C07652032B24008300BC9342 /* IMPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMPlayer.h; sourceTree = "<group>"; };
+		C07652042B24008300BC9342 /* IPlayerCore.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IPlayerCore.hpp; sourceTree = "<group>"; };
+		C076520B2B2461C100BC9342 /* MDMiniMp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDMiniMp3.h; sourceTree = "<group>"; };
+		C076520C2B2461C100BC9342 /* MDMiniMp3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDMiniMp3.cpp; sourceTree = "<group>"; };
+		C076520F2B256BDB00BC9342 /* CoreAudioOutput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreAudioOutput.h; sourceTree = "<group>"; };
+		C07652102B256BE500BC9342 /* CoreAudioOutput.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CoreAudioOutput.cpp; sourceTree = "<group>"; };
+		C07E01642B268BB000EC2B98 /* InputBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InputBuffer.cpp; sourceTree = "<group>"; };
+		C07E01652B268BB000EC2B98 /* InputBuffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = InputBuffer.hpp; sourceTree = "<group>"; };
+		C07E01682B26DA5000EC2B98 /* FBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FBuffer.cpp; sourceTree = "<group>"; };
+		C07E01692B26DA5000EC2B98 /* FBuffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FBuffer.hpp; sourceTree = "<group>"; };
+		C07E016C2B280EF100EC2B98 /* MDFaac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MDFaac.cpp; sourceTree = "<group>"; };
+		C07E016D2B280EF100EC2B98 /* MDFaac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MDFaac.h; sourceTree = "<group>"; };
+		C07E02422B2B2FED00EC2B98 /* MediaInputFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaInputFile.h; sourceTree = "<group>"; };
+		C07E02432B2B2FED00EC2B98 /* MediaInputFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaInputFile.cpp; sourceTree = "<group>"; };
+		C07E06472B2BF87E00EC2B98 /* MDFlac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MDFlac.cpp; sourceTree = "<group>"; };
+		C07E06482B2BF87F00EC2B98 /* MDFlac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MDFlac.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,8 +70,24 @@
 		5F2BD4B814962300003E7F5C = {
 			isa = PBXGroup;
 			children = (
-				5F2BD4CC14962301003E7F5C /* Source */,
+				C07E02432B2B2FED00EC2B98 /* MediaInputFile.cpp */,
+				C07E02422B2B2FED00EC2B98 /* MediaInputFile.h */,
+				C07E01682B26DA5000EC2B98 /* FBuffer.cpp */,
+				C07E01692B26DA5000EC2B98 /* FBuffer.hpp */,
 				5F2BD4C514962301003E7F5C /* Frameworks */,
+				C07652032B24008300BC9342 /* IMPlayer.h */,
+				C07E01642B268BB000EC2B98 /* InputBuffer.cpp */,
+				C07E01652B268BB000EC2B98 /* InputBuffer.hpp */,
+				C07652042B24008300BC9342 /* IPlayerCore.hpp */,
+				C07651FE2B24008300BC9342 /* mac */,
+				C07E016C2B280EF100EC2B98 /* MDFaac.cpp */,
+				C07E016D2B280EF100EC2B98 /* MDFaac.h */,
+				C076520C2B2461C100BC9342 /* MDMiniMp3.cpp */,
+				C076520B2B2461C100BC9342 /* MDMiniMp3.h */,
+				C07E06472B2BF87E00EC2B98 /* MDFlac.cpp */,
+				C07E06482B2BF87F00EC2B98 /* MDFlac.h */,
+				C07652022B24008300BC9342 /* MPlayerCore.cpp */,
+				C07652012B24008300BC9342 /* MPlayerCore.h */,
 				5F2BD4C414962301003E7F5C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -76,25 +119,15 @@
 			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
-		5F2BD4CC14962301003E7F5C /* Source */ = {
+		C07651FE2B24008300BC9342 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				5F2BD59514963C09003E7F5C /* fft.c */,
-				5F2BD59614963C09003E7F5C /* fft.h */,
-				5FCD5B9517A95157004FD253 /* mac */,
-				C0554000298FC64A0057629E /* IPlayerCore.hpp */,
+				C07652102B256BE500BC9342 /* CoreAudioOutput.cpp */,
+				C076520F2B256BDB00BC9342 /* CoreAudioOutput.h */,
+				C07651FF2B24008300BC9342 /* CoreAVPlayer.mm */,
+				C07652002B24008300BC9342 /* CoreAVPlayer.h */,
 			);
-			name = Source;
-			path = MPlayerLib;
-			sourceTree = "<group>";
-		};
-		5FCD5B9517A95157004FD253 /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				5FCD5B9617A95168004FD253 /* CoreAVPlayer.h */,
-				5FCD5B9717A95168004FD253 /* CoreAVPlayer.mm */,
-			);
-			name = mac;
+			path = mac;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -104,9 +137,14 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5F2BD59814963C09003E7F5C /* fft.h in Headers */,
-				5FCD5B9817A95168004FD253 /* CoreAVPlayer.h in Headers */,
-				C0554002298FC64A0057629E /* IPlayerCore.hpp in Headers */,
+				C07E016B2B26DA5000EC2B98 /* FBuffer.hpp in Headers */,
+				C076520A2B24008300BC9342 /* IPlayerCore.hpp in Headers */,
+				C076520D2B2461C100BC9342 /* MDMiniMp3.h in Headers */,
+				C07652092B24008300BC9342 /* IMPlayer.h in Headers */,
+				C07E02442B2B2FED00EC2B98 /* MediaInputFile.h in Headers */,
+				C07652072B24008300BC9342 /* MPlayerCore.h in Headers */,
+				C07E01672B268BB000EC2B98 /* InputBuffer.hpp in Headers */,
+				C07652062B24008300BC9342 /* CoreAVPlayer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -161,8 +199,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5F2BD59714963C09003E7F5C /* fft.c in Sources */,
-				5FCD5B9917A95168004FD253 /* CoreAVPlayer.mm in Sources */,
+				C07E02452B2B2FED00EC2B98 /* MediaInputFile.cpp in Sources */,
+				C07E06492B2BF87F00EC2B98 /* MDFlac.cpp in Sources */,
+				C07652052B24008300BC9342 /* CoreAVPlayer.mm in Sources */,
+				C07652082B24008300BC9342 /* MPlayerCore.cpp in Sources */,
+				C07E01662B268BB000EC2B98 /* InputBuffer.cpp in Sources */,
+				C07E016E2B280EF100EC2B98 /* MDFaac.cpp in Sources */,
+				C07E016A2B26DA5000EC2B98 /* FBuffer.cpp in Sources */,
+				C076520E2B2461C100BC9342 /* MDMiniMp3.cpp in Sources */,
+				C07652112B256BE500BC9342 /* CoreAudioOutput.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -200,9 +245,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					$SRCROOT/..,
+					$SRCROOT/../TinyJs,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
 		};
@@ -231,8 +281,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					$SRCROOT/..,
+					$SRCROOT/../TinyJs,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;
 		};
@@ -244,9 +299,9 @@
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
-				HEADER_SEARCH_PATHS = (
-					$SRCROOT/..,
-					$SRCROOT/../TinyJs,
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/3rd-parties/faad2/build",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -261,9 +316,9 @@
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
-				HEADER_SEARCH_PATHS = (
-					$SRCROOT/..,
-					$SRCROOT/../TinyJs,
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/3rd-parties/faad2/build",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";

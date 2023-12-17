@@ -1,9 +1,9 @@
 #import <Foundation/Foundation.h>
 #import <Cocoa/Cocoa.h>
 #import <QuartzCore/QuartzCore.h>
-#include "GfxRaw.h"
-#include "RawGraphData.h"
+#include "../GfxRaw.h"
 #import "../../Window/mac/ViewMacImp.h"
+#include "RawGraphData.h"
 
 
 CGContextRef createViewContext(WindowHandle handle) {

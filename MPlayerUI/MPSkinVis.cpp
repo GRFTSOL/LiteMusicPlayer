@@ -39,7 +39,7 @@ void CMPSkinVis::onEvent(const IEvent *pEvent) {
     CEventVisDrawUpdate *pVisEvt = (CEventVisDrawUpdate*)pEvent;
 
     //// the pVisEvt->pVisParam should be a static param.
-    m_visParamCur = pVisEvt->pVisParam;
+    // m_visParamCur = pVisEvt->pVisParam;
 
     invalidate();
 }

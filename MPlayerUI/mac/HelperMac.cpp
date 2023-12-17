@@ -1,5 +1,5 @@
-﻿#include "MPlayerApp.h"
-#include "Helper.h"
+﻿#include "../MPlayerApp.h"
+#include "../Helper.h"
 
 
 void analyseProxySetting(cstr_t szProxySetting, char szServer[], int nMaxSize, int &nPort);

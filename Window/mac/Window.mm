@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "WindowTypes.h"
+#import "../WindowTypes.h"
 #import "Window.h"
 #import "WindowHandleHolder.h"
 

@@ -129,6 +129,13 @@ CoreAVPlayer::CoreAVPlayer(void) {
 CoreAVPlayer::~CoreAVPlayer(void) {
 }
 
+void CoreAVPlayer::quit() {
+    if (m_player) {
+        [(_MDAVPlayer*)m_player release];
+        m_player = nullptr;
+    }
+}
+
 // 实现的说明
 const char *CoreAVPlayer::getDescription() {
     return "Mac OS System AVPlayer Implementation";

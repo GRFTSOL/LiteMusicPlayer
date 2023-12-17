@@ -1,4 +1,3 @@
-﻿#include "HelperFun.h"
 #include "LyricsParser.h"
 #include "LrcParser.h"
 #include "SrtParser.h"

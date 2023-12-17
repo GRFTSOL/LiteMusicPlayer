@@ -2,7 +2,7 @@
 #import <Cocoa/Cocoa.h>
 #import <QuartzCore/QuartzCore.h>
 #import <math.h>
-#include "FontInfoEx.h"
+#include "../FontInfoEx.h"
 #include "GfxFont.h"
 
 

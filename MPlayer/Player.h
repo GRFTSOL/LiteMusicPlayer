@@ -1,7 +1,7 @@
 #pragma once
 
+#include "TinyJS/utils/UtilsTypes.h"
 #include "../MPlayerEngine/IPlayerCore.hpp"
-#include "../MPlayerEngine/MPTools.h"
 #include "../Skin/EventsDispatcherBase.h"
 #include "MediaLibrary.h"
 

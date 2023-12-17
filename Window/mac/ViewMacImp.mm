@@ -7,7 +7,7 @@
 //
 
 #import <Carbon/Carbon.h>
-#import "WindowTypes.h"
+#import "../WindowTypes.h"
 #import "ViewMacImp.h"
 #import "Window.h"
 #import "../Cursor.h"

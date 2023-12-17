@@ -26,7 +26,7 @@ public:
     CGContextRef getHandle() const { return m_context; }
 
 protected:
-    WindowHandle                m_windowHandle = NULL;
+    WindowHandle                m_windowHandle = 0;
     RawImageData                m_imageData;
     CGContextRef                m_context = nullptr;
 

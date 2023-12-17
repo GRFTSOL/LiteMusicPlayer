@@ -1,4 +1,4 @@
-﻿/********************************************************************
+/********************************************************************
     Created  :    2002年1月3日 17:54:54
     FileName :    MLData.cpp
     Author   :    xhy
@@ -8,7 +8,6 @@
 
 #include "CurrentLyrics.h"
 #include "LyricsSearch.h"
-#include "HelperFun.h"
 #include "LrcParser.h"
 #ifndef _IPHONE
 #include "SncParser.h"

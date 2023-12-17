@@ -75,7 +75,7 @@ void CLyricsKeywordFilter::init(cstr_t fnFilter) {
                 // remove
                 utf16string strW;
 
-                utf8ToUCS2(node->strContent.c_str(), node->strContent.size(), strW);
+                utf8ToUCS2(node->strContent.c_str(), (int)node->strContent.size(), strW);
                 ucs2TableDelChars(strW.c_str());
             } else if (node->name == "Replace") {
                 // replace

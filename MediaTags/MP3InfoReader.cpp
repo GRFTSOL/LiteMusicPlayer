@@ -1,4 +1,4 @@
-﻿#include "MP3InfoReader.h"
+#include "MP3InfoReader.h"
 #include "ID3/ID3v2.h"
 #include "ID3/ID3Helper.h"
 #include "../TinyJS/utils/BinaryFileStream.h"
@@ -172,86 +172,88 @@ protected:
 
 };
 
+int getVbrInfoFrameCount(uint8_t const *buf, int len, MP3Info &info) {
+    BinaryInputStream is(buf, len);
 
-int getVbrInfoFrameCount(uint8_t const *frameBuff, int nBuffLen, MP3Info &info) {
-    int nOffset;
-
-    if (info.version == MP3Info::MPEG2 || info.version == MP3Info::MPEG25) {
-        nOffset = info.channelMode == MP3Info::SingleChannel ? 9 : 17;
-    } else {
-        nOffset = info.channelMode == MP3Info::SingleChannel ? 17 : 32;
-    }
-    nOffset += 4;
-
-    auto buff = frameBuff + nOffset;
-
-    int nFrameCount = -1;
-
-    if ((buff[0] == 'X' && buff[1] == 'i' && buff[2] == 'n' && buff[3] == 'g')
-        || (buff[0] == 'I' && buff[1] == 'n' && buff[2] == 'f' && buff[3] == 'o')) {
-        /* XING VBR-Header
-
-        size    description
-        4        'Xing' or 'Info'
-        4        flags (indicates which fields are used)
-        4        frames (optional)
-        4        bytes (optional)
-        100    toc (optional)
-        4        a VBR quality indicator: 0=best 100=worst (optional)
-
-        */
-        CBigEndianBuffReader bufReader(buff + 4, nBuffLen - nOffset - 4);
-
-        if (!bufReader.isAvailable(4)) {
-            return -1;
+    try {
+        if (info.version == MP3Info::MPEG2 || info.version == MP3Info::MPEG25) {
+            is.forward(info.channelMode == MP3Info::SingleChannel ? 9 : 17);
+        } else {
+            is.forward(info.channelMode == MP3Info::SingleChannel ? 17 : 32);
         }
-        int nHeadFlags = bufReader.extractIx(4);
+        is.forward(4);
 
-        if (nHeadFlags & FRAMES_FLAG) {
-            if (!bufReader.isAvailable(4)) {
-                return -1;
+        int frameCount = -1;
+
+        auto tag = is.readString(4);
+        if (tag.equal("Xing") || tag.equal("Info")) {
+            /* XING VBR-Header
+            size    description
+            4        'Xing' or 'Info'
+            4        flags (indicates which fields are used)
+            4        frames (optional)
+            4        bytes (optional)
+            100    toc (optional)
+            4        a VBR quality indicator: 0=best 100=worst (optional)
+            */
+            auto nHeadFlags = is.readUInt32BE();
+            info.isXingToc = true;
+
+            if (nHeadFlags & FRAMES_FLAG) {
+                frameCount = is.readUInt32BE();
             }
-            nFrameCount = bufReader.extractIx(4);
+
+            if (nHeadFlags & BYTES_FLAG) {
+                info.bytesFrames = is.readUInt32BE();
+            }
+
+            if (nHeadFlags & TOC_FLAG) {
+                info.toc.clear();
+                for (int i = 0; i < 100; i++) {
+                    info.toc.push_back(is.readUInt8());
+                }
+            }
+        } else if (tag.equal("VBRI")) {
+            /* FhG VBRI Header
+            size    description
+            4        'VBRI' (ID)
+            2        version
+            2        delay
+            2        quality
+            4        bytes
+            4        frames
+            2        table size (for TOC)
+            2        table scale (for TOC)
+            2        size of table entry (max. size = 4 uint8_t (must be stored in an integer))
+            2        frames per table entry
+
+            ??        dynamic table consisting out of frames with size 1-4
+            whole length in table size! (for TOC)
+            */
+
+            // extract all fields from header (all mandatory)
+            /* auto version = */is.readUInt16BE();
+            /* float delay = */is.readUInt16BE();
+            /* auto quality = */is.readUInt16BE();
+            info.bytesFrames = is.readUInt32BE();
+            frameCount = is.readUInt32BE();
+            auto tocSize = is.readUInt16BE();
+            /* auto tocScale = */is.readUInt16BE();
+            auto tocEntrySize = is.readUInt16BE();
+            info.tocVbriFramesPerEntry = is.readUInt16BE();
+            if (info.tocVbriFramesPerEntry == 0) {
+                return frameCount;
+            }
+            for (int i = 0; i < tocSize; i++) {
+                info.toc.push_back(is.readUIntXBE(tocEntrySize));
+            }
         }
-    } else if (buff[0] == 'V' && buff[1] == 'B' && buff[2] == 'R' && buff[3] == 'I') {
-        // VBRI header
-        /* FhG VBRI Header
 
-        size    description
-        4        'VBRI' (ID)
-        2        version
-        2        delay
-        2        quality
-        4        # bytes
-        4        # frames
-        2        table size (for TOC)
-        2        table scale (for TOC)
-        2        size of table entry (max. size = 4 uint8_t (must be stored in an integer))
-        2        frames per table entry
-
-        ??        dynamic table consisting out of frames with size 1-4
-        whole length in table size! (for TOC)
-
-        */
-
-        CBigEndianBuffReader bufReader(buff + 4, nBuffLen - nOffset - 4);
-
-        // extract all fields from header (all mandatory)
-        uint32_t dwVersion, dwQuality;
-        float fDelay;
-
-        if (!bufReader.isAvailable(2 + 2 + 2 + 4 + 4)) {
-            return -1;
-        }
-
-        dwVersion = bufReader.extractIx(2);
-        fDelay = (float)bufReader.extractIx(2);
-        dwQuality = bufReader.extractIx(2);
-        /* int nFileSizeOrg = */bufReader.extractIx(4);
-        nFrameCount = bufReader.extractIx(4);
+        return frameCount;
+    } catch (std::exception &e) {
+        info.toc.clear();
+        return -1;
     }
-
-    return nFrameCount;
 }
 
 bool parseFrameHeader(uint8_t byHeader[PRE_READ_BUFF_SIZE], size_t headerPos, size_t fileSize, MP3Info &infoOut) {
@@ -368,16 +370,18 @@ bool parseFrameHeader(uint8_t byHeader[PRE_READ_BUFF_SIZE], size_t headerPos, si
 
     int nSamplesPerFrame = SAMPLES_PER_FRAMES[isLSF][infoOut.layer];
     int nFrameSize = (((COEFFICENTS[isLSF][infoOut.layer] * infoOut.bitRate * 1000 / infoOut.sampleRate) + paddingSize)) * SLOT_SIZES[infoOut.layer];
+    infoOut.frameSize = nFrameSize;
 
-    int64_t nFrameCount = getVbrInfoFrameCount(byHeader, PRE_READ_BUFF_SIZE, infoOut);
-    if (nFrameCount < 0) {
+    auto frameCount = getVbrInfoFrameCount(byHeader, PRE_READ_BUFF_SIZE, infoOut);
+    if (frameCount < 0) {
         if (nFrameSize > 0) {
-            nFrameCount = (fileSize - headerPos) / nFrameSize;
+            frameCount = int(fileSize - headerPos) / nFrameSize;
         }
     }
+    infoOut.frameCount = frameCount;
 
-    if (nFrameCount > 0) {
-        infoOut.duration = int((double)nSamplesPerFrame * nFrameCount * 1000 / infoOut.sampleRate + 0.5);
+    if (frameCount > 0) {
+        infoOut.duration = int((double)nSamplesPerFrame * frameCount * 1000 / infoOut.sampleRate + 0.5);
     } else if (infoOut.bitRate > 0) {
         infoOut.duration = (uint32_t)((fileSize - headerPos) * 8 / (double)infoOut.bitRate + 0.5);
     } else {
@@ -410,6 +414,8 @@ bool readMP3Info(FILE *fp, MP3Info &infoOut) {
         BinaryFileInputStream is(fp);
 
         auto fileSize = is.size();
+        infoOut.bytesFrames = infoOut.fileSize = fileSize;
+
         string buf = is.readString(sizeof(ID3v2Header));
         ID3v2Header *header = (ID3v2Header *)buf.c_str();
 
@@ -431,6 +437,7 @@ bool readMP3Info(FILE *fp, MP3Info &infoOut) {
             is.readBuf(byHeader, PRE_READ_BUFF_SIZE);
 
             if (parseFrameHeader(byHeader, headerPos, fileSize, infoOut)) {
+                infoOut.firstFrameOffset = (uint32_t)headerPos;
                 return true;
             }
         }

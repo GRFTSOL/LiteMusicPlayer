@@ -1,6 +1,5 @@
-﻿#include "MPlayerApp.h"
+#include "MPlayerApp.h"
 #include "CurMediaAlbumArt.h"
-#include "../LyricsLib/HelperFun.h"
 
 
 static cstr_t SZ_SUPPORTED_IMG_EXT[] = { ".jpg", ".gif", ".bmp", ".png" };

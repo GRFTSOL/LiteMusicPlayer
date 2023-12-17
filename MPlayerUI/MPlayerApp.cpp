@@ -1,4 +1,4 @@
-﻿#include "MPlayerApp.h"
+#include "MPlayerApp.h"
 #include "MLCmd.h"
 #include "DownloadMgr.h"
 #include "MPEventsDispatcher.h"
@@ -94,7 +94,7 @@ bool MPlayerApp::_init() {
         return false;
     }
 
-    CLyricsKeywordFilter::init(getAppResourceFile("LyrKeywordFilter.xml"));
+    CLyricsKeywordFilter::init(getAppResourceFile("LyrKeywordFilter.xml").c_str());
 
     runAllUnittest();
 
@@ -142,8 +142,6 @@ bool MPlayerApp::_init() {
         g_wndFloatingLyr.create();
     }
 
-    g_lyrOutPlguinMgr.init();
-
     // onMediaChanged(true);
 
     LocalServer::getInstance()->start();
@@ -163,8 +161,6 @@ void MPlayerApp::_quit() {
     // 因为网络原因会导致 线程卡住，不主动调用 quit.
     // g_LyricSearch.quit();
     // g_LyricsDownloader.quit();
-
-    g_lyrOutPlguinMgr.quit();
     g_OnlineSearch.quit();
 
     IEventHandler::unregisterHandler();

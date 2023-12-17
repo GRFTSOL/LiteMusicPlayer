@@ -13,7 +13,7 @@
 
 class XiphComment {
 public:
-    void parse(const StringView &data, MediaDataType needDataTypes) throw(BinaryStreamOutOfRange);
+    void parse(const StringView &data, MediaDataType needDataTypes);
 
     void getTags(BasicMediaTags &tagOut) const {
         tagOut = _tags;

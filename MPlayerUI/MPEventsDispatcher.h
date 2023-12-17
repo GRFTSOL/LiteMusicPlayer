@@ -90,7 +90,7 @@ public:
 
 class CEventVisDrawUpdate : public IEvent {
 public:
-    VisParam                    *pVisParam;
+    // VisParam                    *pVisParam;
 };
 
 class ISkinCmdHandler {

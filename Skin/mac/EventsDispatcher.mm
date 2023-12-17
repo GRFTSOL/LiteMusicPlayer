@@ -1,9 +1,9 @@
-#include "SkinTypes.h"
+#include "../SkinTypes.h"
 #import <Foundation/Foundation.h>
 #import <AppKit/NSApplication.h>
-#include "EventsDispatcherBase.h"
+#include "../EventsDispatcherBase.h"
+#include "../Skin.h"
 #include "EventsDispatcher.h"
-#include "Skin.h"
 
 
 @interface EventsDispatchItem : NSObject {

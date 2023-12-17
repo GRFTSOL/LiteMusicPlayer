@@ -1,5 +1,5 @@
-#include "MPlayerApp.h"
-#include "MPSkinMainWnd.h"
+#include "../MPlayerApp.h"
+#include "../MPSkinMainWnd.h"
 
 #ifdef _WIN32
 #include "MPMsg.h"

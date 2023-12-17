@@ -1,7 +1,7 @@
 #import <Carbon/Carbon.h>
 #import "MediaKeyController.h"
-#import "MPlayerApp.h"
-#import "MLCmd.h"
+#import "../MPlayerApp.h"
+#import "../MLCmd.h"
 #import "MPHotkey.h"
 
 

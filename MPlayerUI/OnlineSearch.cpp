@@ -1,4 +1,4 @@
-﻿#include "MPlayerApp.h"
+#include "MPlayerApp.h"
 #include "../third-parties/sqlite/Sqlite3.hpp"
 #include "OnlineSearch.h"
 #include "DownloadMgr.h"
@@ -723,7 +723,7 @@ TEST(OnlineSearch, FilterSearchKeywords) {
 }
 
 TEST(OnlineSearch, RemoveSpamInTag) {
-    CLyricsKeywordFilter::init();
+    CLyricsKeywordFilter::init(getAppResourceFile("LyrKeywordFilter.xml").c_str());
 
     cstr_t cases[] = { "www.test.com - abc", "abc | ass.com",
         "http://a.com | title", "hi.come", };

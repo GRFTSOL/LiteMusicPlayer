@@ -1,10 +1,10 @@
-#include "MPlayerApp.h"
-#include "DownloadMgr.h"
-#include "VersionUpdate.h"
-#include "OnlineSearch.h"
-#include "AutoProcessEmbeddedLyrics.h"
-#include "MPFloatingLyrWnd.h"
-#include "LyricShowObj.h"
+#include "../MPlayerApp.h"
+#include "../DownloadMgr.h"
+#include "../VersionUpdate.h"
+#include "../OnlineSearch.h"
+#include "../AutoProcessEmbeddedLyrics.h"
+#include "../MPFloatingLyrWnd.h"
+#include "../LyricShowObj.h"
 #include "HeadPhoneWatch.hpp"
 
 

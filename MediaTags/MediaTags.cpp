@@ -1,4 +1,4 @@
-﻿#include "MediaTags.h"
+#include "MediaTags.h"
 
 #include "ID3/ID3v1.h"
 #include "ID3/ID3v2.h"
@@ -6,6 +6,7 @@
 #include "OggFileTags.hpp"
 #include "MP3FileTags.hpp"
 #include "M4aFileTags.hpp"
+#include "AacFileTags.hpp"
 #include "MidiFileTags.h"
 #include "LrcParser.h"
 
@@ -30,6 +31,7 @@ MapIMediaFileTags initMediaFileTags() {
     _addToMediaFileTagsMap(m, make_shared<OggFileTags>());
     _addToMediaFileTagsMap(m, make_shared<MP3FileTags>());
     _addToMediaFileTagsMap(m, make_shared<M4aFileTags>());
+    _addToMediaFileTagsMap(m, make_shared<AacFileTags>());
     _addToMediaFileTagsMap(m, make_shared<FlacFileTags>());
     _addToMediaFileTagsMap(m, make_shared<MidiFileTags>());
 

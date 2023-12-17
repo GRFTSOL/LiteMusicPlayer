@@ -17,8 +17,8 @@
 
 @end
 
-#import "Player.h"
-#import "MPlayerApp.h"
+#import "../MPlayer/Player.h"
+#import "../MPlayerApp.h"
 
 @implementation _PlayerEventDispatcherInternal
 

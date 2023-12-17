@@ -1,5 +1,5 @@
-﻿#include "../MPlayer/Player.h"
-#include "../Skin/Skin.h"
+﻿#include "../Skin/Skin.h"
+#include "../MPlayer/Player.h"
 #include "MPSkinTimeCtrl.h"
 
 

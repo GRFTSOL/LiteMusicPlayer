@@ -100,6 +100,8 @@ public:
     IPlayerCore() { m_callback = nullptr; }
     virtual ~IPlayerCore() { }
 
+    virtual void quit() = 0;
+
     // 实现的说明
     virtual const char *getDescription() = 0;
 

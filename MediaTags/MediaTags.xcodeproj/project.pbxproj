@@ -40,6 +40,7 @@
 		C006BA852AAAEE790045EA52 /* LrcParserHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = C006BA842AAAEE790045EA52 /* LrcParserHelper.h */; };
 		C05D744F29613F4700294F50 /* MediaTagTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C05D744D29613F4700294F50 /* MediaTagTypes.cpp */; };
 		C05D745029613F4700294F50 /* MediaTagTypes.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C05D744E29613F4700294F50 /* MediaTagTypes.hpp */; };
+		C07E02412B2A802B00EC2B98 /* AacFileTags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C07E02402B2A802B00EC2B98 /* AacFileTags.cpp */; };
 		C08AA9412AF0BE5400F5DE2D /* LyrTimestamps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C08AA93F2AF0BE5400F5DE2D /* LyrTimestamps.cpp */; };
 		C08AA9422AF0BE5400F5DE2D /* LyrTimestamps.h in Headers */ = {isa = PBXBuildFile; fileRef = C08AA9402AF0BE5400F5DE2D /* LyrTimestamps.h */; };
 		C0CBA42C2AAEF98A0061416F /* MP3FileTags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0CBA42A2AAEF98A0061416F /* MP3FileTags.cpp */; };
@@ -84,6 +85,8 @@
 		C006BA842AAAEE790045EA52 /* LrcParserHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LrcParserHelper.h; sourceTree = "<group>"; };
 		C05D744D29613F4700294F50 /* MediaTagTypes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTagTypes.cpp; sourceTree = "<group>"; };
 		C05D744E29613F4700294F50 /* MediaTagTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MediaTagTypes.hpp; sourceTree = "<group>"; };
+		C07E023F2B2A802B00EC2B98 /* AacFileTags.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AacFileTags.hpp; sourceTree = "<group>"; };
+		C07E02402B2A802B00EC2B98 /* AacFileTags.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AacFileTags.cpp; sourceTree = "<group>"; };
 		C08AA93F2AF0BE5400F5DE2D /* LyrTimestamps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LyrTimestamps.cpp; sourceTree = "<group>"; };
 		C08AA9402AF0BE5400F5DE2D /* LyrTimestamps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LyrTimestamps.h; sourceTree = "<group>"; };
 		C0CBA42A2AAEF98A0061416F /* MP3FileTags.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MP3FileTags.cpp; sourceTree = "<group>"; };
@@ -139,6 +142,8 @@
 		5FB59262154594860071B204 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				C07E02402B2A802B00EC2B98 /* AacFileTags.cpp */,
+				C07E023F2B2A802B00EC2B98 /* AacFileTags.hpp */,
 				C006B8EE2A9C4A310045EA52 /* FlacFileTags.cpp */,
 				C006B8EF2A9C4A310045EA52 /* FlacFileTags.hpp */,
 				0EB71128277D84C1006929F1 /* ID3 */,
@@ -259,6 +264,7 @@
 				0EB71141277D84C1006929F1 /* ID3v2FrameParser.cpp in Sources */,
 				0EB71146277D84C1006929F1 /* ID3Helper.cpp in Sources */,
 				0EB71143277D84C1006929F1 /* ID3v2.cpp in Sources */,
+				C07E02412B2A802B00EC2B98 /* AacFileTags.cpp in Sources */,
 				5FB59273154594EA0071B204 /* ID3v2IF.cpp in Sources */,
 				C006B8F02A9C4A310045EA52 /* FlacFileTags.cpp in Sources */,
 				C08AA9412AF0BE5400F5DE2D /* LyrTimestamps.cpp in Sources */,

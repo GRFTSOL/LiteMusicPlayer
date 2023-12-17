@@ -1,9 +1,8 @@
 ﻿// MPSkinMainWnd.h: interface for the CMPSkinMainWnd class.
 #pragma once
 
-#include "MPSkinWnd.h"
 #include "MLTrayIcon.h"
-#include "MPSkinMainWnd.h"
+#include "../MPSkinMainWnd.h"
 
 
 class CMPSkinMainWnd : public CMPSkinMainWndBase {

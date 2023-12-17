@@ -3,10 +3,8 @@
 #include "MediaScanner.h"
 #include "../MPlayerUI/PlayListFile.h"
 #include "../MPlayerUI/OnlineSearch.h"
-#include "../LyricsLib/HelperFun.h"
 #include "../LyricsLib/CurrentLyrics.h"
-#include "../MPlayerEngine/MPlayer.h"
-
+#include "../MPlayerEngine/MPlayerCore.h"
 
 #ifdef _WIN32
 #include "../MPlayerUI/win32/PlayerEventDispatcher.h"
@@ -117,7 +115,7 @@ void CPlayer::onEndOfPlaying() {
         }
     }
 
-    m_state = m_playerCore->getState();
+    // m_state = m_playerCore->getState();
 
     notifyPlayStateChanged();
 }
@@ -143,11 +141,10 @@ void CPlayer::onInit() {
     }
 
 #ifdef _MAC_OS
-    m_playerCore = new CoreAVPlayer();
+    // m_playerCore = new CoreAVPlayer();
+    m_playerCore = new MPlayerCore();
 #else
-    if (CMPlayer::getInstance(&m_playerCore) != ERR_OK) {
-        return;
-    }
+    m_playerCore = new CoreAVPlayer();
 #endif
     m_playerCore->setCallback(this);
 
@@ -172,6 +169,8 @@ void CPlayer::onInit() {
 
     // volume
     m_volume = g_profile.getInt(SZ_SECT_PLAYER, "volume", 30);
+
+    m_playerCore->setVolume(m_isMute ? 0 : m_volume);
 
     // Load current playlist
     m_currentPlaylist = m_mediaLib->getNowPlaying();
@@ -1063,3 +1062,30 @@ void CPlayer::playNextOnFailed() {
         play();
     }
 }
+
+
+#if UNIT_TEST
+
+#include "../TinyJS/utils/unittest.h"
+
+TEST(HelperFun, testGetArtistTitleFromFileName) {
+    string artist, title;
+    cstr_t szFile;
+
+    szFile = "c:\\abc\ar - ti-a.mp3";
+    getArtistTitleFromFileName(artist, title, szFile);
+    ASSERT_TRUE(artist == "ar");
+    ASSERT_TRUE(title == "ti-a");
+
+    szFile = "c:\\abc\ar-ti-a.mp3";
+    getArtistTitleFromFileName(artist, title, szFile);
+    ASSERT_TRUE(artist == "ar");
+    ASSERT_TRUE(title == "ti-a");
+
+    szFile = "c:\\abc\ti.mp3";
+    getArtistTitleFromFileName(artist, title, szFile);
+    ASSERT_TRUE(artist == "");
+    ASSERT_TRUE(title == "ti");
+}
+
+#endif

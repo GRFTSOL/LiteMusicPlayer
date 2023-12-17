@@ -1,7 +1,7 @@
 #import <Cocoa/Cocoa.h>
-#include "WindowTypes.h"
+#include "../WindowTypes.h"
 #include "Window.h"
-#include "FileOpenDlg.h"
+#include "../FileOpenDlg.h"
 
 
 void CFileDlgExtFilter::addExtention(cstr_t szDesc, cstr_t szExt) {

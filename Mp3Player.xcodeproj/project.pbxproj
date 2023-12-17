@@ -134,7 +134,6 @@
 		0EB710B727773BB6006929F1 /* LyricShowTxtContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7102F27773BB4006929F1 /* LyricShowTxtContainer.cpp */; };
 		0EB710B827773BB6006929F1 /* MPSkinInfoTextCtrl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7103027773BB4006929F1 /* MPSkinInfoTextCtrl.cpp */; };
 		0EB710B927773BB6006929F1 /* DlgSearchLyrics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7103127773BB4006929F1 /* DlgSearchLyrics.cpp */; };
-		0EB710BD27773BB6006929F1 /* LyricsOutPluginMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7103D27773BB4006929F1 /* LyricsOutPluginMgr.cpp */; };
 		0EB710BE27773BB6006929F1 /* MPHotkey.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7103F27773BB4006929F1 /* MPHotkey.mm */; };
 		0EB710BF27773BB6006929F1 /* MLTrayIcon.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7104127773BB4006929F1 /* MLTrayIcon.mm */; };
 		0EB710C027773BB6006929F1 /* MPlayerApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EB7104327773BB4006929F1 /* MPlayerApp.cpp */; };
@@ -311,6 +310,7 @@
 		C07651F12B20C63A00BC9342 /* SkinFilterCtrl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C07651EC2B20C63A00BC9342 /* SkinFilterCtrl.cpp */; };
 		C07651F42B20C66700BC9342 /* Profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C07651F32B20C66700BC9342 /* Profile.cpp */; };
 		C07651FC2B21F17F00BC9342 /* MediaScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C07651FA2B21F17F00BC9342 /* MediaScanner.cpp */; };
+		C07E01632B25D9E100EC2B98 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C07E015B2B25D8ED00EC2B98 /* AudioToolbox.framework */; };
 		C08AA9482AF5244900F5DE2D /* SkinIcons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C08AA9462AF5244900F5DE2D /* SkinIcons.cpp */; };
 		C08AA9822AFA546700F5DE2D /* menu-logo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C08AA9762AFA546700F5DE2D /* menu-logo@2x.png */; };
 		C08AA9832AFA546700F5DE2D /* prev-disabled.png in Resources */ = {isa = PBXBuildFile; fileRef = C08AA9772AFA546700F5DE2D /* prev-disabled.png */; };
@@ -620,7 +620,6 @@
 		0EB70FC127773BAE006929F1 /* LyrDisplayClrListWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LyrDisplayClrListWnd.cpp; path = MPlayerUI/LyrDisplayClrListWnd.cpp; sourceTree = "<group>"; };
 		0EB70FC227773BAF006929F1 /* DlgUpload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgUpload.cpp; path = MPlayerUI/DlgUpload.cpp; sourceTree = "<group>"; };
 		0EB70FC627773BAF006929F1 /* LyricsLocalSearch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LyricsLocalSearch.cpp; path = MPlayerUI/LyricsLocalSearch.cpp; sourceTree = "<group>"; };
-		0EB70FC727773BAF006929F1 /* LyricsOutPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LyricsOutPlugin.h; path = MPlayerUI/LyricsOutPlugin.h; sourceTree = "<group>"; };
 		0EB70FC827773BAF006929F1 /* PreferPageSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PreferPageSystem.cpp; path = MPlayerUI/PreferPageSystem.cpp; sourceTree = "<group>"; };
 		0EB70FCA27773BAF006929F1 /* ThemesFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ThemesFile.h; path = MPlayerUI/ThemesFile.h; sourceTree = "<group>"; };
 		0EB70FCB27773BAF006929F1 /* PreferPageSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferPageSystem.h; path = MPlayerUI/PreferPageSystem.h; sourceTree = "<group>"; };
@@ -702,8 +701,6 @@
 		0EB7103127773BB4006929F1 /* DlgSearchLyrics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgSearchLyrics.cpp; path = MPlayerUI/DlgSearchLyrics.cpp; sourceTree = "<group>"; };
 		0EB7103527773BB4006929F1 /* MPHotkey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPHotkey.h; sourceTree = "<group>"; };
 		0EB7103A27773BB4006929F1 /* MPSkinMainWndMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPSkinMainWndMac.h; sourceTree = "<group>"; };
-		0EB7103C27773BB4006929F1 /* LyricsOutPluginMgr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LyricsOutPluginMgr.h; sourceTree = "<group>"; };
-		0EB7103D27773BB4006929F1 /* LyricsOutPluginMgr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LyricsOutPluginMgr.cpp; sourceTree = "<group>"; };
 		0EB7103F27773BB4006929F1 /* MPHotkey.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MPHotkey.mm; sourceTree = "<group>"; };
 		0EB7104127773BB4006929F1 /* MLTrayIcon.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MLTrayIcon.mm; sourceTree = "<group>"; };
 		0EB7104227773BB4006929F1 /* PlayerEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerEventDispatcher.h; sourceTree = "<group>"; };
@@ -1000,6 +997,12 @@
 		C07651F32B20C66700BC9342 /* Profile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Profile.cpp; sourceTree = "<group>"; };
 		C07651FA2B21F17F00BC9342 /* MediaScanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaScanner.cpp; sourceTree = "<group>"; };
 		C07651FB2B21F17F00BC9342 /* MediaScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaScanner.h; sourceTree = "<group>"; };
+		C07E01562B25D8C100EC2B98 /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
+		C07E01592B25D8ED00EC2B98 /* AVFAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFAudio.framework; path = System/Library/Frameworks/AVFAudio.framework; sourceTree = SDKROOT; };
+		C07E015A2B25D8ED00EC2B98 /* AudioVideoBridging.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioVideoBridging.framework; path = System/Library/Frameworks/AudioVideoBridging.framework; sourceTree = SDKROOT; };
+		C07E015B2B25D8ED00EC2B98 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		C07E015C2B25D8ED00EC2B98 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
+		C07E015D2B25D8ED00EC2B98 /* CoreAudioTypes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioTypes.framework; path = System/Library/Frameworks/CoreAudioTypes.framework; sourceTree = SDKROOT; };
 		C08AA9462AF5244900F5DE2D /* SkinIcons.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SkinIcons.cpp; sourceTree = "<group>"; };
 		C08AA9472AF5244900F5DE2D /* SkinIcons.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SkinIcons.h; sourceTree = "<group>"; };
 		C08AA9762AFA546700F5DE2D /* menu-logo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "menu-logo@2x.png"; sourceTree = "<group>"; };
@@ -1038,6 +1041,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C07E01632B25D9E100EC2B98 /* AudioToolbox.framework in Frameworks */,
 				C0A81FFF2ABDDFC200CDF309 /* libTinyJsStaticLib.a in Frameworks */,
 				C055400929991C0E0057629E /* Carbon.framework in Frameworks */,
 				C0554007299791EA0057629E /* CoreAudio.framework in Frameworks */,
@@ -1211,6 +1215,12 @@
 		0E56BAA22740C32800032A3E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C07E015B2B25D8ED00EC2B98 /* AudioToolbox.framework */,
+				C07E015C2B25D8ED00EC2B98 /* AudioUnit.framework */,
+				C07E015A2B25D8ED00EC2B98 /* AudioVideoBridging.framework */,
+				C07E01592B25D8ED00EC2B98 /* AVFAudio.framework */,
+				C07E015D2B25D8ED00EC2B98 /* CoreAudioTypes.framework */,
+				C07E01562B25D8C100EC2B98 /* CoreAudioKit.framework */,
 				C055400829991C0E0057629E /* Carbon.framework */,
 				C0554006299791EA0057629E /* CoreAudio.framework */,
 				0EB71164277DEE4A006929F1 /* CoreData.framework */,
@@ -1465,7 +1475,6 @@
 				0EB7100F27773BB2006929F1 /* LyricShowVobSub.h */,
 				0EB70FC627773BAF006929F1 /* LyricsLocalSearch.cpp */,
 				0EB7106527773BB5006929F1 /* LyricsLocalSearch.h */,
-				0EB70FC727773BAF006929F1 /* LyricsOutPlugin.h */,
 				0EB7103327773BB4006929F1 /* mac */,
 				0EB70FD027773BAF006929F1 /* MediaAlbumArtCtrl.cpp */,
 				0EB7102727773BB3006929F1 /* MediaAlbumArtCtrl.h */,
@@ -1581,8 +1590,6 @@
 				C055400329978E390057629E /* HeadPhoneWatch.mm */,
 				0EB7104B27773BB4006929F1 /* HelperMac.cpp */,
 				C08AA9B42B197C7700F5DE2D /* imported */,
-				0EB7103D27773BB4006929F1 /* LyricsOutPluginMgr.cpp */,
-				0EB7103C27773BB4006929F1 /* LyricsOutPluginMgr.h */,
 				C08AA9B12B19750F00F5DE2D /* MediaKeyController.h */,
 				C08AA9B22B19753B00F5DE2D /* MediaKeyController.mm */,
 				0EB7104927773BB4006929F1 /* MLTrayIcon.h */,
@@ -1815,12 +1822,12 @@
 		C04DC039298D614B00A0FCB1 /* MPlayer */ = {
 			isa = PBXGroup;
 			children = (
-				C07651FA2B21F17F00BC9342 /* MediaScanner.cpp */,
-				C07651FB2B21F17F00BC9342 /* MediaScanner.h */,
-				C04DC03A298D619300A0FCB1 /* MediaLibrary.cpp */,
-				C04DC03B298D619300A0FCB1 /* MediaLibrary.h */,
 				C04DC041298D63AE00A0FCB1 /* Media.cpp */,
 				C04DC040298D63AE00A0FCB1 /* Media.h */,
+				C04DC03A298D619300A0FCB1 /* MediaLibrary.cpp */,
+				C04DC03B298D619300A0FCB1 /* MediaLibrary.h */,
+				C07651FA2B21F17F00BC9342 /* MediaScanner.cpp */,
+				C07651FB2B21F17F00BC9342 /* MediaScanner.h */,
 				0EB70FEE27773BB0006929F1 /* Player.cpp */,
 				0EB7106127773BB5006929F1 /* Player.h */,
 				C04DC03E298D624800A0FCB1 /* Playlist.cpp */,
@@ -2336,7 +2343,6 @@
 				0E56BC092745E53E00032A3E /* SkinImage.cpp in Sources */,
 				C04DBF81297EB36200A0FCB1 /* cipher_wrap.c in Sources */,
 				C04DBFF9297ECDA100A0FCB1 /* oid.c in Sources */,
-				0EB710BD27773BB6006929F1 /* LyricsOutPluginMgr.cpp in Sources */,
 				C052876F2964FE50009BD885 /* FontInfoEx.cpp in Sources */,
 				0E56BC2C2747F84600032A3E /* Log.cpp in Sources */,
 				C05D740729553EBB00294F50 /* JsResizableLinearContainer.cpp in Sources */,

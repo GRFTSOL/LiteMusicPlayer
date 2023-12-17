@@ -1,3 +1,4 @@
+#include "TinyJS/utils/Utils.h"
 #include "Player.h"
 #include "MediaScanner.h"
 

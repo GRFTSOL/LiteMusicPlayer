@@ -7,9 +7,9 @@
 *********************************************************************/
 
 #import <Cocoa/Cocoa.h>
-#include "WindowTypes.h"
+#include "../WindowTypes.h"
 #include "Window.h"
-#include "FolderDialog.h"
+#include "../FolderDialog.h"
 
 
 bool CFolderDialog::doBrowse(Window *pWndParent) {

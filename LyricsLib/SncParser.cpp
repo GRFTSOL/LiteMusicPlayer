@@ -1,5 +1,4 @@
-﻿#include "SncParser.h"
-#include "HelperFun.h"
+#include "SncParser.h"
 
 
 // COMMENTS:

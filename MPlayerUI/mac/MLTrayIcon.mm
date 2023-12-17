@@ -10,8 +10,8 @@
 @end
 
 #include "MLTrayIcon.h"
-#include "MLCmd.h"
-#include "MPlayerApp.h"
+#include "../MLCmd.h"
+#include "../MPlayerApp.h"
 #include "../MPFloatingLyrWnd.h"
 
 

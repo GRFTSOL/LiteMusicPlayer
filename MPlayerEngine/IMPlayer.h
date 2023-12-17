@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #ifndef _IMPLAYER_H_
 #define _IMPLAYER_H_
@@ -63,16 +63,17 @@ enum MPInterfaceType {
 struct IFBuffer {
     virtual ~IFBuffer() { }
 
-    virtual void addRef() = 0;
-    virtual void release() = 0;
+    virtual void set(int bps, int channels, int sampleRate) = 0;
 
-    virtual void set(int nBps, int nChannels, int nSampleRate);
-
-    virtual char *data() = 0;
+    virtual uint8_t *data() = 0;
     virtual uint32_t size() = 0;
     virtual uint32_t capacity() = 0;
-    virtual void resize(uint32_t nSize) = 0;
-    virtual ResultCode reserve(uint32_t nCapacity) = 0;
+    virtual void resize(uint32_t size) = 0;
+    virtual ResultCode reserve(uint32_t capacity) = 0;
+
+    virtual int bps() = 0;
+    virtual int channels() = 0;
+    virtual int sampleRate() = 0;
 
 };
 
@@ -87,8 +88,6 @@ struct VisParam {
 
 struct IVisualizer {
     virtual ~IVisualizer() { }
-    virtual void addRef() = 0;
-    virtual void release() = 0;
 
     virtual int render(VisParam *visParam) = 0;
 };
@@ -96,47 +95,43 @@ struct IVisualizer {
 struct IDSP {
     virtual ~IDSP() { }
 
-    virtual void addRef() = 0;
-    virtual void release() = 0;
-
-    virtual void process(IFBuffer *pBuf) = 0;
+    virtual void process(IFBuffer *fb) = 0;
 };
 
-struct IMediaOutput { // : IUnknown
+struct IMediaOutput {
     virtual ~IMediaOutput() { }
-
-    virtual void addRef() = 0;
-    virtual void release() = 0;
 
     virtual cstr_t getDescription() = 0;
 
-    virtual ResultCode write(IFBuffer *pBuf) = 0;
+    virtual ResultCode waitForWrite(int timeOutMs) = 0;
+
+    virtual ResultCode write(IFBuffer *fb) = 0;
     virtual ResultCode flush() = 0;
 
-    virtual ResultCode pause(bool bPause) = 0;
+    virtual ResultCode play() = 0;
+    virtual ResultCode pause() = 0;
     virtual bool isPlaying() = 0;
     virtual ResultCode stop() = 0;
-
-    virtual bool isOpened() = 0;
 
     virtual uint32_t getPos() = 0;
 
     // volume
-    virtual ResultCode setVolume(int volume, int nBanlance) = 0;
+    virtual ResultCode setVolume(int volume, int banlance) = 0;
+    virtual int getVolume() = 0;
 
 };
 
+using IMediaOutputPtr = std::shared_ptr<IMediaOutput>;
+
 struct IMediaInput {
     virtual ~IMediaInput() { }
-    virtual void addRef() = 0;
-    virtual void release() = 0;
 
     // if FAILED, return ERR_MI_OPEN_SRC, ERR_MI_NOT_FOUND
-    virtual ResultCode open(cstr_t szSourceMedia) = 0;
-    virtual uint32_t read(void *lpBuffer, uint32_t dwSize) = 0;
+    virtual ResultCode open(cstr_t mediaUr) = 0;
+    virtual uint32_t read(void *buf, uint32_t size) = 0;
     // nOrigin: SEEK_SET, SEEK_CUR, SEEK_END
-    virtual ResultCode seek(uint32_t dwOffset, int nOrigin) = 0;
-    virtual ResultCode getSize(uint32_t &dwSize) = 0;
+    virtual ResultCode seek(uint32_t offset, int origin) = 0;
+    virtual ResultCode getSize(uint32_t &size) = 0;
     virtual uint32_t getPos() = 0;
 
     virtual bool isEOF() = 0;
@@ -148,11 +143,10 @@ struct IMediaInput {
 
 };
 
-struct IMediaDecoder { // : IUnknown
-    virtual ~IMediaDecoder() { }
+using IMediaInputPtr = std::shared_ptr<IMediaInput>;
 
-    virtual void addRef() = 0;
-    virtual void release() = 0;
+struct IMediaDecoder {
+    virtual ~IMediaDecoder() { }
 
     //
     // individual methods
@@ -161,27 +155,21 @@ struct IMediaDecoder { // : IUnknown
     virtual cstr_t getDescription() = 0;
     // get supported file extensions. Example: .mp3|MP3 files|.mp2|MP2 files
     virtual cstr_t getFileExtentions() = 0;
-    virtual ResultCode getMediaInfo(IMediaInput *pInput, IMediaInfo *pMedia) = 0;
 
-    //
-    // decode media file related methods
-    //
+    virtual ResultCode open(IMediaInput *input) = 0;
 
     // Decode to @bufOut
-    virtual ResultCode decode(IFBuffer *bufOut) = 0;
+    virtual ResultCode decode(IFBuffer *fbOut) = 0;
 
     virtual bool isSeekable() = 0;
-    virtual bool isUseOutputPlug() = 0;
 
     // media length, pos related functions, unit: ms
-    virtual uint32_t getLength() = 0;
-    virtual ResultCode seek(uint32_t nPos) = 0;
-    virtual uint32_t getPos() = 0;
-
-    // volume
-    virtual ResultCode setVolume(int volume, int nBanlance) = 0;
+    virtual uint32_t getDuration() = 0;
+    virtual ResultCode seek(uint32_t pos) = 0;
 
 };
+
+using IMediaDecoderPtr = std::shared_ptr<IMediaDecoder>;
 
 //
 // A plugin DLL may contain serveral plugins, use DHPlayerQueryPluginIF to query all the plugin interface

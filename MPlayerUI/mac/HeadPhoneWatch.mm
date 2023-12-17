@@ -7,10 +7,10 @@
 
 #import <CoreAudio/CoreAudio.h>
 #import <AVFoundation/AVFoundation.h>
-#import "Player.h"
 #import "HeadPhoneWatch.hpp"
 #import "MPlayer/Player.h"
 #import "Skin/Skin.h"
+#import "../MPlayer/Player.h"
 
 uint32_t getDefaultOutputDeviceID() {
     AudioDeviceID defaultDevice = 0;

@@ -1,4 +1,4 @@
-﻿/********************************************************************
+/********************************************************************
     Created  :    2002/01/04    21:30
     FileName :    MLProfile.cpp
     Author   :    xhy
@@ -14,7 +14,19 @@ extern CProfile g_profile;
 
 #define CHAR_WORKING_FOLDER '-'
 
-void analyseProxySetting(cstr_t szProxySetting, char szServer[], int nMaxSize, int &nPort);
+void analyseProxySetting(cstr_t szProxySetting, char szServer[], int nMaxSize, int &nPort) {
+    cstr_t szColon;
+
+    szColon = strchr(szProxySetting, ':');
+    if (szColon == nullptr) {
+        strcpy_safe(szServer, nMaxSize, szProxySetting);
+        nPort = 80;
+    } else {
+        strncpy_safe(szServer, nMaxSize, szProxySetting,
+            int(szColon - szProxySetting));
+        nPort = atoi(szColon + 1);
+    }
+}
 
 //
 //取得IE 的代理设置
