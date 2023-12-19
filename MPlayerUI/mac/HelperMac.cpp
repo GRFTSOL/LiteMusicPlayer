@@ -6,6 +6,9 @@ void analyseProxySetting(cstr_t szProxySetting, char szServer[], int nMaxSize, i
 
 void execute(Window *pWnd, cstr_t szExe, cstr_t szParam) {
     // TODO: TBD
+    // NSString *aFilePath = [someFiles objectAtIndex:0];
+    // NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+    // [workspace openFile:aFilePath];
 }
 
 bool setClipboardText(Window *pWnd, cstr_t szText) {

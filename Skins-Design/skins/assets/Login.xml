@@ -3,10 +3,10 @@
   <TitleText Rect="20,10,w-40,25" Text="Thank you for uploading lyrics."/>
   <NormalText Rect="20,45,w-40," Text="Please login, so you could manage the uploaded lyrics." AlignText="AT_CENTER"/>
 
-  <NormalText Rect="20,90,120," Text="Login Name:" AlignText="AT_RIGHT"/>
+  <NormalTextRight Rect="20,90,120," Text="Login Name:"/>
   <NormalEdit ID="CID_E_NAME" Rect="140+10,90,w-140-30,"/>
 
-  <NormalText Rect="20,120,120," Text="Password:" AlignText="AT_RIGHT"/>
+  <NormalTextRight Rect="20,120,120," Text="Password:"/>
   <NormalEdit ID="CID_E_PASSWORD" Rect="140+10,120,w-140-30," Style="PASSWORD"/>
 
   <NormalCheckBox ID="CID_REMEMBER_PWD" Text="Remember password" Rect="140+10,150,w-140-30,"/>

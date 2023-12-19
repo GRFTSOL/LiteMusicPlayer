@@ -10,13 +10,13 @@
 
   <Container ID="Content" Rect="10,40,w-20,h-80" ClipChildren="true">
     <Container.basic ID="CID_C_MI_BASIC" Rect="0,10,w,h-10" Visible="false">
-      <LinearContainer Rect="0,8,150,h" SeparatorThickness="7">
-        <NormalText Rect="0,0,150,30" Text="Artist:" AlignText="AT_RIGHT"/>
-        <NormalText Rect="0,0,150,30" Text="Title:" AlignText="AT_RIGHT"/>
-        <NormalText Rect="0,0,150,30" Text="Album:" AlignText="AT_RIGHT"/>
-        <NormalText Rect="0,0,150,30" Text="Genre:" AlignText="AT_RIGHT"/>
-        <NormalText Rect="0,0,150,30" Text="Year:" AlignText="AT_RIGHT"/>
-        <NormalText Rect="0,0,150,30" Text="Track:" AlignText="AT_RIGHT"/>
+      <LinearContainer Rect="0,0,150,h" SeparatorThickness="7">
+        <NormalTextRight Rect="0,0,150,30" Text="Artist:"/>
+        <NormalTextRight Rect="0,0,150,30" Text="Title:"/>
+        <NormalTextRight Rect="0,0,150,30" Text="Album:"/>
+        <NormalTextRight Rect="0,0,150,30" Text="Genre:"/>
+        <NormalTextRight Rect="0,0,150,30" Text="Year:"/>
+        <NormalTextRight Rect="0,0,150,30" Text="Track:"/>
       </LinearContainer>
       <LinearContainer Rect="160,0,w-170,h" SeparatorThickness="7">
         <NormalEdit ID="CID_E_ARTIST" Text="" Rect="0,0,w,30"/>
@@ -38,12 +38,12 @@
 
     <Container.pictures ID="CID_C_MI_PICTURES" Rect="0,0,w,h" Visible="false">
       <NormalListCtrl ID="LIST_PICTURES" Rect="5,10,w-10,h-45" LineHeight="250" EnableHorzScrollBar="false"/>
-      <NormalTextBt ID="ID_PIC_ACTIONS" Text="&amp;Actions" Rect="5,h-25,80,"/>
+      <NormalTextRightBt ID="ID_PIC_ACTIONS" Text="&amp;Actions" Rect="5,h-25,80,"/>
     </Container.pictures>
 
   </Container>
 
-  <NormalTextBt ID="ID_OK" Text="&amp;Save" Rect="w-80-80-40,h-30,80,"/>
-  <NormalTextBt ID="ID_CANCEL" Text="&amp;Cancel" Rect="w-80-20,h-30,80,"/>
+  <NormalTextRightBt ID="ID_OK" Text="&amp;Save" Rect="w-80-80-40,h-30,80,"/>
+  <NormalTextRightBt ID="ID_CANCEL" Text="&amp;Cancel" Rect="w-80-20,h-30,80,"/>
 
 </skinwnd>

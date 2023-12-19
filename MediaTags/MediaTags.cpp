@@ -39,13 +39,13 @@ MapIMediaFileTags initMediaFileTags() {
 }
 
 IMediaFileTagsPtr getMediaFileTags(const char *fileName) {
-    auto ext = fileGetExt(fileName);
-    if (isEmptyString(ext)) {
+    string ext = fileGetExt(fileName);
+    if (ext.empty()) {
         return nullptr;
     }
 
     assert(ext[0] == '.');
-    ext++;
+    ext = toLower(ext.substr(1).c_str());
 
     auto it = __mediaFileTags.find(ext);
     if (it == __mediaFileTags.end()) {

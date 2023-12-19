@@ -9,9 +9,9 @@
   </NormalTabButton>
   <Container Name="Content" Rect="10,0,w-20,h" ClipChildren="true">
     <PreferPage.Theme Name="Themes" Visible="false" Rect="0,30,w,h-30-20">
-      <NormalText Rect="10,10,w-20,80" Text="Preset themes:"/>
+      <NormalText Rect="10,10,w-20," Text="Preset themes:"/>
       <NormalListCtrl ID="CID_THME_LIST" Rect="10,35,w-25,180" EnableHorzScrollBar="false"/>
-      <NormalText Rect="10,230,120," Text="Theme name:"/>
+      <NormalTextRight Rect="10,230,110," Text="Theme name:"/>
       <NormalEdit ID="CID_E_THEMENAME" Text="" Rect="130,230,w-130-20,"/>
       <NormalTextBt ID="CID_LOAD_THEME" Text="&amp;Load Theme" Rect="w/2-110-110/2-30,260,110,"/>
       <NormalTextBt ID="CID_SAVE_THEME" Text="&amp;Save Theme" Rect="w/2-110/2,260,110,"/>
@@ -29,8 +29,8 @@
       <NormalCheckBox ID="CID_C_ENABLE_BG_IMAGE" Text="Enable background picture" Rect="10,70,w-20,"/>
 
       <NormalText Rect="10,100,150," Text="Picture folder:"/>
-      <NormalEdit ID="CID_E_PIC_FOLDER" Text="" Rect="170,100,w-170-30-25,"/>
-      <NormalTextBt ID="CID_BR_PIC_FOLDER" Text="..." Rect="w-30-10,100,30,"/>
+      <NormalEdit ID="CID_E_PIC_FOLDER" Text="" Rect="170,100,w-180-30-25,"/>
+      <NormalTextBt ID="CID_BR_PIC_FOLDER" Text="..." Rect="w-40-10,100,30,"/>
 
       <NormalText Rect="10,130,w-10-110," Text="Picture show delay time (seconds):"/>
       <NormalEdit ID="CID_E_DELAY_TIME" Text="" Rect="w-100-20,130,100,"/>

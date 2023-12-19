@@ -60,43 +60,6 @@
 
 			<ClientArea Rect="1,31,w-5,h-31-5" ClipChildren="true"/>
 		</MenuWindowFrame>
-		<NormalToolbar Extends="LinearContainer" Orientation="Horizontal" Height="24" >
-			<Toolbar ID="ID_TB_LYR_SYNC" Rect="8,1,72,22" Image="fl_buttons.png" enablehover="TRUE"
-					units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" ButtonSpacesCX="1"
-					Margin="8,1,0,0" MarginX="0" MarginY="0" FullStatusImage="TRUE">
-				<button ID="ID_OPEN_LRC" Left="5" />
-				<button ID="ID_BACKWARD_LYRICS" Left="6" Continuous="TRUE"/>
-				<button ID="ID_FORWARD_LYRICS" Left="7" Continuous="TRUE"/>
-			</Toolbar>
-
-			<Toolbar ID="ID_TB_LYR_TXT" Rect="8,1,50,22" Image="fl_buttons.png" enablehover="TRUE"
-					units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" ButtonSpacesCX="1"
-					Margin="8,1,0,0" MarginX="0" MarginY="0" FullStatusImage="TRUE">
-				<button ID="ID_OPEN_LRC" Left="5" />
-				<button ID="ID_LYR_EDITOR" Left="16"/>
-			</Toolbar>
-
-			<Toolbar Rect="86,1,w-88,22" Weight="1" Image="fl_buttons.png" enablehover="TRUE"
-					units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" ButtonSpacesCX="1"
-					Margin="0,1,0,0" MarginX="0" MarginY="0" FullStatusImage="TRUE">
-				<seperator/>
-				<button ID="ID_FONT_SIZE_INC" Left="8"/>
-				<button ID="ID_FONT_SIZE_DEC" Left="9"/>
-				<button ID="ID_CLR_HIGH_CLR_LIST" Left="14"/>
-				<button ID="ID_RATE_LYR" Left="15"/>
-				<seperator/>
-				<button ID="ID_PREVIOUS" Left="0"/>
-				<button ID="ID_PLAYPAUSE" Left="1" CanCheck="TRUE" checked_left="2"/>
-				<button ID="ID_NEXT" Left="3"/>
-			</Toolbar>
-		</NormalToolbar>
-		<RefreshButton Extends="Button" Width="16" Height="16" Image="refresh.png" ImageSize="16,16" ImagePos="0,0" ImageSelPos="0,16" ImageFocusPos="0,32" />
-		<NormalText Extends="Text" Height="15" FontName="Verdana" FontHeight="13" TextColor="#000000"/>
-		<TitleText Extends="Text" Height="25" FontName="Verdana" FontHeight="20" TextColor="#000000" AlignText="AT_CENTER"/>
-		<ErrorText Extends="Text" Height="15" FontName="Verdana" FontHeight="13" TextColor="#FF0000"/>
-		<NormalLink Extends="TxtLink" Height="15" FontName="Verdana" FontHeight="13" TextColor="#0000FF"/>
 		<WndFrameCaption Extends="Text" ID="ID_CAPTION" Rect="30,4,w-60,20" Text="About MiniLyrics" FontHeight="16" FontBold="true" TextColor="#000000" TextOutlinedColor="#000000" TextOutlined="true" LeftMargin="0" AlignText="AT_CENTER | AT_VCENTER"/>
-		<InfoText Name="InfoText" Rect="0,h-26,w,26" FontName="Verdana" FontHeight="16" FontItalic="1" TextColor="#0000FF"
-			LeftMargin="10" TranslucencyWithSkin="TRUE"/>
 	</style>
 </styles>

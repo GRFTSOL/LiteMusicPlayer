@@ -83,19 +83,6 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/zlib zlib)
 #
 
 set(SRC ${SRC}
-    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/adler32.c
-    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/compress.c
-    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/crc32.c
-    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/deflate.c
-    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/gzio.c
-    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/infback.c
-    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/inffast.c
-    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/inflate.c
-    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/inftrees.c
-    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/trees.c
-    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/uncompr.c
-    # ${PROJECT_SOURCE_DIR}/third-parties/zlib/zutil.c
-
     ${PROJECT_SOURCE_DIR}/third-parties/http-parser/http_parser.c
 
     ${PROJECT_SOURCE_DIR}/third-parties/faad2/frontend/mp4read.c
@@ -128,6 +115,8 @@ set(SRC_PATHS
     ${PROJECT_SOURCE_DIR}/Skin
     ${PROJECT_SOURCE_DIR}/Skin/api-js
     ${PROJECT_SOURCE_DIR}/Window
+    ${PROJECT_SOURCE_DIR}/third-parties/sqlite
+    ${PROJECT_SOURCE_DIR}/third-parties/md5
 )
 
 if (APPLE)
@@ -188,6 +177,7 @@ if(APPLE)
     file(GLOB RESOURCES "${PROJECT_SOURCE_DIR}/Mp3Player/tray-icons/*.png")
     set(RESOURCES ${RESOURCES}
         ${PROJECT_SOURCE_DIR}/Mp3Player/Base.lproj/MainMenu.xib
+        ${PROJECT_SOURCE_DIR}/Skins-Design/skins
     )
 
     add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${SRC} ${RESOURCES} ${HEADER_FILES})

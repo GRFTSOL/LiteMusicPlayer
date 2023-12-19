@@ -141,10 +141,10 @@ void CPlayer::onInit() {
     }
 
 #ifdef _MAC_OS
-    // m_playerCore = new CoreAVPlayer();
-    m_playerCore = new MPlayerCore();
-#else
     m_playerCore = new CoreAVPlayer();
+    // m_playerCore = new MPlayerCore();
+#else
+    m_playerCore = new MPlayerCore();
 #endif
     m_playerCore->setCallback(this);
 

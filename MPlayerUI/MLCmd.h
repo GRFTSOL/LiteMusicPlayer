@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #define MP_SKIN_IDS     \
 DEFINE_CMD_ID_TIP(ID_TOPMOST,           _TLM("Toggle always on top"))               \
@@ -72,9 +72,9 @@ DEFINE_CMD_ID_TIP(ID_MUTE,              _TLM("Mute"))               \
 DEFINE_CMD_ID(ID_PLAYLIST)                                          \
 DEFINE_CMD_ID_TIP(ID_SHUFFLE,           _TLM("Toggle shuffle"))     \
 DEFINE_CMD_ID_TIP(ID_LOOP,              _TLM("Toggle repeat"))      \
-DEFINE_CMD_ID(ID_LOOP_OFF)                                          \
 DEFINE_CMD_ID(ID_LOOP_ALL)                                          \
 DEFINE_CMD_ID(ID_LOOP_TRACK)                                        \
+DEFINE_CMD_ID(ID_LOOP_OFF)                                          \
 DEFINE_CMD_ID_TIP(ID_EQ,                _TLM("Equalizer"))          \
 DEFINE_CMD_ID_TIP(ID_RATE,              _TLM("Rate this song"))     \
 DEFINE_CMD_ID(ID_TXT_TITLE)                                         \
@@ -125,10 +125,10 @@ DEFINE_CMD_ID(ID_APPLY_ACCOUNT)                                     \
 DEFINE_CMD_ID(ID_EMAIL)                                             \
 DEFINE_CMD_ID(ID_WEBHOME)                                           \
 DEFINE_CMD_ID(ID_ANTIAlIAS)                                         \
+DEFINE_CMD_ID(ID_LDO_AUTO)                                          \
 DEFINE_CMD_ID(ID_LDO_NORMAL)                                        \
 DEFINE_CMD_ID(ID_LDO_FADE_IN)                                       \
 DEFINE_CMD_ID(ID_LDO_FADEOUT_BG)                                    \
-DEFINE_CMD_ID(ID_LDO_AUTO)                                          \
 DEFINE_CMD_ID(ID_LDS_MULTI_LINE)                                    \
 DEFINE_CMD_ID(ID_LDS_STATIC_TXT)                                    \
 DEFINE_CMD_ID(ID_LDS_TWO_LINE)                                      \

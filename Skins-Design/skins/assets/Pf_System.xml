@@ -7,21 +7,20 @@
   </NormalTabButton>
   <Container Name="Content" Rect="10,0,w-20,h" ClipChildren="true">
     <Container.Inet Name="Internet" Rect="0,30,w,h-30-20" Visible="false">
-      <NormalFrame Rect="10,15,w-20,210" Text="HTTP proxy"/>
-      <NormalTextBt ID="CID_LOAD_IE_PROXY" Text="Load Setting From IE" Rect="20,40,200,"/>
-      <NormalCheckBox ID="CID_USE_PROXY" Text="Use proxy" Rect="20,70,200,"/>
+      <NormalFrame Rect="10,15,w-20,180" Text="HTTP proxy"/>
+      <NormalCheckBox ID="CID_USE_PROXY" Text="Use proxy" Rect="203,40,200,"/>
 
-      <NormalText Rect="20,100,150," Text="Address:" AlignText="AT_RIGHT"/>
-      <NormalEdit ID="CID_HTTP_PROXY" Text="" Rect="210,100,200,"/>
+      <NormalTextRight Rect="20,70,180," Text="Address:"/>
+      <NormalEdit ID="CID_HTTP_PROXY" Text="" Rect="210,70,200,"/>
 
-      <NormalText Rect="20,130,150," Text="Port:" AlignText="AT_RIGHT"/>
-      <NormalEdit ID="CID_HTTP_PORT" Text="" Rect="210,130,80,"/>
+      <NormalTextRight Rect="20,100,180," Text="Port:"/>
+      <NormalEdit ID="CID_HTTP_PORT" Text="" Rect="210,100,80,"/>
 
-      <NormalText Rect="20,160,150," Text="Proxy user name:" AlignText="AT_RIGHT"/>
-      <NormalEdit ID="CID_USER" Text="" Rect="210,160,200,"/>
+      <NormalTextRight Rect="20,130,180," Text="Proxy user name:"/>
+      <NormalEdit ID="CID_USER" Text="" Rect="210,130,200,"/>
 
-      <NormalText Rect="20,190,150," Text="Proxy password:" AlignText="AT_RIGHT"/>
-      <NormalEdit ID="CID_PASS" Text="" Rect="210,190,200,"/>
+      <NormalTextRight Rect="20,160,180," Text="Proxy password:"/>
+      <NormalEdit ID="CID_PASS" Text="" Rect="210,160,200,"/>
     </Container.Inet>
     <Container.Startup Name="Startup" Rect="0,30,w,h-30-20" Visible="false">
       <NormalCheckBox ID="CID_C_CHECK_NEW_VERSION" Text="Check for new versions at startup" Rect="25,10,w-40,"/>

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <style>
+    <NormalText Extends="Text" Height="22" FontName="Verdana" FontHeight="13" TextColor="#000000" AlignText="AT_VCENTER"/>
+    <NormalTextRight Extends="Text" Height="22" FontName="Verdana" FontHeight="13" TextColor="#000000" AlignText="AT_VCENTER|AT_RIGHT"/>
+    <TitleText Extends="Text" Height="25" FontName="Verdana" FontHeight="20" TextColor="#000000" AlignText="AT_CENTER"/>
+    <ErrorText Extends="Text" Height="22" FontName="Verdana" FontHeight="13" TextColor="#FF0000" AlignText="AT_VCENTER"/>
+    <NormalLink Extends="TxtLink" Height="22" FontName="Verdana" FontHeight="13" TextColor="#0000FF" AlignText="AT_VCENTER"/>
+
     <FlatImageBtn Extends="ImageButton" ContentMarginX="3" ContentMarginY="1" StretchContent="false"
         Height="24" Padding="0,0" TabFocus="true"
         Image="button-flat.png" ImageSize="40,24" ExtendPos="8,24"
@@ -31,6 +37,8 @@
         ImagePos="52,26" ImageSelPos="52,52" ImageFocusPos="52,78" ImageDisabledPos="52,0"
         S1_Image="checks.png" S1_ImageSize="26,26"
         S1_ImagePos="78,26" S1_ImageSelPos="78,52" S1_ImageFocusPos="78,78" S1_ImageDisabledPos="78,0"/>
+
+	<RefreshButton Extends="Button" Width="16" Height="16" Image="refresh.png" ImageSize="16,16" ImagePos="0,0" ImageSelPos="0,16" ImageFocusPos="0,32" />
 
     <NormalEdit Extends="EditCtrl" Height="20" FontName="Verdana" FontHeight="13" TextColor="#000000" PlaceHolderColor="#8c8c8c"
         XMargin="5" YMargin="0"/>
@@ -67,12 +75,14 @@
         ImageHeader="listctrl-header.png"/>
 
     <Slider Extends="SeekCtrl" Height="15" EndWidth="8" ImageThumb="thumb.png" ImageTrack="progress.png"/>
-    <Progress Extends="SeekCtrl" Height="20" EndWidth="8" ImageThumb="thumb-none.png" ImageTrack="progress.png"/>
+    <Progress Extends="SeekCtrl" Height="15" EndWidth="8" ImageThumb="thumb-none.png" ImageTrack="progress.png"/>
 
     <MenuItemsContainer FontName="Verdana" FontHeight="13" FontBold="false" TextColor="#000000" BgColor="#E0E0E0"
         TextColorHover="#000000" BgColorHover="#558ff3" FrameColor="#A0A0A0" DisabledTextColor="#808080" BgColorInactive="#C0C0C0"
         ImageChecked="menu-check.png" ImageSubmenu="menu-expand-right" ImageUpArrow="menu-expand-up" ImageDownArrow="menu-expand-down"/>
 
+    <InfoText Name="InfoText" Rect="0,h-26,w,26" FontName="Verdana" FontHeight="16" FontItalic="1" TextColor="#0000FF"
+        LeftMargin="10" TranslucencyWithSkin="TRUE"/>
 
     <PopupWndFrame EnableTranslucency="true" TranslucencyAlpha="255"
          FixedWidth="true" FixedHeight="true"
@@ -89,5 +99,35 @@
             Image="menu_frame.png" ImageRect="49,5,1,10" BltMode="tile"/>
         <ClientArea Rect="1, 5, w-2, h-5-5"/>
     </PopupWndFrame>
+
+    <NormalToolbar Extends="Container" Height="24" >
+        <Toolbar ID="ID_TB_LYR_SYNC" Rect="8,1,78,22" Image="fl_buttons.png" enablehover="TRUE"
+            units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" ButtonSpacesCX="1"
+            MarginX="0" MarginY="0" FullStatusImage="TRUE">
+            <button ID="ID_OPEN_LRC" Left="5" />
+            <button ID="ID_BACKWARD_LYRICS" Left="6" Continuous="TRUE"/>
+            <button ID="ID_FORWARD_LYRICS" Left="7" Continuous="TRUE"/>
+        </Toolbar>
+
+            <Toolbar ID="ID_TB_LYR_TXT" Rect="8,1,56,22" Image="fl_buttons.png" enablehover="TRUE"
+                        units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" ButtonSpacesCX="1"
+                        Margin="8,1,0,0" MarginX="0" MarginY="0" FullStatusImage="TRUE">
+                <button ID="ID_OPEN_LRC" Left="5" />
+                <button ID="ID_LYR_EDITOR" Left="16"/>
+            </Toolbar>
+
+        <Toolbar Rect="86,1,w-88,22" Image="fl_buttons.png" enablehover="TRUE"
+            units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" ButtonSpacesCX="1"
+            MarginX="0" MarginY="0" FullStatusImage="TRUE">
+            <seperator/>
+            <button ID="ID_FONT_SIZE_INC" Left="8"/>
+            <button ID="ID_FONT_SIZE_DEC" Left="9"/>
+            <button ID="ID_RATE_LYR" Left="15"/>
+            <seperator/>
+            <button ID="ID_PREVIOUS" Left="0"/>
+            <button ID="ID_PLAYPAUSE" Left="1" CanCheck="TRUE" checked_left="2"/>
+            <button ID="ID_NEXT" Left="3"/>
+        </Toolbar>
+    </NormalToolbar>
 
 </style>
