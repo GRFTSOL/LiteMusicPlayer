@@ -236,13 +236,13 @@ int CID3v2::findID3v2() {
 
 int CID3v2::open(cstr_t szFile, bool bModify, bool bCreate) {
     if (bModify) {
-        m_fp = fopen(szFile, "r+b");
+        m_fp = fopenUtf8(szFile, "r+b");
     } else {
-        m_fp = fopen(szFile, "rb");
+        m_fp = fopenUtf8(szFile, "rb");
     }
 
     if (!m_fp) {
-        setCustomErrorDesc(stringPrintf("%s: %s", (cstr_t)OSError(), szFile).c_str());
+        setCustomErrorDesc(stringPrintf("%s: %s", getLastSysErrorDesc().c_str(), szFile).c_str());
         return ERR_CUSTOM_ERROR;
     }
 

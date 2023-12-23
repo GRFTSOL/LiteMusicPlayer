@@ -18,18 +18,6 @@ CAutoProcessEmbeddedLyrics::~CAutoProcessEmbeddedLyrics() {
 
 }
 
-#ifdef UNICODE
-static void strSplit(cstr_t szStr, char chSeperator, vector<string> &vAnsiStr) {
-    VecStrings vStr;
-    strSplit(szStr, chSeperator, vStr);
-    for (uint32_t i = 0; i < vStr.size(); i++) {
-        string str;
-        stringToAnsi(vStr[i].c_str(), vStr[i].size(), str);
-        vAnsiStr.push_back(str);
-    }
-}
-#endif
-
 bool CAutoProcessEmbeddedLyrics::Item::fromXML(SXNode *pNode) {
     m_strSongFile = pNode->getPropertySafe("song_file");
     strSplit(pNode->getPropertySafe("embedded_lyr_names"), '|', m_vLyrNames);

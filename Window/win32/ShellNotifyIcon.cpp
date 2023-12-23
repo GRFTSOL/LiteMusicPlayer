@@ -11,17 +11,17 @@ CShellNotifyIcon::~CShellNotifyIcon() {
 }
 
 bool CShellNotifyIcon::addIcon(Window *pWnd, uint32_t nID, cstr_t szTip, HICON hIcon, uint32_t nCallbackMessage) {
-    NOTIFYICONDATA nif;
-
+    NOTIFYICONDATAW nif;
+    
     nif.cbSize = sizeof(nif);
     nif.hWnd = pWnd->getWndHandle();
     nif.hIcon = hIcon;
-    strcpy_safe(nif.szTip, CountOf(nif.szTip), szTip);
+    wcscpy_s(nif.szTip, CountOf(nif.szTip), utf8ToUCS2(szTip).c_str());
     nif.uID = nID;
     nif.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE;
     nif.uCallbackMessage = nCallbackMessage;
 
-    return tobool(::Shell_NotifyIcon(NIM_ADD, &nif));
+    return tobool(::Shell_NotifyIconW(NIM_ADD, &nif));
 }
 
 bool CShellNotifyIcon::delIcon(Window *pWnd, uint32_t nID) {
@@ -36,12 +36,12 @@ bool CShellNotifyIcon::delIcon(Window *pWnd, uint32_t nID) {
 }
 
 bool CShellNotifyIcon::modifyIcon(Window *pWnd, uint32_t nID, cstr_t szTip, HICON hIcon) {
-    NOTIFYICONDATA nif;
+    NOTIFYICONDATAW nif;
 
     nif.cbSize = sizeof(nif);
     nif.hWnd = pWnd->getWndHandle();
     if (szTip) {
-        strcpy_safe(nif.szTip, CountOf(nif.szTip), szTip);
+        wcscpy_s(nif.szTip, CountOf(nif.szTip), utf8ToUCS2(szTip).c_str());
     }
     nif.uID = nID;
     nif.hIcon = hIcon;

@@ -405,7 +405,7 @@ void CMPSkinWnd::onCreate() {
     CSkinWnd::onCreate();
 
 #ifdef _WIN32
-    ::SendMessageA(m_hWnd, WM_SETICON, ICON_BIG, (WPARAM)LoadIcon(getAppInstance(), MAKEINTRESOURCEA(IDI_MPLAYER)));
+    ::SendMessageA(m_hWnd, WM_SETICON, ICON_BIG, (WPARAM)LoadIconA(getAppInstance(), MAKEINTRESOURCEA(IDI_MPLAYER)));
 
     // 允许拖放歌词文件
     DragAcceptFiles(m_hWnd, true);

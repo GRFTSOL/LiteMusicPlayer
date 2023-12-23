@@ -1,10 +1,16 @@
 #include "MPlayerCore.h"
-#include "mac/CoreAudioOutput.h"
 #include "MediaInputFile.h"
 #include "MDMiniMp3.h"
 #include "MDFaad.h"
 #include "MDFlac.h"
 #include "FBuffer.hpp"
+
+#ifdef _WIN32
+#include "win32/MOSoundCard.h"
+#elif defined(_MAC_OS)
+#include "mac/CoreAudioOutput.h"
+#else
+#endif
 
 
 MPlayerCore::MPlayerCore() {
@@ -144,7 +150,7 @@ void MPlayerCore::threadRun() {
         if (cmd == CMD_QUIT) {
             return;
         }
-        assert(cmd == CMD_PLAY);
+        assert(cmd == CMD_PLAY || _isQuit);
         if (cmd != CMD_PLAY) {
             continue;
         }
@@ -160,7 +166,7 @@ void MPlayerCore::threadRun() {
         int ret = decoder->open(input.get());
         if (ret != ERR_OK) {
             DBG_LOG1("Failed to play media: %s", _curMediaUrl.c_str());
-            sleep(300);
+            Sleep(300);
             notifyEndOfPlaying();
             continue;
         }
@@ -285,7 +291,12 @@ IMediaInputPtr MPlayerCore::newMediaInput(cstr_t mediaUrl) {
 }
 
 IMediaOutputPtr MPlayerCore::newMediaOutput() {
+#ifdef _WIN32
+    return std::make_shared<MOSoundCard>();
+#elif defined(_MAC_OS)
     return std::make_shared<CoreAudioOutput>();
+#else
+#endif
 }
 
 void MPlayerCore::notifyEndOfPlaying() {

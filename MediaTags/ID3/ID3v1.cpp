@@ -247,7 +247,7 @@ int CID3v1::getTag(cstr_t szFile, BasicMediaTags &tags) {
     FILE *fp;
     int nRet;
 
-    fp = fopen(szFile, "rb");
+    fp = fopenUtf8(szFile, "rb");
     if (!fp) {
         return ERR_OPEN_FILE;
     }
@@ -302,7 +302,7 @@ int CID3v1::saveTag(cstr_t szFile, const BasicMediaTags &tags) {
     FILE *fp;
     int nRet;
 
-    fp = fopen(szFile, "r+b");
+    fp = fopenUtf8(szFile, "r+b");
     if (!fp) {
         return ERR_OPEN_FILE;
     }

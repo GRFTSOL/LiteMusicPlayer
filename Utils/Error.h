@@ -106,57 +106,20 @@ public:
     RegErr2Str                  *m_pNext;
 };
 
-//////////////////////////////////////////////////////////////////////////
-
-class OSError {
-public:
-    OSError() : m_szErrMsg(nullptr), m_dwErrCode(0) {
-        doFormatMessage(getLastError());
-    }
-
-    OSError(uint32_t dwLastError)
-    : m_szErrMsg(nullptr), m_dwErrCode(0) {
-        if (dwLastError != -1) {
-            doFormatMessage(dwLastError);
-        }
-    }
-
-    ~OSError();
-
-    const char* Description() const {
-        if (m_szErrMsg) {
-            return m_szErrMsg;
-        } else {
-            return "Can't FormatMessage!";
-        }
-    }
-
-    operator cstr_t () const
-        { return Description(); }
-
-    void doFormatMessage(unsigned int dwLastErr);
-
-private:
-    uint32_t getLastError();
-
-private:
-    char                        *m_szErrMsg;
-    uint32_t                    m_dwErrCode;
-
-};
+std::string getLastSysErrorDesc(int code = -1);
 
 //////////////////////////////////////////////////////////////////////////
 
 class Error2Str {
 protected:
     int                         m_nError;
-    OSError                     m_osError;
+    string                      m_sysErr;
 
 public:
-    Error2Str(int nErr) : m_nError(0), m_osError(-1) {
-        m_nError = nErr;
+    Error2Str(int err) : m_nError(0) {
+        m_nError = err;
         if (m_nError >= ERR_MAX) {
-            m_osError.doFormatMessage(nErr);
+            m_sysErr = getLastSysErrorDesc(err);
         }
     }
 

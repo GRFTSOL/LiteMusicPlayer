@@ -88,6 +88,11 @@ CEventsDispatcherBase *MPlayerApp::getEventsDispatcher() {
 }
 
 bool MPlayerApp::_init() {
+    g_log.setSrcRootDir(__FILE__, 1);
+
+    g_LangTool.setMacro(SZ_MACRO_PRODUCT_NAME, SZ_APP_NAME);
+    g_LangTool.setMacro(SZ_MACRO_COMPANY_NAME, SZ_COMPANY_NAME);
+
     setDefaultSettings();
 
     if (!CSkinApp::init()) {

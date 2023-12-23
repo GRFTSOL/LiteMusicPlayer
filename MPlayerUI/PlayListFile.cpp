@@ -72,7 +72,7 @@ bool savePlaylistAsM3u(Playlist *playList, cstr_t szFile) {
     // ...
 
     auto nCount = playList->getCount();
-    auto fp = fopen(szFile, "w");
+    auto fp = fopenUtf8(szFile, "w");
     if (!fp) {
         return false;
     }
@@ -105,7 +105,7 @@ bool savePlaylistAsM3u(Playlist *playList, cstr_t szFile) {
 }
 
 PlaylistPtr loadM3uPlaylist(cstr_t szFile) {
-    auto fp = fopen(szFile, "r");
+    auto fp = fopenUtf8(szFile, "r");
     if (!fp) {
         return nullptr;
     }

@@ -18,6 +18,8 @@ bool isTopmostWindow(HWND hWnd);
 void topmostWindow(HWND hwnd, bool bTopmost);
 bool showAsAppWindowNoRefresh(HWND hWnd);
 bool showAsToolWindowNoRefresh(HWND hWnd);
+bool isChildWnd(HWND hWnd);
+void centerWindowToMonitor(HWND hWnd);
 
 class Window : public IWindow {
 public:
@@ -55,9 +57,8 @@ public:
     void maximize();
     void restore();
 
-    uint32_t getDlgItemText(int nIDItem, char * szString, int nMaxCount) { return ::GetDlgItemText(m_hWnd, nIDItem, szString, nMaxCount); }
-    uint32_t getDlgItemText(int nIDItem, string &str);
-    bool setDlgItemText(int nIDItem, cstr_t szString) { return ::SetDlgItemText(m_hWnd, nIDItem, szString); }
+    std::string getDlgItemText(int nIDItem);
+    bool setDlgItemText(int nIDItem, cstr_t szString);
     bool setDlgItemInt(int nIDItem, uint32_t uValue, bool bSigned) { return ::SetDlgItemInt(m_hWnd, nIDItem, uValue, bSigned); }
     bool enableDlgItem(int nIDItem, bool bEnable) { return tobool(::EnableWindow(::GetDlgItem(m_hWnd, nIDItem), bEnable)); }
     bool enableWindow(bool bEnable) { return tobool(::EnableWindow(m_hWnd, bEnable)); }
@@ -68,7 +69,7 @@ public:
     void killTimer(uint32_t nTimerId);
 
 	string getTitle();
-    bool setTitle(cstr_t szText) { return tobool(::SetWindowText(m_hWnd, szText)); }
+    bool setTitle(cstr_t szText);
 
     bool setWndCursor(Cursor *pCursor);
 

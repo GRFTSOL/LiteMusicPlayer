@@ -11,7 +11,7 @@ void rectCloseToWindow(CRect &rcs, Window *pWnd, int nCloseExt, int &offx, int &
 
 #ifdef _WIN32
 void getTaskBarRect(CRect &rc) {
-    ::GetWindowRect(::FindWindow("Shell_TrayWnd",nullptr), &rc);
+    ::GetWindowRect(::FindWindowA("Shell_TrayWnd",nullptr), &rc);
 }
 #endif
 

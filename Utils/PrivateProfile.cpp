@@ -1,16 +1,57 @@
 ﻿#include "Utils.h"
 
+/*
+// Windows will save profile in current locale encoding
+// this will confuse the Profile::cache, so do NOT use Windows API.
 
-#ifndef _WIN32
+#ifdef _WIN32
 
-uint32_t GetPrivateProfileString(cstr_t lpAppName, cstr_t lpKeyName, cstr_t lpDefault, char * lpReturnedString, uint32_t nSize, cstr_t lpFileName) {
+uint32_t getPrivateProfileStringUtf8(cstr_t lpAppName, cstr_t lpKeyName, cstr_t lpDefault, char *lpReturnedString, uint32_t nSize, cstr_t lpFileName) {
+    vector<utf16_t> buf;
+    buf.resize(nSize);
+    auto len = GetPrivateProfileStringW(
+        utf8ToUCS2(lpAppName).c_str(),
+        utf8ToUCS2(lpKeyName).c_str(),
+        lpDefault ? utf8ToUCS2(lpDefault).c_str() : nullptr,
+        buf.data(),
+        nSize,
+        utf8ToUCS2(lpFileName).c_str()
+    );
+
+    strcpy_s(lpReturnedString, nSize, ucs2ToUtf8(buf.data(), len).c_str());
+    lpReturnedString[len] = '\0';
+
+    return len;
+}
+
+bool writePrivateProfileStringUtf8(cstr_t lpAppName, cstr_t lpKeyName, cstr_t lpString, cstr_t lpFileName) {
+    return WritePrivateProfileStringW(
+        utf8ToUCS2(lpAppName).c_str(),
+        utf8ToUCS2(lpKeyName).c_str(),
+        utf8ToUCS2(lpString).c_str(),
+        utf8ToUCS2(lpFileName).c_str()
+    );
+}
+
+uint32_t getPrivateProfileIntUtf8(cstr_t lpAppName, cstr_t lpKeyName, int nDefault, cstr_t lpFileName) {
+    return GetPrivateProfileIntW(
+        utf8ToUCS2(lpAppName).c_str(),
+        utf8ToUCS2(lpKeyName).c_str(),
+        nDefault,
+        utf8ToUCS2(lpFileName).c_str()
+    );
+}
+
+#else
+*/
+uint32_t getPrivateProfileStringUtf8(cstr_t lpAppName, cstr_t lpKeyName, cstr_t lpDefault, char * lpReturnedString, uint32_t nSize, cstr_t lpFileName) {
     char szBuff[1024];
     size_t nAppName;
     size_t nKeyName;
     bool bFoundAppName = false;
     int n;
 
-    FILE *fp = fopen(lpFileName, "r");
+    FILE *fp = fopenUtf8(lpFileName, "r");
     if (!fp) {
         goto R_FAILED;
     }
@@ -116,12 +157,12 @@ R_FAILED:
 }
 
 
-uint32_t GetPrivateProfileInt(cstr_t lpAppName, cstr_t lpKeyName, int nDefault, cstr_t lpFileName) {
+uint32_t getPrivateProfileIntUtf8(cstr_t lpAppName, cstr_t lpKeyName, int nDefault, cstr_t lpFileName) {
     char szValue[64];
     char szDefault[64];
     sprintf(szDefault, "%d", nDefault);
 
-    GetPrivateProfileString(lpAppName, lpKeyName, szDefault, szValue, 64, lpFileName);
+    getPrivateProfileStringUtf8(lpAppName, lpKeyName, szDefault, szValue, 64, lpFileName);
 
     return atoi(szValue);
 }
@@ -240,7 +281,7 @@ bool replacePrivateProfileStr(string &buff, const char *lpAppName, const char *l
     return true;
 }
 
-bool WritePrivateProfileString(cstr_t appName, cstr_t keyName, cstr_t value, cstr_t fileName) {
+bool writePrivateProfileStringUtf8(cstr_t appName, cstr_t keyName, cstr_t value, cstr_t fileName) {
     // Unicode isn't being supported.
     string buff;
 
@@ -253,4 +294,4 @@ bool WritePrivateProfileString(cstr_t appName, cstr_t keyName, cstr_t value, cst
     return writeFile(fileName, buff.c_str(), (int)buff.size());
 }
 
-#endif // #ifndef _WIN32
+// #endif // #ifndef _WIN32

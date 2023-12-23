@@ -263,11 +263,11 @@ void CDownloadMgr::createDefaultLyricsDir(string &strDefSavePath) {
     strDefSavePath = getAppResourceDir();
     strDefSavePath.resize(3);
     if (!isDirWritable(strDefSavePath.c_str())) {
-        char szDir[MAX_PATH];
+        utf16_t buf[MAX_PATH];
 
         // Try to save in windows drive
-        GetWindowsDirectory(szDir, CountOf(szDir));
-        strDefSavePath = szDir;
+        GetWindowsDirectoryW(buf, CountOf(buf));
+        strDefSavePath = ucs2ToUtf8(buf);
         strDefSavePath.resize(3);
         if (!isDirWritable(strDefSavePath.c_str())) {
             strDefSavePath = getAppDataDir();

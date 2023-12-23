@@ -18,50 +18,6 @@
 #include "../Skin/SkinTypes.h"
 
 
-void wrapText(cstr_t szText, vector<string> &vOutput, int nLineSize) {
-#ifdef UNICODE
-    int nCount;
-    cwstr_t szLineBeg, szPtr, szLastSpace;
-    szLineBeg = szText;
-    string str;
-    while (*szLineBeg) {
-        szPtr = szLineBeg;
-        nCount = 0;
-        szLastSpace = nullptr;
-        while (*szPtr && *szPtr != '\n' && nCount <= nLineSize) {
-            if ((*szPtr) > 255 || !(isDigit(*szPtr) || isDigit(*szPtr) || *szPtr == '_' || *szPtr == '-')) {
-                szLastSpace = szPtr;
-            }
-
-            if (unsigned(*szPtr) >= 0xFF) {
-                nCount += 2;
-            } else {
-                nCount += 1;
-            }
-            szPtr++;
-        }
-        str.clear();
-        if (szLastSpace) {
-            szPtr = szLastSpace;
-        }
-        str.append(szLineBeg, int(szPtr - szLineBeg));
-        if (str.size()) {
-            if (str.data()[str.size() - 1] == '\r') {
-                str.resize(str.size() - 1);
-            }
-        }
-        vOutput.push_back(str.c_str());
-
-        if (*szPtr == '\n') {
-            szPtr++;
-        }
-        szLineBeg = szPtr;
-    }
-#else
-    vOutput.push_back(szText);
-#endif
-}
-
 CurrentLyrics::CurrentLyrics() {
     m_md5OrgLyrContent = md5ToString("", 0);
     m_isUsedSpecifiedEncoding = false;

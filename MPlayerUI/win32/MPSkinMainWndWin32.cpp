@@ -6,7 +6,7 @@
 #endif
 
 
-const uint32_t g_msgTaskBarCreated = RegisterWindowMessage("TaskBarCreated");
+const uint32_t g_msgTaskBarCreated = RegisterWindowMessageA("TaskBarCreated");
 
 
 CMPSkinMainWnd::CMPSkinMainWnd() {

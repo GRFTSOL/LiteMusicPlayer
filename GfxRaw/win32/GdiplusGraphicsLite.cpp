@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <objidl.h>
 #include <gdiplus.h>
+#include <ole2.h>
 
 
 #include "GdiplusGraphicsLite.h"
@@ -27,7 +28,6 @@ ARGB makeARGB(IN uint8_t a,
 #define GDIPCONST           const
 
 typedef Status(WINGDIPAPI* FUNGdipCreateFromHDC)(HDC hdc, GpGraphics** graphics);
-typedef Status(WINGDIPAPI* FUNGdipCreateFontFromLogfontA) (HDC hdc, GDIPCONST LOGFONTA* logfont, GpFont** font);
 typedef Status(WINGDIPAPI* FUNGdipCreateFontFromLogfontW) (HDC hdc, GDIPCONST LOGFONTW* logfont, GpFont** font);
 typedef Status(WINGDIPAPI* FUNGdipCreateFontFromDC) (HDC hdc, GpFont** font);
 typedef Status(WINGDIPAPI* FUNGdipCreateSolidFill) (ARGB color, GpSolidFill** brush);
@@ -54,8 +54,7 @@ typedef VOID(WINAPI* FUNGdiplusShutdown) (ULONG_PTR token);
 typedef Status(WINGDIPAPI* FUNGdipGetStringFormatTrimming) (GpStringFormat* format, StringTrimming* trimming);
 
 static FUNGdipCreateFromHDC                     g_funGdipCreateFromHDC = nullptr;
-static FUNGdipCreateFontFromLogfontA            g_funGdipCreateFontFromLogfontA = nullptr;
-// static FUNGdipCreateFontFromLogfontW         g_funGdipCreateFontFromLogfontW = nullptr;
+static FUNGdipCreateFontFromLogfontW            g_funGdipCreateFontFromLogfontW = nullptr;
 static FUNGdipCreateFontFromDC                  g_funGdipCreateFontFromDC = nullptr;
 static FUNGdipCreateSolidFill                   g_funGdipCreateSolidFill = nullptr;
 static FUNGdipStringFormatGetGenericTypographic g_funGdipStringFormatGetGenericTypographic = nullptr;
@@ -89,17 +88,17 @@ public:
         destroy();
     }
 
-    bool create(CGdiplusGraphicsLite *canvas, LOGFONTA &logFont) {
+    bool create(CGdiplusGraphicsLite *canvas, LOGFONTW &logFont) {
         Status ret;
 
         destroy();
 
-        ret = g_funGdipCreateFontFromLogfontA(canvas->getHandle(), &logFont, &m_font);
+        ret = g_funGdipCreateFontFromLogfontW(canvas->getHandle(), &logFont, &m_font);
         if (ret == NotTrueTypeFont) {
             // 选择默认的TRUEType字体！
-            LOGFONTA logfontNew = logFont;
-            strcpy_safe(logfontNew.lfFaceName, CountOf(logfontNew.lfFaceName), "Tahoma");
-            ret = g_funGdipCreateFontFromLogfontA(canvas->getHandle(), &logfontNew, &m_font);
+            LOGFONTW logfontNew = logFont;
+            wcscpy_s(logfontNew.lfFaceName, CountOf(logfontNew.lfFaceName), L"Tahoma");
+            ret = g_funGdipCreateFontFromLogfontW(canvas->getHandle(), &logfontNew, &m_font);
         }
 
         return ret == Ok;
@@ -119,11 +118,8 @@ protected:
 
 };
 
-// #ifdef _UNICODE
-// #define g_funGdipCreateFontFromLogfont        g_funGdipCreateFontFromLogfontW
-// #else
-#define g_funGdipCreateFontFromLogfont g_funGdipCreateFontFromLogfontA
-// #endif
+
+#define g_funGdipCreateFontFromLogfont g_funGdipCreateFontFromLogfontW
 
 #ifdef _WIN32
 ULONG_PTR g_gdiplusToken = NULL;
@@ -161,8 +157,7 @@ void CGdiplusGraphicsLite::attach(HDC hdc) {
         }
 
         g_funGdipCreateFromHDC = (FUNGdipCreateFromHDC )GetProcAddress(hModule, "GdipCreateFromHDC");
-        g_funGdipCreateFontFromLogfontA = (FUNGdipCreateFontFromLogfontA )GetProcAddress(hModule, "GdipCreateFontFromLogfontA");
-        // g_funGdipCreateFontFromLogfontW        = (FUNGdipCreateFontFromLogfontW            )GetProcAddress(hModule, "GdipCreateFontFromLogfontW");
+        g_funGdipCreateFontFromLogfontW = (FUNGdipCreateFontFromLogfontW )GetProcAddress(hModule, "GdipCreateFontFromLogfontW");
         g_funGdipCreateFontFromDC = (FUNGdipCreateFontFromDC )GetProcAddress(hModule, "GdipCreateFontFromDC");
         g_funGdipCreateSolidFill = (FUNGdipCreateSolidFill )GetProcAddress(hModule, "GdipCreateSolidFill");
         //        g_funGdipStringFormatGetGenericDefault = (FUNGdipStringFormatGetGenericDefault    )GetProcAddress(hModule, "GdipStringFormatGetGenericDefault");
@@ -184,8 +179,7 @@ void CGdiplusGraphicsLite::attach(HDC hdc) {
         g_funGdipGetStringFormatLineAlign = (FUNGdipGetStringFormatLineAlign )GetProcAddress(hModule, "GdipGetStringFormatLineAlign");
         g_funGdipSetStringFormatTrimming = (FUNGdipSetStringFormatTrimming )GetProcAddress(hModule, "GdipSetStringFormatTrimming");
         g_funGdipGetStringFormatTrimming = (FUNGdipGetStringFormatTrimming )GetProcAddress(hModule, "GdipGetStringFormatTrimming");
-        if (!g_funGdipCreateFromHDC || !g_funGdipCreateFontFromLogfontA
-            // || !g_funGdipCreateFontFromLogfontW
+        if (!g_funGdipCreateFromHDC || !g_funGdipCreateFontFromLogfontW
             || !g_funGdipCreateFontFromDC || !g_funGdipCreateSolidFill
             || !g_funGdipStringFormatGetGenericTypographic || !g_funGdipDeleteStringFormat
             || !g_funGdipGetStringFormatFlags || !g_funGdipSetStringFormatFlags
@@ -320,6 +314,9 @@ HMODULE CGdiplusGraphicsLite::loadGdiplusDll() {
 }
 
 bool CGdiplusGraphicsLite::startup() {
+    // init gdiplus
+    OleInitialize(nullptr);
+
     GdiplusStartupInput gdiplusStartupInput;
 
     if (!g_funGdiplusStartup || !g_funGdiplusShutdown) {
@@ -344,18 +341,21 @@ void CGdiplusGraphicsLite::shutdown() {
         g_funGdiplusShutdown(g_gdiplusToken);
         g_gdiplusToken = NULL;
     }
+
+    OleUninitialize();
 }
 
 CGdiplusFontPtr CGdiplusGraphicsLite::createFont(FontInfoEx &font, bool isLatin) {
-    LOGFONTA logFont;
+    LOGFONTW logFont = { 0 };
     logFont.lfHeight = font.getSize();
     logFont.lfWeight = font.getWeight();
     logFont.lfItalic = font.getItalic();
     logFont.lfUnderline = font.isUnderline;
     if (isEmptyString(font.getName())) {
-        strcpy_safe(logFont.lfFaceName, CountOf(logFont.lfFaceName), "Tahoma");
+        wcscpy_s(logFont.lfFaceName, CountOf(logFont.lfFaceName), L"Tahoma");
     } else {
-        strcpy_safe(logFont.lfFaceName, CountOf(logFont.lfFaceName), font.getName());
+        wcscpy_s(logFont.lfFaceName, CountOf(logFont.lfFaceName), 
+            utf8ToUCS2(isLatin ? font.getName() : font.getNameOthers()).c_str());
     }
 
     auto f = std::make_shared<CGdiplusFont>();

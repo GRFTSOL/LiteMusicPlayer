@@ -117,7 +117,7 @@ cstr_t Error2Str::c_str() {
     }
 
     if (m_nError >= ERR_MAX) {
-        return m_osError.Description();
+        return m_sysErr.c_str();
     }
 
     cstr_t szError;
@@ -134,10 +134,39 @@ cstr_t Error2Str::c_str() {
 #ifndef _WIN32
     if (m_nError >= ERR_C_ERRNO_BASE && m_nError - ERR_C_ERRNO_BASE <= 100) {
         // C error no, translate it.
-        m_osError.doFormatMessage(m_nError - ERR_C_ERRNO_BASE);
-        return m_osError.Description();
+        return getLastSysErrorDesc(m_nError - ERR_C_ERRNO_BASE).c_str();
     }
 #endif
 
     return "Not translated error code.";
 }
+
+#ifdef _WIN32
+std::string getLastSysErrorDesc(int code) {
+    if (code == -1) {
+        code = ::GetLastError();
+    }
+
+    WCHAR buf[512] = { 0 };
+    auto len = ::FormatMessageW(
+        FORMAT_MESSAGE_IGNORE_INSERTS |
+        FORMAT_MESSAGE_FROM_SYSTEM,
+        nullptr,
+        code,
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT ),
+        buf,
+        CountOf(buf),
+        nullptr);
+    
+    return ucs2ToUtf8(buf, len);
+}
+
+#else // #ifdef _WIN32
+std::string getLastSysErrorDesc(int code) {
+    if (code == -1) {
+        code = errno;
+    }
+
+    return strerror(code);
+}
+#endif // #ifdef _WIN32

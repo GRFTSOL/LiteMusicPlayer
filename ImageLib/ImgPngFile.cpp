@@ -15,9 +15,17 @@ void preMultiplyRGBChannels(RawImageData *imgData) {
         auto p = row;
         for (int x = 0; x < imgData->width; x++) {
             auto a = p[3];
+#ifdef _WIN32
+            auto r = p[0] * a / 255;
+            auto b = p[2] * a / 255;
+            p[0] = b;
+            p[1] = p[1] * a / 255;
+            p[2] = r;
+#else // #ifdef _WIN32
             p[0] = p[0] * a / 255;
             p[1] = p[1] * a / 255;
             p[2] = p[2] * a / 255;
+#endif // #ifdef _WIN32
             p += 4;
         }
         row += imgData->stride;

@@ -18,22 +18,6 @@ public:
 
     void init() {
         Window::createEx(MSG_WND_CLASS_NAME, "PlayerEventWnd", 0, 0, 1, 1, nullptr, 0);
-
-        // latest playlist and latest playing song file will loaded while main window is created.
-        cstr_t szCmdLine;
-
-        // get command line
-        szCmdLine = GetCommandLine();
-        szCmdLine = cmdLineNext(szCmdLine);
-        if (strcasecmp(szCmdLine, "/iPodLyricsDownloader") == 0) {
-            szCmdLine = "";
-        }
-        if (isEmptyString(szCmdLine)) {
-            // load default playlist
-        } else {
-            // excute cmdline
-            sendCommandLine(MPlayerApp::getMainWnd()->getWndHandle(), szCmdLine);
-        }
     }
 
     void quit() {

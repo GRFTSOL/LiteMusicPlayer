@@ -24,7 +24,7 @@ bool Cursor::loadStdCursor(STD_CURSOR_TYPE cusorType) {
 }
 
 bool Cursor::loadCursorFromFile(cstr_t szFile) {
-    m_cursor = ::LoadCursorFromFile(szFile);
+    m_cursor = ::LoadCursorFromFileW(utf8ToUCS2(szFile).c_str());
     return m_cursor != nullptr;
 }
 
@@ -32,4 +32,8 @@ void Cursor::destroy() {
     if (m_cursor) {
         m_cursor = nullptr;
     }
+}
+
+void Cursor::set() {
+    ::SetCursor(m_cursor);
 }

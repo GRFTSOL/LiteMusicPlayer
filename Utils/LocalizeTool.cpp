@@ -56,7 +56,7 @@ static bool findStringValue(cstr_t szBuff, cstr_t szName, string &strValue) {
 }
 
 //
-// getPrivateProfileString don't support UTF-8 encoding file.
+// getPrivateProfileStringUtf8 don't support UTF-8 encoding file.
 // Use this function instead.
 //
 static bool getLanguagePackInfo(cstr_t szFile, string &strLanguage, string &strLangCode, string &strLangCodeFull) {
@@ -66,7 +66,7 @@ static bool getLanguagePackInfo(cstr_t szFile, string &strLanguage, string &strL
     string strBuff;
     cstr_t SZ_INFO = "[Info]";
 
-    fp = fopen(szFile, "rb");
+    fp = fopenUtf8(szFile, "rb");
     if (!fp) {
         return false;
     }

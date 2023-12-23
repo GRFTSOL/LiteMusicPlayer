@@ -17,7 +17,9 @@ if (APPLE)
     add_definitions(-D_MAC_OS)
 elseif (LINUX)
     add_definitions(-D_LINUX)
-endif (APPLE)
+else(WIN32)
+    add_definitions(-DUNICODE)
+endif ()
 
 add_definitions(-DASIO_STANDALONE)
 add_definitions(-D_WEBSOCKETPP_CPP11_TYPE_TRAITS_)
@@ -50,6 +52,7 @@ set(ENABLE_PROGRAMS OFF)
 set(MBEDTLS_PYTHON_EXECUTABLE OFF)
 set(USE_STATIC_MBEDTLS_LIBRARY ON)
 set(USE_SHARED_MBEDTLS_LIBRARY OFF)
+set(GEN_FILES ON)
 add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/mbedtls mbedtls)
 
 #
@@ -65,18 +68,19 @@ set(WITH_FORTIFY_SOURCE OFF)
 set(WITH_STACK_PROTECTOR OFF)
 set(INSTALL_MANPAGES OFF)
 set(INSTALL_PKGCONFIG_MODULES OFF)
+set(ZLIB_LIBRARY ${CMAKE_CURRENT_BINARY_DIR}/zlib/Debug/zlibstaticd.lib)
+set(ZLIB_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/third-parties/zlib)
 #set(INSTALL_CMAKE_CONFIG_MODULE OFF)
 add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/flac FLAC)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/faad2 libfaad2)
 
-# set(ENABLE_OPT OFF)
+add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/zlib zlib)
+
 set(SPNG_SHARED OFF)
-# set(SPNG_STATIC OFF)
+set(SPNG_STATIC ON)
 set(BUILD_EXAMPLES OFF)
 add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/libspng libspng)
-
-add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/zlib zlib)
 
 #
 # Build Mp3Player
@@ -154,16 +158,6 @@ foreach(_PATH ${SRC_PATHS})
     aux_source_directory(${_PATH} SRC)
 endforeach()
 
-set(LINK_OPT_FRAME_WORK)
-
-if (APPLE)
-    set(LINK_OPT_FRAME_WORK "-framework CoreFoundation" "-framework Cocoa"
-        "-framework AudioToolbox" "-framework CoreAudio" "-framework CoreData"
-        "-framework AppKit" "-framework CoreText" "-framework CoreMedia"
-        "-framework AVFoundation" "-framework CoreGraphics" "-framework Carbon")
-    message("${LINK_OPT_FRAME_WORK}")
-endif (APPLE)
-
 # set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
 set(HEADER_FILES)
@@ -218,6 +212,19 @@ if(WIN32)
 target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/Mp3Player/win32/resource.rc)
 endif(WIN32)
 
+set(OS_LINK_OPTS)
+if(WIN32)
+    set(OS_LINK_OPTS odbc32.lib odbccp32.lib ws2_32.lib Winmm.lib comctl32.lib version.lib psapi.lib)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE pthread FLAC faad TinyJS_STATIC agg_STATIC glogbase uv_a mbedtls spng_static ${LINK_OPT_FRAME_WORK})
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:wWinMainCRTStartup")
+elseif (APPLE)
+    set(OS_LINK_OPTS "pthread" "-framework CoreFoundation" "-framework Cocoa"
+        "-framework AudioToolbox" "-framework CoreAudio" "-framework CoreData"
+        "-framework AppKit" "-framework CoreText" "-framework CoreMedia"
+        "-framework AVFoundation" "-framework CoreGraphics" "-framework Carbon")
+else(APPLE)
+    set(OS_LINK_OPTS pthread)
+endif(APPLE)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE ${OS_LINK_OPTS} FLAC faad TinyJS_STATIC agg_STATIC glogbase uv_a mbedtls spng_static zlibstatic)
 # -static-libstdc++

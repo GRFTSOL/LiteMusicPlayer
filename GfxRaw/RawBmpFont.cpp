@@ -813,7 +813,9 @@ bool CRawBmpFont::drawTextEx(CRawGraph *canvas, const CRect &rcPos, const CColor
         if (shouldDrawTextEllipsis(text, len, rcPos.right - rcPos.left, str)) {
             return drawTextEx(canvas, rcPos, clrText, str.c_str(), (int)str.size(), uFormat, bDrawAlphaChannel);
         }
-    } else if (isFlagSet(uFormat, DT_PREFIX_TEXT)) {
+    }
+
+    if (isFlagSet(uFormat, DT_PREFIX_TEXT)) {
         // 绘制文字时，绘制对应的下划线: A&bc&&d ==> Abc&d
         string str;
         float xPrefix, prefixWidth;
@@ -1074,19 +1076,13 @@ void CRawBmpFont::useColorOverlay() {
 }
 
 bool isWordSplitChar(cstr_t szChar) {
-#ifdef UNICODE
-    if ((*szChar) > 255 || !(isalpha(*szChar) || IsDigit(*szChar) || (*szChar >= 127 && *szChar <= 255)
-        || *szChar == '\'' || *szChar == '\"' || *szChar == '_' || *szChar == '-')) {
-        return true;
-    }
-#else
     uint32_t c = (uint32_t)*szChar;
 
     if (!(isalpha(c) || isDigit(c) || (c >= 127 && c <= 255)
         || c == '\'' || c == '\"' || c == '_' || c == '-')) {
         return true;
     }
-#endif
+
     return false;
 }
 

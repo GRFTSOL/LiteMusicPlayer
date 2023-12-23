@@ -16,7 +16,7 @@ public:
 
     CFontCollection() {
     //: m_logFont(25, 0, 0, 0, FW_REGULAR, false, false, false, DEFAULT_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, g_byFontQuality, DEFAULT_PITCH | FF_ROMAN, "Tahoma")
-        LOGFONTA lgfont = {25, 0, 0, 0, FW_REGULAR, false, false, false, DEFAULT_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, g_byFontQuality, DEFAULT_PITCH | FF_ROMAN, "Tahoma"};
+        LOGFONTW lgfont = {25, 0, 0, 0, FW_REGULAR, false, false, false, DEFAULT_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, g_byFontQuality, DEFAULT_PITCH | FF_ROMAN, "Tahoma"};
 
         m_logFontLatin9 = lgfont;
         m_logFontOthers = lgfont;
@@ -126,8 +126,8 @@ public:
     }
 
 protected:
-    LOGFONTA                    m_logFontLatin9;
-    LOGFONTA                    m_logFontOthers;
+    LOGFONTW                    m_logFontLatin9;
+    LOGFONTW                    m_logFontOthers;
     MAP_FONT                    m_mapFonts;
 
 };

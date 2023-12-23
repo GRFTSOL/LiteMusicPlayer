@@ -5,10 +5,14 @@
 // 使用者 WindowsProject1.rc
 
 #define IDS_APP_TITLE           103
+#define IDC_STATIC              -1
+
 #define IDI_MPLAYER             107
 #define IDI_PLAY                109
 #define IDI_PREV                110
 #define IDI_NEXT                111
+#define IDI_CRASH               112
+#define IDD_CRASH_REPORT        120
 
 // 新对象的下一组默认值
 //

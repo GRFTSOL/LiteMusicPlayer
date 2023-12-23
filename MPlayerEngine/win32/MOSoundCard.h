@@ -1,15 +1,13 @@
 ﻿#pragma once
 
-﻿
-
 #ifndef MPlayerEngine_win32_MOSoundCard_h
 #define MPlayerEngine_win32_MOSoundCard_h
 
-
+#include "../IMPlayer.h"
 #include <mmsystem.h>
 
 
-class CMOSoundCard : public IMediaOutput {
+class MOSoundCard : public IMediaOutput {
 OBJ_REFERENCE_DECL
 public:
     enum FADE_MODE {
@@ -18,69 +16,53 @@ public:
         FADE_OUT,
     };
 
-    CMOSoundCard();
-    virtual ~CMOSoundCard();
+    MOSoundCard();
+    virtual ~MOSoundCard();
 
-    cstr_t getDescription();
+    cstr_t getDescription() override { return "MCI Soundcard Output"; }
 
-    virtual ResultCode init(IMPlayer *pPlayer) { return ERR_OK; }
-    virtual ResultCode quit() { return ERR_OK; }
+    ResultCode waitForWrite(int timeOutMs) override;
 
-    virtual ResultCode open(int nSampleRate, int nNumChannels, int nBitsPerSamp);
+    ResultCode write(IFBuffer *fb) override;
+    ResultCode flush() override;
 
-    virtual ResultCode waitForWrite();
+    ResultCode play() override;
+    ResultCode pause() override;
+    bool isPlaying() override;
+    ResultCode stop() override;
 
-    virtual ResultCode write(IFBuffer *pBuf);
-    virtual ResultCode flush();
+    uint32_t getPos() override;
 
-    virtual ResultCode pause(bool bPause);
-    virtual bool isPlaying();
-    virtual ResultCode stop();
-
-    virtual bool isOpened();
-
-    // volume
-    ResultCode setVolume(int volume, int nBanlance);
-
-    virtual uint32_t getPos();
+    ResultCode setVolume(int volume, int banlance) override;
+    int getVolume() override;
 
 protected:
-    ResultCode doOpen();
+    ResultCode doOpen(int sampleRate, int numChannels, int bitsPerSamp);
     ResultCode doStop();
 
     void fadeInSoundData(char *buf, int nLen);
     void fadeOutSoundData(char *buf, int nLen);
 
-    WAVEHDR* NewWaveHdr();
-
 public:
-    static void CALLBACK MCICallBack(HWAVEOUT hwo, uint32_t msg, uint32_t dwInstance,
-        uint32_t dwParam1, uint32_t dwParam2);
+    static void CALLBACK mciCallBack(HWAVEOUT hwo, uint32_t msg, DWORD_PTR user, DWORD_PTR param1, DWORD_PTR param2);
 
 private:
-    Event                       m_eventCanWrite;
-    uint32_t                    m_dwTotolBytesOffset; // 输入到MOSoundCard中的字节偏移总量
+    WAVEFORMATEX                    m_wfex;
+    HWAVEOUT                        m_hwo = nullptr;
 
-    WAVEFORMATEX                m_wfex;
-    HWAVEOUT                    m_hwo;
+    int                             m_volume = 0;
 
-    int                         m_iBytesPerSample;
-    uint32_t                    m_dwDataSize;
+    int                             m_channels = 0;
+    int                             m_sampleRate = 0;
+    int                             m_bitsPerSamp = 0;
 
-    typedef    list<WAVEHDR *>        LIST_WAVHDR;
+    int                             m_iBytesPerSample = 0;
 
-    std::mutex                  m_mutex;
-    list<WAVEHDR                *>    m_listFree, m_listPrepared, m_listPausedHdr;
-    int                         m_nBuffered;
-    int                         m_nBufferedMax;
+    std::mutex                      _mutexWaitWrite;
+    std::condition_variable         _cvWaitWrite;
 
-    FADE_MODE                   m_fadeMode;
-    long                        m_nFadeDoneSamples;
-    long                        m_nFadeMaxSamples;
-
-    bool                        m_bWrittingPausedData;
-
-    WAVEHDR                     *m_pFadeOutEndHdr;
+    std::atomic<int>                m_nBuffered = 0;
+    int                             m_nBufferedMax = 0;
 
 };
 

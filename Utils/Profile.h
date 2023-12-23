@@ -13,19 +13,9 @@
 
 #include "UtilsTypes.h"
 
-
-bool writePrivateProfileInt(
-    cstr_t lpAppName,  // section name
-    cstr_t lpKeyName,  // key name
-    int value,            // int to add
-    cstr_t lpFileName  // initialization file
-    );
-
-#ifndef WIN32
-uint32_t GetPrivateProfileString(cstr_t lpAppName, cstr_t lpKeyName, cstr_t lpDefault, char * lpReturnedString, uint32_t nSize, cstr_t lpFileName);
-bool WritePrivateProfileString(cstr_t lpAppName, cstr_t lpKeyName, cstr_t lpString, cstr_t lpFileName);
-uint32_t GetPrivateProfileInt(cstr_t lpAppName, cstr_t lpKeyName, int nDefault, cstr_t lpFileName);
-#endif
+uint32_t getPrivateProfileStringUtf8(cstr_t appName, cstr_t keyName, cstr_t defVal, char *returnedString, uint32_t nSize, cstr_t fileName);
+uint32_t getPrivateProfileIntUtf8(cstr_t appName, cstr_t keyName, int defVal, cstr_t fileName);
+bool writePrivateProfileStringUtf8(cstr_t appName, cstr_t keyName, cstr_t value, cstr_t fileName);
 
 //
 // 从*.ini文件中读入设置之类的

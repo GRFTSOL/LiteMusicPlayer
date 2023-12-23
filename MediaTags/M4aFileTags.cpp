@@ -516,14 +516,10 @@ M4aTag::~M4aTag() {
 }
 
 int M4aTag::open(cstr_t szFile, bool bModify) {
-    if (bModify) {
-        m_fp = fopen(szFile, "r+b");
-    } else {
-        m_fp = fopen(szFile, "rb");
-    }
+    m_fp = fopenUtf8(szFile, bModify ? "r+b" : "rb");
 
     if (!m_fp) {
-        setCustomErrorDesc(stringPrintf("%s: %s", (cstr_t)OSError(), szFile).c_str());
+        setCustomErrorDesc(stringPrintf("%s: %s", getLastSysErrorDesc().c_str(), szFile).c_str());
         return ERR_CUSTOM_ERROR;
     }
 

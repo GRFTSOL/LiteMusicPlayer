@@ -19,9 +19,9 @@ CTextFile::~CTextFile() {
 int CTextFile::open(cstr_t szFile, bool writeMode, CharEncodingType encoding) {
     close();
 
-    m_fp = fopen(szFile, writeMode ? "wb" : "rb");
+    m_fp = fopenUtf8(szFile, writeMode ? "wb" : "rb");
     if (!m_fp) {
-        setCustomErrorDesc(stringPrintf("%s: %s", (cstr_t)OSError(), szFile).c_str());
+        setCustomErrorDesc(stringPrintf("%s: %s", getLastSysErrorDesc().c_str(), szFile).c_str());
         return ERR_CUSTOM_ERROR;
     }
 

@@ -11,66 +11,61 @@
 void analyseProxySetting(cstr_t szProxySetting, char szServer[], int nMaxSize, int &nPort);
 
 void execute(Window *pWnd, cstr_t szExe, cstr_t szParam) {
-    ShellExecute(pWnd != nullptr ? pWnd->getWndHandle() : nullptr, "open",
-        szExe,
-        szParam, nullptr, SW_SHOWNORMAL);
+    ShellExecuteW(pWnd != nullptr ? pWnd->getWndHandle() : nullptr, L"open",
+        utf8ToUCS2(szExe).c_str(),
+        utf8ToUCS2(szParam).c_str(), nullptr, SW_SHOWNORMAL);
 }
 
 bool setClipboardText(Window *pWnd, cstr_t szText) {
     return tobool(copyTextToClipboard(szText));
 }
 
-bool SHDeleteFile(cstr_t szFile, Window *pWndParent) {
-    SHFILEOPSTRUCT sop;
-    string strFile;
-
-    strFile = szFile;
-    strFile += '\0';
+bool SHDeleteFile(cstr_t file, Window *pWndParent) {
+    SHFILEOPSTRUCTW sop;
+    utf16string fn = utf8ToUCS2(file);
+    fn.push_back('\0');
 
     sop.hwnd = pWndParent->getWndHandle();
     sop.wFunc = FO_DELETE;
-    sop.pFrom = strFile.c_str();
+    sop.pFrom = fn.c_str();
     sop.pTo = nullptr;
     sop.fFlags = FOF_ALLOWUNDO;
     sop.fAnyOperationsAborted = false;
     sop.hNameMappings = nullptr;
-    sop.lpszProgressTitle = "";
+    sop.lpszProgressTitle = L"";
 
-    return (SHFileOperation(&sop) == 0 && !sop.fAnyOperationsAborted);
+    return (SHFileOperationW(&sop) == 0 && !sop.fAnyOperationsAborted);
 }
 
-bool SHCopyFile(cstr_t szSrcFile, cstr_t szTargFile, Window *pWndParent) {
-    SHFILEOPSTRUCT sop;
-    string strSrc, strTarg;
-
-    strSrc = szSrcFile;
-    strTarg = szTargFile;
-    szSrcFile += '\0';
-    szTargFile += '\0';
+bool SHCopyFile(cstr_t srcFile, cstr_t targFile, Window *pWndParent) {
+    SHFILEOPSTRUCTW sop;
+    utf16string fnSrc = utf8ToUCS2(srcFile); fnSrc.push_back('\0');
+    utf16string fnTarg = utf8ToUCS2(targFile); fnTarg.push_back('\0');
 
     sop.hwnd = pWndParent->getWndHandle();
     sop.wFunc = FO_COPY;
-    sop.pFrom = strSrc.c_str();
-    sop.pTo = strTarg.c_str();
+    sop.pFrom = fnSrc.c_str();
+    sop.pTo = fnTarg.c_str();
     sop.fFlags = FOF_ALLOWUNDO;
     sop.fAnyOperationsAborted = false;
     sop.hNameMappings = nullptr;
-    sop.lpszProgressTitle = "";
+    sop.lpszProgressTitle = L"";
 
-    return (SHFileOperation(&sop) == 0 && !sop.fAnyOperationsAborted);
+    return (SHFileOperationW(&sop) == 0 && !sop.fAnyOperationsAborted);
 }
 
 #ifndef INVALID_FILE_ATTRIBUTES
 #define INVALID_FILE_ATTRIBUTES 0xFFFFFFFF
 #endif
 
-bool setFileNoReadOnly(cstr_t szFile) {
+bool setFileNoReadOnly(cstr_t file) {
+    auto fn = utf8ToUCS2(file);
     uint32_t dwAttr;
-    dwAttr = GetFileAttributes(szFile);
+    dwAttr = GetFileAttributesW(fn.c_str());
 
     if (dwAttr != INVALID_FILE_ATTRIBUTES) {
         if (isFlagSet(dwAttr, FILE_ATTRIBUTE_READONLY)) {
-            return SetFileAttributes(szFile, dwAttr & ~FILE_ATTRIBUTE_READONLY);
+            return SetFileAttributes(fn.c_str(), dwAttr & ~FILE_ATTRIBUTE_READONLY);
         } else {
             return true;
         }
@@ -87,13 +82,13 @@ bool loadProxySvrFromIE(bool &bUseProxy, string &strSvr, int &nPort) {
     HKEY hKeyInet;
     bool bRet = true;
 
-    if (RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",
+    if (RegOpenKeyExA(HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",
         0, KEY_QUERY_VALUE, &hKeyInet) == ERROR_SUCCESS) {
         char szBuff[256];
 
         // ProxyEnable?
         DWORD dwType = REG_DWORD, dwEnable, nSize = sizeof(szBuff);
-        if (RegQueryValueEx(hKeyInet, "ProxyEnable", nullptr, &dwType, (uint8_t *)&dwEnable, &nSize) != ERROR_SUCCESS) {
+        if (RegQueryValueExA(hKeyInet, "ProxyEnable", nullptr, &dwType, (uint8_t *)&dwEnable, &nSize) != ERROR_SUCCESS) {
             bRet = false;
             bUseProxy = false;
         } else {
@@ -103,7 +98,7 @@ bool loadProxySvrFromIE(bool &bUseProxy, string &strSvr, int &nPort) {
         // ProxyServer ?
         dwType = REG_SZ;
         nSize = sizeof(szBuff);
-        if (RegQueryValueEx(hKeyInet, "ProxyServer", nullptr, &dwType, (uint8_t *)szBuff, &nSize) != ERROR_SUCCESS) {
+        if (RegQueryValueExA(hKeyInet, "ProxyServer", nullptr, &dwType, (uint8_t *)szBuff, &nSize) != ERROR_SUCCESS) {
             bRet = false;
         } else {
             string http;

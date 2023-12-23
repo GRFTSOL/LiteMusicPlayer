@@ -33,12 +33,8 @@ int CRawGlyphBuilder::getHeight() const {
 }
 
 void CRawGlyphBuilder::createMemGraph(int nWidthGraph) {
-    nWidthGraph = (nWidthGraph + 3 % 4) * 4;
     m_fontMemGraph.destroy();
-
     m_fontMemGraph.create(nWidthGraph, getHeightBitmap(), NULL, MEM_GRAPH_BITS);
-
-    CGdiplusGraphicsLite *pmemGraph;
 
     m_fontGraph.attach(m_fontMemGraph.getHandle());
 
@@ -51,6 +47,10 @@ void CRawGlyphBuilder::createMemGraph(int nWidthGraph) {
 
 void CRawGlyphBuilder::destroy() {
     m_fontMemGraph.destroy();
+}
+
+int CRawGlyphBuilder::getHeightBitmap() {
+    return m_fontInfo.height + MARGIN_FONT * 2;
 }
 
 void copyBitmpDataFromGraphBuffer(Glyph *pGlyph, agg::pixfmt_rgb24 &bufGraph);

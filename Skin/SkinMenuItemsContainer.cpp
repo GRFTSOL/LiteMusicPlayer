@@ -395,7 +395,7 @@ void SkinMenuItemsContainer::setMenu(const CMenu &menu) {
 
     int count = m_menu.getItemCount();
     for (int i = 0; i < count; i++) {
-        MenuItemInfo item;
+        MenuItemInfo item = { 0 };
         if (m_menu.getMenuItemInfo(i, true, item)) {
             m_items.push_back(item);
         }

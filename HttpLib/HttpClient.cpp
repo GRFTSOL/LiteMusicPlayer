@@ -2,8 +2,8 @@
 //  HttpClient.cpp
 //
 
-#include <glog/logging.h>
 #include "HttpClient.hpp"
+#include <glog/logging.h>
 
 
 string getHttpRequestString(cstr_t method, const string &domain, int port, const string &path, const ListHttpHeaders &headers, const string *body) {
@@ -91,8 +91,8 @@ void HttpClient::onConnect(uv_connect_t *connection, int status) {
 
     uv_stream_t *stream = connection->handle;
     uv_buf_t http = {
-        .base = thiz->_toWriteData.data(),
-        .len = thiz->_toWriteData.size(),
+        thiz->_toWriteData.size(),
+        thiz->_toWriteData.data(),
     };
 
     uv_write(new uv_write_t, stream, &http, 1, onWrite);

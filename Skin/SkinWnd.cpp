@@ -869,39 +869,7 @@ void CSkinWnd::invalidateUIObject(CUIObject *pObj) {
         return; // SkinWnd isn't created yet.
     }
 
-#ifdef _WIN32
-    CRawGraph::CClipBoxAutoRecovery autoCBR(m_pmemGraph);
-
-    m_pmemGraph->setClipBoundBox(pObj->m_rcObj);
-
-    if (pObj->isUseParentBg()) {
-        // Redraw background
-        assert(pObj->getParent() != nullptr);
-        pObj->getParent()->redrawBackground(m_pmemGraph, pObj->m_rcObj);
-    }
-
-    CRawGraph::COpacityBlendAutoRecovery opacityAR(m_pmemGraph, pObj->getOpacity());
-
-    pObj->tryToCallInitialUpdate();
-    pObj->draw(m_pmemGraph);
-
-    opacityAR.recover();
-
-    autoCBR.recover();
-
-    if (m_bTranslucencyLayered) {
-        updateLayeredWindowUsingMemGraph(m_pmemGraph);
-        return;
-    }
-
-    m_pmemGraph->drawToWindow(
-        pObj->m_rcObj.left, pObj->m_rcObj.top,
-        pObj->m_rcObj.width(), pObj->m_rcObj.height(),
-        pObj->m_rcObj.left, pObj->m_rcObj.top);
-
-#else // _WIN32
     invalidateRect(&pObj->m_rcObj);
-#endif
 }
 
 void CSkinWnd::enterInDrawUpdate() {
@@ -1419,6 +1387,7 @@ void CSkinWnd::onDestroy() {
     closeSkin();
 
     m_skinToolTip.onDestroy();
+    m_fontProperty.clear();
 
     Window::onDestroy();
 
@@ -1657,7 +1626,7 @@ void CSkinWnd::postExecOnMainThread(const std::function<void()> &f) {
 void CSkinWnd::onExecOnMainThread() {
     while (!m_functionsToExecOnMainThread.empty()) {
         RMutexAutolock lock(m_mutex);
-        auto &f = m_functionsToExecOnMainThread.front();
+        auto f = m_functionsToExecOnMainThread.front();
         m_functionsToExecOnMainThread.pop_front();
         f();
     }

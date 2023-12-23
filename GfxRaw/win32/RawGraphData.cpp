@@ -14,7 +14,7 @@ CRawGraphData::~CRawGraphData() {
 
 bool CRawGraphData::create(int cx, int cy, WindowHandle windowHandle, int nBitCount) {
     assert(cx > 0 && cy > 0);
-    assert(nBitCount == 32);
+    // assert(nBitCount == 32);
     m_windowHandle = windowHandle;
     HDC hdc = ::GetDC((HWND)windowHandle);
 

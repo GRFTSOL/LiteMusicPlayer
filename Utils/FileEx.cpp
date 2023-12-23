@@ -14,9 +14,9 @@ CFileEx::~CFileEx() {
 int CFileEx::open(cstr_t szFile, cstr_t szMode) {
     close();
 
-    m_fp = fopen(szFile, szMode);
+    m_fp = fopenUtf8(szFile, szMode);
     if (!m_fp) {
-        setCustomErrorDesc(stringPrintf("%s: %s", (cstr_t)OSError(), szFile).c_str());
+        setCustomErrorDesc(stringPrintf("%s: %s", getLastSysErrorDesc().c_str(), szFile).c_str());
         return ERR_CUSTOM_ERROR;
     }
 

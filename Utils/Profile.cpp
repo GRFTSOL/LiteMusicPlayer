@@ -36,19 +36,9 @@ int testEncryptProfile()
 
 int k = testEncryptProfile();*/
 
-bool writePrivateProfileInt(
-    cstr_t lpAppName,  // section name
-    cstr_t lpKeyName,  // key name
-    int value,            // int to add
-    cstr_t lpFileName  // initialization file
-    ) {
-    string str = itos(value);
-    return WritePrivateProfileString(lpAppName, lpKeyName, str.c_str(), lpFileName);
-}
-
 //uint32_t regGetProfileString(cstr_t szKeyName, cstr_t szDefault, char * szReturnedString, uint32_t nSize)
 //{
-//    getPrivateProfileString("Registry", szKeyName, szDefault, szReturnedString, nSize);
+//    getPrivateProfileStringUtf8("Registry", szKeyName, szDefault, szReturnedString, nSize);
 //}
 //
 // uint32_t regGetProfileString(HKEY hRoot, cstr_t szItem, cstr_t szKeyName, cstr_t szDefault, char * szReturnedString, uint32_t nSize)
@@ -406,7 +396,7 @@ cstr_t CProfile::getString(cstr_t szAppName, cstr_t szKeyName, cstr_t szDefault)
 
     if (!getKey(szAppName, szKeyName, itKey)) {
         char szReturnedString[1024];
-        GetPrivateProfileString(szAppName, szKeyName, szDefault, szReturnedString, 1024, m_strProfile.c_str());
+        getPrivateProfileStringUtf8(szAppName, szKeyName, szDefault, szReturnedString, 1024, m_strProfile.c_str());
         addKeys(szAppName, szKeyName, szReturnedString);
         if (!getKey(szAppName, szKeyName, itKey)) {
             assert(0 && "getKey Can't be FAILED!");
@@ -423,7 +413,7 @@ bool CProfile::writeString(cstr_t szAppName, cstr_t szKeyName, cstr_t szValue) {
     uint32_t dwRet;
     MapStrings::iterator itKey;
 
-    dwRet = WritePrivateProfileString(szAppName, szKeyName, szValue, m_strProfile.c_str());
+    dwRet = writePrivateProfileStringUtf8(szAppName, szKeyName, szValue, m_strProfile.c_str());
 
     if (!getKey(szAppName, szKeyName, itKey)) {
         addKeys(szAppName, szKeyName, szValue);
@@ -510,7 +500,7 @@ string CProfile::encryptGetString(cstr_t szAppName, cstr_t szKeyName, cstr_t szD
     MapStrings::iterator itKey;
     if (!getKey(szAppName, strKeyNameEncrypt.c_str(), itKey)) {
         encryptStr(szDefault, strValue);
-        GetPrivateProfileString(szAppName, strKeyNameEncrypt.c_str(), strValue.c_str(), szReturnedString, CountOf(szReturnedString), m_strProfile.c_str());
+        getPrivateProfileStringUtf8(szAppName, strKeyNameEncrypt.c_str(), strValue.c_str(), szReturnedString, CountOf(szReturnedString), m_strProfile.c_str());
         addKeys(szAppName, strKeyNameEncrypt.c_str(), szReturnedString);
     } else {
         strcpy_safe(szReturnedString, CountOf(szReturnedString), (*itKey).second.c_str());
@@ -531,7 +521,7 @@ bool CProfile::encryptWriteString(cstr_t szAppName, cstr_t szKeyName, cstr_t szV
     encryptStr(szKeyName, strKeyNameEncrypt);
     encryptStr(szValue, strValueEncrypt);
 
-    dwRet = WritePrivateProfileString(szAppName, strKeyNameEncrypt.c_str(), strValueEncrypt.c_str(), m_strProfile.c_str());
+    dwRet = writePrivateProfileStringUtf8(szAppName, strKeyNameEncrypt.c_str(), strValueEncrypt.c_str(), m_strProfile.c_str());
 
     if (!getKey(szAppName, strKeyNameEncrypt.c_str(), itKey)) {
         addKeys(szAppName, strKeyNameEncrypt.c_str(), szValue);

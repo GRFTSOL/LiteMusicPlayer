@@ -14,8 +14,6 @@
 
 
 int CALLBACK BrowseCallbackProc(HWND hwnd,uint32_t uMsg,LPARAM lp, LPARAM pData) {
-    char szDir[MAX_PATH];
-
     switch (uMsg) {
     case BFFM_INITIALIZED:
         {
@@ -32,8 +30,9 @@ int CALLBACK BrowseCallbackProc(HWND hwnd,uint32_t uMsg,LPARAM lp, LPARAM pData)
     case BFFM_SELCHANGED:
         {
             // set the status window to the currently selected path.
-            if (SHGetPathFromIDList((LPITEMIDLIST) lp, szDir)) {
-                SendMessage(hwnd, BFFM_SETSTATUSTEXT, 0, (LPARAM)szDir);
+            utf16_t path[MAX_PATH];
+            if (SHGetPathFromIDListW((LPITEMIDLIST) lp, path)) {
+                SendMessage(hwnd, BFFM_SETSTATUSTEXTW, 0, (LPARAM)path);
             }
             break;
         }
@@ -45,15 +44,18 @@ int CALLBACK BrowseCallbackProc(HWND hwnd,uint32_t uMsg,LPARAM lp, LPARAM pData)
 
 
 bool CFolderDialog::doBrowse(Window *pWndParent) {
-    BROWSEINFO info;
+    BROWSEINFOW info;
 
     ZeroMemory((PVOID)&info, sizeof(info));
     info.hwndOwner = pWndParent->getWndHandle();
 
-    char pathBuf[MAX_PATH] = {0};
+    utf16string u16Title;
+    utf16_t pathBuf[MAX_PATH] = {0};
     info.pszDisplayName = pathBuf;
     if (m_title.empty()) {
-        info.lpszTitle = _TLT("Choose Folder");
+        u16Title = utf8ToUCS2(_TLT("Choose Folder"));
+    } else {
+        u16Title = utf8ToUCS2(m_title.c_str());
     }
 
 #ifndef BIF_NEWDIALOGSTYLE
@@ -73,7 +75,7 @@ bool CFolderDialog::doBrowse(Window *pWndParent) {
     if (::SHGetPathFromIDList(pidl, pathBuf) == false) {
         return false;
     }
-    m_path = pathBuf;
+    m_path = ucs2ToUtf8(pathBuf);
 
     return true;
 }

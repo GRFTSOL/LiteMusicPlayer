@@ -21,7 +21,7 @@ CFileILIO::~CFileILIO() {
 bool CFileILIO::open(cstr_t szFile) {
     close();
 
-    m_fp = fopen(szFile, "rb");
+    m_fp = fopenUtf8(szFile, "rb");
     if (!m_fp) {
         return false;
     }

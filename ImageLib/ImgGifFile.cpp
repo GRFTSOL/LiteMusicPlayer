@@ -594,7 +594,7 @@ int CImgGifFile::out_line(CImageIterator *iter, unsigned char *pixels, int linel
 // {
 //     FILE        *fp;
 // 
-//     fp = _tfopen(szFile, "wb");
+//     fp = fopenUtf8(szFile, "wb");
 //     if (!fp)
 //         return false;
 // 

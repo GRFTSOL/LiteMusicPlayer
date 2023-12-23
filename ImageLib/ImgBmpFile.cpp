@@ -107,7 +107,7 @@ int saveBmpFileFromRawImageData(RawImageData *pImageData, cstr_t szFile) {
     BITMAPFILEHEADER bmfh;
     FILE *fp;
 
-    fp = fopen(szFile, "wb");
+    fp = fopenUtf8(szFile, "wb");
     if (!fp) {
         ERR_LOG1("Can't create file: %s", szFile);
         return ERR_OPEN_FILE;

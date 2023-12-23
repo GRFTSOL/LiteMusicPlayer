@@ -8,32 +8,24 @@ bool isExtendedKey(UINT nVk)
     return nVk >= VK_SPACE && nVk <= VK_HELP;
 }
 
-void formatHotkeyText(string &strText, uint32_t nVirtKey, uint32_t fsModifiers) {
-    char szKeyName[256];
-    uint32_t nScanCode;
+string formatHotkeyText(uint32_t key, uint32_t modifiers) {
+    string text;
 
-    strText.resize(0);
-
-    emptyStr(szKeyName);
-    nScanCode = MapVirtualKey(nVirtKey, 0) << 16;
-    if (isExtendedKey(nVirtKey)) {
+    char keyName[256] = { 0 };
+    auto nScanCode = MapVirtualKey(key, 0) << 16;
+    if (isExtendedKey(key)) {
         nScanCode |= 1 << 24;
     }
-    GetKeyNameText(nScanCode, szKeyName, CountOf(szKeyName));
+    GetKeyNameTextA(nScanCode, keyName, CountOf(keyName));
 
-    if (isFlagSet(fsModifiers, MOD_WIN)) {
-        strText += _TLT("Winkey+");
-    }
-    if (isFlagSet(fsModifiers, MOD_CONTROL)) {
-        strText += _TLT("Ctrl+");
-    }
-    if (isFlagSet(fsModifiers, MOD_SHIFT)) {
-        strText += _TLT("Shift+");
-    }
-    if (isFlagSet(fsModifiers, MOD_ALT)) {
-        strText += _TLT("Alt+");
-    }
-    strText += szKeyName;
+    if (isFlagSet(modifiers, MOD_WIN)) { text += _TLT("Winkey+"); }
+    if (isFlagSet(modifiers, MOD_CONTROL)) { text += _TLT("Ctrl+"); }
+    if (isFlagSet(modifiers, MOD_SHIFT)) { text += _TLT("Shift+"); }
+    if (isFlagSet(modifiers, MOD_ALT)) { text += _TLT("Alt+"); }
+
+    text += keyName;
+
+    return text;
 }
 
 
@@ -401,7 +393,7 @@ bool CMPHotkey::getHotkeyText(int cmd, string &strKey) {
         CmdAccKey &cmdKey = m_vAccKey[i];
 
         if (cmdKey.cmd == cmd) {
-            formatHotkeyText(strKey, cmdKey.button, cmdKey.fsModifiers);
+            strKey = formatHotkeyText(cmdKey.button, cmdKey.fsModifiers);
             return true;
         }
     }

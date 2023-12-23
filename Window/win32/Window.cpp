@@ -3,12 +3,32 @@
 #include "../WindowTypes.h"
 #include "Window.h"
 #include "../GfxRaw/RawGraph.h"
+#include "../Desktop.h"
 
+
+void showInFinder(cstr_t filename) {
+    executeCmd(("explorer.exe /select, " + std::string(filename)).c_str());
+}
+
+void showInFinder(const VecStrings &files) {
+    SetStrings openedPaths;
+
+    for (auto &fn : files) {
+        auto path = fileGetPath(fn.c_str());
+        if (openedPaths.find(path) == openedPaths.end()) {
+            openedPaths.insert(path);
+            executeCmd(("explorer.exe /select, " + fn).c_str());
+        }
+    }
+}
+
+float getScreenScaleFactor() {
+    return 1;
+}
 
 #define BASEWNDCLASSNAME    "Window"
 
 #define WM_MOUSEWHEEL       0x020A
-
 
 LRESULT CALLBACK baseWndProc(HWND hWnd, uint32_t uMsg, WPARAM wParam, LPARAM lParam) {
     // fetch out the Window *
@@ -43,12 +63,13 @@ LRESULT CALLBACK baseWndProc(HWND hWnd, uint32_t uMsg, WPARAM wParam, LPARAM lPa
     }
 }
 
-bool mLRegisterWndClass(HINSTANCE hInstance, cstr_t szClassName) {
-    WNDCLASSEX wc;
+bool registerWndClass(HINSTANCE hInstance, cstr_t className) {
+    auto u16ClassName = utf8ToUCS2(className);
+    WNDCLASSEXW wc;
 
     wc.cbSize = sizeof(wc);
 
-    if (GetClassInfoEx(hInstance, szClassName, &wc)) {
+    if (GetClassInfoExW(hInstance, u16ClassName.c_str(), &wc)) {
         return true;
     }
 
@@ -63,9 +84,9 @@ bool mLRegisterWndClass(HINSTANCE hInstance, cstr_t szClassName) {
     wc.hCursor = LoadCursor(nullptr, MAKEINTRESOURCE(IDC_ARROW));
     wc.hbrBackground= (HBRUSH)GetStockObject(NULL_BRUSH);
     wc.lpszMenuName = nullptr;
-    wc.lpszClassName= szClassName;
+    wc.lpszClassName= u16ClassName.c_str();
 
-    int r = RegisterClassEx(&wc);
+    int r = RegisterClassExW(&wc);
     if (r == 0) {
         int res = GetLastError();
         if (res != ERROR_CLASS_ALREADY_EXISTS) {
@@ -213,6 +234,22 @@ bool moveWindowSafely(HWND hWnd, int X, int Y, int nWidth, int nHeight, bool bRe
     return bRet;
 }
 
+void centerWindowToMonitor(HWND hWnd) {
+    CRect rc, rcRestrict;
+    int w, h;
+
+    GetWindowRect(hWnd, &rc);
+    getMonitorRestrictRect(rc, rcRestrict);
+
+    w = rc.right - rc.left;
+    h = rc.bottom - rc.top;
+
+    rc.left = rcRestrict.left + (rcRestrict.right - rcRestrict.left - w) / 2;
+    rc.top = rcRestrict.top + (rcRestrict.bottom - rcRestrict.top - h) / 2;
+
+    SetWindowPos(hWnd, nullptr, rc.left, rc.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+}
+
 bool isLayeredWndSupported()
 {
     OSVERSIONINFO        version;
@@ -274,14 +311,14 @@ bool Window::create(cstr_t szCaption, int x, int y, int nWidth, int nHeight, Win
 }
 
 bool Window::createEx(cstr_t szClassName, cstr_t szCaption, int x, int y, int nWidth, int nHeight, Window *pWndParent, uint32_t dwStyle, uint32_t dwExStyle, int64_t nID) {
-    if (!mLRegisterWndClass(getAppInstance(), szClassName)) {
+    if (!registerWndClass(getAppInstance(), szClassName)) {
         return false;
     }
 
     assert(m_hWnd == nullptr);
 
     // 创建窗口
-    m_hWnd = CreateWindowEx(
+    m_hWnd = CreateWindowExA(
         dwExStyle,              // extend styles
         szClassName,            // window class name
         szCaption,              // window title
@@ -389,23 +426,21 @@ void Window::minimizeNoActivate() {
     ::ShowWindow(m_hWnd, SW_SHOWMINNOACTIVE);
 }
 
-uint32_t Window::getDlgItemText(int nIDItem, string &str) {
-    int nLen;
+string Window::getDlgItemText(int nIDItem) {
+    auto len= SendDlgItemMessage(m_hWnd, nIDItem, WM_GETTEXTLENGTH, 0, 0);
+    if (len> 0) {
+        utf16string buf;
+        buf.resize(len+ 1);
+        len = ::GetDlgItemTextW(m_hWnd, nIDItem, (WCHAR *)buf.c_str(), buf.capacity());
 
-    nLen = SendDlgItemMessage(m_hWnd, nIDItem, WM_GETTEXTLENGTH, 0, 0);
-    if (nLen > 0) {
-        str.resize(nLen + 1);
-        nLen = ::GetDlgItemText(m_hWnd, nIDItem, (char *)str.c_str(), str.capacity());
-
-        // Under certain conditions, the defWindowProc function returns
-        // a value that is larger than the actual length of the text
-        // So, must call str.resize again.
-        str.resize(nLen);
-    } else {
-        str.resize(0);
+        return ucs2ToUtf8(buf.c_str(), len);
     }
 
-    return nLen;
+    return string();
+}
+
+bool Window::setDlgItemText(int nIDItem, cstr_t szString) {
+    return ::SetDlgItemTextW(m_hWnd, nIDItem, utf8ToUCS2(szString).c_str());
 }
 
 bool Window::getDlgItemRect(int nIDItem, CRect* lpRect) {
@@ -443,8 +478,13 @@ bool Window::getClientRect(CRect* lpRect) {
     return tobool(::GetClientRect(m_hWnd, lpRect));
 }
 
+float Window::getScaleFactor() {
+    return 1.0;
+}
+
 void Window::setCursor(Cursor *cursor) {
-    setWndCursor(cursor);
+    cursor->set();
+    // setWndCursor(cursor);
 }
 
 bool Window::setTimer(uint32_t nTimerId, uint32_t nElapse) {
@@ -459,13 +499,18 @@ string Window::getTitle() {
     string str;
     int len = SendMessage(m_hWnd, WM_GETTEXTLENGTH, 0, 0);
     if (len > 0) {
-        str.resize(len + 1);
-        len = ::GetWindowText(m_hWnd, (char *)str.c_str(), str.capacity());
+        utf16string buf;
+        buf.resize(len + 1);
+        len = ::GetWindowTextW(m_hWnd, (WCHAR *)buf.c_str(), str.capacity());
 
         str.resize(len);
     }
 
     return str;
+}
+
+bool Window::setTitle(cstr_t szText) {
+    return tobool(::SetWindowTextW(m_hWnd, utf8ToUCS2(szText).c_str()));
 }
 
 bool Window::setWndCursor(Cursor *pCursor) {
@@ -550,6 +595,10 @@ void Window::setToolWindow(bool bToolWindow) {
     }
 }
 
+bool Window::isForeground() {
+    return ::GetForegroundWindow() == m_hWnd;
+}
+
 bool Window::setForeground() {
     return tobool(::SetForegroundWindow(m_hWnd));
 }
@@ -582,15 +631,17 @@ bool Window::moveWindowSafely(int X, int Y, int nWidth, int nHeight, bool bRepai
     return tobool(::moveWindowSafely(m_hWnd, X, Y, nWidth, nHeight, bRepaint));
 }
 
-int Window::messageOut(cstr_t lpText, uint32_t uType, cstr_t lpCaption) {
-    char szCap[512] = { 0 };
-    if (lpCaption == nullptr) {
-        emptyStr(szCap);
-        GetWindowText(m_hWnd, szCap, CountOf(szCap));
-        lpCaption = szCap;
+int Window::messageOut(cstr_t text, uint32_t uType, cstr_t caption) {
+    utf16string u16Cap;
+    if (caption == nullptr) {
+        WCHAR buf[512] = { 0 };
+        auto len = GetWindowTextW(m_hWnd, buf, CountOf(buf));
+        u16Cap.assign(buf, len);
+    } else {
+        u16Cap = utf8ToUCS2(caption);
     }
 
-    return MessageBox(m_hWnd, lpText, lpCaption, uType);
+    return MessageBoxW(m_hWnd, utf8ToUCS2(text).c_str(), u16Cap.c_str(), uType);
 }
 
 bool Window::replaceChildPos(int nIDChildSrcPos, Window *pChildNew) {
@@ -636,6 +687,7 @@ LRESULT Window::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
         break;
     case WM_CREATE:
         onCreate();
+        return 0;
     case WM_CLOSE:
         if (onClose()) {
             destroy();
@@ -727,7 +779,10 @@ LRESULT Window::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
         break;
     case WM_SIZE:
         if (wParam == SIZE_RESTORED) {
-            onResized(LOWORD(lParam), HIWORD(lParam));
+            auto cx = LOWORD(lParam), cy = HIWORD(lParam);
+            if (cx > 0 && cy > 0) {
+                onResized(cx, cy);
+            }
             if (m_WndSizeMode != WndSizeMode_Normal) {
                 m_WndSizeMode = WndSizeMode_Normal;
                 onSizeModeChanged(m_WndSizeMode);
@@ -840,4 +895,18 @@ void Window::detach() {
 
 WindowHandle Window::getHandle() {
     return (WindowHandle)m_hWnd;
+}
+
+// 在编辑框开始/结束编辑时需要调用
+void Window::startTextInput() {
+
+}
+
+void Window::endTextInput() {
+
+}
+
+// 编辑控件的光标位置改变后需要调用此函数
+void Window::caretPositionChanged(const CPoint &point) {
+
 }

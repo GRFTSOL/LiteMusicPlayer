@@ -86,7 +86,7 @@ void logTrace(void *lpData, int nSize) {
     data.cbData = strlen((cstr_t)lpData) + 1;
 
     if (_hDebugWnd == nullptr) {
-        _hDebugWnd = FindWindow(DEBUGCLASSNAME, DEBUGWNDNAME);
+        _hDebugWnd = FindWindowA(DEBUGCLASSNAME, DEBUGWNDNAME);
     }
 
     if (_hDebugWnd) {
@@ -132,20 +132,6 @@ L: Line
 E: lEvel  (Error)
 M: Message
 */
-
-size_t fwriteWT(const char *szBuffer, size_t n, size_t nLen, FILE *fp) {
-    size_t nLenWrite;
-#if defined(_WIN32)
-    USES_CONVERSION;
-    cstr_t szMsgAssii = T2CA((char *)szBuffer);
-    nLenWrite = strlen(szMsgAssii);
-#else
-    cstr_t szMsgAssii = (cstr_t)szBuffer;
-    nLenWrite = sizeof(char) * nLen;
-#endif
-    return fwrite(szMsgAssii, 1, nLenWrite, fp);
-}
-
 
 //////////////////////////////////////////////////////////////////////
 
@@ -258,8 +244,8 @@ void CLog::writeLog( uint8_t byLevel, cstr_t szFile, int nLine, cstr_t szFormat,
     }
 
     if (m_fpLog) {
-        fwriteWT(szBuffer, sizeof(char), (nLen - 1), m_fpLog);
-        fwriteWT("\n", sizeof(char), strlen("\n"), m_fpLog);
+        fwrite(szBuffer, 1, nLen - 1, m_fpLog);
+        fwrite("\n", 1, strlen("\n"), m_fpLog);
         fflush(m_fpLog);
     } else {
         printf("%s\n", szBuffer);
@@ -331,7 +317,7 @@ bool CLog::openLogFile() {
         deleteFile(m_logFile.c_str());
     }
 
-    m_fpLog = fopen(m_logFile.c_str(), "a+");
+    m_fpLog = fopenUtf8(m_logFile.c_str(), "a+");
 
     return (m_fpLog != nullptr);
 }

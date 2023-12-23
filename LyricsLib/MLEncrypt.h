@@ -53,7 +53,7 @@ bool mLEncriptV2(cstr_t szFile, cstr_t szData1, cstr_t szData2, string &strData,
 
     FILE *fp;
 
-    fp = fopen(szFile, "rb+");
+    fp = fopenUtf8(szFile, "rb+");
     if (fp) {
         fseek(fp, POS_MZ_TXT_BEG, SEEK_SET);
         fwrite(strData.c_str(), 1, strData.size(), fp);

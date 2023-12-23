@@ -15,20 +15,12 @@ bool CSkinWnd::invalidateRect(const CRect *lpRect, bool bErase) {
         return false;
     }
 
-    if (!m_bTranslucencyLayered) {
-        return Window::invalidateRect(lpRect, bErase);
-    }
-
-    invalidateRectOfLayeredWindow(lpRect);
-
-    return true;
+    return Window::invalidateRect(lpRect, bErase);
 }
 
 void CSkinWnd::invalidateRectOfLayeredWindow(const CRect* lpRect) {
     assert(m_bTranslucencyLayered);
-    CRawGraph *memCanvas;
-
-    memCanvas = getMemGraphics();
+    auto memCanvas = getMemGraphics();
     CRawGraph::CClipBoxAutoRecovery autoCBR(memCanvas);
     if (lpRect) {
         memCanvas->setClipBoundBox(*lpRect);
@@ -41,93 +33,8 @@ void CSkinWnd::invalidateRectOfLayeredWindow(const CRect* lpRect) {
     updateLayeredWindowUsingMemGraph(memCanvas);
 }
 
-/*
-
-void testUpdateLayeredWindow(HWND hWnd, HBITMAP hbmp, int nBmpWidth, int nBmpHeight)
-{
-    HDC        hdc, hdcSrc;
-    HBITMAP    hbmpOld;
-    BLENDFUNCTION    blend;
-    CPoint    ptSrc, ptDest;
-    SIZE    sizeWnd;
-    CRect    rcWnd;
-    uint32_t    dwStyle;
-
-    hdc = GetDC(hWnd);
-
-    // ????WS_EX_LAYERED??
-    dwStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
-    dwStyle |= WS_EX_LAYERED;
-    // SetWindowLong(hWnd, GWL_EXSTYLE, dwStyle & ~ (WS_EX_LAYERED));
-    SetWindowLong(hWnd, GWL_EXSTYLE, dwStyle);
-
-    hdcSrc = CreateCompatibleDC(hdc);
-
-    hbmpOld = (HBITMAP)SelectObject(hdcSrc, hbmp);
-
-#if !defined(AC_SRC_ALPHA)
-#define AC_SRC_ALPHA                0x01
-#endif
-
-    getWindowRect(hWnd, &rcWnd);
-
-    blend.AlphaFormat = AC_SRC_ALPHA;
-    blend.BlendOp = AC_SRC_OVER;
-    blend.BlendFlags = 0;
-    blend.SourceConstantAlpha = 255;
-
-    ptSrc.x = ptSrc.y = 0;
-    ptDest.x = rcWnd.left;
-    ptDest.y = rcWnd.top;
-    sizeWnd.cx = nBmpWidth;
-    sizeWnd.cy = nBmpHeight;
-
-    bool bRet = UpdateLayeredWindow(hWnd, hdc, &ptDest, &sizeWnd, hdcSrc, &ptSrc, 0, &blend, ULW_ALPHA);
-
-    SelectObject(hdcSrc, hbmpOld);
-
-    ReleaseDC(hWnd, hdc);
-    DeleteDC(hdcSrc);
-}
-
-HBITMAP load32Bitbmp(cstr_t szImage, int &nWidth, int &nHeight)
-{
-    CImgPngFile        png;
-    CImageData        imgData;
-
-    png.setImgData(&imgData);
-    if (!png.open(szImage))
-        return nullptr;
-
-    nWidth = imgData.GetWidth();
-    nHeight = imgData.getHeight();
-
-    return imgData.ToHBitmap(nullptr);
-}*/
-
 LRESULT CSkinWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
-    if (message == WM_NOTIFY) {
-        NMHDR *pnmh = (NMHDR *)lParam;
-
-        if (pnmh->code == TTN_GETDISPINFO) {
-            NMTTDISPINFO *lpnmtdi = (NMTTDISPINFO *)lParam;
-
-            if ((lpnmtdi->uFlags & TTF_IDISHWND) != TTF_IDISHWND) {
-                int nId;
-
-                nId = lpnmtdi->hdr.idFrom;
-
-                CUIObject *pObj;
-
-                pObj = getUIObjectById(nId);
-                if (pObj) {
-                    strcpy_safe(lpnmtdi->szText, CountOf(lpnmtdi->szText), _TL(pObj->m_strTooltip.c_str()));
-                    lpnmtdi->lpszText = lpnmtdi->szText;
-                    lpnmtdi->hinst = nullptr;
-                }
-            }
-        }
-    } else if (message == WM_GETDLGCODE) {
+    if (message == WM_GETDLGCODE) {
         return DLGC_WANTMESSAGE;
     } else if (message == WM_CAPTURECHANGED) {
         m_pUIObjCapMouse = nullptr;
@@ -174,6 +81,11 @@ LRESULT CSkinWnd::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
     case WM_PAINT:
         {
             if (m_bTranslucencyLayered) {
+                CRect rcClip;
+                if (::GetUpdateRect(m_hWnd, &rcClip, false)) {
+                    invalidateRectOfLayeredWindow(&rcClip);
+                }
+
                 // updates the position, size, shape, content, and translucency of a layered window
                 return DefWindowProc(m_hWnd, message, wParam, lParam);
             } else {

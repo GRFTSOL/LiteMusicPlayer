@@ -4,13 +4,14 @@
 #include <ShlObj_core.h>
 #include "../App.h"
 #include "../../TinyJS/utils/FileApi.h"
+#include "../../TinyJS/utils/CharEncoding.h"
 
 
 string _getAppResourceDir() {
-    char path[MAX_PATH] = {0};
-    GetModuleFileName(nullptr, path, CountOf(path));
+    WCHAR path[MAX_PATH] = {0};
+    auto len = GetModuleFileNameW(nullptr, path, CountOf(path));
 
-    return path;
+    return ucs2ToUtf8(path, len);
 }
 
 string _getAppDataDir(cstr_t szDefAppName) {
@@ -45,9 +46,9 @@ string _getAppDataDir(cstr_t szDefAppName) {
     }
 
     if (bInUserDir) {
-        char path[MAX_PATH] = {0};
-        if (SUCCEEDED(SHGetSpecialFolderPath(nullptr, path, CSIDL_APPDATA, false))) {
-            string dataDir = dirStringJoin(path, szDefAppName);
+        utf16_t path[MAX_PATH] = {0};
+        if (SUCCEEDED(SHGetSpecialFolderPathW(nullptr, path, CSIDL_APPDATA, false))) {
+            string dataDir = dirStringJoin(ucs2ToUtf8(path), szDefAppName);
             if (!isDirExist(dataDir.c_str())) {
                 createDirectory(dataDir.c_str());
             }

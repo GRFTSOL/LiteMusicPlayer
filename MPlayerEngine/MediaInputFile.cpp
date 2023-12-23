@@ -13,7 +13,7 @@ MediaInputFile::~MediaInputFile() {
 }
 
 ResultCode MediaInputFile::open(cstr_t szSourceMedia) {
-    m_fp = fopen(szSourceMedia, "rb");
+    m_fp = fopenUtf8(szSourceMedia, "rb");
     if (m_fp == nullptr) {
         if (!isFileExist(szSourceMedia)) {
             return ERR_MI_NOT_FOUND;

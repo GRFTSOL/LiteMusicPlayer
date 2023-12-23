@@ -140,12 +140,6 @@ public:
     bool isAnotherInstanceRunning();
     bool setRunningFlag();
 
-#ifdef _WIN32
-    bool isRunning() { return m_hMutexRuning != nullptr; }
-#else
-    bool isRunning() { return m_bRunning; }
-#endif
-
 protected:
     void setDefaultSettings();
 
@@ -156,9 +150,9 @@ protected:
     CMPHotkey                   m_hotKey;
 
 #ifdef _WIN32
-    HANDLE                      m_hMutexRuning;
+    HANDLE                      m_hMutexRuning = NULL;
 #else
-    bool                        m_bRunning;
+    bool                        m_bRunning = false;
 #endif
 
 };

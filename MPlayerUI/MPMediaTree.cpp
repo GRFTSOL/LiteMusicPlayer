@@ -195,16 +195,14 @@ void CMPMTNDiskDevice::onUpdate() {
     if (m_nImageIndex == II_MYCOMPUTER) {
         // root of my computer
 #ifdef _WIN32
-        char szStr[512] = "";
-        int nRet;
-        VecStrings vStr;
-        int nImage;
-        uint32_t nType;
-
-        nRet = GetLogicalDriveStrings(CountOf(szStr), szStr);
+        utf16_t szStr[512] = { 0 };
+        VecUtf16Strings vStr;
+        
+        auto nRet = GetLogicalDriveStringsW(CountOf(szStr), szStr);
         multiStrToVStr(szStr, vStr);
         for (int i = 0; i < (int)vStr.size(); i++) {
-            nType = GetDriveType(vStr[i].c_str());
+            int nImage;
+            auto nType = GetDriveTypeW(vStr[i].c_str());
             if (nType == DRIVE_REMOVABLE) {
                 nImage = II_DRIVE_REMOVABLE;
             } else if (nType == DRIVE_FIXED) {
@@ -219,7 +217,8 @@ void CMPMTNDiskDevice::onUpdate() {
                 continue;
             }
 
-            addNewNode(vStr[i].c_str(), vStr[i].c_str(), nImage, nImage);
+            auto name = ucs2ToUtf8(vStr[i]);
+            addNewNode(name.c_str(), name.c_str(), nImage, nImage);
         }
 #else
 #endif

@@ -329,7 +329,7 @@ TEST(ID3Helper, FileMoveEndData)
 {
     // fileMoveEndData
     FILE        *fp;
-    fp = fopen("c:\\1.txt", "wb");
+    fp = fopenUtf8("c:\\1.txt", "wb");
     if (!fp)
         return;
 
@@ -339,7 +339,7 @@ TEST(ID3Helper, FileMoveEndData)
     }
     fclose(fp);
 
-    fp = fopen("c:\\1.txt", "r+b");
+    fp = fopenUtf8("c:\\1.txt", "r+b");
     if (!fp)
         return;
     fileMoveEndData(fp, 90, 89);

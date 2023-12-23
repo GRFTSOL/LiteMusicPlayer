@@ -374,7 +374,7 @@ void CLyricsLocalSearch::loadLyricsAssociation() {
     MutexAutolock autoLock(m_mutex);
 
     string file = getAppDataDir() + "MLyrics.S2L";
-    fp = fopen(file.c_str(), "rb");
+    fp = fopenUtf8(file.c_str(), "rb");
     if (fp == nullptr) {
         goto R_END;
     }
@@ -425,7 +425,7 @@ void CLyricsLocalSearch::saveLyricsAssociation() {
 
     string file = getAppDataDir() + "MLyrics.S2L";
 
-    fp = fopen(file.c_str(), "wb");
+    fp = fopenUtf8(file.c_str(), "wb");
     if (fp == nullptr) {
         ERR_LOG1("Can't save lyrics association file: %s.", file.c_str());
         return;

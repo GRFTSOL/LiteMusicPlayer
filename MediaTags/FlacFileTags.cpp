@@ -90,7 +90,7 @@ FlacTag::~FlacTag() {
 
 int FlacTag::open(cstr_t fileName, MediaDataType needMediaDataTypes) {
     _tagTypes = 0;
-    _fp = fopen(fileName, (needMediaDataTypes & MDT_MODIFY) ? "r+b" : "rb");
+    _fp = fopenUtf8(fileName, (needMediaDataTypes & MDT_MODIFY) ? "r+b" : "rb");
     if (!_fp) {
         return ERR_OPEN_FILE;
     }

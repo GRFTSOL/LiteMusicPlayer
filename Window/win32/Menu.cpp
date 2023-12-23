@@ -1,4 +1,5 @@
 ﻿#include "../WindowLib.h"
+#include "../../TinyJS/utils/CharEncoding.h"
 
 
 bool toLocalMenu(HMENU hMenu) {
@@ -6,21 +7,19 @@ bool toLocalMenu(HMENU hMenu) {
         return true;
     }
 
-    // int                nCount;
-    MENUITEMINFO info;
-    char szString[256];
-    char szAccKey[256];
-    cstr_t szPos;
-
     // don't use get menu item count, under win ce, it will cost a lot time
     for (int i = 0; i < 256; i++) {
+        MENUITEMINFOW info;
+        utf16_t text[256];
+        utf16_t szAccKey[256];
+
         memset(&info, 0, sizeof(info));
 
         info.cbSize = sizeof(info);
         info.fMask = MIIM_TYPE | MIIM_SUBMENU | MIIM_DATA;
-        info.dwTypeData = szString;
-        info.cch = CountOf(szString);
-        szString[0] = '\0';
+        info.dwTypeData = text;
+        info.cch = CountOf(text);
+        text[0] = '\0';
 
         // get menu item by pos.
         if (!GetMenuItemInfo(hMenu, i, true, &info)) {
@@ -31,28 +30,31 @@ bool toLocalMenu(HMENU hMenu) {
             toLocalMenu(info.hSubMenu);
         }
 
-        if (isEmptyString(szString)) {
+        if (text[0] == '\0') {
             continue;
         }
 
         //
         // translate menu string
         //
-        szPos = strchr(szString, '\t');
-        if (!szPos) {
-            strcpy_safe(szString, CountOf(szString), _TL(szString));
-        } else {
-            strcpy_safe(szAccKey, CountOf(szAccKey), szPos);
-            szString[int(szPos - szString)] = '\0';
-            strcpy_safe(szString, CountOf(szString), _TL(szString));
-            strcat_safe(szString, CountOf(szString), szAccKey);
+        auto utf8Text = ucs2ToUtf8(text);
+        string label, accText;
+        if (!strSplit(utf8Text.c_str(), '\t', label, accText)) {
+            label = utf8Text;
         }
 
-        info.cch = strlen(szString) + 1;
+        utf8Text = _TL(label.c_str());
+        if (!accText.empty()) {
+            utf8Text.push_back('\t');
+            utf8Text.append(accText);
+        }
+
+        auto u16Text = utf8ToUCS2(utf8Text.c_str(), utf8Text.size());
+        info.dwTypeData = (utf16_t *)u16Text.c_str();
+        info.cch = u16Text.size() + 1;
         info.fMask = MIIM_DATA | MIIM_TYPE;
-        if (!SetMenuItemInfo(hMenu, i, true, &info)) {
-            OSError Err;
-            ERR_LOG1("SetMenuItemInfo: %s", Err.Description());
+        if (!SetMenuItemInfoW(hMenu, i, true, &info)) {
+            ERR_LOG1("SetMenuItemInfo: %s", getLastSysErrorDesc().c_str());
             continue;
         }
     }
@@ -67,6 +69,12 @@ bool toLocalMenu(CMenu *pMenu) {
 //////////////////////////////////////////////////////////////////////
 
 CMenu::CMenu() {
+}
+
+CMenu::CMenu(const CMenu &src) {
+    m_hMenu = src.m_hMenu;
+    m_nSubMenu = src.m_nSubMenu;
+    m_bFree = false;
 }
 
 CMenu::~CMenu() {
@@ -160,28 +168,34 @@ int CMenu::getItemCount() {
     return ::GetMenuItemCount(getHandle());
 }
 
-void CMenu::appendItem(uint32_t nID, cstr_t text, cstr_t szShortcutKey) {
-    if (isEmptyString(szShortcutKey)) {
-        ::AppendMenu(m_hMenu, MF_STRING, nID, text);
-    } else {
-        ::AppendMenu(m_hMenu, MF_STRING, nID, (string(text) + "\t" + szShortcutKey).c_str());
+void CMenu::appendItem(uint32_t nID, cstr_t text, cstr_t shortcutKey) {
+    utf16string u16Text = utf8ToUCS2(text);
+
+    if (!isEmptyString(shortcutKey)) {
+        u16Text.push_back('\t');
+        u16Text.append(utf8ToUCS2(shortcutKey));
     }
+
+    ::AppendMenuW(getHandle(), MF_STRING, nID, u16Text.c_str());
 }
 
 void CMenu::appendSeperator() {
-    AppendMenu(m_hMenu, MF_SEPARATOR, 0, nullptr);
+    AppendMenu(getHandle(), MF_SEPARATOR, 0, nullptr);
 }
 
-void CMenu::insertItem(int nPos, uint32_t nID, cstr_t text, cstr_t szShortcutKey) {
-    if (isEmptyString(szShortcutKey)) {
-        ::InsertMenu(getHandle(), nPos, MF_BYPOSITION, nID, text);
-    } else {
-        ::InsertMenu(getHandle(), nPos, MF_BYPOSITION, nID, (string(text) + "\t" + szShortcutKey).c_str());
+void CMenu::insertItem(int nPos, uint32_t nID, cstr_t text, cstr_t shortcutKey) {
+    utf16string u16Text = utf8ToUCS2(text);
+
+    if (!isEmptyString(shortcutKey)) {
+        u16Text.push_back('\t');
+        u16Text.append(utf8ToUCS2(shortcutKey));
     }
+
+    ::InsertMenuW(getHandle(), nPos, MF_BYPOSITION, nID, u16Text.c_str());
 }
 
 HMENU findMenuPos(HMENU hMenu, UINT nIDMenu) {
-    MENUITEMINFO	mii;
+    MENUITEMINFO mii;
 
     // don't use get menu item count, under win ce, it will cost a lot time
     for (int i = 0; i < 256; i++) {
@@ -212,18 +226,21 @@ HMENU findMenuPos(HMENU hMenu, UINT nIDMenu) {
     return NULL;
 }
 
-void CMenu::insertItemByID(uint32_t nPosID, uint32_t nID, cstr_t text, cstr_t szShortcutKey) {
-    HMENU hMenu = findMenuPos(m_hMenu, nPosID);
+void CMenu::insertItemByID(uint32_t nPosID, uint32_t nID, cstr_t text, cstr_t shortcutKey) {
+    HMENU hMenu = findMenuPos(getHandle(), nPosID);
     assert(hMenu);
     if (hMenu == nullptr) {
         return;
     }
 
-    if (isEmptyString(szShortcutKey)) {
-        ::InsertMenu(hMenu, nPosID, MF_BYCOMMAND, nID, text);
-    } else {
-        ::InsertMenu(hMenu, nPosID, MF_BYCOMMAND, nID, (string(text) + "\t" + szShortcutKey).c_str());
+    utf16string u16Text = utf8ToUCS2(text);
+
+    if (!isEmptyString(shortcutKey)) {
+        u16Text.push_back('\t');
+        u16Text.append(utf8ToUCS2(shortcutKey));
     }
+
+    ::InsertMenu(hMenu, nPosID, MF_BYCOMMAND, nID, u16Text.c_str());
 }
 
 void CMenu::insertSeperator(int nPos) {
@@ -232,7 +249,7 @@ void CMenu::insertSeperator(int nPos) {
 
 CMenu CMenu::appendSubmenu(cstr_t text) {
     HMENU hSubMenu = ::CreatePopupMenu();
-    ::AppendMenu(getHandle(), MF_POPUP, (UINT_PTR)hSubMenu, text);
+    ::AppendMenuW(getHandle(), MF_POPUP, (UINT_PTR)hSubMenu, utf8ToUCS2(text).c_str());
 
     CMenu menu;
     menu.attach(hSubMenu, false);
@@ -242,7 +259,8 @@ CMenu CMenu::appendSubmenu(cstr_t text) {
 
 CMenu CMenu::insertSubmenu(int nPos, cstr_t text) {
     HMENU hSubMenu = ::CreatePopupMenu();
-    ::InsertMenu(getHandle(), nPos, MF_BYPOSITION | MF_POPUP, (UINT_PTR)hSubMenu, text);
+    ::InsertMenuW(getHandle(), nPos, MF_BYPOSITION | MF_POPUP,
+        (UINT_PTR)hSubMenu, utf8ToUCS2(text).c_str());
 
     CMenu menu;
     menu.attach(hSubMenu, false);
@@ -263,7 +281,7 @@ void CMenu::removeAllItems() {
 }
 
 bool CMenu::getMenuItemText(uint32_t index, string &text, bool byPosition) {
-    MenuItemInfo info;
+    MenuItemInfo info = { 0 };
 
     if (!getMenuItemInfo(index, byPosition, info)) {
         return false;
@@ -274,26 +292,26 @@ bool CMenu::getMenuItemText(uint32_t index, string &text, bool byPosition) {
 }
 
 bool CMenu::getMenuItemInfo(uint32_t index, bool byPosition, MenuItemInfo &itemOut) {
-    MENUITEMINFO info;
-    char szString[256];
+    MENUITEMINFOW info = { 0 };
+    utf16_t text[256];
 
     info.cbSize = sizeof(info);
-    info.fMask = MIIM_TYPE | MIIM_SUBMENU | MIIM_DATA | MIIM_ID;
-    info.dwTypeData = szString;
-    info.cch = CountOf(szString);
-    szString[0] = '\0';
+    info.fMask = MIIM_TYPE | MIIM_SUBMENU | MIIM_DATA | MIIM_ID | MIIM_STATE;
+    info.dwTypeData = text;
+    info.cch = CountOf(text);
+    text[0] = '\0';
 
     // get menu item by pos.
-    if (!::GetMenuItemInfo(getHandle(), index, byPosition, &info)) {
+    if (!::GetMenuItemInfoW(getHandle(), index, byPosition, &info)) {
         return false;
     }
 
-    itemOut.text = szString;
+    auto state = GetMenuState(getHandle(), index, MF_BYPOSITION);
+
+    itemOut.text = ucs2ToUtf8(text);
     itemOut.id = info.wID;
     itemOut.isSubmenu = info.hSubMenu != nullptr;
-
-    auto state = GetMenuState(m_hMenu, index, byPosition);
-
+    itemOut.isSeparator = state & MF_SEPARATOR;
     itemOut.isChecked = state & MF_CHECKED;
     itemOut.isEnabled = !(state & MF_DISABLED);
 
@@ -301,7 +319,7 @@ bool CMenu::getMenuItemInfo(uint32_t index, bool byPosition, MenuItemInfo &itemO
 }
 
 bool CMenu::isSeparator(int pos) {
-    auto state = GetMenuState(m_hMenu, pos, MF_BYPOSITION);
+    auto state = GetMenuState(getHandle(), pos, MF_BYPOSITION);
     return state & MF_SEPARATOR;
 }
 
@@ -351,14 +369,23 @@ CMenu CMenu::getSubmenu(int nPos) {
     return menu;
 }
 
-HMENU CMenu::getSubMenuHandle(int nPos) {
-    if (m_nSubMenu == -1) {
-        return ::GetSubMenu(m_hMenu, nPos);
-    } else {
-        HMENU hSubMenu;
-        hSubMenu = ::GetSubMenu(m_hMenu, m_nSubMenu);
-        return ::GetSubMenu(hSubMenu, nPos);
+CMenu CMenu::getSubmenuByPlaceHolderID(uint32_t id) {
+    int count = getItemCount();
+    for (int i = 0; i < count; i++) {
+        if (hasSubmenu(i)) {
+            CMenu menu = getSubmenu(i);
+            MenuItemInfo info;
+            if (menu.getMenuItemInfo(0, true, info) && info.id == id) {
+                return menu;
+            }
+        }
     }
+
+    return CMenu();
+}
+
+HMENU CMenu::getSubMenuHandle(int nPos) {
+    return ::GetSubMenu(getHandle(), nPos);
 }
 
 HMENU CMenu::getHandle() {

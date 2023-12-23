@@ -2,7 +2,7 @@
 
 
 void openUrl(Window *pWnd, cstr_t szUrl) {
-    ShellExecute(pWnd->getWndHandle(), "open", szUrl, nullptr, nullptr, SW_SHOWNORMAL);
+    ShellExecuteW(pWnd->getWndHandle(), L"open", utf8ToUCS2(szUrl).c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 }
 
 bool isModifierKeyPressed(int nKey, uint32_t nFlags) {

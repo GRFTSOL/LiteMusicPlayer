@@ -1,47 +1,39 @@
 ﻿#include "../MPlayerApp.h"
-#include "crashRptDlg.h"
+#include "CrashRptDlg.h"
+#include "../Utils/win32/MiniDump.h"
+#include "../../Window/win32/BaseDialog.h"
+#include "../../Utils/win32/MailFileTo.h"
+//#include "../resource.h"
 
-/*
-#include "../Utils/win32/MailFileTo.h"
 
+class CCrashRptDlg : public CBaseDialog {
+public:
+    CCrashRptDlg(): CBaseDialog(IDD_CRASH_REPORT) { }
 
-CMiniDumperNotify dumpNotify;
+    void onOK() {
+        string strSubjet = getAppNameLong();
+        strSubjet += " Minidumps";
 
-bool CMiniDumperNotify::onBeginDump(HMODULE hCrashMod, char szDumpFileToSave[], int nLen) {
-    getAppDataDir(szDumpFileToSave);
-    strcat_safe(szDumpFileToSave, nLen, SZ_APP_NAME "_crash.dmp");
+        CBaseDialog::onOK();
 
-    return true;
+        sendMail(HWND_DESKTOP, SZ_COMPANY_NAME " support", getStrName(SN_SUPPORT_MAIL), _fnDumpSaved.c_str(), strSubjet.c_str());
+    }
+
+public:
+    void updateListBoxHorzExtent(cstr_t szStrInsert);
+
+    string                      _fnDumpSaved;
+
+};
+
+void initMiniDumper() {
+    auto fnToSave = getAppDataFile(SZ_APP_NAME "_crash.dmp");
+    MiniDumper::init(fnToSave.c_str(), [](cstr_t dumpFileSaved) {
+        CCrashRptDlg dlg;
+
+        dlg._fnDumpSaved = dumpFileSaved;
+
+        // show error report dialog
+        dlg.doModal(MPlayerApp::getMainWnd());
+    });
 }
-
-bool CMiniDumperNotify::onDumpFinished(HMODULE hCrashMod, cstr_t szDumpFileToSave) {
-    CCrashRptDlg dlg;
-
-    dlg.m_strDumpFile = szDumpFileToSave;
-
-    // show error report dialog
-    dlg.doModal(MPlayerApp::getMainWnd());
-
-    return true;
-}
-
-
-bool CCrashRptDlg::onInitDialog() {
-    CBaseDialog::onInitDialog();
-
-    return true;
-}
-
-void CCrashRptDlg::onOK() {
-    CMailFileTo mail;
-    string strSubjet;
-
-    strSubjet = getAppNameLong();
-    strSubjet += " Minidumps";
-
-    CBaseDialog::onOK();
-
-    mail.sendMail(HWND_DESKTOP, SZ_COMPANY_NAME " support", getStrName(SN_SUPPORT_MAIL), m_strDumpFile.c_str(), strSubjet.c_str());
-}
-
-*/

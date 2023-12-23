@@ -1,8 +1,0 @@
-noinst_LIBRARIES = liblinux.a
-
-liblinux_a_SOURCES = CharEncoding.cpp Event.cpp fileapi.cpp \
-	MemmapFile.cpp Mutex.cpp Semaphore.cpp Thread.cpp Win32Error.cpp 
-
-INCLUDES = -I$(top_srcdir)/base 
-
-liblinux_a_CPPFLAGS = -D_LINUX -D_LINUX_GTK2 `pkg-config gtk+-2.0 --cflags`

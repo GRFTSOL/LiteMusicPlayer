@@ -9,11 +9,9 @@
 //        取得 GetSaveFileName 中lpstrFilter 的第nIndex个扩展名。
 // INPUT:
 //        szFilters    :    "All supported files (*.lrc; *.txt; *.snc)\0*.lrc;*.txt;*.snc\0LRC Lyrics File (*.lrc)\0*.LRC\0Text File (*.txt)\0*.TXT\0Snc File (*.snc)\0*.snc\0\0"
-cstr_t getFileFilterExtByIndex(cstr_t szFilters, int nIndex) {
+cwstr_t getFileFilterExtByIndex(cwstr_t szFilters, int nIndex) {
     assert(nIndex >= 1);
-    cstr_t szReturn;
-
-    szReturn = szFilters;
+    auto szReturn = szFilters;
 
     //
     // 找到第nIndex个filter
@@ -43,18 +41,19 @@ UINT_PTR CALLBACK MyOFNHookProc(
     ) {
     switch (uiMsg) {
     case WM_NOTIFY:
-        LPOFNOTIFY ofnotify = (LPOFNOTIFY)lParam;
+        LPOFNOTIFYW ofnotify = (LPOFNOTIFY)lParam;
         if (ofnotify) {
             if (ofnotify->hdr.code == CDN_TYPECHANGE) {
                 auto ofn = ofnotify->lpOFN;
-                cstr_t newExt = getFileFilterExtByIndex(ofn->lpstrFilter, ofn->nFilterIndex);
+                cwstr_t newExt = getFileFilterExtByIndex(ofn->lpstrFilter, ofn->nFilterIndex);
                 if (ofn->nFilterIndex > 1 && newExt) {
-                    char filename[MAX_PATH] = { 0 };
+                    utf16_t filename[MAX_PATH] = { 0 };
 
-                    GetDlgItemText(ofnotify->hdr.hwndFrom, cmb13, filename, MAX_PATH);
-                    string name = filename;
-                    fileSetExt(name, newExt);
-                    SetDlgItemText(ofnotify->hdr.hwndFrom, cmb13, name.c_str());
+                    GetDlgItemTextW(ofnotify->hdr.hwndFrom, cmb13, filename, MAX_PATH);
+                    string name = ucs2ToUtf8(filename);
+                    fileSetExt(name, ucs2ToUtf8(newExt).c_str());
+                    SetDlgItemTextW(ofnotify->hdr.hwndFrom, cmb13, 
+                        utf8ToUCS2(name.c_str()).c_str());
                 }
             }
             return 1;
@@ -75,13 +74,17 @@ CFileSaveDlg::~CFileSaveDlg(void) {
 }
 
 int CFileSaveDlg::doModal(Window *pWndParent) {
-    OPENFILENAME openfile;
-    m_file.resize(MAX_PATH);
+    OPENFILENAMEW openfile;
+
+    utf16string u16ExtFilter = utf8ToUCS2(m_extFilter, getMultiStrLength(m_extFilter));
+    utf16string title = utf8ToUCS2(m_title.c_str(), m_title.size());
+    utf16string u16Fn = utf8ToUCS2(m_title.c_str(), m_title.size());
+    u16Fn.resize(MAX_PATH);
 
     memset(&openfile, 0, sizeof(openfile));
-    openfile.lpstrTitle = m_title.c_str();
-    openfile.lpstrFilter = m_extFilter;
-    openfile.lpstrFile = (char *)m_file.data();
+    openfile.lpstrTitle = title.c_str();
+    openfile.lpstrFilter = u16ExtFilter.c_str();
+    openfile.lpstrFile = (utf16_t *)u16Fn.data();
     openfile.nMaxFile = m_file.size();
     openfile.nFilterIndex = m_nDefFileType;
 
@@ -94,9 +97,9 @@ int CFileSaveDlg::doModal(Window *pWndParent) {
     if (GetSaveFileName(&openfile)) {
         m_file.resize(strlen(m_file.c_str()));
 
-        cstr_t ext = getFileFilterExtByIndex(m_extFilter, openfile.nFilterIndex);
+        auto ext = getFileFilterExtByIndex(u16ExtFilter.c_str(), openfile.nFilterIndex);
         if (ext) {
-            m_selectedExt = ext;
+            m_selectedExt = ucs2ToUtf8(ext);
         } else {
             m_selectedExt.clear();
         }

@@ -206,7 +206,7 @@ public:
         setUIObjectText(CID_E_TITLE, m_strTitle.c_str(), false);
 
         cstr_t szHead[] = {"Artist", "Title", "Rating", "Downloads", "From", "Album", nullptr};
-        int arrWidth[] = {130, 160, 90, 68, 150, 150, 0};
+        int arrWidth[] = {130, 160, 90, 80, 150, 150, 0};
 
         assert(CountOf(arrWidth) == CountOf(szHead));
         for (int i = 0; szHead[i] != nullptr; i++) {

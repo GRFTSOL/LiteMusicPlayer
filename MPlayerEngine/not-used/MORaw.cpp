@@ -30,7 +30,7 @@ ResultCode CMORaw::open(int nSampleRate, int nNumChannels, int nBitsPerSamp) {
     char szFile[MAX_PATH];
     getAppResourceDir(szFile);
     strcat_safe(szFile, CountOf(szFile), "mout.raw");
-    m_fp = fopen(szFile, "wb");
+    m_fp = fopenUtf8(szFile, "wb");
     if (!m_fp) {
         return ERR_OPEN_FILE;
     }
