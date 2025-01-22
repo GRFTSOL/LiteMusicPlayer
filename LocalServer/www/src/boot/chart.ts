@@ -16,6 +16,9 @@ export function makeSunBurstOption(title: string) {
         },
         toolbox: {
             show: true,
+            iconStyle: {
+                color: '#4b0082'
+            },
             feature: {
                 mySwitchChartType: {
                     show: true,
@@ -183,6 +186,9 @@ export function makeToolboxRemoveChart() {
     return {
         toolbox: {
             show: true,
+            iconStyle: {
+                color: '#4b0082'
+            },
             feature: {
                 myRemoveChart: {
                     show: true,

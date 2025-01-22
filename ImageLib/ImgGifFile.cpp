@@ -1,4 +1,4 @@
-﻿// ImgGifFile.cpp: implementation of the CImgGifFile class.
+// ImgGifFile.cpp: implementation of the CImgGifFile class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -267,10 +267,10 @@ bool CImgGifFile::open(IILIO *io)
     struct_TabCol TabCol;
 
     if (io->read(&dscgif, sizeof(dscgif)) != sizeof(dscgif))
-        return nullptr;
+        return false;
     //if (strncmp(dscgif.header,"GIF8",3)!=0) {
     if (strncmp(dscgif.header,"GIF8",4) != 0)
-        return nullptr;
+        return false;
 
     /* AD - for interlace */
     TabCol.sogct = (short)(1 << ((dscgif.pflds & 0x07)+1));
@@ -286,7 +286,7 @@ bool CImgGifFile::open(IILIO *io)
     if (dscgif.pflds & 0x80)
     {
         if (io->read(TabCol.paleta, sizeof(struct rgb_color)*TabCol.sogct) != sizeof(struct rgb_color)*TabCol.sogct)
-            return nullptr;
+            return false;
     }
     else 
         bTrueColor++;    //first chance for a truecolor gif
@@ -298,7 +298,7 @@ bool CImgGifFile::open(IILIO *io)
     nNumFrames = get_num_frames(io, &TabCol);
 
     if (nNumFrames <= 0)
-        return nullptr;
+        return false;
 
     char ch;
     for (bool bContinue = true; bContinue; )
