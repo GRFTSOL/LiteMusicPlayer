@@ -14,6 +14,13 @@
 #include "ImageBuffBlt.h"
 
 
+#ifdef WIN32
+typedef agg::pixfmt_bgra32 pixfmt;
+#else
+typedef agg::pixfmt_rgba32 pixfmt;
+#endif
+typedef agg::renderer_mclip<pixfmt> renderer_mclip;
+
 //////////////////////////////////////////////////////////////////////////
 
 CRawGraph::CRawGraph(float scaleFactor) : m_scaleFactor(scaleFactor) {
@@ -77,9 +84,6 @@ void CRawGraph::line(float x1, float y1, float x2, float y2) {
 
     assert(m_imageData.bitCount == 32);
 
-    typedef agg::pixfmt_rgba32 pixfmt;
-    typedef agg::renderer_mclip<pixfmt> renderer_mclip;
-
     agg::rendering_buffer buf(m_imageData.buff, m_imageData.width, m_imageData.height, m_imageData.stride);
     pixfmt pixf(buf);
     renderer_mclip rb(pixf);
@@ -116,8 +120,6 @@ void CRawGraph::rectangle(float x, float y, float width, float height) {
     ras.add_path(pg);
 
     assert(m_imageData.bitCount == 32);
-    typedef agg::pixfmt_rgba32 pixfmt;
-    typedef agg::renderer_mclip<pixfmt> renderer_mclip;
 
     agg::rendering_buffer buf(m_imageData.buff, m_imageData.width, m_imageData.height, m_imageData.stride);
     pixfmt pixf(buf);
@@ -146,8 +148,6 @@ void CRawGraph::roundedRect(float x, float y, float width, float height, float r
     ras.add_path(pg);
 
     assert(m_imageData.bitCount == 32);
-    typedef agg::pixfmt_rgba32 pixfmt;
-    typedef agg::renderer_mclip<pixfmt> renderer_mclip;
 
     agg::rendering_buffer buf(m_imageData.buff, m_imageData.width, m_imageData.height, m_imageData.stride);
     pixfmt pixf(buf);
@@ -177,8 +177,6 @@ void CRawGraph::fillRoundedRect(float x, float y, float width, float height, flo
     ras.add_path(rr);
 
     assert(m_imageData.bitCount == 32);
-    typedef agg::pixfmt_rgba32 pixfmt;
-    typedef agg::renderer_mclip<pixfmt> renderer_mclip;
 
     agg::rendering_buffer buf(m_imageData.buff, m_imageData.width, m_imageData.height, m_imageData.stride);
     pixfmt pixf(buf);
@@ -207,8 +205,6 @@ void CRawGraph::fillPath(const VecPoints &points, const CColor &clrFill) {
     ras.add_path(path);
 
     assert(m_imageData.bitCount == 32);
-    typedef agg::pixfmt_rgba32 pixfmt;
-    typedef agg::renderer_mclip<pixfmt> renderer_mclip;
 
     agg::rendering_buffer buf(m_imageData.buff, m_imageData.width, m_imageData.height, m_imageData.stride);
     pixfmt pixf(buf);

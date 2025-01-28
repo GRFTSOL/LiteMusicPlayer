@@ -241,5 +241,5 @@ else(APPLE)
     set(OS_LINK_OPTS pthread)
 endif()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${OS_LINK_OPTS} FLAC faad TinyJS_STATIC agg_STATIC glogbase uv_a mbedtls spng_static z)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${OS_LINK_OPTS} FLAC faad TinyJS_STATIC agg_STATIC glogbase uv_a mbedtls spng_static zlibstatic)
 # -static-libstdc++
