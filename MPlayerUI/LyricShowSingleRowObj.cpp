@@ -104,34 +104,12 @@ void CLyricShowSingleRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
     if (nPlayPos + FIO_TIME >= lyricRow.endTime) {
         // 计算渐变显示的颜色
         LyricsLine *lineNext = nullptr;
-
-        CRect rcClip;
-
-        rcClip.setLTRB(m_rcObj.left + m_nXMargin,
-            m_rcObj.top + m_nYMargin,
-            m_rcObj.right - m_nXMargin,
-            m_rcObj.bottom - m_nYMargin);
-        // 设置剪裁区域为: 左边边框-->nSeperatePos
-        CRawGraph::CClipBoxAutoRecovery autoCBR(canvas);
-        canvas->setClipBoundBox(rcClip);
-
         if (nRowCur + 1 < (int)m_lyrLines.size()) {
             lineNext = &m_lyrLines[nRowCur + 1];
         }
 
         drawCurLineFadeInNextLine(canvas, lyricRow, lineNext, -1, y);
     } else {
-
-        CRect rcClip;
-
-        rcClip.setLTRB(m_rcObj.left + m_nXMargin,
-            m_rcObj.top + m_nYMargin,
-            m_rcObj.right - m_nXMargin,
-            m_rcObj.bottom - m_nYMargin);
-        // 设置剪裁区域为: 左边边框-->右边歌词的开始显示部分
-        CRawGraph::CClipBoxAutoRecovery autoCBR(canvas);
-        canvas->setClipBoundBox(rcClip);
-
         drawRow(canvas, lyricRow, AUTO_CAL_X, y, LP_CUR_LINE);
     }
 }

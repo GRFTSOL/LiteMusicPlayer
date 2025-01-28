@@ -1543,21 +1543,21 @@ bool CLyricShowObj::autoWidthSkinAccordLyrics() {
 }
 
 void CLyricShowObj::onPlayTimeChangedUpdate() {
-    CRect rcUpdate;
-    CRawGraph *canvas;
-
     if (m_pSkin->isIconic() || !isVisible() || !isParentVisible()) {
         return;
     }
 
-    canvas = m_pContainer->getMemGraph();
-
+    CRawGraph *canvas = m_pContainer->getMemGraph();
     canvas->setFont(&m_font);
 
+    // 不绘制，仅仅计算需要重绘的区域
+    CRect empty, rcUpdate;
+    canvas->setClipBoundBox(empty);
     fastDraw(canvas, &rcUpdate);
 
     if (!rcUpdate.empty()) {
-        m_pContainer->updateMemGraphicsToScreen(&rcUpdate, this);
+        // 设置需重绘制的区域
+        m_pSkin->invalidateRect(&rcUpdate);
     }
 }
 

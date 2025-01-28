@@ -765,7 +765,7 @@ LRESULT Window::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
         break;
     case WM_MOUSEWHEEL:
         {
-            onMouseWheel(short(HIWORD(wParam)), LOWORD(wParam), CPoint((short)LOWORD(lParam), (short)HIWORD(lParam)));
+            onMouseWheel(short(HIWORD(wParam)) / -60, LOWORD(wParam), CPoint((short)LOWORD(lParam), (short)HIWORD(lParam)));
         }
         break;
     case WM_MOVE:
