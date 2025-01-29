@@ -755,8 +755,6 @@ void CSkinEditCtrl::fillSelectedLineBg(CRawGraph *canvas, int x, int y, COneLine
 }
 
 void CSkinEditCtrl::draw(CRawGraph *canvas) {
-    CSkinScrollFrameCtrlBase::draw(canvas);
-
     canvas->setFont(m_font.getFont());
 
     fillGraph(canvas, m_rcContent, CN_BG);
@@ -904,6 +902,12 @@ void CSkinEditCtrl::draw(CRawGraph *canvas) {
     }
 
     m_caret.draw(canvas);
+
+    autoCBR.recover();
+    auto oldBgType = m_bgType;
+    m_bgType = BG_NONE;
+    CSkinScrollFrameCtrlBase::draw(canvas);
+    m_bgType = oldBgType;
 }
 
 CColor & CSkinEditCtrl::getColor(int nColorName) {

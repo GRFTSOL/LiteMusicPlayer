@@ -433,11 +433,10 @@ CLyricShowTextEditObj::CLyrOneLine *CLyricShowTextEditObj::getLine(int nLine) {
 }
 
 void CLyricShowTextEditObj::draw(CRawGraph *canvas) {
-    int nBegSelRow, nEndSelRow;
-    int nBegSelCol, nEndSelCol;
     bool bSelectedEmpty = true;
 
     if (m_nBegSelRow != -1) {
+        int nBegSelRow, nEndSelRow, nBegSelCol, nEndSelCol;
         bSelectedEmpty = false;
         sortSelectPos(nBegSelRow, nBegSelCol, nEndSelRow, nEndSelCol, bSelectedEmpty);
     }
@@ -446,6 +445,11 @@ void CLyricShowTextEditObj::draw(CRawGraph *canvas) {
         m_nTopVisibleLineOld = -1;
 
         reDraw(canvas);
+
+        auto oldBgType = m_bgType;
+        m_bgType = BG_NONE;
+        CSkinScrollFrameCtrlBase::draw(canvas);
+        m_bgType = oldBgType;
         return;
     }
 
@@ -528,8 +532,6 @@ CRect CLyricShowTextEditObj::getFastDrawRect() {
 }
 
 void CLyricShowTextEditObj::reDraw(CRawGraph *canvas) {
-    CSkinScrollFrameCtrlBase::draw(canvas);
-
     CRect &rc = m_rcContent;
 
     int y, xStart, xMax, yMax;
