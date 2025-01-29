@@ -28,17 +28,13 @@ void CLyricShowTwoRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
         return;
     }
 
-    canvas->setFont(&m_font);
-
-    if (prcUpdate) {
-        *prcUpdate = m_rcObj;
-    }
-
     // get the current playing row
     int nRowCur = m_curLyrics->getCurPlayLine(m_lyrLines);
     if (nRowCur == -1) {
-        // no lyrics, redraw background
-        updateLyricDrawBufferBackground(canvas, m_rcObj);
+        // no lyrics
+        if (prcUpdate) {
+            prcUpdate->setEmpty();
+        }
         return;
     }
 
@@ -76,71 +72,34 @@ void CLyricShowTwoRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
         std::swap(yCurRow, yTheOtherRow);
     }
 
-    if (prcUpdate && m_nCurRowOld == nRowCur
-        && m_nRowTheOtherOld == nRowTheOther
-        && m_LyricsDisplayOpt == DO_NORMAL) {
-        if (!isKaraoke()) {
-            prcUpdate->setEmpty();
-            // 如果没有使用KOROKE方式则直接返回
-            return;
-        }
-
-        // 只重绘当前歌词行
+    if (prcUpdate) {
         prcUpdate->top = yCurRow;
-        prcUpdate->bottom = yCurRow + nRowHeight;
-        if (prcUpdate->top < m_rcObj.top + m_nYMargin) {
-            prcUpdate->top = m_rcObj.top + m_nYMargin;
+
+        if (m_nCurRowOld == nRowCur
+            && m_nRowTheOtherOld == nRowTheOther
+            && m_LyricsDisplayOpt == DO_NORMAL)
+        {
+            if (!isKaraoke()) {
+                prcUpdate->setEmpty();
+                // 如果没有使用KOROKE方式则直接返回
+                return;
+            }
+
+            // 只重绘当前歌词行
+            prcUpdate->bottom = yCurRow + nRowHeight;
+        } else {
+            // 绘制两行
+            prcUpdate->bottom = nRowHeight * 2;
         }
-        if (prcUpdate->bottom > m_rcObj.bottom - m_nYMargin) {
-            prcUpdate->bottom = m_rcObj.bottom - m_nYMargin;
-        }
 
-        // 当前行歌词没有超出歌词显示区域
-        prcUpdate->left = m_rcObj.left + m_nXMargin;
-        prcUpdate->right = m_rcObj.right - m_nXMargin;
+        prcUpdate->intersect(getClipRect());
 
-        // clear background
-        updateLyricDrawBufferBackground(canvas, *prcUpdate);
-
-        CRect rcClip;
-
-        rcClip = *prcUpdate;
-
-        CRawGraph::CClipBoxAutoRecovery autoCBR(canvas);
-        canvas->setClipBoundBox(rcClip);
-
-        // 显示当前歌词行
-        drawCurrentRow(canvas, lyricRow, AUTO_CAL_X, yCurRow);
-
+        // 不进行真正的绘制
         return;
     } else {
         m_nCurRowOld = nRowCur;
         m_nRowTheOtherOld = nRowTheOther;
     }
-
-    // clear back buffer
-    CRect rcClip;
-    if (prcUpdate) {
-        prcUpdate->setLTRB(m_rcObj.left + m_nXMargin, y, m_rcObj.right - m_nXMargin, y + nRowHeight * 2);
-        if (prcUpdate->top < m_rcObj.top + m_nYMargin) {
-            prcUpdate->top = m_rcObj.top + m_nYMargin;
-        }
-        if (prcUpdate->bottom > m_rcObj.bottom - m_nYMargin) {
-            prcUpdate->bottom = m_rcObj.bottom - m_nYMargin;
-        }
-        updateLyricDrawBufferBackground(canvas, *prcUpdate);
-        rcClip = *prcUpdate;
-    } else {
-        updateLyricDrawBufferBackground(canvas, m_rcObj);
-
-
-        rcClip.setLTRB(m_rcObj.left + m_nXMargin,
-            m_rcObj.top + m_nYMargin,
-            m_rcObj.right - m_nXMargin,
-            m_rcObj.bottom - m_nYMargin);
-    }
-    CRawGraph::CClipBoxAutoRecovery autoCBR(canvas);
-    canvas->setClipBoundBox(rcClip);
 
     // 显示当前歌词行
     drawCurrentRow(canvas, lyricRow, AUTO_CAL_X, yCurRow);

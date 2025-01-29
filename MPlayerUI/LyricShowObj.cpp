@@ -578,18 +578,21 @@ void CLyricShowObj::onEvent(const IEvent *pEvent) {
     }
 }
 
-
-// COMMENT:
-//        从右向左滚动歌词显示
 void CLyricShowObj::draw(CRawGraph *canvas) {
     canvas->setFont(&m_font);
+
+    updateLyricDrawBufferBackground(canvas, m_rcObj);
+
+    CRect rcClip = getClipRect();
+    CRawGraph::CClipBoxAutoRecovery autoCBR(canvas);
+    canvas->setClipBoundBox(rcClip);
 
     fastDraw(canvas, nullptr);
 }
 
-// 快速绘画
-// OUTPUT:
-//        rcUpdate    -    更新的矩形区域
+// fastDraw 用于绘制需要更新的区域
+// 当 @fastDraw 有效时，不需要去绘制，仅仅计算需要绘制区域
+// 否则，需要绘制所有区域
 void CLyricShowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
     if (prcUpdate) {
         prcUpdate->left = prcUpdate->right = m_rcObj.left;
@@ -599,11 +602,9 @@ void CLyricShowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
 
 void CLyricShowObj::fastDrawMediaInfo(CRawGraph *canvas, CRect *prcUpdate) {
     if (prcUpdate) {
-        prcUpdate->left = prcUpdate->top = prcUpdate->right = prcUpdate->bottom = 0;
+        prcUpdate->setEmpty();
         return;
     }
-
-    updateLyricDrawBufferBackground(canvas, m_rcObj);
 
     canvas->setFont(&m_font);
 
@@ -620,16 +621,6 @@ void CLyricShowObj::fastDrawMediaInfo(CRawGraph *canvas, CRect *prcUpdate) {
     if (y < m_rcObj.top + m_nYMargin) {
         y = m_rcObj.top + m_nYMargin;
     }
-
-    CRect rcClip;
-
-    rcClip.setLTRB(m_rcObj.left + m_nXMargin,
-        m_rcObj.top + m_nYMargin,
-        m_rcObj.right - m_nXMargin,
-        m_rcObj.bottom - m_nYMargin);
-
-    CRawGraph::CClipBoxAutoRecovery autoCBR(canvas);
-    canvas->setClipBoundBox(rcClip);
 
     for (size_t i = 0; i < m_lyrLines.size(); i++) {
         drawRow(canvas, m_lyrLines[i], x, y, LP_CUR_LINE);
@@ -1117,8 +1108,7 @@ void CLyricShowObj::updateLyricDrawBufferBackground(CRawGraph *canvas, CRect &rc
             darkenLyricsBg(canvas, rc);
         }
     } else if (m_bSetSkinBg) {
-        assert(rc.bottom <= m_rcObj.bottom);
-        m_pContainer->redrawBackground(canvas, rc);
+        // The background has been drawed by parent skin container 
     } else {
         canvas->fillRect(rc, m_clrBg);
     }
@@ -1550,13 +1540,17 @@ void CLyricShowObj::onPlayTimeChangedUpdate() {
     CRawGraph *canvas = m_pContainer->getMemGraph();
     canvas->setFont(&m_font);
 
-    // 不绘制，仅仅计算需要重绘的区域
-    CRect empty, rcUpdate;
+    // 设置绘制区域为空，不进行实际的绘制
+    const CRect empty;
     canvas->setClipBoundBox(empty);
+
+    // 缺省需要更新的区域为 m_rcObject 去掉 margin
+    CRect rcUpdate = getClipRect();
+
+    // 调用 fastDraw 获取需要更新的区域
     fastDraw(canvas, &rcUpdate);
 
     if (!rcUpdate.empty()) {
-        // 设置需重绘制的区域
         m_pSkin->invalidateRect(&rcUpdate);
     }
 }
@@ -1633,11 +1627,11 @@ void CLyricShowObj::loadNextBgImage() {
         }
     }
 
-    if (m_img.isValid()) {
-        m_img.detach();
-    }
-
     if (image) {
+        if (m_img.isValid()) {
+            m_img.detach();
+        }
+
         image = autoFitImageToRect(image, m_rcObj.width(), m_rcObj.height(), image->bitCount);
         if (image) {
             m_img.attach(image);

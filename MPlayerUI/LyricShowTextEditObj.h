@@ -53,7 +53,7 @@ public:
     CLyrOneLine *getLine(int nLine);
 
     // for lyrics draw
-    void fastDraw(CRawGraph *canvas, CRect *prcUpdate = nullptr);
+    CRect getFastDrawRect();
     void reDraw(CRawGraph *canvas);
     void onPlayTimeChangedUpdate();
     void drawLineGradual(CRawGraph *canvas, COneLine *pLine, int x, int xMax, int y);

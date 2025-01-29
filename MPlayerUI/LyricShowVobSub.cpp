@@ -12,7 +12,6 @@ CLyricShowVobSub::CLyricShowVobSub() {
     m_nDarkenBottomArea = float(0.65);
 
     m_nCurRowOld = -1;
-    m_bClearedOld = false;
 }
 
 CLyricShowVobSub::~CLyricShowVobSub() {
@@ -20,12 +19,6 @@ CLyricShowVobSub::~CLyricShowVobSub() {
 }
 
 void CLyricShowVobSub::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
-    canvas->setFont(&m_font);
-
-    if (prcUpdate) {
-        *prcUpdate = m_rcObj;
-    }
-
     if (m_curLyrics == nullptr) {
         return;
     }
@@ -33,8 +26,10 @@ void CLyricShowVobSub::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
     // get the current playing row
     int nRowCur = m_curLyrics->getCurPlayLine(m_lyrLines);
     if (nRowCur == -1) {
-        // no lyrics, redraw background
-        updateLyricDrawBufferBackground(canvas, m_rcObj);
+        // no lyrics
+        if (prcUpdate) {
+            prcUpdate->setEmpty();
+        }
         return;
     }
 
@@ -68,35 +63,17 @@ void CLyricShowVobSub::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
         return;
     }
 
-    // clear back buffer
-    if (!m_bClearedOld || prcUpdate == nullptr) {
-        updateLyricDrawBufferBackground(canvas, m_rcObj);
-        m_bClearedOld = true;
-    }
-
-    CRect rcClip;
-
-    rcClip.setLTRB(m_rcObj.left + m_nXMargin,
-        m_rcObj.top + m_nYMargin,
-        m_rcObj.right - m_nXMargin,
-        m_rcObj.bottom - m_nYMargin);
-
-    CRawGraph::CClipBoxAutoRecovery autoCBR(canvas);
-    canvas->setClipBoundBox(rcClip);
-
     if (nPlayPos >= lyricRow.beginTime &&
         nPlayPos <= lyricRow.endTime) {
         // 显示此行
         drawCurrentRow(canvas, lyricRow, AUTO_CAL_X, y);
         y += getLineHeight();
-        m_bClearedOld = false;
     }
 
     if (lyricRowNext && nPlayPos >= lyricRowNext->beginTime &&
         nPlayPos <= lyricRowNext->endTime) {
         // 显示此行
         drawCurrentRow(canvas, *lyricRowNext, AUTO_CAL_X, y);
-        m_bClearedOld = false;
     }
 
     if (nPlayPos >= lyricRow.beginTime && nPlayPos <= lyricRow.endTime) {

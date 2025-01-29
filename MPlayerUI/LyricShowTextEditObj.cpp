@@ -452,20 +452,20 @@ void CLyricShowTextEditObj::draw(CRawGraph *canvas) {
     CSkinEditCtrl::draw(canvas);
 }
 
-void CLyricShowTextEditObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
+/**
+ * getFastDrawRect 只有 onPlayTimeChangedUpdate 会调用
+ */
+CRect CLyricShowTextEditObj::getFastDrawRect() {
     CRect rc = m_rcContent;
-    canvas->setFont(m_font.getFont());
-
-    *prcUpdate = rc;
+    CRect rcUpdate = rc;
 
     int xStart = rc.left + m_xMargin;
     int nTimePos = g_currentLyrics.getPlayElapsedTime();
-    CLyrOneLine *pLyrLine;
 
     if (m_nTopVisibleLine == m_nTopVisibleLineOld) {
         // Fast draw ...?
         if (m_nCurPosLineOld >= 0 && m_nCurPosLineOld < (int)m_vLines.size()) {
-            pLyrLine = (CLyrOneLine*)m_vLines[m_nCurPosLineOld];
+            CLyrOneLine *pLyrLine = (CLyrOneLine*)m_vLines[m_nCurPosLineOld];
             if (pLyrLine->bTimeLine) {
                 if (pLyrLine->beginTime <= nTimePos && nTimePos <= pLyrLine->endTime) {
                     int nTimeTagLen;
@@ -488,37 +488,28 @@ void CLyricShowTextEditObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
                     }
 
                     if (m_nXOfCurPosLineOld == nXOfCurPosLine) {
-                        prcUpdate->right = prcUpdate->left;
-                        prcUpdate->bottom = prcUpdate->top;
-                        // no need to update, just return
-                        // DBG_LOG0("No update, fastest.");
-                        return;
+                        // no need to update
+                        rcUpdate.setEmpty();
                     } else {
                         // only update the current line.
-                        // DBG_LOG0("update only one line, faster.");
-                        prcUpdate->top = rc.top + m_yMargin + getLineDy() * (m_nCurPosLineOld - m_nTopVisibleLine);
-                        prcUpdate->bottom = prcUpdate->top + getLineDy();
-                        fillGraph(canvas, *prcUpdate,
-                            m_nCaretRow == m_nCurPosLineOld ? CN_EDIT_LINE_BG : CN_BG);
-                        drawLineGradual(canvas, pLyrLine, xStart, rc.right - m_xMargin, prcUpdate->top);
-                        return;
+                        rcUpdate.top = rc.top + m_yMargin + getLineDy() * (m_nCurPosLineOld - m_nTopVisibleLine);
+                        rcUpdate.bottom = rcUpdate.top + getLineDy();
                     }
+                    return rcUpdate;
                 }
             }
         }
 
         if (m_nCurPosLineOld == -1) {
             // current line isn't being displayed.
-            int y, yMax;
-            int i;
-            y = m_yMargin;
-            yMax = rc.bottom - m_yMargin;
+            int y = m_yMargin;
+            int yMax = rc.bottom - m_yMargin;
 
-            for (i = 0; i < (int)m_vLines.size(); i++) {
+            for (int i = 0; i < (int)m_vLines.size(); i++) {
                 if (y + getLineDy() > yMax && i > m_nTopVisibleLine) {
                     break;
                 }
-                pLyrLine = (CLyrOneLine *)m_vLines[i];
+                CLyrOneLine *pLyrLine = (CLyrOneLine *)m_vLines[i];
                 if (pLyrLine->bTimeLine &&
                     pLyrLine->beginTime <= nTimePos && nTimePos <= pLyrLine->endTime) {
                     m_nCurPosLineOld = i;
@@ -527,21 +518,13 @@ void CLyricShowTextEditObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
                 y += getLineDy();
             }
             if (m_nCurPosLineOld == -1) {
-                // DBG_LOG0("No update, no current line, fastest.");
-                prcUpdate->right = prcUpdate->left;
-                prcUpdate->bottom = prcUpdate->top;
-                return;
+                rcUpdate.setEmpty();
+                return rcUpdate;
             }
         }
     }
 
-    reDraw(canvas);
-
-    CRect rcCaret;
-    rcCaret.intersect(m_caret.getUpdateRect(), *prcUpdate);
-    if (!rcCaret.empty()) {
-        m_caret.draw(canvas);
-    }
+    return rcUpdate;
 }
 
 void CLyricShowTextEditObj::reDraw(CRawGraph *canvas) {
@@ -1432,36 +1415,18 @@ void CLyricShowTextEditObj::onPlayTimeChangedUpdate() {
         }
     }
 
-    CRect rc;
-    int nBegSelRow, nEndSelRow;
-    int nBegSelCol, nEndSelCol;
     bool bSelectedEmpty = true;
-
     if (m_nBegSelRow != -1) {
         bSelectedEmpty = false;
+        int nBegSelRow, nEndSelRow;
+        int nBegSelCol, nEndSelCol;
         sortSelectPos(nBegSelRow, nBegSelCol, nEndSelRow, nEndSelCol, bSelectedEmpty);
     }
 
     if (bSelectedEmpty) {
-        CRawGraph *canvas;
-        CRect rcUpdate;
-
-        canvas = getMemGraphics();
-
-        CRect rcClip;
-
-        rc = m_rcContent;
-        rcClip.setLTRB(rc.left + m_xMargin, rc.top + m_yMargin, rc.right - m_xMargin, rc.bottom - m_yMargin);
-
-        CRawGraph::CClipBoxAutoRecovery autoCBR(canvas);
-        canvas->setClipBoundBox(rcClip);
-
-        fastDraw(canvas, &rcUpdate);
-
-        autoCBR.recover();
-
-        if (rcUpdate.top != rcUpdate.bottom) {
-            updateRectToScreen(&rcUpdate);
+        CRect rcUpdate = getFastDrawRect();
+        if (!rcUpdate.empty()) {
+            m_pSkin->invalidateRect(&rcUpdate);
         }
     }
 }

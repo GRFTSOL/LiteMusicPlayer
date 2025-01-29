@@ -75,27 +75,18 @@ void CLyricShowSingleRowObj::drawCurLineFadeInNextLine(CRawGraph *canvas, Lyrics
     }
 }
 
-// OUTPUT:
-//        rcUpdate    -    更新的矩形区域
 void CLyricShowSingleRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
-    canvas->setFont(&m_font);
-
-    if (prcUpdate) {
-        *prcUpdate = m_rcObj;
-    }
-
     // get the current playing row
     int nRowCur = m_curLyrics->getCurPlayLine(m_lyrLines);
     if (nRowCur == -1) {
-        // no lyrics, redraw background
-        updateLyricDrawBufferBackground(canvas, m_rcObj);
+        // no lyrics
+        if (prcUpdate) {
+            prcUpdate->setEmpty();
+        }
         return;
     }
 
     auto &lyricRow = m_lyrLines[nRowCur];
-
-    // clear back buffer
-    updateLyricDrawBufferBackground(canvas, m_rcObj);
 
     int nPlayPos = m_curLyrics->getPlayElapsedTime();
     int y = getLineVertAlignPos() - getFontHeight() / 2 + getOutlineMargin();

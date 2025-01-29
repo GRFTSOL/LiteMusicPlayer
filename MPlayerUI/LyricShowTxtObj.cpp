@@ -126,12 +126,7 @@ void CLyricShowTxtObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
         }
     }
 
-    if (prcUpdate) {
-        *prcUpdate = m_rcObj;
-    }
-
     if (m_lyrLines.size() == 0) {
-        updateLyricDrawBufferBackground(canvas, m_rcObj);
         return;
     }
 
@@ -165,18 +160,12 @@ void CLyricShowTxtObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
         m_nCurLine = 0;
     }
 
-    // clear background
-    updateLyricDrawBufferBackground(canvas, m_rcObj);
-
     CRect rcClip;
 
     rcClip.setLTRB(m_rcObj.left + m_nXMargin,
         m_rcObj.top + m_nYMargin,
         m_rcObj.right - m_nXMargin,
         m_rcObj.bottom - m_nYMargin);
-
-    CRawGraph::CClipBoxAutoRecovery autoCBR(canvas);
-    canvas->setClipBoundBox(rcClip);
 
     CDispOptRecover dispOptRecover(this);
     m_LyricsDisplayOpt = DO_FADEOUT_LOWCOLOR;

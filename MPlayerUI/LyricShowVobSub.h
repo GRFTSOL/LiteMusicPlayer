@@ -27,7 +27,6 @@ protected:
     // 使用下面的变量记录了上一次歌词的显示位置，在新的一次显示时，
     // 可以优化显示速度
     int                         m_nCurRowOld;       // 前一次显示的当前行
-    bool                        m_bClearedOld;      // 前一次显示是否清除过背景
 
 };
 

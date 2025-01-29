@@ -114,9 +114,6 @@ public:
 
     void draw(CRawGraph *canvas) override;
 
-    // 快速绘画
-    // OUTPUT:
-    //        rcUpdate    -    更新的矩形区域
     virtual void fastDraw(CRawGraph *canvas, CRect *prcUpdate = nullptr);
 
     virtual bool onLButtonUp(uint32_t nFlags, CPoint point) override;
@@ -178,6 +175,9 @@ protected:
     void drawCurrentRow(CRawGraph *canvas, LyricsLine &lyricRow, int x, int y);
 
     void fadeOutVertBorder(CRawGraph *canvas, int yDrawLyrStartPos, int yDrawLyrEndPos);
+
+    CRect getClipRect()
+        { CRect rc = m_rcObj; rc.inflate(m_nXMargin, m_nYMargin); return rc; }
 
     void loadBgImageFolder();
 

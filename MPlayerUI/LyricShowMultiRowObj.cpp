@@ -44,17 +44,11 @@ void CLyricShowMultiRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
         return;
     }
 
-    canvas->setFont(&m_font);
-
-    if (prcUpdate) {
-        *prcUpdate = m_rcObj;
-    }
-
     // get the current playing line
     int nRowCur = m_curLyrics->getCurPlayLine(m_lyrLines);
     if (nRowCur == -1) {
-        // no lyrics, redraw the whole background
-        updateLyricDrawBufferBackground(canvas, m_rcObj);
+        // no lyrics
+        prcUpdate->setEmpty();
         return;
     }
 
@@ -89,47 +83,28 @@ void CLyricShowMultiRowObj::fastDraw(CRawGraph *canvas, CRect *prcUpdate) {
         }
     }
 
-    CRect rcClip;
-
-    rcClip.setLTRB(m_rcObj.left + m_nXMargin,
-        m_rcObj.top + m_nYMargin,
-        m_rcObj.right - m_nXMargin,
-        m_rcObj.bottom - m_nYMargin);
-
-    if (prcUpdate && yCurRow == m_yDrawingOld && nRowCur == m_nCurRowOld) {
-        *prcUpdate = rcClip;
-
-        if (m_LyricsDisplayOpt == DO_NORMAL) {
-            fastestDraw_GetUpdateRectOfNormal(canvas, prcUpdate, yCurRow);
-        } else {
-            fastestDraw_GetUpdateRectOfFadeInOut(canvas, prcUpdate, yCurRow, nRowCur);
+    if (prcUpdate) {
+        if (yCurRow == m_yDrawingOld && nRowCur == m_nCurRowOld) {
+            if (m_LyricsDisplayOpt == DO_NORMAL) {
+                fastestDraw_GetUpdateRectOfNormal(canvas, prcUpdate, yCurRow);
+            } else {
+                fastestDraw_GetUpdateRectOfFadeInOut(canvas, prcUpdate, yCurRow, nRowCur);
+            }
         }
 
-        rcClip = *prcUpdate;
-
-        if (rcClip.empty()) {
-            return;
-        }
-
-        // clear background
-        updateLyricDrawBufferBackground(canvas, rcClip);
+        // 当参数 prcUpdate 有效时，不需要去绘制，仅仅计算需要绘制区域
+        return;
     } else {
         m_nCurRowOld = nRowCur;
         m_yDrawingOld = yCurRow;
-
-        // clear background
-        updateLyricDrawBufferBackground(canvas, m_rcObj);
     }
 
-    CRawGraph::CClipBoxAutoRecovery autoCBR(canvas);
-    canvas->setClipBoundBox(rcClip);
-
-    int nRow, nRowEnd;
     int yLyrStart, yLyrEnd, y;
 
     // draw lyrics lines above current line
-    nRow = nRowCur - 1;
-    nRowEnd = 0;
+    int nRow = nRowCur - 1;
+    int nRowEnd = 0;
+    CRect rcClip = getClipRect();
     for (y = yCurRow - nRowHeight; y + nRowHeight > rcClip.top && nRow >= nRowEnd; y -= nRowHeight) {
         LyricsLine &line = m_lyrLines[nRow];
 
