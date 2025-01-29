@@ -181,6 +181,7 @@ public:
 protected:
     WndSizeMode                 m_WndSizeMode;
     HWND                        m_hWnd;
+    bool                        m_isCursorSet = false;
 
 };
 

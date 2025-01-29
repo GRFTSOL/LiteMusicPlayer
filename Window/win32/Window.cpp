@@ -483,6 +483,7 @@ float Window::getScaleFactor() {
 }
 
 void Window::setCursor(Cursor *cursor) {
+    m_isCursorSet = true;
     cursor->set();
     // setWndCursor(cursor);
 }
@@ -755,6 +756,8 @@ LRESULT Window::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
         break;
     case WM_MOUSEMOVE:
         {
+            m_isCursorSet = false;
+
             uint32_t nFlags = uint32_t(wParam);
             if (nFlags & MK_LBUTTON) {
                 onMouseDrag((uint32_t)wParam, CPoint((short)LOWORD(lParam), (short)HIWORD(lParam)));
@@ -768,6 +771,12 @@ LRESULT Window::wndProc(uint32_t message, WPARAM wParam, LPARAM lParam) {
             onMouseWheel(short(HIWORD(wParam)) / -60, LOWORD(wParam), CPoint((short)LOWORD(lParam), (short)HIWORD(lParam)));
         }
         break;
+    case WM_SETCURSOR:
+        // m_isCursorSet flag is used to fix cursor flashing problem.
+        if (!m_isCursorSet) {
+            return DefWindowProc(m_hWnd, message, wParam, lParam);
+        }
+        return true;
     case WM_MOVE:
         onMove(LOWORD(lParam), HIWORD(lParam));
         return 0;
