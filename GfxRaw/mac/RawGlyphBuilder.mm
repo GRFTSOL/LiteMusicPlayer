@@ -14,8 +14,6 @@
 
 #define MEM_GRAPH_BITS      32
 
-extern bool g_bAntialiasFontEnabled;
-
 CRawGlyphBuilder::CRawGlyphBuilder() {
 }
 

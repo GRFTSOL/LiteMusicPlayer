@@ -11,8 +11,6 @@
 #include "RawGlyphSet.hpp"
 
 
-bool g_bAntialiasFontEnabled = false;
-
 inline uint8_t RGBToGray(int r, int g, int b) {
     // 5 = 四舍五入
     return (r * 3 + g * 6 + b + 5) / 10;

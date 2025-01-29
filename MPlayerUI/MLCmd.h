@@ -124,7 +124,6 @@ DEFINE_CMD_ID(ID_LOGIN_VIA_IE)                                      \
 DEFINE_CMD_ID(ID_APPLY_ACCOUNT)                                     \
 DEFINE_CMD_ID(ID_EMAIL)                                             \
 DEFINE_CMD_ID(ID_WEBHOME)                                           \
-DEFINE_CMD_ID(ID_ANTIAlIAS)                                         \
 DEFINE_CMD_ID(ID_LDO_AUTO)                                          \
 DEFINE_CMD_ID(ID_LDO_NORMAL)                                        \
 DEFINE_CMD_ID(ID_LDO_FADE_IN)                                       \

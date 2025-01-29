@@ -350,13 +350,6 @@
         [
           "Fade out to Back&ground",
           "ID_LDO_FADEOUT_BG"
-        ],
-        [
-          "separator"
-        ],
-        [
-          "Ant&ialiasing",
-          "ID_ANTIAlIAS"
         ]
       ]
     ],

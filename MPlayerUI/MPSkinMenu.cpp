@@ -55,7 +55,6 @@ int encodingIdToCmd(CharEncodingType nEncodingId) {
 
 MenuItemCheck _menuItemsCheck[] = {
     { ID_SHUFFLE, SZ_SECT_PLAYER, "shuffle", "1", },
-    { ID_ANTIAlIAS, SZ_SECT_UI, "Antialias", "1", },
     { ID_CLICK_THROUGH, nullptr, nullptr, "1",  },
     { ID_TOPMOST, nullptr, nullptr, "1",  },
     { ID_LDO_KARAOKE, nullptr, nullptr, "1",  },
