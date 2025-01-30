@@ -112,6 +112,8 @@ void CPlayer::onEndOfPlaying() {
         auto ret = doNext(false);
         if (ret == ERR_OK) {
             play();
+        } else {
+            m_state = PS_STOPPED;
         }
     }
 

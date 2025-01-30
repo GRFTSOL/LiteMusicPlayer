@@ -22,6 +22,14 @@ public:
 
     void onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBar) override;
 
+    // 最终输入的文字
+    virtual void onInputText(cstr_t text) override;
+
+    // MarketText 是临时的文字，当输入其他字符时会被替代
+    virtual void onInputMarkedText(cstr_t text) override;
+
+    virtual void onChar(uint32_t nChar) override;
+
     void sendNotifyEvent(CSkinListCtrlEventNotify::Command cmd, int nClickedRow, int nClickedCol) override;
 
     void makeSureRowVisible(int nRow) override;

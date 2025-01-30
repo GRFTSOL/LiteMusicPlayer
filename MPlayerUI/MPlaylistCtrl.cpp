@@ -437,6 +437,26 @@ void CMPlaylistCtrl::onVScroll(uint32_t nSBCode, int nPos, IScrollBar *pScrollBa
     CSkinListCtrl::onVScroll(nSBCode, nPos, pScrollBar);
 }
 
+// 最终输入的文字
+void CMPlaylistCtrl::onInputText(cstr_t text) {
+    showHideEditorSearch(0);
+    m_editorSearch->onInputText(text);
+    m_editorSearch->setFocus();
+}
+
+// MarketText 是临时的文字，当输入其他字符时会被替代
+void CMPlaylistCtrl::onInputMarkedText(cstr_t text) {
+    showHideEditorSearch(0);
+    m_editorSearch->onInputMarkedText(text);
+    m_editorSearch->setFocus();
+}
+
+void CMPlaylistCtrl::onChar(uint32_t nChar) {
+    showHideEditorSearch(0);
+    m_editorSearch->onChar(nChar);
+    m_editorSearch->setFocus();
+}
+
 void CMPlaylistCtrl::sendNotifyEvent(CSkinListCtrlEventNotify::Command cmd, int nClickedRow, int nClickedCol) {
     if (cmd == CSkinListCtrlEventNotify::C_DBL_CLICK && nClickedRow != -1) {
         auto pl = getSelected();
