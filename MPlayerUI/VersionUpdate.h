@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 
-uint32_t parseVersionStr(cstr_t version);
+bool isNewVersion(cstr_t version);
 
 class CVersionInfo {
 public:

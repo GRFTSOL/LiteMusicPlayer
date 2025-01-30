@@ -9,13 +9,17 @@
 
 
 uint32_t parseVersionStr(cstr_t version) {
-    int verMajor = 0, verMinor = 0, verBuild = 0;
-    int ret = sscanf(version, "%d.%d.%d", &verMajor, &verMinor, &verBuild);
-    if (ret == 3) {
-        return (verMajor * 1000 + verMinor) * 1000 + verBuild;
+    int verMajor = 0, verMinor = 0;
+    int ret = sscanf(version, "%d.%d", &verMajor, &verMinor);
+    if (ret == 2) {
+        return (verMajor * 1000 + verMinor) * 1000;
     }
 
     return 0;
+}
+
+bool isNewVersion(cstr_t version) {
+    return MAJOR_VERSION * 1000 + MINOR_VERSION < parseVersionStr(version);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -24,7 +28,7 @@ uint32_t parseVersionStr(cstr_t version) {
 
 //<?xml version="1.0" encoding="gb2312"?>
 //<SOFTWARE_INFO>
-//  <curversion version="1.3" upgradedate="2002-9-12" obsoletever="1.4.3" TrDays="30">
+//  <curversion version="1.3" upgradedate="2002-9-12" obsoletever="1.4.3">
 //    <feature>
 //    </feature>
 //  </curversion>
@@ -81,7 +85,7 @@ void CVersionUpdate::onDownloadOK(CDownloadTask *pTask) {
         return;
     }
 
-    if (VERSION < parseVersionStr(versionInfo.verNew.c_str())) {
+    if (isNewVersion(versionInfo.verNew.c_str())) {
         string strMessage = versionInfo.strFeature;
         strMessage += "\r\n\r\n";
         strMessage += _TLT("Do you want to visit our website for more information?");

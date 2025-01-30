@@ -797,10 +797,6 @@ bool CMPCommonCmdHandler::saveAsLyricsFile(Window *pWndParent) {
 
     if (dlg.doModal(pWndParent) == IDOK) {
         strFile = dlg.getSaveFile();
-        if (isEmptyString(fileGetExt(strFile.c_str()))) {
-            // set file extend name as the user selected.
-            fileSetExt(strFile, dlg.getSelectedExt());
-        }
 
         bool bUseNewFileName;
         int nRet = g_currentLyrics.saveAsFile(strFile.c_str(), bUseNewFileName);

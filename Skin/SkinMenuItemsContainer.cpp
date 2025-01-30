@@ -307,9 +307,11 @@ void SkinMenuItemsContainer::draw(CRawGraph *canvas) {
         }
     }
 
-    canvas->fillRoundedRect(rcObj.left, rcObj.top, rcObj.width(), rcObj.height(), 10, m_clrBg);
+    const int SELECTED_MARGIN = 8, RADIUS = 5;
+
+    canvas->fillRoundedRect(rcObj.left, rcObj.top, rcObj.width(), rcObj.height(), RADIUS, m_clrBg);
     canvas->setPen(m_penFrame);
-    canvas->roundedRect(rcObj.left, rcObj.top, rcObj.width(), rcObj.height(), 10);
+    canvas->roundedRect(rcObj.left, rcObj.top, rcObj.width(), rcObj.height(), RADIUS);
 
     if (m_font.isGood()) {
         canvas->setFont(m_font.getFont());
@@ -321,8 +323,6 @@ void SkinMenuItemsContainer::draw(CRawGraph *canvas) {
 
     CColor clrText = m_font.getTextColor(true);
     canvas->setTextColor(clrText);
-
-    const int SELECTED_MARGIN = 8, RADIUS = 10;
 
     if (m_isShowArrow) {
         // 菜单空间不足以显示所有项，显示上箭头

@@ -67,7 +67,7 @@ protected:
     VecTooltips                 _tooltips;
 
     int                         _heightHandle = 10;
-    int                         _margin = 10;
+    int                         _margin = 5;
 
 };
 

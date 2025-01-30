@@ -132,6 +132,7 @@ void CRawGraph::rectangle(float x, float y, float width, float height) {
 void CRawGraph::roundedRect(float x, float y, float width, float height, float radius) {
     typedef agg::scanline_p8 scanline_type;
 
+    radius *= m_scaleFactor;
     x = mapAndScaleX(x);
     y = mapAndScaleY(y);
     width *= m_scaleFactor;

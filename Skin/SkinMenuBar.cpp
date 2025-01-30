@@ -42,6 +42,8 @@ void CSkinMenuBar::onCreate() {
     m_pSkin->getRootContainer()->addUIObject(m_popupMenu);
     m_popupMenu->setVisible(false, false);
 
+    m_cursorArrow.loadStdCursor(Cursor::C_ARROW);
+
     onLanguageChanged();
 }
 
@@ -129,6 +131,11 @@ bool CSkinMenuBar::onLButtonDown(uint32_t nFlags, CPoint point) {
 }
 
 bool CSkinMenuBar::onMouseMove(CPoint point) {
+#ifdef WIN32
+    // 在 windows 下，当 setCatpureMouse 后，鼠标指针无法被正常更新
+    setCursor(m_cursorArrow);
+#endif
+
     if (point == m_ptLast) {
         return false;
     }

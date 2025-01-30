@@ -45,7 +45,7 @@ public:
                     // get new version info
                     nRet = verCheck.getUpdateInfo(pDlEvt->pTask, versionInfo);
                     if (nRet == ERR_OK) {
-                        if (VERSION < parseVersionStr(versionInfo.verNew.c_str())) {
+                        if (isNewVersion(versionInfo.verNew.c_str())) {
                             // new version
                             string strNewVersion = _TLT("new version of $Product$ is available.");
                             strNewVersion += " ";

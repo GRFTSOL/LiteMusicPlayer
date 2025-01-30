@@ -75,6 +75,8 @@ protected:
     SkinMenuItemsContainer      *m_popupMenu;
     SkinMenuPtr                 m_pMenu;
 
+    Cursor                      m_cursorArrow;
+
 };
 
 #endif // !defined(_SKIN_MENU_BAR_H_)

@@ -9,13 +9,11 @@ public:
 
     cstr_t getSaveFile() { return m_file.c_str(); }
 
-    cstr_t getSelectedExt() { return m_selectedExt.c_str(); }
-
 public:
     string                      m_title;
     cstr_t                      m_extFilter;
     int                         m_nDefFileType;
-    string                      m_file, m_selectedExt;
+    string                      m_file;
     VecStrings                  m_vExts;
 
 };
