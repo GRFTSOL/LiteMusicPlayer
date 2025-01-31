@@ -177,7 +177,7 @@ public:
     virtual void setOption(int nIndex) {
         string strFilterFile = g_player.getTitleFilterFile();
         if (!isFileExist(strFilterFile.c_str())) {
-            writeFile(strFilterFile.c_str(), "; Enter the Radio station name filters below, one name per line.\r\n; Please save this file, and restart MiniLyrics.\r\n");
+            writeFile(strFilterFile.c_str(), "; Enter the Radio station name filters below, one name per line.\r\n; Please save this file, and restart MusicPlayer.\r\n");
         }
 
         string strEditor;

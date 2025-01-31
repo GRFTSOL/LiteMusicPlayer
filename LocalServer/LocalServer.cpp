@@ -1,6 +1,6 @@
 ﻿//
 //  LocalServer.cpp
-//  Mp3Player
+//  MusicPlayer
 //
 //  Created by henry_xiao on 2023/1/20.
 //
@@ -57,6 +57,20 @@ bool loadRSAKeys(cstr_t fnPrivateKey, cstr_t fnPublicKey, mbedtls_pk_context &rs
     return ret == 0;
 }
 
+string getLocal3WDir() {
+    string path = g_profile.getString("LocalWWW", "");
+    if (!path.empty()) {
+        if (isDirExist(path.c_str())) {
+            return path;
+        }
+    }
+
+    path = getAppResourceDir();
+    path += "local-server";
+    path += PATH_SEP_STR;
+    return path;
+}
+
 LocalServer *LocalServer::getInstance() {
     if (!_instance) {
         mbedtls_pk_context rsaKey;
@@ -79,9 +93,9 @@ LocalServer *LocalServer::getInstance() {
         }
 
         _instance = new LocalServer(g_profile.getString("LocalServer", "address", "127.0.0.1"),
-                                    g_profile.getString("LocalServer", "http_port", "1212"),
-                                    g_profile.getString("LocalServer", "web_socket_port", "1213"),
-                                    "/Users/henry_xiao/ProjectsPrivate/Mp3Player/LocalServer/www/",
+                                    g_profile.getString("LocalServer", "http_port", "12120"),
+                                    g_profile.getString("LocalServer", "web_socket_port", "12121"),
+                                    getLocal3WDir().c_str(),
                                     rsaKey, publicKey);
 
         auto &wsserver = _instance->m_webSocketServer;

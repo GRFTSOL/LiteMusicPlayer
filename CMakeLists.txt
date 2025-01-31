@@ -28,7 +28,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 endif()
 
-PROJECT(Mp3Player)
+PROJECT(MusicPlayer)
 
 #
 # Compile third-parties first.
@@ -54,7 +54,7 @@ set(ENABLE_PROGRAMS OFF)
 set(MBEDTLS_PYTHON_EXECUTABLE OFF)
 set(USE_STATIC_MBEDTLS_LIBRARY ON)
 set(USE_SHARED_MBEDTLS_LIBRARY OFF)
-set(GEN_FILES ON)
+set(GEN_FILES OFF)
 add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/mbedtls mbedtls)
 
 #
@@ -98,7 +98,7 @@ set(BUILD_EXAMPLES OFF)
 add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/libspng libspng)
 
 #
-# Build Mp3Player
+# Build MusicPlayer
 #
 
 set(SRC ${SRC}
@@ -147,7 +147,7 @@ if (APPLE)
         ${PROJECT_SOURCE_DIR}/MPlayerUI/mac
         ${PROJECT_SOURCE_DIR}/MPlayerUI/mac/imported/SPMediaKeyTap
         ${PROJECT_SOURCE_DIR}/MPlayerEngine/mac
-        ${PROJECT_SOURCE_DIR}/Mp3Player
+        ${PROJECT_SOURCE_DIR}/MusicPlayer
     )
 elseif (LINUX)
     set(SRC_PATHS ${SRC_PATHS}
@@ -183,9 +183,9 @@ foreach(HEADER_PATH ${SRC_PATHS})
 endforeach()
 
 if(APPLE)
-    file(GLOB RESOURCES "${PROJECT_SOURCE_DIR}/Mp3Player/tray-icons/*.png")
+    file(GLOB RESOURCES "${PROJECT_SOURCE_DIR}/MusicPlayer/tray-icons/*.png")
     set(RESOURCES ${RESOURCES}
-        ${PROJECT_SOURCE_DIR}/Mp3Player/Base.lproj/MainMenu.xib
+        ${PROJECT_SOURCE_DIR}/MusicPlayer/Base.lproj/MainMenu.xib
         ${PROJECT_SOURCE_DIR}/Skins-Design/skins
     )
 
@@ -193,7 +193,7 @@ if(APPLE)
     set_target_properties(${PROJECT_NAME} PROPERTIES
         BUNDLE TRUE
         MACOSX_BUNDLE_GUI_IDENTIFIER com.crintsoft.${PROJECT_NAME}
-        MACOSX_BUNDLE_ICON_FILE ${CMAKE_SOURCE_DIR}/Mp3Player/MiniLyrics.icns
+        MACOSX_BUNDLE_ICON_FILE ${CMAKE_SOURCE_DIR}/MusicPlayer/MusicPlayer.icns
         MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
         MACOSX_BUNDLE_BUNDLE_VERSION "1.0.0"
         MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0"
@@ -224,7 +224,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
 
 if(WIN32)
-target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/Mp3Player/win32/resource.rc)
+target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/MusicPlayer/win32/resource.rc)
 endif(WIN32)
 
 set(OS_LINK_OPTS)

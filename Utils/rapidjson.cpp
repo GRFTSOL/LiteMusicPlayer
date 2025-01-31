@@ -1,6 +1,6 @@
 ﻿//
 //  rapidjson.cpp
-//  Mp3Player
+//  MusicPlayer
 //
 //  Created by henry_xiao on 2023/1/27.
 //

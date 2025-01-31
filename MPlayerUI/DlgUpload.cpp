@@ -262,7 +262,7 @@ public:
         if (pPageWait) {
             pPageWait->setLoginWork(false);
             pPageWait->startWork(_TLT("upload Lyrics"),
-                _TLT("MiniLyrics is uploading lyrics, It may take a few seconds."),
+                _TLT("MusicPlayer is uploading lyrics, It may take a few seconds."),
                 m_pUploadObj);
         }
 
@@ -328,7 +328,7 @@ public:
             if (pPageWait) {
                 pPageWait->setLoginWork(false);
                 pPageWait->startWork(_TLT("upload Lyrics"),
-                    _TLT("MiniLyrics is uploading lyrics, It may take a few seconds."),
+                    _TLT("MusicPlayer is uploading lyrics, It may take a few seconds."),
                     ((CSkinWndUploadLyr *)m_pSkin)->getUploadWorkObj());
             }
         } else {

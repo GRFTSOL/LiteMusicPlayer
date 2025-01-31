@@ -87,7 +87,7 @@ MLMsgCmd mLMsgStr2Cmd(cstr_t szMLMsgCmd);
 
 
 #define PRODUCT_ID_INVALID  0
-#define PRODUCT_ID_MINILYRICS   1
+#define PRODUCT_ID_MUSIC_PLAYER   1
 
 class CXMLMsgCmd {
 public:
@@ -101,7 +101,7 @@ public:
 
 public:
     string                      strClient;          // MiniLyrics for Winamp2 7.0.xxx
-    int                         nProductId;         // See PRODUCT_ID_MINILYRICS
+    int                         nProductId;         // See PRODUCT_ID_MUSIC_PLAYER
 
 };
 

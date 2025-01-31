@@ -19,7 +19,7 @@ extern int g_nPortDownloadServer;
 /*
 ***** To prevent DDos attach: *****
 1. open as many port as possible on server, If any connection error occurs,
-   so MiniLyrics client tries connect port from 80 to 180, about 100 ports.
+   so MusicPlayer client tries connect port from 80 to 180, about 100 ports.
 
 */
 

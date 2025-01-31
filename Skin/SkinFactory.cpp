@@ -776,9 +776,9 @@ int CSkinFactory::changeSkin(cstr_t szSkinName, cstr_t szSkinDir, cstr_t szExtra
     // create or open Main Window
     CSkinWnd *pMainWnd = nullptr;
     if (m_listSkinWnds.empty()) {
-        pMainWnd = newSkinWnd("MiniLyrics", true);
+        pMainWnd = newSkinWnd("MusicPlayer", true);
 
-        SkinWndStartupInfo skinWndStartupInfo("MiniLyrics", "MiniLyrics", strSkinWndName.c_str(), nullptr, true);
+        SkinWndStartupInfo skinWndStartupInfo("MusicPlayer", "MusicPlayer", strSkinWndName.c_str(), nullptr, true);
         int nRet = pMainWnd->create(skinWndStartupInfo, this, false);
         assert(nRet == ERR_OK);
         if (nRet == ERR_OK) {
@@ -1218,6 +1218,15 @@ cstr_t CSkinFactory::getSkinRootDir() {
 
         m_strSkinRootDir = getAppResourceDir();
         m_strSkinRootDir += "skins";
+
+
+        // 可能在编译输出目录 build/debug
+        if (!isFileExist(m_strSkinRootDir.c_str())) {
+            m_strSkinRootDir = getAppResourceDir();
+            m_strSkinRootDir += "../../Skins-Design/skins";
+            strrep(m_strSkinRootDir, '/', PATH_SEP_CHAR);
+        }
+
         m_strSkinRootDir += PATH_SEP_STR;
     }
 

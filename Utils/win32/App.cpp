@@ -11,7 +11,7 @@ string _getAppResourceDir() {
     WCHAR path[MAX_PATH] = {0};
     auto len = GetModuleFileNameW(nullptr, path, CountOf(path));
 
-    return ucs2ToUtf8(path, len);
+    return fileGetPath(ucs2ToUtf8(path, len).c_str());
 }
 
 string _getAppDataDir(cstr_t szDefAppName) {

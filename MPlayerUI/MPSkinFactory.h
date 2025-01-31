@@ -7,8 +7,6 @@
 #include "../Skin/SkinFactory.h"
 
 
-#define SZ_DEFSKIN          "DHPlayer"
-
 class CSkinMenu;
 
 class CMPSkinFactory : public CSkinFactory {

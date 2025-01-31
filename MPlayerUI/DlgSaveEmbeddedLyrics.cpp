@@ -1,6 +1,6 @@
 ﻿//
 //  DlgSaveEmbeddedLyrics.cpp
-//  Mp3Player
+//  MusicPlayer
 //
 //  Created by henry_xiao on 2023/9/18.
 //
@@ -13,7 +13,7 @@
 int saveEmbeddedLyrics(const string &mediaUrl, const string &lyrics, const VecStrings &lyrUrls, CSkinWnd *parent) {
     int ret = g_autoProcessEmbeddedLyrics.saveEmbeddedLyrics(mediaUrl.c_str(), lyrics, lyrUrls);
     if (ret != ERR_OK) {
-        string strMsg = _TLT("Failed to save embedded lyrics, MiniLyrics will auto try again later.");
+        string strMsg = _TLT("Failed to save embedded lyrics, MusicPlayer will auto try again later.");
         strMsg += "\n\n";
         strMsg += ERROR2STR_LOCAL(ret);
         parent->messageOut(strMsg.c_str());

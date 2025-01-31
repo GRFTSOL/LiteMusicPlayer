@@ -172,7 +172,7 @@ struct IMediaDecoder {
 using IMediaDecoderPtr = std::shared_ptr<IMediaDecoder>;
 
 //
-// A plugin DLL may contain serveral plugins, use DHPlayerQueryPluginIF to query all the plugin interface
+// A plugin DLL may contain serveral plugins, use MusicPlayerQueryPluginIF to query all the plugin interface
 // that it supported.
 //
 // query will start with nIndex = 0, till !ERR_OK returned.
@@ -180,9 +180,9 @@ using IMediaDecoderPtr = std::shared_ptr<IMediaDecoder>;
 // nIndex = 0, return its interface type, and description, and lpInterface.
 // strDescription and lpInterface can be nullptr, and only its description or lpInterface is queried.
 //
-// extern "C" __declspec(dllexport) ResultCode DHPlayerQueryPluginIF(int index, MPInterfaceType *interfaceType, const char **description, void **interfacePtr);
+// extern "C" __declspec(dllexport) ResultCode MusicPlayerQueryPluginIF(int index, MPInterfaceType *interfaceType, const char **description, void **interfacePtr);
 typedef ResultCode (*PlayerQueryPluginIF_t)(int index, MPInterfaceType *interfaceType, const char **description, void **interfacePtr);
 
-#define SZ_FUNC_ZP_QUERY_PLUGIN_IF  "DHPlayerQueryPluginIF"
+#define SZ_FUNC_ZP_QUERY_PLUGIN_IF  "MusicPlayerQueryPluginIF"
 
 #endif // _IMPLAYER_H_

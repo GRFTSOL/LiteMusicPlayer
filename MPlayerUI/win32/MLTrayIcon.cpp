@@ -5,7 +5,7 @@
 #include "../../Window/win32/ShellNotifyIcon.h"
 
 
-#define IDN_MINILYRICS      1
+#define IDN_MUSIC_PLAYER      1
 #define IDN_PLAYER_CTRL     2
 #define IDN_PLAYER_CTRL_MAX        (2 + 5)
 
@@ -48,7 +48,7 @@ void CMLTrayIcon::init(Window *pWnd) {
 void CMLTrayIcon::quit() {
     //
     // remove icon in tray bar
-    CShellNotifyIcon::delIcon(m_pWnd, IDN_MINILYRICS);
+    CShellNotifyIcon::delIcon(m_pWnd, IDN_MUSIC_PLAYER);
 
     if (m_hIconTray) {
         DestroyIcon(m_hIconTray);
@@ -109,14 +109,14 @@ void CMLTrayIcon::updateShowIconPos() {
 
     if (bAddTrayIcon) {
         // add icon in tray bar
-        CShellNotifyIcon::addIcon(m_pWnd, IDN_MINILYRICS, strCaption.c_str(), m_hIconTray, MPWM_TRAYICN);
+        CShellNotifyIcon::addIcon(m_pWnd, IDN_MUSIC_PLAYER, strCaption.c_str(), m_hIconTray, MPWM_TRAYICN);
 
         if (m_pWnd->isIconic()) {
             m_pWnd->hide();
         }
     } else {
         // remove icon in tray bar
-        CShellNotifyIcon::delIcon(m_pWnd, IDN_MINILYRICS);
+        CShellNotifyIcon::delIcon(m_pWnd, IDN_MUSIC_PLAYER);
     }
 }
 
@@ -144,12 +144,12 @@ void CMLTrayIcon::updateTrayIconText(cstr_t szText) {
     nShowPos = g_profile.getInt(SZ_SECT_UI, "ShowIconOn", SHOW_ICON_ON_TASKBAR);
 
     if (nShowPos == SHOW_ICON_ON_BAR_TRAY || nShowPos == SHOW_ICON_ON_SYSTRAY) {
-        CShellNotifyIcon::modifyIcon(m_pWnd, IDN_MINILYRICS, szText, nullptr);
+        CShellNotifyIcon::modifyIcon(m_pWnd, IDN_MUSIC_PLAYER, szText, nullptr);
     }
 }
 
 void CMLTrayIcon::onMyNotifyIcon(WPARAM wParam, LPARAM lParam) {
-    if (wParam == IDN_MINILYRICS) {
+    if (wParam == IDN_MUSIC_PLAYER) {
         if (lParam == WM_RBUTTONUP) {
             // show popup menu
             CPoint pt = getCursorPos();

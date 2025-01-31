@@ -46,5 +46,7 @@ export function registerMediaLibChangedHandler(callback: any) {
 }
 
 export function saveMediaBasicInfo(media: Media) {
+    // TODO:
+    console.log('Todo: save media info', media);
     return true;
 }

@@ -1,6 +1,5 @@
 //
 //  PlayerEventDispatcher.m
-//  MiniLyricsMac
 //
 //  Created by Xiao Hongyong on 8/1/13.
 //

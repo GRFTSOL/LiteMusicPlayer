@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding='UTF-8'?>
-<skin defmainwnd="MainWnd" mainwnds="MainWnd,lyrbar,floatinglyr" ExtraResouceFolder="DHPlayer">
+<skin defmainwnd="MainWnd" mainwnds="MainWnd,lyrbar,floatinglyr" ExtraResouceFolder="Classic">
   <include Name="Styles.xml"/>
   <Menus>
     <Menu Name="NormalMode" From="MainWndMenu" >

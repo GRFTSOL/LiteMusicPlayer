@@ -1,6 +1,6 @@
-# DHPlayer
+# MusicPlayer
 
-DH Player
+MusicPlayer
 
 ## 环境搭建
 * nvm use v12.22.12

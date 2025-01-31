@@ -1,8 +1,8 @@
 {
   "name": "www",
   "version": "0.0.1",
-  "description": "DH Player",
-  "productName": "dhplayer",
+  "description": "Music Player",
+  "productName": "Music",
   "author": "Xiao Hongyong <hongyongxiao@gmail.com>",
   "private": true,
   "scripts": {

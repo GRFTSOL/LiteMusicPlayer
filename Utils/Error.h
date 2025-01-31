@@ -81,7 +81,7 @@ enum Error {
     ERR_HTTP_407,                    // MLERR_HTTP_UNATHORIZED
     ERR_HTTP_500,
 
-    // MiniLyrics protocol command error code
+    // MusicPlayer protocol command error code
     ERR_MLPROTOCAL_ERROR_BASE   = 1035,
 
     ERR_PLAYER_ERROR_BASE       = 2000,

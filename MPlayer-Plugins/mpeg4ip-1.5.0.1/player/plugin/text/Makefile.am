@@ -1,2 +1,0 @@
-SUBDIRS = href plain
-

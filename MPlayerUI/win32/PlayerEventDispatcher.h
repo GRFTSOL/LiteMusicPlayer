@@ -59,7 +59,7 @@ public:
             if (pWnd) {
                 pWnd->activateWindow();
             } else {
-                ERR_LOG0("MiniLyrics main window hasn't been started yet, can't activate it.");
+                ERR_LOG0("MusicPlayer main window hasn't been started yet, can't activate it.");
             }
         } else if (wParam == ML_SEND_CMD_LINE && pcds->dwData == ML_SEND_CMD_LINE) {
         }

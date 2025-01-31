@@ -148,8 +148,8 @@ module.exports = configure(function (ctx) {
       // chainWebpackCustomSW (/* chain */) {},
 
       manifest: {
-        name: `dhplayer`,
-        short_name: `dhplayer`,
+        name: `musicplayer`,
+        short_name: `musicplayer`,
         description: ``,
         display: 'standalone',
         orientation: 'portrait',

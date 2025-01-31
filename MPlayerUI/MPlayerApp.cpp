@@ -17,6 +17,8 @@
 #include "MPFloatingLyrWnd.h"
 
 
+#define SZ_DEFSKIN          "Metal"
+
 CurrentLyrics g_currentLyrics;
 
 CDownloadMgr g_LyricsDownloader;

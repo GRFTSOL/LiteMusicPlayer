@@ -7,7 +7,7 @@
 #define ML_SEND_CMD_LINE    0xF30B4730
 #define ML_ACTIVATE         0x803C27CA
 
-#define MSG_WND_CLASS_NAME  "DHPlayerMsgWnd"
+#define MSG_WND_CLASS_NAME  "MusicPlayerMsgWnd"
 
 void cmdLineAnalyse(cstr_t szCmdLine, vector<string> &vCmdLine);
 

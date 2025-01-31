@@ -13,7 +13,7 @@
 
 #ifdef _WIN32
 #include "win32/MPHotkey.h"
-#include "../Mp3Player/win32/resource.h"
+#include "../MusicPlayer/win32/resource.h"
 #endif
 
 #ifdef _LINUX_GTK2
@@ -25,16 +25,16 @@
 #endif
 
 
-#define SZ_APP_NAME         "DHPlayer"
+#define SZ_APP_NAME         "MusicPlayer"
 #define SZ_COMPANY_NAME     "CrintSoft"
 
 #define SZ_MACRO_PRODUCT_NAME   "$Product$"
 #define SZ_MACRO_COMPANY_NAME   "$Company$"
 
 
-#define SZ_PROFILE_NAME     "DHPlayer.ini"
-#define SZ_MUTEX_RUNNING    "DHPlayerRunning"
-#define SZ_MAINWND_CLASSNAME "DHPlayer"
+#define SZ_PROFILE_NAME     "MusicPlayer.ini"
+#define SZ_MUTEX_RUNNING    "MusicPlayerRunning"
+#define SZ_MAINWND_CLASSNAME "MusicPlayer"
 
 class CDownloadMgr;
 class CMLClientSession;

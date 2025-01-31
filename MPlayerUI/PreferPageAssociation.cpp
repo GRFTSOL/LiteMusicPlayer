@@ -5,14 +5,14 @@
 /*
 #define MEDIA_FILE_ICON_ID  2
 
-#define KEY_LOCATION        "Software\\Crintsoft\\DHPlayer\\MP3\\Location"
+#define KEY_LOCATION        "Software\\Crintsoft\\MusicPlayer\\MP3\\Location"
 #define NAME_LOCATION       "Location"
 
-#define KEY_AUDIOFILE       "DHPlayer AudioFile"
+#define KEY_AUDIOFILE       "MusicPlayer AudioFile"
 #define NAME_AUDIOFILE      "Audio File"
-#define KEY_PLAYLIST        "DHPlayer Playlist"
+#define KEY_PLAYLIST        "MusicPlayer Playlist"
 #define NAME_PLAYLIST       "Playlist File"
-#define VALUE_BACKUP        "DHPlayer Backup"
+#define VALUE_BACKUP        "MusicPlayer Backup"
 
 void associateFile(cstr_t pszExt, cstr_t pszKey, cstr_t pszName, uint32_t uIconID) {
 

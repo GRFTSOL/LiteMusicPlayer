@@ -261,7 +261,7 @@ int CMLClientSession::upload(const string &lyricsContent, string &strLyricsId, s
 
 void CMLClientSession::prepareClientInfo(CXMLMsgCmd &cmd) {
     cmd.strClient = m_strClient;
-    cmd.nProductId = PRODUCT_ID_MINILYRICS;
+    cmd.nProductId = PRODUCT_ID_MUSIC_PLAYER;
 }
 
 int CMLClientSession::sendXmlCommand(CXMLMsgCmd &cmd) {

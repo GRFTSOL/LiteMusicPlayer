@@ -83,7 +83,7 @@ int CHttpClient::init(cstr_t szUrl, cstr_t szReferUrl) {
 
     m_httpReturn.setNetFile(&m_NetFile);
     m_httpReturn.setAvailProp(CHttpReturnProtocol::RP_MIN_RET);
-    m_httpReturn.setServer("MiniLyrics Server/1.1");
+    m_httpReturn.setServer("MusicPlayer Server/1.1");
     m_httpReturn.setConnection("close");
 
     setProxy(false, nullptr, 80);

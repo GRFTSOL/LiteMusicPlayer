@@ -16,6 +16,8 @@ x64
 *.pdb
 /temp/
 build
+MusicPlayer/win32/version.nsh
+MusicPlayer.exe
 *.db
 *.settings
 *.obj
@@ -31,5 +33,5 @@ obj
 /third-parties
 /temp
 /TinyJS
-ServerNgx
+LyricServer
 ~$*

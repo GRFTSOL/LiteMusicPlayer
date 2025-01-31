@@ -1,6 +1,6 @@
 ﻿//
 //  WindowHandleHolder.h
-//  Mp3Player
+//  MusicPlayer
 //
 //  Created by HongyongXiao on 2021/12/23.
 //

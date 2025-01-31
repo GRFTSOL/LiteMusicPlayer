@@ -40,10 +40,6 @@ bool MPlayerApp::init(int argc, char *argv[]) {
     strMLIniFile += SZ_PROFILE_NAME;
     setFileNoReadOnly(strMLIniFile.c_str());
 
-    if (!isFileExist(strMLIniFile.c_str())) {
-        g_bEngEdition = true;
-    }
-
     g_log.setSrcRootDir(__FILE__, 2);
 
     strMLLogFile = getAppDataDir();
@@ -64,27 +60,6 @@ bool MPlayerApp::init(int argc, char *argv[]) {
 #endif
 
     LOG1(LOG_LVL_EVENT_IMP, "start %s", getAppNameLong().c_str());
-
-    {
-        //
-        // 检查版本
-        //
-#ifdef _DEBUG
-        CProfile file;
-        string strEng;
-        file.init("install.ini", "INSTALL");
-        strEng = file.getString("Edition", "");
-        if (strcmp(strEng.c_str(), "english") == 0) {
-            g_bEngEdition = true;
-        } else if (strcmp(strEng.c_str(), "chinese") == 0) {
-            g_bEngEdition = false;
-        } else {
-            #endif
-        }
-        {
-            // 根据 location 来设置中英文版本差别
-        }
-    }
 
     return _init();
 }

@@ -105,7 +105,7 @@ void CMPSkinMainWnd::onSkinLoaded() {
 
 void CMPSkinMainWnd::onTimer(uint32_t nIDEvent) {
     if (nIDEvent == m_nTimerFixWndFocus) {
-        // Under some special situation, MiniLyrics may not receive WM_ACTIVATE !activate notifications.
+        // Under some special situation, MusicPlayer may not receive WM_ACTIVATE !activate notifications.
         unregisterTimerObject(nullptr, m_nTimerFixWndFocus);
         if (GetForegroundWindow() != m_hWnd) {
             if (m_bActived) {

@@ -43,7 +43,7 @@ bool getEmbeddedLyricsUrlInfo(cstr_t szName, string &language, int &index);
 
 #define SZ_SONG_ID3V2_SYLT_DESC     _TLM("Embedded lyrics for Windows Media Player (ID3v2 synchronized lyrics)")
 #define SZ_SONG_ID3V2_USLT_DESC     _TLM("Embedded lyrics for iPod, iTunes (ID3v2 unsynchronized lyrics)")
-#define SZ_SONG_LYRICS3V2_DESC      _TLM("Embedded lyrics for MiniLyrics (Lyrics3v2 synchronized lyrics)")
+#define SZ_SONG_LYRICS3V2_DESC      _TLM("Embedded lyrics for MusicPlayer (Lyrics3v2 synchronized lyrics)")
 #define SZ_SONG_ID3V2_LYRICS_DESC   _TLM("Embedded ID3v2 lyrics (Nonstandard)")
 #define SZ_SONG_M4A_LYRICS_DESC     _TLM("Embedded lyrics for iPod, iTunes (For &AAC (M4A) file)")
 #define SZ_SONG_SOLE_EMBEDDED_LYRICS_DESC     _TLM("Embedded lyrics")

@@ -208,18 +208,6 @@ public:
 
         string strDefaultSkin = CSkinApp::getInstance()->getDefaultSkin();
 
-#ifdef _MINILYRICS_WIN32
-        m_strEmbeddedSkinName = "";
-        if (MPlayerApp::getInstance()->isSupportEmbedded()) {
-            m_strEmbeddedSkinName = string("<< ") + g_player.getEmbeddedSkinName() + " >>";
-            m_pSkinList->insertItem(m_pSkinList->getItemCount(), m_strEmbeddedSkinName.c_str());
-
-            if (MPlayerApp::getInstance()->isEmbeddedMode()) {
-                m_pSkinList->setItemSelectionState(0, true);
-            }
-        }
-#endif
-
         // 查找所有的Skin，并且添加到菜单中
         vector<string> vSkins;
         if (MPlayerApp::getMPSkinFactory()->enumAllSkins(vSkins)) {
@@ -253,7 +241,6 @@ public:
 protected:
     int                         CID_SKIN_LIST;
     CSkinListCtrl               *m_pSkinList;
-    string                      m_strEmbeddedSkinName;
     bool                        m_bIgnoreSkinListNotify;
     int                         TIMER_ID_SKIN_SEL_CHANGED;
 

@@ -37,8 +37,8 @@ function pull_or_clone() {
     fi
 }
 
-pull_or_clone git@gitee.com:xiaohongyong/LyrServer.git ServerNgx
-pull_or_clone git@gitee.com:xiaohongyong/mp3player-third-parties.git third-parties
-pull_or_clone git@gitee.com:xiaohongyong/TinyJs.git TinyJS
+pull_or_clone git@gitee.com:xiaohongyong/LyricServer.git LyricServer
+pull_or_clone git@gitee.com:xiaohongyong/music-player-third-parties.git third-parties
+pull_or_clone git@gitee.com:xiaohongyong/TinyJS.git TinyJS
 
 echo "== update successfully =="

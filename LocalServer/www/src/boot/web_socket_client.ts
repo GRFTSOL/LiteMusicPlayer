@@ -29,7 +29,7 @@ export const TYPE_PUBLIC_KEY = 'PublicKey',
     TYPE_MEDIA_LIB_ALL = 'MediaLibAll';
 
 let socket: (WebSocket | null) = null, g_clientId = 0, g_clientKey = '', g_pubKey;
-const wsServer = 'ws://localhost:1213';
+const wsServer = 'ws://localhost:12121';
 let lastConnectTime = getTimeInSeconds();
 const handlers: any = {
     [TYPE_INIT_CONNECTION]: handleInitConnection,

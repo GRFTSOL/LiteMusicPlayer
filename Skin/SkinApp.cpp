@@ -24,8 +24,6 @@ bool CSkinApp::init() {
     m_pSkinFactory = newSkinFactory();
 
     if (!isDirExist(m_pSkinFactory->getSkinRootDir())) {
-        // Sometimes, uninstallation can't be remove MiniLyrics.dll till next restart,
-        // So, don't start MiniLyrics, after uninstallation.
         ERR_LOG1("Skin root folder: %s doesn't exist.", m_pSkinFactory->getSkinRootDir());
         return false;
     }

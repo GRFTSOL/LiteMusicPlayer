@@ -6,7 +6,7 @@ RawImageDataPtr createGradientFillImage(int nHeight, CColor clrGradient[3]);
 
 string getPatternDir() {
     string strPatternDir = getAppResourceDir();
-    strPatternDir += "Patterns" PATH_SEP_STR;
+    strPatternDir += "patterns" PATH_SEP_STR;
 
     return strPatternDir;
 }

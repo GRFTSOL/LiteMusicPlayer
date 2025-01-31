@@ -92,7 +92,7 @@ IdToString    __MlCmdResult2Str[] = {
 
 int CXMLMsgCmd::fromXML(SXNode *pXmlNode) {
     strClient = pXmlNode->getPropertySafe("client");
-    nProductId = pXmlNode->getPropertyInt("pid", PRODUCT_ID_MINILYRICS);
+    nProductId = pXmlNode->getPropertyInt("pid", PRODUCT_ID_MUSIC_PLAYER);
     assert(nProductId != PRODUCT_ID_INVALID);
 
     return ERR_OK;
@@ -100,7 +100,7 @@ int CXMLMsgCmd::fromXML(SXNode *pXmlNode) {
 
 void CXMLMsgCmd::toXMLAttribute(CXMLWriter &xmlStream) {
     xmlStream.writeAttribute("client", strClient.c_str());
-    if (nProductId != PRODUCT_ID_MINILYRICS) {
+    if (nProductId != PRODUCT_ID_MUSIC_PLAYER) {
         xmlStream.writeAttribute("pid", nProductId);
     }
 }
@@ -882,11 +882,11 @@ int CMLProtocol::init(CNetFile *pFile, cstr_t szHost, int nPort) {
     m_httpReqWriteXmlCache.setUrl(SZ_ML_POST_URL);
     m_httpReqWriteXmlCache.setAvailProp(CHttpRequestProtocol::RP_POST_MIN);
     //     m_httpReqWriteXmlCache.setPropValue(CHttpRequestProtocol::RP_HOST, "www.minilyrics.com");
-    m_httpReqWriteXmlCache.setPropValue(CHttpRequestProtocol::RP_USER_AGENT, "MiniLyrics");
+    m_httpReqWriteXmlCache.setPropValue(CHttpRequestProtocol::RP_USER_AGENT, "MusicPlayer");
 
     m_httpRetWriteXmlCache.setNetFile(m_pNetFile);
     m_httpRetWriteXmlCache.setAvailProp(CHttpReturnProtocol::RP_MIN_RET);
-    m_httpRetWriteXmlCache.setServer("MiniLyrics Server/1.1");
+    m_httpRetWriteXmlCache.setServer("MusicPlayer Server/1.1");
     m_httpRetWriteXmlCache.setConnection("close");
 
     return ERR_OK;
@@ -1004,7 +1004,7 @@ TEST(MLProtocol, ParseBinXml) {
 TEST(MLProtocol, MLMsgCmdSearch) {
     MLMsgCmdSearch msgSearch;
 
-    msgSearch.nProductId = PRODUCT_ID_MINILYRICS;
+    msgSearch.nProductId = PRODUCT_ID_MUSIC_PLAYER;
     msgSearch.nRequestPage = 1;
     msgSearch.strArtist = "ar";
     msgSearch.strClient = "client xxx";

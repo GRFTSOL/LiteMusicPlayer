@@ -1,6 +1,6 @@
 ﻿//
 //  JsSkinDocument.hpp
-//  Mp3Player
+//  MusicPlayer
 //
 //  Created by henry_xiao on 2022/12/22.
 //

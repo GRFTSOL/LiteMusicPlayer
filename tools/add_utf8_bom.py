@@ -37,7 +37,7 @@ def add_utf8_bom_in_dir(dir):
     print('{} files were added successfully.'.format(count_added))
 
 if __name__ == '__main__':
-    # add_utf8_bom_in_dir(r'C:\Users\xhy\Documents\Mp3Player\TinyJS')
+    # add_utf8_bom_in_dir(r'C:\Users\xhy\Documents\MusicPlayer\TinyJS')
 
     if len(sys.argv) != 2:
         print('{} DIR_TO_ADD_BOM'.format(os.path.basename(__file__)))

@@ -187,7 +187,7 @@ void CMPSkinFactory::setClickThrough(bool bClickThrough) {
 
 #ifdef _WIN32
     if (m_bClickThrough) {
-        // show MiniLyrics system tray icon.
+        // show MusicPlayer system tray icon.
         int nShowPos;
 
         nShowPos = g_profile.getInt(SZ_SECT_UI, "ShowIconOn", SHOW_ICON_ON_TASKBAR);

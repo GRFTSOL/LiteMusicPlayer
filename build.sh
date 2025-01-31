@@ -12,14 +12,14 @@ function exit_if_err() {
     fi
 }
 
-function create_mp3player_ini() {
+function create_music_player_ini() {
     mkdir -p ${CUR_DIR}/build/Debug
-    file_ini="${CUR_DIR}/build/Debug/MP3Player.ini"
+    file_ini="${CUR_DIR}/build/Debug/MusicPlayer.ini"
     if ! test -f ${file_ini} ; then
         # lyrics-server.ini
         echo "Creating ${file_ini} ..."
 
-        echo "[MP3Player]
+        echo "[MusicPlayer]
 SkinRootDir=${CUR_DIR}/Skins-Design/skins" > ${file_ini}
         exit_if_err "Failed to create ${file_ini}."
         echo "OK"
@@ -35,7 +35,7 @@ cd build
 cmake -G Xcode ..
 exit_if_err
 
-create_mp3player_ini
+create_music_player_ini
 
 # cmake -DBUILD_CXXLIBS=OFF -DBUILD_PROGRAMS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF -DBUILD_DOCS=OFF \
 #     -DWITH_FORTIFY_SOURCE=OFF -DWITH_STACK_PROTECTOR=OFF -DINSTALL_MANPAGES=OFF -DINSTALL_PKGCONFIG_MODULES=OFF \

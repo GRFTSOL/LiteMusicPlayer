@@ -16,7 +16,7 @@
 #define SZ_SECT_PLAYER      "Player"
 #define SZ_SECT_LYR_DL      "Download"
 
-#define SZ_SECT_UI          "DHPlayer"
+#define SZ_SECT_UI          "MusicPlayer"
 
 enum MLEventType {
     ET_INVALID                  = 0,

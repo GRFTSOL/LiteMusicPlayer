@@ -55,7 +55,7 @@ bool terminateAnotherInstance() {
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, WCHAR *lpCmdLine, int nCmdShow) {
     setAppInstance(hInstance);
 
-    initBaseFramework(0, nullptr, "Mp3Player.log", "Mp3Player.ini", "MP3Player");
+    initBaseFramework(0, nullptr, "MusicPlayer.log", "MusicPlayer.ini", "MusicPlayer");
     setFileNoReadOnly(g_profile.getFile());
 
     LOG1(LOG_LVL_INFO, "start %s.", getAppNameLong().c_str());
@@ -63,6 +63,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, WCHAR *lpCmdLi
     initMiniDumper();
 
     if (!MPlayerApp::getInstance()->init()) {
+        ERR_LOG0("Failed to init MPlayerApp.");
         return 1;
     }
 

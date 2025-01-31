@@ -4,7 +4,7 @@
 #include "../version.h"
 
 
-#define SOFTWARE_INFO       "DHPlayer"
+#define SOFTWARE_INFO       "MusicPlayer"
 #define VER_FILE            "dhpver.xml"
 
 

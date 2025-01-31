@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding='UTF-8'?>
-<skin defmainwnd="MainWnd" mainwnds="MainWnd" ExtraResouceFolder="DHPlayer">
+<skin defmainwnd="MainWnd" mainwnds="MainWnd" ExtraResouceFolder="Classic">
 	<include Name="Styles.xml"/>
 
 	<skinwnd Extends="Window" Name="MainWnd"
