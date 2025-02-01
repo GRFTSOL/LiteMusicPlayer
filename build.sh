@@ -26,24 +26,100 @@ SkinRootDir=${CUR_DIR}/Skins-Design/skins" > ${file_ini}
     fi
 }
 
+function print_help() {
+    echo "build.sh [Release|Debug] [-g|--generate] [-b|-build] [-p|--pack] [-h|--help]"
+    echo "    -h|--help                 显示帮助消息"
+    echo "    Release|Debug             使用 Release 或者 Debug 配置，缺省为 Release"
+    echo "    -g|--generate             生成项目工程文件"
+    echo "    -b|--build                执行编译"
+    echo "    -p|--pack                 进行打包"
+    exit
+}
+
+BUILD_TYPE=Release
+ACTION_BUILD=
+ACTION_PACK=
+ACTION_GENERATE=
+
+while (($# > 0)); do
+    case "$1" in
+        "-h"|"--help")
+            print_help
+        ;;
+
+        "Release")
+            BUILD_TYPE=Release
+        ;;
+
+        "Debug")
+            BUILD_TYPE=Debug
+        ;;
+
+        "-g"|"--generate")
+            ACTION_GENERATE=1
+        ;;
+
+        "-b"|"--build")
+            ACTION_BUILD=1
+        ;;
+
+        "-p"|"--pack")
+            echo "-p"
+            ACTION_PACK=1
+        ;;
+
+        *)
+            echo "Invalid parameters: ($1)"
+            exit 1
+        ;;
+    esac
+    shift
+done
+
+if [[ ! $ACTION_BUILD ]] && [[ ! $ACTION_PACK ]] && [[ ! $ACTION_GENERATE ]] ; then
+    ACTION_BUILD=1
+    ACTION_PACK=1
+    ACTION_GENERATE=1
+fi
+
 python3 TinyJS/build-script/build.py
+VERSION="$(python3 build.py update_version_header_file)"
+RELEASE_DIR="../Release/$VERSION"
 
-mkdir -p build
-cd build
+if [ $ACTION_GENERATE ] ; then
+    echo "Generate XCode project MusicPlayer..."
 
-# cmake -D CMAKE_C_COMPILER="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc"  -D CMAKE_CXX_COMPILER="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++" -G Xcode ..
-cmake -G Xcode ..
-exit_if_err
+    mkdir -p build
+    cd build
 
-create_music_player_ini
+    # cmake -D CMAKE_C_COMPILER="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc"  -D CMAKE_CXX_COMPILER="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++" -G Xcode ..
+    cmake -G Xcode -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
+    exit_if_err
+    cd ..
 
-# cmake -DBUILD_CXXLIBS=OFF -DBUILD_PROGRAMS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF -DBUILD_DOCS=OFF \
-#     -DWITH_FORTIFY_SOURCE=OFF -DWITH_STACK_PROTECTOR=OFF -DINSTALL_MANPAGES=OFF -DINSTALL_PKGCONFIG_MODULES=OFF \
-#     -DINSTALL_CMAKE_CONFIG_MODULE=OFF -DBUILD_SHARED_LIBS=OFF ../flac
+    create_music_player_ini
+fi
 
-make -j $(sysctl -n hw.ncpu)
-# make
-exit_if_err
+if [ $ACTION_BUILD ] ; then
+    echo "Build project MusicPlayer..."
+
+    xcodebuild -project build/MusicPlayer.xcodeproj -scheme MusicPlayer -configuration $BUILD_TYPE
+    exit_if_err
+fi
+
+if [ $ACTION_PACK ] ; then
+    echo "Make package: MusicPlayer.dmg ..."
+
+    rm build/MusicPlayer.dmg
+    rm build/Release/Applications
+    ln -s /Applications build/Release/Applications
+    hdiutil create -volname MusicPlayer -srcfolder build/Release -format UDZO build/MusicPlayer.dmg
+    exit_if_err
+
+    mkdir -p $RELEASE_DIR
+    rm -f $RELEASE_DIR/*.dmg
+    cp build/MusicPlayer.dmg $RELEASE_DIR
+fi
 
 echo "== build successfully =="
 

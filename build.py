@@ -16,7 +16,6 @@ import shutil
 import re
 
 
-VERSION_FN = 'version.h'
 WORK_DIR = os.path.abspath(os.path.dirname(__file__))
 
 def err_exit(err):
@@ -99,14 +98,22 @@ def compress(input, output_fn):
 
 	compress([zip_exe, 'a', '-t7z', output_fn, input])
 
-def build_player(build_action):
-	major_ver = get_feild_int_value_in_file(VERSION_FN, 'MAJOR_VERSION')
-	minor_ver = get_feild_int_value_in_file(VERSION_FN, 'MINOR_VERSION')
+def update_version_header_file():
+	VERSION_FN_IN = 'version.h.in'
+	VERSION_FN = 'version.h'
+
+	major_ver = get_feild_int_value_in_file(VERSION_FN_IN, 'MAJOR_VERSION')
+	minor_ver = get_feild_int_value_in_file(VERSION_FN_IN, 'MINOR_VERSION')
 	build_num = get_git_commit()
 	version = version_str(major_ver, minor_ver, build_num)
 
+	write_file(VERSION_FN, read_file(VERSION_FN_IN))
 	replace_field_str_in_file(VERSION_FN, 'BUILD', build_num)
 	replace_field_str_in_file(VERSION_FN, 'VERSION_STR', version)
+	return version
+
+def build_player(build_action):
+	version = update_version_header_file()
 
 	pack_release_dir = os.path.join(r'..\Release', version) + '\\'
 	print(r'Version: ' + version)
@@ -143,6 +150,13 @@ def build_player(build_action):
 
 
 if __name__ == '__main__':
+	if "update_version_header_file" in sys.argv:
+		# Only print version string
+		org_print=print
+		print=lambda *x: ()
+		org_print(update_version_header_file())
+		exit()
+
 	#
 	# Build solution
 	#
@@ -158,9 +172,5 @@ if __name__ == '__main__':
 
 	execute_expect_ok('cd build && cmake -G "Visual Studio 17 2022" ..')
 
-	try:
-		# 备份 version.h
-		version_backup = read_file(VERSION_FN)
-		build_player(build_action)
-	finally:
-		write_file(VERSION_FN, version_backup)
+	# 备份 version.h
+	build_player(build_action)

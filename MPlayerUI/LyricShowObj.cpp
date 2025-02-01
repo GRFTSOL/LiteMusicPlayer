@@ -443,7 +443,7 @@ void createLyrOverlayBlendingPattern(CLyricShowObj::TextOverlayBlending &tob, in
 }
 
 bool profileGetLyricsFont(cstr_t sectName, FontInfoEx &info) {
-    cstr_t defaultFont = "Verdana, 13, bold, 0, 0, Tahoma";
+    cstr_t defaultFont = "Verdana, 16, bold, 0, 0, Tahoma";
     bool ret = info.parse(g_profile.getString(sectName, "Font", defaultFont));
 
     // Font height is associated with current skin name.

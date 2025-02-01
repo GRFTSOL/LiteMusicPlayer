@@ -3,7 +3,7 @@
 #include "../Utils.h"
 
 
-const string &_getAppResourceDir() {
+const string _getAppResourceDir() {
 #ifdef _IPHONE
     NSArray *paths = NSSearchPathForDirectoriesInDomains(
         NSDocumentDirectory,
@@ -15,6 +15,17 @@ const string &_getAppResourceDir() {
     NSString *resourcePath = [[NSBundle mainBundle] resourcePath];
     return [resourcePath UTF8String];
 #endif
+}
+
+string getProfileFile(cstr_t profileName) {
+    // 为了方便修改 skin, 如果当前目录有 profileName 则优先使用此配置
+    string path = fileGetPath([[[NSBundle mainBundle] bundlePath] UTF8String]);
+    string file = dirStringJoin(path.c_str(), profileName);
+    if (isFileExist(file.c_str())) {
+        return file;
+    }
+
+    return getAppDataFile(profileName);
 }
 
 bool initBaseFramework(int argc, const char *argv[], cstr_t logFile, cstr_t profileName, cstr_t defAppName) {
@@ -41,7 +52,7 @@ bool initBaseFramework(int argc, const char *argv[], cstr_t logFile, cstr_t prof
 
     setAppDataDir(dataDir.c_str());
 
-    g_profile.init(getAppDataFile(profileName).c_str(), defAppName);
+    g_profile.init((getProfileFile(profileName)).c_str(), defAppName);
     g_log.init(getAppDataFile(logFile).c_str());
 
     return true;

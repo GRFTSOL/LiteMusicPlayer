@@ -1,4 +1,4 @@
-﻿#include "SkinToolTip.h"
+#include "SkinToolTip.h"
 #include "Skin.h"
 #include "SkinWnd.h"
 
@@ -130,7 +130,7 @@ void CSkinToolTip::onPaint(CRawGraph *canvas) {
         };
     }
 
-    canvas->fillRoundedRect(rcFill.left, rcFill.top, rcFill.width(), rcFill.height(), _margin, _clrBg);
+    canvas->fillRoundedRect(rcFill.left, rcFill.top, rcFill.width(), rcFill.height(), _margin / 2, _clrBg);
     canvas->fillPath(triangle, _clrBg);
 
     canvas->setTextColor(_fontProperty.getTextColor());

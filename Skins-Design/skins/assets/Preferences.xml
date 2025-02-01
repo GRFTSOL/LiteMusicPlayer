@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding='UTF-8'?>
 <skinwnd Extends="WindowFrame" Name="Preferences.xml" Caption="Preferences"
-         MinWidth="600" MinHeight="540" RememberSizePos="true">
+         MinWidth="700" MinHeight="540" RememberSizePos="true">
   <PreferPage.Root Name="Preference Root" Rect="0,0,w,h">
     <Toolbar ID="CID_TB_PREFERENCE" Rect="20,10,w-40,55" 
              DrawBtText="true" 

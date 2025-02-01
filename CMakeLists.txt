@@ -4,7 +4,7 @@ if(UNIX AND NOT APPLE)
     set(LINUX TRUE)
 endif()
 
-set(CMAKE_CXX_FLAGS "-std=c++17")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -14,6 +14,11 @@ if (UT)
 endif(UT)
 
 if (APPLE)
+    if (CMAKE_BUILD_TYPE MATCHES "Release")
+        SET(CMAKE_XCODE_ATTRIBUTE_DEPLOYMENT_POSTPROCESSING YES)
+    endif(RELEASE)
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g") # Clang generate debug symbols.
     add_definitions(-D_MAC_OS)
 elseif (LINUX)
     add_definitions(-D_LINUX)
@@ -24,9 +29,7 @@ endif ()
 add_definitions(-DASIO_STANDALONE)
 add_definitions(-D_WEBSOCKETPP_CPP11_TYPE_TRAITS_)
 
-if (CMAKE_BUILD_TYPE MATCHES Debug)
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
-endif()
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 
 PROJECT(MusicPlayer)
 
@@ -76,14 +79,6 @@ set(ZLIB_BUILD_EXAMPLES OFF)
 #set(INSTALL_CMAKE_CONFIG_MODULE OFF)
 
 # flac options
-set(BUILD_PROGRAMS OFF)
-set(BUILD_EXAMPLES OFF)
-set(BUILD_TESTING OFF)
-set(BUILD_DOCS OFF)
-set(WITH_FORTIFY_SOURCE OFF)
-set(WITH_STACK_PROTECTOR OFF)
-set(INSTALL_MANPAGES OFF)
-set(INSTALL_PKGCONFIG_MODULES OFF)
 set(INSTALL_CMAKE_CONFIG_MODULE OFF)
 set(WITH_OGG ON)
 add_subdirectory(${PROJECT_SOURCE_DIR}/third-parties/flac FLAC)
@@ -187,13 +182,15 @@ if(APPLE)
     set(RESOURCES ${RESOURCES}
         ${PROJECT_SOURCE_DIR}/MusicPlayer/Base.lproj/MainMenu.xib
         ${PROJECT_SOURCE_DIR}/Skins-Design/skins
+        ${PROJECT_SOURCE_DIR}/Skins-Design/patterns
+        ${PROJECT_SOURCE_DIR}/MusicPlayer/MusicPlayer.icns
     )
 
     add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${SRC} ${RESOURCES} ${HEADER_FILES})
     set_target_properties(${PROJECT_NAME} PROPERTIES
         BUNDLE TRUE
         MACOSX_BUNDLE_GUI_IDENTIFIER com.crintsoft.${PROJECT_NAME}
-        MACOSX_BUNDLE_ICON_FILE ${CMAKE_SOURCE_DIR}/MusicPlayer/MusicPlayer.icns
+        MACOSX_BUNDLE_ICON_FILE MusicPlayer.icns
         MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
         MACOSX_BUNDLE_BUNDLE_VERSION "1.0.0"
         MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0"
@@ -236,9 +233,10 @@ elseif (APPLE)
     set(OS_LINK_OPTS "pthread" "-framework CoreFoundation" "-framework Cocoa"
         "-framework AudioToolbox" "-framework CoreAudio" "-framework CoreData"
         "-framework AppKit" "-framework CoreText" "-framework CoreMedia"
-        "-framework AVFoundation" "-framework CoreGraphics" "-framework Carbon")
+        "-framework AVFoundation" "-framework CoreGraphics" "-framework Carbon"
+        "-dead_strip")
 else(APPLE)
-    set(OS_LINK_OPTS pthread)
+    set(OS_LINK_OPTS "pthread --gc-sections")
 endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OS_LINK_OPTS} FLAC faad TinyJS_STATIC agg_STATIC glogbase uv_a mbedtls spng_static zlibstatic)

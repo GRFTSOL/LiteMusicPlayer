@@ -471,7 +471,7 @@ void MPlayerApp::setDefaultSettings() {
 #ifdef _WIN32
     g_profile.setDefaultIfNotExist(SZ_SECT_LYR_DISPLAY, "Font", "Verdana, 16, bold, 0, 0, Tahoma");
 #else
-    g_profile.setDefaultIfNotExist(SZ_SECT_LYR_DISPLAY, "Font", ", 13, bold, 0, 0, ");
+    g_profile.setDefaultIfNotExist(SZ_SECT_LYR_DISPLAY, "Font", ", 16, bold, 0, 0, ");
 #endif
     g_profile.setDefaultIfNotExist(SZ_SECT_LYR_DISPLAY, "FgColor", "#FFFFFF");
     g_profile.setDefaultIfNotExist(SZ_SECT_LYR_DISPLAY, "FgLowColor", "#B2B2B2");

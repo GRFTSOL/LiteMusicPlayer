@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #ifndef _SKIN_TOOL_TOP_INC_
 #define _SKIN_TOOL_TOP_INC_
@@ -67,7 +67,7 @@ protected:
     VecTooltips                 _tooltips;
 
     int                         _heightHandle = 10;
-    int                         _margin = 5;
+    int                         _margin = 15;
 
 };
 
