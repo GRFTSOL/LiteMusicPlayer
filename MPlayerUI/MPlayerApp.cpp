@@ -43,7 +43,7 @@ cstr_t getStrName(STR_NAME nameId) {
     switch (nameId) {
         case SN_HTTP_DOMAIN: return "http://www.crintsoft.com";
         case SN_HTTP_FAQ_INET: return "http://www.crintsoft.com/music-player/internet-connection";
-        case SN_HTTP_VERSION_UPDATE: return "http://c.com/download/music-player-update.json";
+        case SN_HTTP_VERSION_UPDATE: return "http://crintsoft.com/download/music-player-update.json";
         case SN_HTTP_HELP: return "http://www.crintsoft.com/music-player/help";
         case SN_HTTP_HELP_EDIT_LYR: return "http://www.crintsoft.com/music-player/faq/edit-lyrics";
         case SN_HTTP_HELP_SEARCH_LYR_SUGGESTIONS: return "http://www.crintsoft.com/music-player/faq/search-lyrics-suggestions";

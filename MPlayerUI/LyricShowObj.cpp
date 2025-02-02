@@ -1,4 +1,4 @@
-﻿/********************************************************************
+/********************************************************************
     Created  :    2002年1月3日 16:21:56
     FileName :    LyricShowObj.cpp
     Author   :    xhy
@@ -1066,7 +1066,7 @@ void CLyricShowObj::fadeOutVertBorder(CRawGraph *canvas, int yDrawLyrStartPos, i
     }
 
     CRect rc;
-    rc.setLTRB(m_rcObj.left, m_rcObj.top + m_nYMargin, m_rcObj.right, m_rcObj.top + m_nYMargin + m_nFontHeight);
+    rc.setLTRB(m_rcObj.left, m_rcObj.top, m_rcObj.right, m_rcObj.top + m_nFontHeight);
     if (rc.bottom > yDrawLyrStartPos) {
         if (m_pSkin->getEnableTranslucencyLayered() && m_pSkin->m_nCurTranslucencyAlpha <= 0) {
             canvas->vertAlphaFadeOut(rc, true);
@@ -1075,8 +1075,8 @@ void CLyricShowObj::fadeOutVertBorder(CRawGraph *canvas, int yDrawLyrStartPos, i
         }
     }
 
-    rc.bottom = m_rcObj.bottom - m_nYMargin;
-    rc.top = m_rcObj.bottom - m_nYMargin - m_nFontHeight;
+    rc.bottom = m_rcObj.bottom;
+    rc.top = m_rcObj.bottom - m_nFontHeight;
     if (rc.top < yDrawLyrEndPos) {
         if (m_pSkin->getEnableTranslucencyLayered() && m_pSkin->m_nCurTranslucencyAlpha <= 0) {
             canvas->vertAlphaFadeOut(rc, false);
