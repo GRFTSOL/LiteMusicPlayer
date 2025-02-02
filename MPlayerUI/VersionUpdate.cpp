@@ -1,7 +1,8 @@
-﻿#include "MPlayerApp.h"
+#include "MPlayerApp.h"
 #include "DownloadMgr.h"
 #include "VersionUpdate.h"
 #include "../version.h"
+#include "../../Utils/rapidjson.h"
 
 
 #define SOFTWARE_INFO       "MusicPlayer"
@@ -12,7 +13,7 @@ uint32_t parseVersionStr(cstr_t version) {
     int verMajor = 0, verMinor = 0;
     int ret = sscanf(version, "%d.%d", &verMajor, &verMinor);
     if (ret == 2) {
-        return (verMajor * 1000 + verMinor) * 1000;
+        return verMajor * 1000 + verMinor;
     }
 
     return 0;
@@ -21,48 +22,6 @@ uint32_t parseVersionStr(cstr_t version) {
 bool isNewVersion(cstr_t version) {
     return MAJOR_VERSION * 1000 + MINOR_VERSION < parseVersionStr(version);
 }
-
-//////////////////////////////////////////////////////////////////////////
-// 从服务器取得VER_FILE的版本控制信息，根据此文件进行更新
-// VER_FILE文件的格式
-
-//<?xml version="1.0" encoding="gb2312"?>
-//<SOFTWARE_INFO>
-//  <curversion version="1.3" upgradedate="2002-9-12" obsoletever="1.4.3">
-//    <feature>
-//    </feature>
-//  </curversion>
-//</SOFTWARE_INFO>
-
-int CVersionInfo::fromXML(SXNode *pNodeVer) {
-    if (strcmp(pNodeVer->name.c_str(), SOFTWARE_INFO) != 0) {
-        return ERR_FALSE;
-    }
-
-    // current version
-    auto pNode = pNodeVer->getChild("curversion");
-    if (!pNode) {
-        return ERR_FALSE;
-    }
-
-    // new version
-    verNew = pNode->getPropertySafe("version");
-    if (verNew.empty()) {
-        return ERR_FALSE;
-    }
-
-    strNewVerDate = pNode->getPropertySafe("upgradedate");
-
-    // new feature
-    SXNode *pFeatureNode = pNode->getChild("feature");
-    if (pFeatureNode) {
-        strFeature = pFeatureNode->strContent.c_str();
-    }
-
-    return ERR_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
 
 CVersionUpdate::CVersionUpdate() {
 
@@ -78,17 +37,13 @@ void CVersionUpdate::onDownloadOK(CDownloadTask *pTask) {
     }
 
     CVersionInfo versionInfo;
-    int nRet;
-
-    nRet = getUpdateInfo(pTask, versionInfo);
+    int nRet = getUpdateInfo(pTask, versionInfo);
     if (nRet != ERR_OK) {
         return;
     }
 
     if (isNewVersion(versionInfo.verNew.c_str())) {
-        string strMessage = versionInfo.strFeature;
-        strMessage += "\r\n\r\n";
-        strMessage += _TLT("Do you want to visit our website for more information?");
+        string strMessage = _TLT("Do you want to visit our website for more information?");
         if (IDYES == MPlayerApp::getInstance()->messageOut(strMessage.c_str(), MB_YESNO, _TLT("new version Notice"))) {
             openUrl(MPlayerApp::getMainWnd(), getStrName(SN_HTTP_DOMAIN));
         }
@@ -98,29 +53,32 @@ void CVersionUpdate::onDownloadOK(CDownloadTask *pTask) {
 int CVersionUpdate::getUpdateInfo(CDownloadTask *pTask, CVersionInfo &versionInfo) {
     assert(pTask);
 
-    char szCheckVerTime[256];
-    CSimpleXML xml;
     time_t lTime;
-    tm *curtime;
 
     time(&lTime);
-
-    curtime = localtime(&lTime);
+    tm *curtime = localtime(&lTime);
 
     //
     // 将检查更新时间写入配置文件中
+    char szCheckVerTime[256];
     snprintf(szCheckVerTime, CountOf(szCheckVerTime), "%d-%d-%d", curtime->tm_year + 1900, curtime->tm_mon + 1, curtime->tm_mday);
     g_profile.encryptWriteString("CheckVerTime", szCheckVerTime);
 
-    // 分析VER_FILE
-    if (!xml.parseData(pTask->buffContent.c_str(), pTask->buffContent.size())) {
-        ERR_LOG1("parse xml data FAILED: %s", pTask->buffContent.c_str());
-        return ERR_PARSE_XML;
+    rapidjson::Document doc;
+    if (doc.Parse(pTask->buffContent.c_str(), pTask->buffContent.size()).HasParseError() || !doc.IsObject()) {
+        ERR_LOG1("Failed to parse version json file: %s", pTask->buffContent.c_str());
+        return false;
     }
 
-    if (versionInfo.fromXML(xml.m_pRoot) != ERR_OK) {
-        return ERR_PARSE_XML;
+    //  http://crintsoft.com/download/music-player-update.json 的格式
+    /*
+    {
+        "version": "1.0.abcdef",
+        "release-date": "2025-01-2"
     }
+    */
+    versionInfo.verNew = getMemberString(doc, "version");
+    versionInfo.releaseDate = getMemberString(doc, "release-date");
 
     return ERR_OK;
 }
@@ -140,5 +98,5 @@ void CVersionUpdate::checkNewVersion(bool bAutoCheck) {
         g_profile.encryptWriteString("CheckVerTime", dateNow.toDateString().c_str());
     }
 
-    g_LyricsDownloader.downloadVersionFile(getStrName(SN_HTTP_ML_VER), !bAutoCheck);
+    g_LyricsDownloader.downloadVersionFile(getStrName(SN_HTTP_VERSION_UPDATE), !bAutoCheck);
 }

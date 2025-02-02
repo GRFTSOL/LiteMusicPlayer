@@ -36,25 +36,18 @@ cstr_t getStrName(STR_NAME nameId) {
     switch (nameId) {
         case SN_HTTP_SIGNUP: return "http://www.viewlyrics.com/user/signup.aspx";
         case SN_HTTP_LOGIN: return "http://www.viewlyrics.com/user/login.aspx";
-        case SN_HTTP_RATE_LRC: return "http://viewlyrics.com/lyrics/rate.aspx?lid=";
+        case SN_HTTP_RATE_LRC: return "http://viewlyrics.com/lyrics/rate?lid=";
         default: break;
     }
 
     switch (nameId) {
         case SN_HTTP_DOMAIN: return "http://www.crintsoft.com";
-        case SN_HTTP_REGISTER: return "http://www.crintsoft.com/mlbuy.htm";
-        case SN_HTTP_DLSKIN: return "http://www.crintsoft.com/mlskin.htm";
-        case SN_HTTP_FAQ_INET: return "http://www.crintsoft.com/mlfaq-ineterror.htm";
-        case SN_HTTP_BBS: return "http://forum.viewlyrics.com";
-        case SN_HTTP_ML_VER: return "http://viewlyrics.com/mlver.xml";
-        case SN_HTTP_HELP: return "http://www.crintsoft.com/help.htm";
-        case SN_HTTP_HELP_EMBEDDED_LYR: return "http://www.crintsoft.com/mlfaq-embedlyrics.htm";
-        case SN_HTTP_HELP_UPLOAD_LYR: return "http://www.crintsoft.com/mlfaq-upload.htm";
-        case SN_HTTP_HELP_EDIT_LYR: return "http://www.crintsoft.com/mlfaq-editlrc.htm";
-        case SN_HTTP_HELP_SEARCH_LYR_SUGGESTIONS: return "http://www.crintsoft.com/mlfaq-search-lyrics-suggestions.htm";
-        case SN_HTTP_DLPLUGIN: return "http://www.crintsoft.com/mlplugin.htm";
-        case SN_HTTP_HELP_G15_LCD: return "http://www.crintsoft.com/help-logitech-lcd.htm";
-        case SN_HTTP_FEEDBACK: return "http://www.crintsoft.com/contactus.htm";
+        case SN_HTTP_FAQ_INET: return "http://www.crintsoft.com/music-player/internet-connection";
+        case SN_HTTP_VERSION_UPDATE: return "http://c.com/download/music-player-update.json";
+        case SN_HTTP_HELP: return "http://www.crintsoft.com/music-player/help";
+        case SN_HTTP_HELP_EDIT_LYR: return "http://www.crintsoft.com/music-player/faq/edit-lyrics";
+        case SN_HTTP_HELP_SEARCH_LYR_SUGGESTIONS: return "http://www.crintsoft.com/music-player/faq/search-lyrics-suggestions";
+        case SN_HTTP_FEEDBACK: return "http://www.crintsoft.com/contactus";
         case SN_EMAIL: return "mailto:support@crintsoft.com";
         case SN_SUPPORT_MAIL: return "support@crintsoft.com";
         case SN_WEBHOME: return "www.crintsoft.com";

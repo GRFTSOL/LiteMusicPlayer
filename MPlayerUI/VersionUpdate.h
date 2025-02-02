@@ -5,12 +5,8 @@ bool isNewVersion(cstr_t version);
 
 class CVersionInfo {
 public:
-    int fromXML(SXNode *pNodeVer);
-
-public:
     string                      verNew;
-    string                      strNewVerDate;      // 新版发布日期
-    string                      strFeature;         // 新版特性
+    string                      releaseDate;      // 新版发布日期
 
 };
 
