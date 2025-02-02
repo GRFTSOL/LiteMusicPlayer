@@ -191,9 +191,6 @@ void CLog::writeLog( uint8_t byLevel, cstr_t szFile, int nLine, cstr_t szFormat,
 
     auto time = DateTime::localTime();
 
-#if defined(_WIN32)
-    __try
-#endif
     {
         nLen = snprintf(szBuffer, CountOf(szBuffer) - 1, "|T%d-%d %d:%d:%d|F%s|L%d|E%d|M",
             time.month(), time.day(), time.hour(), time.minute(), time.second(),
@@ -213,12 +210,6 @@ void CLog::writeLog( uint8_t byLevel, cstr_t szFile, int nLine, cstr_t szFormat,
             szMsg[nBuf] = '\0';
         }
     }
-#if defined(_WIN32)
-    __except(EXCEPTION_EXECUTE_HANDLER) {
-        // 有异常发生！
-        strcpy_safe(szBuffer + nLen, CountOf(szBuffer) - nLen, "Exception error in format.");
-    }
-#endif
 
     nLen = (int)strlen(szBuffer) + 1;
 

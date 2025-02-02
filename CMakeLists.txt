@@ -199,9 +199,12 @@ if(APPLE)
         # XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "iPhone Developer"
         # XCODE_ATTRIBUTE_DEBUG_INFORMATION_FORMAT "dwarf-with-dsym"
     )
-else(APPLE)
+elseif (LINUX)
+else(LINUX)
+    # Win32
     add_executable(${PROJECT_NAME} ${SRC} ${HEADER_FILES})
-endif(APPLE)
+    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:${CMAKE_BUILD_TYPE}>:${CMAKE_BUILD_TYPE}>")
+endif(LINUX)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${PROJECT_SOURCE_DIR}
