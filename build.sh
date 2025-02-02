@@ -26,6 +26,18 @@ SkinRootDir=${CUR_DIR}/Skins-Design/skins" > ${file_ini}
     fi
 }
 
+function create_music_player_update_json() {
+    file="$RELEASE_DIR/music-player-update.json"
+    echo "Creating ${file} ..."
+
+    echo '{
+"version": "$VERSION",
+"release-date": "$(date '+%Y-%m-%d')"
+}' > ${file}
+    exit_if_err "Failed to create ${file}."
+    echo "OK"
+}
+
 function print_help() {
     echo "build.sh [Release|Debug] [-g|--generate] [-b|-build] [-p|--pack] [-h|--help]"
     echo "    -h|--help                 显示帮助消息"
@@ -119,6 +131,8 @@ if [ $ACTION_PACK ] ; then
     mkdir -p $RELEASE_DIR
     rm -f $RELEASE_DIR/*.dmg
     cp build/MusicPlayer.dmg $RELEASE_DIR
+
+    create_music_player_update_json
 fi
 
 echo "== build successfully =="
