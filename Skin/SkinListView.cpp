@@ -1,4 +1,4 @@
-﻿#include "SkinTypes.h"
+#include "SkinTypes.h"
 #include "Skin.h"
 #include "SkinListView.h"
 #include "SkinFrameCtrl.h"
@@ -1106,6 +1106,13 @@ bool CSkinListView::onHandleKeyDown(uint32_t nChar, uint32_t nFlags) {
         return false;
     }
 
+    bool bShift = isModifierKeyPressed(MK_SHIFT, nFlags);
+#ifdef _MAC_OS
+    bool ctrl = isModifierKeyPressed(MK_COMMAND, nFlags);
+#else
+    bool ctrl = isModifierKeyPressed(MK_CONTROL, nFlags);
+#endif
+
     if (nChar == VK_RETURN) {
         sendNotifyEvent(CSkinListCtrlEventNotify::C_ENTER);
         if (m_cmdSubmit != ID_INVALID) {
@@ -1115,40 +1122,25 @@ bool CSkinListView::onHandleKeyDown(uint32_t nChar, uint32_t nFlags) {
     } else if (nChar == VK_DELETE) {
         sendNotifyEvent(CSkinListCtrlEventNotify::C_KEY_DELETE);
         return true;
-    } else if (nChar == 'A') {
-        bool bCtrl = isModifierKeyPressed(MK_CONTROL, nFlags);
+    } else if (nChar == 'A' && ctrl) {
+        // select all
+        CSelChangedCheck selChecher(this);
 
-        if (bCtrl) {
-            // select all
-            CSelChangedCheck selChecher(this);
-
-            selectRangeRow(0, getRowCount() - 1);
-            if (selChecher.isSelectChanged()) {
-                invalidate();
-            }
-        }
-        return true;
-    } else if (nChar == 'I') {
-        bool bCtrl = isModifierKeyPressed(MK_CONTROL, nFlags);
-
-        if (bCtrl) {
-            // invert selection
-            CSelChangedCheck selChecher(this);
-
-            for (int i = 0; i < (int)getRowCount(); i++) {
-                m_dataSource->setRowSelectionState(i, !m_dataSource->isRowSelected(i));
-            }
+        selectRangeRow(0, getRowCount() - 1);
+        if (selChecher.isSelectChanged()) {
             invalidate();
         }
         return true;
-    }
+    } else if (nChar == 'I' && ctrl) {
+        // invert selection
+        CSelChangedCheck selChecher(this);
 
-    bool bShift = isModifierKeyPressed(MK_SHIFT, nFlags);
-#ifdef _MAC_OS
-    bool ctrl = isModifierKeyPressed(MK_COMMAND, nFlags);
-#else
-    bool ctrl = isModifierKeyPressed(MK_CONTROL, nFlags);
-#endif
+        for (int i = 0; i < (int)getRowCount(); i++) {
+            m_dataSource->setRowSelectionState(i, !m_dataSource->isRowSelected(i));
+        }
+        invalidate();
+        return true;
+    }
 
     if (nChar != VK_UP && nChar != VK_DOWN && nChar != VK_PRIOR && nChar != VK_NEXT
         && nChar != VK_HOME && nChar != VK_END) {

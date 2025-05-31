@@ -27,6 +27,7 @@ struct MediaCategory {
         ARTIST,
         ALBUM,
         GENRE,
+        RATING,
         _COUNT,
     };
 

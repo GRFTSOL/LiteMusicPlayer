@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #ifndef MPlayerUI_SkinRateCtrl_h
 #define MPlayerUI_SkinRateCtrl_h
@@ -27,14 +27,14 @@ public:
     bool isKindOf(cstr_t szClassName) override;
 
 protected:
+    void updateRatings(CPoint point);
+
     string                      m_strBmpFile;
     CSFImage                    m_img;
     int                         m_nRateStarWidth;
 
     int                         m_nRating;          // 0 ~ 5
     int                         m_nRatingMax;
-
-    bool                        m_bLBtDown;
 
     static cstr_t               ms_szClassName;
 

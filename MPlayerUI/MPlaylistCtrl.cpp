@@ -1,4 +1,4 @@
-﻿#include "MPlayerApp.h"
+#include "MPlayerApp.h"
 #include "MPlaylistCtrl.h"
 #include "PlayListFile.h"
 #include "DlgPlaylist.hpp"
@@ -367,7 +367,14 @@ bool CMPlaylistCtrl::onCommand(uint32_t nId) {
 }
 
 bool CMPlaylistCtrl::onKeyDown(uint32_t code, uint32_t flags) {
-    return CSkinListCtrl::onKeyDown(code, flags);
+    if (CSkinListCtrl::onKeyDown(code, flags)) {
+        return true;
+    }
+
+    showHideEditorSearch(0);
+    m_editorSearch->setFocus();
+
+    return false;
 }
 
 bool CMPlaylistCtrl::onHandleKeyDown(uint32_t code, uint32_t flags) {

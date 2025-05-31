@@ -135,7 +135,7 @@ MediaPtr newMedia() {
 }
 
 cstr_t mediaCategoryTypeToString(MediaCategory::Type type) {
-    static cstr_t NAMES[] = { _TLM("All Musics"), _TLM("Playlist"), _TLM("Folder"), _TLM("Artist"), _TLM("Album"), _TLM("Genre") };
+    static cstr_t NAMES[] = { _TLM("All Musics"), _TLM("Playlist"), _TLM("Folder"), _TLM("Artist"), _TLM("Album"), _TLM("Genre"), _TLM("Rating") };
     assert(CountOf(NAMES) == MediaCategory::_COUNT);
     assert(type >= 0 && type <= MediaCategory::_COUNT);
 
@@ -271,6 +271,16 @@ PlaylistPtr CMediaLibrary::getMediaCategory(const MediaCategory &category) {
             for (int i = 0; i < count; i++) {
                 auto media = m_allMedias->getItem(i);
                 if (category.value == media->genre) {
+                    pl->insertItem(-1, media);
+                }
+            }
+            break;
+        }
+        case MediaCategory::RATING: {
+            int rating = atoi(category.value.c_str());
+            for (int i = 0; i < count; i++) {
+                auto media = m_allMedias->getItem(i);
+                if (media->rating >= rating) {
                     pl->insertItem(-1, media);
                 }
             }
@@ -1366,6 +1376,7 @@ void CMediaLibrary::updateMediaCategories() {
     unordered_map<string, MediaCategory> byArtist;
     unordered_map<string, MediaCategory> byAlbum;
     unordered_map<string, MediaCategory> byGenre;
+    unordered_map<int, MediaCategory> byRating;
     MediaTree root("", 0, 0);
     int count = m_allMedias->getCount();
 
@@ -1411,6 +1422,20 @@ void CMediaLibrary::updateMediaCategories() {
                 info.mediaDuration += duration;
             }
 
+            // Rating
+            auto rating = int(media->rating);
+            {
+                auto it = byRating.find(rating);
+                if (it == byRating.end()) {
+                    auto ratingStr = to_string(rating);
+                    byRating.insert(std::pair<int, MediaCategory>(rating, MediaCategory(MediaCategory::RATING, ratingStr.c_str(), ratingStr.c_str(), 1, duration)));
+                } else {
+                    auto &info = (*it).second;
+                    info.mediaCount++;
+                    info.mediaDuration += duration;
+                }
+            }
+
             VecStrings paths;
             strSplit(media->url.c_str(), PATH_SEP_CHAR, paths);
             paths.pop_back(); // 去掉文件名
@@ -1429,6 +1454,10 @@ void CMediaLibrary::updateMediaCategories() {
     }
 
     for (auto &item : byGenre) {
+        m_mediaCategories.push_back(item.second);
+    }
+
+    for (auto &item : byRating) {
         m_mediaCategories.push_back(item.second);
     }
 

@@ -56,7 +56,8 @@
 				<NormalLink Rect="0,0,w,h" ID="UID_INSTRUCTION" Text="Please click here to add media files." Link="cmd://ID_IMPORT"
 					Visible="false" FontHeight="16" FontBold="true" TextColor="#FF8040" AlignText="AT_CENTER|AT_VCENTER"/>
 				<Container Rect="0,0,w,h" ID="UID_MEDIA_INFO" Name="Info">
-					<MediaInfoText Name="Title" Rect="10,5,w-20,20" FontName="Tahoma" FontHeight="16" FontBold="TRUE" TextOutlined="TRUE" TextOutlinedColor="#000000" TextColor="#FFFFFF" Text="" MediaInfoType="Title"/>
+					<MediaInfoText Name="Title" Rect="10,5,w-120,20" FontName="Tahoma" FontHeight="16" FontBold="TRUE" TextOutlined="TRUE" TextOutlinedColor="#000000" TextColor="#FFFFFF" Text="" MediaInfoType="Title"/>
+					<RateButton id="ID_RATE" Rect="w-100-10,5,100,20" Image="rating.png" ImageRect="0,0,40,20" />
 					<MediaInfoText Name="Artist - Album" Rect="10,27,w-20,16" FontName="Tahoma" FontHeight="13" FontBold="false" TextOutlined="TRUE" TextOutlinedColor="#000000" TextColor="#FFFFFF" Text="" MediaInfoType="Artist|Album" CombineWith=" - "/>
 
 					<PlayingTime Rect="10,50,50,11" 

@@ -1,4 +1,4 @@
-﻿#include "Skin.h"
+#include "Skin.h"
 #include "SkinRateCtrl.h"
 
 
@@ -8,8 +8,7 @@ cstr_t CSkinRateCtrl::ms_szClassName = "RateButton";
 CSkinRateCtrl::CSkinRateCtrl() {
     m_msgNeed = UO_MSG_WANT_MOUSEMOVE | UO_MSG_WANT_LBUTTON;
 
-    m_bLBtDown = false;
-    m_nRating = 3;
+    m_nRating = 0;
     m_nRatingMax = 5;
     m_nRateStarWidth = 0;
 }
@@ -20,25 +19,30 @@ CSkinRateCtrl::~CSkinRateCtrl() {
 
 bool CSkinRateCtrl::onLButtonDown(uint32_t nFlags, CPoint point) {
     assert(m_pSkin);
-
-    m_bLBtDown = true;
+    updateRatings(point);
 
     return true;
 }
 
 bool CSkinRateCtrl::onLButtonUp(uint32_t nFlags, CPoint point) {
-    m_bLBtDown = false;
-
-    m_nRating++;
-    if (m_nRating > m_nRatingMax) {
-        m_nRating = 0;
-    }
-
-    invalidate();
-
+    updateRatings(point);
     m_pSkin->postCustomCommandMsg(m_id);
 
     return true;
+}
+
+void CSkinRateCtrl::updateRatings(CPoint point) {
+    int old = m_nRating;
+    m_nRating = (point.x - m_rcObj.left + m_nRateStarWidth - 1) / m_nRateStarWidth;
+    if (m_nRating > m_nRatingMax) {
+        m_nRating = m_nRatingMax;
+    } else if (m_nRating < 0) {
+        m_nRating = 0;
+    }
+
+    if (old != m_nRating) {
+        invalidate();
+    }
 }
 
 cstr_t CSkinRateCtrl::getClassName() {

@@ -24,7 +24,8 @@
 			<Container Rect="0,0,w,h" ID="UID_MEDIA_INFO" Name="Info">
 				<MediaInfoText Name="Title" Rect="10,10,w-20,20" FontName="Tahoma" FontHeight="16" FontBold="TRUE" TextOutlined="TRUE" TextOutlinedColor="#000000" TextColor="#FFFFFF" Text="" MediaInfoType="Title" ShowTitle="false"/>
 				<HStretchImage Name="TitleLine" Rect="8,35,w-16,6" Image="title_line.png" ImageRect="0,0,20,6" StretchStartX="6" StretchEndX="14"/>
-				<MediaInfoText Name="Artist" Rect="10,50,w-20,16" FontName="Tahoma" FontHeight="13" FontBold="TRUE" TextOutlined="TRUE" TextOutlinedColor="#000000" TextColor="#FFFFFF" Text="" MediaInfoType="Artist" ShowTitle="false"/>
+				<MediaInfoText Name="Artist" Rect="10,50,w-120,16" FontName="Tahoma" FontHeight="13" FontBold="TRUE" TextOutlined="TRUE" TextOutlinedColor="#000000" TextColor="#FFFFFF" Text="" MediaInfoType="Artist" ShowTitle="false"/>
+				<RateButton id="ID_RATE" Rect="w-100-10,48,100,20" Image="rating.png" ImageRect="0,0,40,20" />
 				<MediaInfoText Name="Album" Rect="10,70,w-20,16" FontName="Tahoma" FontHeight="13" FontBold="TRUE" TextOutlined="TRUE" TextOutlinedColor="#000000" TextColor="#FFFFFF" Text="" MediaInfoType="Album" ShowTitle="false"/>
 
 				<PlayingTime Rect="10,100,50,11" 

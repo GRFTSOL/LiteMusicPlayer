@@ -63,8 +63,9 @@
       <Container Name="MediaInfo" ID="CID_MEDIAINFO" Width="200" Height="108" MinWidth="108" MinHeight="108" FixedHeight="TRUE" Weight="1">
         <MediaInfoText Name="Title" Rect="0,8,w,18" FontName="Tahoma" FontHeight="16" FontBold="TRUE" TextOutlined="TRUE" TextOutlinedColor="#000000" TextColor="#FFFFFF" LeftMargin="0" Text="" MediaInfoType="Title" ShowTitle="false"/>
         <HStretchImage Rect="-2,25,w+2,6" Name="TitleLine" Image="title_line.png" ImageRect="0,0,20,6" StretchStartX="6" StretchEndX="14"/>
-        <MediaInfoText Name="Artist" Rect="0,33,w,16" FontName="Tahoma" FontHeight="13" FontBold="TRUE" TextOutlined="TRUE" TextOutlinedColor="#000000" TextColor="#FFFFFF" LeftMargin="0" Text="" MediaInfoType="Artist" ShowTitle="false"/>
+        <MediaInfoText Name="Artist" Rect="0,33,w - 110,16" FontName="Tahoma" FontHeight="13" FontBold="TRUE" TextOutlined="TRUE" TextOutlinedColor="#000000" TextColor="#FFFFFF" LeftMargin="0" Text="" MediaInfoType="Artist" ShowTitle="false"/>
         <MediaInfoText Name="Album" Rect="0,58,w,16" FontName="Tahoma" FontHeight="13" FontBold="TRUE" TextOutlined="TRUE" TextOutlinedColor="#000000" TextColor="#FFFFFF" LeftMargin="0" Text="" MediaInfoType="Album" ShowTitle="false"/>
+				<RateButton id="ID_RATE" Rect="w-100,33,100,20" Image="rating.png" ImageRect="0,0,40,20" />
         <Toolbar Rect="0,78,80,22" Image="fl_buttons.png" enablehover="TRUE" units_x="22" blank_x="-1" blank_cx="22" seperator_x="220" seperator_cx="14" MarginX="0" MarginY="0" FullStatusImage="TRUE">
           <button ID="ID_PREVIOUS" Left="0" />
           <button ID="ID_PLAYPAUSE" Left="1" CanCheck="TRUE" checked_left="2"/>
