@@ -1,4 +1,4 @@
-﻿/********************************************************************
+/********************************************************************
     Created  :    2001-12-15 2:36:55
     FileName :    SkinWnd.cpp
     Author   :    xhy
@@ -146,6 +146,8 @@ CSkinWnd::CSkinWnd() : m_skinToolTip(this, TIMER_ID_TOOLTIP) {
     m_bActived = false;
     m_bMainAppWnd = false;
     m_bDialogWnd = false;
+
+    m_isSkinMenuPopup = false;
 
     m_rootConainter.m_pSkin = this;
     m_pUIObjCapMouse = nullptr;
@@ -823,7 +825,10 @@ void CSkinWnd::onPaint(CRawGraph *canvas, CRect *rcClip) {
 
         // draw every UI objects on back buffer one by one
         m_rootConainter.draw(canvas);
-        m_skinToolTip.onPaint(canvas);
+        if (!m_isSkinMenuPopup && m_bActived) {
+            // Show tooltip only when menu is not popup and window is activated.
+            m_skinToolTip.onPaint(canvas);
+        }
     }
 
     canvas->drawToWindow(rcClip->left, rcClip->top, rcClip->width(), rcClip->height(), rcClip->left, rcClip->top);

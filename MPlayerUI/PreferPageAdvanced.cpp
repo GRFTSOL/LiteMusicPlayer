@@ -1,4 +1,4 @@
-﻿#include "MPlayerApp.h"
+#include "MPlayerApp.h"
 #include "PreferPageAdvanced.h"
 #include "DownloadMgr.h"
 #include "../MediaTags/LrcParser.h"

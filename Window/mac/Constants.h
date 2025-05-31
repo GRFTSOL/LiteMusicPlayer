@@ -164,7 +164,7 @@ enum {
 #define MK_CONTROL          (1 << 18) // NSControlKeyMask
 #define MK_ALT              (1 << 19) // NSAlternateKeyMask
 #define MK_COMMAND          (1 << 20) // NSCommandKeyMask
-#define MK_FUNCTION         (1 << 21) // NSEventModifierFlagFunction
+#define MK_FUNCTION         (1 << 23) // NSEventModifierFlagFunction
 
 #define MK_LBUTTON          1
 

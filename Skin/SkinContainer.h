@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <stack>
 #include "UIObject.h"

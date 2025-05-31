@@ -1,4 +1,4 @@
-﻿#include "SkinTypes.h"
+#include "SkinTypes.h"
 #include "Skin.h"
 #include "SkinMenuBar.h"
 
@@ -95,8 +95,8 @@ void CSkinMenuBar::draw(CRawGraph *canvas) {
         x += item.nWidth;
     }
 
-    if (isMenuPopuped()) {
-        // Need mouse wheel message only when child menu popuped.
+    if (isMenuPopup()) {
+        // Need mouse wheel message only when child menu is popup.
         m_msgNeed |= UO_MSG_WANT_MOUSEWHEEL;
     } else {
         m_msgNeed &= ~UO_MSG_WANT_MOUSEWHEEL;
@@ -155,7 +155,7 @@ bool CSkinMenuBar::onMouseMove(CPoint point) {
 }
 
 void CSkinMenuBar::onMouseWheel(int nWheelDistance, int nMkeys, CPoint pt) {
-    if (isMenuPopuped()) {
+    if (isMenuPopup()) {
         m_popupMenu->onMouseWheel(nWheelDistance, nMkeys, pt);
     }
 }
@@ -165,12 +165,12 @@ bool CSkinMenuBar::onKeyDown(uint32_t nChar, uint32_t nFlags) {
         return false;
     }
 
-    if (nChar == VK_ESCAPE && isMenuPopuped()) {
+    if (nChar == VK_ESCAPE && isMenuPopup()) {
         hideSubMenu();
         return true;
     }
 
-    if (isMenuPopuped()) {
+    if (isMenuPopup()) {
         return m_popupMenu->onKeyDown(nChar, nFlags);
     }
 
@@ -190,6 +190,7 @@ void CSkinMenuBar::onPopupMenuClosed() {
     m_isShowingMenu = false;
     m_nSelSubMenu = -1;
     m_pSkin->releaseCaptureMouse(this);
+    m_pSkin->setSkinMenuPopup(false);
 }
 
 void CSkinMenuBar::onPopupKeyDown(uint32_t nChar, uint32_t nFlags) {
@@ -337,6 +338,7 @@ void CSkinMenuBar::onMenuItemSelected(int index) {
         if (m_pSkin->getCaptureMouse() != this) {
             // 弹出菜单，需要一直关注鼠标输入.
             m_pSkin->setCaptureMouse(this);
+            m_pSkin->setSkinMenuPopup(true);
         }
 
         m_pMenu->updateMenuStatus(m_pSkin);
@@ -354,15 +356,12 @@ void CSkinMenuBar::onMenuItemSelected(int index) {
 
 void CSkinMenuBar::hideSubMenu() {
     if (m_isShowingMenu) {
-        m_isShowingMenu = false;
-        m_nSelSubMenu = -1;
+        onPopupMenuClosed();
         m_popupMenu->setVisible(false, false);
         m_pSkin->invalidateRect();
-
-        m_pSkin->releaseCaptureMouse(this);
     }
 }
 
-bool CSkinMenuBar::isMenuPopuped() {
+bool CSkinMenuBar::isMenuPopup() {
     return m_popupMenu && m_popupMenu->isVisible();
 }

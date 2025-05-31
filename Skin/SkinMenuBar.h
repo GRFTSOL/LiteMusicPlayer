@@ -43,7 +43,7 @@ protected:
 
     void onMenuItemSelected(int index);
     void hideSubMenu();
-    bool isMenuPopuped();
+    bool isMenuPopup();
 
     friend class CMenuBarMsgHandler;
 

@@ -30,10 +30,10 @@ function create_music_player_update_json() {
     file="$RELEASE_DIR/music-player-update.json"
     echo "Creating ${file} ..."
 
-    echo '{
-"version": "$VERSION",
-"release-date": "$(date '+%Y-%m-%d')"
-}' > ${file}
+    echo "{
+\"version\": \"$VERSION\",
+\"release-date\": \"$(date '+%Y-%m-%d')\"
+}" > ${file}
     exit_if_err "Failed to create ${file}."
     echo "OK"
 }

@@ -1,4 +1,4 @@
-﻿/********************************************************************
+/********************************************************************
     Created  :    2001/07/06
     FileName :    SkinWnd.h
     Author   :    xhy
@@ -319,6 +319,8 @@ public:
 
     bool isWndActive();
 
+    void setSkinMenuPopup(bool isPopup) { m_isSkinMenuPopup = isPopup; }
+
     CSkinFontProperty *getFontProperty() { return &m_fontProperty; }
     CRawBmpFont *getRawFont() { return m_fontProperty.getFont(); }
 
@@ -443,6 +445,8 @@ protected:
     bool                        m_bActived;         // 当前窗口是否为激活状态Focus?
     bool                        m_bMainAppWnd;      // true: when the Window is closed, exit process.
     bool                        m_bDialogWnd;       // For dialog Skin: Enter key = OK, Escape key = cancel.
+
+    bool                        m_isSkinMenuPopup;
 
     //
     // properties

@@ -332,6 +332,8 @@ void CMPHotkey::onHotKey(uint32_t nId, uint32_t fuModifiers, uint32_t uVirtKey) 
 bool CMPHotkey::onKeyDown(CMPSkinWnd *pWnd, uint32_t nChar, uint32_t nFlags) {
     assert(pWnd);
 
+    // Remove MK_FUNCTION flag for mac
+    nFlags &= ~MK_FUNCTION;
     auto nIDKeyPressed = makeHotkeyID(nFlags, nChar);
 
     for (int i = 0; i < (int)m_vAccKey.size(); i++) {

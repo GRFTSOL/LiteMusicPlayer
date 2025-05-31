@@ -1549,6 +1549,7 @@ void CLyricShowTextEditObj::syncTimeTag(bool bMoveToNextLine) {
             if (nLine == nBegLine) {
                 string newTimeTag = formatLrcTimeTag(nPlayingPos, true);
 
+                setCaret(nLine, 0);
                 setSelOfLine(nLine, 0, 0);
                 replaceSel(newTimeTag.c_str());
                 break;
